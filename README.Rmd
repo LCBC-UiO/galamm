@@ -32,25 +32,24 @@ remotes::install_github("LCBC-UiO/galamm")
 ```
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
+Here is a basic example with three items measuring an underlying latent trait.
 
 ```{r example}
 library(galamm)
-## basic example code
+
+# Define factor loading matrix
+load.mat <- matrix(c(1, NA, NA), ncol = 1)
+dimnames(load.mat) <- list(c("item1", "item2", "item3"), NULL)
+
+# Fit a galamm
+mod <- galamm(
+  formula = value ~ s(x, by = weight),
+  random = ~(1|id),
+  data = dat1,
+  load.var = "item",
+  lambda = load.mat,
+  factor = "weight",
+  optim_control = list(trace = 3)
+  )
 ```
 
-What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so:
-
-```{r cars}
-summary(cars)
-```
-
-You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date. `devtools::build_readme()` is handy for this. You could also use GitHub Actions to re-render `README.Rmd` every time you push. An example workflow can be found here: <https://github.com/r-lib/actions/tree/master/examples>.
-
-You can also embed plots, for example:
-
-```{r pressure, echo = FALSE}
-plot(pressure)
-```
-
-In that case, don't forget to commit and push the resulting figure files, so they display on GitHub and CRAN.

@@ -29,7 +29,8 @@ remotes::install_github("LCBC-UiO/galamm")
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
+Here is a basic example with three items measuring an underlying latent
+trait.
 
 ``` r
 library(galamm)
@@ -45,32 +46,68 @@ library(galamm)
 #>     lmList
 #> This is mgcv 1.8-34. For overview type 'help("mgcv-package")'.
 #> This is gamm4 0.2-6
-## basic example code
+
+# Define factor loading matrix
+load.mat <- matrix(c(1, NA, NA), ncol = 1)
+dimnames(load.mat) <- list(c("item1", "item2", "item3"), NULL)
+
+# Fit a galamm
+mod <- galamm(
+  formula = value ~ s(x, by = weight),
+  random = ~(1|id),
+  data = dat1,
+  load.var = "item",
+  lambda = load.mat,
+  factor = "weight",
+  optim_control = list(trace = 3)
+  )
+#> N = 2, M = 5 machine precision = 2.22045e-16
+#> This problem is unconstrained.
+#> At X0, 0 variables are exactly at the bounds
+#> At iterate     0  f=       954.75  |proj g|=       192.41
+#> Bad direction in the line search;
+#>    refresh the lbfgs memory and restart the iteration.
+#> At iterate    10  f =       774.32  |proj g|=        8.6731
+#> Warning: Some predictor variables are on very different scales: consider
+#> rescaling
+
+#> Warning: Some predictor variables are on very different scales: consider
+#> rescaling
+
+#> Warning: Some predictor variables are on very different scales: consider
+#> rescaling
+
+#> Warning: Some predictor variables are on very different scales: consider
+#> rescaling
+
+#> Warning: Some predictor variables are on very different scales: consider
+#> rescaling
+
+#> Warning: Some predictor variables are on very different scales: consider
+#> rescaling
+
+#> Warning: Some predictor variables are on very different scales: consider
+#> rescaling
+
+#> Warning: Some predictor variables are on very different scales: consider
+#> rescaling
+
+#> Warning: Some predictor variables are on very different scales: consider
+#> rescaling
+
+#> Warning: Some predictor variables are on very different scales: consider
+#> rescaling
+#> At iterate    20  f =        741.3  |proj g|=        11.206
+#> 
+#> iterations 26
+#> function evaluations 81
+#> segments explored during Cauchy searches 2
+#> BFGS updates skipped 0
+#> active bounds at final generalized Cauchy point 0
+#> norm of the final projected gradient 0.00105644
+#> final function value 741.116
+#> 
+#> F = 741.116
+#> final  value 741.115782 
+#> converged
 ```
-
-What is special about using `README.Rmd` instead of just `README.md`?
-You can include R chunks like so:
-
-``` r
-summary(cars)
-#>      speed           dist       
-#>  Min.   : 4.0   Min.   :  2.00  
-#>  1st Qu.:12.0   1st Qu.: 26.00  
-#>  Median :15.0   Median : 36.00  
-#>  Mean   :15.4   Mean   : 42.98  
-#>  3rd Qu.:19.0   3rd Qu.: 56.00  
-#>  Max.   :25.0   Max.   :120.00
-```
-
-You’ll still need to render `README.Rmd` regularly, to keep `README.md`
-up-to-date. `devtools::build_readme()` is handy for this. You could also
-use GitHub Actions to re-render `README.Rmd` every time you push. An
-example workflow can be found here:
-<https://github.com/r-lib/actions/tree/master/examples>.
-
-You can also embed plots, for example:
-
-<img src="man/figures/README-pressure-1.png" width="100%" />
-
-In that case, don’t forget to commit and push the resulting figure
-files, so they display on GitHub and CRAN.
