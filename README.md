@@ -8,6 +8,8 @@
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![R-CMD-check](https://github.com/LCBC-UiO/galamm/workflows/R-CMD-check/badge.svg)](https://github.com/LCBC-UiO/galamm/actions)
+[![Codecov test
+coverage](https://codecov.io/gh/LCBC-UiO/galamm/branch/main/graph/badge.svg)](https://codecov.io/gh/LCBC-UiO/galamm?branch=main)
 <!-- badges: end -->
 
 galamm is an R package for fitting multivariate generalized additive
@@ -64,47 +66,16 @@ mod <- galamm(
 #> N = 2, M = 5 machine precision = 2.22045e-16
 #> This problem is unconstrained.
 #> At X0, 0 variables are exactly at the bounds
-#> At iterate     0  f=       954.75  |proj g|=       192.41
-#> Bad direction in the line search;
-#>    refresh the lbfgs memory and restart the iteration.
-#> At iterate    10  f =       774.32  |proj g|=        8.6731
-#> Warning: Some predictor variables are on very different scales: consider
-#> rescaling
-
-#> Warning: Some predictor variables are on very different scales: consider
-#> rescaling
-
-#> Warning: Some predictor variables are on very different scales: consider
-#> rescaling
-
-#> Warning: Some predictor variables are on very different scales: consider
-#> rescaling
-
-#> Warning: Some predictor variables are on very different scales: consider
-#> rescaling
-
-#> Warning: Some predictor variables are on very different scales: consider
-#> rescaling
-
-#> Warning: Some predictor variables are on very different scales: consider
-#> rescaling
-
-#> Warning: Some predictor variables are on very different scales: consider
-#> rescaling
-
-#> Warning: Some predictor variables are on very different scales: consider
-#> rescaling
-
-#> Warning: Some predictor variables are on very different scales: consider
-#> rescaling
-#> At iterate    20  f =        741.3  |proj g|=        11.206
+#> At iterate     0  f=        992.2  |proj g|=       30.627
+#> At iterate    10  f =       773.34  |proj g|=        29.988
+#> At iterate    20  f =       741.14  |proj g|=        2.1189
 #> 
-#> iterations 26
-#> function evaluations 81
-#> segments explored during Cauchy searches 2
+#> iterations 24
+#> function evaluations 48
+#> segments explored during Cauchy searches 1
 #> BFGS updates skipped 0
 #> active bounds at final generalized Cauchy point 0
-#> norm of the final projected gradient 0.00105644
+#> norm of the final projected gradient 0.000410504
 #> final function value 741.116
 #> 
 #> F = 741.116
