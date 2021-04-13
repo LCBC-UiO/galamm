@@ -21,7 +21,9 @@ knitr::opts_chunk$set(
 [![Codecov test coverage](https://codecov.io/gh/LCBC-UiO/galamm/branch/main/graph/badge.svg)](https://codecov.io/gh/LCBC-UiO/galamm?branch=main)
 <!-- badges: end -->
 
-galamm is an R package for fitting multivariate generalized additive mixed models with factor structures. The package is currently under development, and changes to the API must be expected. If you are looking for a package for fitting generalized linear mixed models with factor structures, check out [PLmixed](https://cran.r-project.org/package=PLmixed).
+galamm is an R package for fitting multivariate generalized additive mixed models with factor structures. The package is currently under development, and changes to the API must be expected. 
+
+The package uses an interface similar to [PLmixed](https://cran.r-project.org/package=PLmixed), which fits generalized linear mixed models with factor structures. However, galamm allows semiparametric estimations with [gamm4](https://cran.r-project.org/package=gamm4), and hence more flexibly allows estimation of nonlinear effects.
 
 ## Installation
 

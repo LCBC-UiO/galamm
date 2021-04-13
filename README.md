@@ -14,10 +14,14 @@ coverage](https://codecov.io/gh/LCBC-UiO/galamm/branch/main/graph/badge.svg)](ht
 
 galamm is an R package for fitting multivariate generalized additive
 mixed models with factor structures. The package is currently under
-development, and changes to the API must be expected. If you are looking
-for a package for fitting generalized linear mixed models with factor
-structures, check out
-[PLmixed](https://cran.r-project.org/package=PLmixed).
+development, and changes to the API must be expected.
+
+The package uses an interface similar to
+[PLmixed](https://cran.r-project.org/package=PLmixed), which fits
+generalized linear mixed models with factor structures. However, galamm
+allows semiparametric estimations with
+[gamm4](https://cran.r-project.org/package=gamm4), and hence more
+flexibly allows estimation of nonlinear effects.
 
 ## Installation
 
@@ -66,19 +70,18 @@ mod <- galamm(
 #> N = 2, M = 5 machine precision = 2.22045e-16
 #> This problem is unconstrained.
 #> At X0, 0 variables are exactly at the bounds
-#> At iterate     0  f=        992.2  |proj g|=       30.627
-#> At iterate    10  f =       773.34  |proj g|=        29.988
-#> At iterate    20  f =       741.14  |proj g|=        2.1189
+#> At iterate     0  f=       939.88  |proj g|=       103.94
+#> At iterate    10  f =        782.8  |proj g|=        0.2652
 #> 
-#> iterations 24
-#> function evaluations 48
+#> iterations 17
+#> function evaluations 19
 #> segments explored during Cauchy searches 1
 #> BFGS updates skipped 0
 #> active bounds at final generalized Cauchy point 0
-#> norm of the final projected gradient 0.000410504
-#> final function value 741.116
+#> norm of the final projected gradient 0.00024042
+#> final function value 782.618
 #> 
-#> F = 741.116
-#> final  value 741.115782 
+#> F = 782.618
+#> final  value 782.618195 
 #> converged
 ```
