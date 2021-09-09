@@ -37,7 +37,7 @@ remotes::install_github("LCBC-UiO/galamm")
 
 Here is a basic example with three items measuring an underlying latent trait.
 
-```{r example}
+```{r example, eval=FALSE}
 library(galamm)
 
 # Define factor loading matrix

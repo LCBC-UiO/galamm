@@ -40,18 +40,6 @@ trait.
 
 ``` r
 library(galamm)
-#> Loading required package: gamm4
-#> Loading required package: Matrix
-#> Loading required package: lme4
-#> Loading required package: mgcv
-#> Loading required package: nlme
-#> 
-#> Attaching package: 'nlme'
-#> The following object is masked from 'package:lme4':
-#> 
-#>     lmList
-#> This is mgcv 1.8-34. For overview type 'help("mgcv-package")'.
-#> This is gamm4 0.2-6
 
 # Define factor loading matrix
 load.mat <- matrix(c(1, NA, NA), ncol = 1)
@@ -67,21 +55,4 @@ mod <- galamm(
   factor = "weight",
   optim_control = list(trace = 3)
   )
-#> N = 2, M = 5 machine precision = 2.22045e-16
-#> This problem is unconstrained.
-#> At X0, 0 variables are exactly at the bounds
-#> At iterate     0  f=       939.88  |proj g|=       103.94
-#> At iterate    10  f =        782.8  |proj g|=        0.2652
-#> 
-#> iterations 17
-#> function evaluations 19
-#> segments explored during Cauchy searches 1
-#> BFGS updates skipped 0
-#> active bounds at final generalized Cauchy point 0
-#> norm of the final projected gradient 0.00024042
-#> final function value 782.618
-#> 
-#> F = 782.618
-#> final  value 782.618195 
-#> converged
 ```
