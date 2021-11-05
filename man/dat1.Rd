@@ -3,15 +3,24 @@
 \docType{data}
 \name{dat1}
 \alias{dat1}
-\title{Example dataset with three measurements of a single latent variable.}
+\title{Simulated dataset with continuous response and three observations per subject.}
 \format{
-An object of class \code{data.frame} with 300 rows and 4 columns.
+An object of class \code{data.frame} with 300 rows and 3 columns.
 }
 \usage{
 dat1
 }
 \description{
-The underlying smooth curve for the latent trait has been generated
-\code{mgcv::gamSim}.
+This dataset can be used to validate the code, by comparing the estimates to
+those obtained from other mixed model software.
+}
+\details{
+\code{dat1} contains the following variables:
+
+\describe{
+\item{\code{id}}{Subject identifier.}
+\item{\code{tp}}{Within-subject timepoint.}
+\item{\code{y}}{Response variable.}
+}
 }
 \keyword{datasets}
