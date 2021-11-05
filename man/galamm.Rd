@@ -11,10 +11,7 @@ galamm(
   data = list(),
   load.var = NULL,
   lambda = NULL,
-  factor = NULL,
-  optim_method = "L-BFGS-B",
-  optim_control = list(),
-  numDeriv_method = "simple"
+  factor = NULL
 )
 }
 \arguments{
@@ -34,39 +31,10 @@ model.}
 to \code{load.var}.}
 
 \item{factor}{The latent variable, or factor.}
-
-\item{optim_method}{Passed on to \code{stats::optim}.}
-
-\item{optim_control}{Passed on to \code{stats::optim}.}
-
-\item{numDeriv_method}{Passed on to \code{numDeriv::jacobian}.}
 }
 \value{
 An object of S3 class \code{galamm}.
 }
 \description{
-Fits a GALAMM using a profile likelihood algorithm.
-\code{gamm4::gamm4} is used to fit the underling
-generalized additive mixed model at each step. See
-the documentation to \code{gamm4::gamm4} and
-\code{PLmixed::PLmixed} for details about the syntax.
-}
-\examples{
-# Example dataset with three measurements of a latent response
-# Define loading matrix
-load.mat <- matrix(c(1, NA, NA), ncol = 1)
-dimnames(load.mat) <- list(c("item1", "item2", "item3"), NULL)
-\dontrun{
-mod <- galamm(
-  formula = value ~ s(x, by = weight),
-  random = ~(1|id),
-  data = dat1,
-  load.var = "item",
-  lambda = load.mat,
-  factor = "weight",
-  optim_control = list(trace = 3)
-  )
-}
-
-
+Fits a GALAMM
 }
