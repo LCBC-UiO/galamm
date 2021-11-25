@@ -9,7 +9,6 @@
 #' @export
 #'
 #'
-#' @importFrom Rdpack reprompt
 galamm <- function(formula, data, family) {
   print("Hello, world!")
 
