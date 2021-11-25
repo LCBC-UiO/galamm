@@ -4,7 +4,8 @@ Title: Multivariate Generalized Additive Latent and Mixed Models
 Version: 0.1.0
 Authors@R: c(person("Øystein", "Sørensen",
                     email = "oystein.sorensen@psykologi.uio.no",
-                    role = c("aut", "cre")))
+                    role = c("aut", "cre"),
+                    comment = c(ORCID = "0000-0003-0724-3542")))s
 Description: Estimation of multivariate generalized additive mixed models,
     including models with mixed response types and models with latent 
     variables.
