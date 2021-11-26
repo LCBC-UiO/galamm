@@ -15,22 +15,14 @@ galamm <- function(formula, data, family, nAGQ) {
                            data = data,
                            family = family)
 
-  family <- glmod$family
 
-  # Fixed effect model matrix
-  X <- glmod$X
+  linkinv <- function(x) (1 + exp(-x))^(-1)
+  log_response_prob <- function(mean, y, trials = 1){
+    y * log(mean) + (trials - y) * log(1 - mean)
+  }
 
-  # Transposed sparse model matrix for random effects
-  Zt <- glmod$reTrms$Zt
-
-  # Initial values of covariance parameters
-  theta <- glmod$reTrms$theta
-
-  # Initial values of regression coefficients
-  beta <- c(.2, .3)
-
-  # Transposed relative covariance factor
-  Lambdat <- glmod$reTrms$Lambdat
+  # Initial values
+  pars <- c(0,0,0)
 
   # Quadrature points
   Quadpoints <- sweep(hermite.h.quadrature.rules(nAGQ)[[nAGQ]], 2,
@@ -40,47 +32,84 @@ galamm <- function(formula, data, family, nAGQ) {
   nmom <- length(levels(glmod$reTrms$flist[[1]]))
   moments <- data.frame(mu1 = rep(0, nmom), tau1 = rep(1, nmom))
 
-  alpha <- outer(moments$mu1, rep(1, length(Quadpoints$x))) +
-    outer(moments$tau1, Quadpoints$x)
-  pi <- sqrt(2 * pi) *
-    outer(moments$tau1, exp(Quadpoints$x^2 / 2) * Quadpoints$w) *
-    dnorm(alpha)
-
-  # Every column of alpha is a spherical random effect where we
-  # want to evaluate the response probability
-  # Create non-spherical random effects
-  b <- crossprod(Lambdat, alpha)
-
-  # Evaluate linear predictor at each quadrature point
-  nu <- crossprod(Zt, b) + c(X %*% beta)
-
-  # Response
+  Lambdat <- glmod$reTrms$Lambdat
+  Lind <- glmod$reTrms$Lind
+  X <- glmod$X
+  Zt <- glmod$reTrms$Zt
   y <- glmod$fr$y
-  trials <- 1
-
-
-  linkinv <- function(x) (1 + exp(-x))^(-1)
-  log_response_prob <- function(mean, y, trials){
-    y * log(mean) + (trials - y) * log(1 - mean)
-  }
-
-  # Evaluate response probability at each quadrature point
-  probmat <- log_response_prob(linkinv(nu), y, trials)
-
-  # Mapping
   Ztlist <- glmod$reTrms$Ztlist$`1 | id`
 
-  # Sum of level-1 log probabilities per level-2 unit
-  f1_prod <- Ztlist %*% probmat
+  eval_loglik <- function(pars, moments, Quadpoints, Lambdat,
+                          Lind, X, Zt, y, Ztlist, maxit = 1){
+    fixed_inds <- seq_len(ncol(X))
+    beta <- pars[fixed_inds]
+    theta <- pars[setdiff(seq_along(pars), fixed_inds)]
+    # Update relative covariance factor after having updated theta
+    Lambdat@x[] <- exp(theta[Lind])
 
-  # Integrate to get level-2 likelihood
-  f2 <- rowSums(f1_prod * pi)
-  moments$mu1 <- rowSums(f1_prod * pi * alpha) / f2
-  moments$tau1 <- sqrt(rowSums(f1_prod * pi * alpha^2) / f2 - moments$mu1^2)
+    ll0 <- -Inf
+    for(i in seq_len(maxit)){
+      alpha <- outer(moments$mu1, rep(1, length(Quadpoints$x))) +
+        outer(moments$tau1, Quadpoints$x)
+
+      pi <- sqrt(2 * pi) *
+        outer(moments$tau1, exp(Quadpoints$x^2 / 2) * Quadpoints$w) *
+        dnorm(alpha)
+
+      # Every column of alpha is a spherical random effect where we
+      # want to evaluate the response probability
+      # Create non-spherical random effects
+      b <- crossprod(Lambdat, alpha)
+
+      # Evaluate linear predictor at each quadrature point
+      nu <- crossprod(Zt, b) + c(X %*% beta)
+
+
+      # Evaluate response probability at each quadrature point
+      probmat <- log_response_prob(linkinv(nu), y)
+
+      # Sum of level-1 log probabilities per level-2 unit
+      f1_prod <- Ztlist %*% probmat
+
+      # Integrate to get level-2 likelihood
+      f2 <- log(rowSums(exp(f1_prod) * pi))
+      moments$mu1 <- rowSums(exp(f1_prod) * pi * alpha) / exp(f2)
+      moments$tau1 <- sqrt(rowSums(exp(f1_prod) * pi * alpha^2) / exp(f2) - moments$mu1^2)
+
+      ll <- sum(f2)
+
+      if(abs(ll0 - ll) < 1e-3) break
+      ll0 <- ll
+    }
+    attr(ll, "moments") <- moments
+    attr(ll, "iter") <- i
+    ll
+  }
+
+  # Run to get moments
+  for(i in 1:10){
+    ll <- eval_loglik(pars, moments, Quadpoints, Lambdat, Lind,
+                      X, Zt, y, Ztlist, maxit = 100)
+    moments <- attr(ll, "moments")
+    g <- numDeriv::grad(eval_loglik, pars,
+                        moments = moments,
+                        Quadpoints = Quadpoints,
+                        Lambdat = Lambdat,
+                        Lind = Lind,
+                        X = X, Zt = Zt, y = y, Ztlist = Ztlist,
+                        maxit = 1)
+    H <- numDeriv::hessian(eval_loglik, pars,
+                           moments = moments,
+                           Quadpoints = Quadpoints,
+                           Lambdat = Lambdat,
+                           Lind = Lind,
+                           X = X, Zt = Zt, y = y, Ztlist = Ztlist,
+                           maxit = 1)
+
+    (pars <- pars - solve(H) %*% g)
+    print(c(ll))
+  }
 
 
 
-
-  # Update relative covariance factor after having updated theta
-  Lambdat@x[] <- theta[glmod$reTrms$Lind]
 }

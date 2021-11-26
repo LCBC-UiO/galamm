@@ -25,6 +25,7 @@ Suggests:
 Depends: 
     R (>= 2.10),
     gaussquad,
-    Matrix
+    Matrix,
+    numDeriv
 RdMacros:
     Rdpack
