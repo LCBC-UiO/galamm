@@ -2,3 +2,4 @@
 
 export(galamm)
 importFrom(Rdpack,reprompt)
+importFrom(gaussquad,hermite.h.quadrature.rules)

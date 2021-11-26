@@ -5,7 +5,7 @@
 \alias{galamm}
 \title{Estimate a generalized additive latent and mixed model.}
 \usage{
-galamm(formula, data, family)
+galamm(formula, data, family, nAGQ, maxit_newton = 10, maxit_moments = 10)
 }
 \arguments{
 \item{formula}{The model formula, including smooth terms but not
@@ -14,6 +14,12 @@ random effects.}
 \item{data}{Data frame or list.}
 
 \item{family}{Family.}
+
+\item{nAGQ}{Quadrature points.}
+
+\item{maxit_newton}{Newton iterations.}
+
+\item{maxit_moments}{Moment iterations.}
 }
 \value{
 An object of class galamm.
@@ -21,4 +27,11 @@ An object of class galamm.
 \description{
 The package provides methods for estimating generalized additive mixed
 models with mixed response types and latent variables.
+}
+\examples{
+mod <- galamm(
+  formula = y ~ x + (1 | id),
+  data = dat1,
+  family = binomial(),
+  nAGQ = 5, maxit_moments = 4)
 }
