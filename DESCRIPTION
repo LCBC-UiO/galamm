@@ -21,7 +21,6 @@ Suggests:
     Matrix,
     numDeriv
 Depends: 
-    R (>= 2.10),
-    gaussquad
+    R (>= 2.10)
 RdMacros:
     Rdpack

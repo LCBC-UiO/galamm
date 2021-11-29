@@ -4,7 +4,6 @@
 #' models with mixed response types and latent variables.
 #'
 #' @importFrom Rdpack reprompt
-#' @importFrom gaussquad hermite.h.quadrature.rules
 #' @docType package
 #' @name galamm
 NULL

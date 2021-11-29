@@ -25,4 +25,4 @@ making sure the standard normal distribution is being integrated over.
 \references{
 \insertAllCited{}
 }
-\keyword{datasets}
+\keyword{internal}

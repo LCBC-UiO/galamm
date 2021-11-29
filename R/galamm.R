@@ -20,18 +20,25 @@ galamm <- function(formula, data, family, nAGQ,
                            data = data,
                            family = family)
 
+  # Initial values, convert theta to log scale
+  t0 <- glmod$reTrms$theta
+  t0[t0 == 0] <- -10
+  t0[t0 == 1] <- 0
+  pars <- c(rep(0, ncol(glmod$X)), t0)
+
+  hq <- hermite_quadrature
+  Quadpoints <- hq[[nAGQ]]
+
+  moments <- initialize_moments(glmod)
 
 
-  # Initial values
-  pars <- c(0,0,0)
-
-  # Quadrature points
-  Quadpoints <- sweep(
-    hermite.h.quadrature.rules(nAGQ)[[nAGQ]], 2,
-    c(sqrt(2), 1 / sqrt(pi)), "*")
-
-  # Assuming the random effects are strictly hierarchical
   nmom <- length(levels(glmod$reTrms$flist[[1]]))
+
+
+  for(i in seq_along(glmod$reTrm$cnms[[1]])){
+    moments$a <- rep(1, 10)
+  }
+
   moments <- data.frame(mu1 = rep(0, nmom), tau1 = rep(1, nmom))
 
   Lambdat <- glmod$reTrms$Lambdat
@@ -40,6 +47,7 @@ galamm <- function(formula, data, family, nAGQ,
   Zt <- glmod$reTrms$Zt
   y <- glmod$fr$y
   Ztlist <- glmod$reTrms$Ztlist$`1 | id`
+
 
 
 
@@ -117,11 +125,4 @@ eval_loglik <- function(pars, moments, Quadpoints, Lambdat,
   attr(ll, "moments") <- moments
   attr(ll, "iter") <- i
   ll
-}
-
-
-linkinv <- function(x) (1 + exp(-x))^(-1)
-
-log_response_prob <- function(mean, y, trials = 1){
-  y * log(mean) + (trials - y) * log(1 - mean)
 }
