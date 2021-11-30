@@ -1,9 +1,18 @@
 devtools::load_all()
 
+## random intercept
+formula = y ~ x + (1 | id)
+data = dat1
+family = binomial()
+nAGQ = 11
+maxit_newton <- 10
+maxit_moments = 10
+
+## random coefficients
 formula = y ~ x + (x | id)
 data = dat2
 family = binomial()
-nAGQ = 11
+nAGQ = c(5, 5)
 maxit_newton <- 10
 maxit_moments = 10
 
