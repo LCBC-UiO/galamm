@@ -15,7 +15,6 @@ LazyData: true
 RoxygenNote: 7.1.2
 Imports:
     lme4,
-    gtools,
     Rdpack
 Suggests:
     rmarkdown,

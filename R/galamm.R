@@ -41,7 +41,9 @@ galamm <- function(formula, data, family, nAGQ,
 
   # Run to get moments
   for(i in seq_len(maxit_newton)){
-    ll <- eval_loglik(pars, moments, Quadpoints,
+    ll <- eval_loglik(pars,
+                      moments = moments,
+                      Quadpoints = Quadpoints,
                       LLHelper = LLHelper,
                       Lambdat = rho$pp$Lambdat,
                       Lind = rho$pp$Lind,
@@ -50,22 +52,36 @@ galamm <- function(formula, data, family, nAGQ,
                       y = rho$resp$y,
                       family = rho$resp$family,
                       maxit = maxit_moments,
-                      fixed_ind, vc_ind)
+                      fixed_ind = fixed_ind,
+                      vc_ind = vc_ind
+                      )
     moments <- attr(ll, "moments")
     g <- numDeriv::grad(eval_loglik, pars,
                         moments = moments,
                         Quadpoints = Quadpoints,
-                        Lambdat = Lambdat,
-                        Lind = Lind,
-                        X = X, Zt = Zt, y = y, Ztlist = Ztlist,
-                        maxit = 1)
+                        LLHelper = LLHelper,
+                        Lambdat = rho$pp$Lambdat,
+                        Lind = rho$pp$Lind,
+                        X = rho$pp$X,
+                        Zt = rho$pp$Zt,
+                        y = rho$resp$y,
+                        family = rho$resp$family,
+                        maxit = 1,
+                        fixed_ind = fixed_ind,
+                        vc_ind = vc_ind)
     H <- numDeriv::hessian(eval_loglik, pars,
                            moments = moments,
                            Quadpoints = Quadpoints,
-                           Lambdat = Lambdat,
-                           Lind = Lind,
-                           X = X, Zt = Zt, y = y, Ztlist = Ztlist,
-                           maxit = 1)
+                           LLHelper = LLHelper,
+                           Lambdat = rho$pp$Lambdat,
+                           Lind = rho$pp$Lind,
+                           X = rho$pp$X,
+                           Zt = rho$pp$Zt,
+                           y = rho$resp$y,
+                           family = rho$resp$family,
+                           maxit = 1,
+                           fixed_ind = fixed_ind,
+                           vc_ind = vc_ind)
 
     pars <- pars - solve(H) %*% g
   }
