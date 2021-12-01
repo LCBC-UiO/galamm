@@ -4,7 +4,7 @@ eval_loglik <- function(pars, moments, Quadpoints,
                         fixed_ind, vc_ind){
 
   beta <- pars[fixed_ind]
-  theta <- pars[vc_ind]
+  theta <- exp(pars[vc_ind])
   # Update relative covariance factor after having updated theta
   Lambdat@x[] <- theta[Lind]
 
@@ -15,19 +15,8 @@ eval_loglik <- function(pars, moments, Quadpoints,
 
   mainvars <- grep("\\:", colnames(moments[[1]]), invert = TRUE, value = TRUE)
   squaredvars <- paste0(mainvars, ":", mainvars)
-  if(length(mainvars) > 1){
-    crossedvars <- expand.grid(mainvars, mainvars)
-    crossedvars <- crossedvars[crossedvars$Var1 != crossedvars$Var2, , drop = FALSE]
-    crossedvars <- unique(t(apply(crossedvars, 1, sort)))
-    crossedvars <- cbind(crossedvars, apply(crossedvars, 1, paste, collapse = ":"),
-                         paste(crossedvars[, 1], crossedvars[, 1], sep = ":"))
-    dimnames(crossedvars) <- list(NULL, c("var1", "var2", "var1var2", "var1var1"))
 
-  } else {
-    crossedvars <- NULL
-  }
-
-
+  crossedvars <- define_crossedvars(mainvars)
 
   ll0 <- -Inf
   for(i in seq_len(maxit)){
@@ -35,14 +24,10 @@ eval_loglik <- function(pars, moments, Quadpoints,
     tau <- sqrt(moments[[1]][, squaredvars, drop = FALSE] -
                   moments[[1]][, mainvars, drop = FALSE]^2)
 
-    if(!is.null(crossedvars)){
-      gamma <- (
-        moments[[1]][, crossedvars[, "var1var2"], drop = FALSE] -
-          moments[[1]][, crossedvars[, "var1"], drop = FALSE] * moments[[1]][, crossedvars[, "var2"], drop = FALSE]
-      ) / moments[[1]][, crossedvars[, "var1var1"]]
-    } else {
-      gamma <- NULL
-    }
+    gamma <- (
+      moments[[1]][, crossedvars[, "var1var2"], drop = FALSE] -
+        moments[[1]][, crossedvars[, "var1"], drop = FALSE] * moments[[1]][, crossedvars[, "var2"], drop = FALSE]
+    ) / moments[[1]][, crossedvars[, "var1var1"]]
 
     A <- P <- alpha <- array(dim = c(ncol(a), nrow(mu), nrow(a)))
 
@@ -89,19 +74,15 @@ eval_loglik <- function(pars, moments, Quadpoints,
       moments[[1]][, squaredvars[[varind]]] <-
         Matrix::rowSums(exp(f1_prod) * P_prod * A[varind, , ]^2) / exp(f2)
     }
-    if(!is.null(crossedvars)){
-      for(varind in seq_along(crossedvars[, "var1var2"])){
-        ind1 <- which(mainvars == crossedvars[varind, "var1"])
-        ind2 <- which(mainvars == crossedvars[varind, "var2"])
-        v1v2 <- crossedvars[varind, "var1var2"]
-        moments[[1]][, v1v2] <-
-          Matrix::rowSums(exp(f1_prod) * P_prod * A[ind1, , ] * A[ind2, , ]) / exp(f2)
+    for(varind in seq_along(crossedvars[, "var1var2"])){
+      ind1 <- which(mainvars == crossedvars[varind, "var1"])
+      ind2 <- which(mainvars == crossedvars[varind, "var2"])
+      v1v2 <- crossedvars[varind, "var1var2"]
+      moments[[1]][, v1v2] <-
+        Matrix::rowSums(exp(f1_prod) * P_prod * A[ind1, , ] * A[ind2, , ]) / exp(f2)
       }
-    }
-
 
     ll <- sum(f2)
-
     if(abs(ll0 - ll) < 1e-3) break
     ll0 <- ll
   }

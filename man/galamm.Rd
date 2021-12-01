@@ -15,7 +15,8 @@ random effects.}
 
 \item{family}{Family.}
 
-\item{nAGQ}{Quadrature points.}
+\item{nAGQ}{Quadrature points. Either a vector of the same length as the
+number of random effects, or a single value.}
 
 \item{maxit_newton}{Newton iterations.}
 

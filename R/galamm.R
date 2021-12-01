@@ -17,19 +17,14 @@
 galamm <- function(formula, data, family, nAGQ,
                    maxit_newton = 10, maxit_moments = 10) {
 
-  glmod <- lme4::glFormula(formula = formula,
-                           data = data,
-                           family = family)
-
+  glmod <- lme4::glFormula(formula = formula, data = data, family = family)
   devfun <- do.call(lme4::mkGlmerDevfun, glmod)
   rho <- environment(devfun)
-
   moments <- initialize_moments(glmod)
-
   hq <- hermite_quadrature
   Quadpoints <- lapply(nAGQ, function(x) hq[[x]])
 
-  pars <- c(rho$pp$beta0, rho$pp$theta)
+  pars <- c(rho$pp$beta0, log(ifelse(rho$pp$theta == 1, rho$pp$theta, .01)))
   fixed_ind <- seq_along(rho$pp$beta0)
   vc_ind <- seq_along(rho$pp$theta) + max(fixed_ind)
 
@@ -39,7 +34,7 @@ galamm <- function(formula, data, family, nAGQ,
     x = 1
   )
 
-  # Run to get moments
+  ll0 <- -Inf
   for(i in seq_len(maxit_newton)){
     ll <- eval_loglik(pars,
                       moments = moments,
@@ -83,9 +78,13 @@ galamm <- function(formula, data, family, nAGQ,
                            fixed_ind = fixed_ind,
                            vc_ind = vc_ind)
 
-    pars <- pars - solve(H) %*% g
-  }
 
+    pars <- pars - solve(H) %*% g
+
+    if(abs(ll0 - ll) < 1e-3) break
+    ll0 <- ll
+
+  }
 
   pars
 
