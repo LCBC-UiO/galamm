@@ -31,6 +31,21 @@
 #' @references \insertAllCited{}
 "dat2"
 
+#' Example dataset with binomial response and two levels.
+#'
+#' This dataset can be used to fit models with quadratic random slopes.
+#'
+#' @format A data frame with 1800 rows and 4 variables:
+#' \describe{
+#'   \item{id}{Subject ID}
+#'   \item{y}{Number of successes}
+#'   \item{trials}{Number of trials. Always equal to 1.}
+#'   \item{x}{Explanatory variable}
+#' }
+#'
+#' @references \insertAllCited{}
+"dat3"
+
 
 #' Gauss-Hermite quadrature rules
 #'
