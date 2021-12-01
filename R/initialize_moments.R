@@ -12,7 +12,10 @@ initialize_moments <- function(glmod){
     # Second order moments
     mom2 <- unique(apply(
       expand.grid(glmod$reTrms$cnms[[i]], glmod$reTrms$cnms[[i]]),
-      1, function(x) paste(sort(x), collapse = ":")))
+      1, function(x) {
+        x <- factor(x, levels = intersect(mom1, x))
+        paste(sort(x), collapse = ":")
+      }))
 
     cross_moments <- which(vapply(mom2, function(x) {
       length(unique(strsplit(x, "\\:")[[1]])) == 2},
