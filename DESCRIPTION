@@ -19,8 +19,10 @@ Imports:
 Suggests:
     rmarkdown,
     Matrix,
-    numDeriv
+    numDeriv,
+    testthat (>= 3.0.0)
 Depends: 
     R (>= 2.10)
 RdMacros:
     Rdpack
+Config/testthat/edition: 3
