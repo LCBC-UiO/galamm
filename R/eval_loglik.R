@@ -35,7 +35,7 @@ eval_loglik <- function(pars, moments, Quadpoints,
       alpha[iter, ,] <- outer(mu[, iter], rep(1, nrow(a))) +
         outer(tau[, iter], a[, iter])
 
-      gamma_inds <- grep(mainvars[[iter]], crossedvars[, "var2"], fixed = TRUE)
+      gamma_inds <- which(crossedvars[, "var2"] %in% mainvars[[iter]])
       transformation <- alpha[iter , ,] * 0
       for(gi in gamma_inds){
         transformation <- transformation + alpha[gi , ,] * as.numeric(gamma[, gi])

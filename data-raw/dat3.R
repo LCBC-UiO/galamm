@@ -18,7 +18,7 @@ dat3 <- tibble(
   mutate(
     x = rnorm(nrow(.)),
     y = rbinom(nrow(.), size = trials,
-               prob = plogis(.1 * x + eta20 + eta21 * x + eta22 * x^2))
+               prob = plogis(.1 * x + .1 * x^2 + eta20 + eta21 * x + eta22 * x^2))
   ) %>%
   select(id, y, trials, x)
 
