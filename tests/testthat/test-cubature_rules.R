@@ -21,7 +21,7 @@ test_that("spherical cubature rules work", {
         rules$quadrature_weights[i]
       }, FUN.VALUE = numeric(1)))
   }, FUN.VALUE = numeric(1))
-  expect_equal(value, c(0, 1/2, 0, 3/4, 0))
+  expect_equal(value, c(0, 1, 0, 3, 0))
 
 })
 
@@ -50,7 +50,7 @@ test_that("cartesian cubature rules work", {
         rules$quadrature_weights[i]
       }, FUN.VALUE = numeric(1)))
   }, FUN.VALUE = numeric(1))
-  expect_equal(round(value, 10), c(0, 1/2, 0, 3/4, 0))
+  expect_equal(round(value, 10), c(0, 1, 0, 3, 0))
 })
 
 

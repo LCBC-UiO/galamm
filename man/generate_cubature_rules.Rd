@@ -7,7 +7,9 @@
 generate_cubature_rules(
   dimension,
   num_quadrature_points = NULL,
-  type = "lu_darmofal_4.2"
+  type = "lu_darmofal_4.2",
+  weight_multiplier = pi^(-dimension/2),
+  location_multiplier = sqrt(2)
 )
 }
 \arguments{
@@ -17,6 +19,11 @@ generate_cubature_rules(
 quadrature points per dimension. Only used when \code{type = "gauss-hermite"}.}
 
 \item{type}{Type of rule.}
+
+\item{weight_multiplier}{Number which the weights are multiplied by. Defaults
+to yielding standard normal distribution.}
+
+\item{location_multiplier}{Number which each location is multiplied with.}
 }
 \value{
 List of rules and weights.

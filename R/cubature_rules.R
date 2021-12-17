@@ -21,13 +21,20 @@ replicate_quadrature_points <- function(quadrature_rules, nrep){
 #' @param num_quadrature_points Vector containing the number of
 #' quadrature points per dimension. Only used when \code{type = "gauss-hermite"}.
 #' @param type Type of rule.
+#' @param weight_multiplier Number which the weights are multiplied by. Defaults
+#' to yielding standard normal distribution.
+#' @param location_multiplier Number which each location is multiplied with.
 #'
 #' @export
 #' @return List of rules and weights.
 #'
-generate_cubature_rules <- function(dimension,
-                                    num_quadrature_points = NULL,
-                                    type = "lu_darmofal_4.2"){
+generate_cubature_rules <- function(
+  dimension,
+  num_quadrature_points = NULL,
+  type = "lu_darmofal_4.2",
+  weight_multiplier = pi^(-dimension / 2),
+  location_multiplier = sqrt(2)
+  ){
   stopifnot(dimension >= 2)
 
   if(type == "lu_darmofal_4.2"){
@@ -58,8 +65,8 @@ generate_cubature_rules <- function(dimension,
     quadrature_points <- rbind(part1, part2, part3)
     stopifnot(nrow(quadrature_points) == (2 * dimension^2 + 1))
 
-    return(list(quadrature_points = quadrature_points,
-                quadrature_weights = quadrature_weights,
+    return(list(quadrature_points = quadrature_points * location_multiplier,
+                quadrature_weights = quadrature_weights * weight_multiplier,
                 num_quadrature_points = nrow(quadrature_points)))
   } else if(type == "gauss-hermite"){
     stopifnot(is.numeric(num_quadrature_points) &
@@ -75,8 +82,8 @@ generate_cubature_rules <- function(dimension,
     stopifnot(prod(num_quadrature_points) == length(quadrature_weights))
 
     list(
-      quadrature_points = as.matrix(quadrature_points),
-      quadrature_weights = as.numeric(quadrature_weights),
+      quadrature_points = as.matrix(quadrature_points) * location_multiplier,
+      quadrature_weights = as.numeric(quadrature_weights) * weight_multiplier,
       num_quadrature_points = prod(num_quadrature_points)
     )
   }
