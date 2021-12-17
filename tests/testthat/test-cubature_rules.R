@@ -1,72 +1,40 @@
-test_that("spherical cubature rules work", {
+test_that("cubature rules work", {
 
-  # mean is always exactly zero
-  value <- vapply(2:7, function(dim){
-    rules <- generate_cubature_rules(dim)
-    sum(vapply(seq_len(rules$num_quadrature_points), function(i){
-      mean(rules$quadrature_points[i, ]) * rules$quadrature_weights[i]
-    }, FUN.VALUE = numeric(1)))
-  }, FUN.VALUE = numeric(1))
-  expect_equal(value, rep(0, length(2:7)))
+  dim <- 4
+  for(type in c("lu_darmofal_4.1", "lu_darmofal_4.2", "gauss-hermite")){
+    rules <- generate_cubature_rules(dimension = dim,
+                                     num_quadrature_points = rep(6, dim),
+                                     type = type)
 
-  # moments along the first axis
-  dim <- 5
-  rules <- generate_cubature_rules(dim)
-  value <- vapply(1:5, function(pow){
-    sum(vapply(seq_len(rules$num_quadrature_points), function(i){
-      rules$quadrature_points[i, 1]^(pow) *
-        rules$quadrature_weights[i]
-    }, FUN.VALUE = numeric(1))) /
-      sum(vapply(seq_len(rules$num_quadrature_points), function(i){
-        rules$quadrature_weights[i]
-      }, FUN.VALUE = numeric(1)))
-  }, FUN.VALUE = numeric(1))
-  expect_equal(value, c(0, 1, 0, 3, 0))
+    normalizing_constant <- sum(apply(rules$quadrature_points, 1, function(x) 1)
+                                * rules$quadrature_weights)
 
-})
+    expect_equal(round(normalizing_constant, 10), 1)
 
-test_that("cartesian cubature rules work", {
-  # mean is always exactly zero
-  value <- vapply(2:5, function(dim){
-    rules <- generate_cubature_rules(dim, num_quadrature_points = rep(4, dim),
-                                     type = "gauss-hermite")
-    sum(vapply(seq_len(rules$num_quadrature_points), function(i){
-      mean(rules$quadrature_points[i, ]) * rules$quadrature_weights[i]
-    }, FUN.VALUE = numeric(1)))
-  }, FUN.VALUE = numeric(1))
-  expect_equal(round(value, 10), rep(0, length(2:5)))
+    first_moments <- lapply(seq_len(dim), function(axis){
+      sum(apply(rules$quadrature_points, 1, function(x) x[axis]) *
+            rules$quadrature_weights)
+    })
 
-  # moments along the first axis
-  dim <- 5
-  rules <- generate_cubature_rules(
-    dim, num_quadrature_points = rep(3, dim),
-    type = "gauss-hermite")
-  value <- vapply(1:5, function(pow){
-    sum(vapply(seq_len(rules$num_quadrature_points), function(i){
-      rules$quadrature_points[i, 1]^(pow) *
-        rules$quadrature_weights[i]
-    }, FUN.VALUE = numeric(1))) /
-      sum(vapply(seq_len(rules$num_quadrature_points), function(i){
-        rules$quadrature_weights[i]
-      }, FUN.VALUE = numeric(1)))
-  }, FUN.VALUE = numeric(1))
-  expect_equal(round(value, 10), c(0, 1, 0, 3, 0))
-})
+    expect_equal(round(unlist(first_moments), 10), rep(0, dim))
 
+    second_moments <- lapply(seq_len(dim), function(axis){
+      sum(apply(rules$quadrature_points, 1, function(x) x[axis]^2) *
+            rules$quadrature_weights)
+    })
 
-test_that("replicate quadrature works", {
+    expect_equal(round(unlist(second_moments), 10), rep(1, dim))
+  }
 
-  rules <- generate_cubature_rules(3)
-  reprules <- replicate_quadrature_points(rules, 2)
-  expect_equal(reprules$num_quadrature_points,
-               rules$num_quadrature_points)
+  # Lu and Darmofal, section 6.2
+  for(dim in 4:5){
+    rules1 <- generate_cubature_rules(dim, type = "lu_darmofal_4.1")
+    rules2 <- generate_cubature_rules(dim, type = "lu_darmofal_4.2")
 
-  expect_equal(
-    reprules$quadrature_points,
-    rbind(t(rules$quadrature_points), t(rules$quadrature_points))
-  )
-  expect_equal(
-    reprules$quadrature_weights,
-    rbind(rules$quadrature_weights, rules$quadrature_weights)
-  )
+    integrand <- function(x) (1 + t(x) %*% x)^(-1/2)
+    expect_equal(
+      sum(apply(rules1$quadrature_points, 1, integrand) * rules1$quadrature_weights),
+      sum(apply(rules2$quadrature_points, 1, integrand) * rules2$quadrature_weights))
+  }
+
 })

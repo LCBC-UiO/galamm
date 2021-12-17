@@ -37,7 +37,63 @@ generate_cubature_rules <- function(
   ){
   stopifnot(dimension >= 2)
 
-  if(type == "lu_darmofal_4.2"){
+  if(type == "lu_darmofal_4.1") {
+    stopifnot(dimension >= 4)
+
+    quadrature_weights <- c(
+      2 * pi^(dimension / 2) / (dimension + 2),
+      rep((dimension^2 * (7 - dimension) * pi^(dimension / 2)) /
+        (2 * (dimension + 1)^2 * (dimension + 2)^2), 2 * (dimension + 1)),
+      rep((2 * (dimension - 1)^2 * pi^(dimension / 2)) /
+        ((dimension + 1)^2 * (dimension + 2)^2), dimension^2 + dimension)
+    )
+
+    part1 <- rep(0, dimension)
+
+    ar <- matrix(nrow = dimension + 1, ncol = dimension)
+    for(i in seq_len(ncol(ar))){
+      for(r in seq_len(nrow(ar))){
+        if(i < r){
+          ar[r, i] <- -sqrt(
+            (dimension + 1) /
+              (dimension * (dimension - i + 2) * (dimension - i + 1))
+            )
+        } else if(i == r){
+          ar[r, i] <- sqrt(
+            (dimension + 1) * (dimension - r + 1) /
+              (dimension * (dimension - r + 2))
+              )
+        } else {
+          ar[r, i] <- 0
+        }
+      }
+    }
+    part2 <- rbind(ar, -ar) * sqrt(dimension / 2 + 1)
+
+    bj <- matrix(nrow = (dimension^2 + dimension) / 2, ncol = dimension)
+    b_rowind <- 1
+    for(l in seq_len(dimension + 1)){
+      for(k in seq_len(l - 1)){
+        bj[b_rowind, ] <- sqrt(dimension / (2 * (dimension - 1))) *
+          (ar[k, ] + ar[l, ])
+        b_rowind <- b_rowind + 1
+      }
+    }
+    part3 <- rbind(bj, -bj) * sqrt(dimension / 2 + 1)
+
+    quadrature_points <- rbind(part1, part2, part3)
+    stopifnot(nrow(quadrature_points) == (dimension^2 + 3 * dimension + 3))
+    stopifnot(length(quadrature_weights) == (dimension^2 + 3 * dimension + 3))
+
+    list(
+      quadrature_points = as.matrix(quadrature_points) * location_multiplier,
+      quadrature_weights = as.numeric(quadrature_weights) * weight_multiplier,
+      num_quadrature_points = prod(num_quadrature_points)
+    )
+
+
+    }
+  else if(type == "lu_darmofal_4.2"){
     # Formula 4.2 in Lu and Darmofal
     all_permuted_indices <- combinat::permn(seq_len(dimension))
 
