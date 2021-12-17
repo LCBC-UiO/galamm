@@ -124,6 +124,40 @@ generate_cubature_rules <- function(
     return(list(quadrature_points = quadrature_points * location_multiplier,
                 quadrature_weights = quadrature_weights * weight_multiplier,
                 num_quadrature_points = nrow(quadrature_points)))
+  } else if(type == "lu_darmofal_4.3"){
+
+    # Formula 4.3 in Lu and Darmofal
+    all_permuted_indices <- combinat::permn(seq_len(dimension))
+
+    quadrature_weights <- c(
+      (dimension^2 - 7 * dimension + 18) / 18 * pi^(dimension / 2),
+      rep((4 - dimension) / 18 * pi^(dimension / 2), 2 * dimension),
+      rep(pi^(dimension / 2) / 36, 2 * dimension * (dimension - 1))
+    )
+
+    part1 <- rep(0, dimension)
+
+    part2 <- unique(do.call(rbind, lapply(all_permuted_indices, function(ind){
+      rbind(c(sqrt(3 / 2), rep(0, dimension - 1))[ind],
+            c(-sqrt(3 / 2), rep(0, dimension - 1))[ind])
+    })))
+
+    part3 <- unique(do.call(rbind, lapply(all_permuted_indices, function(ind){
+      rbind(c(sqrt(3 / 2), sqrt(3 / 2), rep(0, dimension - 2))[ind],
+            c(-sqrt(3 / 2), sqrt(3 / 2), rep(0, dimension - 2))[ind],
+            c(sqrt(3 / 2), -sqrt(3 / 2), rep(0, dimension - 2))[ind],
+            c(-sqrt(3 / 2), -sqrt(3 / 2), rep(0, dimension - 2))[ind]
+      )
+    })))
+
+    quadrature_points <- rbind(part1, part2, part3)
+    stopifnot(nrow(quadrature_points) == (2 * dimension^2 + 1))
+
+    return(list(quadrature_points = quadrature_points * location_multiplier,
+                quadrature_weights = quadrature_weights * weight_multiplier,
+                num_quadrature_points = nrow(quadrature_points)))
+
+
   } else if(type == "gauss-hermite"){
     stopifnot(is.numeric(num_quadrature_points) &
                 length(num_quadrature_points) == dimension)

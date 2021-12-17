@@ -1,7 +1,7 @@
 test_that("cubature rules work", {
 
   dim <- 4
-  for(type in c("lu_darmofal_4.1", "lu_darmofal_4.2", "gauss-hermite")){
+  for(type in c("lu_darmofal_4.1", "lu_darmofal_4.2", "lu_darmofal_4.3", "gauss-hermite")){
     rules <- generate_cubature_rules(dimension = dim,
                                      num_quadrature_points = rep(6, dim),
                                      type = type)
