@@ -35,7 +35,7 @@ generate_cubature_rules <- function(
   weight_multiplier = pi^(-dimension / 2),
   location_multiplier = sqrt(2)
   ){
-  stopifnot(dimension >= 2)
+
 
   if(type == "lu_darmofal_4.1") {
     stopifnot(dimension >= 4)
@@ -94,6 +94,7 @@ generate_cubature_rules <- function(
 
     }
   else if(type == "lu_darmofal_4.2"){
+    stopifnot(dimension >= 2)
     # Formula 4.2 in Lu and Darmofal
     all_permuted_indices <- combinat::permn(seq_len(dimension))
 
@@ -125,7 +126,7 @@ generate_cubature_rules <- function(
                 quadrature_weights = quadrature_weights * weight_multiplier,
                 num_quadrature_points = nrow(quadrature_points)))
   } else if(type == "lu_darmofal_4.3"){
-
+    stopifnot(dimension >= 2)
     # Formula 4.3 in Lu and Darmofal
     all_permuted_indices <- combinat::permn(seq_len(dimension))
 
