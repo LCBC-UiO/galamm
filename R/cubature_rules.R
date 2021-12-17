@@ -1,3 +1,20 @@
+#' Convencience function for replication quadrature points
+#'
+#' @param quadrature_rules Object returned by \code{\link{generate_cubature_rules}}.
+#' @param nrep Number of repetitions.
+#'
+#' @return List of quadrature rules.
+#' @export
+#'
+replicate_quadrature_points <- function(quadrature_rules, nrep){
+  quadrature_list <- list()
+  quadrature_list$quadrature_points <- do.call("rbind", rep(list(t(quadrature_rules$quadrature_points)), nrep))
+  quadrature_list$quadrature_weights <- do.call("rbind", rep(list(quadrature_rules$quadrature_weights), nrep))
+  quadrature_list$num_quadrature_points <- quadrature_rules$num_quadrature_points
+  quadrature_list
+}
+
+
 #' Generate cubature rules for integration
 #'
 #' @param dimension Dimension of the integral.

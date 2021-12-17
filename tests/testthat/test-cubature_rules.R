@@ -52,3 +52,21 @@ test_that("cartesian cubature rules work", {
   }, FUN.VALUE = numeric(1))
   expect_equal(round(value, 10), c(0, 1/2, 0, 3/4, 0))
 })
+
+
+test_that("replicate quadrature works", {
+
+  rules <- generate_cubature_rules(3)
+  reprules <- replicate_quadrature_points(rules, 2)
+  expect_equal(reprules$num_quadrature_points,
+               rules$num_quadrature_points)
+
+  expect_equal(
+    reprules$quadrature_points,
+    rbind(t(rules$quadrature_points), t(rules$quadrature_points))
+  )
+  expect_equal(
+    reprules$quadrature_weights,
+    rbind(rules$quadrature_weights, rules$quadrature_weights)
+  )
+})

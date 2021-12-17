@@ -2,5 +2,6 @@
 
 export(galamm)
 export(generate_cubature_rules)
+export(replicate_quadrature_points)
 import(gamm4)
 import(lme4)
