@@ -5,6 +5,7 @@
 #' quadrature points per dimension. Only used when \code{type = "gauss-hermite"}.
 #' @param type Type of rule.
 #'
+#' @export
 #' @return List of rules and weights.
 #'
 generate_cubature_rules <- function(dimension,
