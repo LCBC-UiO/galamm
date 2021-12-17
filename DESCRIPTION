@@ -11,14 +11,16 @@ Description: Maximum likelihood estimation of multivariate
     generalized additive mixed models with factor structures.
 License: GPL (>= 3)
 Encoding: UTF-8
-Imports: numDeriv (>= 2016.8-1-1)
+Imports: 
+    combinat,
+    numDeriv (>= 2016.8-1-1)
 Depends: 
     gamm4 (>= 0.2-6),
     lme4 (>= 1.1-26),
     R (>= 2.10)
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Suggests: 
     covr,
     testthat (>= 3.0.0)
