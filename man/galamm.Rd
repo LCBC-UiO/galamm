@@ -12,8 +12,8 @@ random effects.}
 
 \item{data}{data frame containing the variables in \code{formula}.}
 
-\item{family}{a GLM family, see \code{\link{stats::glm}} and
-\code{\link{stats::family}}.}
+\item{family}{a GLM family, see \code{\link{glm}} and
+\code{\link{family}}.}
 }
 \value{
 
