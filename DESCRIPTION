@@ -1,0 +1,17 @@
+Package: galamm
+Type: Package
+Title: Maximum Likelihood Estimation of Generalized Additive Latent and Mixed Models
+Version: 0.1.0
+Authors@R: person("Oystein", "Sorensen",
+                    email = "oystein.sorensen.1985@gmail.com",
+                    role = c("aut", "cre"),
+                    comment = c(ORCID = "0000-0003-0724-3542"))
+Maintainer: Oystein Sorensen <oystein.sorensen.1985@gmail.com>
+Description: Maximum likelihood estimation of generalized additive mixed
+    models with factor structures. This includes many instances of generalized
+    linear latent and mixed models as well as generalized nonlinear mixed
+    models as special cases.
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.1.2
