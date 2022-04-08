@@ -15,7 +15,8 @@ random effects.}
 \item{family}{a GLM family, see \code{\link{glm}} and
 \code{\link{family}}.}
 
-\item{latent}{Formula for latent variables.}
+\item{latent}{Formula for latent variables, of the form
+\code{~(factor | load_var)}.}
 
 \item{lambda}{Initial matrix for factor loadings.}
 }
