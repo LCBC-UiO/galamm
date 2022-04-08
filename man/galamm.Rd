@@ -4,7 +4,7 @@
 \alias{galamm}
 \title{Fitting Generalized Additive Latent and Mixed Models}
 \usage{
-galamm(formula, data, family = gaussian)
+galamm(formula, data, family = gaussian, latent = NULL, lambda = NULL)
 }
 \arguments{
 \item{formula}{a two-sided formula object using \code{lme4} style to specify
@@ -14,6 +14,10 @@ random effects.}
 
 \item{family}{a GLM family, see \code{\link{glm}} and
 \code{\link{family}}.}
+
+\item{latent}{Formula for latent variables.}
+
+\item{lambda}{Initial matrix for factor loadings.}
 }
 \value{
 Object of class \code{galamm}.

@@ -7,6 +7,6 @@
 #' @docType package
 #' @name galamm-package
 #'
-#' @importFrom stats gaussian glm family
+#' @import stats
 #'
 NULL
