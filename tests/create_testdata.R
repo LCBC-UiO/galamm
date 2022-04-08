@@ -26,6 +26,7 @@ latent_response_dat <- tibble(
   ) %>%
   filter(runif(nrow(.)) > .1) %>%
   select(id, tp, item, time, y) %>%
-  as.data.frame()
+  as.data.frame() %>%
+  mutate(across(c(id, tp, item), factor))
 
 saveRDS(latent_response_dat, "inst/testdata/latent_response_dat.rds")
