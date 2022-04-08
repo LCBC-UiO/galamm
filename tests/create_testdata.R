@@ -25,6 +25,7 @@ latent_response_dat <- tibble(
     y = rbinom(nrow(.), size = trials, prob = plogis(linpred))
   ) %>%
   filter(runif(nrow(.)) > .1) %>%
-  select(id, tp, item, time, y)
+  select(id, tp, item, time, y) %>%
+  as.data.frame()
 
 saveRDS(latent_response_dat, "inst/testdata/latent_response_dat.rds")
