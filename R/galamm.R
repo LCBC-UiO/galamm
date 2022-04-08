@@ -18,42 +18,17 @@ galamm <- function(formula, data, family = gaussian,
                    latent = NULL, lambda = NULL){
 
   latent_barlist <- lme4::findbars(latent)
-  factors <- lapply(latent_barlist, function(x) as.character(x)[[2]])
+  factors <- find_factors(latent_barlist, data)
+  load_vars <- find_load_vars(latent_barlist, data, lambda)
+  lambda_init <- initialize_lambda(lambda)
+  datax <- add_latent_to_data(latent_barlist, factors, load_vars, data,
+                              lambda_init)
+  X <- create_fixed_model_matrix(formula, datax, factors, load_vars)
+  fixed_mappings <- attr(X, "fixed_mappings")
 
-  if(any(factors %in% names(data))){
-    stop("Factors in argument 'latent' cannot be columns of 'data'.")
-  }
 
-  load_vars <- lapply(latent_barlist, function(x) as.character(x)[[3]])
-  if(!all(load_vars %in% names(data))){
-    stop("All loading variables in 'latent' must be columns of 'data'.")
-  }
-  if(!all(load_vars %in% names(lambda))){
-    stop("All loading variables specified in 'latent' must be in 'lambda'.")
-  }
-
-  lambda_init <- lapply(lambda, function(x) {
-    x[is.na(x)] <- runif(sum(is.na(x)), .9, 1.1)
-    x
-  })
-
-  for(i in seq_along(latent_barlist)){
-    ff <- factors[[i]]
-    lv <- load_vars[[i]]
-    eval(parse(text = paste0("data$", ff, " <- lambda_init$", lv,
-                             "[data$item]")))
-  }
-
-  X <- model.matrix(lme4::nobars(formula), data = data)
-  # Which columns of X correspond to which latent variable
-  fixed_mappings <- Map(function(ff, lv){
-    col_inds <- grep(paste0("(?<![a-zA-Z])", ff, "(?![a-zA-Z])"),
-                     colnames(X), perl = TRUE)
-    list(
-      col_inds = col_inds,
-      lambda_ind = data[[lv]]
-    )
-  }, ff = factors, lv = load_vars)
-
+  ## Here is how we can update the values of X
+  tmp <- update_fixed(X, fixed_mappings[[1]]$col_inds - 1L,
+                      c(1, .5, 2)[fixed_mappings[[1]]$lambda_ind])
 
 }

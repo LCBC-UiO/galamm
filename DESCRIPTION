@@ -1,7 +1,7 @@
 Package: galamm
 Type: Package
 Title: Maximum Likelihood Estimation of Generalized Additive Latent and Mixed Models
-Version: 0.1.0
+Version: 0.1.0.9000
 Authors@R: person("Oystein", "Sorensen",
                     email = "oystein.sorensen.1985@gmail.com",
                     role = c("aut", "cre"),
@@ -17,7 +17,11 @@ LazyData: true
 RoxygenNote: 7.1.2
 Depends: R (>= 3.5.0)
 Imports:
-    lme4 (>= 1.1-28)
+    lme4 (>= 1.1-28),
+    Rcpp (>= 1.0.8.3)
 Suggests: 
     testthat (>= 3.0.0)
+LinkingTo: 
+    Rcpp,
+    RcppEigen
 Config/testthat/edition: 3
