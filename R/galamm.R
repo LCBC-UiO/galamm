@@ -7,11 +7,11 @@
 #' \code{\link{family}}.
 #'
 #'
-#' @return
+#' @return Object of class \code{galamm}.
 #' @export
 #'
 #' @examples
 #' # empty example
 galamm <- function(formula, data, family = gaussian){
-
+  2
 }

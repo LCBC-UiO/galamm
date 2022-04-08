@@ -4,8 +4,6 @@
 # galamm
 
 <!-- badges: start -->
-
-[![R-CMD-check](https://github.com/LCBC-UiO/galamm/workflows/R-CMD-check/badge.svg)](https://github.com/LCBC-UiO/galamm/actions)
 <!-- badges: end -->
 
 The goal of galamm is to …

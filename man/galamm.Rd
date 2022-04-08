@@ -16,7 +16,7 @@ random effects.}
 \code{\link{family}}.}
 }
 \value{
-
+Object of class \code{galamm}.
 }
 \description{
 Fitting Generalized Additive Latent and Mixed Models

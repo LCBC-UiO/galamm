@@ -1,3 +1,5 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^\.github$
+tests/create_testdata.R
+^README\.Rmd$
