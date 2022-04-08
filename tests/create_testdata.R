@@ -9,6 +9,7 @@ lambda <- c(item1 = 1, item2 = .4, items = 2)
 beta <- c(0, .1) # intercept, time
 trials <- 5
 
+set.seed(9988)
 latent_response_dat <- tibble(
   id = seq_len(n3),
   b3 = rnorm(n3)
@@ -23,6 +24,7 @@ latent_response_dat <- tibble(
     linpred = lambda[item] * b2,
     y = rbinom(nrow(.), size = trials, prob = plogis(linpred))
   ) %>%
+  filter(runif(nrow(.)) > .1) %>%
   select(id, tp, item, time, y)
 
 saveRDS(latent_response_dat, "inst/testdata/latent_response_dat.rds")
