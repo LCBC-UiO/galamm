@@ -23,12 +23,21 @@ galamm <- function(formula, data, family = gaussian,
   lambda_init <- initialize_lambda(lambda)
   datax <- add_latent_to_data(latent_barlist, factors, load_vars, data,
                               lambda_init)
-  X <- create_fixed_model_matrix(formula, datax, factors, load_vars)
-  fixed_mappings <- attr(X, "fixed_mappings")
+  X <- model.matrix(lme4::nobars(formula), data = datax)
+
+  fixed_mapping <- find_load_cols(factors, load_vars, colnames(X))
+  lambda_mapping <- lapply(names(lambda), function(x) as.integer(datax[[x]]))
+  ranef_obj <- lme4::mkReTrms(lme4::findbars(formula), datax)
+
+  ranef_mapping <- lapply(ranef_obj$cnms,
+                          function(x) find_load_cols(factors, load_vars, x))
+
+  lambda_update <- c(1, 2)
+  increment <- unique(diff(ranef_obj$Zt@p))
+  stopifnot(length(increment) == 1)
 
 
-  ## Here is how we can update the values of X
-  tmp <- update_fixed(X, fixed_mappings[[1]]$col_inds - 1L,
-                      c(1, .5, 2)[fixed_mappings[[1]]$lambda_ind])
+  tmp <- update_random(ranef_obj$Zt,
+                rep(lambda_update[datax$item], each = increment))
 
 }

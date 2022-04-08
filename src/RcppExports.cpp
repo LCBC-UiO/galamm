@@ -24,9 +24,22 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// update_random
+Eigen::SparseMatrix<double> update_random(Eigen::SparseMatrix<double> Zt, Eigen::VectorXd lambda_update);
+RcppExport SEXP _galamm_update_random(SEXP ZtSEXP, SEXP lambda_updateSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Eigen::SparseMatrix<double> >::type Zt(ZtSEXP);
+    Rcpp::traits::input_parameter< Eigen::VectorXd >::type lambda_update(lambda_updateSEXP);
+    rcpp_result_gen = Rcpp::wrap(update_random(Zt, lambda_update));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_galamm_update_fixed", (DL_FUNC) &_galamm_update_fixed, 3},
+    {"_galamm_update_random", (DL_FUNC) &_galamm_update_random, 2},
     {NULL, NULL, 0}
 };
 

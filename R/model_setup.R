@@ -41,16 +41,8 @@ add_latent_to_data <- function(latent_barlist, factors, load_vars, data,
   data
 }
 
-create_fixed_model_matrix <- function(formula, datax, factors, load_vars){
-  X <- model.matrix(lme4::nobars(formula), data = datax)
-  # Which columns of X correspond to which latent variable
-  fixed_mappings <- Map(function(ff, lv){
-    col_inds <- grep(paste0("(?<![a-zA-Z])", ff, "(?![a-zA-Z])"),
-                     colnames(X), perl = TRUE)
-    list(
-      col_inds = col_inds,
-      lambda_ind = as.integer(datax[[lv]]))
+find_load_cols <- function(factors, load_vars, cnms){
+  Map(function(ff, lv){
+    grep(paste0("(?<![a-zA-Z])", ff, "(?![a-zA-Z])"), cnms, perl = TRUE)
   }, ff = factors, lv = load_vars)
-  attr(X, "fixed_mappings") <- fixed_mappings
-  X
 }

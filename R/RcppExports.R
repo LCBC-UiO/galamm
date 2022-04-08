@@ -17,3 +17,7 @@ update_fixed <- function(X, columns, lambda_update) {
     .Call(`_galamm_update_fixed`, X, columns, lambda_update)
 }
 
+update_random <- function(Zt, lambda_update) {
+    .Call(`_galamm_update_random`, Zt, lambda_update)
+}
+

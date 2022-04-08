@@ -28,3 +28,20 @@ Eigen::MatrixXd update_fixed(
   }
   return X;
 }
+
+
+// [[Rcpp::export]]
+Eigen::SparseMatrix<double> update_random(
+  Eigen::SparseMatrix<double> Zt,
+  Eigen::VectorXd lambda_update
+) {
+
+  size_t l{};
+  for(size_t j{}; j < Zt.outerSize(); ++j){
+    for(Eigen::SparseMatrix<double>::InnerIterator it(Zt, j); it; ++it){
+      Zt.coeffRef(it.row(), it.col()) /= lambda_update(l);
+      ++l;
+    }
+  }
+  return Zt;
+}
