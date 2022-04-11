@@ -2,6 +2,7 @@
 
 export(galamm)
 export(update_fixed)
+export(update_random)
 import(stats)
 importFrom(Rcpp,sourceCpp)
 useDynLib(galamm, .registration = TRUE)

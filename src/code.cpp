@@ -3,7 +3,7 @@
 // [[Rcpp::depends(RcppEigen)]]
 
 
-//' Update the fixed effect model matrix when loadings have changed
+//' Update fixed effect model matrix when loadings have changed
 //'
 //' @param X                 model matrix
 //' @param columns           integer vector of columns to update
@@ -11,7 +11,7 @@
 //'                          values. One for each row of \code{X}.
 //' @export
 //'
-//' @return A matrix \code{X} in which all columns specified in the
+//' @return A matrix in which all columns specified in the
 //'  \code{columns} argument have been divided by the values in
 //'  \code{lambda_update}.
 //'
@@ -30,6 +30,17 @@ Eigen::MatrixXd update_fixed(
 }
 
 
+//' Update random effect model matrix when loadings have changed
+//'
+//' @param Zt transposed model matrix in compressed sparse column format
+//' @param lambda_update dense vector containing values with which the current
+//' nonzero elements of \code{Zt} should be multiplied.
+//'
+//' @export
+//'
+//' @return A matrix having the same dimension and sparsity pattern as
+//' \code{Zt}, but with its nonzero values updated.
+//'
 // [[Rcpp::export]]
 Eigen::SparseMatrix<double> update_random(
   Eigen::SparseMatrix<double> Zt,

@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{update_fixed}
 \alias{update_fixed}
-\title{Update the fixed effect model matrix when loadings have changed}
+\title{Update fixed effect model matrix when loadings have changed}
 \usage{
 update_fixed(X, columns, lambda_update)
 }
@@ -15,10 +15,10 @@ update_fixed(X, columns, lambda_update)
 values. One for each row of \code{X}.}
 }
 \value{
-A matrix \code{X} in which all columns specified in the
+A matrix in which all columns specified in the
  \code{columns} argument have been divided by the values in
  \code{lambda_update}.
 }
 \description{
-Update the fixed effect model matrix when loadings have changed
+Update fixed effect model matrix when loadings have changed
 }
