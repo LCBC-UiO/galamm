@@ -7,15 +7,14 @@
 #' \code{\link{family}}.
 #' @param latent Formula for latent variables, of the form
 #' \code{~(factor | load_var)}.
-#' @param lambda Initial matrix for factor loadings.
+#' @param lambda List with initial matrices for factor loadings.
 #'
 #' @return Object of class \code{galamm}.
 #' @export
 #'
 #' @examples
 #' # empty example
-galamm <- function(formula, data, family = gaussian,
-                   latent = NULL, lambda = NULL){
+galamm <- function(formula, data, family = gaussian, latent, lambda){
 
   latent_barlist <- lme4::findbars(latent)
   factors <- find_factors(latent_barlist, data)

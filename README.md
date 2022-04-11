@@ -22,7 +22,9 @@ remotes::install_github("LCBC-UiO/galamm")
 
 ## Example
 
-This is a basic example briefly showing what the package can do.
+This is a basic example briefly showing what the package can do. The
+goal is to understand how a latent construct develops with time. For
+details, see the vignettes, function documentation, and references.
 
 ``` r
 library(galamm)
@@ -66,3 +68,24 @@ ggplot(subset(latent_response_example, id %in% sample(id, 6)),
 ```
 
 <img src="man/figures/README-unnamed-chunk-4-1.svg" width="100%" style="display: block; margin: auto;" />
+
+A three-level hierarchical model is reasonable for these data, with a
+top-level random intercept per participant and a mid-level random
+intercept for the participant’s latent level at a given timepoint. Such
+a model can be fit easily with existing mixed model packages like lme4.
+However, we also need to specify a measurement model, relating the
+measurements to the latent construct.
+
+In the call to galamm below, we fix the factor loading for the first
+item to 1 for identifiability. The syntax is similar, but not identical,
+to the PLmixed package.
+
+``` r
+mod <- galamm(
+  formula = y ~ item + time : latent + ( 0 + latent | id / tp ),
+  data = latent_response_example,
+  family = binomial,
+  latent = ~( latent | item ),
+  lambda = list(item = c(1, NA_real_, NA_real_))
+)
+```

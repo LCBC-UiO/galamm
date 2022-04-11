@@ -24,7 +24,8 @@ test_that("galamm fails when load variable is not in data", {
     formula = y ~ 1,
     data = latent_response_dat,
     family = binomial,
-    latent = ~ (1 | id_unknown)
+    latent = ~ (1 | id_unknown),
+    lambda = list(c(1, NA_real_, NA_real_))
   ),
   regexp = "All loading variables in 'latent' must be columns of 'data'.")
 })
@@ -46,6 +47,15 @@ test_that("find_load_vars works", {
                    data = data.frame(item = 1, jtem = 2),
                    lambda = list(item = 1, jtem = 2)),
     list("item", "jtem"))
+})
+
+test_that("find_load_vars fails without list", {
+  expect_error(
+    find_load_vars(lme4::findbars(~ (lambda | item) + (kappa | jtem)),
+                   data = data.frame(item = 1, jtem = 2),
+                   lambda = c(1, 1)),
+    regexp = "lambda must be a list"
+  )
 })
 
 test_that("initialize_lambda works", {

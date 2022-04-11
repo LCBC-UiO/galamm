@@ -6,7 +6,7 @@ n3 <- 100
 n2 <- 4
 n1 <- 3
 lambda <- c(item1 = 1, item2 = .4, items = 2)
-beta <- c(0, .1) # intercept, time
+beta <- c(0, 1) # intercept, time
 trials <- 5
 
 set.seed(9988)
