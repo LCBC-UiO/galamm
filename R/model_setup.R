@@ -35,8 +35,12 @@ add_latent_to_data <- function(latent_barlist, factors, load_vars, data,
   for(i in seq_along(latent_barlist)){
     ff <- factors[[i]]
     lv <- load_vars[[i]]
-    eval(parse(text = paste0("data$", ff, " <- lambda_init$", lv,
-                             "[data$item]")))
+    if(length(unique(lambda_init[[lv]])) != length(unique(data[[lv]]))){
+      stop("Number of factors does not match number in data.")
+    }
+
+    eval(parse(text = paste0(
+      "data$", ff, " <- lambda_init[['", lv, "']][data[, '", lv,"']]")))
   }
   data
 }

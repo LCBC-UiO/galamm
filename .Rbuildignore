@@ -3,3 +3,4 @@
 ^\.github$
 tests/create_testdata.R
 ^README\.Rmd$
+^dev-scripts

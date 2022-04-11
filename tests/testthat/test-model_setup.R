@@ -60,6 +60,19 @@ test_that("initialize_lambda works", {
   expect_equal(c(ret$item1[[1]], ret$item2[1:2]), c(1, 1, 1))
 })
 
+test_that("add_latent_to_data fails with wrong vector size", {
+  expect_error(
+    galamm(
+      formula = y ~ item + latent + time : latent + ( 0 + latent | id ) +
+        (0 + latent | tp:id),
+      data = latent_response_dat,
+      family = binomial,
+      latent = ~ (latent | item),
+      lambda = list(item = c(1, NA_real_, NA_real_, NA_real_))
+    ),
+    regexp = "Number of factors does not match number in data.")
+})
+
 test_that("update_fixed works", {
   X <- matrix(1:12, nrow = 3)
   expect_equal(
