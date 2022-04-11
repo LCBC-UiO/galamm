@@ -31,12 +31,12 @@ galamm <- function(formula, data, family = gaussian, latent, lambda){
   ranef_mapping <- lapply(ranef_obj$cnms,
                           function(x) find_load_cols(factors, load_vars, x))
 
-  lambda_update <- c(1, 2)
   increment <- unique(diff(ranef_obj$Zt@p))
   stopifnot(length(increment) == 1)
 
 
-  tmp <- update_random(ranef_obj$Zt,
-                rep(lambda_update[datax$item], each = increment))
+
+  # tmp <- update_random(ranef_obj$Zt,
+  #               rep(lambda_update[datax$item], each = increment))
 
 }

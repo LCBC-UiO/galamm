@@ -1,4 +1,4 @@
-#include <RcppEigen.h>
+#include "update_model_matrices.h"
 
 // [[Rcpp::depends(RcppEigen)]]
 
