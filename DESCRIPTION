@@ -20,6 +20,7 @@ Imports:
     lme4 (>= 1.1-28),
     Rcpp (>= 1.0.8.3)
 Suggests: 
+    ggplot2,
     testthat (>= 3.0.0)
 LinkingTo: 
     Rcpp,
