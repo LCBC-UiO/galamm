@@ -12,8 +12,8 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // compute_galamm
-Rcpp::List compute_galamm(const Eigen::Map<Eigen::VectorXd> y0, const Eigen::Map<Eigen::MatrixXd> X0, const Eigen::MappedSparseMatrix<double> Zt0, const Eigen::MappedSparseMatrix<double> Lambdat0, const Eigen::Map<Eigen::VectorXi> Lind);
-RcppExport SEXP _galamm_compute_galamm(SEXP y0SEXP, SEXP X0SEXP, SEXP Zt0SEXP, SEXP Lambdat0SEXP, SEXP LindSEXP) {
+Rcpp::List compute_galamm(const Eigen::Map<Eigen::VectorXd> y0, const Eigen::Map<Eigen::MatrixXd> X0, const Eigen::MappedSparseMatrix<double> Zt0, const Eigen::MappedSparseMatrix<double> Lambdat0, const Eigen::Map<Eigen::VectorXi> Lind, const int n_obs, const int n_ranef);
+RcppExport SEXP _galamm_compute_galamm(SEXP y0SEXP, SEXP X0SEXP, SEXP Zt0SEXP, SEXP Lambdat0SEXP, SEXP LindSEXP, SEXP n_obsSEXP, SEXP n_ranefSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -22,7 +22,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Eigen::MappedSparseMatrix<double> >::type Zt0(Zt0SEXP);
     Rcpp::traits::input_parameter< const Eigen::MappedSparseMatrix<double> >::type Lambdat0(Lambdat0SEXP);
     Rcpp::traits::input_parameter< const Eigen::Map<Eigen::VectorXi> >::type Lind(LindSEXP);
-    rcpp_result_gen = Rcpp::wrap(compute_galamm(y0, X0, Zt0, Lambdat0, Lind));
+    Rcpp::traits::input_parameter< const int >::type n_obs(n_obsSEXP);
+    Rcpp::traits::input_parameter< const int >::type n_ranef(n_ranefSEXP);
+    rcpp_result_gen = Rcpp::wrap(compute_galamm(y0, X0, Zt0, Lambdat0, Lind, n_obs, n_ranef));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -30,7 +32,7 @@ END_RCPP
 RcppExport SEXP run_testthat_tests(SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_galamm_compute_galamm", (DL_FUNC) &_galamm_compute_galamm, 5},
+    {"_galamm_compute_galamm", (DL_FUNC) &_galamm_compute_galamm, 7},
     {"run_testthat_tests", (DL_FUNC) &run_testthat_tests, 1},
     {NULL, NULL, 0}
 };

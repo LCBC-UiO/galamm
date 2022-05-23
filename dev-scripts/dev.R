@@ -28,10 +28,9 @@ increment <- unique(diff(ranef_obj$Zt@p))
 stopifnot(length(increment) == 1)
 y <- as.numeric(data[[all.vars(formula)[[1]]]])
 
-(obj <- compute_galamm(
+obj <- compute_galamm(
   y0 = y, X0 = X, Zt0 = ranef_obj$Zt, Lambdat0 = ranef_obj$Lambdat,
-  Lind = ranef_obj$Lind - 1L
-))
+  Lind = ranef_obj$Lind - 1L, nrow(X), nrow(ranef_obj$Zt))
 
 
 plot(obj$u * 36.012, ranef(fm1)$Subject$`(Intercept)`)

@@ -28,6 +28,24 @@ Eigen::SparseMatrix<real> update_V(Eigen::SparseMatrix<real> V, real phi){
   return V;
 }
 
+VectorXreal update_u(VectorXreal u_prev, VectorXreal b0,
+                     Eigen::SparseMatrix<real> A,
+                     Eigen::SimplicialLDLT<Eigen::SparseMatrix<real> >& solver){
+  VectorXreal u;
+  for(int iter = 0; iter < 10; ++iter){
+    VectorXreal b = b0 - u_prev;
+    solver.factorize(A);
+    u = solver.solve(b);
+    real delta = (u - u_prev).squaredNorm();
+
+    if(delta < 1e-10){
+      Rcpp::Rcout << "Breaking at " << iter << std::endl;
+      break;
+    }
+    u_prev = u;
+  }
+  return u;
+}
 
 // [[Rcpp::export]]
 Rcpp::List compute_galamm(
@@ -35,7 +53,9 @@ Rcpp::List compute_galamm(
     const Eigen::Map<Eigen::MatrixXd> X0,
     const Eigen::MappedSparseMatrix<double> Zt0,
     const Eigen::MappedSparseMatrix<double> Lambdat0,
-    const Eigen::Map<Eigen::VectorXi> Lind
+    const Eigen::Map<Eigen::VectorXi> Lind,
+    const int n_obs,
+    const int n_ranef
 ){
 
   VectorXreal y = y0.cast<real>();
@@ -43,33 +63,29 @@ Rcpp::List compute_galamm(
   Eigen::SparseMatrix<real> Zt = Zt0.cast<real>();
   Eigen::SparseMatrix<real> Lambdat = Lambdat0.cast<real>();
   MatrixXreal Iq;
-  Iq.setIdentity(Lambdat.rows(), Lambdat.cols());
-  Eigen::SparseMatrix<real> V(Zt.cols(), Zt.cols());
+  Iq.setIdentity(n_ranef, n_ranef);
+  Eigen::SparseMatrix<real> V(n_obs, n_obs);
+  Eigen::SimplicialLDLT<Eigen::SparseMatrix<real> > solver;
   V = update_V(V, 1);
-
-
 
   VectorXreal beta(2);
   beta << 251.405, 10.4673;
   VectorXreal theta(1);
   theta << 36.012;
+  V = update_V(V, std::pow(30.895, -2));
+  VectorXreal u_prev = VectorXreal::Random(n_ranef, 1);
+  VectorXreal mu = X * beta;
 
-  Eigen::SimplicialLDLT<Eigen::SparseMatrix<real> > solver;
   Eigen::SparseMatrix<real> A = Lambdat * Zt * V * Zt.transpose() * Lambdat.transpose() + Iq;
   solver.analyzePattern(A);
 
-  VectorXreal u_prev = VectorXreal::Random(Zt.rows(), 1);
-
-  V = update_V(V, std::pow(30.895, -2));
   Lambdat = update_Lambdat(Lambdat, theta, Lind);
 
   A = Lambdat * Zt * V * Zt.transpose() * Lambdat.transpose() + Iq;
-  solver.factorize(A);
 
-  VectorXreal mu = X * beta;
-  VectorXreal b = Lambdat * Zt * (y - mu) / std::pow(30.895, 2) - u_prev;
+  VectorXreal b0 = Lambdat * Zt * (y - mu) / std::pow(30.895, 2);
+  VectorXreal u = update_u(u_prev, b0, A, solver);
 
-  VectorXreal u = solver.solve(b);
 
 
   return Rcpp::List::create(
