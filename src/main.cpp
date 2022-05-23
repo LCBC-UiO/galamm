@@ -43,6 +43,34 @@ VectorXreal update_u(
   return u;
 }
 
+real negative_loglik(
+  const VectorXreal& beta,
+  const VectorXreal& theta,
+  real phi,
+  const MatrixXreal& X,
+  const Eigen::SparseMatrix<real>& Zt,
+  Eigen::SparseMatrix<real>& Lambdat,
+  VectorXreal& u,
+  VectorXreal& u_prev,
+  const Eigen::SparseMatrix<real>& V,
+  Eigen::SimplicialLDLT<Eigen::SparseMatrix<real> >& solver,
+  const Eigen::VectorXi Lind,
+  const VectorXreal& y,
+  Eigen::SparseMatrix<real>& A
+){
+  VectorXreal mu = X * beta;
+  update_Lambdat(Lambdat, theta, Lind);
+  A = Lambdat * Zt * V * Zt.adjoint() * Lambdat.adjoint();
+  VectorXreal b0 = Lambdat * Zt * (y - mu) / pow(phi, 2.);
+  update_u(u, u_prev, b0, A, solver);
+
+  real logdet = solver.vectorD().array().log().sum() / 2;
+  VectorXreal linpred = beta.transpose() * X.transpose() +
+    u.transpose() * Lambdat* Zt;
+  real loglik = -logdet + .5 * (y - linpred).squaredNorm() / pow(phi, 2.) - .5 * u.squaredNorm();
+  return -loglik;
+}
+
 // [[Rcpp::export]]
 Rcpp::List compute_galamm(
     const Eigen::Map<Eigen::VectorXd> y0,
@@ -59,8 +87,13 @@ Rcpp::List compute_galamm(
   Eigen::SparseMatrix<real> Zt = Zt0.cast<real>();
   Eigen::SparseMatrix<real> Lambdat = Lambdat0.cast<real>();
   Eigen::SparseMatrix<real> V(n_obs, n_obs);
-  Eigen::SimplicialLDLT<Eigen::SparseMatrix<real> > solver;
   update_V(V, 1);
+  Eigen::SimplicialLDLT<Eigen::SparseMatrix<real> > solver;
+  solver.setShift(1); // add identity matrix
+  Eigen::SparseMatrix<real> A = Lambdat * Zt * V * Zt.adjoint() * Lambdat.adjoint();
+  solver.analyzePattern(A);
+
+
 
   real phi{30.895};
 
@@ -70,36 +103,15 @@ Rcpp::List compute_galamm(
   theta << 36.012;
   update_V(V, pow(phi, -2.));
   VectorXreal u_prev = VectorXreal::Random(n_ranef, 1);
-  VectorXreal mu = X * beta;
-
-  solver.setShift(1); // add identity matrix
-  Eigen::SparseMatrix<real> A = Lambdat * Zt * V * Zt.adjoint() * Lambdat.adjoint();
-  solver.analyzePattern(A);
-
-  update_Lambdat(Lambdat, theta, Lind);
-
-  A = Lambdat * Zt * V * Zt.adjoint() * Lambdat.adjoint();
-
-  VectorXreal b0 = Lambdat * Zt * (y - mu) / pow(phi, 2.);
   VectorXreal u{};
-  update_u(u, u_prev, b0, A, solver);
-
-
-
-  real logdet = solver.vectorD().array().log().sum() / 2;
-  VectorXreal linpred = beta.transpose() * X.transpose() +
-    u.transpose() * Lambdat* Zt;
-  real loglik = -logdet + .5 * (y - linpred).squaredNorm() / pow(phi, 2.) - .5 * u.squaredNorm();
-
-
-
+  real loglik{};
+  Eigen::VectorXd g = gradient(
+    negative_loglik, wrt(beta),
+    at(beta, theta, phi, X, Zt, Lambdat, u, u_prev, V, solver, Lind, y, A),
+    loglik);
 
   return Rcpp::List::create(
-    Rcpp::Named("beta") = 0,
-    Rcpp::Named("Lambdat") = Lambdat.cast<double>(),
-    Rcpp::Named("V") = V.cast<double>(),
-    Rcpp::Named("u") = u.cast<double>(),
-    Rcpp::Named("logdet") = static_cast<double>(logdet),
-    Rcpp::Named("loglik") = static_cast<double>(loglik)
+    Rcpp::Named("loglik") = static_cast<double>(loglik),
+    Rcpp::Named("gradient") = g
   );
 }
