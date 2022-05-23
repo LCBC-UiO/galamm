@@ -33,5 +33,7 @@ obj <- compute_galamm(
   Lind = ranef_obj$Lind - 1L, nrow(X), nrow(ranef_obj$Zt))
 
 
+
+
 plot(obj$u * 36.012, ranef(fm1)$Subject$`(Intercept)`)
 abline(0,1)
