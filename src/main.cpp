@@ -62,11 +62,13 @@ Rcpp::List compute_galamm(
   Eigen::SimplicialLDLT<Eigen::SparseMatrix<real> > solver;
   update_V(V, 1);
 
+  real phi{30.895};
+
   VectorXreal beta(2);
   beta << 251.405, 10.4673;
   VectorXreal theta(1);
   theta << 36.012;
-  update_V(V, std::pow(30.895, -2));
+  update_V(V, pow(phi, -2.));
   VectorXreal u_prev = VectorXreal::Random(n_ranef, 1);
   VectorXreal mu = X * beta;
 
@@ -78,7 +80,7 @@ Rcpp::List compute_galamm(
 
   A = Lambdat * Zt * V * Zt.adjoint() * Lambdat.adjoint();
 
-  VectorXreal b0 = Lambdat * Zt * (y - mu) / std::pow(30.895, 2);
+  VectorXreal b0 = Lambdat * Zt * (y - mu) / pow(phi, 2.);
   VectorXreal u{};
   update_u(u, u_prev, b0, A, solver);
 
@@ -87,7 +89,7 @@ Rcpp::List compute_galamm(
   real logdet = solver.vectorD().array().log().sum() / 2;
   VectorXreal linpred = beta.transpose() * X.transpose() +
     u.transpose() * Lambdat* Zt;
-  real loglik = -logdet + .5 * (y - linpred).squaredNorm() - .5 * u.squaredNorm();
+  real loglik = -logdet + .5 * (y - linpred).squaredNorm() / pow(phi, 2.) - .5 * u.squaredNorm();
 
 
 
