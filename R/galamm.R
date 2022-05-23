@@ -38,7 +38,7 @@ galamm <- function(formula, data, family = gaussian, latent = NULL,
 
   compute_galamm(
     y0 = y, X0 = X, Zt0 = ranef_obj$Zt, Lambdat0 = ranef_obj$Lambdat,
-    Lind = ranef_obj$Lind
+    Lind = ranef_obj$Lind - 1L
   )
 
 }

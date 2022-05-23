@@ -49,14 +49,6 @@ test_that("find_load_vars works", {
     list("item", "jtem"))
 })
 
-test_that("find_load_vars fails without list", {
-  expect_error(
-    find_load_vars(lme4::findbars(~ (lambda | item) + (kappa | jtem)),
-                   data = data.frame(item = 1, jtem = 2),
-                   lambda = c(1, 1)),
-    regexp = "lambda must be a list"
-  )
-})
 
 test_that("initialize_lambda works", {
 
