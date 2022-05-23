@@ -34,6 +34,5 @@ obj <- compute_galamm(
 
 
 
-
 plot(obj$u * 36.012, ranef(fm1)$Subject$`(Intercept)`)
 abline(0,1)

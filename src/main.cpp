@@ -84,7 +84,7 @@ Rcpp::List compute_galamm(
 
 
 
-  real logdet = solver.vectorD().array().log().sum();
+  real logdet = solver.vectorD().array().log().sum() / 2;
   VectorXreal linpred = beta.transpose() * X.transpose() +
     u.transpose() * Lambdat* Zt;
   real loglik = -logdet + .5 * (y - linpred).squaredNorm() - .5 * u.squaredNorm();
@@ -97,6 +97,7 @@ Rcpp::List compute_galamm(
     Rcpp::Named("Lambdat") = Lambdat.cast<double>(),
     Rcpp::Named("V") = V.cast<double>(),
     Rcpp::Named("u") = u.cast<double>(),
+    Rcpp::Named("logdet") = static_cast<double>(logdet),
     Rcpp::Named("loglik") = static_cast<double>(loglik)
   );
 }
