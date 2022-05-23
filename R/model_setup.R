@@ -11,7 +11,6 @@ find_factors <- function(latent_barlist, data){
 
 
 find_load_vars <- function(latent_barlist, data, lambda){
-  if(!is.list(lambda)) stop("lambda must be a list")
   load_vars <- lapply(latent_barlist, function(x) as.character(x)[[3]])
   if(!all(load_vars %in% names(data))){
     stop("All loading variables in 'latent' must be columns of 'data'.")

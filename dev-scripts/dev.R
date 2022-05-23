@@ -1,11 +1,12 @@
 devtools::load_all()
-latent_response_dat <- readRDS(
-  system.file("testdata", "latent_response_dat.rds", package = "galamm"))
+B <- matrix( c( 1, 2, 0, 2, 5, 0, 0, 0, 3  ), 3, 3, TRUE )
+b <- c( 5, 1, 7 )
+B %*% solve( B, b )
+A <- as( B, 'dgCMatrix' )
+B %*% sparse1(A, b)$beta
 
-formula = y ~ item + time : latent + ( 0 + latent | id / tp)
-#data = subset(latent_response_dat, id %in% 1:2 & tp %in% 1:2 & item %in% 1:2)
-data <- latent_response_dat
-data <- data[sample(nrow(data), nrow(data)), ]
-family = binomial
-latent = ~ (latent | item)
-lambda = list(item = c(1, NA_real_, NA_real_))
+library(lme4)
+fm1 <- lmer(Reaction ~ Days + (1 | Subject), sleepstudy, REML = FALSE)
+
+formula <- Reaction ~ Days + (1 | Subject)
+data <- sleepstudy
