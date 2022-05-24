@@ -5,113 +5,107 @@ using namespace autodiff;
 
 // [[Rcpp::depends(RcppEigen)]]
 
-void update_Lambdat(
-    Eigen::SparseMatrix<real>& Lambdat,
-    const VectorXreal& theta,
-    const Eigen::VectorXi& Lind
-){
-  int iteration_counter{};
-  for (int k=0; k<Lambdat.outerSize(); ++k){
-    for (Eigen::SparseMatrix<real>::InnerIterator it(Lambdat,k); it; ++it)
-    {
-      it.valueRef() = theta(Lind(iteration_counter));
-      ++iteration_counter;
-    }
+enum class Family{
+  Gaussian
+};
+
+struct ModelData{
+  ModelData(
+    Eigen::VectorXd y0, Eigen::MatrixXd Xt0, Eigen::SparseMatrix<double> Zt0,
+    Eigen::SparseMatrix<double> Lambdat0
+  ) : y { y0.cast<real>() }, Xt { Xt0.cast<real>() }, Zt{ Zt0.cast<real>()},
+          Lambdat { Lambdat0.cast<real>() }{}
+
+  const VectorXreal y;
+  const MatrixXreal Xt;
+  const Eigen::SparseMatrix<real> Zt;
+  const Eigen::SparseMatrix<real> Lambdat;
+};
+
+struct ModelParameters{
+  ModelParameters(
+    Eigen::VectorXi Lind0,
+    Eigen::VectorXd theta0,
+    Eigen::RowVectorXd beta0
+  ) : Lind { Lind0 },
+  theta { theta0.cast<real>() }, beta { beta0.cast<real>() },
+  u { VectorXreal::Zero(Lind.rows(), 1) } {}
+
+  VectorXreal const cumulant (const VectorXreal&) const;
+  real const varfun (const real&) const;
+  real const c (const VectorXreal&) const;
+
+  const Eigen::VectorXi Lind;
+  VectorXreal theta;
+  RowVectorXreal beta;
+  real phi{1};
+  RowVectorXreal u;
+  Family family{Family::Gaussian};
+};
+
+real const ModelParameters::c (const VectorXreal& y) const {
+  switch(family){
+  case Family::Gaussian: {
+    return y.squaredNorm() / 2;
+  } break;
+  default: {
+    Rcpp::stop("Unknown family\n");
+  }
   }
 }
 
-void update_V(Eigen::SparseMatrix<real>& V, const real& phi){
-  for(int i = 0; i < V.rows(); ++i) V.coeffRef(i, i) = phi;
+real loglik(const ModelParameters& mpar, const ModelData& mdat) {
+  Eigen::SparseMatrix<real> LambdatUpd = mdat.Lambdat;
+  real ll{};
+  VectorXreal linpred = mpar.u * LambdatUpd * mdat.Zt + mpar.beta * mdat.Xt;
+
+  ll = (mdat.y.dot(linpred) - mpar.cumulant(linpred).sum()) / mpar.varfun(mpar.phi) +
+    mpar.c(mdat.y) - mpar.u.squaredNorm() / 2;
+  return ll;
 }
 
-VectorXreal update_u(
-    VectorXreal& u, VectorXreal& u_prev, const VectorXreal& b0,
-    const Eigen::SparseMatrix<real>& A,
-    Eigen::SimplicialLDLT<Eigen::SparseMatrix<real> >& solver){
-  for(int iter = 0; iter < 10; ++iter){
-    VectorXreal b = b0 - u_prev;
-    solver.factorize(A);
-    u = solver.solve(b);
-    real delta = (u - u_prev).squaredNorm();
-
-    if(delta < 1e-10){
-      Rcpp::Rcout << "Breaking at " << iter << std::endl;
-      break;
-    }
-    u_prev = u;
+VectorXreal const ModelParameters::cumulant(const VectorXreal& a) const {
+  switch(family){
+  case Family::Gaussian: {
+    return a.array().square() / 2;
+  } break;
+  default: {
+    Rcpp::stop("Unknown family\n");
   }
-  return u;
+  }
 }
 
-real negative_loglik(
-  const VectorXreal& beta,
-  const VectorXreal& theta,
-  real phi,
-  const MatrixXreal& X,
-  const Eigen::SparseMatrix<real>& Zt,
-  Eigen::SparseMatrix<real>& Lambdat,
-  VectorXreal& u,
-  VectorXreal& u_prev,
-  const Eigen::SparseMatrix<real>& V,
-  Eigen::SimplicialLDLT<Eigen::SparseMatrix<real> >& solver,
-  const Eigen::VectorXi Lind,
-  const VectorXreal& y,
-  Eigen::SparseMatrix<real>& A
-){
-  VectorXreal mu = X * beta;
-  update_Lambdat(Lambdat, theta, Lind);
-  A = Lambdat * Zt * V * Zt.adjoint() * Lambdat.adjoint();
-  VectorXreal b0 = Lambdat * Zt * (y - mu) / pow(phi, 2.);
-  update_u(u, u_prev, b0, A, solver);
-
-  real logdet = solver.vectorD().array().log().sum() / 2;
-  VectorXreal linpred = beta.transpose() * X.transpose() +
-    u.transpose() * Lambdat* Zt;
-  real loglik = -logdet + .5 * (y - linpred).squaredNorm() / pow(phi, 2.) - .5 * u.squaredNorm();
-  return -loglik;
+real const ModelParameters::varfun(const real& phi) const {
+  switch(family){
+  case Family::Gaussian: {
+    return pow(phi, 2.0);
+  } break;
+  default: {
+    Rcpp::stop("Unknown family\n");
+  }
+  }
 }
+
 
 // [[Rcpp::export]]
 Rcpp::List compute_galamm(
-    const Eigen::Map<Eigen::VectorXd> y0,
-    const Eigen::Map<Eigen::MatrixXd> X0,
-    const Eigen::MappedSparseMatrix<double> Zt0,
-    const Eigen::MappedSparseMatrix<double> Lambdat0,
+    const Eigen::Map<Eigen::VectorXd> y,
+    const Eigen::Map<Eigen::MatrixXd> Xt,
+    const Eigen::MappedSparseMatrix<double> Zt,
+    const Eigen::MappedSparseMatrix<double> Lambdat,
     const Eigen::Map<Eigen::VectorXi> Lind,
-    const int n_obs,
-    const int n_ranef
-){
+    const Eigen::Map<Eigen::VectorXd> theta,
+    const Eigen::Map<Eigen::RowVectorXd> beta
+  ){
 
-  VectorXreal y = y0.cast<real>();
-  MatrixXreal X = X0.cast<real>();
-  Eigen::SparseMatrix<real> Zt = Zt0.cast<real>();
-  Eigen::SparseMatrix<real> Lambdat = Lambdat0.cast<real>();
-  Eigen::SparseMatrix<real> V(n_obs, n_obs);
-  update_V(V, 1);
-  Eigen::SimplicialLDLT<Eigen::SparseMatrix<real> > solver;
-  solver.setShift(1); // add identity matrix
-  Eigen::SparseMatrix<real> A = Lambdat * Zt * V * Zt.adjoint() * Lambdat.adjoint();
-  solver.analyzePattern(A);
+  ModelData mdat{y, Xt, Zt, Lambdat};
+  ModelParameters mpar{Lind, theta, beta};
 
-
-
-  real phi{30.895};
-
-  VectorXreal beta(2);
-  beta << 251.405, 10.4673;
-  VectorXreal theta(1);
-  theta << 36.012;
-  update_V(V, pow(phi, -2.));
-  VectorXreal u_prev = VectorXreal::Random(n_ranef, 1);
-  VectorXreal u{};
-  real loglik{};
-  Eigen::VectorXd g = gradient(
-    negative_loglik, wrt(beta),
-    at(beta, theta, phi, X, Zt, Lambdat, u, u_prev, V, solver, Lind, y, A),
-    loglik);
+  real res = loglik(mpar, mdat);
+  Eigen::VectorXd g = gradient(loglik, wrt(mpar.beta), at(mpar, mdat));
 
   return Rcpp::List::create(
-    Rcpp::Named("loglik") = static_cast<double>(loglik),
-    Rcpp::Named("gradient") = g
+    Rcpp::Named("loglik") = static_cast<double>(res),
+    Rcpp::Named("g") = g
   );
 }

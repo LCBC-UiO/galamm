@@ -12,19 +12,19 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // compute_galamm
-Rcpp::List compute_galamm(const Eigen::Map<Eigen::VectorXd> y0, const Eigen::Map<Eigen::MatrixXd> X0, const Eigen::MappedSparseMatrix<double> Zt0, const Eigen::MappedSparseMatrix<double> Lambdat0, const Eigen::Map<Eigen::VectorXi> Lind, const int n_obs, const int n_ranef);
-RcppExport SEXP _galamm_compute_galamm(SEXP y0SEXP, SEXP X0SEXP, SEXP Zt0SEXP, SEXP Lambdat0SEXP, SEXP LindSEXP, SEXP n_obsSEXP, SEXP n_ranefSEXP) {
+Rcpp::List compute_galamm(const Eigen::Map<Eigen::VectorXd> y, const Eigen::Map<Eigen::MatrixXd> Xt, const Eigen::MappedSparseMatrix<double> Zt, const Eigen::MappedSparseMatrix<double> Lambdat, const Eigen::Map<Eigen::VectorXi> Lind, const Eigen::Map<Eigen::VectorXd> theta, const Eigen::Map<Eigen::RowVectorXd> beta);
+RcppExport SEXP _galamm_compute_galamm(SEXP ySEXP, SEXP XtSEXP, SEXP ZtSEXP, SEXP LambdatSEXP, SEXP LindSEXP, SEXP thetaSEXP, SEXP betaSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Eigen::Map<Eigen::VectorXd> >::type y0(y0SEXP);
-    Rcpp::traits::input_parameter< const Eigen::Map<Eigen::MatrixXd> >::type X0(X0SEXP);
-    Rcpp::traits::input_parameter< const Eigen::MappedSparseMatrix<double> >::type Zt0(Zt0SEXP);
-    Rcpp::traits::input_parameter< const Eigen::MappedSparseMatrix<double> >::type Lambdat0(Lambdat0SEXP);
+    Rcpp::traits::input_parameter< const Eigen::Map<Eigen::VectorXd> >::type y(ySEXP);
+    Rcpp::traits::input_parameter< const Eigen::Map<Eigen::MatrixXd> >::type Xt(XtSEXP);
+    Rcpp::traits::input_parameter< const Eigen::MappedSparseMatrix<double> >::type Zt(ZtSEXP);
+    Rcpp::traits::input_parameter< const Eigen::MappedSparseMatrix<double> >::type Lambdat(LambdatSEXP);
     Rcpp::traits::input_parameter< const Eigen::Map<Eigen::VectorXi> >::type Lind(LindSEXP);
-    Rcpp::traits::input_parameter< const int >::type n_obs(n_obsSEXP);
-    Rcpp::traits::input_parameter< const int >::type n_ranef(n_ranefSEXP);
-    rcpp_result_gen = Rcpp::wrap(compute_galamm(y0, X0, Zt0, Lambdat0, Lind, n_obs, n_ranef));
+    Rcpp::traits::input_parameter< const Eigen::Map<Eigen::VectorXd> >::type theta(thetaSEXP);
+    Rcpp::traits::input_parameter< const Eigen::Map<Eigen::RowVectorXd> >::type beta(betaSEXP);
+    rcpp_result_gen = Rcpp::wrap(compute_galamm(y, Xt, Zt, Lambdat, Lind, theta, beta));
     return rcpp_result_gen;
 END_RCPP
 }
