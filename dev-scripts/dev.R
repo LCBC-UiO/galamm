@@ -29,6 +29,6 @@ stopifnot(length(increment) == 1)
 y <- as.numeric(data[[all.vars(formula)[[1]]]])
 
 obj <- compute_galamm(y = y, Xt = t(X), Zt = ranef_obj$Zt,
-                      Lambdat = ranef_obj$Lambdat, Lind = ranef_obj$Lind,
-                      theta = ranef_obj$theta, beta = runif(ncol(X)))
+                      Lambdat = ranef_obj$Lambdat, Lind = ranef_obj$Lind - 1L,
+                      theta = ranef_obj$theta * 3)
 
