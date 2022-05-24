@@ -61,10 +61,19 @@ struct RandomEffects{
     Eigen::SparseMatrix<real> A = Lambdat * mod.Zt * mod.Zt.transpose() *
       Lambdat.transpose() / mod.varfun();
     solver.factorize(A);
-    RowVectorXreal linpred = mod.beta * mod.Xt + u * Lambdat * mod.Zt;
-    VectorXreal b = Lambdat * mod.Zt * (mod.y - linpred) / mod.varfun() - u;
-    VectorXreal delta = solver.solve(b);
-    u += delta;
+
+    for(int i{}; i < 10; ++i){
+      VectorXreal linpred = mod.beta * mod.Xt + u * Lambdat * mod.Zt;
+      VectorXreal b = Lambdat * mod.Zt * (mod.y - linpred) / mod.varfun() - u.transpose();
+
+      VectorXreal delta = solver.solve(b);
+      u += delta;
+      if(delta.squaredNorm() < 1e-5){
+        Rcpp::Rcout << "Stopping at iteration " << i << std::endl;
+        break;
+      }
+    }
+
   }
 
   const Eigen::VectorXi Lind;
@@ -107,8 +116,8 @@ real const Model::varfun() const {
 
 
 real loglik(const Model& mod, RandomEffects& re, ldlt& solver){
-  re.update_u(solver, mod);
   re.update_lambda(mod.theta);
+  re.update_u(solver, mod);
   RowVectorXreal linpred = mod.beta * mod.Xt + re.u * re.Lambdat * mod.Zt;
   real ll = (linpred.dot(mod.y) - mod.cumulant(linpred).sum()) / mod.varfun() +
     mod.c_phi() - re.u.squaredNorm() / 2;
@@ -135,9 +144,12 @@ Rcpp::List compute_galamm(
     re.Lambdat.transpose();
   solver.analyzePattern(A);
 
-  real ll = loglik(mod, re, solver);
+  real ll{};
+  Eigen::VectorXd g = gradient(loglik, wrt(mod.beta), at(mod, re, solver), ll);
+
 
   return Rcpp::List::create(
-    Rcpp::Named("loglik") = static_cast<double>(ll)
+    Rcpp::Named("loglik") = static_cast<double>(ll),
+    Rcpp::Named("grad") = g
   );
 }
