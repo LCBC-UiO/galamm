@@ -32,3 +32,12 @@ obj <- compute_galamm(y = y, Xt = t(X), Zt = ranef_obj$Zt,
                       Lambdat = ranef_obj$Lambdat, Lind = ranef_obj$Lind - 1L,
                       theta = ranef_obj$theta * 3)
 
+plot(obj$u %*% obj$Lambdat, ranef(fm1)$Subject$`(Intercept)`); abline(0, 1)
+
+plot(obj$beta, fixef(fm1)); abline(0,1)
+
+obj$theta
+getME(fm1, "theta") * sigma(fm1)
+
+logLik(fm1)
+obj$loglik

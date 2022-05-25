@@ -21,7 +21,6 @@ struct Model{
   Zt{ Zt0.cast<dual2nd>()},
   theta { theta0 } {
     beta = RowVectorXdual2nd::Zero(1, Xt.rows());
-
   }
 
   VectorXdual2nd const cumulant (const VectorXdual2nd&) const;
@@ -31,10 +30,10 @@ struct Model{
   const VectorXdual2nd y;
   const MatrixXdual2nd Xt;
   const Eigen::SparseMatrix<dual2nd> Zt;
+  Family family{Family::Gaussian};
   VectorXdual2nd theta;
   RowVectorXdual2nd beta;
   dual2nd phi{1};
-  Family family{Family::Gaussian};
 };
 
 struct RandomEffects{
@@ -68,10 +67,7 @@ struct RandomEffects{
 
       VectorXdual2nd delta = solver.solve(b);
       u += delta;
-      if(delta.squaredNorm() < 1e-5){
-        Rcpp::Rcout << "Stopping at iteration " << i << std::endl;
-        break;
-      }
+      if(delta.squaredNorm() < 1e-10) break;
     }
 
   }
@@ -84,7 +80,7 @@ struct RandomEffects{
 dual2nd const Model::c_phi () const {
   switch(family){
   case Family::Gaussian: {
-    return y.squaredNorm() / 2;
+    return -y.squaredNorm() / 2;
   } break;
   default: {
     Rcpp::stop("Unknown family\n");
@@ -106,7 +102,7 @@ VectorXdual2nd const Model::cumulant(const VectorXdual2nd& a) const {
 dual2nd const Model::varfun() const {
   switch(family){
   case Family::Gaussian: {
-    return pow(phi, 2.0);
+    return phi;
   } break;
   default: {
     Rcpp::stop("Unknown family\n");
@@ -119,8 +115,13 @@ dual2nd loglik(const Model& mod, RandomEffects& re, ldlt& solver){
   re.update_lambda(mod.theta);
   re.update_u(solver, mod);
   RowVectorXdual2nd linpred = mod.beta * mod.Xt + re.u * re.Lambdat * mod.Zt;
-  dual2nd ll = (linpred.dot(mod.y) - mod.cumulant(linpred).sum()) / mod.varfun() +
-    mod.c_phi() - re.u.squaredNorm() / 2;
+
+  dual2nd logdet = solver.vectorD().array().log().sum() / 2;
+
+  dual2nd rss = (linpred.dot(mod.y) - mod.cumulant(linpred).sum()) / mod.varfun();
+    + mod.c_phi();
+
+  dual2nd ll = -logdet + rss - re.u.squaredNorm() / 2;
 
   return ll;
 }
@@ -149,11 +150,25 @@ Rcpp::List compute_galamm(
     re.Lambdat.transpose();
   solver.analyzePattern(A);
 
-  H = hessian(loglik, wrt(mod.beta), at(mod, re, solver), ll, g);
+  mod.phi = 954.5278;
+  for(int i = 0; i < 10; ++i){
+    H = hessian(loglik, wrt(mod.theta, mod.beta),
+                at(mod, re, solver), ll, g);
+    Eigen::VectorXd delta = H.colPivHouseholderQr().solve(-g);
+    mod.theta += delta.segment(0, 1);
+    mod.beta += delta.segment(1, 2);
+  }
+
+
+
 
 
   return Rcpp::List::create(
     Rcpp::Named("loglik") = static_cast<double>(ll),
+    Rcpp::Named("theta") = mod.theta.cast<double>(),
+    Rcpp::Named("beta") = mod.beta.cast<double>(),
+    Rcpp::Named("u") = re.u.cast<double>(),
+    Rcpp::Named("Lambdat") = re.Lambdat.cast<double>(),
     Rcpp::Named("grad") = g,
     Rcpp::Named("H") = H
   );
