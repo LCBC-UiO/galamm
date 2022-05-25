@@ -1,11 +1,11 @@
 #include <RcppEigen.h>
-#include <autodiff/forward/real.hpp>
-#include <autodiff/forward/real/eigen.hpp>
+#include <autodiff/forward/dual.hpp>
+#include <autodiff/forward/dual/eigen.hpp>
 using namespace autodiff;
 
 // [[Rcpp::depends(RcppEigen)]]
 
-typedef Eigen::SimplicialLDLT<Eigen::SparseMatrix<real> > ldlt;
+typedef Eigen::SimplicialLDLT<Eigen::SparseMatrix<dual2nd> > ldlt;
 
 enum class Family{
   Gaussian
@@ -17,23 +17,23 @@ struct Model{
     Eigen::MatrixXd Xt0,
     Eigen::SparseMatrix<double> Zt0,
     Eigen::VectorXd theta0
-  ) : y { y0.cast<real>() }, Xt { Xt0.cast<real>() },
-  Zt{ Zt0.cast<real>()},
+  ) : y { y0.cast<dual2nd>() }, Xt { Xt0.cast<dual2nd>() },
+  Zt{ Zt0.cast<dual2nd>()},
   theta { theta0 } {
-    beta = RowVectorXreal::Zero(1, Xt.rows());
+    beta = RowVectorXdual2nd::Zero(1, Xt.rows());
 
   }
 
-  VectorXreal const cumulant (const VectorXreal&) const;
-  real const varfun () const;
-  real const c_phi () const;
+  VectorXdual2nd const cumulant (const VectorXdual2nd&) const;
+  dual2nd const varfun () const;
+  dual2nd const c_phi () const;
 
-  const VectorXreal y;
-  const MatrixXreal Xt;
-  const Eigen::SparseMatrix<real> Zt;
-  VectorXreal theta;
-  RowVectorXreal beta;
-  real phi{1};
+  const VectorXdual2nd y;
+  const MatrixXdual2nd Xt;
+  const Eigen::SparseMatrix<dual2nd> Zt;
+  VectorXdual2nd theta;
+  RowVectorXdual2nd beta;
+  dual2nd phi{1};
   Family family{Family::Gaussian};
 };
 
@@ -41,32 +41,32 @@ struct RandomEffects{
   RandomEffects(
     Eigen::VectorXi Lind0,
     Eigen::SparseMatrix<double> Lambdat0
-  ) : Lind { Lind0 }, Lambdat { Lambdat0.cast<real>() } {
-    u = RowVectorXreal::Zero(1, Lambdat0.rows());
+  ) : Lind { Lind0 }, Lambdat { Lambdat0.cast<dual2nd>() } {
+    u = RowVectorXdual2nd::Zero(1, Lambdat0.rows());
     if(Lind.minCoeff() != 0){
       Rcpp::stop("Wrong index in Lind\n");
     }
   }
 
-  void update_lambda(const VectorXreal& theta){
+  void update_lambda(const VectorXdual2nd& theta){
     int lind_counter{};
     for (int k=0; k<Lambdat.outerSize(); ++k)
-      for (Eigen::SparseMatrix<real>::InnerIterator it(Lambdat,k); it; ++it)
+      for (Eigen::SparseMatrix<dual2nd>::InnerIterator it(Lambdat,k); it; ++it)
       {
         it.valueRef() = theta(Lind(lind_counter));
         lind_counter++;
       }
   }
   void update_u(ldlt& solver, const Model& mod){
-    Eigen::SparseMatrix<real> A = Lambdat * mod.Zt * mod.Zt.transpose() *
+    Eigen::SparseMatrix<dual2nd> A = Lambdat * mod.Zt * mod.Zt.transpose() *
       Lambdat.transpose() / mod.varfun();
     solver.factorize(A);
 
     for(int i{}; i < 10; ++i){
-      VectorXreal linpred = mod.beta * mod.Xt + u * Lambdat * mod.Zt;
-      VectorXreal b = Lambdat * mod.Zt * (mod.y - linpred) / mod.varfun() - u.transpose();
+      VectorXdual2nd linpred = mod.beta * mod.Xt + u * Lambdat * mod.Zt;
+      VectorXdual2nd b = Lambdat * mod.Zt * (mod.y - linpred) / mod.varfun() - u.transpose();
 
-      VectorXreal delta = solver.solve(b);
+      VectorXdual2nd delta = solver.solve(b);
       u += delta;
       if(delta.squaredNorm() < 1e-5){
         Rcpp::Rcout << "Stopping at iteration " << i << std::endl;
@@ -77,11 +77,11 @@ struct RandomEffects{
   }
 
   const Eigen::VectorXi Lind;
-  Eigen::SparseMatrix<real> Lambdat;
-  RowVectorXreal u;
+  Eigen::SparseMatrix<dual2nd> Lambdat;
+  RowVectorXdual2nd u;
 };
 
-real const Model::c_phi () const {
+dual2nd const Model::c_phi () const {
   switch(family){
   case Family::Gaussian: {
     return y.squaredNorm() / 2;
@@ -92,7 +92,7 @@ real const Model::c_phi () const {
   }
 }
 
-VectorXreal const Model::cumulant(const VectorXreal& a) const {
+VectorXdual2nd const Model::cumulant(const VectorXdual2nd& a) const {
   switch(family){
   case Family::Gaussian: {
     return a.array().square() / 2;
@@ -103,7 +103,7 @@ VectorXreal const Model::cumulant(const VectorXreal& a) const {
   }
 }
 
-real const Model::varfun() const {
+dual2nd const Model::varfun() const {
   switch(family){
   case Family::Gaussian: {
     return pow(phi, 2.0);
@@ -115,11 +115,11 @@ real const Model::varfun() const {
 }
 
 
-real loglik(const Model& mod, RandomEffects& re, ldlt& solver){
+dual2nd loglik(const Model& mod, RandomEffects& re, ldlt& solver){
   re.update_lambda(mod.theta);
   re.update_u(solver, mod);
-  RowVectorXreal linpred = mod.beta * mod.Xt + re.u * re.Lambdat * mod.Zt;
-  real ll = (linpred.dot(mod.y) - mod.cumulant(linpred).sum()) / mod.varfun() +
+  RowVectorXdual2nd linpred = mod.beta * mod.Xt + re.u * re.Lambdat * mod.Zt;
+  dual2nd ll = (linpred.dot(mod.y) - mod.cumulant(linpred).sum()) / mod.varfun() +
     mod.c_phi() - re.u.squaredNorm() / 2;
 
   return ll;
@@ -140,16 +140,21 @@ Rcpp::List compute_galamm(
   ldlt solver;
   solver.setShift(1);
 
-  Eigen::SparseMatrix<real> A = re.Lambdat * mod.Zt * mod.Zt.transpose() *
+
+  dual2nd ll{};
+  Eigen::VectorXd g{};
+  Eigen::MatrixXd H{};
+
+  Eigen::SparseMatrix<dual2nd> A = re.Lambdat * mod.Zt * mod.Zt.transpose() *
     re.Lambdat.transpose();
   solver.analyzePattern(A);
 
-  real ll{};
-  Eigen::VectorXd g = gradient(loglik, wrt(mod.beta), at(mod, re, solver), ll);
+  H = hessian(loglik, wrt(mod.beta), at(mod, re, solver), ll, g);
 
 
   return Rcpp::List::create(
     Rcpp::Named("loglik") = static_cast<double>(ll),
-    Rcpp::Named("grad") = g
+    Rcpp::Named("grad") = g,
+    Rcpp::Named("H") = H
   );
 }
