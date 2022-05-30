@@ -41,3 +41,6 @@ getME(fm1, "theta") * sigma(fm1)
 
 logLik(fm1)
 obj$loglik
+
+obj$phi
+as.data.frame(VarCorr(fm1))

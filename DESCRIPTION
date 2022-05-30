@@ -21,10 +21,8 @@ Imports:
     Rcpp (>= 1.0.8.3)
 Suggests: 
     ggplot2,
-    testthat (>= 3.0.0),
-    xml2
+    testthat (>= 3.0.0)
 LinkingTo: 
     Rcpp,
-    RcppEigen,
-    testthat
+    RcppEigen
 Config/testthat/edition: 3
