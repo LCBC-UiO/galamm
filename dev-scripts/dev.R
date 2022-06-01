@@ -3,10 +3,24 @@ devtools::load_all()
 library(lme4)
 fm1 <- lmer(Reaction ~ Days + (1 | Subject), sleepstudy, REML = FALSE)
 
+
+
+getME(fm1, "devcomp")$cmp[["sigmaML"]]
+
+### Exact log likelihood
+-getME(fm1, "devcomp")$cmp[["ldL2"]] / 2-
+  sum(residuals(fm1)^2) / 2 / sigma(fm1)^2 -
+  getME(fm1, "N") / 2 * log(2 * pi * sigma(fm1)^2) -
+  sum(getME(fm1, "u")^2) / 2 / getME(fm1, "sigma")^2
+
+logLik(fm1)
+
 formula <- Reaction ~ Days + (1 | Subject)
 data <- sleepstudy
 latent <- NULL
 lambda <- NULL
+
+
 
 
 latent_barlist <- lme4::findbars(latent)
@@ -28,11 +42,17 @@ increment <- unique(diff(ranef_obj$Zt@p))
 stopifnot(length(increment) == 1)
 y <- as.numeric(data[[all.vars(formula)[[1]]]])
 
-obj <- compute_galamm(y = y, Xt = t(X), Zt = ranef_obj$Zt,
-                      Lambdat = ranef_obj$Lambdat, Lind = ranef_obj$Lind - 1L,
-                      theta = ranef_obj$theta * 3)
+obj <- compute_galamm(y = y, X = X, Z = t(ranef_obj$Zt),
+                      Lambda = t(ranef_obj$Lambdat), Lind = ranef_obj$Lind - 1L,
+                      getME(fm1, "theta") * getME(fm1, "sigma"), getME(fm1, "beta"))
 
-plot(obj$u %*% obj$Lambdat, ranef(fm1)$Subject$`(Intercept)`); abline(0, 1)
+sum((sleepstudy$Reaction - X %*% fixef(fm1))^2) / 2 / sigma(fm1)^2
+
+
+getME(fm1, "devcomp")$cmp[["ldL2"]] / 2
+
+
+plot(obj$u * getME(fm1, "theta") * getME(fm1, "sigma"), getME(fm1, "b")); abline(0, 1)
 
 plot(obj$beta, fixef(fm1)); abline(0,1)
 
