@@ -18,6 +18,7 @@ struct Model{
     Eigen::VectorXi Lind0,
     Eigen::VectorXd theta0,
     Eigen::VectorXd beta0,
+    double phi0,
     Family& family0
   ) :
   y { y0.cast<dual2nd>() },
@@ -27,6 +28,7 @@ struct Model{
   Lind { Lind0 },
   theta { theta0.cast<dual2nd>() },
   beta { beta0.cast<dual2nd>() },
+  phi { static_cast<dual2nd>(phi0) },
   family { family0 }
   {
     q = Z.cols();
@@ -35,9 +37,7 @@ struct Model{
   }
 
   VectorXdual2nd get_eta(){
-    VectorXdual2nd eta = X * beta + Z * Lambda * u;
-    Rcpp::Rcout << "eta = " << eta << std::endl;
-    return eta;
+    return X * beta + Z * Lambda * u;
   }
   VectorXdual2nd get_mu(){
     return family.inv_link(get_eta());
@@ -71,18 +71,18 @@ struct Model{
   VectorXdual2nd theta;
   VectorXdual2nd beta;
   VectorXdual2nd u;
-  dual2nd phi{954.5278};
+  dual2nd phi;
 
 private:
   int q{};
   int p{};
 };
 
-dual2nd loglik(Model& mod, ldlt& solver){
+dual2nd negloglik(Model& mod, ldlt& solver, int maxit = 50){
   mod.update_Lambda();
   VectorXdual2nd delta{};
 
-  for(int i{}; i < 10; ++i){
+  for(int i{}; i < maxit; ++i){
     Eigen::SparseMatrix<dual2nd> A = mod.get_hessian();
     solver.factorize(A);
     VectorXdual2nd b = mod.get_rhs();
@@ -95,16 +95,12 @@ dual2nd loglik(Model& mod, ldlt& solver){
 
   dual2nd logdet = (solver.vectorD()).array().log().sum() / 2;
 
-  dual2nd rss = (mod.y.dot(mod.get_eta()) - mod.family.d(mod.get_eta()) / 2 -
-    mod.y.squaredNorm() / 2) / mod.phi;
-  Rcpp::Rcout << "rss = " << rss << std::endl;
-
   dual2nd ll = -logdet +
     (mod.y.dot(mod.get_eta()) - mod.family.d(mod.get_eta())) /
     mod.family.a(mod.phi) +
       mod.family.c(mod.y, mod.phi) - mod.u.squaredNorm() / 2;
 
-  return ll;
+  return -ll;
 }
 
 // [[Rcpp::export]]
@@ -115,22 +111,48 @@ Rcpp::List compute_galamm(
     const Eigen::MappedSparseMatrix<double> Lambda,
     const Eigen::Map<Eigen::VectorXi> Lind,
     const Eigen::Map<Eigen::VectorXd> theta,
-    const Eigen::Map<Eigen::VectorXd> beta
+    const Eigen::Map<Eigen::VectorXi> theta_inds,
+    const Eigen::Map<Eigen::VectorXd> beta,
+    const Eigen::Map<Eigen::VectorXi> beta_inds,
+    const double phi
   ){
 
   Gaussian family;
-  Model mod{y, X, Z, Lambda, Lind, theta, beta, family};
+  Model mod{y, X, Z, Lambda, Lind, theta, beta, phi, family};
   ldlt solver;
   solver.setShift(1);
   solver.analyzePattern(mod.get_hessian());
 
 
-  dual2nd ll = loglik(mod, solver);
+  Eigen::MatrixXd H{};
+  Eigen::VectorXd g{};
+  dual2nd nll{};
+  VectorXdual2nd delta{};
 
+  for(int i{}; i < 100; i++){
+    H = hessian(negloglik, wrt(mod.theta, mod.beta, mod.phi),
+                at(mod, solver, 10), nll, g);
+
+    delta = H.colPivHouseholderQr().solve(-g);
+    mod.theta += delta.segment(theta_inds.minCoeff(), theta_inds.rows());
+    mod.beta += delta.segment(beta_inds.minCoeff(), beta_inds.rows());
+    mod.phi += delta(delta.rows() - 1);
+
+    if(delta.squaredNorm() < 1e-10){
+      break;
+    }
+  }
 
 
   return Rcpp::List::create(
-    Rcpp::Named("ll") = static_cast<double>(ll),
-    Rcpp::Named("u") = mod.u.cast<double>()
+    Rcpp::Named("nll") = static_cast<double>(nll),
+    Rcpp::Named("u") = mod.u.cast<double>(),
+    Rcpp::Named("Lambda") = mod.Lambda.cast<double>(),
+    Rcpp::Named("H") = H,
+    Rcpp::Named("g") = g,
+    Rcpp::Named("delta") = delta.cast<double>(),
+    Rcpp::Named("theta") = mod.theta.cast<double>(),
+    Rcpp::Named("beta") = mod.beta.cast<double>(),
+    Rcpp::Named("phi") = static_cast<double>(mod.phi)
   );
 }
