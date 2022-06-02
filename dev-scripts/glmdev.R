@@ -1,22 +1,10 @@
 devtools::load_all()
 
 library(lme4)
-fm1 <- lmer(Reaction ~ Days + (Days | Subject), sleepstudy, REML = FALSE)
+formula <- cbind(incidence, size - incidence) ~ period + (1 | herd)
+gm1 <- glmer(formula, data = cbpp, family = binomial)
 
-
-
-getME(fm1, "devcomp")$cmp[["sigmaML"]]
-
-### Exact log likelihood
--getME(fm1, "devcomp")$cmp[["ldL2"]] / 2-
-  sum(residuals(fm1)^2) / 2 / sigma(fm1)^2 -
-  getME(fm1, "N") / 2 * log(2 * pi * sigma(fm1)^2) -
-  sum(getME(fm1, "u")^2) / 2 / getME(fm1, "sigma")^2
-
-logLik(fm1)
-
-formula <- Reaction ~ Days + (Days | Subject)
-data <- sleepstudy
+data <- cbpp
 latent <- NULL
 lambda <- NULL
 
@@ -40,8 +28,8 @@ increment <- unique(diff(ranef_obj$Zt@p))
 y <- as.numeric(data[[all.vars(formula)[[1]]]])
 
 set.seed(1)
-beta_init <- getME(fm1, "beta") * runif(2, .9 , 1.1)
-theta_init <- getME(fm1, "theta") * getME(fm1, "sigma") * runif(3, .9, 1.1)
+beta_init <- getME(gm1, "beta")
+theta_init <- getME(gm1, "theta")
 obj <- compute_galamm(y = y, X = X, Z = t(ranef_obj$Zt),
                       Lambda = t(ranef_obj$Lambdat), Lind = ranef_obj$Lind - 1L,
                       theta = theta_init,  theta_inds = 0:2,

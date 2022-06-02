@@ -32,9 +32,13 @@ galamm <- function(formula, data, family = gaussian, latent = NULL,
   ranef_mapping <- lapply(ranef_obj$cnms,
                           function(x) find_load_cols(factors, load_vars, x))
 
-  increment <- unique(diff(ranef_obj$Zt@p))
-  stopifnot(length(increment) == 1)
   y <- as.numeric(data[[all.vars(formula)[[1]]]])
 
-
+  fit <- compute_galamm(
+    y = y, X = X, Z = t(ranef_obj$Zt), Lambda = t(ranef_obj$Lambdat),
+    Lind = ranef_obj$Lind - 1L, theta = ranef_obj$theta,
+    theta_inds = seq(0L, length(ranef_obj$theta) - 1L),
+    beta = rep(0, ncol(X)),
+    beta_inds = length(ranef_obj$theta) + seq_len(ncol(X)) - 1L,
+    phi = 950)
 }
