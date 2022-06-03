@@ -42,7 +42,7 @@ y <- as.numeric(data[[all.vars(formula)[[1]]]])
 set.seed(1)
 beta_init <- getME(fm1, "beta") * runif(2, .9 , 1.1)
 theta_init <- getME(fm1, "theta") * getME(fm1, "sigma") * runif(3, .9, 1.1)
-obj <- compute_galamm(y = y, X = X, Z = t(ranef_obj$Zt),
+obj <- compute_galamm(y = y, rep(1L, length = length(y)), X = X, Z = t(ranef_obj$Zt),
                       Lambda = t(ranef_obj$Lambdat), Lind = ranef_obj$Lind - 1L,
                       theta = theta_init,  theta_inds = 0:2,
                       beta = beta_init, beta_inds = 3:4, 700)
