@@ -1,4 +1,5 @@
 #include <RcppEigen.h>
+#include <unsupported/Eigen/SpecialFunctions>
 #include <autodiff/forward/dual.hpp>
 #include <autodiff/forward/dual/eigen.hpp>
 
@@ -8,11 +9,16 @@ using namespace autodiff;
 
 typedef Eigen::SimplicialLDLT<Eigen::SparseMatrix<dual2nd> > ldlt;
 
+Eigen::ArrayXd lchoose(const Eigen::VectorXd& n, const Eigen::VectorXd& y){
+  return (n.array() + 1).lgamma() - (n.array() - y.array() + 1).lgamma() -
+    (y.array() + 1).lgamma();
+}
+
 struct Model {
 
   Model(
     Eigen::VectorXd y0,
-    Eigen::VectorXi trials0,
+    Eigen::VectorXd trials0,
     Eigen::MatrixXd X0,
     Eigen::SparseMatrix<double> Z0,
     Eigen::SparseMatrix<double> Lambda0,
@@ -22,8 +28,8 @@ struct Model {
     double phi0,
     std::string family0
   ) :
-  y { y0.cast<dual2nd>() },
-  trials { trials0.cast<dual2nd>() },
+  y { y0 },
+  trials { trials0 },
   X { X0.cast<dual2nd>() },
   Z { Z0.cast<dual2nd>() },
   Lambda { Lambda0.cast<dual2nd>() },
@@ -46,7 +52,6 @@ struct Model {
     return inv_link();
   }
   Eigen::SparseMatrix<dual2nd> get_hessian(){
-
     Eigen::SparseMatrix<dual2nd> A = Lambda.transpose() * Z.transpose() *
       V() * Z * Lambda / pow(a(), 2.0);
     return A;
@@ -76,7 +81,7 @@ struct Model {
     if(family == "gaussian"){
       return -y.squaredNorm() / 2 / phi - n / 2 * log(2 * M_PI * phi);
     } else if(family == "binomial") {
-      return 1;
+      return lchoose(trials, y).sum();
     } else {
       Rcpp::stop("Unknown family.\n");
     }
@@ -91,7 +96,7 @@ struct Model {
     }
   }
   Eigen::DiagonalMatrix<dual2nd, Eigen::Dynamic> V() {
-    Eigen::DiagonalMatrix<dual2nd, Eigen::Dynamic> V(get_eta().rows());
+    Eigen::DiagonalMatrix<dual2nd, Eigen::Dynamic> V(n);
     V.setIdentity();
     if(family == "gaussian"){
       V.diagonal().array() = a();
@@ -114,7 +119,7 @@ struct Model {
     }
   }
 
-  VectorXdual2nd y;
+  Eigen::VectorXd y;
   MatrixXdual2nd X;
   Eigen::SparseMatrix<dual2nd> Z;
   Eigen::VectorXi Lind;
@@ -124,7 +129,7 @@ struct Model {
   VectorXdual2nd beta;
   VectorXdual2nd u;
   dual2nd phi;
-  VectorXdual2nd trials;
+  Eigen::VectorXd trials;
 
 private:
   int q{};
@@ -135,12 +140,17 @@ private:
 dual2nd negloglik(Model& mod, ldlt& solver, int maxit = 50){
   mod.update_Lambda();
   VectorXdual2nd delta{};
+  double stepsize{1};
 
   for(int i{}; i < maxit; ++i){
     Eigen::SparseMatrix<dual2nd> A = mod.get_hessian();
     solver.factorize(A);
     VectorXdual2nd b = mod.get_rhs();
     delta = solver.solve(b);
+
+    // stepsize check
+
+
     mod.u += delta;
     if(delta.squaredNorm() < 1e-10) {
       break;
@@ -159,7 +169,7 @@ dual2nd negloglik(Model& mod, ldlt& solver, int maxit = 50){
 // [[Rcpp::export]]
 Rcpp::List compute_galamm(
     const Eigen::Map<Eigen::VectorXd> y,
-    const Eigen::Map<Eigen::VectorXi> trials,
+    const Eigen::Map<Eigen::VectorXd> trials,
     const Eigen::Map<Eigen::MatrixXd> X,
     const Eigen::MappedSparseMatrix<double> Z,
     const Eigen::MappedSparseMatrix<double> Lambda,
@@ -183,28 +193,37 @@ Rcpp::List compute_galamm(
   dual2nd nll{};
   VectorXdual2nd delta{};
 
-  for(int i{}; i < 100; i++){
-    H = hessian(negloglik, wrt(mod.theta, mod.beta, mod.phi),
-                at(mod, solver, 10), nll, g);
+  nll = negloglik(mod, solver, 1);
 
-    delta = H.colPivHouseholderQr().solve(-g);
-    mod.theta += delta.segment(theta_inds.minCoeff(), theta_inds.rows());
-    mod.beta += delta.segment(beta_inds.minCoeff(), beta_inds.rows());
-    mod.phi += delta(delta.rows() - 1);
+  // for(int i{}; i < 1; i++){
+    // if(family == "gaussian"){
+    //   H = hessian(negloglik, wrt(mod.theta, mod.beta, mod.phi),
+    //               at(mod, solver, 1), nll, g);
+    // } else {
+    //   H = hessian(negloglik, wrt(mod.theta, mod.beta),
+    //               at(mod, solver, 1), nll, g);
+    // }
 
-    if(delta.squaredNorm() < 1e-10){
-      break;
-    }
-  }
 
+    // delta = H.colPivHouseholderQr().solve(-g);
+    // mod.theta += delta.segment(theta_inds.minCoeff(), theta_inds.rows());
+    // mod.beta += delta.segment(beta_inds.minCoeff(), beta_inds.rows());
+    // if(family == "gaussian"){
+    //   mod.phi += delta(delta.rows() - 1);
+    // }
+    //
+    // if(delta.squaredNorm() < 1e-10){
+    //   break;
+    // }
+  // }
 
   return Rcpp::List::create(
     Rcpp::Named("nll") = static_cast<double>(nll),
     Rcpp::Named("u") = mod.u.cast<double>(),
     Rcpp::Named("Lambda") = mod.Lambda.cast<double>(),
-    Rcpp::Named("H") = H,
-    Rcpp::Named("g") = g,
-    Rcpp::Named("delta") = delta.cast<double>(),
+    Rcpp::Named("eta") = mod.get_eta().cast<double>(),
+    Rcpp::Named("V") = mod.V().diagonal().cast<double>(),
+    Rcpp::Named("H") = mod.get_hessian().cast<double>(),
     Rcpp::Named("theta") = mod.theta.cast<double>(),
     Rcpp::Named("beta") = mod.beta.cast<double>(),
     Rcpp::Named("phi") = static_cast<double>(mod.phi)
