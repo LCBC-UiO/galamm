@@ -7,225 +7,100 @@ using namespace autodiff;
 
 // [[Rcpp::depends(RcppEigen)]]
 
-typedef Eigen::SimplicialLDLT<Eigen::SparseMatrix<dual2nd> > ldlt;
+using ldlt = Eigen::SimplicialLLT<Eigen::SparseMatrix<dual2nd> >;
+using dvec = VectorXdual2nd;
+using dmat = MatrixXdual2nd;
+using dspmat = Eigen::SparseMatrix<dual2nd>;
+using ivec = Eigen::VectorXi;
 
-Eigen::ArrayXd lchoose(const Eigen::VectorXd& n, const Eigen::VectorXd& y){
-  return (n.array() + 1).lgamma() - (n.array() - y.array() + 1).lgamma() -
-    (y.array() + 1).lgamma();
-}
-
-struct Model {
-
+struct Model{
   Model(
-    Eigen::VectorXd y0,
-    Eigen::VectorXd trials0,
-    Eigen::MatrixXd X0,
-    Eigen::SparseMatrix<double> Z0,
-    Eigen::SparseMatrix<double> Lambda0,
-    Eigen::VectorXi Lind0,
-    Eigen::VectorXd theta0,
-    Eigen::VectorXd beta0,
-    double phi0,
-    std::string family0
-  ) :
-  y { y0 },
-  trials { trials0 },
+    const Eigen::VectorXd y0,
+    const Eigen::MatrixXd X0,
+    const Eigen::MappedSparseMatrix<double> Zt0,
+    const Eigen::MappedSparseMatrix<double> Lambdat0,
+    const ivec Lind0,
+    const Eigen::VectorXd theta0
+  ) : y { y0.cast<dual2nd>() },
   X { X0.cast<dual2nd>() },
-  Z { Z0.cast<dual2nd>() },
-  Lambda { Lambda0.cast<dual2nd>() },
+  Zt { Zt0.cast<dual2nd>() },
+  Lambdat { Lambdat0.cast<dual2nd>() },
   Lind { Lind0 },
-  theta { theta0.cast<dual2nd>() },
-  beta { beta0.cast<dual2nd>() },
-  phi { static_cast<dual2nd>(phi0) },
-  family { family0 }
+  theta { theta0.cast<dual2nd>() }
   {
-    q = Z.cols();
-    p = X.cols();
     n = X.rows();
-    u = VectorXdual2nd::Zero(q, 1);
+    p = X.cols();
+    q = Zt.rows();
   }
 
-  VectorXdual2nd get_eta(){
-    return X * beta + Z * Lambda * u;
+
+  dspmat ZtZ(){
+    dmat V = dmat::Identity(n, n);
+    V.diagonal().array() = phi;
+
+    return Lambdat * Zt * Zt.transpose() * Lambdat.transpose();
   }
-  VectorXdual2nd get_mu(){
-    return inv_link();
-  }
-  Eigen::SparseMatrix<dual2nd> get_hessian(){
-    Eigen::SparseMatrix<dual2nd> A = Lambda.transpose() * Z.transpose() *
-      V() * Z * Lambda / pow(a(), 2.0);
-    return A;
-  }
-  VectorXdual2nd get_rhs(){
-    return Lambda.transpose() * Z.transpose() * (y - get_mu()) / a() - u;
-  }
-  void update_Lambda(){
+  void update_Lambdat(){
     int lind_counter{};
-    for (int k=0; k<Lambda.outerSize(); ++k)
-      for (Eigen::SparseMatrix<dual2nd>::InnerIterator it(Lambda, k); it; ++it)
+    for (int k{}; k < Lambdat.outerSize(); ++k)
+      for (dspmat::InnerIterator it(Lambdat, k); it; ++it)
       {
         it.valueRef() = theta(Lind(lind_counter));
         lind_counter++;
       }
   }
-  dual2nd a(){
-    if(family == "gaussian") {
-      return phi;
-    } else if(family == "binomial") {
-      return 1;
-    } else {
-      Rcpp::stop("Unknown family.\n");
-    }
-  }
-  dual2nd c(){
-    if(family == "gaussian"){
-      return -y.squaredNorm() / 2 / phi - n / 2 * log(2 * M_PI * phi);
-    } else if(family == "binomial") {
-      return lchoose(trials, y).sum();
-    } else {
-      Rcpp::stop("Unknown family.\n");
-    }
-  }
-  dual2nd d(){
-    if(family == "gaussian"){
-      return get_eta().squaredNorm() / 2;
-    } else if(family == "binomial") {
-      return ((1 + get_eta().array().exp()).log() * trials.array()).sum();
-    } else {
-      Rcpp::stop("Unknown family.\n");
-    }
-  }
-  Eigen::DiagonalMatrix<dual2nd, Eigen::Dynamic> V() {
-    Eigen::DiagonalMatrix<dual2nd, Eigen::Dynamic> V(n);
-    V.setIdentity();
-    if(family == "gaussian"){
-      V.diagonal().array() = a();
-      return V;
-    } else if(family == "binomial") {
-      ArrayXdual2nd dd = inv_link().array();
-      V.diagonal().array() = trials.array() * dd * (1 - dd);
-      return V;
-    } else {
-      Rcpp::stop("Unknown family.\n");
-    }
-  }
-  VectorXdual2nd inv_link(){
-    if(family == "gaussian"){
-      return get_eta();
-    } else if(family == "binomial") {
-      return get_eta().array().exp() / (1 + get_eta().array().exp());
-    } else {
-      Rcpp::stop("Unknown family.\n");
-    }
-  }
 
-  Eigen::VectorXd y;
-  MatrixXdual2nd X;
-  Eigen::SparseMatrix<dual2nd> Z;
-  Eigen::VectorXi Lind;
-  std::string family;
-  Eigen::SparseMatrix<dual2nd> Lambda;
-  VectorXdual2nd theta;
-  VectorXdual2nd beta;
-  VectorXdual2nd u;
-  dual2nd phi;
-  Eigen::VectorXd trials;
+  const dvec y;
+  dmat X;
+  dspmat Zt;
+  dspmat Lambdat;
+  const ivec Lind;
+  dvec theta;
+  dual2nd phi{2};
 
-private:
-  int q{};
-  int p{};
-  int n{};
+
+  int n;
+  int p;
+  int q;
 };
 
-dual2nd negloglik(Model& mod, ldlt& solver, int maxit = 50){
-  mod.update_Lambda();
-  VectorXdual2nd delta{};
-  double stepsize{1};
 
-  for(int i{}; i < maxit; ++i){
-    Eigen::SparseMatrix<dual2nd> A = mod.get_hessian();
-    solver.factorize(A);
-    VectorXdual2nd b = mod.get_rhs();
-    delta = solver.solve(b);
-
-    // stepsize check
-
-
-    mod.u += delta;
-    if(delta.squaredNorm() < 1e-10) {
-      break;
-    }
-  }
-
-  dual2nd logdet = (solver.vectorD()).array().log().sum() / 2;
-
-  dual2nd ll = -logdet +
-    (mod.y.dot(mod.get_eta()) - mod.d()) / mod.a() +
-      mod.c() - mod.u.squaredNorm() / 2;
-
-  return -ll;
-}
 
 // [[Rcpp::export]]
 Rcpp::List compute_galamm(
     const Eigen::Map<Eigen::VectorXd> y,
-    const Eigen::Map<Eigen::VectorXd> trials,
     const Eigen::Map<Eigen::MatrixXd> X,
-    const Eigen::MappedSparseMatrix<double> Z,
-    const Eigen::MappedSparseMatrix<double> Lambda,
+    const Eigen::MappedSparseMatrix<double> Zt,
+    const Eigen::MappedSparseMatrix<double> Lambdat,
     const Eigen::Map<Eigen::VectorXi> Lind,
-    const Eigen::Map<Eigen::VectorXd> theta,
-    const Eigen::Map<Eigen::VectorXi> theta_inds,
-    const Eigen::Map<Eigen::VectorXd> beta,
-    const Eigen::Map<Eigen::VectorXi> beta_inds,
-    const double phi = 1,
-    std::string family = "gaussian"
+    const Eigen::Map<Eigen::VectorXd> theta
   ){
 
-  Model mod{y, trials, X, Z, Lambda, Lind, theta, beta, phi, family};
+  Model mod{y, X, Zt, Lambdat, Lind, theta};
+
   ldlt solver;
   solver.setShift(1);
-  solver.analyzePattern(mod.get_hessian());
+  solver.analyzePattern(mod.ZtZ());
+  mod.update_Lambdat();
+  solver.factorize(mod.ZtZ());
 
+  dvec b1 = solver.permutationP() * mod.Lambdat * mod.Zt * mod.y;
+  dvec cu = solver.matrixL().solve(b1);
+  dmat b2 = solver.permutationP() * mod.Lambdat * mod.Zt * mod.X;
+  dmat RZX = solver.matrixL().solve(b2);
+  dmat RXtRX = X.transpose() * X - RZX.transpose() * RZX;
+  dvec beta = RXtRX.ldlt().solve(mod.X.transpose() * y - RZX.transpose() * cu);
+  dvec u = solver.permutationPinv() * solver.matrixU().solve(cu - RZX * beta);
+  dvec b = mod.Lambdat.transpose() * u;
 
-  Eigen::MatrixXd H{};
-  Eigen::VectorXd g{};
-  dual2nd nll{};
-  VectorXdual2nd delta{};
-
-  nll = negloglik(mod, solver, 1);
-
-  // for(int i{}; i < 1; i++){
-    // if(family == "gaussian"){
-    //   H = hessian(negloglik, wrt(mod.theta, mod.beta, mod.phi),
-    //               at(mod, solver, 1), nll, g);
-    // } else {
-    //   H = hessian(negloglik, wrt(mod.theta, mod.beta),
-    //               at(mod, solver, 1), nll, g);
-    // }
-
-
-    // delta = H.colPivHouseholderQr().solve(-g);
-    // mod.theta += delta.segment(theta_inds.minCoeff(), theta_inds.rows());
-    // mod.beta += delta.segment(beta_inds.minCoeff(), beta_inds.rows());
-    // if(family == "gaussian"){
-    //   mod.phi += delta(delta.rows() - 1);
-    // }
-    //
-    // if(delta.squaredNorm() < 1e-10){
-    //   break;
-    // }
-  // }
 
   return Rcpp::List::create(
-    Rcpp::Named("nll") = static_cast<double>(nll),
-    Rcpp::Named("u") = mod.u.cast<double>(),
-    Rcpp::Named("Lambda") = mod.Lambda.cast<double>(),
-    Rcpp::Named("eta") = mod.get_eta().cast<double>(),
-    Rcpp::Named("V") = mod.V().diagonal().cast<double>(),
-    Rcpp::Named("H") = mod.get_hessian().cast<double>(),
-    Rcpp::Named("theta") = mod.theta.cast<double>(),
-    Rcpp::Named("beta") = mod.beta.cast<double>(),
-    Rcpp::Named("phi") = static_cast<double>(mod.phi)
+    Rcpp::Named("cu") = cu.cast<double>(),
+    Rcpp::Named("RZX") = RZX.cast<double>(),
+    Rcpp::Named("RXtRX") = RXtRX.cast<double>(),
+    Rcpp::Named("beta") = beta.cast<double>(),
+    Rcpp::Named("u") = u.cast<double>(),
+    Rcpp::Named("b") = b.cast<double>(),
+    Rcpp::Named("Lambdat") = mod.Lambdat.cast<double>()
   );
 }

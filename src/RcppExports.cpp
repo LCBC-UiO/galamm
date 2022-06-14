@@ -12,30 +12,24 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // compute_galamm
-Rcpp::List compute_galamm(const Eigen::Map<Eigen::VectorXd> y, const Eigen::Map<Eigen::VectorXd> trials, const Eigen::Map<Eigen::MatrixXd> X, const Eigen::MappedSparseMatrix<double> Z, const Eigen::MappedSparseMatrix<double> Lambda, const Eigen::Map<Eigen::VectorXi> Lind, const Eigen::Map<Eigen::VectorXd> theta, const Eigen::Map<Eigen::VectorXi> theta_inds, const Eigen::Map<Eigen::VectorXd> beta, const Eigen::Map<Eigen::VectorXi> beta_inds, const double phi, std::string family);
-RcppExport SEXP _galamm_compute_galamm(SEXP ySEXP, SEXP trialsSEXP, SEXP XSEXP, SEXP ZSEXP, SEXP LambdaSEXP, SEXP LindSEXP, SEXP thetaSEXP, SEXP theta_indsSEXP, SEXP betaSEXP, SEXP beta_indsSEXP, SEXP phiSEXP, SEXP familySEXP) {
+Rcpp::List compute_galamm(const Eigen::Map<Eigen::VectorXd> y, const Eigen::Map<Eigen::MatrixXd> X, const Eigen::MappedSparseMatrix<double> Zt, const Eigen::MappedSparseMatrix<double> Lambdat, const Eigen::Map<Eigen::VectorXi> Lind, const Eigen::Map<Eigen::VectorXd> theta);
+RcppExport SEXP _galamm_compute_galamm(SEXP ySEXP, SEXP XSEXP, SEXP ZtSEXP, SEXP LambdatSEXP, SEXP LindSEXP, SEXP thetaSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Eigen::Map<Eigen::VectorXd> >::type y(ySEXP);
-    Rcpp::traits::input_parameter< const Eigen::Map<Eigen::VectorXd> >::type trials(trialsSEXP);
     Rcpp::traits::input_parameter< const Eigen::Map<Eigen::MatrixXd> >::type X(XSEXP);
-    Rcpp::traits::input_parameter< const Eigen::MappedSparseMatrix<double> >::type Z(ZSEXP);
-    Rcpp::traits::input_parameter< const Eigen::MappedSparseMatrix<double> >::type Lambda(LambdaSEXP);
+    Rcpp::traits::input_parameter< const Eigen::MappedSparseMatrix<double> >::type Zt(ZtSEXP);
+    Rcpp::traits::input_parameter< const Eigen::MappedSparseMatrix<double> >::type Lambdat(LambdatSEXP);
     Rcpp::traits::input_parameter< const Eigen::Map<Eigen::VectorXi> >::type Lind(LindSEXP);
     Rcpp::traits::input_parameter< const Eigen::Map<Eigen::VectorXd> >::type theta(thetaSEXP);
-    Rcpp::traits::input_parameter< const Eigen::Map<Eigen::VectorXi> >::type theta_inds(theta_indsSEXP);
-    Rcpp::traits::input_parameter< const Eigen::Map<Eigen::VectorXd> >::type beta(betaSEXP);
-    Rcpp::traits::input_parameter< const Eigen::Map<Eigen::VectorXi> >::type beta_inds(beta_indsSEXP);
-    Rcpp::traits::input_parameter< const double >::type phi(phiSEXP);
-    Rcpp::traits::input_parameter< std::string >::type family(familySEXP);
-    rcpp_result_gen = Rcpp::wrap(compute_galamm(y, trials, X, Z, Lambda, Lind, theta, theta_inds, beta, beta_inds, phi, family));
+    rcpp_result_gen = Rcpp::wrap(compute_galamm(y, X, Zt, Lambdat, Lind, theta));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_galamm_compute_galamm", (DL_FUNC) &_galamm_compute_galamm, 12},
+    {"_galamm_compute_galamm", (DL_FUNC) &_galamm_compute_galamm, 6},
     {NULL, NULL, 0}
 };
 
