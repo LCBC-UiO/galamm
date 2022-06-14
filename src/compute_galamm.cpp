@@ -56,13 +56,37 @@ struct Model{
   dspmat Lambdat;
   const ivec Lind;
   dvec theta;
+  dvec beta{};
+  dvec b{};
+  dvec u{};
   dual2nd phi{2};
+  dual2nd prss{};
 
 
   int n;
   int p;
   int q;
 };
+
+dual2nd nll(Model& mod, ldlt& solver){
+  mod.update_Lambdat();
+  solver.factorize(mod.ZtZ());
+
+  dvec b1 = solver.permutationP() * mod.Lambdat * mod.Zt * mod.y;
+  dvec cu = solver.matrixL().solve(b1);
+  dmat b2 = solver.permutationP() * mod.Lambdat * mod.Zt * mod.X;
+  dmat RZX = solver.matrixL().solve(b2);
+  dmat RXtRX = mod.X.transpose() * mod.X - RZX.transpose() * RZX;
+  mod.beta = RXtRX.ldlt().solve(mod.X.transpose() * mod.y - RZX.transpose() * cu);
+  mod.u = solver.permutationPinv() * solver.matrixU().solve(cu - RZX * mod.beta);
+
+  dual2nd logdet = log(solver.determinant()) / 2;
+  dvec linpred = mod.X * mod.beta + mod.Zt.transpose() * mod.Lambdat.transpose() * mod.u;
+  mod.prss = (mod.y - linpred).squaredNorm() + mod.u.squaredNorm();
+
+  dual2nd nll = -(logdet + mod.n / 2 * (1 + log(2 * M_PI * mod.prss / mod.n)));
+  return nll;
+}
 
 
 
@@ -81,26 +105,15 @@ Rcpp::List compute_galamm(
   ldlt solver;
   solver.setShift(1);
   solver.analyzePattern(mod.ZtZ());
-  mod.update_Lambdat();
-  solver.factorize(mod.ZtZ());
 
-  dvec b1 = solver.permutationP() * mod.Lambdat * mod.Zt * mod.y;
-  dvec cu = solver.matrixL().solve(b1);
-  dmat b2 = solver.permutationP() * mod.Lambdat * mod.Zt * mod.X;
-  dmat RZX = solver.matrixL().solve(b2);
-  dmat RXtRX = X.transpose() * X - RZX.transpose() * RZX;
-  dvec beta = RXtRX.ldlt().solve(mod.X.transpose() * y - RZX.transpose() * cu);
-  dvec u = solver.permutationPinv() * solver.matrixU().solve(cu - RZX * beta);
-  dvec b = mod.Lambdat.transpose() * u;
-
+  dual2nd loss = nll(mod, solver);
+  mod.phi = mod.prss / mod.n;
+  mod.b = mod.Lambdat.transpose() * mod.u;
 
   return Rcpp::List::create(
-    Rcpp::Named("cu") = cu.cast<double>(),
-    Rcpp::Named("RZX") = RZX.cast<double>(),
-    Rcpp::Named("RXtRX") = RXtRX.cast<double>(),
-    Rcpp::Named("beta") = beta.cast<double>(),
-    Rcpp::Named("u") = u.cast<double>(),
-    Rcpp::Named("b") = b.cast<double>(),
-    Rcpp::Named("Lambdat") = mod.Lambdat.cast<double>()
+    Rcpp::Named("beta") = mod.beta.cast<double>(),
+    Rcpp::Named("b") = mod.b.cast<double>(),
+    Rcpp::Named("phi") = static_cast<double>(mod.phi),
+    Rcpp::Named("loss") = static_cast<double>(loss)
   );
 }

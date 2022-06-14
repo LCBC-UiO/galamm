@@ -1,7 +1,7 @@
 devtools::load_all()
 
 library(lme4)
-formula <- Reaction ~ Days + (1 | Subject)
+formula <- Reaction ~ Days + (Days | Subject)
 fm1 <- lmer(formula, sleepstudy, REML = FALSE)
 
 
