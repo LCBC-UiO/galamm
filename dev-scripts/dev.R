@@ -40,14 +40,7 @@ theta <- getME(fm1, "theta")
 
 obj <- galamm:::compute_galamm(
   y = y, X = X, Zt = Zt, Lambdat = Lambdat, Lind = ranef_obj$Lind - 1L,
-  theta = theta, maxit_outer = 1, family = "gaussian")
-
-
-
-- obj$deviance / 2
-sum(y * predict(fm1))
--.5 * sum((y - predict(fm1))^2) / obj$phi - nrow(X) / 2 * log(2 * pi * obj$phi) -
-  sum(obj$u^2) / 2 / obj$phi
+  theta = theta, maxit_outer = 1, family = "gaussian", trials = rep(1, length(y)))
 
 -obj$deviance / 2
 logLik(fm1)
@@ -58,3 +51,4 @@ plot(obj$beta, fixef(fm1)); abline(0, 1)
 plot(obj$b, getME(fm1, "b")); abline(0,1)
 
 plot(obj$u, getME(fm1, "u")); abline(0,1)
+

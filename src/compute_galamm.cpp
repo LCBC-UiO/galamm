@@ -17,6 +17,7 @@ using ddiag = Eigen::DiagonalMatrix<dscl, Eigen::Dynamic>;
 using ivec = Eigen::VectorXi;
 
 
+
 struct Model{
   Model(
     const Eigen::VectorXd y0,
@@ -25,14 +26,16 @@ struct Model{
     const Eigen::MappedSparseMatrix<double> Lambdat0,
     const ivec Lind0,
     const Eigen::VectorXd theta0,
-    const std::string family0
-  ) : y { y0.cast<dscl>() },
+    const std::string family0,
+    const Eigen::VectorXd trials0
+  ) : y { y0 },
   X { X0.cast<dscl>() },
   Zt { Zt0.cast<dscl>() },
   Lambdat { Lambdat0.cast<dscl>() },
   Lind { Lind0 },
   theta { theta0.cast<dscl>() },
-  family { family0 }
+  family { family0 },
+  trials { trials0 }
   {
     n = X.rows();
     p = X.cols();
@@ -44,6 +47,8 @@ struct Model{
   dscl dsum(const dvec& linpred){
     if(family == "gaussian"){
       return linpred.squaredNorm() / 2;
+    } else if(family == "binomial") {
+      return ((1 + linpred.array().exp()).log() * trials.array()).sum();
     } else {
       Rcpp::stop("Unknown family.");
     }
@@ -52,14 +57,21 @@ struct Model{
   dscl csum(){
     if(family == "gaussian"){
       return -.5 * (y.squaredNorm() / phi + n * log(2 * M_PI * phi));
+    } else if(family == "binomial") {
+      return ((trials.array() + 1).lgamma() -
+              (trials.array() - y.array() + 1).lgamma() -
+              (y.array() + 1).lgamma()).sum();
     } else {
       Rcpp::stop("Unknown family.");
     }
   }
 
-  dvec meanfun(const dvec& beta, const dvec& u){
+  dvec meanfun(){
     if(family == "gaussian"){
       return X * beta + Zt.transpose() * Lambdat.transpose() * u;
+    } else if(family == "binomial") {
+      dvec eta = X * beta + Zt.transpose() * Lambdat.transpose() * u;
+      return eta.array().exp() / (1 + eta.array().exp()) * trials.array();
     } else {
       Rcpp::stop("Unknown family.");
     }
@@ -70,6 +82,9 @@ struct Model{
     ddiag V(n);
     if(family == "gaussian"){
       V.diagonal().array() = phi;
+      return V;
+    } else if(family == "binomial") {
+      V.diagonal().array() = meanfun().array() * (trials.array() - meanfun().array());
       return V;
     } else {
       Rcpp::stop("Unknown family.");
@@ -82,7 +97,9 @@ struct Model{
 
   void update_phi(){
     if(family == "gaussian"){
-      phi = ((y - meanfun(beta, u)).squaredNorm() + u.squaredNorm()) / n;
+      phi = ((y - meanfun()).squaredNorm() + u.squaredNorm()) / n;
+    } else if(family == "binomial"){
+      phi = 1;
     } else {
       Rcpp::stop("Unknown family.");
     }
@@ -98,7 +115,7 @@ struct Model{
       }
   }
 
-  const dvec y;
+  Eigen::VectorXd y;
   dmat X;
   dspmat Zt;
   dspmat Lambdat;
@@ -110,11 +127,21 @@ struct Model{
   dvec u{};
   dscl phi{1};
   std::string family;
+  Eigen::VectorXd trials;
 
   int n;
   int p;
   int q;
 };
+
+
+dscl g(Model& mod, const dvec& beta, const dvec& u){
+  dvec linpred = mod.X * beta +
+    mod.Zt.transpose() * mod.Lambdat.transpose() * u;
+
+  return (mod.y.dot(linpred) - mod.dsum(linpred)) / mod.phi + mod.csum() -
+    u.squaredNorm() / 2 / mod.phi;
+}
 
 void conditional_modes(Model& mod, ldlt& solver){
   dvec delta_beta{};
@@ -122,25 +149,48 @@ void conditional_modes(Model& mod, ldlt& solver){
   dvec beta_new = mod.beta;
   dvec u_new = mod.u;
 
-  solver.factorize(mod.inner_hessian());
-  dvec b1 = solver.permutationP() *
-    (mod.Lambdat * mod.Zt * (mod.y - mod.meanfun(mod.beta, mod.u)) - mod.u );
-  dvec cu = solver.matrixL().solve(b1);
+  for(int i{}; i < 50; i++){
+    solver.factorize(mod.inner_hessian());
+    dvec b1 = solver.permutationP() *
+      (mod.Lambdat * mod.Zt * (mod.y - mod.meanfun()) - mod.u );
+    dvec cu = solver.matrixL().solve(b1);
 
-  dmat b2 = solver.permutationP() * mod.Lambdat * mod.Zt * mod.V() * mod.X / mod.phi;
-  dmat RZX = solver.matrixL().solve(b2);
+    dmat b2 = solver.permutationP() * mod.Lambdat * mod.Zt * mod.V() * mod.X / mod.phi;
+    dmat RZX = solver.matrixL().solve(b2);
 
-  dmat RXtRX = (1/mod.phi) * mod.X.transpose() * mod.V() * mod.X - RZX.transpose() * RZX;
-  delta_beta = RXtRX.colPivHouseholderQr().solve(mod.X.transpose() * (mod.y - mod.meanfun(mod.beta, mod.u)) -
-    RZX.transpose() * cu);
+    dmat RXtRX = (1/mod.phi) * mod.X.transpose() * mod.V() * mod.X - RZX.transpose() * RZX;
+    delta_beta = RXtRX.colPivHouseholderQr().solve(mod.X.transpose() * (mod.y - mod.meanfun()) -
+      RZX.transpose() * cu);
 
-  delta_u = solver.permutationPinv() * solver.matrixU().solve(cu - RZX * delta_beta);
+    delta_u = solver.permutationPinv() * solver.matrixU().solve(cu - RZX * delta_beta);
 
-  mod.beta = delta_beta;
-  mod.u = delta_u;
+    dscl g_old = g(mod, mod.beta, mod.u);
+    dscl g_new{};
+    mod.update_phi();
 
+    double step = 1;
+    for(int s{}; s < 5; s++){
+      beta_new = mod.beta + step * delta_beta;
+      u_new = mod.u + step * delta_u;
+      g_new = g(mod, beta_new, u_new);
 
+      if(g_new > g_old - 1e-5){
+        break;
+      } else {
+        step /= 10;
+      }
+    }
+
+    mod.beta = beta_new;
+    mod.u = u_new;
+
+    if(delta_beta.squaredNorm() + delta_u.squaredNorm() < 1e-10) {
+      Rcpp::Rcout << "Stopping at " << i << std::endl;
+      break;
+    }
+  }
 }
+
 
 dscl get_deviance(Model& mod, ldlt& solver){
   mod.update_Lambdat();
@@ -149,13 +199,12 @@ dscl get_deviance(Model& mod, ldlt& solver){
 
   mod.update_phi();
   dscl logdet = log(solver.determinant()) / 2;
-  dvec linpred = mod.X * mod.beta + mod.Zt.transpose() * mod.Lambdat.transpose() * mod.u;
 
-  dscl loglik = (mod.y.dot(linpred) - mod.dsum(linpred)) / mod.phi + mod.csum() -
-    mod.u.squaredNorm() / 2 / mod.phi - logdet;
+  dscl loglik = g(mod, mod.beta, mod.u) - logdet;
 
   return -2 * loglik;
 }
+
 
 
 
@@ -168,10 +217,11 @@ Rcpp::List compute_galamm(
     const Eigen::Map<Eigen::VectorXi> Lind,
     const Eigen::Map<Eigen::VectorXd> theta,
     const int maxit_outer,
-    const std::string family
+    const std::string family,
+    const Eigen::Map<Eigen::VectorXd> trials
   ){
 
-  Model mod{y, X, Zt, Lambdat, Lind, theta, family};
+  Model mod{y, X, Zt, Lambdat, Lind, theta, family, trials};
 
   ldlt solver;
   solver.setShift(1);
