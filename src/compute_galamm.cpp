@@ -49,6 +49,8 @@ struct Model{
       return linpred.squaredNorm() / 2;
     } else if(family == "binomial") {
       return ((1 + linpred.array().exp()).log() * trials.array()).sum();
+    } else if(family == "poisson") {
+      return linpred.array().exp().sum();
     } else {
       Rcpp::stop("Unknown family.");
     }
@@ -61,17 +63,21 @@ struct Model{
       return ((trials.array() + 1).lgamma() -
               (trials.array() - y.array() + 1).lgamma() -
               (y.array() + 1).lgamma()).sum();
+    } else if(family == "poisson") {
+      return -(y.array() + 1).lgamma().sum();
     } else {
       Rcpp::stop("Unknown family.");
     }
   }
 
   dvec meanfun(){
+    dvec eta = X * beta + Zt.transpose() * Lambdat.transpose() * u;
     if(family == "gaussian"){
-      return X * beta + Zt.transpose() * Lambdat.transpose() * u;
+      return eta;
     } else if(family == "binomial") {
-      dvec eta = X * beta + Zt.transpose() * Lambdat.transpose() * u;
       return eta.array().exp() / (1 + eta.array().exp()) * trials.array();
+    } else if(family == "poisson") {
+      return eta.array().exp();
     } else {
       Rcpp::stop("Unknown family.");
     }
@@ -82,13 +88,14 @@ struct Model{
     ddiag V(n);
     if(family == "gaussian"){
       V.diagonal().array() = phi;
-      return V;
     } else if(family == "binomial") {
       V.diagonal().array() = meanfun().array() * (trials.array() - meanfun().array());
-      return V;
+    } else if(family == "poisson") {
+      V.diagonal().array() = meanfun().array();
     } else {
       Rcpp::stop("Unknown family.");
     }
+    return V;
   }
 
   dspmat inner_hessian(){
@@ -99,6 +106,8 @@ struct Model{
     if(family == "gaussian"){
       phi = ((y - meanfun()).squaredNorm() + u.squaredNorm()) / n;
     } else if(family == "binomial"){
+      phi = 1;
+    } else if(family == "poisson") {
       phi = 1;
     } else {
       Rcpp::stop("Unknown family.");
@@ -149,7 +158,7 @@ void conditional_modes(Model& mod, ldlt& solver){
   dvec beta_new = mod.beta;
   dvec u_new = mod.u;
 
-  for(int i{}; i < 50; i++){
+  for(int i{}; i < 30; i++){
     solver.factorize(mod.inner_hessian());
     dvec b1 = solver.permutationP() *
       (mod.Lambdat * mod.Zt * (mod.y - mod.meanfun()) - mod.u );
@@ -169,7 +178,7 @@ void conditional_modes(Model& mod, ldlt& solver){
     mod.update_phi();
 
     double step = 1;
-    for(int s{}; s < 5; s++){
+    for(int s{}; s < 1; s++){
       beta_new = mod.beta + step * delta_beta;
       u_new = mod.u + step * delta_u;
       g_new = g(mod, beta_new, u_new);
@@ -180,6 +189,7 @@ void conditional_modes(Model& mod, ldlt& solver){
         step /= 10;
       }
     }
+    Rcpp::Rcout << "g_new = " << g_new << std::endl;
 
     mod.beta = beta_new;
     mod.u = u_new;
