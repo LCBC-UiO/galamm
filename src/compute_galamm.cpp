@@ -16,20 +16,14 @@ using dspmat = Eigen::SparseMatrix<dscl>;
 using ddiag = Eigen::DiagonalMatrix<dscl, Eigen::Dynamic>;
 using ivec = Eigen::VectorXi;
 
-
-
-
-
-
 dscl get_deviance(GALAMM::Model& mod, ldlt& solver){
-
+  mod.Lambdat_needs_update = true;
   mod.get_conditional_modes(solver);
   solver.factorize(mod.get_inner_hessian());
-  dscl logdet = log(solver.determinant()) / 2;
-  dscl loglik = mod.exponent_g() - logdet;
-
-  return -2 * loglik;
+  return -2 * (mod.exponent_g() - log(solver.determinant()) / 2);
 }
+
+
 
 
 
@@ -47,14 +41,15 @@ Rcpp::List compute_galamm(
     const Eigen::Map<Eigen::VectorXd> trials
   ){
 
-  GALAMM::Gaussian mod{y, X, Zt, Lambdat, Lind, theta, trials};
-
   ldlt solver;
   solver.setShift(1);
+
+
+  GALAMM::Gaussian mod{y, X, Zt, Lambdat, Lind, theta, trials};
   solver.analyzePattern(mod.get_inner_hessian());
 
-  dscl deviance = get_deviance(mod, solver);
-  mod.b = mod.get_Lambdat().transpose() * mod.u;
+  dscl deviance{};
+  Eigen::VectorXd g = gradient(get_deviance, wrt(mod.theta), at(mod, solver), deviance);
 
 
   return Rcpp::List::create(
@@ -62,8 +57,9 @@ Rcpp::List compute_galamm(
     Rcpp::Named("theta") = mod.theta.cast<double>(),
     Rcpp::Named("beta") = mod.beta.cast<double>(),
     Rcpp::Named("u") = mod.u.cast<double>(),
-    Rcpp::Named("b") = mod.b.cast<double>(),
+    Rcpp::Named("b") = (mod.get_Lambdat().transpose() * mod.u).cast<double>(),
     Rcpp::Named("phi") = static_cast<double>(mod.get_phi()),
-    Rcpp::Named("deviance") = static_cast<double>(deviance)
+    Rcpp::Named("deviance") = static_cast<double>(deviance),
+    Rcpp::Named("gradient") = g
   );
 }

@@ -42,7 +42,7 @@ obj <- galamm:::compute_galamm(
   y = y, X = X, Zt = Zt, Lambdat = Lambdat, Lind = ranef_obj$Lind - 1L,
   theta = theta, maxit_outer = 1, family = "Gaussian", trials = rep(1, length(y)))
 
-galamm(formula, data)
+
 
 -obj$deviance / 2
 logLik(fm1)

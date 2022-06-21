@@ -2,10 +2,10 @@
 
 using dvec = autodiff::VectorXdual2nd;
 using dmat = autodiff::MatrixXdual2nd;
+using dscl = autodiff::dual2nd;
+using ldlt = Eigen::SimplicialLLT<Eigen::SparseMatrix<dscl> >;
 
-void GALAMM::Model::get_conditional_modes(
-    Eigen::SimplicialLLT<Eigen::SparseMatrix<autodiff::dual2nd> >& solver
-  ){
+void GALAMM::Model::get_conditional_modes(ldlt& solver){
   dvec delta_beta{};
   dvec delta_u{};
 
@@ -31,7 +31,7 @@ void GALAMM::Model::get_conditional_modes(
   }
 }
 
-autodiff::dual2nd GALAMM::Model::exponent_g(){
+dscl GALAMM::Model::exponent_g(){
   return (y.dot(get_linpred()) - cumulant()) / get_phi() + constfun() -
     u.squaredNorm() / 2 / get_phi();
 }
@@ -42,7 +42,7 @@ void GALAMM::Model::update_inner_hessian(){
     Zt.transpose() * get_Lambdat().transpose();
 }
 
-Eigen::SparseMatrix<autodiff::dual2nd>& GALAMM::Model::get_inner_hessian(){
+Eigen::SparseMatrix<dscl>& GALAMM::Model::get_inner_hessian(){
   if(inner_hessian_needs_update){
     update_inner_hessian();
     inner_hessian_needs_update = false;
@@ -53,7 +53,7 @@ Eigen::SparseMatrix<autodiff::dual2nd>& GALAMM::Model::get_inner_hessian(){
 void GALAMM::Model::update_Lambdat(){
   int lind_counter{};
   for (int k{}; k < Lambdat.outerSize(); ++k){
-    for (Eigen::SparseMatrix<autodiff::dual2nd>::InnerIterator
+    for (Eigen::SparseMatrix<dscl>::InnerIterator
            it(Lambdat, k); it; ++it)
     {
       it.valueRef() = theta(Lind(lind_counter));
@@ -65,7 +65,7 @@ void GALAMM::Model::update_Lambdat(){
 
 }
 
-Eigen::SparseMatrix<autodiff::dual2nd>& GALAMM::Model::get_Lambdat(){
+Eigen::SparseMatrix<dscl>& GALAMM::Model::get_Lambdat(){
   if(Lambdat_needs_update){
     update_Lambdat();
     Lambdat_needs_update = false;
@@ -73,7 +73,7 @@ Eigen::SparseMatrix<autodiff::dual2nd>& GALAMM::Model::get_Lambdat(){
   return Lambdat;
 }
 
-Eigen::DiagonalMatrix<autodiff::dual2nd, Eigen::Dynamic>&
+Eigen::DiagonalMatrix<dscl, Eigen::Dynamic>&
   GALAMM::Model::get_V(){
     if(V_needs_update){
       update_V();
@@ -82,7 +82,7 @@ Eigen::DiagonalMatrix<autodiff::dual2nd, Eigen::Dynamic>&
     return V;
   }
 
-autodiff::dual2nd& GALAMM::Model::get_phi(){
+dscl& GALAMM::Model::get_phi(){
   if(phi_needs_update){
     update_phi();
     phi_needs_update = false;

@@ -94,7 +94,6 @@ namespace GALAMM {
     const Eigen::VectorXi Lind;
     autodiff::VectorXdual2nd theta;
     autodiff::VectorXdual2nd beta;
-    autodiff::VectorXdual2nd b;
     autodiff::VectorXdual2nd u;
     Eigen::VectorXd trials;
 
