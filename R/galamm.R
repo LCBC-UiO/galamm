@@ -14,7 +14,7 @@
 #'
 #' @examples
 #' # empty example
-galamm <- function(formula, data, family = gaussian, latent = NULL,
+galamm <- function(formula, data, family = "Gaussian", latent = NULL,
                   lambda = NULL){
 
   latent_barlist <- lme4::findbars(latent)
@@ -34,11 +34,8 @@ galamm <- function(formula, data, family = gaussian, latent = NULL,
 
   y <- as.numeric(data[[all.vars(formula)[[1]]]])
 
-  fit <- compute_galamm(
-    y = y, X = X, Z = t(ranef_obj$Zt), Lambda = t(ranef_obj$Lambdat),
-    Lind = ranef_obj$Lind - 1L, theta = ranef_obj$theta,
-    theta_inds = seq(0L, length(ranef_obj$theta) - 1L),
-    beta = rep(0, ncol(X)),
-    beta_inds = length(ranef_obj$theta) + seq_len(ncol(X)) - 1L,
-    phi = 950)
+  compute_galamm(
+    y = y, X = X, Zt = ranef_obj$Zt, Lambdat = ranef_obj$Lambdat,
+    Lind = ranef_obj$Lind - 1L, theta = ranef_obj$theta, maxit_outer = 1,
+    family = family, trials = rep(1, length(y)))
 }

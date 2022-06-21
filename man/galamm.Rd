@@ -4,7 +4,7 @@
 \alias{galamm}
 \title{Fitting Generalized Additive Latent and Mixed Models}
 \usage{
-galamm(formula, data, family = gaussian, latent = NULL, lambda = NULL)
+galamm(formula, data, family = "Gaussian", latent = NULL, lambda = NULL)
 }
 \arguments{
 \item{formula}{a two-sided formula object using \code{lme4} style to specify
