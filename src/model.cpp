@@ -5,6 +5,32 @@ using dmat = autodiff::MatrixXdual2nd;
 using dscl = autodiff::dual2nd;
 using ldlt = Eigen::SimplicialLLT<Eigen::SparseMatrix<dscl> >;
 
+GALAMM::Model::Model(
+  const Eigen::VectorXd y0,
+  const Eigen::MatrixXd X0,
+  const Eigen::MappedSparseMatrix<double> Zt0,
+  const Eigen::MappedSparseMatrix<double> Lambdat0,
+  const Eigen::VectorXi Lind0,
+  const Eigen::VectorXd theta0,
+  const Eigen::VectorXd trials0,
+  const int maxit_conditional_modes0
+) : y { y0 },
+  X { X0.cast<autodiff::dual2nd>() },
+  Zt { Zt0.cast<autodiff::dual2nd>() },
+  Lambdat { Lambdat0.cast<autodiff::dual2nd>() },
+  Lind { Lind0 },
+  theta { theta0.cast<autodiff::dual2nd>() },
+  trials { trials0 },
+  maxit_conditional_modes { maxit_conditional_modes0 }
+  {
+    n = X.rows();
+    p = X.cols();
+    q = Zt.rows();
+    u = autodiff::VectorXdual2nd::Zero(q);
+    beta = autodiff::VectorXdual2nd::Zero(p);
+    V = Eigen::DiagonalMatrix<autodiff::dual2nd, Eigen::Dynamic>(n);
+  }
+
 void GALAMM::Model::get_conditional_modes(ldlt& solver){
   dvec delta_beta{};
   dvec delta_u{};

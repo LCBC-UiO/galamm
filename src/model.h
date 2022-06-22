@@ -21,23 +21,7 @@ namespace GALAMM {
       const Eigen::VectorXd theta0,
       const Eigen::VectorXd trials0,
       const int maxit_conditional_modes0 = 1
-    )
-     : y { y0 },
-    X { X0.cast<autodiff::dual2nd>() },
-    Zt { Zt0.cast<autodiff::dual2nd>() },
-    Lambdat { Lambdat0.cast<autodiff::dual2nd>() },
-    Lind { Lind0 },
-    theta { theta0.cast<autodiff::dual2nd>() },
-    trials { trials0 },
-    maxit_conditional_modes { maxit_conditional_modes0 }
-    {
-      n = X.rows();
-      p = X.cols();
-      q = Zt.rows();
-      u = autodiff::VectorXdual2nd::Zero(q);
-      beta = autodiff::VectorXdual2nd::Zero(p);
-      V = Eigen::DiagonalMatrix<autodiff::dual2nd, Eigen::Dynamic>(n);
-    }
+    );
 
     // Function to compute regression coefficients in inner loop
     void get_conditional_modes(
@@ -104,6 +88,21 @@ namespace GALAMM {
   };
 
   struct Gaussian : Model {
+
+    // Inherit base class constructor
+    using Model::Model;
+
+    autodiff::dual2nd cumulant() override;
+    autodiff::dual2nd constfun() override;
+    autodiff::VectorXdual2nd meanfun() override;
+
+    // How to update diagonal variance matrix is model dependent
+    void update_V() override;
+    void update_phi() override;
+
+  };
+
+  struct Binomial : Model {
 
     // Inherit base class constructor
     using Model::Model;

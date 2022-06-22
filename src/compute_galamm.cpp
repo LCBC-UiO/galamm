@@ -44,8 +44,7 @@ Rcpp::List compute_galamm(
   ldlt solver;
   solver.setShift(1);
 
-
-  GALAMM::Gaussian mod{y, X, Zt, Lambdat, Lind, theta, trials};
+  GALAMM::Binomial mod{y, X, Zt, Lambdat, Lind, theta, trials, 50};
   solver.analyzePattern(mod.get_inner_hessian());
 
   dscl deviance{};

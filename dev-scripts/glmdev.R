@@ -14,7 +14,7 @@ data <- tibble(
     y = rbinom(nrow(.), trials, prob = plogis(x + b))
     )
 
-formula <- cbind(y, trials - y) ~ x + I(x^2) + (1 | id)
+formula <- cbind(y, trials - y) ~ x + (1 | id)
 
 llglm <- numeric()
 llgaa <- numeric()
