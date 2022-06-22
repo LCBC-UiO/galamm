@@ -16,50 +16,40 @@ data <- tibble(
 
 formula <- cbind(y, trials - y) ~ x + (1 | id)
 
-llglm <- numeric()
-llgaa <- numeric()
+gm1 <- glmer(formula, data = data, family = binomial, nAGQ = 0L)
 
-for(formula in list(cbind(y, trials - y) ~ 1 + (1 | id),
-                    cbind(y, trials - y) ~ x + (1 | id))) {
-  gm1 <- glmer(formula, data = data, family = binomial, nAGQ = 0L)
 
-  llglm <- c(llglm, logLik(gm1))
+latent <- NULL
+lambda <- NULL
 
-  latent <- NULL
-  lambda <- NULL
+latent_barlist <- lme4::findbars(latent)
+factors <- find_factors(latent_barlist, data)
+load_vars <- find_load_vars(latent_barlist, data, lambda)
+lambda_init <- initialize_lambda(lambda)
+datax <- add_latent_to_data(latent_barlist, factors, load_vars, data,
+                            lambda_init)
+X <- model.matrix(lme4::nobars(formula), data = datax)
 
-  latent_barlist <- lme4::findbars(latent)
-  factors <- find_factors(latent_barlist, data)
-  load_vars <- find_load_vars(latent_barlist, data, lambda)
-  lambda_init <- initialize_lambda(lambda)
-  datax <- add_latent_to_data(latent_barlist, factors, load_vars, data,
-                              lambda_init)
-  X <- model.matrix(lme4::nobars(formula), data = datax)
+fixed_mapping <- find_load_cols(factors, load_vars, colnames(X))
+lambda_mapping <- lapply(names(lambda), function(x) as.integer(datax[[x]]))
+ranef_obj <- lme4::mkReTrms(lme4::findbars(formula), datax)
 
-  fixed_mapping <- find_load_cols(factors, load_vars, colnames(X))
-  lambda_mapping <- lapply(names(lambda), function(x) as.integer(datax[[x]]))
-  ranef_obj <- lme4::mkReTrms(lme4::findbars(formula), datax)
+ranef_mapping <- lapply(ranef_obj$cnms,
+                        function(x) find_load_cols(factors, load_vars, x))
 
-  ranef_mapping <- lapply(ranef_obj$cnms,
-                          function(x) find_load_cols(factors, load_vars, x))
+increment <- unique(diff(ranef_obj$Zt@p))
 
-  increment <- unique(diff(ranef_obj$Zt@p))
+y <- as.numeric(data[[all.vars(formula)[[1]]]])
 
-  y <- as.numeric(data[[all.vars(formula)[[1]]]])
+theta_init <- getME(gm1, "theta") + .01
 
-  theta_init <- getME(gm1, "theta")
+Zt <- getME(gm1, "Zt")
+Lambdat <- getME(gm1, "Lambdat")
 
-  Zt <- getME(gm1, "Zt")
-  Lambdat <- getME(gm1, "Lambdat")
+obj <- galamm:::compute_galamm(
+  y = as.numeric(y) , X = X, Zt = Zt, Lambdat = Lambdat, Lind = ranef_obj$Lind - 1L,
+  theta = theta_init, maxit_outer = 1, family = "binomial", trials = as.numeric(data$trials))
 
-  obj <- galamm:::compute_galamm(
-    y = as.numeric(y) , X = X, Zt = Zt, Lambdat = Lambdat, Lind = ranef_obj$Lind - 1L,
-    theta = theta_init, maxit_outer = 1, family = "binomial", trials = as.numeric(data$trials))
-  llgaa <- c(llgaa, -obj$deviance/2)
-}
-
-diff(llglm)
-diff(llgaa)
 plot(obj$u, getME(gm1, "u")); abline(0, 1)
 plot(obj$beta, fixef(gm1)); abline(0, 1)
 

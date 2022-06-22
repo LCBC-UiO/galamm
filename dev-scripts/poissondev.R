@@ -41,10 +41,11 @@ increment <- unique(diff(ranef_obj$Zt@p))
 
 y <- as.numeric(data[[all.vars(formula)[[1]]]])
 
-theta_init <- getME(gm1, "theta")
+
 
 Zt <- getME(gm1, "Zt")
 Lambdat <- getME(gm1, "Lambdat")
+theta_init <- getME(gm1, "theta")
 
 obj <- galamm:::compute_galamm(
   y = as.numeric(y) , X = X, Zt = Zt, Lambdat = Lambdat, Lind = ranef_obj$Lind - 1L,

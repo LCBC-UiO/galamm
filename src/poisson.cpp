@@ -7,7 +7,7 @@ GALAMM::Poisson::cumulant(){
 
 autodiff::dual2nd
 GALAMM::Poisson::constfun(){
-  return 1;
+  return -(y.array() + 1).lgamma().sum();
 }
 
 autodiff::VectorXdual2nd
@@ -27,4 +27,5 @@ void GALAMM::Poisson::update_phi(){
 void GALAMM::Poisson::update_linpred(){
   linpred = X * beta + Zt.transpose() * get_Lambdat().transpose() * u;
   phi_needs_update = false;
+  V_needs_update = true;
 }

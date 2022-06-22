@@ -23,11 +23,32 @@ dscl get_deviance(GALAMM::Model& mod, ldlt& solver){
   return -2 * (mod.exponent_g() - log(solver.determinant()) / 2);
 }
 
-Rcpp::List compute(GALAMM::Model& mod, ldlt& solver){
+Rcpp::List compute(GALAMM::Model& mod, ldlt& solver, int maxit_outer){
   dscl deviance{};
+  Eigen::VectorXd g;
+  Eigen::MatrixXd H;
+  dvec delta_theta;
+
+  // parameters for backtracking line search
+  double alpha = 1;
+  double c = 1e-4;
+  double rho = .9;
 
   solver.analyzePattern(mod.get_inner_hessian());
-  Eigen::VectorXd g = gradient(get_deviance, wrt(mod.theta), at(mod, solver), deviance);
+
+  for(int i{}; i < maxit_outer; i++){
+    H = hessian(get_deviance, wrt(mod.theta), at(mod, solver), deviance, g);
+    delta_theta = -H.colPivHouseholderQr().solve(g);
+
+    mod.theta += alpha * delta_theta;
+
+    if(abs(get_deviance(mod, solver) - deviance) < 1e-10){
+      Rcpp::Rcout << "Stopping at iteration " << i << std::endl;
+      break;
+    }
+  }
+  deviance = get_deviance(mod, solver);
+
 
   return Rcpp::List::create(
     Rcpp::Named("Lambdat") = mod.get_Lambdat().cast<double>(),
@@ -37,7 +58,9 @@ Rcpp::List compute(GALAMM::Model& mod, ldlt& solver){
     Rcpp::Named("b") = (mod.get_Lambdat().transpose() * mod.u).cast<double>(),
     Rcpp::Named("phi") = static_cast<double>(mod.get_phi()),
     Rcpp::Named("deviance") = static_cast<double>(deviance),
-    Rcpp::Named("gradient") = g.cast<double>()
+    Rcpp::Named("gradient") = g.cast<double>(),
+    Rcpp::Named("Hessian") = H.cast<double>(),
+    Rcpp::Named("delta_theta") = delta_theta.cast<double>()
   );
 }
 
@@ -60,13 +83,13 @@ Rcpp::List compute_galamm(
 
   if(family == "gaussian"){
     GALAMM::Gaussian mod{y, X, Zt, Lambdat, Lind, theta, trials, 1};
-    return compute(mod, solver);
+    return compute(mod, solver, maxit_outer);
   } else if(family == "binomial"){
     GALAMM::Binomial mod{y, X, Zt, Lambdat, Lind, theta, trials, 50};
-    return compute(mod, solver);
+    return compute(mod, solver, maxit_outer);
   } else if(family == "poisson"){
     GALAMM::Poisson mod{y, X, Zt, Lambdat, Lind, theta, trials, 50};
-    return compute(mod, solver);
+    return compute(mod, solver, maxit_outer);
   } else {
     Rcpp::stop("Unknown family.");
   }
