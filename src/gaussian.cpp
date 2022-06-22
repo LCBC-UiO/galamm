@@ -25,3 +25,9 @@ void GALAMM::Gaussian::update_phi(){
   inner_hessian_needs_update = true;
   V_needs_update = true;
 }
+
+
+void GALAMM::Gaussian::update_linpred(){
+  linpred = X * beta + Zt.transpose() * get_Lambdat().transpose() * u;
+  phi_needs_update = true;
+}

@@ -23,10 +23,23 @@ dscl get_deviance(GALAMM::Model& mod, ldlt& solver){
   return -2 * (mod.exponent_g() - log(solver.determinant()) / 2);
 }
 
+Rcpp::List compute(GALAMM::Model& mod, ldlt& solver){
+  dscl deviance{};
 
+  solver.analyzePattern(mod.get_inner_hessian());
+  Eigen::VectorXd g = gradient(get_deviance, wrt(mod.theta), at(mod, solver), deviance);
 
-
-
+  return Rcpp::List::create(
+    Rcpp::Named("Lambdat") = mod.get_Lambdat().cast<double>(),
+    Rcpp::Named("theta") = mod.theta.cast<double>(),
+    Rcpp::Named("beta") = mod.beta.cast<double>(),
+    Rcpp::Named("u") = mod.u.cast<double>(),
+    Rcpp::Named("b") = (mod.get_Lambdat().transpose() * mod.u).cast<double>(),
+    Rcpp::Named("phi") = static_cast<double>(mod.get_phi()),
+    Rcpp::Named("deviance") = static_cast<double>(deviance),
+    Rcpp::Named("gradient") = g.cast<double>()
+  );
+}
 
 // [[Rcpp::export]]
 Rcpp::List compute_galamm(
@@ -44,21 +57,19 @@ Rcpp::List compute_galamm(
   ldlt solver;
   solver.setShift(1);
 
-  GALAMM::Binomial mod{y, X, Zt, Lambdat, Lind, theta, trials, 50};
-  solver.analyzePattern(mod.get_inner_hessian());
 
-  dscl deviance{};
-  Eigen::VectorXd g = gradient(get_deviance, wrt(mod.theta), at(mod, solver), deviance);
+  if(family == "gaussian"){
+    GALAMM::Gaussian mod{y, X, Zt, Lambdat, Lind, theta, trials, 1};
+    return compute(mod, solver);
+  } else if(family == "binomial"){
+    GALAMM::Binomial mod{y, X, Zt, Lambdat, Lind, theta, trials, 50};
+    return compute(mod, solver);
+  } else if(family == "poisson"){
+    GALAMM::Poisson mod{y, X, Zt, Lambdat, Lind, theta, trials, 50};
+    return compute(mod, solver);
+  } else {
+    Rcpp::stop("Unknown family.");
+  }
 
 
-  return Rcpp::List::create(
-    Rcpp::Named("Lambdat") = mod.get_Lambdat().cast<double>(),
-    Rcpp::Named("theta") = mod.theta.cast<double>(),
-    Rcpp::Named("beta") = mod.beta.cast<double>(),
-    Rcpp::Named("u") = mod.u.cast<double>(),
-    Rcpp::Named("b") = (mod.get_Lambdat().transpose() * mod.u).cast<double>(),
-    Rcpp::Named("phi") = static_cast<double>(mod.get_phi()),
-    Rcpp::Named("deviance") = static_cast<double>(deviance),
-    Rcpp::Named("gradient") = g
-  );
 }

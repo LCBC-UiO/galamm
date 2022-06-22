@@ -40,7 +40,7 @@ theta <- getME(fm1, "theta")
 
 obj <- galamm:::compute_galamm(
   y = y, X = X, Zt = Zt, Lambdat = Lambdat, Lind = ranef_obj$Lind - 1L,
-  theta = theta, maxit_outer = 1, family = "Gaussian", trials = rep(1, length(y)))
+  theta = theta, maxit_outer = 1, family = "gaussian", trials = rep(1, length(y)))
 
 
 

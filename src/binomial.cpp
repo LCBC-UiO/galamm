@@ -24,3 +24,8 @@ void GALAMM::Binomial::update_V(){
 void GALAMM::Binomial::update_phi(){
   phi = 1;
 }
+
+void GALAMM::Binomial::update_linpred(){
+  linpred = X * beta + Zt.transpose() * get_Lambdat().transpose() * u;
+  phi_needs_update = false;
+}

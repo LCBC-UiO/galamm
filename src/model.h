@@ -57,7 +57,7 @@ namespace GALAMM {
     bool V_needs_update{true};
 
     // Linear predictor
-    void update_linpred();
+    virtual void update_linpred() = 0;
     autodiff::VectorXdual2nd& get_linpred();
     bool linpred_needs_update{true};
     autodiff::VectorXdual2nd linpred;
@@ -95,6 +95,7 @@ namespace GALAMM {
     autodiff::dual2nd cumulant() override;
     autodiff::dual2nd constfun() override;
     autodiff::VectorXdual2nd meanfun() override;
+    void update_linpred() override;
 
     // How to update diagonal variance matrix is model dependent
     void update_V() override;
@@ -110,6 +111,24 @@ namespace GALAMM {
     autodiff::dual2nd cumulant() override;
     autodiff::dual2nd constfun() override;
     autodiff::VectorXdual2nd meanfun() override;
+    void update_linpred() override;
+
+    // How to update diagonal variance matrix is model dependent
+    void update_V() override;
+    void update_phi() override;
+
+  };
+
+
+  struct Poisson : Model {
+
+    // Inherit base class constructor
+    using Model::Model;
+
+    autodiff::dual2nd cumulant() override;
+    autodiff::dual2nd constfun() override;
+    autodiff::VectorXdual2nd meanfun() override;
+    void update_linpred() override;
 
     // How to update diagonal variance matrix is model dependent
     void update_V() override;

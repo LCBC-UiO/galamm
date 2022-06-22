@@ -116,11 +116,6 @@ dscl& GALAMM::Model::get_phi(){
   return phi;
 }
 
-void GALAMM::Model::update_linpred(){
-  linpred = X * beta + Zt.transpose() * get_Lambdat().transpose() * u;
-  phi_needs_update = true;
-}
-
 autodiff::VectorXdual2nd& GALAMM::Model::get_linpred(){
   if(linpred_needs_update){
     update_linpred();

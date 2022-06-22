@@ -6,7 +6,7 @@ test_that("model matrices get correctly set up", {
   mod <- galamm(
     formula = y ~ item + latent + time : latent + ( 0 + latent | id / tp ),
     data = latent_response_dat,
-    family = "Gaussian",
+    family = "gaussian",
     latent = ~ (latent | item),
     lambda = list(item = c(1, NA_real_, NA_real_))
   )

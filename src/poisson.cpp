@@ -1,0 +1,30 @@
+#include "model.h"
+
+autodiff::dual2nd
+GALAMM::Poisson::cumulant(){
+  return get_linpred().array().exp().sum();
+}
+
+autodiff::dual2nd
+GALAMM::Poisson::constfun(){
+  return 1;
+}
+
+autodiff::VectorXdual2nd
+GALAMM::Poisson::meanfun() {
+  return get_linpred().array().exp();
+}
+
+void GALAMM::Poisson::update_V(){
+  V.diagonal().array() = meanfun().array();
+  inner_hessian_needs_update = true;
+}
+
+void GALAMM::Poisson::update_phi(){
+  phi = 1;
+}
+
+void GALAMM::Poisson::update_linpred(){
+  linpred = X * beta + Zt.transpose() * get_Lambdat().transpose() * u;
+  phi_needs_update = false;
+}
