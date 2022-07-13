@@ -19,6 +19,7 @@ namespace GALAMM {
       const Eigen::MappedSparseMatrix<double> Lambdat0,
       const Eigen::VectorXi Lind0,
       const Eigen::VectorXd theta0,
+      const Eigen::VectorXi theta_log0,
       const Eigen::VectorXd trials0,
       const int maxit_conditional_modes0 = 1
     );
@@ -77,6 +78,7 @@ namespace GALAMM {
 
     const Eigen::VectorXi Lind;
     autodiff::VectorXdual2nd theta;
+    Eigen::VectorXi theta_log;
     autodiff::VectorXdual2nd beta;
     autodiff::VectorXdual2nd u;
     Eigen::VectorXd trials;

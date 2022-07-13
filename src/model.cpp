@@ -12,6 +12,7 @@ GALAMM::Model::Model(
   const Eigen::MappedSparseMatrix<double> Lambdat0,
   const Eigen::VectorXi Lind0,
   const Eigen::VectorXd theta0,
+  const Eigen::VectorXi theta_log0,
   const Eigen::VectorXd trials0,
   const int maxit_conditional_modes0
 ) : y { y0 },
@@ -20,6 +21,7 @@ GALAMM::Model::Model(
   Lambdat { Lambdat0.cast<autodiff::dual2nd>() },
   Lind { Lind0 },
   theta { theta0.cast<autodiff::dual2nd>() },
+  theta_log { theta_log0 },
   trials { trials0 },
   maxit_conditional_modes { maxit_conditional_modes0 }
   {
@@ -82,7 +84,11 @@ void GALAMM::Model::update_Lambdat(){
     for (Eigen::SparseMatrix<dscl>::InnerIterator
            it(Lambdat, k); it; ++it)
     {
-      it.valueRef() = theta(Lind(lind_counter));
+      if(theta_log(Lind(lind_counter)) == 1){
+        it.valueRef() = exp(theta(Lind(lind_counter)));
+      } else {
+        it.valueRef() = theta(Lind(lind_counter));
+      }
       lind_counter++;
     }
   }

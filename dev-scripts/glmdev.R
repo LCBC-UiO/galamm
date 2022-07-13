@@ -41,14 +41,17 @@ increment <- unique(diff(ranef_obj$Zt@p))
 
 y <- as.numeric(data[[all.vars(formula)[[1]]]])
 
-theta_init <- getME(gm1, "theta") + .01
+theta_init <- getME(gm1, "theta") + .1
+theta_log <- 1L
+theta_init <- log(theta_init)
 
 Zt <- getME(gm1, "Zt")
 Lambdat <- getME(gm1, "Lambdat")
 
 obj <- galamm:::compute_galamm(
   y = as.numeric(y) , X = X, Zt = Zt, Lambdat = Lambdat, Lind = ranef_obj$Lind - 1L,
-  theta = theta_init, maxit_outer = 1, family = "binomial", trials = as.numeric(data$trials))
+  theta = theta_init, theta_log = theta_log, maxit_outer = 10, family = "binomial",
+  trials = as.numeric(data$trials))
 
 plot(obj$u, getME(gm1, "u")); abline(0, 1)
 plot(obj$beta, fixef(gm1)); abline(0, 1)

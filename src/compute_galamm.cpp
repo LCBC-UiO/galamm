@@ -42,7 +42,7 @@ Rcpp::List compute(GALAMM::Model& mod, ldlt& solver, int maxit_outer){
 
     mod.theta += alpha * delta_theta;
 
-    if(abs(get_deviance(mod, solver) - deviance) < 1e-10){
+    if(delta_theta.squaredNorm() < 1e-5){
       Rcpp::Rcout << "Stopping at iteration " << i << std::endl;
       break;
     }
@@ -72,6 +72,7 @@ Rcpp::List compute_galamm(
     const Eigen::MappedSparseMatrix<double> Lambdat,
     const Eigen::Map<Eigen::VectorXi> Lind,
     const Eigen::Map<Eigen::VectorXd> theta,
+    const Eigen::Map<Eigen::VectorXi> theta_log,
     const int maxit_outer,
     const std::string family,
     const Eigen::Map<Eigen::VectorXd> trials
@@ -82,13 +83,16 @@ Rcpp::List compute_galamm(
 
 
   if(family == "gaussian"){
-    GALAMM::Gaussian mod{y, X, Zt, Lambdat, Lind, theta, trials, 1};
+    GALAMM::Gaussian mod{y, X, Zt, Lambdat, Lind, theta, theta_log,
+                         trials, 1};
     return compute(mod, solver, maxit_outer);
   } else if(family == "binomial"){
-    GALAMM::Binomial mod{y, X, Zt, Lambdat, Lind, theta, trials, 50};
+    GALAMM::Binomial mod{y, X, Zt, Lambdat, Lind, theta, theta_log,
+                         trials, 50};
     return compute(mod, solver, maxit_outer);
   } else if(family == "poisson"){
-    GALAMM::Poisson mod{y, X, Zt, Lambdat, Lind, theta, trials, 50};
+    GALAMM::Poisson mod{y, X, Zt, Lambdat, Lind, theta, theta_log,
+                        trials, 50};
     return compute(mod, solver, maxit_outer);
   } else {
     Rcpp::stop("Unknown family.");

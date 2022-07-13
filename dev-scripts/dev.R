@@ -37,10 +37,15 @@ sigma <- .01
 beta <- .5
 
 theta <- getME(fm1, "theta")
+theta_log <- as.integer(ranef_obj$lower == 0)
+theta <- ifelse(theta_log == 1, log(theta), theta)
 
 obj <- galamm:::compute_galamm(
   y = y, X = X, Zt = Zt, Lambdat = Lambdat, Lind = ranef_obj$Lind - 1L,
-  theta = theta, maxit_outer = 1, family = "gaussian", trials = rep(1, length(y)))
+  theta = theta + rnorm(3, sd = .05),
+  theta_log = theta_log,
+  maxit_outer = 10,
+  family = "gaussian", trials = rep(1, length(y)))
 
 
 

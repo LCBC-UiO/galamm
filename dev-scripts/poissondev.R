@@ -45,11 +45,13 @@ y <- as.numeric(data[[all.vars(formula)[[1]]]])
 
 Zt <- getME(gm1, "Zt")
 Lambdat <- getME(gm1, "Lambdat")
-theta_init <- getME(gm1, "theta")
+theta_init <- log(getME(gm1, "theta")) + rnorm(1, sd = .1)
+theta_log <- 1L
 
 obj <- galamm:::compute_galamm(
   y = as.numeric(y) , X = X, Zt = Zt, Lambdat = Lambdat, Lind = ranef_obj$Lind - 1L,
-  theta = theta_init, maxit_outer = 1, family = "poisson", trials = rep(1, length(y)))
+  theta = theta_init, theta_log = theta_log,
+  maxit_outer = 10, family = "poisson", trials = rep(1, length(y)))
 
 - obj$deviance / 2
 logLik(gm1)
