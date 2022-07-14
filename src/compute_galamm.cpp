@@ -64,7 +64,6 @@ Rcpp::List compute(GALAMM::Model& mod, ldlt& solver, int maxit_outer){
   }
   deviance = get_deviance(mod, solver);
 
-
   return Rcpp::List::create(
     Rcpp::Named("Lambdat") = mod.get_Lambdat().cast<double>(),
     Rcpp::Named("theta") = mod.theta.cast<double>(),
@@ -73,9 +72,7 @@ Rcpp::List compute(GALAMM::Model& mod, ldlt& solver, int maxit_outer){
     Rcpp::Named("b") = (mod.get_Lambdat().transpose() * mod.u).cast<double>(),
     Rcpp::Named("phi") = static_cast<double>(mod.get_phi()),
     Rcpp::Named("deviance") = static_cast<double>(deviance),
-    Rcpp::Named("gradient") = g.cast<double>(),
-    Rcpp::Named("Hessian") = H.cast<double>(),
-    Rcpp::Named("delta_theta") = delta_theta.cast<double>()
+    Rcpp::Named("RXtRX") = mod.RXtRX.cast<double>()
   );
 }
 

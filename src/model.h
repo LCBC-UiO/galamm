@@ -75,6 +75,7 @@ namespace GALAMM {
     Eigen::VectorXd y;
     autodiff::MatrixXdual2nd X;
     Eigen::SparseMatrix<autodiff::dual2nd> Zt;
+    autodiff::MatrixXdual2nd RXtRX;
 
     const Eigen::VectorXi Lind;
     autodiff::VectorXdual2nd theta;

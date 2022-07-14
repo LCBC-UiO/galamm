@@ -41,14 +41,14 @@ void GALAMM::Model::get_conditional_modes(ldlt& solver){
 
     solver.factorize(get_inner_hessian());
     dvec b1 = solver.permutationP() *
-      (get_Lambdat() * Zt * (y - meanfun()) - u );
+      (get_Lambdat() * Zt * (y - meanfun()) - u);
     dvec cu = solver.matrixL().solve(b1);
 
     dmat b2 = solver.permutationP() * get_Lambdat() * Zt *
       get_V() * X / get_phi();
     dmat RZX = solver.matrixL().solve(b2);
 
-    dmat RXtRX = (1/get_phi()) * X.transpose() * get_V() * X -
+    RXtRX = (1/get_phi()) * X.transpose() * get_V() * X -
       RZX.transpose() * RZX;
     delta_beta = RXtRX.colPivHouseholderQr().solve(X.transpose() * (y - meanfun()) -
       RZX.transpose() * cu);

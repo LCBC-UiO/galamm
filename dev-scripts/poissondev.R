@@ -45,7 +45,7 @@ y <- as.numeric(data[[all.vars(formula)[[1]]]])
 
 Zt <- getME(gm1, "Zt")
 Lambdat <- getME(gm1, "Lambdat")
-theta_init <- log(getME(gm1, "theta") + runif(1, 0, 1))
+theta_init <- log(getME(gm1, "theta") + runif(1, 0, .1))
 theta_log <- 1L
 
 obj <- galamm:::compute_galamm(
