@@ -53,14 +53,32 @@ void GALAMM::Model::get_conditional_modes(ldlt& solver, int stage){
         RZX.transpose() * RZX;
       delta_beta = RXtRX.colPivHouseholderQr().solve(X.transpose() * (y - meanfun()) -
         RZX.transpose() * cu);
-      update_beta(delta_beta);
+
       delta_u = solver.permutationPinv() * solver.matrixU().solve(cu - RZX * delta_beta);
+
+      for(int j{}; j < 10; j++){
+        double alpha_bar = 1;
+        dvec beta_old = beta;
+        dvec u_old = u;
+        dscl g_old = exponent_g();
+        update_beta(delta_beta, alpha_bar);
+        update_u(delta_u, alpha_bar);
+        if(exponent_g() > g_old){
+          Rcpp::Rcout << "Stopping inner search at " << j << std::endl;
+          break;
+        } else {
+          alpha_bar /= 2;
+        }
+      }
+
+
     } else if(stage == 2){
       delta_u = solver.permutationPinv() * solver.matrixU().solve(cu);
+      update_u(delta_u, 1);
     } else {
       Rcpp::stop("Unknown stage.");
     }
-    update_u(delta_u);
+
   }
 }
 
@@ -136,12 +154,14 @@ autodiff::VectorXdual2nd& GALAMM::Model::get_linpred(){
 }
 
 
-void GALAMM::Model::update_beta(const autodiff::VectorXdual2nd& delta_beta){
-  beta += delta_beta;
+void GALAMM::Model::update_beta(const autodiff::VectorXdual2nd& delta_beta,
+                                double alpha_bar){
+  beta += alpha_bar * delta_beta;
   linpred_needs_update = true;
 }
 
-void GALAMM::Model::update_u(const autodiff::VectorXdual2nd& delta_u){
-  u += delta_u;
+void GALAMM::Model::update_u(const autodiff::VectorXdual2nd& delta_u,
+                             double alpha_bar){
+  u += alpha_bar * delta_u;
   linpred_needs_update = true;
 }

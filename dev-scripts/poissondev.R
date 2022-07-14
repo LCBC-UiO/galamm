@@ -51,7 +51,7 @@ theta_log <- 1L
 obj <- galamm:::compute_galamm(
   y = as.numeric(y) , X = X, Zt = Zt, Lambdat = Lambdat, Lind = ranef_obj$Lind - 1L,
   theta = theta_init, theta_log = theta_log,
-  maxit_outer = 10, family = "poisson", trials = rep(1, length(y)))
+  maxit_outer = 100, family = "poisson", trials = rep(1, length(y)))
 
 - obj$deviance / 2
 logLik(gm1)

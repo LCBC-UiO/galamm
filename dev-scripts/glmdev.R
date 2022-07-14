@@ -53,8 +53,6 @@ obj <- galamm:::compute_galamm(
   theta = theta_init, theta_log = theta_log, maxit_outer = 30, family = "binomial",
   trials = as.numeric(data$trials))
 
-
-
 plot(obj$u, getME(gm1, "u")); abline(0, 1)
 plot(c(obj$beta, exp(obj$theta)), c(fixef(gm1), getME(gm1, "theta"))); abline(0, 1)
 

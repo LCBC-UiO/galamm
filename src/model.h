@@ -70,8 +70,8 @@ namespace GALAMM {
     virtual autodiff::VectorXdual2nd meanfun() = 0;
 
     // Regression coefficients
-    void update_beta(const autodiff::VectorXdual2nd& delta_beta);
-    void update_u(const autodiff::VectorXdual2nd& delta_u);
+    void update_beta(const autodiff::VectorXdual2nd& delta_beta, double alpha_bar);
+    void update_u(const autodiff::VectorXdual2nd& delta_u, double alpha_bar);
 
     Eigen::VectorXd y;
     autodiff::MatrixXdual2nd X;

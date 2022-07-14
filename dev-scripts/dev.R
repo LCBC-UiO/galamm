@@ -36,7 +36,7 @@ s <- 1
 sigma <- .01
 beta <- .5
 
-theta <- getME(fm1, "theta") + runif(3, .1, .3)
+theta <- getME(fm1, "theta") + runif(3, 0, .1)
 theta_log <- as.integer(ranef_obj$lower == 0)
 theta <- ifelse(theta_log == 1, log(theta), theta)
 
