@@ -25,26 +25,40 @@ dscl get_deviance(GALAMM::Model& mod, ldlt& solver){
 
 Rcpp::List compute(GALAMM::Model& mod, ldlt& solver, int maxit_outer){
   dscl deviance{};
+  dscl deviance_new{};
   Eigen::VectorXd g;
   Eigen::MatrixXd H;
   dvec delta_theta;
-
-  // parameters for backtracking line search
-  double alpha = 1;
-  double c = 1e-4;
-  double rho = .9;
+  dvec theta_old;
+  int max_backtracking_steps = 20;
 
   solver.analyzePattern(mod.get_inner_hessian());
 
   for(int i{}; i < maxit_outer; i++){
+    // parameters for backtracking line search
+    double alpha = 1;
+    double c = 1e-4;
+    double rho = .9;
+
     H = hessian(get_deviance, wrt(mod.theta), at(mod, solver), deviance, g);
     delta_theta = -H.colPivHouseholderQr().solve(g);
 
-    mod.theta += alpha * delta_theta;
-
-    if(delta_theta.squaredNorm() < 1e-5){
+    if(delta_theta.squaredNorm() < 1e-6){
       Rcpp::Rcout << "Stopping at iteration " << i << std::endl;
       break;
+    }
+
+    for(int j{}; j < max_backtracking_steps; j++){
+      mod.theta += alpha * delta_theta;
+      deviance_new = get_deviance(mod, solver);
+      dscl deviance_armijo = deviance + c * alpha * g.dot(delta_theta);
+      Rcpp::Rcout << "LHS = " << deviance_new << std::endl <<
+        "RHS = " << deviance_armijo << std::endl << "alpha = " << alpha <<
+          std::endl << std::endl;
+
+      if(deviance_new <= deviance_armijo) break;
+      mod.theta = theta_old;
+      alpha = rho * alpha;
     }
   }
   deviance = get_deviance(mod, solver);
