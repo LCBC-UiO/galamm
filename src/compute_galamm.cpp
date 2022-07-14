@@ -48,6 +48,7 @@ Rcpp::List compute(GALAMM::Model& mod, ldlt& solver, int maxit_outer){
       break;
     }
 
+    theta_old = mod.theta;
     for(int j{}; j < max_backtracking_steps; j++){
       mod.theta += alpha * delta_theta;
       deviance_new = get_deviance(mod, solver);
