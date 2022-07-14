@@ -53,9 +53,6 @@ Rcpp::List compute(GALAMM::Model& mod, ldlt& solver, int maxit_outer){
       mod.theta += alpha * delta_theta;
       deviance_new = get_deviance(mod, solver);
       dscl deviance_armijo = deviance + c * alpha * g.dot(delta_theta);
-      Rcpp::Rcout << "LHS = " << deviance_new << std::endl <<
-        "RHS = " << deviance_armijo << std::endl << "alpha = " << alpha <<
-          std::endl << std::endl;
 
       if(deviance_new <= deviance_armijo) break;
       mod.theta = theta_old;

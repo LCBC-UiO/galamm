@@ -33,7 +33,7 @@ GALAMM::Model::Model(
     V = Eigen::DiagonalMatrix<autodiff::dual2nd, Eigen::Dynamic>(n);
   }
 
-void GALAMM::Model::get_conditional_modes(ldlt& solver){
+void GALAMM::Model::get_conditional_modes(ldlt& solver, int stage){
   dvec delta_beta{};
   dvec delta_u{};
 
@@ -44,17 +44,22 @@ void GALAMM::Model::get_conditional_modes(ldlt& solver){
       (get_Lambdat() * Zt * (y - meanfun()) - u);
     dvec cu = solver.matrixL().solve(b1);
 
-    dmat b2 = solver.permutationP() * get_Lambdat() * Zt *
-      get_V() * X / get_phi();
-    dmat RZX = solver.matrixL().solve(b2);
+    if(stage == 1){
+      dmat b2 = solver.permutationP() * get_Lambdat() * Zt *
+        get_V() * X / get_phi();
+      dmat RZX = solver.matrixL().solve(b2);
 
-    RXtRX = (1/get_phi()) * X.transpose() * get_V() * X -
-      RZX.transpose() * RZX;
-    delta_beta = RXtRX.colPivHouseholderQr().solve(X.transpose() * (y - meanfun()) -
-      RZX.transpose() * cu);
-
-    delta_u = solver.permutationPinv() * solver.matrixU().solve(cu - RZX * delta_beta);
-    update_beta(delta_beta);
+      RXtRX = (1/get_phi()) * X.transpose() * get_V() * X -
+        RZX.transpose() * RZX;
+      delta_beta = RXtRX.colPivHouseholderQr().solve(X.transpose() * (y - meanfun()) -
+        RZX.transpose() * cu);
+      update_beta(delta_beta);
+      delta_u = solver.permutationPinv() * solver.matrixU().solve(cu - RZX * delta_beta);
+    } else if(stage == 2){
+      delta_u = solver.permutationPinv() * solver.matrixU().solve(cu);
+    } else {
+      Rcpp::stop("Unknown stage.");
+    }
     update_u(delta_u);
   }
 }
