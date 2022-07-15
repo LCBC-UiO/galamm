@@ -26,8 +26,7 @@ namespace GALAMM {
 
     // Function to compute regression coefficients in inner loop
     void get_conditional_modes(
-        Eigen::SimplicialLLT<Eigen::SparseMatrix<autodiff::dual2nd> >& solver,
-        int stage = 1
+        Eigen::SimplicialLLT<Eigen::SparseMatrix<autodiff::dual2nd> >& solver
     );
     int maxit_conditional_modes;
 

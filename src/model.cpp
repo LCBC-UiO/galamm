@@ -33,7 +33,7 @@ GALAMM::Model::Model(
     V = Eigen::DiagonalMatrix<autodiff::dual2nd, Eigen::Dynamic>(n);
   }
 
-void GALAMM::Model::get_conditional_modes(ldlt& solver, int stage){
+void GALAMM::Model::get_conditional_modes(ldlt& solver){
   dvec delta_beta{};
   dvec delta_u{};
 
@@ -44,42 +44,19 @@ void GALAMM::Model::get_conditional_modes(ldlt& solver, int stage){
       (get_Lambdat() * Zt * (y - meanfun()) - u);
     dvec cu = solver.matrixL().solve(b1);
 
-    if(stage == 1){
-      dmat b2 = solver.permutationP() * get_Lambdat() * Zt *
-        get_V() * X / get_phi();
-      dmat RZX = solver.matrixL().solve(b2);
+    dmat b2 = solver.permutationP() * get_Lambdat() * Zt *
+      get_V() * X / get_phi();
+    dmat RZX = solver.matrixL().solve(b2);
 
-      RXtRX = (1/get_phi()) * X.transpose() * get_V() * X -
-        RZX.transpose() * RZX;
-      delta_beta = RXtRX.colPivHouseholderQr().solve(X.transpose() * (y - meanfun()) -
-        RZX.transpose() * cu);
+    RXtRX = (1/get_phi()) * X.transpose() * get_V() * X -
+      RZX.transpose() * RZX;
+    delta_beta = RXtRX.colPivHouseholderQr().solve(X.transpose() * (y - meanfun()) -
+      RZX.transpose() * cu);
 
-      delta_u = solver.permutationPinv() * solver.matrixU().solve(cu - RZX * delta_beta);
-
-      for(int j{}; j < 10; j++){
-        double alpha_bar = 1;
-        dvec beta_old = beta;
-        dvec u_old = u;
-        dscl g_old = exponent_g();
-        update_beta(delta_beta, alpha_bar);
-        update_u(delta_u, alpha_bar);
-        if(exponent_g() > g_old){
-          Rcpp::Rcout << "Stopping inner search at " << j << std::endl;
-          break;
-        } else {
-          alpha_bar /= 2;
-        }
-      }
-
-
-    } else if(stage == 2){
-      delta_u = solver.permutationPinv() * solver.matrixU().solve(cu);
-      update_u(delta_u, 1);
-    } else {
-      Rcpp::stop("Unknown stage.");
+    delta_u = solver.permutationPinv() * solver.matrixU().solve(cu - RZX * delta_beta);
+    update_beta(delta_beta, 1);
+    update_u(delta_u, 1);
     }
-
-  }
 }
 
 dscl GALAMM::Model::exponent_g(){

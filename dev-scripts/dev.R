@@ -45,7 +45,8 @@ obj <- galamm:::compute_galamm(
   theta = theta,
   theta_log = theta_log,
   maxit_outer = 100,
-  family = "gaussian", trials = rep(1, length(y)))
+  family = "gaussian", trials = rep(1, length(y)),
+  delta_tol = 1e-10)
 
 
 

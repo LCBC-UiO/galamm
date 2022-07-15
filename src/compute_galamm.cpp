@@ -16,15 +16,15 @@ using dspmat = Eigen::SparseMatrix<dscl>;
 using ddiag = Eigen::DiagonalMatrix<dscl, Eigen::Dynamic>;
 using ivec = Eigen::VectorXi;
 
-dscl get_deviance(GALAMM::Model& mod, ldlt& solver, int stage = 1){
+dscl get_deviance(GALAMM::Model& mod, ldlt& solver){
   mod.Lambdat_needs_update = true;
-  mod.get_conditional_modes(solver, stage);
+  mod.get_conditional_modes(solver);
   solver.factorize(mod.get_inner_hessian());
   return -2 * (mod.exponent_g() - log(solver.determinant()) / 2);
 }
 
 Rcpp::List compute(GALAMM::Model& mod, ldlt& solver, int maxit_outer,
-                   int stages){
+                   double delta_tol){
   dscl deviance{};
   dscl deviance_new{};
   Eigen::VectorXd g;
@@ -40,69 +40,34 @@ Rcpp::List compute(GALAMM::Model& mod, ldlt& solver, int maxit_outer,
   solver.analyzePattern(mod.get_inner_hessian());
 
   for(int i{}; i < maxit_outer; i++){
+    dvec param_old;
     double alpha_bar = alpha;
-    H = hessian(get_deviance, wrt(mod.theta), at(mod, solver, 1), deviance, g);
+
+    H = hessian(get_deviance, wrt(mod.theta), at(mod, solver), deviance, g);
+    param_old.resize(mod.theta.size());
+    param_old << mod.theta;
+
     delta_param = -H.colPivHouseholderQr().solve(g);
 
-    if(delta_param.squaredNorm() < 1e-10){
-      Rcpp::Rcout << "Stopping stage 1 at iteration " << i << std::endl;
+    if(delta_param.squaredNorm() < delta_tol){
+      Rcpp::Rcout << "Stopping at iteration " << i << std::endl;
       break;
     }
 
-    dvec param_old(mod.theta.size());
-    param_old << mod.theta;
     for(int j{}; j < max_backtracking_steps; j++){
       mod.theta += alpha_bar * delta_param;
+
       deviance_new = get_deviance(mod, solver);
       dscl deviance_armijo = deviance + c * alpha_bar * g.dot(delta_param);
 
-      if(deviance_new <= deviance_armijo) break;
+      if(deviance_new <= deviance_armijo) {
+        break;
+      }
+
       mod.theta = param_old;
       alpha_bar = rho * alpha_bar;
     }
   }
-
-  if(stages == 2){
-    for(int i{}; i < maxit_outer; i++){
-      Rcpp::Rcout << "deviance " << deviance << std::endl;
-      double alpha_bar = alpha;
-      H = hessian(get_deviance, wrt(mod.theta, mod.beta), at(mod, solver, 2),
-                  deviance, g);
-      delta_param = -H.colPivHouseholderQr().solve(g);
-
-      if(delta_param.squaredNorm() < 1e-10){
-        Rcpp::Rcout << "Stopping stage 2 at iteration " << i << std::endl;
-        break;
-      }
-
-      dvec param_old(mod.theta.size() + mod.beta.size());
-      param_old << mod.theta, mod.beta;
-
-      for(int j{}; j < max_backtracking_steps; j++){
-        for(int ind{}; ind < mod.theta.size(); ind++){
-          mod.theta(ind) += alpha_bar * delta_param(ind);
-        }
-        for(int ind{}; ind < mod.beta.size(); ind++){
-          mod.beta(ind) += alpha_bar * delta_param(ind + mod.theta.size());
-        }
-        deviance_new = get_deviance(mod, solver);
-        dscl deviance_armijo = deviance + c * alpha_bar * g.dot(delta_param);
-
-        if(deviance_new <= deviance_armijo) break;
-
-        for(int ind{}; ind < mod.theta.size(); ind++){
-          mod.theta(ind) += param_old(ind);
-        }
-        for(int ind{}; ind < mod.beta.size(); ind++){
-          mod.beta(ind) += param_old(ind + mod.theta.size());
-        }
-        alpha_bar = rho * alpha_bar;
-      }
-
-
-    }
-  }
-
 
   deviance = get_deviance(mod, solver);
 
@@ -129,7 +94,8 @@ Rcpp::List compute_galamm(
     const Eigen::Map<Eigen::VectorXi> theta_log,
     const int maxit_outer,
     const std::string family,
-    const Eigen::Map<Eigen::VectorXd> trials
+    const Eigen::Map<Eigen::VectorXd> trials,
+    const double delta_tol
   ){
 
   ldlt solver;
@@ -138,16 +104,16 @@ Rcpp::List compute_galamm(
 
   if(family == "gaussian"){
     GALAMM::Gaussian mod{y, X, Zt, Lambdat, Lind, theta, theta_log,
-                         trials, 1};
-    return compute(mod, solver, maxit_outer, 1);
+                         trials};
+    return compute(mod, solver, maxit_outer, delta_tol);
   } else if(family == "binomial"){
     GALAMM::Binomial mod{y, X, Zt, Lambdat, Lind, theta, theta_log,
                          trials, 50};
-    return compute(mod, solver, maxit_outer, 1);
+    return compute(mod, solver, maxit_outer, delta_tol);
   } else if(family == "poisson"){
     GALAMM::Poisson mod{y, X, Zt, Lambdat, Lind, theta, theta_log,
                         trials, 50};
-    return compute(mod, solver, maxit_outer, 1);
+    return compute(mod, solver, maxit_outer, delta_tol);
   } else {
     Rcpp::stop("Unknown family.");
   }
