@@ -28,6 +28,9 @@ namespace GALAMM {
     void get_conditional_modes(
         Eigen::SimplicialLLT<Eigen::SparseMatrix<autodiff::dual2nd> >& solver
     );
+    void get_conditional_modes_random_only(
+        Eigen::SimplicialLLT<Eigen::SparseMatrix<autodiff::dual2nd> >& solver
+    );
     int maxit_conditional_modes;
 
     // Exponent in the Laplace approximation

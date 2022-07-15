@@ -48,8 +48,6 @@ obj <- galamm:::compute_galamm(
   family = "gaussian", trials = rep(1, length(y)),
   delta_tol = 1e-10)
 
-
-
 -obj$deviance / 2
 logLik(fm1)
 

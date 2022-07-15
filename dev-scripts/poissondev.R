@@ -15,7 +15,7 @@ data <- tibble(
 
 formula <- y ~ x + (1 | id)
 
-gm1 <- glmer(formula, data = data, family = poisson, nAGQ = 0L)
+gm1 <- glmer(formula, data = data, family = poisson, nAGQ = 1L)
 
 logLik(gm1)
 
@@ -45,14 +45,14 @@ y <- as.numeric(data[[all.vars(formula)[[1]]]])
 
 Zt <- getME(gm1, "Zt")
 Lambdat <- getME(gm1, "Lambdat")
-theta_init <- log(getME(gm1, "theta") + runif(1, 0, .1))
+theta_init <- log(getME(gm1, "theta") + runif(1, 0, .3))
 theta_log <- 1L
 
 obj <- galamm:::compute_galamm(
   y = as.numeric(y) , X = X, Zt = Zt, Lambdat = Lambdat, Lind = ranef_obj$Lind - 1L,
   theta = theta_init, theta_log = theta_log,
   maxit_outer = 10, family = "poisson", trials = rep(1, length(y)),
-  delta_tol = 1e-10)
+  delta_tol = 1e-7, stages = 2)
 
 - obj$deviance / 2
 logLik(gm1)

@@ -12,8 +12,8 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // compute_galamm
-Rcpp::List compute_galamm(const Eigen::Map<Eigen::VectorXd> y, const Eigen::Map<Eigen::MatrixXd> X, const Eigen::MappedSparseMatrix<double> Zt, const Eigen::MappedSparseMatrix<double> Lambdat, const Eigen::Map<Eigen::VectorXi> Lind, const Eigen::Map<Eigen::VectorXd> theta, const Eigen::Map<Eigen::VectorXi> theta_log, const int maxit_outer, const std::string family, const Eigen::Map<Eigen::VectorXd> trials, const double delta_tol);
-RcppExport SEXP _galamm_compute_galamm(SEXP ySEXP, SEXP XSEXP, SEXP ZtSEXP, SEXP LambdatSEXP, SEXP LindSEXP, SEXP thetaSEXP, SEXP theta_logSEXP, SEXP maxit_outerSEXP, SEXP familySEXP, SEXP trialsSEXP, SEXP delta_tolSEXP) {
+Rcpp::List compute_galamm(const Eigen::Map<Eigen::VectorXd> y, const Eigen::Map<Eigen::MatrixXd> X, const Eigen::MappedSparseMatrix<double> Zt, const Eigen::MappedSparseMatrix<double> Lambdat, const Eigen::Map<Eigen::VectorXi> Lind, const Eigen::Map<Eigen::VectorXd> theta, const Eigen::Map<Eigen::VectorXi> theta_log, const int maxit_outer, const std::string family, const Eigen::Map<Eigen::VectorXd> trials, const double delta_tol, const int stages);
+RcppExport SEXP _galamm_compute_galamm(SEXP ySEXP, SEXP XSEXP, SEXP ZtSEXP, SEXP LambdatSEXP, SEXP LindSEXP, SEXP thetaSEXP, SEXP theta_logSEXP, SEXP maxit_outerSEXP, SEXP familySEXP, SEXP trialsSEXP, SEXP delta_tolSEXP, SEXP stagesSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -28,13 +28,14 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const std::string >::type family(familySEXP);
     Rcpp::traits::input_parameter< const Eigen::Map<Eigen::VectorXd> >::type trials(trialsSEXP);
     Rcpp::traits::input_parameter< const double >::type delta_tol(delta_tolSEXP);
-    rcpp_result_gen = Rcpp::wrap(compute_galamm(y, X, Zt, Lambdat, Lind, theta, theta_log, maxit_outer, family, trials, delta_tol));
+    Rcpp::traits::input_parameter< const int >::type stages(stagesSEXP);
+    rcpp_result_gen = Rcpp::wrap(compute_galamm(y, X, Zt, Lambdat, Lind, theta, theta_log, maxit_outer, family, trials, delta_tol, stages));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_galamm_compute_galamm", (DL_FUNC) &_galamm_compute_galamm, 11},
+    {"_galamm_compute_galamm", (DL_FUNC) &_galamm_compute_galamm, 12},
     {NULL, NULL, 0}
 };
 

@@ -59,6 +59,20 @@ void GALAMM::Model::get_conditional_modes(ldlt& solver){
     }
 }
 
+void GALAMM::Model::get_conditional_modes_random_only(ldlt& solver){
+  dvec delta_u{};
+
+  for(int i{}; i < maxit_conditional_modes; i++){
+
+    solver.factorize(get_inner_hessian());
+    dvec b1 = solver.permutationP() *
+      (get_Lambdat() * Zt * (y - meanfun()) - u);
+    dvec cu = solver.matrixL().solve(b1);
+    delta_u = solver.permutationPinv() * solver.matrixU().solve(cu);
+    update_u(delta_u, 1);
+  }
+}
+
 dscl GALAMM::Model::exponent_g(){
   return (y.dot(get_linpred()) - cumulant()) / get_phi() + constfun() -
     u.squaredNorm() / 2 / get_phi();
