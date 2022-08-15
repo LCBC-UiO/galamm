@@ -2,10 +2,7 @@
 #'
 #' Fits a GALAMM using a profile likelihood algorithm.
 #' \code{gamm4::gamm4} is used to fit the underling
-#' generalized additive mixed model at each step. See
-#' the documentation to \code{gamm4::gamm4} and
-#' \code{PLmixed::PLmixed} for details about the syntax.
-#'
+#' generalized additive mixed model at each step.
 #'
 #' @param formula A formula for the fixed effects, including
 #'   smooth terms.
@@ -24,6 +21,10 @@
 #' @return An object of S3 class \code{galamm}.
 #' @export
 #'
+#' @details
+#'  See the documentation to \code{gamm4::gamm4} and
+#' \code{PLmixed::PLmixed} for details about the syntax.
+#'
 #' @examples
 #' # Example dataset with three measurements of a latent response
 #' # Define loading matrix
@@ -31,7 +32,7 @@
 #' dimnames(load.mat) <- list(c("item1", "item2", "item3"), NULL)
 #' \dontrun{
 #' mod <- galamm(
-#'   formula = value ~ s(x, by = weight),
+#'   formula = y ~ s(x, by = weight),
 #'   random = ~(1|id),
 #'   data = dat1,
 #'   load.var = "item",
@@ -39,9 +40,7 @@
 #'   factor = "weight",
 #'   optim_control = list(trace = 3)
 #'   )
-#' }
-#'
-#'
+#'   }
 galamm <- function(formula, random = NULL, family = stats::gaussian(),
                    data = list(), load.var = NULL, lambda = NULL,
                    factor = NULL, optim_method = "L-BFGS-B",
@@ -58,15 +57,14 @@ galamm <- function(formula, random = NULL, family = stats::gaussian(),
 
     mod <- gamm4::gamm4(
       formula = formula, random = random, family = family,
-      start = gammstart, data = data
+      start = gammstart, data = data, REML = FALSE
     )
 
     gammstart <<- list(theta = lme4::getME(mod$mer, "theta"),
                        fixef = lme4::getME(mod$mer, "fixef"))
 
     -as.numeric(stats::logLik(mod$mer))
-  }, method = optim_method, control = optim_control,
-  hessian = TRUE)
+  }, method = optim_method, control = optim_control, hessian = TRUE)
 
   lambda_est <- lambda
   lambda_est[is.na(lambda)] <- opt$par

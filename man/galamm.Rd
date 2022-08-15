@@ -47,8 +47,10 @@ An object of S3 class \code{galamm}.
 \description{
 Fits a GALAMM using a profile likelihood algorithm.
 \code{gamm4::gamm4} is used to fit the underling
-generalized additive mixed model at each step. See
-the documentation to \code{gamm4::gamm4} and
+generalized additive mixed model at each step.
+}
+\details{
+See the documentation to \code{gamm4::gamm4} and
 \code{PLmixed::PLmixed} for details about the syntax.
 }
 \examples{
@@ -58,7 +60,7 @@ load.mat <- matrix(c(1, NA, NA), ncol = 1)
 dimnames(load.mat) <- list(c("item1", "item2", "item3"), NULL)
 \dontrun{
 mod <- galamm(
-  formula = value ~ s(x, by = weight),
+  formula = y ~ s(x, by = weight),
   random = ~(1|id),
   data = dat1,
   load.var = "item",
@@ -66,7 +68,5 @@ mod <- galamm(
   factor = "weight",
   optim_control = list(trace = 3)
   )
-}
-
-
+  }
 }

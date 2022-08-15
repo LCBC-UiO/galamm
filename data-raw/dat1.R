@@ -15,7 +15,8 @@ dat1 <- gamSim(n = n, verbose = FALSE) %>%
     item3 = lambda[[3]] * eta + rnorm(n, sd = .3)
   ) %>%
   select(-eta) %>%
-  pivot_longer(cols = c(item1, item2, item3), names_to = "item") %>%
+  pivot_longer(cols = c(item1, item2, item3), names_to = "item", values_to = "y") %>%
+  select(id, item, y, x) %>%
   as.data.frame()
 
 usethis::use_data(dat1, overwrite = TRUE)
