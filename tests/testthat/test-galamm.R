@@ -9,6 +9,7 @@ test_that("galamm works", {
     load.var = "item",
     lambda = load.mat,
     factor = "weight",
+    lambda_init = 2,
     optim_control = list(trace = 0)
   )
   expect_equal(c(mod$lambda_est), c(1, 2.00281079467529), tolerance = 1e-5)

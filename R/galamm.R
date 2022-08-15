@@ -14,6 +14,9 @@
 #' @param lambda A factor loading matrix, with row names corresponding
 #'  to \code{load.var}.
 #' @param factor The latent variable, or factor.
+#' @param lambda_init Initial value for free factor loadings. Default to \code{NULL},
+#' which means that they are randomly drawn from a uniform distribution with support
+#' \eqn{[0,1]}.
 #' @param optim_method Passed on to \code{stats::optim}.
 #' @param optim_control Passed on to \code{stats::optim}.
 #' @param numDeriv_method Passed on to \code{numDeriv::jacobian}.
@@ -38,16 +41,22 @@
 #'   load.var = "item",
 #'   lambda = load.mat,
 #'   factor = "weight",
+#'   lambda_init = c(2, .4),
 #'   optim_control = list(trace = 3)
 #'   )
 #'   }
 galamm <- function(formula, random = NULL, family = stats::gaussian(),
                    data = list(), load.var = NULL, lambda = NULL,
-                   factor = NULL, optim_method = "L-BFGS-B",
+                   factor = NULL, lambda_init = NULL, optim_method = "L-BFGS-B",
                    optim_control = list(), numDeriv_method = "simple"){
 
   gammstart <- NULL
-  lambda_init <- stats::runif(sum(is.na(lambda)), 1, 2)
+  if(is.null(lambda_init)){
+    lambda_init <- stats::runif(sum(is.na(lambda)), 1, 2)
+  } else {
+    stopifnot(length(lambda_init) == sum(is.na(lambda)))
+  }
+
 
   # Optimize over non-missing variables in lambda
   opt <- stats::optim(lambda_init, function(x){

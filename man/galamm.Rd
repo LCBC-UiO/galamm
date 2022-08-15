@@ -12,6 +12,7 @@ galamm(
   load.var = NULL,
   lambda = NULL,
   factor = NULL,
+  lambda_init = NULL,
   optim_method = "L-BFGS-B",
   optim_control = list(),
   numDeriv_method = "simple"
@@ -34,6 +35,10 @@ model.}
 to \code{load.var}.}
 
 \item{factor}{The latent variable, or factor.}
+
+\item{lambda_init}{Initial value for free factor loadings. Default to \code{NULL},
+which means that they are randomly drawn from a uniform distribution with support
+\eqn{[0,1]}.}
 
 \item{optim_method}{Passed on to \code{stats::optim}.}
 
