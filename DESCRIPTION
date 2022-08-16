@@ -22,9 +22,13 @@ Encoding: UTF-8
 Imports: 
     numDeriv (>= 2016.8-1-1),
     gamm4 (>= 0.2-6),
-    lme4 (>= 1.1-26)
+    lme4 (>= 1.1-26),
+    Rcpp (>= 1.0.9)
 Depends:
     R (>= 2.10)
+LinkingTo:
+    Rcpp,
+    RcppEigen
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.1
