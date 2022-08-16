@@ -21,7 +21,10 @@ The package uses an interface similar to
 generalized linear mixed models with factor structures. However, galamm
 allows semiparametric estimations with
 [gamm4](https://cran.r-project.org/package=gamm4), and hence more
-flexibly allows estimation of nonlinear effects.
+flexibly allows estimation of nonlinear effects. If you don’t need
+semiparametric estimation, on the other hand, your should use definitely
+[PLmixed](https://cran.r-project.org/package=PLmixed), as it is a much
+more mature package.
 
 ## Installation
 
