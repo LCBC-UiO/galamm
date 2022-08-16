@@ -17,12 +17,9 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(galamm)
-library(ggplot2)
-theme_set(theme_bw())
-theme_update(panel.grid = element_blank())
 ```
 
-The `galamm` packages estimates generalized additive latent and mixed models (GALAMMs). GALAMMs are described in @sorensenLongitudinalModelingAgedependent2021 as an extension of generalized linear latent and mixed models (GLLAMMs) [@rabe-heskethGeneralizedMultilevelStructural2004]. 
+The `galamm` packages estimates generalized additive latent and mixed models (GALAMMs). GALAMMs are described in @sorensenLongitudinalModelingAgedependent2021 as an extension of generalized linear latent and mixed models (GLLAMMs) [@rabe-heskethGeneralizedMultilevelStructural2004]. If you don't need nonlinear smooth terms, you should probably use the [PLmixed](https://cran.r-project.org/package=PLmixed) package instead.
 
 ## Fitting a latent response model
 
@@ -41,11 +38,13 @@ The dataset illustrates measurements of a latent response variable. The variable
 
 The plot below shows the measurements of each item.
 
-```{r, fig.width=6}
-ggplot(dat1, aes(x = x, y = y, color = item)) + 
-  geom_point() +
-  facet_wrap(vars(item)) + 
-  labs(color = NULL)
+```{r, fig.width=4}
+sdat <- split(dat1, f = dat1$item)
+for(i in seq_along(sdat)){
+  plot(sdat[[i]]$x, sdat[[i]]$y, col = i + 1,
+       xlab = "x", ylab = "y", 
+       main = paste("Item", i))
+}
 ```
 
 
@@ -87,12 +86,36 @@ mod <- galamm(
   formula = y ~ s(x, by = weight),
   random = ~(1|id),
   data = dat1,
-  load.var = "item",
+  load_var = "item",
   lambda = load.mat,
   factor = "weight",
   lambda_init = c(2, .4)
   )
 ```
+
+
+### Inspecting the model
+
+We can plot the estimated smooth function with corresponding 95 % confidence bands. The confidence bands take uncertainty in the factor loadings into account.
+
+
+```{r, fig.width=4}
+plot(mod)
+```
+
+The \verb!plot! function for \verb!galamm! objects takes any arguments that can be provided to \verb!mgcv!'s \verb!plot! function. For example, we can get shaded confidence bands and remove the rug and add more informative labels and titles.
+
+```{r, fig.width=4}
+plot(mod, rug = FALSE, shade = TRUE, ylab = "latent variable", 
+     xlab = "predictor", main = "Estimated smooth function")
+```
+
+We can also print some summary information.
+
+```{r}
+summary(mod)
+```
+
 
 
 ## References

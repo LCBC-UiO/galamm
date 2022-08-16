@@ -9,7 +9,7 @@ galamm(
   random = NULL,
   family = stats::gaussian(),
   data = list(),
-  load.var = NULL,
+  load_var = NULL,
   lambda = NULL,
   factor = NULL,
   lambda_init = NULL,
@@ -29,10 +29,10 @@ smooth terms.}
 \item{data}{A data frame containing the variables used in the
 model.}
 
-\item{load.var}{The variables which the factors load onto.}
+\item{load_var}{The variables which the factors load onto.}
 
 \item{lambda}{A factor loading matrix, with row names corresponding
-to \code{load.var}.}
+to \code{load_var}.}
 
 \item{factor}{The latent variable, or factor.}
 
@@ -68,9 +68,10 @@ mod <- galamm(
   formula = y ~ s(x, by = weight),
   random = ~(1|id),
   data = dat1,
-  load.var = "item",
+  load_var = "item",
   lambda = load.mat,
   factor = "weight",
+  lambda_init = c(2, .4),
   optim_control = list(trace = 3)
   )
   }

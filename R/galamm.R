@@ -10,9 +10,9 @@
 #' @param family A GLM family.
 #' @param data A data frame containing the variables used in the
 #'   model.
-#' @param load.var The variables which the factors load onto.
+#' @param load_var The variables which the factors load onto.
 #' @param lambda A factor loading matrix, with row names corresponding
-#'  to \code{load.var}.
+#'  to \code{load_var}.
 #' @param factor The latent variable, or factor.
 #' @param lambda_init Initial value for free factor loadings. Default to \code{NULL},
 #' which means that they are randomly drawn from a uniform distribution with support
@@ -38,7 +38,7 @@
 #'   formula = y ~ s(x, by = weight),
 #'   random = ~(1|id),
 #'   data = dat1,
-#'   load.var = "item",
+#'   load_var = "item",
 #'   lambda = load.mat,
 #'   factor = "weight",
 #'   lambda_init = c(2, .4),
@@ -46,7 +46,7 @@
 #'   )
 #'   }
 galamm <- function(formula, random = NULL, family = stats::gaussian(),
-                   data = list(), load.var = NULL, lambda = NULL,
+                   data = list(), load_var = NULL, lambda = NULL,
                    factor = NULL, lambda_init = NULL, optim_method = "L-BFGS-B",
                    optim_control = list(), numDeriv_method = "simple"){
 
@@ -57,12 +57,11 @@ galamm <- function(formula, random = NULL, family = stats::gaussian(),
     stopifnot(length(lambda_init) == sum(is.na(lambda)))
   }
 
-
   # Optimize over non-missing variables in lambda
   opt <- stats::optim(lambda_init, function(x){
     ll <- lambda
     ll[is.na(ll)] <- x
-    eval(parse(text = paste0("data$", factor, "<-ll[data$", load.var, ", ]")))
+    eval(parse(text = paste0("data$", factor, "<-ll[data$", load_var, ", ]")))
 
     mod <- gamm4::gamm4(
       formula = formula, random = random, family = family,
@@ -77,11 +76,11 @@ galamm <- function(formula, random = NULL, family = stats::gaussian(),
 
   lambda_est <- lambda
   lambda_est[is.na(lambda)] <- opt$par
-  eval(parse(text = paste0("data$", factor, "<-lambda_est[data$", load.var, ", ]")))
+  eval(parse(text = paste0("data$", factor, "<-lambda_est[data$", load_var, ", ]")))
 
   final_gamm <- gamm4::gamm4(
     formula = formula, random = random, family = family,
-    start = gammstart, data = data)
+    start = gammstart, data = data, REML = FALSE)
 
   beta_hat <- stats::coef(final_gamm$gam)
   cov_lambda <- solve(opt$hessian)
@@ -91,7 +90,7 @@ galamm <- function(formula, random = NULL, family = stats::gaussian(),
     function(x){
       ll <- lambda
       ll[is.na(ll)] <- x
-      eval(parse(text = paste0("data$", factor, "<-ll[data$", load.var, ", ]")))
+      eval(parse(text = paste0("data$", factor, "<-ll[data$", load_var, ", ]")))
       mod <- gamm4::gamm4(
         formula = formula, random = random, family = family,
         start = gammstart, data = data)
@@ -102,13 +101,29 @@ galamm <- function(formula, random = NULL, family = stats::gaussian(),
 
   cov_beta <- cov_beta_naive + beta_jacobian %*% cov_lambda %*% t(beta_jacobian)
 
+  # find indices of spline coefficients
+  inds <- integer(0L)
+  for(sm in final_gamm$gam$smooth){
+    inds <- c(inds, seq(sm$first.para, sm$last.para))
+  }
+
+  fixed_effects <- cbind(
+    stats::coef(final_gamm$gam)[-inds, drop = FALSE],
+    sqrt(diag(cov_beta[-inds, -inds, drop = FALSE])))
+  colnames(fixed_effects) <- c("Beta", "SE")
+
   res <- list(
     gamm4 = final_gamm,
-    beta_jacobian = beta_jacobian,
-    cov_beta_naive = cov_beta_naive,
     cov_beta = cov_beta,
     cov_lambda = cov_lambda,
-    lambda_est = lambda_est
+    lambda_est = lambda_est,
+    load_var = load_var,
+    loadings_estimated = length(opt$par),
+    log_likelihood = stats::logLik(final_gamm$mer),
+    formula = formula,
+    iterations = opt$counts[["function"]],
+    random_effects = lme4::VarCorr(final_gamm$mer),
+    fixed_effects = fixed_effects
   )
   class(res) <- "galamm"
 

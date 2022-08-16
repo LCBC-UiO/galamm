@@ -6,7 +6,7 @@ test_that("galamm works", {
     formula = y ~ s(x, by = weight),
     random = ~(1|id),
     data = subset(dat1, item != "item3"),
-    load.var = "item",
+    load_var = "item",
     lambda = load.mat,
     factor = "weight",
     lambda_init = 2,
