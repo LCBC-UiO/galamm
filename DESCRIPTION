@@ -7,19 +7,31 @@ Authors@R:
            role = c("aut", "cre"),
            email = "oystein.sorensen@psykologi.uio.no",
            comment = c(ORCID = "0000-0003-0724-3542"))
-Description: Maximum likelihood estimation of multivariate 
-    generalized additive mixed models with factor structures.
+Description: Estimates generalized additive latent and
+    mixed models, as defined in Sorensen et al. (2021) 
+    <doi:10.48550/arXiv.2105.02488>. Factor analysis and 
+    item response models in which the responses depend 
+    nolinearly on observed predictors can be estimated, 
+    with crossed or nested random effects structures defined
+    using 'lme4' syntax. Computations are based on profile 
+    likelihood estimation proposed by Jeon and Rabe-Hesketh 
+    (2012) <doi:10.3102/1076998611417628>, utilizing the 
+    'gamm4' and 'lme4' packages.
 License: GPL (>= 3)
 Encoding: UTF-8
-Imports: numDeriv (>= 2016.8-1-1)
-Depends: 
+Imports: 
+    numDeriv (>= 2016.8-1-1),
     gamm4 (>= 0.2-6),
-    lme4 (>= 1.1-26),
+    lme4 (>= 1.1-26)
+Depends:
     R (>= 2.10)
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.1
 Suggests: 
     covr,
+    knitr,
+    rmarkdown,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
+VignetteBuilder: knitr

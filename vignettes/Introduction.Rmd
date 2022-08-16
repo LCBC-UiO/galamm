@@ -1,0 +1,121 @@
+---
+title: "Introduction"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+bibliography: ../inst/references.bib
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(galamm)
+```
+
+The `galamm` packages estimates generalized additive latent and mixed models (GALAMMs). GALAMMs are described in @sorensenLongitudinalModelingAgedependent2021 as an extension of generalized linear latent and mixed models (GLLAMMs) [@rabe-heskethGeneralizedMultilevelStructural2004]. If you don't need nonlinear smooth terms, you should probably use the [PLmixed](https://cran.r-project.org/package=PLmixed) package instead.
+
+## Fitting a latent response model
+
+In this vignette we illustrate a basic use case with the simulated dataset `dat1` which is part of the package.
+
+```{r}
+head(dat1)
+```
+
+The dataset illustrates measurements of a latent response variable. The variables are
+
+- `id`: an identifier for the study subjects.
+- `item`: an identifier for one of three items which measure an underlying latent trait of interest.
+- `y`: the measurement of the given item.
+- `x`: a predictor variable.
+
+The plot below shows the measurements of each item.
+
+```{r, fig.width=4}
+sdat <- split(dat1, f = dat1$item)
+for(i in seq_along(sdat)){
+  plot(sdat[[i]]$x, sdat[[i]]$y, col = i + 1,
+       xlab = "x", ylab = "y", 
+       main = paste("Item", i))
+}
+```
+
+
+
+### Model definition
+
+Letting $y_{ij}$ denotes the $i$th measurement of the $j$th subject, we assume the measurement part
+
+$$y_{ij} = \beta_{0} + \eta_{j} \boldsymbol{\lambda}^{T} \boldsymbol{\delta}_{ij}  + \epsilon_{ij}$$
+
+where $\boldsymbol{\delta}_{ij}$ is a vector whose $k$th element equals 1 if the $i$th measurement of the $j$th subject is a measurement of item $k$, and $\boldsymbol{\lambda} = (1, \lambda_{2}, \lambda_{3})^{T}$ is a vector of factor loadings, whose first element is set to 1 for identifiability. Furthermore, $\eta_{j}$ denotes a latent variable for subject $j$, assumed identical across all three items, and $\epsilon_{ij} \sim N(0, \sigma^{2})$ is the residual term.
+
+Next, the structural part relates the latent variables to the predictor variables,
+
+$$\eta_{j} = f(x_{j}) + \zeta_{j}$$
+
+where $x_{j}$ is a predictor variable for subject $j$ which does not vary within subjects, and $\zeta_{j} \sim N(0, \psi)$ is a disturbance term (random intercept).
+
+Plugging the structural model into the measurement model yields the reduced form
+
+$$y_{ij} = \beta_{0} + f(x_{j}) \boldsymbol{\lambda}^{T} \boldsymbol{\delta}_{ij} + \zeta_{j} \boldsymbol{\lambda}^{T} \boldsymbol{\delta}_{ij}  + \epsilon_{ij}$$
+
+At fixed values of $\boldsymbol{\lambda}$, the reduced form defines a generalized additive mixed model (GAMM) [@woodGeneralizedAdditiveModels2017a] with varying coefficient term $f(x_{j}) \boldsymbol{\lambda}^{T} \boldsymbol{\delta}_{ij}$ and random effect term $\zeta_{j} \boldsymbol{\lambda}^{T} \boldsymbol{\delta}_{ij}$. Identifying this lets us use profile likelihood estimation similar to what @jeonProfileLikelihoodApproachEstimating2012 proposed for a subset of GLLAMMs, and @rockwoodEstimatingComplexMeasurement2019 implemented in the R package `PLmixed`. The current implementation in `galamm` uses this profile likelihood algorithm, extended to smooth nonlinear functions.
+
+### Profile likelihood estimation with galamm
+
+We start by defining that loading matrix, using the same syntax as `PLmixed`. `NA` means that the loading is free to be estimated, whereas a value means that we fix the corresponding loading.
+
+```{r}
+load.mat <- matrix(c(1, NA, NA), ncol = 1)
+dimnames(load.mat) <- list(c("item1", "item2", "item3"), NULL)
+load.mat
+```
+
+We then fit the model. We set the initial values `lambda_init = c(2, .4)` to speed up convergence in this example case. If initial values are not provided, random starting points are used instead.
+
+```{r}
+mod <- galamm(
+  formula = y ~ s(x, by = weight),
+  random = ~(1|id),
+  data = dat1,
+  load_var = "item",
+  lambda = load.mat,
+  factor = "weight",
+  lambda_init = c(2, .4)
+  )
+```
+
+
+### Inspecting the model
+
+We can plot the estimated smooth function with corresponding 95 % confidence bands. The confidence bands take uncertainty in the factor loadings into account.
+
+
+```{r, fig.width=4}
+plot(mod)
+```
+
+The \verb!plot! function for \verb!galamm! objects takes any arguments that can be provided to \verb!mgcv!'s \verb!plot! function. For example, we can get shaded confidence bands and remove the rug and add more informative labels and titles.
+
+```{r, fig.width=4}
+plot(mod, rug = FALSE, shade = TRUE, ylab = "latent variable", 
+     xlab = "predictor", main = "Estimated smooth function")
+```
+
+We can also print some summary information.
+
+```{r}
+summary(mod)
+```
+
+
+
+## References
