@@ -1,0 +1,100 @@
+---
+title: "Maximum Likelihood Estimation"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{MaximumLikelihood}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+bibliography: ../inst/references.bib
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(galamm)
+```
+
+
+The `galamm` package includes a function for computing the Laplace approximate marginal likelihood of both GLLAMMs and GALAMMs. In the future, this will replace the profile likelihood method, but due to the complexity of the matter, it will take some time to develop a decent API. This vignette describes how to perform maximum likelihood estimation with the currently available functions; it is complicated, but also gives the benefit of understanding what's going on, in addition to a more accurate algorithm which scales better. Before reading this on, make sure you've read the Introduction vignette.
+
+## Linear mixed model with factor structure
+
+We will use an example dataset from the `PLmixed` package [@rockwoodEstimatingComplexMeasurement2019]. The `PLmixed` is probably a better choice for this model, but this way we get a gentle start before we try estimating generalized multilevel models with semiparametric terms.
+
+```{r}
+library(PLmixed)
+data("IRTsim")
+IRTsim$item <- factor(IRTsim$item)
+IRTsim$sid <- factor(IRTsim$sid)
+IRTsim$school <- factor(IRTsim$school)
+```
+
+
+### Estimation with PLmixed
+
+The model can be fit with `PLmixed` as follows, where we're pretending for now the the response is normally distributed, although the binomial distribution would be correct.
+
+```{r, cache=TRUE}
+irt.lam = c(1, NA, NA, NA, NA)
+irt.model <- PLmixed(
+  y ~ 0 + item + (0 + abil.sid |sid) +(0 + abil.sid |school),
+  data = IRTsim, load.var = c("item"), 
+  factor = list(c("abil.sid")), lambda = list(irt.lam), 
+  REML = FALSE, iter.count = FALSE)
+summary(irt.model)
+
+```
+
+### Estimation with the galamm package
+
+We can use the `marginal_likelihood` function from `galamm` to compute the marginal likelihood of this model at given values of fixed effects $\beta$, variance components $\theta$, and factor loadings $\lambda$.
+
+We start by adding $\lambda$ as a variable in the model:
+
+```{r}
+dat <- IRTsim
+lambda_init <- 1:5
+dat$abil.sid <- lambda_init[dat$item]
+```
+
+We then generate the components of a linear mixed model:
+
+```{r}
+library(lme4)
+lmod <- lFormula(
+  y ~ 0 + item + (0 + abil.sid |sid) +(0 + abil.sid |school),
+  data = dat, REML = FALSE
+)
+```
+
+The fixed effects matrix does not contain any factor loadings, so we keep it as is.
+
+```{r}
+X <- lmod$X
+```
+
+The random effects matrix does contain factor loadings, so we need a mapping. Also note that it is sparse. In the mapping, $-1$ denotes an element of $\lambda$ which is fixed. In addition, since C++ has base zero indexing, we need to subtract an integer 2.
+
+```{r}
+Zt <- lmod$reTrms$Zt
+class(Zt)
+lambda_mapping_Zt <- (Zt@x - 2L)
+head(lambda_mapping_Zt)
+```
+
+We also extract the random effects covariance matrix, with its mapping to $\theta$. See @batesFittingLinearMixedEffects2015 for details.
+
+```{r}
+Lambdat <- lmod$reTrms$Lambdat
+theta_mapping <- lmod$reTrms$Lind - 1L
+```
+
+We can now start by 
+
+
+## References
