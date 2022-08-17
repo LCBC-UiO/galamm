@@ -82,6 +82,7 @@ void GALAMM::Model::update_Lambdat(){
 }
 
 void GALAMM::Model::update_Zt(){
+  if(lambda_mapping_Zt.rows() == 0) return;
   int counter{};
   for(int k{}; k < Zt.outerSize(); ++k){
     for(Eigen::SparseMatrix<dual1st>::InnerIterator it(Zt, k); it; ++it){

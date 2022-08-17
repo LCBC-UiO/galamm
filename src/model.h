@@ -27,11 +27,23 @@ namespace GALAMM {
       const int maxit_conditional_modes0
     );
 
+    Eigen::VectorXd y;
+    Eigen::VectorXd trials;
+    autodiff::MatrixXdual1st X;
+    Eigen::SparseMatrix<autodiff::dual1st> Zt;
+    Eigen::SparseMatrix<autodiff::dual1st> Lambdat;
+    autodiff::VectorXdual1st beta;
+    autodiff::VectorXdual1st theta;
+    const Eigen::VectorXi theta_mapping;
+    autodiff::VectorXdual1st lambda;
+    const Eigen::VectorXi lambda_mapping_X;
+    const Eigen::VectorXi lambda_mapping_Zt;
+    int maxit_conditional_modes;
+
     // Function to compute regression coefficients in inner loop
     void get_conditional_modes(
         Eigen::SimplicialLLT<Eigen::SparseMatrix<autodiff::dual1st> >& solver
     );
-    int maxit_conditional_modes;
 
     // Exponent in the Laplace approximation
     autodiff::dual1st exponent_g();
@@ -44,7 +56,7 @@ namespace GALAMM {
     // Lower Cholesky factor of scaled covariance matrix
     void update_Lambdat();
     Eigen::SparseMatrix<autodiff::dual1st>& get_Lambdat();
-    Eigen::SparseMatrix<autodiff::dual1st> Lambdat;
+
 
     // Scale parameter
     virtual void update_phi() = 0;
@@ -69,23 +81,9 @@ namespace GALAMM {
     // Regression coefficients
     void update_u(const autodiff::VectorXdual1st& delta_u, double alpha_bar);
 
-    Eigen::VectorXd y;
-
-    autodiff::MatrixXdual1st X;
-
     void update_Zt();
     Eigen::SparseMatrix<autodiff::dual1st>& get_Zt();
-    Eigen::SparseMatrix<autodiff::dual1st> Zt;
-
-    autodiff::VectorXdual1st beta;
-    autodiff::VectorXdual1st theta;
-    const Eigen::VectorXi theta_mapping;
-    autodiff::VectorXdual1st lambda;
-    const Eigen::VectorXi lambda_mapping_X;
-    const Eigen::VectorXi lambda_mapping_Zt;
-
     autodiff::VectorXdual1st u;
-    Eigen::VectorXd trials;
 
     int n;
     int p;

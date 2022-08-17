@@ -30,8 +30,41 @@ Rcpp::List compute(
   );
 }
 
+//' Compute the marginal likelihood of a GLLAMM or GALAMM
+//'
+//' This function computes the Laplace approximate marginal
+//' likelihood.
+//'
+//' @param y A \code{numeric} vector of responses.
+//' @param trials A \code{numeric} vector representing the number
+//' of trials. Only used for binomial models, but should be set to
+//' some arbtirary value otherwise.
+//' @param X A dense \code{numeric} matrix.
+//' @param Zt A sparse matrix of class \code{dgCMatrix}.
+//' @param Lambdat A sparse matrix of class \code{dgCMatrix}.
+//' @param beta A \code{numeric} vector of fixed effects.
+//' @param theta A \code{numeric} vector of variance components,
+//' parametrized identically to \code{lme4}.
+//' @param theta_mapping An \code{integer} vector corresponding to
+//' \code{Lind} used by \code{lme4}, but with base zero indexing.
+//' @param lambda A \code{numeric} vector of factor loadings.
+//' @param lambda_mapping_X An \code{integer} vector of mappings between
+//' \code{X} and \code{lambda}, columnwise. Should be set to
+//' \code{integer()} if not used. An entry \code{-1} indicates that the
+//' corresponding value of \code{X} does not depend on \code{lambda},
+//' as in the case where the first element of \code{lambda} is fixed to 1.
+//' @param lambda_mapping_Zt An \code{integer} vector of mappings between
+//' \code{Zt} and \code{lambda}, along the nonzero elements of \code{Zt}
+//' as can be found by \code{Zt@x}. Should be set to
+//' \code{integer()} if not used. An entry \code{-1} indicates that the
+//' corresponding value of \code{X} does not depend on \code{lambda},
+//' as in the case where the first element of \code{lambda} is fixed to 1.
+//' @param family A length one \code{character} denoting the family.
+//'
+//' @return A \code{list} with elements \code{deviance} and \code{gradient}.
+//'
 // [[Rcpp::export]]
-Rcpp::List compute_galamm(
+Rcpp::List marginal_likelihood(
     const Eigen::Map<Eigen::VectorXd> y,
     const Eigen::Map<Eigen::VectorXd> trials,
     const Eigen::Map<Eigen::MatrixXd> X,

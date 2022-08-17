@@ -35,7 +35,7 @@ lmod <- lFormula(formula, data = data, REML = FALSE)
 lambda_mapping_Zt <- (sapply(lmod$reTrms$Zt@x, function(x) which(x == lambda_init[[1]])) - 2L)
 
 
-mm2 <- compute_galamm(
+mm2 <- marginal_likelihood(
   y = data$y,
   trials = rep(1, nrow(data)),
   X = lmod$X,
@@ -59,7 +59,7 @@ lambda_inds <- c(6L, 7L)
 lower = c(0, 0, -Inf, -Inf, -Inf, -Inf, -Inf)
 
 fn <- function(par){
-  ret <- compute_galamm(
+  ret <- marginal_likelihood(
     y = data$y,
     trials = rep(1, nrow(data)),
     X = lmod$X,
