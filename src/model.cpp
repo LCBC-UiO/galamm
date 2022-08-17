@@ -15,6 +15,7 @@ GALAMM::Model::Model(
   const Eigen::VectorXd& lambda0,
   const Eigen::VectorXi& lambda_mapping_X0,
   const Eigen::VectorXi& lambda_mapping_Zt0,
+  const Eigen::VectorXi& lambda_free0,
   const int maxit_conditional_modes0
 ) : y { y0 },
   trials { trials0 },
@@ -27,6 +28,7 @@ GALAMM::Model::Model(
   lambda { lambda0.cast<dual1st>() },
   lambda_mapping_X { lambda_mapping_X0 },
   lambda_mapping_Zt { lambda_mapping_Zt0 },
+  lambda_free { lambda_free0 },
   maxit_conditional_modes { maxit_conditional_modes0 }
 {
   n = X.rows();
