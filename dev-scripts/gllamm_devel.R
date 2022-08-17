@@ -32,7 +32,8 @@ mm <- lmer(formula, data, REML = FALSE)
 # Mapping between elements of Zt and lambda
 lmod <- lFormula(formula, data = data, REML = FALSE)
 
-lambda_mapping_Zt <- sapply(lmod$reTrms$Zt@x, function(x) which(x == lambda_init[[1]]))
+lambda_mapping_Zt <- (sapply(lmod$reTrms$Zt@x, function(x) which(x == lambda_init[[1]])) - 2L)
+
 
 mm2 <- compute_galamm(
   y = data$y,
@@ -45,30 +46,31 @@ mm2 <- compute_galamm(
   theta_mapping = lmod$reTrms$Lind - 1L,
   lambda = c(2, 3),
   lambda_mapping_X = integer(),
-  lambda_mapping_Zt = lambda_mapping_Zt - 1L,
-  lambda_free = c(2L, 3L) - 1L,
+  lambda_mapping_Zt = lambda_mapping_Zt,
   family = "gaussian"
   )
 
-par <- c(10, 200, 50)
+par <- c(.2, .2, .6, .6, .6, 1, 1)
 grad <- NULL
 
-theta_inds <- 1L
-beta_inds <- c(2L, 3L)
+theta_inds <- c(1L, 2L)
+beta_inds <- c(3L, 4L, 5L)
+lambda_inds <- c(6L, 7L)
+lower = c(0, 0, -Inf, -Inf, -Inf, -Inf, -Inf)
 
 fn <- function(par){
   ret <- compute_galamm(
-    y = sleepstudy$Reaction,
-    trials = rep(1, length(sleepstudy$Reaction)),
+    y = data$y,
+    trials = rep(1, nrow(data)),
     X = lmod$X,
     Zt = lmod$reTrms$Zt,
     Lambdat = lmod$reTrms$Lambdat,
     beta = par[beta_inds],
     theta = par[theta_inds],
     theta_mapping = lmod$reTrms$Lind - 1L,
-    lambda = 1,
+    lambda = par[lambda_inds],
     lambda_mapping_X = integer(),
-    lambda_mapping_Zt = integer(),
+    lambda_mapping_Zt = lambda_mapping_Zt,
     family = "gaussian"
   )
   grad <<- ret$gradient
@@ -79,7 +81,12 @@ gr <- function(par){
 }
 
 opt <- optim(par, fn = fn, gr = gr, method = "L-BFGS-B",
-             lower = c(0, -Inf, -Inf))
+             lower = lower)
+
+mm3 <- PLmixed(formula, IRTsub, load.var = load_var, lambda = list(irt.lam),
+               factor = list("abil.sid"), REML = FALSE)
+
+summary(mm3)
 
 mm2$deviance
 -2 * logLik(mm)

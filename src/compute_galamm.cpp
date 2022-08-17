@@ -21,7 +21,8 @@ Rcpp::List compute(
   dual1st dev{};
   Eigen::VectorXd g;
 
-  g = gradient(deviance, wrt(mod.theta, mod.beta), at(mod, solver), dev);
+  g = gradient(deviance, wrt(mod.theta, mod.beta, mod.lambda),
+               at(mod, solver), dev);
 
   return Rcpp::List::create(
     Rcpp::Named("deviance") = static_cast<double>(dev),
@@ -42,7 +43,6 @@ Rcpp::List compute_galamm(
     const Eigen::Map<Eigen::VectorXd> lambda,
     const Eigen::Map<Eigen::VectorXi> lambda_mapping_X,
     const Eigen::Map<Eigen::VectorXi> lambda_mapping_Zt,
-    const Eigen::Map<Eigen::VectorXi> lambda_free,
     const std::string family
 ){
 
@@ -51,17 +51,17 @@ Rcpp::List compute_galamm(
 
   if(family == "gaussian"){
     GALAMM::Gaussian mod{y, trials, X, Zt, Lambdat, beta, theta, theta_mapping,
-                         lambda, lambda_mapping_X, lambda_mapping_Zt, lambda_free, 1};
+                         lambda, lambda_mapping_X, lambda_mapping_Zt, 1};
     solver.analyzePattern(mod.get_inner_hessian());
     return compute(mod, solver);
   } else if(family == "binomial"){
     GALAMM::Binomial mod{y, trials, X, Zt, Lambdat, beta, theta, theta_mapping,
-                         lambda, lambda_mapping_X, lambda_mapping_Zt, lambda_free, 50};
+                         lambda, lambda_mapping_X, lambda_mapping_Zt, 50};
     solver.analyzePattern(mod.get_inner_hessian());
     return compute(mod, solver);
   } else if(family == "poisson"){
     GALAMM::Poisson mod{y, trials, X, Zt, Lambdat, beta, theta, theta_mapping,
-                        lambda, lambda_mapping_X, lambda_mapping_Zt, lambda_free, 50};
+                        lambda, lambda_mapping_X, lambda_mapping_Zt, 50};
     solver.analyzePattern(mod.get_inner_hessian());
     return compute(mod, solver);
   } else {

@@ -24,7 +24,6 @@ namespace GALAMM {
       const Eigen::VectorXd& lambda0,
       const Eigen::VectorXi& lambda_mapping_X0,
       const Eigen::VectorXi& lambda_mapping_Zt0,
-      const Eigen::VectorXi& lambda_free0,
       const int maxit_conditional_modes0
     );
 
@@ -71,7 +70,11 @@ namespace GALAMM {
     void update_u(const autodiff::VectorXdual1st& delta_u, double alpha_bar);
 
     Eigen::VectorXd y;
+
     autodiff::MatrixXdual1st X;
+
+    void update_Zt();
+    Eigen::SparseMatrix<autodiff::dual1st>& get_Zt();
     Eigen::SparseMatrix<autodiff::dual1st> Zt;
 
     autodiff::VectorXdual1st beta;
@@ -80,7 +83,6 @@ namespace GALAMM {
     autodiff::VectorXdual1st lambda;
     const Eigen::VectorXi lambda_mapping_X;
     const Eigen::VectorXi lambda_mapping_Zt;
-    const Eigen::VectorXi lambda_free;
 
     autodiff::VectorXdual1st u;
     Eigen::VectorXd trials;

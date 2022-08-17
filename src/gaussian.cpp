@@ -23,5 +23,5 @@ void GALAMM::Gaussian::update_phi(){
 
 
 void GALAMM::Gaussian::update_linpred(){
-  linpred = X * beta + Zt.transpose() * get_Lambdat().transpose() * u;
+  linpred = X * beta + get_Zt().transpose() * get_Lambdat().transpose() * u;
 }

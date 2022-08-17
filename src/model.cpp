@@ -15,7 +15,6 @@ GALAMM::Model::Model(
   const Eigen::VectorXd& lambda0,
   const Eigen::VectorXi& lambda_mapping_X0,
   const Eigen::VectorXi& lambda_mapping_Zt0,
-  const Eigen::VectorXi& lambda_free0,
   const int maxit_conditional_modes0
 ) : y { y0 },
   trials { trials0 },
@@ -28,7 +27,6 @@ GALAMM::Model::Model(
   lambda { lambda0.cast<dual1st>() },
   lambda_mapping_X { lambda_mapping_X0 },
   lambda_mapping_Zt { lambda_mapping_Zt0 },
-  lambda_free { lambda_free0 },
   maxit_conditional_modes { maxit_conditional_modes0 }
 {
   n = X.rows();
@@ -47,7 +45,7 @@ void GALAMM::Model::get_conditional_modes(
 
     solver.factorize(get_inner_hessian());
     VectorXdual1st b1 = solver.permutationP() *
-      (get_Lambdat() * Zt * (y - meanfun()) - u);
+      (get_Lambdat() * get_Zt() * (y - meanfun()) - u);
     VectorXdual1st cu = solver.matrixL().solve(b1);
     delta_u = solver.permutationPinv() * solver.matrixU().solve(cu);
 
@@ -62,8 +60,8 @@ dual1st GALAMM::Model::exponent_g(){
 
 void GALAMM::Model::update_inner_hessian(){
   inner_hessian = (1 / get_phi()) *
-    get_Lambdat() * Zt * get_V() *
-    Zt.transpose() * get_Lambdat().transpose();
+    get_Lambdat() * get_Zt() * get_V() *
+    get_Zt().transpose() * get_Lambdat().transpose();
 }
 
 Eigen::SparseMatrix<dual1st>& GALAMM::Model::get_inner_hessian(){
@@ -83,9 +81,27 @@ void GALAMM::Model::update_Lambdat(){
   }
 }
 
+void GALAMM::Model::update_Zt(){
+  int counter{};
+  for(int k{}; k < Zt.outerSize(); ++k){
+    for(Eigen::SparseMatrix<dual1st>::InnerIterator it(Zt, k); it; ++it){
+      int newind = lambda_mapping_Zt(counter);
+      if(newind != -1){
+        it.valueRef() = lambda(newind);
+      }
+      counter++;
+    }
+  }
+}
+
 Eigen::SparseMatrix<dual1st>& GALAMM::Model::get_Lambdat(){
   update_Lambdat();
   return Lambdat;
+}
+
+Eigen::SparseMatrix<autodiff::dual1st>& GALAMM::Model::get_Zt(){
+  update_Zt();
+  return Zt;
 }
 
 Eigen::DiagonalMatrix<dual1st, Eigen::Dynamic>&
