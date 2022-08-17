@@ -27,7 +27,7 @@ namespace GALAMM {
       const int maxit_conditional_modes0
     );
 
-    // Compute posterior modes of random effects
+    // Function to compute regression coefficients in inner loop
     void get_conditional_modes(
         Eigen::SimplicialLLT<Eigen::SparseMatrix<autodiff::dual1st> >& solver
     );
@@ -78,14 +78,15 @@ namespace GALAMM {
     autodiff::MatrixXdual1st X;
     Eigen::SparseMatrix<autodiff::dual1st> Zt;
 
-    const Eigen::VectorXi theta_mapping;
-    autodiff::VectorXdual1st theta;
     autodiff::VectorXdual1st beta;
-    autodiff::VectorXdual1st u;
-    Eigen::VectorXd trials;
+    autodiff::VectorXdual1st theta;
+    const Eigen::VectorXi theta_mapping;
     autodiff::VectorXdual1st lambda;
     const Eigen::VectorXi lambda_mapping_X;
     const Eigen::VectorXi lambda_mapping_Zt;
+
+    autodiff::VectorXdual1st u;
+    Eigen::VectorXd trials;
 
     int n;
     int p;
@@ -142,5 +143,7 @@ namespace GALAMM {
 
   };
 }
+
+
 
 #endif

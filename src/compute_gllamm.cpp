@@ -8,25 +8,26 @@ using namespace autodiff;
 
 // [[Rcpp::depends(RcppEigen)]]
 
-using llt = Eigen::SimplicialLLT<Eigen::SparseMatrix<dual1st> >;
-
-dual1st deviance(GALAMM::Model& mod, llt& solver){
+dual1st deviance(
+    GALAMM::Model& mod,
+    Eigen::SimplicialLLT<Eigen::SparseMatrix<autodiff::dual1st> >& solver){
   mod.Lambdat_needs_update = true;
   mod.get_conditional_modes(solver);
   solver.factorize(mod.get_inner_hessian());
   return -2 * (mod.exponent_g() - log(solver.determinant()) / 2);
 }
 
-Rcpp::List compute(GALAMM::Model& mod, llt& solver){
-  dual1st deviance{};
+Rcpp::List compute(
+    GALAMM::Model& mod,
+    Eigen::SimplicialLLT<Eigen::SparseMatrix<autodiff::dual1st> >& solver){
+  dual1st dev{};
   Eigen::VectorXd g;
 
-  g = gradient(deviance, wrt(mod.beta, mod.theta, mod.phi),
-               at(mod, solver), deviance);
+  dev = deviance(mod, solver);
 
   return Rcpp::List::create(
-    Rcpp::Named("deviance") = static_cast<double>(deviance),
-    Rcpp::Named("gradient") = g.cast<double>()
+    Rcpp::Named("deviance") = static_cast<double>(dev),
+    Rcpp::Named("u") = mod.u.cast<double>()
   );
 }
 
@@ -41,12 +42,12 @@ Rcpp::List compute_galamm(
     const Eigen::Map<Eigen::VectorXd> theta,
     const Eigen::Map<Eigen::VectorXi> theta_mapping,
     const Eigen::Map<Eigen::VectorXd> lambda,
-    const Eigen::Map<Eigen::VectorXd> lambda_mapping_X,
-    const Eigen::Map<Eigen::VectorXd> lambda_mapping_Zt,
+    const Eigen::Map<Eigen::VectorXi> lambda_mapping_X,
+    const Eigen::Map<Eigen::VectorXi> lambda_mapping_Zt,
     const std::string family
 ){
 
-  llt solver;
+  Eigen::SimplicialLLT<Eigen::SparseMatrix<autodiff::dual1st> > solver;
   solver.setShift(1);
 
   if(family == "gaussian"){

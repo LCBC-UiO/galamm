@@ -2,7 +2,6 @@
 
 using namespace autodiff;
 
-using llt = Eigen::SimplicialLLT<Eigen::SparseMatrix<dual1st> >;
 
 GALAMM::Model::Model(
   const Eigen::VectorXd& y0,
@@ -37,7 +36,7 @@ GALAMM::Model::Model(
   V = Eigen::DiagonalMatrix<dual1st, Eigen::Dynamic>(n);
 }
 
-void GALAMM::Model::get_conditional_modes(llt& solver){
+void GALAMM::Model::get_conditional_modes(Eigen::SimplicialLLT<Eigen::SparseMatrix<dual1st> >& solver){
   VectorXdual1st delta_u{};
 
   for(int i{}; i < maxit_conditional_modes; i++){
