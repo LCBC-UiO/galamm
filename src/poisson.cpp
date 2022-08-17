@@ -15,7 +15,6 @@ VectorXdual1st GALAMM::Poisson::meanfun() {
 
 void GALAMM::Poisson::update_V(){
   V.diagonal().array() = meanfun().array();
-  inner_hessian_needs_update = true;
 }
 
 void GALAMM::Poisson::update_phi(){
@@ -24,6 +23,4 @@ void GALAMM::Poisson::update_phi(){
 
 void GALAMM::Poisson::update_linpred(){
   linpred = X * beta + Zt.transpose() * get_Lambdat().transpose() * u;
-  phi_needs_update = false;
-  V_needs_update = true;
 }

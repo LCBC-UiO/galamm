@@ -39,31 +39,26 @@ namespace GALAMM {
     // Hessian matrix used in penalized iteratively reweighted least squares
     void update_inner_hessian();
     Eigen::SparseMatrix<autodiff::dual1st>& get_inner_hessian();
-    bool inner_hessian_needs_update{true};
     Eigen::SparseMatrix<autodiff::dual1st> inner_hessian;
 
     // Lower Cholesky factor of scaled covariance matrix
     void update_Lambdat();
     Eigen::SparseMatrix<autodiff::dual1st>& get_Lambdat();
-    bool Lambdat_needs_update{true};
     Eigen::SparseMatrix<autodiff::dual1st> Lambdat;
 
     // Scale parameter
     virtual void update_phi() = 0;
     autodiff::dual1st phi;
     autodiff::dual1st& get_phi();
-    bool phi_needs_update{true};
 
     // Diagonal variance matrix, common parts
     virtual void update_V() = 0;
     Eigen::DiagonalMatrix<autodiff::dual1st, Eigen::Dynamic> V;
     Eigen::DiagonalMatrix<autodiff::dual1st, Eigen::Dynamic>& get_V();
-    bool V_needs_update{true};
 
     // Linear predictor
     virtual void update_linpred() = 0;
     autodiff::VectorXdual1st& get_linpred();
-    bool linpred_needs_update{true};
     autodiff::VectorXdual1st linpred;
 
     // GLM functions defined in derived classes

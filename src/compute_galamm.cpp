@@ -11,9 +11,7 @@ using namespace autodiff;
 dual1st deviance(
     GALAMM::Model& mod,
     Eigen::SimplicialLLT<Eigen::SparseMatrix<autodiff::dual1st> >& solver){
-  mod.Lambdat_needs_update = true;
   mod.get_conditional_modes(solver);
-  solver.factorize(mod.get_inner_hessian());
   return -2 * (mod.exponent_g() - log(solver.determinant()) / 2);
 }
 
@@ -27,7 +25,8 @@ Rcpp::List compute(
 
   return Rcpp::List::create(
     Rcpp::Named("deviance") = static_cast<double>(dev),
-    Rcpp::Named("u") = mod.u.cast<double>()
+    Rcpp::Named("u") = mod.u.cast<double>(),
+    Rcpp::Named("phi") = static_cast<double>(mod.phi)
   );
 }
 

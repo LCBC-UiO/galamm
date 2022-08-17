@@ -16,7 +16,6 @@ VectorXdual1st GALAMM::Binomial::meanfun() {
 
 void GALAMM::Binomial::update_V(){
   V.diagonal().array() = meanfun().array() * (trials.array() - meanfun().array());
-  inner_hessian_needs_update = true;
 }
 
 void GALAMM::Binomial::update_phi(){
@@ -25,6 +24,4 @@ void GALAMM::Binomial::update_phi(){
 
 void GALAMM::Binomial::update_linpred(){
   linpred = X * beta + Zt.transpose() * get_Lambdat().transpose() * u;
-  phi_needs_update = false;
-  V_needs_update = true;
 }

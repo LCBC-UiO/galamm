@@ -47,14 +47,14 @@ mm2 <- compute_galamm(
   Lambdat = lmod$reTrms$Lambdat,
   beta = fixef(mm),
   theta = getME(mm, "theta"),
-  theta_mapping = lmod$reTrms$Lind,
+  theta_mapping = lmod$reTrms$Lind - 1L,
   lambda = 1,
   lambda_mapping_X = integer(),
   lambda_mapping_Zt = integer(),
   family = "gaussian"
   )
 
-plot(getME(mm, "u"), mm2$u)
-
-
+plot(getME(mm, "u"), mm2$u); abline(0, 1)
+mm2$deviance
+-2 * logLik(mm)
 

@@ -36,7 +36,9 @@ GALAMM::Model::Model(
   V = Eigen::DiagonalMatrix<dual1st, Eigen::Dynamic>(n);
 }
 
-void GALAMM::Model::get_conditional_modes(Eigen::SimplicialLLT<Eigen::SparseMatrix<dual1st> >& solver){
+void GALAMM::Model::get_conditional_modes(
+    Eigen::SimplicialLLT<Eigen::SparseMatrix<dual1st> >& solver
+  ){
   VectorXdual1st delta_u{};
 
   for(int i{}; i < maxit_conditional_modes; i++){
@@ -63,10 +65,7 @@ void GALAMM::Model::update_inner_hessian(){
 }
 
 Eigen::SparseMatrix<dual1st>& GALAMM::Model::get_inner_hessian(){
-  if(inner_hessian_needs_update){
-    update_inner_hessian();
-    inner_hessian_needs_update = false;
-  }
+  update_inner_hessian();
   return inner_hessian;
 }
 
@@ -80,46 +79,30 @@ void GALAMM::Model::update_Lambdat(){
       lind_counter++;
     }
   }
-  inner_hessian_needs_update = true;
-  linpred_needs_update = true;
-
 }
 
 Eigen::SparseMatrix<dual1st>& GALAMM::Model::get_Lambdat(){
-  if(Lambdat_needs_update){
-    update_Lambdat();
-    Lambdat_needs_update = false;
-  }
+  update_Lambdat();
   return Lambdat;
 }
 
 Eigen::DiagonalMatrix<dual1st, Eigen::Dynamic>&
   GALAMM::Model::get_V(){
-    if(V_needs_update){
-      update_V();
-      V_needs_update = false;
-    }
+    update_V();
     return V;
   }
 
 dual1st& GALAMM::Model::get_phi(){
-  if(phi_needs_update){
-    update_phi();
-    phi_needs_update = false;
-  }
+  update_phi();
   return phi;
 }
 
 VectorXdual1st& GALAMM::Model::get_linpred(){
-  if(linpred_needs_update){
-    update_linpred();
-    linpred_needs_update = false;
-  }
+  update_linpred();
   return linpred;
 }
 
 void GALAMM::Model::update_u(const VectorXdual1st& delta_u,
                              double alpha_bar){
   u += alpha_bar * delta_u;
-  linpred_needs_update = true;
 }
