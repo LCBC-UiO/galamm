@@ -8,7 +8,7 @@ ind1 <- str_which(ff, "#include <Eigen/Core>")
 ff <- c(ff[1:ind1], "#include <Eigen/SparseCore>",
         ff[(ind1 + 1):length(ff)])
 
-ind2 <- min(str_which(ff, "template<typename Scalar")) - 1
+ind2 <- min(str_which(ff, "EIGEN_VERSION_AT_LEAST")) - 1
 
 ff <- c(ff[1:ind2],
         "template<typename Scalar, int Options, typename StorageIndex>",

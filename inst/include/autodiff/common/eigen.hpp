@@ -73,14 +73,6 @@ namespace detail {
 //
 //=====================================================================================================================
 
-template<typename Scalar, int Options, typename StorageIndex>
-struct VectorTraits<Eigen::SparseMatrix<Scalar, Options, StorageIndex>>
-{
-  using ValueType = Scalar;
-  template<typename NewValueType>
-  using ReplaceValueType = Eigen::SparseMatrix<NewValueType, Options, StorageIndex>;
-};
-
 template<typename Scalar, int Rows, int Cols, int Options, int MaxRows, int MaxCols>
 struct VectorTraits<Eigen::Matrix<Scalar, Rows, Cols, Options, MaxRows, MaxCols>>
 {
@@ -106,6 +98,14 @@ struct VectorTraits<Eigen::VectorBlock<VectorType, Size>>
 
     template<typename NewValueType>
     using ReplaceValueType = VectorReplaceValueType<VectorType, NewValueType>;
+};
+
+template<typename Scalar, int Options, typename StorageIndex>
+struct VectorTraits<Eigen::SparseMatrix<Scalar, Options, StorageIndex>>
+{
+  using ValueType = Scalar;
+  template<typename NewValueType>
+  using ReplaceValueType = Eigen::SparseMatrix<NewValueType, Options, StorageIndex>;
 };
 
 #if EIGEN_VERSION_AT_LEAST(3, 3, 90)

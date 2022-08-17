@@ -1,0 +1,45 @@
+
+R version 4.2.1 (2022-06-23 ucrt) -- "Funny-Looking Kid"
+Copyright (C) 2022 The R Foundation for Statistical Computing
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> library(readr)
+> library(stringr)
+> 
+> ff <- read_lines("inst/include/autodiff/common/eigen.hpp")
+> 
+> ind1 <- str_which(ff, "#include <Eigen/Core>")
+> 
+> ff <- c(ff[1:ind1], "#include <Eigen/SparseCore>",
++         ff[(ind1 + 1):length(ff)])
+> 
+> ind2 <- min(str_which(ff, "EIGEN_VERSION_AT_LEAST")) - 1
+> 
+> ff <- c(ff[1:ind2],
++         "template<typename Scalar, int Options, typename StorageIndex>",
++         "struct VectorTraits<Eigen::SparseMatrix<Scalar, Options, StorageIndex>>",
++         "{",
++         "  using ValueType = Scalar;",
++         "  template<typename NewValueType>",
++         "  using ReplaceValueType = Eigen::SparseMatrix<NewValueType, Options, StorageIndex>;",
++         "};",
++         "",
++         ff[(ind2 + 1):length(ff)])
+> 
+> write_lines(ff, "inst/include/autodiff/common/eigen.hpp")
+> 
+> proc.time()
+   user  system elapsed 
+   1.01    0.17    1.17 
