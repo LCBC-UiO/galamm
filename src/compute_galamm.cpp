@@ -62,7 +62,7 @@ Rcpp::List compute(
 //' @param family A length one \code{character} denoting the family.
 //'
 //' @return A \code{list} with elements \code{deviance} and \code{gradient}.
-//'
+//' @export
 // [[Rcpp::export]]
 Rcpp::List marginal_likelihood(
     const Eigen::Map<Eigen::VectorXd> y,
