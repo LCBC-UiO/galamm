@@ -34,6 +34,8 @@
 #'
 #' @return A \code{list} with elements \code{deviance} and \code{gradient}.
 #' @export
+#'
+#' @details For examples, see the vignette on maximum likelihood estimation.
 marginal_likelihood <- function(y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, lambda, lambda_mapping_X, lambda_mapping_Zt, family) {
     .Call(`_galamm_marginal_likelihood`, y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, lambda, lambda_mapping_X, lambda_mapping_Zt, family)
 }

@@ -64,3 +64,6 @@ A \code{list} with elements \code{deviance} and \code{gradient}.
 This function computes the Laplace approximate marginal
 likelihood.
 }
+\details{
+For examples, see the vignette on maximum likelihood estimation.
+}

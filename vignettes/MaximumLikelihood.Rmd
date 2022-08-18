@@ -20,7 +20,7 @@ library(galamm)
 ```
 
 
-The `galamm` package includes a function for computing the Laplace approximate marginal likelihood of both GLLAMMs and GALAMMs. In the future, this will replace the profile likelihood method, but due to the complexity of the matter, it will take some time to develop a decent API. This vignette describes how to perform maximum likelihood estimation with the currently available functions; it is complicated, but also gives the benefit of understanding what's going on, in addition to a more accurate algorithm which scales better. Before reading this on, make sure you've read the Introduction vignette.
+The `galamm` package includes a function for computing the Laplace approximate marginal likelihood of both GLLAMMs and GALAMMs. In the future, this will replace the profile likelihood method, but due to the complexity of the matter, it will take some time to develop a decent API. This vignette describes how to perform maximum likelihood estimation with the currently available functions; it is complicated, but also gives the benefit of understanding what's going on, in addition to a more accurate algorithm which scales better. Before continuing, make sure you've read the Introduction vignette.
 
 ## Linear mixed model with factor structure
 
@@ -123,7 +123,7 @@ ml$gradient
 
 This gradient is computed with algorithmic differentiation using the `autodiff` C++ library [@lealAutodiffModernFast2018], which means that it is exact to computer precision.
 
-We can use this gradient to find the maximum likelihood estimates of the model (technically, the Laplace approximate marginal maximum likelihood estimates).
+We can use this gradient to find the maximum likelihood estimates of the model (technically, the Laplace approximate marginal maximum likelihood estimates). We also use `memoise` to avoid evaluating the function unnecessarily.
 
 ```{r}
 library(memoise)
@@ -158,17 +158,6 @@ gr <- function(par){
 }
 
 ```
-
-We can confirm that the functions are memoised:
-
-```{r}
-system.time({fn(c(1,1,0,0,0,1,1))})
-system.time({fn(c(1,1,0,0,0,1,1))})
-system.time({gr(c(1,1,0,0,0,1,1))})
-forget(mlmem)
-system.time({gr(c(1,1,0,0,0,1,1))})
-```
-
 
 We start the optimization from some pretty arbitrary values, and it converges quite fast, to a solution which is identical to the one the `PLmixed` found:
 
@@ -212,6 +201,71 @@ system.time({
 
 
 ## Generalized linear mixed models with factor structures
+
+For illustrating use with generalized linear mixed models, we start by using a model without any factor structures.
+
+We first fit the model using `lme4`:
+
+```{r}
+glmod <- glFormula(cbind(incidence, size - incidence) ~ period + (1 | herd),
+                   data = cbpp, family = binomial)
+devfun <- do.call(mkGlmerDevfun, glmod)
+opt1 <- optimizeGlmer(devfun)
+devfun <- updateGlmerDevfun(devfun, glmod$reTrms)
+opt2 <- optimizeGlmer(devfun, stage=2)
+fMod <- mkMerMod(environment(devfun), opt2, glmod$reTrms, fr = glmod$fr)
+```
+
+Then we do it using `marginal_likelihood`:
+
+```{r}
+theta_inds <- 1
+beta_inds <- 2:5
+
+mlwrapper <- function(par){
+  marginal_likelihood(
+    y = cbpp$incidence,
+    trials = cbpp$size,
+    X = glmod$X,
+    Zt = glmod$reTrms$Zt,
+    Lambdat = glmod$reTrms$Lambdat,
+    beta = par[beta_inds],
+    theta = par[theta_inds],
+    theta_mapping = glmod$reTrms$Lind - 1L,
+    lambda = numeric(),
+    lambda_mapping_X = integer(),
+    lambda_mapping_Zt = integer(),
+    family = "binomial"
+  )
+}
+
+mlmem <- memoise(mlwrapper)
+fn <- function(par){
+  mlmem(par)$deviance
+}
+gr <- function(par){
+  mlmem(par)$gradient
+}
+
+opt <- optim(
+  par = c(1, rep(0, 4)), fn = fn, gr = gr,
+  method = "L-BFGS-B", lower = c(0, rep(-Inf, 4))
+)
+```
+
+Using `optim()` with L-BFGS-B yields slightly higher deviance than `lme4`.
+
+```{r}
+opt$value
+-2 * logLik(fMod)
+```
+
+On the other hand, for given parameter values, they perfectly agree, confirming that our implementation is correct, but that some work is needed to check the optimization algorithms.
+
+```{r}
+fn(opt2$par)
+```
+
 
 
 

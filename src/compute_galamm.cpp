@@ -63,6 +63,8 @@ Rcpp::List compute(
 //'
 //' @return A \code{list} with elements \code{deviance} and \code{gradient}.
 //' @export
+//'
+//' @details For examples, see the vignette on maximum likelihood estimation.
 // [[Rcpp::export]]
 Rcpp::List marginal_likelihood(
     const Eigen::Map<Eigen::VectorXd> y,
