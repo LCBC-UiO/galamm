@@ -7,5 +7,7 @@
 Mixed Models.}
 \description{
 This package performs profile and maximum likelihood estmation of
-generalized additive latent and mxied models.
+generalized additive latent and mxied models. To get started, take a look at
+the vignettes. The main functions are \code{\link{galamm}} and
+\code{\link{marginal_likelihood}}.
 }

@@ -126,8 +126,14 @@ This gradient is computed with algorithmic differentiation using the `autodiff` 
 We can use this gradient to find the maximum likelihood estimates of the model (technically, the Laplace approximate marginal maximum likelihood estimates).
 
 ```{r}
-optfun <- function(par, theta_inds, beta_inds, lambda_inds){
-  ml <- marginal_likelihood(
+library(memoise)
+theta_inds <- 1:2
+beta_inds <- 3:5
+lambda_inds <- 6:7
+bounds <- c(0, 0, rep(-Inf, 5))
+
+mlwrapper <- function(par){
+  marginal_likelihood(
     y = dat$y,
     trials = rep(1, length(dat$y)),
     X = X,
@@ -141,27 +147,34 @@ optfun <- function(par, theta_inds, beta_inds, lambda_inds){
     lambda_mapping_Zt = lambda_mapping_Zt,
     family = "gaussian"
     )
-  grad <<- ml$gradient
-  ml$deviance
 }
-gradfun <- function(par, ...){
-  grad
+
+mlmem <- memoise(mlwrapper)
+fn <- function(par){
+  mlmem(par)$deviance
 }
+gr <- function(par){
+  mlmem(par)$gradient
+}
+
 ```
+
+We can confirm that the functions are memoised:
+
+```{r}
+system.time({fn(c(1,1,0,0,0,1,1))})
+system.time({fn(c(1,1,0,0,0,1,1))})
+system.time({gr(c(1,1,0,0,0,1,1))})
+forget(mlmem)
+system.time({gr(c(1,1,0,0,0,1,1))})
+```
+
 
 We start the optimization from some pretty arbitrary values, and it converges quite fast, to a solution which is identical to the one the `PLmixed` found:
 
 ```{r}
-grad <- NULL
 par_init <- c(1, 1, 0, 0, 0, 1, 1)
-theta_inds <- 1:2
-beta_inds <- 3:5
-lambda_inds <- 6:7
-bounds <- c(0, 0, rep(-Inf, 5))
-
-opt <- optim(par_init, fn = optfun, gr = gradfun, 
-             theta_inds = theta_inds, beta_inds = beta_inds, 
-             lambda_inds = lambda_inds,
+opt <- optim(par_init, fn = fn, gr = gr, 
              method = "L-BFGS-B", lower = bounds)
 
 opt$value
@@ -183,9 +196,7 @@ It should also be clear to the reader the `PLmixed` is MUCH more convenient to u
 
 ```{r}
 system.time({
-  opt <- optim(par_init, fn = optfun, gr = gradfun, 
-             theta_inds = theta_inds, beta_inds = beta_inds, 
-             lambda_inds = lambda_inds,
+  opt <- optim(par_init, fn = fn, gr = gr, 
              method = "L-BFGS-B", lower = bounds)
 })
 ```
@@ -193,11 +204,14 @@ system.time({
 ```{r}
 system.time({
   irt.model <- PLmixed(form,
-                     data = IRTsub, load.var = c("item"), # family = binomial,
+                     data = IRTsub, load.var = c("item"),
                      REML = FALSE, factor = list(c("abil.sid")), 
                      lambda = list(irt.lam), iter.count = FALSE)
 })
 ```
+
+
+## Generalized linear mixed models with factor structures
 
 
 

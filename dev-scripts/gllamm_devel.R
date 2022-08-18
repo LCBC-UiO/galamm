@@ -1,4 +1,4 @@
-devtools::load_all()
+library(galamm)
 library(lme4)
 library(PLmixed)
 
@@ -17,23 +17,14 @@ data <- IRTsub
 load_var <- "item"
 factor <- list("abil.sid")
 lambda <- list(irt.lam)
-lambda_init <- lapply(lambda, function(x) {
-  x[is.na(x)] <- seq(from = 2, length.out = sum(is.na(x)))
-  x
-})
-for(i in seq_along(factor)){
-  for(j in seq_along(factor[[i]])){
-    eval(parse(text = paste0("data$", factor[[i]][[j]], "<- lambda_init[[", i, "]][data$",
-                             load_var, "]")))
-  }
-}
+lambda_init <- 1:3
+data$abil.sid <- lambda_init[data$item]
 
-mm <- lmer(formula, data, REML = FALSE)
+mm <- glmer(formula, data, family = "binomial")
 # Mapping between elements of Zt and lambda
-lmod <- lFormula(formula, data = data, REML = FALSE)
+lmod <- glFormula(formula, data = data, family = "binomial")
 
-lambda_mapping_Zt <- (sapply(lmod$reTrms$Zt@x, function(x) which(x == lambda_init[[1]])) - 2L)
-
+lambda_mapping_Zt <- (sapply(lmod$reTrms$Zt@x, function(x) which(x == lambda_init)) - 2L)
 
 mm2 <- marginal_likelihood(
   y = data$y,
@@ -44,11 +35,14 @@ mm2 <- marginal_likelihood(
   beta = fixef(mm),
   theta = getME(mm, "theta"),
   theta_mapping = lmod$reTrms$Lind - 1L,
-  lambda = c(2, 3),
+  lambda = as.numeric(lambda_init[-1]),
   lambda_mapping_X = integer(),
   lambda_mapping_Zt = lambda_mapping_Zt,
-  family = "gaussian"
+  family = "binomial"
   )
+
+mm2$deviance
+-2 * logLik(mm)
 
 par <- c(.2, .2, .6, .6, .6, 1, 1)
 grad <- NULL
@@ -71,7 +65,7 @@ fn <- function(par){
     lambda = par[lambda_inds],
     lambda_mapping_X = integer(),
     lambda_mapping_Zt = lambda_mapping_Zt,
-    family = "gaussian"
+    family = "binomial"
   )
   grad <<- ret$gradient
   ret$deviance
@@ -84,7 +78,8 @@ opt <- optim(par, fn = fn, gr = gr, method = "L-BFGS-B",
              lower = lower)
 
 mm3 <- PLmixed(formula, IRTsub, load.var = load_var, lambda = list(irt.lam),
-               factor = list("abil.sid"), REML = FALSE)
+               factor = list("abil.sid"), family = "binomial", REML = FALSE)
+
 
 summary(mm3)
 

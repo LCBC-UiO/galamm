@@ -13,10 +13,10 @@ Description: Estimates generalized additive latent and
     item response models in which the responses depend 
     nolinearly on observed predictors can be estimated, 
     with crossed or nested random effects structures defined
-    using 'lme4' syntax. Computations are based on profile 
-    likelihood estimation proposed by Jeon and Rabe-Hesketh 
-    (2012) <doi:10.3102/1076998611417628>, utilizing the 
-    'gamm4' and 'lme4' packages.
+    using 'lme4' syntax. Computations use either the profile 
+    likelihood algorithm proposed by Jeon and Rabe-Hesketh 
+    (2012) <doi:10.3102/1076998611417628> or Laplace
+    approximate marginal likelihood.
 License: GPL (>= 3)
 Encoding: UTF-8
 Imports: 
@@ -35,6 +35,7 @@ RoxygenNote: 7.2.1
 Suggests: 
     covr,
     knitr,
+    memoise,
     PLmixed,
     rmarkdown,
     testthat (>= 3.0.0)

@@ -49,6 +49,7 @@ void GALAMM::Model::get_conditional_modes(
     VectorXdual1st cu = solver.matrixL().solve(b1);
     delta_u = solver.permutationPinv() * solver.matrixU().solve(cu);
 
+    if(delta_u.squaredNorm() < 1e-10) break;
     update_u(delta_u, 1);
   }
 }
