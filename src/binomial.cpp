@@ -6,7 +6,8 @@ dual1st GALAMM::Binomial::cumulant(){
   }
 
 dual1st GALAMM::Binomial::constfun(){
-    return 1;
+    return (lgamma(trials.array() + 1) - lgamma(y.array() + 1) -
+            lgamma(trials.array() - y.array() + 1)).sum();
   }
 
 VectorXdual1st GALAMM::Binomial::meanfun() {
@@ -15,7 +16,7 @@ VectorXdual1st GALAMM::Binomial::meanfun() {
   }
 
 void GALAMM::Binomial::update_V(){
-  V.diagonal().array() = meanfun().array() * (trials.array() - meanfun().array());
+  V.diagonal().array() = meanfun().array() / trials.array() * (trials.array() - meanfun().array());
 }
 
 void GALAMM::Binomial::update_phi(){

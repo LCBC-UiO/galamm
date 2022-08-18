@@ -1,5 +1,74 @@
 library(galamm)
 library(lme4)
+library(memoise)
+
+glmod <- glFormula(cbind(incidence, size - incidence) ~ period + (1 | herd),
+                  data = cbpp, family = binomial)
+devfun <- do.call(mkGlmerDevfun, glmod)
+opt <- optimizeGlmer(devfun)
+devfun <- updateGlmerDevfun(devfun, glmod$reTrms)
+opt <- optimizeGlmer(devfun, stage=2)
+fMod <- mkMerMod(environment(devfun), opt, glmod$reTrms, fr = glmod$fr)
+
+ml <- marginal_likelihood(
+  y = cbpp$incidence,
+  trials = cbpp$size,
+  X = glmod$X,
+  Zt = glmod$reTrms$Zt,
+  Lambdat = glmod$reTrms$Lambdat,
+  beta = fixef(fMod),
+  theta = getME(fMod, "theta"),
+  theta_mapping = glmod$reTrms$Lind - 1L,
+  lambda = numeric(),
+  lambda_mapping_X = integer(),
+  lambda_mapping_Zt = integer(),
+  family = "binomial"
+)
+
+logLik(fMod) * (-2)
+ml$deviance
+
+theta_inds <- 1
+beta_inds <- 2:5
+
+mlwrapper <- function(par){
+  marginal_likelihood(
+    y = cbpp$incidence,
+    trials = cbpp$size,
+    X = glmod$X,
+    Zt = glmod$reTrms$Zt,
+    Lambdat = glmod$reTrms$Lambdat,
+    beta = par[beta_inds],
+    theta = par[theta_inds],
+    theta_mapping = glmod$reTrms$Lind - 1L,
+    lambda = numeric(),
+    lambda_mapping_X = integer(),
+    lambda_mapping_Zt = integer(),
+    family = "binomial"
+  )
+}
+
+mlmem <- memoise(mlwrapper)
+fn <- function(par){
+  mlmem(par)$deviance
+}
+gr <- function(par){
+  mlmem(par)$gradient
+}
+
+opt <- optim(
+  par = c(1, rep(0, 4)), fn = fn, gr = gr,
+  method = "L-BFGS-B", lower = c(0, rep(-Inf, 4))
+)
+
+-2 * logLik(fMod)
+opt$value
+
+
+opt$par
+getME(fMod, "theta")
+fixef(fMod)
+
 library(PLmixed)
 
 data("IRTsim") # Load the IRTsim data
