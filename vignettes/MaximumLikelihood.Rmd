@@ -29,9 +29,11 @@ We will use an example dataset from the `PLmixed` package [@rockwoodEstimatingCo
 ```{r}
 library(PLmixed)
 data("IRTsim")
-IRTsim$item <- factor(IRTsim$item)
-IRTsim$sid <- factor(IRTsim$sid)
-IRTsim$school <- factor(IRTsim$school)
+IRTsub <- IRTsim[IRTsim$item < 4, ]
+set.seed(12345)
+IRTsub <- IRTsub[sample(nrow(IRTsub), 300), ]
+IRTsub <- IRTsub[order(IRTsub$item), ]
+irt.lam = c(1, NA, NA)
 ```
 
 
@@ -40,14 +42,11 @@ IRTsim$school <- factor(IRTsim$school)
 The model can be fit with `PLmixed` as follows, where we're pretending for now the the response is normally distributed, although the binomial distribution would be correct.
 
 ```{r, cache=TRUE}
-irt.lam = c(1, NA, NA, NA, NA)
-irt.model <- PLmixed(
-  y ~ 0 + item + (0 + abil.sid |sid) +(0 + abil.sid |school),
-  data = IRTsim, load.var = c("item"), 
-  factor = list(c("abil.sid")), lambda = list(irt.lam), 
-  REML = FALSE, iter.count = FALSE)
-summary(irt.model)
-
+form <- y ~ 0 + as.factor(item) + (0 + abil.sid |sid) +(0 + abil.sid |school)
+irt.model <- PLmixed(form,
+                     data = IRTsub, load.var = c("item"), # family = binomial,
+                     REML = FALSE, factor = list(c("abil.sid")), 
+                     lambda = list(irt.lam), iter.count = FALSE)
 ```
 
 ### Estimation with the galamm package
@@ -57,8 +56,8 @@ We can use the `marginal_likelihood` function from `galamm` to compute the margi
 We start by adding $\lambda$ as a variable in the model:
 
 ```{r}
-dat <- IRTsim
-lambda_init <- 1:5
+dat <- IRTsub
+lambda_init <- c(1, 2, 3)
 dat$abil.sid <- lambda_init[dat$item]
 ```
 
@@ -66,10 +65,7 @@ We then generate the components of a linear mixed model:
 
 ```{r}
 library(lme4)
-lmod <- lFormula(
-  y ~ 0 + item + (0 + abil.sid |sid) +(0 + abil.sid |school),
-  data = dat, REML = FALSE
-)
+lmod <- lFormula(form, data = dat, REML = FALSE)
 ```
 
 The fixed effects matrix does not contain any factor loadings, so we keep it as is.
@@ -82,9 +78,8 @@ The random effects matrix does contain factor loadings, so we need a mapping. Al
 
 ```{r}
 Zt <- lmod$reTrms$Zt
-class(Zt)
-lambda_mapping_Zt <- (Zt@x - 2L)
-head(lambda_mapping_Zt)
+lambda_mapping_Zt <- sapply(lmod$reTrms$Zt@x, 
+                            function(x) which(x == lambda_init)) - 2L
 ```
 
 We also extract the random effects covariance matrix, with its mapping to $\theta$. See @batesFittingLinearMixedEffects2015 for details.
@@ -94,7 +89,116 @@ Lambdat <- lmod$reTrms$Lambdat
 theta_mapping <- lmod$reTrms$Lind - 1L
 ```
 
-We can now start by 
+We can now start by confirming that we are able to compute the likelihood of the model.
+
+```{r}
+ml <- marginal_likelihood(
+  y = dat$y,
+  trials = rep(1, length(dat$y)),
+  X = X,
+  Zt = Zt,
+  Lambdat = Lambdat,
+  beta = fixef(irt.model),
+  theta = getME(irt.model$lme4, "theta"),
+  theta_mapping = theta_mapping,
+  lambda = irt.model$Lambda[[1]][, "abil.sid", drop = TRUE][2:3],
+  lambda_mapping_X = integer(),
+  lambda_mapping_Zt = lambda_mapping_Zt,
+  family = "gaussian"
+)
+```
+
+The `marginal_likelihood` function returns the deviance, which we can compare with that from `PLmixed`:
+
+```{r}
+-2 * irt.model$`Log-Likelihood`
+ml$deviance
+```
+
+The `marginal_likelihood` function also returns the gradient of the marginal likelihood with respect to $\theta$, $\beta$, and $\lambda$, in that order. Reassuringly, it is close to zero. Not however that `PLmixed` returns the maximum of the profile likelihood, which albeit consistent, is not the same as the maximum likelihood estimate [@gongPseudoMaximumLikelihood1981;@parkePseudoMaximumLikelihood1986;@pawitanAllLikelihood2001].
+
+```{r}
+ml$gradient
+```
+
+This gradient is computed with algorithmic differentiation using the `autodiff` C++ library [@lealAutodiffModernFast2018], which means that it is exact to computer precision.
+
+We can use this gradient to find the maximum likelihood estimates of the model (technically, the Laplace approximate marginal maximum likelihood estimates).
+
+```{r}
+optfun <- function(par, theta_inds, beta_inds, lambda_inds){
+  ml <- marginal_likelihood(
+    y = dat$y,
+    trials = rep(1, length(dat$y)),
+    X = X,
+    Zt = Zt,
+    Lambdat = Lambdat,
+    beta = par[beta_inds],
+    theta = par[theta_inds],
+    theta_mapping = theta_mapping,
+    lambda = par[lambda_inds],
+    lambda_mapping_X = integer(),
+    lambda_mapping_Zt = lambda_mapping_Zt,
+    family = "gaussian"
+    )
+  grad <<- ml$gradient
+  ml$deviance
+}
+gradfun <- function(par, ...){
+  grad
+}
+```
+
+We start the optimization from some pretty arbitrary values, and it converges quite fast, to a solution which is identical to the one the `PLmixed` found:
+
+```{r}
+grad <- NULL
+par_init <- c(1, 1, 0, 0, 0, 1, 1)
+theta_inds <- 1:2
+beta_inds <- 3:5
+lambda_inds <- 6:7
+bounds <- c(0, 0, rep(-Inf, 5))
+
+opt <- optim(par_init, fn = optfun, gr = gradfun, 
+             theta_inds = theta_inds, beta_inds = beta_inds, 
+             lambda_inds = lambda_inds,
+             method = "L-BFGS-B", lower = bounds)
+
+opt$value
+-2 * irt.model$`Log-Likelihood`
+```
+
+We can confirm that the parameters are identical:
+
+```{r, fig.width=4}
+plot(
+  opt$par, 
+  c(getME(irt.model$lme4, "theta"), fixef(irt.model), 
+    irt.model$Lambda[[1]][2:3, 1]),
+  xlab = "optim()", ylab = "PLmixed");
+abline(0, 1)
+```
+
+It should also be clear to the reader the `PLmixed` is MUCH more convenient to use. However, the optimization shown here is faster:
+
+```{r}
+system.time({
+  opt <- optim(par_init, fn = optfun, gr = gradfun, 
+             theta_inds = theta_inds, beta_inds = beta_inds, 
+             lambda_inds = lambda_inds,
+             method = "L-BFGS-B", lower = bounds)
+})
+```
+
+```{r}
+system.time({
+  irt.model <- PLmixed(form,
+                     data = IRTsub, load.var = c("item"), # family = binomial,
+                     REML = FALSE, factor = list(c("abil.sid")), 
+                     lambda = list(irt.lam), iter.count = FALSE)
+})
+```
+
 
 
 ## References

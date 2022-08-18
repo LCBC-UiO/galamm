@@ -90,5 +90,6 @@ summary(mm3)
 
 mm2$deviance
 -2 * logLik(mm)
+-2 * mm3$`Log-Likelihood`
 
 mm2
