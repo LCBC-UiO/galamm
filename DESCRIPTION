@@ -28,7 +28,7 @@ Imports:
     lme4 (>= 1.1-26),
     Rcpp (>= 1.0.9)
 Depends:
-    R (>= 2.10)
+    R (>= 3.5.0)
 LinkingTo:
     Rcpp,
     RcppEigen
@@ -39,6 +39,7 @@ Suggests:
     covr,
     knitr,
     memoise,
+    mgcv,
     PLmixed,
     rmarkdown,
     testthat (>= 3.0.0)
