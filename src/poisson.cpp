@@ -22,5 +22,5 @@ void GALAMM::Poisson::update_phi(){
 }
 
 void GALAMM::Poisson::update_linpred(){
-  linpred = X * beta + get_Zt().transpose() * get_Lambdat().transpose() * u;
+  linpred = get_X() * beta + get_Zt().transpose() * get_Lambdat().transpose() * u;
 }

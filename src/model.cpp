@@ -18,7 +18,9 @@ GALAMM::Model::Model(
   const int maxit_conditional_modes0
 ) : y { y0 },
   trials { trials0 },
+  X_init { X0.cast<dual1st>() },
   X { X0.cast<dual1st>() },
+  Zt_init { Zt0.cast<dual1st>() },
   Zt { Zt0.cast<dual1st>() },
   Lambdat { Lambdat0.cast<dual1st>() },
   beta { beta0.cast<dual1st>() },
@@ -82,14 +84,26 @@ void GALAMM::Model::update_Lambdat(){
   }
 }
 
+void GALAMM::Model::update_X(){
+  X = X_init;
+  if(lambda_mapping_X.size() == 0) return;
+  for(int i = 0; i < X.size(); i++){
+    int newind = lambda_mapping_X(i);
+    if(newind != -1){
+      *(X.data() + i) *= lambda(newind);
+    }
+  }
+}
+
 void GALAMM::Model::update_Zt(){
-  if(lambda_mapping_Zt.rows() == 0) return;
+  Zt = Zt_init;
+  if(lambda_mapping_Zt.size() == 0) return;
   int counter{};
   for(int k{}; k < Zt.outerSize(); ++k){
     for(Eigen::SparseMatrix<dual1st>::InnerIterator it(Zt, k); it; ++it){
       int newind = lambda_mapping_Zt(counter);
       if(newind != -1){
-        it.valueRef() = lambda(newind);
+        it.valueRef() = lambda(newind) * it.value();
       }
       counter++;
     }
@@ -104,6 +118,11 @@ Eigen::SparseMatrix<dual1st>& GALAMM::Model::get_Lambdat(){
 Eigen::SparseMatrix<autodiff::dual1st>& GALAMM::Model::get_Zt(){
   update_Zt();
   return Zt;
+}
+
+Eigen::MatrixXdual1st& GALAMM::Model::get_X(){
+  update_X();
+  return X;
 }
 
 Eigen::DiagonalMatrix<dual1st, Eigen::Dynamic>&

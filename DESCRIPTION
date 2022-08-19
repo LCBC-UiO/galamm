@@ -1,6 +1,6 @@
 Package: galamm
 Title: Generalized Additive Latent and Mixed Models
-Version: 0.0.0.9000
+Version: 0.1.0
 Authors@R: 
     person(given = "Øystein",
            family = "Sørensen",
@@ -16,7 +16,10 @@ Description: Estimates generalized additive latent and
     using 'lme4' syntax. Computations use either the profile 
     likelihood algorithm proposed by Jeon and Rabe-Hesketh 
     (2012) <doi:10.3102/1076998611417628> or Laplace
-    approximate marginal likelihood.
+    approximate marginal likelihood. Also provides functions
+    for evaluating the likelihood of complex mixed models
+    at given parameter values, and evaluating the gradient
+    exactly using automatic differentiation.
 License: GPL (>= 3)
 Encoding: UTF-8
 Imports: 

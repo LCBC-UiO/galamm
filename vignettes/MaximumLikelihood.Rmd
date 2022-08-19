@@ -200,7 +200,7 @@ system.time({
 ```
 
 
-## Generalized linear mixed models with factor structures
+## Generalized linear mixed models
 
 For illustrating use with generalized linear mixed models, we start by using a model without any factor structures.
 
@@ -249,7 +249,8 @@ gr <- function(par){
 
 opt <- optim(
   par = c(1, rep(0, 4)), fn = fn, gr = gr,
-  method = "L-BFGS-B", lower = c(0, rep(-Inf, 4))
+  method = "L-BFGS-B", lower = c(0, rep(-Inf, 4)),
+  control = list(maxit = 2000)
 )
 ```
 
@@ -260,13 +261,232 @@ opt$value
 -2 * logLik(fMod)
 ```
 
-On the other hand, for given parameter values, they perfectly agree, confirming that our implementation is correct, but that some work is needed to check the optimization algorithms.
+On the other hand, for given parameter values, they almost perfectly agree, confirming that our implementation is correct, but that some work is needed to check the optimization algorithms.
 
 ```{r}
 fn(opt2$par)
 ```
 
+## Generalized additive mixed model with factor structures
 
+```{r}
+library(mgcv)
+library(gamm4)
+```
+
+
+We can now fit the model illustrates in the Introduction vignette, which we refer to for details.
+
+We start by adding a weight column to `dat1`, to hold factor loadings.
+
+```{r}
+lambda_init <- c(item1 = 1, item2 = 2, item3 = .4)
+dat1$weight <- lambda_init[dat1$item]
+head(dat1)
+```
+
+To confirm that what we do is correct, we fit this GAMM at the initial values of the loadings.
+
+```{r}
+mod0 <- gamm4(y ~ 0 + s(x, by = weight), random = ~(0 + weight|id), 
+              data = dat1, REML = FALSE)
+```
+
+
+We then compute the mixed model representation of the GAMM.
+
+```{r}
+sm <- smoothCon(s(x, by = weight), data = dat1)[[1]]
+re <- smooth2random(sm, "", type = 2)
+```
+
+Then set up the list which holds the data.
+
+```{r}
+mdat <- list(
+  id = dat1$id,
+  y = dat1$y,
+  Xf = re$Xf,
+  Xr = re$rand$Xr,
+  weight = dat1$weight,
+  pseudoGroups = rep(1:ncol(re$rand$Xr), length = nrow(dat1))
+)
+```
+
+And set up the model.
+
+```{r}
+lmod <- lFormula(y ~ 0 + Xf + (1 | pseudoGroups) + (0 + weight | id), 
+                 data = mdat, REML = FALSE)
+```
+
+Then we add the penalized part of the smooth terms.
+
+```{r}
+lmod$reTrms$Ztlist$`1 | pseudoGroups` <- as(t(as.matrix(mdat$Xr))[], class(lmod$reTrms$Zt))
+lmod$reTrms$Zt <- rbind(lmod$reTrms$Ztlist$`0 + weight | id`, 
+                        lmod$reTrms$Ztlist$`1 | pseudoGroups`)
+```
+
+To begin with, we complete model fitting at the initial loading.
+
+```{r}
+devfun <- do.call(mkLmerDevfun, lmod)
+opt <- optimizeLmer(devfun)
+mod1 <- mkMerMod(environment(devfun), opt, lmod$reTrms, fr = lmod$fr)
+```
+
+We can now compare the fitted models. The likelihoods are equal.
+
+```{r}
+logLik(mod0$mer)
+logLik(mod1)
+```
+
+As are the fixed effects and variance components.
+
+```{r}
+fixef(mod0$mer)
+fixef(mod1)
+
+getME(mod0$mer, "theta")
+getME(mod1, "theta")
+```
+
+We can also compare the penalized spline coefficients.
+
+```{r, fig.width=4}
+plot(
+  ranef(mod0$mer)$Xr[[1]],
+  ranef(mod1)$pseudoGroups[[1]],
+  xlab = "gamm4", ylab = "lme4"); abline(0, 1)
+```
+
+Having gained some confidence in our ability to fit a GAMM as a mixed model, we can now move on to also estimating the factor loadings. For this we use the `marginal_likelihood` function provided by this package, and we start by confirming that we get the same likelihood as with the two approaches shown above. 
+
+We first remove the factor loading from the design matrices.
+
+The lambda mapping for `X` runs through each column.
+
+```{r}
+lambda_mapping_X <- rep(as.integer(factor(dat1$item)) - 2L, ncol(lmod$X))
+```
+
+The lambda mapping for `Zt` runs through the vector of structural nonzeros. Compressed sparse column format is used, so the `x` vector runs through columns. Each loading is repeated the following number of times:
+
+```{r}
+(diffs <- diff(lmod$reTrms$Zt@p))
+```
+
+
+```{r}
+lambda_mapping_Zt <- unlist(Map(function(item, times){
+  rep(item, each = times)
+}, item = as.integer(as.factor(dat1$item)), times = diffs)) - 2L
+```
+
+```{r}
+X <- lmod$X / as.numeric(lambda_init[lambda_mapping_X + 2L])
+Zt <- lmod$reTrms$Zt
+Zt@x <- Zt@x / as.numeric(lambda_init[lambda_mapping_Zt + 2L])
+```
+
+We can confirm that they now are free of factor loadings:
+
+```{r}
+# Before
+head(lmod$X)
+# After
+head(X)
+```
+
+```{r}
+compmat <- cbind(before = lmod$reTrms$Zt@x, after = Zt@x)
+compmat <- cbind(compmat, ratio = compmat[, 1] / compmat[, 2])
+
+head(compmat, 27)
+```
+
+We also remove the estimated values from `Lambdat`.
+
+```{r}
+Lambdat <- lmod$reTrms$Lambdat
+Lambdat@x <- rep(1, length(Lambdat@x))
+```
+
+We then compute the marginal likelihood.
+
+```{r}
+margl <- marginal_likelihood(
+  y = mdat$y,
+  trials = numeric(),
+  X = X,
+  Zt = Zt,
+  Lambdat = Lambdat,
+  beta = fixef(mod1),
+  theta = getME(mod1, "theta"),
+  theta_mapping = lmod$reTrms$Lind - 1L,
+  lambda = lambda_init[-1],
+  lambda_mapping_X = lambda_mapping_X,
+  lambda_mapping_Zt = lambda_mapping_Zt,
+  family = "gaussian"
+)
+
+margl$deviance
+-2 * logLik(mod1)
+```
+
+Finally, we can fit the model directly, using the same memoization technique as above.
+
+```{r}
+theta_inds <- 1:2
+beta_inds <- 3:4
+lambda_inds <- 5:6
+bounds <- c(0, 0, rep(-Inf, 4))
+
+mlwrapper <- function(par){
+  marginal_likelihood(
+    y = mdat$y,
+    trials = numeric(),
+    X = X,
+    Zt = Zt,
+    Lambdat = Lambdat,
+    beta = par[beta_inds],
+    theta = par[theta_inds],
+    theta_mapping = lmod$reTrms$Lind - 1L,
+    lambda = par[lambda_inds],
+    lambda_mapping_X = lambda_mapping_X,
+    lambda_mapping_Zt = lambda_mapping_Zt,
+    family = "gaussian"
+  )
+}
+
+mlmem <- memoise(mlwrapper)
+fn <- function(par){
+  mlmem(par)$deviance
+}
+gr <- function(par){
+  mlmem(par)$gradient
+}
+
+```
+
+It ends up at the right values. Profile likelihood estimation fails from these initial values, and is much slower.
+
+```{r}
+par_init <- c(1, 1, 0, 0, 1, 1)
+opt <- optim(par_init, fn = fn, gr = gr, 
+             method = "L-BFGS-B", lower = bounds, 
+             control = list(maxit = 2000))
+
+opt$value
+-2 * logLik(mod1)
+```
+
+
+```{r}
+opt
+```
 
 
 ## References
