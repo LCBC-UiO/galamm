@@ -11,7 +11,7 @@ Description: Estimates generalized additive latent and
     mixed models, as defined in Sorensen et al. (2021) 
     <doi:10.48550/arXiv.2105.02488>. Factor analysis and 
     item response models in which the responses depend 
-    nolinearly on observed predictors can be estimated, 
+    nonlinearly on observed predictors can be estimated, 
     with crossed or nested random effects structures defined
     using 'lme4' syntax. Computations use either the profile 
     likelihood algorithm proposed by Jeon and Rabe-Hesketh 
