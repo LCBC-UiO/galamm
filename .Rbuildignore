@@ -6,3 +6,4 @@
 
 ^\.github$
 ^codecov\.yml$
+^dev-scripts$

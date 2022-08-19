@@ -1,4 +1,36 @@
 
+@article{batesFittingLinearMixedEffects2015,
+  title = {Fitting {{Linear Mixed-Effects Models Using}} Lme4},
+  author = {Bates, Douglas M and M{\"a}chler, Martin and Bolker, Ben and Walker, Steve},
+  year = {2015},
+  month = oct,
+  journal = {Journal of Statistical Software},
+  volume = {67},
+  number = {1},
+  pages = {1--48},
+  issn = {1548-7660},
+  doi = {10.18637/jss.v067.i01},
+  copyright = {Copyright (c) 2015 Douglas Bates, Martin M\"achler, Ben Bolker, Steve Walker},
+  langid = {english},
+  keywords = {Cholesky decomposition,linear mixed models,penalized least squares,sparse matrix methods},
+  file = {/Users/oyss/Zotero/storage/9WJRVLK3/Bates et al. - 2015 - Fitting Linear Mixed-Effects Models Using lme4.pdf;/Users/oyss/Zotero/storage/FAV723AQ/v067i01.html}
+}
+
+@article{gongPseudoMaximumLikelihood1981,
+  title = {Pseudo {{Maximum Likelihood Estimation}}: {{Theory}} and {{Applications}}},
+  shorttitle = {Pseudo {{Maximum Likelihood Estimation}}},
+  author = {Gong, Gail and Samaniego, Francisco J.},
+  year = {1981},
+  journal = {The Annals of Statistics},
+  volume = {9},
+  number = {4},
+  pages = {861--869},
+  publisher = {{Institute of Mathematical Statistics}},
+  issn = {0090-5364},
+  abstract = {Let X\textsubscript{1}, {$\cdots$}, X\textsubscript{n} be i.i.d. random variables with probability distribution F\textsubscript{\texttheta, p} indexed by two real parameters. Let {\^p} = {\^p}(X\textsubscript{1}, {$\cdots$}, X\textsubscript{n}) be an estimate of p other than the maximum likelihood estimate, and let {\^\texttheta} be the solution of the likelihood equation {$\partial$}/{$\partial$} \texttheta{} ln L(x, \texttheta, {\^p}) = 0 which maximizes the likelihood. We call {\^\texttheta} a pseudo maximum likelihood estimate of \texttheta, and give conditions under which {\^\texttheta} is consistent and asymptotically normal. Pseudo maximum likelihood estimation easily extends to k-parameter models, and is of interest in problems in which the likelihood surface is ill-behaved in higher dimensions but well-behaved in lower dimensions. We examine several signal-plus-noise, or convolution, models which exhibit such behavior and satisfy the regularity conditions of the asymptotic theory. For specific models, a numerical comparison of asymptotic variances suggests that a pseudo maximum likelihood estimate of the signal parameter is uniformly more efficient than estimators proposed previously.},
+  file = {/Users/oyss/Zotero/storage/GQWKTTPF/Gong and Samaniego - 1981 - Pseudo Maximum Likelihood Estimation Theory and A.pdf}
+}
+
 @article{jeonProfileLikelihoodApproachEstimating2012,
   title = {Profile-{{Likelihood Approach}} for {{Estimating Generalized Linear Mixed Models With Factor Structures}}},
   author = {Jeon, Minjeong and {Rabe-Hesketh}, Sophia},
@@ -13,7 +45,37 @@
   doi = {10.3102/1076998611417628},
   abstract = {In this article, the authors suggest a profile-likelihood approach for estimating complex models by maximum likelihood (ML) using standard software and minimal programming. The method works whenever setting some of the parameters of the model to known constants turns the model into a standard model. An important class of models that can be estimated this way is generalized linear mixed models with factor structures. Such models are useful in educational research, for example, for estimation of value-added teacher or school effects with persistence parameters and for analysis of large-scale assessment data using multilevel item response models with discrimination parameters. The authors describe the profile-likelihood approach, implement it in the R software, and apply the method to longitudinal data and binary item response data. Simulation studies and comparison with gllamm show that the profile-likelihood method performs well in both types of applications. The authors also briefly discuss other types of models that can be estimated using the profile-likelihood idea.},
   langid = {english},
-  file = {C\:\\Users\\oyste\\Zotero\\storage\\SQK5KJQ3\\Jeon and Rabe-Hesketh - 2012 - Profile-Likelihood Approach for Estimating General.pdf}
+  file = {/Users/oyss/Zotero/storage/SQK5KJQ3/Jeon and Rabe-Hesketh - 2012 - Profile-Likelihood Approach for Estimating General.pdf}
+}
+
+@misc{lealAutodiffModernFast2018,
+  title = {Autodiff, a Modern, Fast and Expressive {{C}}++ Library for Automatic Differentiation},
+  author = {Leal, Allan M. M.},
+  year = {2018}
+}
+
+@article{parkePseudoMaximumLikelihood1986,
+  title = {Pseudo {{Maximum Likelihood Estimation}}: {{The Asymptotic Distribution}}},
+  shorttitle = {Pseudo {{Maximum Likelihood Estimation}}},
+  author = {Parke, William R.},
+  year = {1986},
+  journal = {The Annals of Statistics},
+  volume = {14},
+  number = {1},
+  pages = {355--357},
+  publisher = {{Institute of Mathematical Statistics}},
+  issn = {0090-5364},
+  abstract = {Gong and Samaniego (1981) define pseudo maximum likelihood estimation and derive the asymptotic distribution of the resulting estimates. This note gives a simpler and more elegant expression for the asymptotic variance of a pseudo maximum likelihood estimate.},
+  file = {/Users/oyss/Zotero/storage/PYE2TSZ6/Parke - 1986 - Pseudo Maximum Likelihood Estimation The Asymptot.pdf}
+}
+
+@book{pawitanAllLikelihood2001,
+  title = {In All Likelihood},
+  author = {Pawitan, Yudi},
+  year = {2001},
+  publisher = {{Oxford University Press}},
+  address = {{New York, NY}},
+  isbn = {978-0-19-967122-9}
 }
 
 @article{rabe-heskethGeneralizedMultilevelStructural2004,
@@ -29,7 +91,7 @@
   doi = {10.1007/BF02295939},
   abstract = {A unifying framework for generalized multilevel structural equation modeling is introduced. The models in the framework, called generalized linear latent and mixed models (GLLAMM), combine features of generalized linear mixed models (GLMM) and structural equation models (SEM) and consist of a response model and a structural model for the latent variables. The response model generalizes GLMMs to incorporate factor structures in addition to random intercepts and coefficients. As in GLMMs, the data can have an arbitrary number of levels and can be highly unbalanced with different numbers of lower-level units in the higher-level units and missing data. A wide range of response processes can be modeled including ordered and unordered categorical responses, counts, and responses of mixed types. The structural model is similar to the structural part of a SEM except that it may include latent and observed variables varying at different levels. For example, unit-level latent variables (factors or random coefficients) can be regressed on cluster-level latent variables. Special cases of this framework are explored and data from the British Social Attitudes Survey are used for illustration. Maximum likelihood estimation and empirical Bayes latent score prediction within the GLLAMM framework can be performed using adaptive quadrature in gllamm, a freely available program running in Stata.},
   langid = {english},
-  file = {C\:\\Users\\oyste\\Zotero\\storage\\75KIMKIT\\Rabe-Hesketh et al. - 2004 - Generalized multilevel structural equation modelin.pdf}
+  file = {/Users/oyss/Zotero/storage/75KIMKIT/Rabe-Hesketh et al. - 2004 - Generalized multilevel structural equation modelin.pdf}
 }
 
 @article{rockwoodEstimatingComplexMeasurement2019,
@@ -48,7 +110,7 @@
   pmid = {30983418},
   keywords = {crossed random effects,GLMM,growth models,IRT,lme4,partially linear mixed models},
   annotation = {\_eprint: https://doi.org/10.1080/00273171.2018.1516541},
-  file = {C\:\\Users\\oyste\\Zotero\\storage\\DU7P3PXM\\Rockwood and Jeon - 2019 - Estimating Complex Measurement and Growth Models U.pdf;C\:\\Users\\oyste\\Zotero\\storage\\9NH99JKL\\00273171.2018.html}
+  file = {/Users/oyss/Zotero/storage/DU7P3PXM/Rockwood and Jeon - 2019 - Estimating Complex Measurement and Growth Models U.pdf;/Users/oyss/Zotero/storage/9NH99JKL/00273171.2018.html}
 }
 
 @misc{sorensenLongitudinalModelingAgedependent2021,
@@ -65,7 +127,7 @@
   abstract = {We present generalized additive latent and mixed models (GALAMMs) for analysis of clustered data with latent and observed variables depending smoothly on observed variables. A profile likelihood algorithm is proposed, and we derive asymptotic standard errors of both smooth and parametric terms. The work was motivated by applications in cognitive neuroscience, and we show how GALAMMs can successfully model the complex lifespan trajectory of latent episodic memory, along with a discrepant trajectory of working memory, as well as the effect of latent socioeconomic status on hippocampal development. Simulation experiments suggest that model estimates are accurate even with moderate sample sizes.},
   archiveprefix = {arXiv},
   keywords = {Statistics - Applications,Statistics - Methodology},
-  file = {C\:\\Users\\oyste\\Zotero\\storage\\3LWUD6XQ\\Sørensen et al. - 2021 - Longitudinal modeling of age-dependent latent trai.pdf;C\:\\Users\\oyste\\Zotero\\storage\\USR82V7V\\2105.html}
+  file = {/Users/oyss/Zotero/storage/3LWUD6XQ/Sørensen et al. - 2021 - Longitudinal modeling of age-dependent latent trai.pdf;/Users/oyss/Zotero/storage/USR82V7V/2105.html}
 }
 
 @book{woodGeneralizedAdditiveModels2017a,
