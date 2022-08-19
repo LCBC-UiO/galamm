@@ -69,6 +69,8 @@ mod <- galamm(
   )
 ```
 
+## References
+
 <div id="refs" class="references csl-bib-body hanging-indent">
 
 <div id="ref-batesFastElegantNumerical2013" class="csl-entry">

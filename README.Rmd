@@ -58,3 +58,4 @@ mod <- galamm(
   )
 ```
 
+## References
