@@ -24,7 +24,7 @@ marginal_likelihood(
 
 \item{trials}{A \code{numeric} vector representing the number
 of trials. Only used for binomial models, but should be set to
-some arbtirary value otherwise.}
+some arbitrary value otherwise.}
 
 \item{X}{A dense \code{numeric} matrix.}
 

@@ -4,7 +4,7 @@
 #' the confidence bands take uncertainty about factor loadings into account.
 #'
 #' @param x A fitted \code{galamm} object as produced by \code{\link{galamm}}.
-#' @param ... Other arguments pased on to \code{mgcv::plot.gam}.
+#' @param ... Other arguments passed on to \code{mgcv::plot.gam}.
 #'
 #' @return A plot is generated.
 #' @export

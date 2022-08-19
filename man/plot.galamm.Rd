@@ -9,7 +9,7 @@
 \arguments{
 \item{x}{A fitted \code{galamm} object as produced by \code{\link{galamm}}.}
 
-\item{...}{Other arguments pased on to \code{mgcv::plot.gam}.}
+\item{...}{Other arguments passed on to \code{mgcv::plot.gam}.}
 }
 \value{
 A plot is generated.

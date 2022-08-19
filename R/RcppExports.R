@@ -9,7 +9,7 @@
 #' @param y A \code{numeric} vector of responses.
 #' @param trials A \code{numeric} vector representing the number
 #' of trials. Only used for binomial models, but should be set to
-#' some arbtirary value otherwise.
+#' some arbitrary value otherwise.
 #' @param X A dense \code{numeric} matrix.
 #' @param Zt A sparse matrix of class \code{dgCMatrix}.
 #' @param Lambdat A sparse matrix of class \code{dgCMatrix}.
