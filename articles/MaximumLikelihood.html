@@ -104,8 +104,7 @@
 <p>We start by adding <span class="math inline">\(\lambda\)</span> as a variable in the model:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="va">IRTsub</span></span>
-<span><span class="va">lambda_init</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span></span>
-<span><span class="va">dat</span><span class="op">$</span><span class="va">abil.sid</span> <span class="op">&lt;-</span> <span class="va">lambda_init</span><span class="op">[</span><span class="va">dat</span><span class="op">$</span><span class="va">item</span><span class="op">]</span></span></code></pre></div>
+<span><span class="va">dat</span><span class="op">$</span><span class="va">abil.sid</span> <span class="op">&lt;-</span> <span class="fl">1</span></span></code></pre></div>
 <p>We then generate the components of a linear mixed model:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/lme4/lme4/" class="external-link">lme4</a></span><span class="op">)</span></span>
@@ -114,11 +113,10 @@
 <p>The fixed effects matrix does not contain any factor loadings, so we keep it as is.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">X</span> <span class="op">&lt;-</span> <span class="va">lmod</span><span class="op">$</span><span class="va">X</span></span></code></pre></div>
-<p>The random effects matrix does contain factor loadings, so we need a mapping. Also note that it is sparse. In the mapping, <span class="math inline">\(-1\)</span> denotes an element of <span class="math inline">\(\lambda\)</span> which is fixed. In addition, since C++ has base zero indexing, we need to subtract an integer 2.</p>
+<p>The random effects matrix does contain factor loadings, so we need a mapping.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">Zt</span> <span class="op">&lt;-</span> <span class="va">lmod</span><span class="op">$</span><span class="va">reTrms</span><span class="op">$</span><span class="va">Zt</span></span>
-<span><span class="va">lambda_mapping_Zt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">lmod</span><span class="op">$</span><span class="va">reTrms</span><span class="op">$</span><span class="va">Zt</span><span class="op">@</span><span class="va">x</span>, </span>
-<span>                            <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">x</span> <span class="op">==</span> <span class="va">lambda_init</span><span class="op">)</span><span class="op">)</span> <span class="op">-</span> <span class="fl">2L</span></span></code></pre></div>
+<span><span class="va">lambda_mapping_Zt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="va">dat</span><span class="op">$</span><span class="va">item</span><span class="op">)</span>, each <span class="op">=</span> <span class="fl">2L</span><span class="op">)</span> <span class="op">-</span> <span class="fl">2L</span></span></code></pre></div>
 <p>We also extract the random effects covariance matrix, with its mapping to <span class="math inline">\(\theta\)</span>. See <span class="citation">Bates et al. (2015)</span> for details.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">Lambdat</span> <span class="op">&lt;-</span> <span class="va">lmod</span><span class="op">$</span><span class="va">reTrms</span><span class="op">$</span><span class="va">Lambdat</span></span>
@@ -144,12 +142,12 @@
 <code class="sourceCode R"><span><span class="op">-</span><span class="fl">2</span> <span class="op">*</span> <span class="va">irt.model</span><span class="op">$</span><span class="va">`Log-Likelihood`</span></span>
 <span><span class="co">#&gt; [1] 387.1267</span></span>
 <span><span class="va">ml</span><span class="op">$</span><span class="va">deviance</span></span>
-<span><span class="co">#&gt; [1] 445.1005</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 387.1267</span></span></code></pre></div>
 <p>The <code>marginal_likelihood</code> function also returns the gradient of the marginal likelihood with respect to <span class="math inline">\(\theta\)</span>, <span class="math inline">\(\beta\)</span>, and <span class="math inline">\(\lambda\)</span>, in that order. Reassuringly, it is close to zero. Not however that <code>PLmixed</code> returns the maximum of the profile likelihood, which albeit consistent, is not the same as the maximum likelihood estimate <span class="citation">(Gong and Samaniego 1981; Parke 1986; Pawitan 2001)</span>.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ml</span><span class="op">$</span><span class="va">gradient</span></span>
-<span><span class="co">#&gt; [1] 121.5204727  38.9467076  -0.6478820   0.9911561  -1.4393518  37.3612057</span></span>
-<span><span class="co">#&gt; [7] 101.3513143</span></span></code></pre></div>
+<span><span class="co">#&gt; [1]  2.438535e-06  3.918029e-06 -5.440350e-13 -8.484958e-13 -7.526399e-13</span></span>
+<span><span class="co">#&gt; [6]  4.070702e-05 -3.101126e-05</span></span></code></pre></div>
 <p>This gradient is computed with algorithmic differentiation using the <code>autodiff</code> C++ library <span class="citation">(Leal 2018)</span>, which means that it is exact to computer precision.</p>
 <p>We can use this gradient to find the maximum likelihood estimates of the model (technically, the Laplace approximate marginal maximum likelihood estimates). We also use <code>memoise</code> to avoid evaluating the function unnecessarily.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
@@ -193,7 +191,7 @@
 <span><span class="co">#&gt; [1] 387.1267</span></span>
 <span><span class="op">-</span><span class="fl">2</span> <span class="op">*</span> <span class="va">irt.model</span><span class="op">$</span><span class="va">`Log-Likelihood`</span></span>
 <span><span class="co">#&gt; [1] 387.1267</span></span></code></pre></div>
-<p>We can confirm that the parameters are identical:</p>
+<p>We can confirm that the parameters are almost identical:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span></span>
 <span>  <span class="va">opt</span><span class="op">$</span><span class="va">par</span>, </span>
@@ -218,7 +216,7 @@
 <span>                     lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">irt.lam</span><span class="op">)</span>, iter.count <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   2.472   0.000   2.472</span></span></code></pre>
+<span><span class="co">#&gt;   2.492   0.008   2.500</span></span></code></pre>
 </div>
 </div>
 <div class="section level2">
@@ -501,12 +499,13 @@
 <span><span class="va">gr</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">par</span><span class="op">)</span><span class="op">{</span></span>
 <span>  <span class="fu">mlmem</span><span class="op">(</span><span class="va">par</span><span class="op">)</span><span class="op">$</span><span class="va">gradient</span></span>
 <span><span class="op">}</span></span></code></pre></div>
-<p>It ends up at the right values. Profile likelihood estimation fails from these initial values, and is much slower.</p>
+<p>It ends up at the right values. Profile likelihood estimation fails from these initial values, and is much slower. Note that the deviance is lower now, because the factor loadings are estimated, rather than fixed at <span class="math inline">\((1, 2, .4)\)</span>.</p>
 <div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">par_init</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span></span>
+<span></span>
 <span><span class="va">opt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/optim.html" class="external-link">optim</a></span><span class="op">(</span><span class="va">par_init</span>, fn <span class="op">=</span> <span class="va">fn</span>, gr <span class="op">=</span> <span class="va">gr</span>, </span>
-<span>             method <span class="op">=</span> <span class="st">"L-BFGS-B"</span>, lower <span class="op">=</span> <span class="va">bounds</span>, </span>
-<span>             control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>maxit <span class="op">=</span> <span class="fl">2000</span><span class="op">)</span><span class="op">)</span></span>
+<span>           method <span class="op">=</span> <span class="st">"L-BFGS-B"</span>, lower <span class="op">=</span> <span class="va">bounds</span>, </span>
+<span>           control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>maxit <span class="op">=</span> <span class="fl">2000</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">opt</span><span class="op">$</span><span class="va">value</span></span>
 <span><span class="co">#&gt; [1] 768.3233</span></span>
