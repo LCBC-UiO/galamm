@@ -30,6 +30,7 @@ namespace GALAMM {
     Eigen::VectorXd y;
     Eigen::VectorXd trials;
     autodiff::MatrixXdual1st X;
+    Eigen::SparseMatrix<autodiff::dual1st> Zt_init;
     Eigen::SparseMatrix<autodiff::dual1st> Zt;
     Eigen::SparseMatrix<autodiff::dual1st> Lambdat;
     autodiff::VectorXdual1st beta;

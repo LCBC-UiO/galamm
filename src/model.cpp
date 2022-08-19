@@ -19,6 +19,7 @@ GALAMM::Model::Model(
 ) : y { y0 },
   trials { trials0 },
   X { X0.cast<dual1st>() },
+  Zt_init { Zt0.cast<dual1st>() },
   Zt { Zt0.cast<dual1st>() },
   Lambdat { Lambdat0.cast<dual1st>() },
   beta { beta0.cast<dual1st>() },
@@ -83,13 +84,14 @@ void GALAMM::Model::update_Lambdat(){
 }
 
 void GALAMM::Model::update_Zt(){
+  Zt = Zt_init;
   if(lambda_mapping_Zt.rows() == 0) return;
   int counter{};
   for(int k{}; k < Zt.outerSize(); ++k){
     for(Eigen::SparseMatrix<dual1st>::InnerIterator it(Zt, k); it; ++it){
       int newind = lambda_mapping_Zt(counter);
       if(newind != -1){
-        it.valueRef() = lambda(newind);
+        it.valueRef() = lambda(newind) * it.value();
       }
       counter++;
     }
