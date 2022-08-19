@@ -84,7 +84,7 @@ We then fit the model. We set the initial values `lambda_init = c(2, .4)` to spe
 ```{r}
 mod <- galamm(
   formula = y ~ s(x, by = weight),
-  random = ~(1|id),
+  random = ~(0 + weight|id),
   data = dat1,
   load_var = "item",
   lambda = load.mat,
@@ -93,6 +93,8 @@ mod <- galamm(
   )
 ```
 
+
+NB! The model as set up will as set up is not identified if all $\lambda$ are equal, since the term `s(x, by = weight)` also contains a constant component. This problem can be fixed by using the mixed model representation described in the vignette on maximum likelihood estimation.
 
 ### Inspecting the model
 
