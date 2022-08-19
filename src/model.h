@@ -29,6 +29,7 @@ namespace GALAMM {
 
     Eigen::VectorXd y;
     Eigen::VectorXd trials;
+    autodiff::MatrixXdual1st X_init;
     autodiff::MatrixXdual1st X;
     Eigen::SparseMatrix<autodiff::dual1st> Zt_init;
     Eigen::SparseMatrix<autodiff::dual1st> Zt;
@@ -81,6 +82,9 @@ namespace GALAMM {
 
     // Regression coefficients
     void update_u(const autodiff::VectorXdual1st& delta_u, double alpha_bar);
+
+    void update_X();
+    Eigen::MatrixXdual1st& get_X();
 
     void update_Zt();
     Eigen::SparseMatrix<autodiff::dual1st>& get_Zt();
