@@ -57,8 +57,7 @@ We start by adding $\lambda$ as a variable in the model:
 
 ```{r}
 dat <- IRTsub
-lambda_init <- c(1, 2, 3)
-dat$abil.sid <- lambda_init[dat$item]
+dat$abil.sid <- 1
 ```
 
 We then generate the components of a linear mixed model:
@@ -74,12 +73,11 @@ The fixed effects matrix does not contain any factor loadings, so we keep it as 
 X <- lmod$X
 ```
 
-The random effects matrix does contain factor loadings, so we need a mapping. Also note that it is sparse. In the mapping, $-1$ denotes an element of $\lambda$ which is fixed. In addition, since C++ has base zero indexing, we need to subtract an integer 2.
+The random effects matrix does contain factor loadings, so we need a mapping.
 
 ```{r}
 Zt <- lmod$reTrms$Zt
-lambda_mapping_Zt <- sapply(lmod$reTrms$Zt@x, 
-                            function(x) which(x == lambda_init)) - 2L
+lambda_mapping_Zt <- rep(as.integer(dat$item), each = 2L) - 2L
 ```
 
 We also extract the random effects covariance matrix, with its mapping to $\theta$. See @batesFittingLinearMixedEffects2015 for details.
@@ -170,7 +168,7 @@ opt$value
 -2 * irt.model$`Log-Likelihood`
 ```
 
-We can confirm that the parameters are identical:
+We can confirm that the parameters are almost identical:
 
 ```{r, fig.width=4}
 plot(
@@ -471,13 +469,14 @@ gr <- function(par){
 
 ```
 
-It ends up at the right values. Profile likelihood estimation fails from these initial values, and is much slower.
+It ends up at the right values. Profile likelihood estimation fails from these initial values, and is much slower. Note that the deviance is lower now, because the factor loadings are estimated, rather than fixed at $(1, 2, .4)$.
 
 ```{r}
 par_init <- c(1, 1, 0, 0, 1, 1)
+
 opt <- optim(par_init, fn = fn, gr = gr, 
-             method = "L-BFGS-B", lower = bounds, 
-             control = list(maxit = 2000))
+           method = "L-BFGS-B", lower = bounds, 
+           control = list(maxit = 2000))
 
 opt$value
 -2 * logLik(mod1)
@@ -487,6 +486,8 @@ opt$value
 ```{r}
 opt
 ```
+
+
 
 
 ## References

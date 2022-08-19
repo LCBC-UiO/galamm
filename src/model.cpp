@@ -85,6 +85,7 @@ void GALAMM::Model::update_Lambdat(){
 }
 
 void GALAMM::Model::update_X(){
+  if(lambda_mapping_X.size() == 0) return;
   X = X_init;
   if(lambda_mapping_X.size() == 0) return;
   for(int i = 0; i < X.size(); i++){
@@ -96,8 +97,8 @@ void GALAMM::Model::update_X(){
 }
 
 void GALAMM::Model::update_Zt(){
-  Zt = Zt_init;
   if(lambda_mapping_Zt.size() == 0) return;
+  Zt = Zt_init;
   int counter{};
   for(int k{}; k < Zt.outerSize(); ++k){
     for(Eigen::SparseMatrix<dual1st>::InnerIterator it(Zt, k); it; ++it){
@@ -144,4 +145,8 @@ VectorXdual1st& GALAMM::Model::get_linpred(){
 void GALAMM::Model::update_u(const VectorXdual1st& delta_u,
                              double alpha_bar){
   u += alpha_bar * delta_u;
+}
+
+void GALAMM::Model::update_linpred(){
+  linpred = get_X() * beta + get_Zt().transpose() * get_Lambdat().transpose() * u;
 }

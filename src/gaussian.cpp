@@ -20,8 +20,3 @@ void GALAMM::Gaussian::update_V(){
 void GALAMM::Gaussian::update_phi(){
   phi = ((y - get_linpred()).squaredNorm() + u.squaredNorm()) / n;
 }
-
-
-void GALAMM::Gaussian::update_linpred(){
-  linpred = get_X() * beta + get_Zt().transpose() * get_Lambdat().transpose() * u;
-}
