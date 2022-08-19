@@ -59,7 +59,6 @@ namespace GALAMM {
     void update_Lambdat();
     Eigen::SparseMatrix<autodiff::dual1st>& get_Lambdat();
 
-
     // Scale parameter
     virtual void update_phi() = 0;
     autodiff::dual1st phi;
@@ -71,7 +70,7 @@ namespace GALAMM {
     Eigen::DiagonalMatrix<autodiff::dual1st, Eigen::Dynamic>& get_V();
 
     // Linear predictor
-    virtual void update_linpred() = 0;
+    void update_linpred();
     autodiff::VectorXdual1st& get_linpred();
     autodiff::VectorXdual1st linpred;
 
@@ -104,7 +103,6 @@ namespace GALAMM {
     autodiff::dual1st cumulant() override;
     autodiff::dual1st constfun() override;
     autodiff::VectorXdual1st meanfun() override;
-    void update_linpred() override;
 
     // How to update diagonal variance matrix is model dependent
     void update_V() override;
@@ -120,7 +118,6 @@ namespace GALAMM {
     autodiff::dual1st cumulant() override;
     autodiff::dual1st constfun() override;
     autodiff::VectorXdual1st meanfun() override;
-    void update_linpred() override;
 
     // How to update diagonal variance matrix is model dependent
     void update_V() override;
@@ -137,7 +134,6 @@ namespace GALAMM {
     autodiff::dual1st cumulant() override;
     autodiff::dual1st constfun() override;
     autodiff::VectorXdual1st meanfun() override;
-    void update_linpred() override;
 
     // How to update diagonal variance matrix is model dependent
     void update_V() override;
