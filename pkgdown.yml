@@ -4,7 +4,7 @@ pkgdown_sha: ~
 articles:
   Introduction: Introduction.html
   MaximumLikelihood: MaximumLikelihood.html
-last_built: 2022-08-19T11:19Z
+last_built: 2022-08-19T13:07Z
 urls:
   reference: https://lcbc-uio.github.io/galamm/reference
   article: https://lcbc-uio.github.io/galamm/articles
