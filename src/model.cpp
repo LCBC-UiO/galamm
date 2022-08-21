@@ -39,18 +39,13 @@ GALAMM::Model::Model(
 }
 
 void GALAMM::Model::get_conditional_modes(
-    Eigen::SimplicialLLT<Eigen::SparseMatrix<dual1st> >& solver
+    Eigen::SimplicialLDLT<Eigen::SparseMatrix<dual1st> >& solver
   ){
   VectorXdual1st delta_u{};
 
   for(int i{}; i < maxit_conditional_modes; i++){
-
     solver.factorize(get_inner_hessian());
-    VectorXdual1st b1 = solver.permutationP() *
-      (get_Lambdat() * get_Zt() * (y - meanfun()) - u);
-    VectorXdual1st cu = solver.matrixL().solve(b1);
-    delta_u = solver.permutationPinv() * solver.matrixU().solve(cu);
-
+    delta_u = solver.solve((get_Lambdat() * get_Zt() * (y - meanfun()) - u));
     if(delta_u.squaredNorm() < 1e-10) break;
     update_u(delta_u, 1);
   }

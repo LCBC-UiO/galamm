@@ -10,14 +10,14 @@ using namespace autodiff;
 
 dual1st deviance(
     GALAMM::Model& mod,
-    Eigen::SimplicialLLT<Eigen::SparseMatrix<autodiff::dual1st> >& solver){
+    Eigen::SimplicialLDLT<Eigen::SparseMatrix<autodiff::dual1st> >& solver){
   mod.get_conditional_modes(solver);
   return -2 * (mod.exponent_g() - log(solver.determinant()) / 2);
 }
 
 Rcpp::List compute(
     GALAMM::Model& mod,
-    Eigen::SimplicialLLT<Eigen::SparseMatrix<autodiff::dual1st> >& solver){
+    Eigen::SimplicialLDLT<Eigen::SparseMatrix<autodiff::dual1st> >& solver){
   dual1st dev{};
   Eigen::VectorXd g;
 
@@ -81,7 +81,7 @@ Rcpp::List marginal_likelihood(
     const std::string family
 ){
 
-  Eigen::SimplicialLLT<Eigen::SparseMatrix<autodiff::dual1st> > solver;
+  Eigen::SimplicialLDLT<Eigen::SparseMatrix<autodiff::dual1st> > solver;
   solver.setShift(1);
 
   if(family == "gaussian"){

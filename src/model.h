@@ -44,7 +44,7 @@ namespace GALAMM {
 
     // Function to compute regression coefficients in inner loop
     void get_conditional_modes(
-        Eigen::SimplicialLLT<Eigen::SparseMatrix<autodiff::dual1st> >& solver
+        Eigen::SimplicialLDLT<Eigen::SparseMatrix<autodiff::dual1st> >& solver
     );
 
     // Exponent in the Laplace approximation
