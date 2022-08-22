@@ -63,6 +63,8 @@ void GALAMM::Model::get_conditional_modes(
       step /= 2;
     }
 
+    Rcpp::checkUserInterrupt();
+
     deviance_prev = deviance_new;
   }
 }
