@@ -12,7 +12,7 @@ dual1st deviance(
     GALAMM::Model& mod,
     Eigen::SimplicialLDLT<Eigen::SparseMatrix<autodiff::dual1st> >& solver){
   mod.get_conditional_modes(solver);
-  return -2 * (mod.exponent_g() - log(solver.determinant()) / 2);
+  return -2 * (mod.exponent_g() - solver.vectorD().array().log().sum() / 2);
 }
 
 Rcpp::List compute(
