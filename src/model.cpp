@@ -42,12 +42,28 @@ void GALAMM::Model::get_conditional_modes(
     Eigen::SimplicialLDLT<Eigen::SparseMatrix<dual1st> >& solver
   ){
   VectorXdual1st delta_u{};
+  solver.factorize(get_inner_hessian());
+  dual1st deviance_prev = -2 * (exponent_g() - solver.vectorD().array().log().sum() / 2);
+  dual1st deviance_new;
+
 
   for(int i{}; i < maxit_conditional_modes; i++){
-    solver.factorize(get_inner_hessian());
     delta_u = solver.solve((get_Lambdat() * get_Zt() * (y - meanfun()) - u));
     if(delta_u.squaredNorm() < 1e-10) break;
-    update_u(delta_u, 1);
+
+    double step = 1;
+    for(int j{}; j < 10; j++){
+      update_u(delta_u, step);
+      solver.factorize(get_inner_hessian());
+      deviance_new = -2 * (exponent_g() - solver.vectorD().array().log().sum() / 2);
+      if(deviance_new < deviance_prev){
+        break;
+      }
+      update_u(delta_u, -step);
+      step /= 2;
+    }
+
+    deviance_prev = deviance_new;
   }
 }
 

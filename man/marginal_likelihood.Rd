@@ -16,7 +16,8 @@ marginal_likelihood(
   lambda,
   lambda_mapping_X,
   lambda_mapping_Zt,
-  family
+  family,
+  maxit_conditional_modes
 )
 }
 \arguments{
@@ -56,6 +57,9 @@ corresponding value of \code{X} does not depend on \code{lambda},
 as in the case where the first element of \code{lambda} is fixed to 1.}
 
 \item{family}{A length one \code{character} denoting the family.}
+
+\item{maxit_conditional_models}{Maximum number of iterations for
+conditional models. Can be 1 when \code{family = "gaussian"}.}
 }
 \value{
 A \code{list} with elements \code{deviance} and \code{gradient}.

@@ -60,6 +60,8 @@ Rcpp::List compute(
 //' corresponding value of \code{X} does not depend on \code{lambda},
 //' as in the case where the first element of \code{lambda} is fixed to 1.
 //' @param family A length one \code{character} denoting the family.
+//' @param maxit_conditional_models Maximum number of iterations for
+//' conditional models. Can be 1 when \code{family = "gaussian"}.
 //'
 //' @return A \code{list} with elements \code{deviance} and \code{gradient}.
 //' @export
@@ -78,7 +80,8 @@ Rcpp::List marginal_likelihood(
     const Eigen::Map<Eigen::VectorXd> lambda,
     const Eigen::Map<Eigen::VectorXi> lambda_mapping_X,
     const Eigen::Map<Eigen::VectorXi> lambda_mapping_Zt,
-    const std::string family
+    const std::string family,
+    const int maxit_conditional_modes
 ){
 
   Eigen::SimplicialLDLT<Eigen::SparseMatrix<autodiff::dual1st> > solver;
@@ -86,17 +89,20 @@ Rcpp::List marginal_likelihood(
 
   if(family == "gaussian"){
     GALAMM::Gaussian mod{y, trials, X, Zt, Lambdat, beta, theta, theta_mapping,
-                         lambda, lambda_mapping_X, lambda_mapping_Zt, 1};
+                         lambda, lambda_mapping_X, lambda_mapping_Zt,
+                         maxit_conditional_modes};
     solver.analyzePattern(mod.get_inner_hessian());
     return compute(mod, solver);
   } else if(family == "binomial"){
     GALAMM::Binomial mod{y, trials, X, Zt, Lambdat, beta, theta, theta_mapping,
-                         lambda, lambda_mapping_X, lambda_mapping_Zt, 50};
+                         lambda, lambda_mapping_X, lambda_mapping_Zt,
+                         maxit_conditional_modes};
     solver.analyzePattern(mod.get_inner_hessian());
     return compute(mod, solver);
   } else if(family == "poisson"){
     GALAMM::Poisson mod{y, trials, X, Zt, Lambdat, beta, theta, theta_mapping,
-                        lambda, lambda_mapping_X, lambda_mapping_Zt, 50};
+                        lambda, lambda_mapping_X, lambda_mapping_Zt,
+                        maxit_conditional_modes};
     solver.analyzePattern(mod.get_inner_hessian());
     return compute(mod, solver);
   } else {
