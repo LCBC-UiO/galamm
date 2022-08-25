@@ -17,7 +17,8 @@ marginal_likelihood(
   lambda_mapping_X,
   lambda_mapping_Zt,
   family,
-  maxit_conditional_modes
+  maxit_conditional_modes,
+  hessian = FALSE
 )
 }
 \arguments{
@@ -57,6 +58,11 @@ corresponding value of \code{X} does not depend on \code{lambda},
 as in the case where the first element of \code{lambda} is fixed to 1.}
 
 \item{family}{A length one \code{character} denoting the family.}
+
+\item{hessian}{Boolean specifying whether or not to compute the Hessian
+matrix. If \code{TRUE}, the Hessian at the given parameters are computed to
+machine precision using algorithmic differentiation. Defaults to
+\code{FALSE}.}
 
 \item{maxit_conditional_models}{Maximum number of iterations for
 conditional models. Can be 1 when \code{family = "gaussian"}.}

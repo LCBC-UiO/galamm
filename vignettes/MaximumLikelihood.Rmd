@@ -104,7 +104,8 @@ ml <- marginal_likelihood(
   lambda_mapping_X = integer(),
   lambda_mapping_Zt = integer(), #lambda_mapping_Zt,
   family = "gaussian",
-  maxit_conditional_modes = 1
+  maxit_conditional_modes = 1,
+  compute_hessian = TRUE
 )
 ```
 

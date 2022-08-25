@@ -6,14 +6,11 @@
 #include <autodiff/forward/dual.hpp>
 #include <autodiff/forward/dual/eigen.hpp>
 
-
-
-
 template <typename T> struct Model{
   typedef Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> Mdual;
   typedef Eigen::SparseMatrix<T> SpMdual;
   typedef Eigen::Matrix<T, Eigen::Dynamic, 1> Vdual;
-  typedef Eigen::DiagonalMatrix<autodiff::dual1st, Eigen::Dynamic> Ddual;
+  typedef Eigen::DiagonalMatrix<T, Eigen::Dynamic> Ddual;
 
   // Constructor, converting objects to autodiff
   Model(
