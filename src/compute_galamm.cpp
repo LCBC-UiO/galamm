@@ -1,27 +1,27 @@
-#include <RcppEigen.h>
-#include <unsupported/Eigen/SpecialFunctions>
-#include <autodiff/forward/dual.hpp>
-#include <autodiff/forward/dual/eigen.hpp>
 #include "model.h"
 
-using namespace autodiff;
+// using namespace autodiff;
 
 // [[Rcpp::depends(RcppEigen)]]
 
-dual1st deviance(
-    GALAMM::Model& mod,
-    Eigen::SimplicialLDLT<Eigen::SparseMatrix<autodiff::dual1st> >& solver){
+template <typename T>
+T deviance(
+    Model<T>& mod,
+    Eigen::SimplicialLDLT<Eigen::SparseMatrix<T> >& solver){
   mod.get_conditional_modes(solver);
   return -2 * (mod.exponent_g() - solver.vectorD().array().log().sum() / 2);
 }
 
-Rcpp::List compute(
-    GALAMM::Model& mod,
-    Eigen::SimplicialLDLT<Eigen::SparseMatrix<autodiff::dual1st> >& solver){
-  dual1st dev{};
+template <typename T>
+Rcpp::List compute(Model<T>& mod){
+  T dev{};
   Eigen::VectorXd g;
 
-  g = gradient(deviance, wrt(mod.theta, mod.beta, mod.lambda),
+  Eigen::SimplicialLDLT<Eigen::SparseMatrix<T> > solver;
+  solver.setShift(1);
+  solver.analyzePattern(mod.get_inner_hessian());
+
+  g = gradient(deviance<T>, wrt(mod.theta, mod.beta, mod.lambda),
                at(mod, solver), dev);
 
   return Rcpp::List::create(
@@ -84,30 +84,23 @@ Rcpp::List marginal_likelihood(
     const int maxit_conditional_modes
 ){
 
-  Eigen::SimplicialLDLT<Eigen::SparseMatrix<autodiff::dual1st> > solver;
-  solver.setShift(1);
-
   if(family == "gaussian"){
-    GALAMM::Gaussian mod{y, trials, X, Zt, Lambdat, beta, theta, theta_mapping,
-                         lambda, lambda_mapping_X, lambda_mapping_Zt,
-                         maxit_conditional_modes};
-    solver.analyzePattern(mod.get_inner_hessian());
-    return compute(mod, solver);
+    Gaussian<autodiff::dual1st> mod{
+      y, trials, X, Zt, Lambdat, beta, theta, theta_mapping,
+      lambda, lambda_mapping_X, lambda_mapping_Zt, maxit_conditional_modes};
+    return compute(mod);
   } else if(family == "binomial"){
-    GALAMM::Binomial mod{y, trials, X, Zt, Lambdat, beta, theta, theta_mapping,
-                         lambda, lambda_mapping_X, lambda_mapping_Zt,
-                         maxit_conditional_modes};
-    solver.analyzePattern(mod.get_inner_hessian());
-    return compute(mod, solver);
+    Binomial<autodiff::dual1st> mod{
+      y, trials, X, Zt, Lambdat, beta, theta, theta_mapping,
+      lambda, lambda_mapping_X, lambda_mapping_Zt, maxit_conditional_modes};
+    return compute(mod);
   } else if(family == "poisson"){
-    GALAMM::Poisson mod{y, trials, X, Zt, Lambdat, beta, theta, theta_mapping,
-                        lambda, lambda_mapping_X, lambda_mapping_Zt,
-                        maxit_conditional_modes};
-    solver.analyzePattern(mod.get_inner_hessian());
-    return compute(mod, solver);
+    Poisson<autodiff::dual1st> mod{
+      y, trials, X, Zt, Lambdat, beta, theta, theta_mapping,
+      lambda, lambda_mapping_X, lambda_mapping_Zt, maxit_conditional_modes};
+    return compute(mod);
   } else {
     Rcpp::stop("Unknown family.");
   }
-
 
 }

@@ -77,7 +77,8 @@ The random effects matrix does contain factor loadings, so we need a mapping.
 
 ```{r}
 Zt <- lmod$reTrms$Zt
-lambda_mapping_Zt <- rep(as.integer(dat$item), each = 2L) - 2L
+diff(Zt@p)
+lambda_mapping_Zt <- rep(dat$item, each = 2) - 2L
 ```
 
 We also extract the random effects covariance matrix, with its mapping to $\theta$. See @batesFittingLinearMixedEffects2015 for details.
@@ -101,7 +102,7 @@ ml <- marginal_likelihood(
   theta_mapping = theta_mapping,
   lambda = irt.model$Lambda[[1]][, "abil.sid", drop = TRUE][2:3],
   lambda_mapping_X = integer(),
-  lambda_mapping_Zt = lambda_mapping_Zt,
+  lambda_mapping_Zt = integer(), #lambda_mapping_Zt,
   family = "gaussian",
   maxit_conditional_modes = 1
 )
