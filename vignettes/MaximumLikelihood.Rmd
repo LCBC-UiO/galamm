@@ -102,9 +102,9 @@ ml <- marginal_likelihood(
   theta_mapping = theta_mapping,
   lambda = irt.model$Lambda[[1]][, "abil.sid", drop = TRUE][2:3],
   lambda_mapping_X = integer(),
-  lambda_mapping_Zt = integer(), #lambda_mapping_Zt,
+  lambda_mapping_Zt = lambda_mapping_Zt,
   family = "gaussian",
-  maxit_conditional_modes = 1,
+  maxit_conditional_modes = 1, 
   compute_hessian = TRUE
 )
 ```
@@ -123,6 +123,14 @@ ml$gradient
 ```
 
 This gradient is computed with algorithmic differentiation using the `autodiff` C++ library [@lealAutodiffModernFast2018], which means that it is exact to computer precision.
+
+The Hessian is also positive definite, but note that setting `compute_hessian = TRUE` as we did above typically increases the runtime.
+
+```{r}
+qr(ml$hessian)$rank
+dim(ml$hessian)
+```
+
 
 We can use this gradient to find the maximum likelihood estimates of the model (technically, the Laplace approximate marginal maximum likelihood estimates). We also use `memoise` to avoid evaluating the function unnecessarily.
 
@@ -492,6 +500,33 @@ opt$value
 
 ```{r}
 opt
+```
+
+Finally we can compute the Hessian at the maximum likelihood estimates.
+
+```{r}
+ml_final <- marginal_likelihood(
+    y = mdat$y,
+    trials = numeric(),
+    X = X,
+    Zt = Zt,
+    Lambdat = Lambdat,
+    beta = opt$par[beta_inds],
+    theta = opt$par[theta_inds],
+    theta_mapping = lmod$reTrms$Lind - 1L,
+    lambda = opt$par[lambda_inds],
+    lambda_mapping_X = lambda_mapping_X,
+    lambda_mapping_Zt = lambda_mapping_Zt,
+    family = "gaussian",
+    maxit_conditional_modes = 1,
+    compute_hessian = TRUE
+  )
+```
+
+The inverse of the Hessian is the covariance matrix.
+
+```{r}
+solve(ml_final$hessian)
 ```
 
 
