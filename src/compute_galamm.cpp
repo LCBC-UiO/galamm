@@ -121,22 +121,30 @@ Rcpp::List marginal_likelihood(
         lambda, lambda_mapping_X, lambda_mapping_Zt, maxit_conditional_modes};
       return compute(mod);
     }
-
-
   } else if(family == "binomial"){
-
-    Binomial<dual1st> mod{
-      y, trials, X, Zt, Lambdat, beta, theta, theta_mapping,
-      lambda, lambda_mapping_X, lambda_mapping_Zt, maxit_conditional_modes};
-    return compute(mod);
-
+    if(compute_hessian){
+      Binomial<dual2nd> mod{
+        y, trials, X, Zt, Lambdat, beta, theta, theta_mapping,
+        lambda, lambda_mapping_X, lambda_mapping_Zt, maxit_conditional_modes};
+      return compute(mod);
+    } else {
+      Binomial<dual1st> mod{
+        y, trials, X, Zt, Lambdat, beta, theta, theta_mapping,
+        lambda, lambda_mapping_X, lambda_mapping_Zt, maxit_conditional_modes};
+      return compute(mod);
+    }
   } else if(family == "poisson"){
-
-    Poisson<dual1st> mod{
-      y, trials, X, Zt, Lambdat, beta, theta, theta_mapping,
-      lambda, lambda_mapping_X, lambda_mapping_Zt, maxit_conditional_modes};
-    return compute(mod);
-
+    if(compute_hessian){
+      Poisson<dual2nd> mod{
+        y, trials, X, Zt, Lambdat, beta, theta, theta_mapping,
+        lambda, lambda_mapping_X, lambda_mapping_Zt, maxit_conditional_modes};
+      return compute(mod);
+    } else {
+      Poisson<dual1st> mod{
+        y, trials, X, Zt, Lambdat, beta, theta, theta_mapping,
+        lambda, lambda_mapping_X, lambda_mapping_Zt, maxit_conditional_modes};
+      return compute(mod);
+    }
   } else {
     Rcpp::stop("Unknown family.");
   }
