@@ -31,12 +31,18 @@
 #' corresponding value of \code{X} does not depend on \code{lambda},
 #' as in the case where the first element of \code{lambda} is fixed to 1.
 #' @param family A length one \code{character} denoting the family.
+#' @param maxit_conditional_modes Maximum number of iterations for
+#' conditional models. Can be 1 when \code{family = "gaussian"}.
+#' @param compute_hessian Boolean specifying whether or not to compute the Hessian
+#' matrix. If \code{TRUE}, the Hessian at the given parameters are computed to
+#' machine precision using algorithmic differentiation. Defaults to
+#' \code{FALSE}.
 #'
 #' @return A \code{list} with elements \code{deviance} and \code{gradient}.
 #' @export
 #'
 #' @details For examples, see the vignette on maximum likelihood estimation.
-marginal_likelihood <- function(y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, lambda, lambda_mapping_X, lambda_mapping_Zt, family) {
-    .Call(`_galamm_marginal_likelihood`, y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, lambda, lambda_mapping_X, lambda_mapping_Zt, family)
+marginal_likelihood <- function(y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, lambda, lambda_mapping_X, lambda_mapping_Zt, family, maxit_conditional_modes, compute_hessian = FALSE) {
+    .Call(`_galamm_marginal_likelihood`, y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, lambda, lambda_mapping_X, lambda_mapping_Zt, family, maxit_conditional_modes, compute_hessian)
 }
 

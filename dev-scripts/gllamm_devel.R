@@ -22,7 +22,8 @@ ml <- marginal_likelihood(
   lambda = numeric(),
   lambda_mapping_X = integer(),
   lambda_mapping_Zt = integer(),
-  family = "binomial"
+  family = "binomial",
+  maxit_conditional_modes = 50
 )
 
 logLik(fMod) * (-2)
@@ -44,7 +45,8 @@ mlwrapper <- function(par){
     lambda = numeric(),
     lambda_mapping_X = integer(),
     lambda_mapping_Zt = integer(),
-    family = "binomial"
+    family = "binomial",
+    maxit_conditional_modes = 50
   )
 }
 
@@ -94,12 +96,14 @@ mm <- glmer(formula, data, family = "binomial")
 lmod <- glFormula(formula, data = data, family = "binomial")
 
 lambda_mapping_Zt <- (sapply(lmod$reTrms$Zt@x, function(x) which(x == lambda_init)) - 2L)
+Zt <- lmod$reTrms$Zt
+Zt@x <- Zt@x / Zt@x
 
 mm2 <- marginal_likelihood(
   y = data$y,
   trials = rep(1, nrow(data)),
   X = lmod$X,
-  Zt = lmod$reTrms$Zt,
+  Zt = Zt,
   Lambdat = lmod$reTrms$Lambdat,
   beta = fixef(mm),
   theta = getME(mm, "theta"),
@@ -107,7 +111,8 @@ mm2 <- marginal_likelihood(
   lambda = as.numeric(lambda_init[-1]),
   lambda_mapping_X = integer(),
   lambda_mapping_Zt = lambda_mapping_Zt,
-  family = "binomial"
+  family = "binomial",
+  maxit_conditional_modes = 50
   )
 
 mm2$deviance
@@ -126,7 +131,7 @@ fn <- function(par){
     y = data$y,
     trials = rep(1, nrow(data)),
     X = lmod$X,
-    Zt = lmod$reTrms$Zt,
+    Zt = Zt,
     Lambdat = lmod$reTrms$Lambdat,
     beta = par[beta_inds],
     theta = par[theta_inds],
@@ -134,7 +139,8 @@ fn <- function(par){
     lambda = par[lambda_inds],
     lambda_mapping_X = integer(),
     lambda_mapping_Zt = lambda_mapping_Zt,
-    family = "binomial"
+    family = "binomial",
+    maxit_conditional_modes = 50
   )
   grad <<- ret$gradient
   ret$deviance
@@ -152,6 +158,7 @@ mm3 <- PLmixed(formula, IRTsub, load.var = load_var, lambda = list(irt.lam),
 
 summary(mm3)
 
+opt$value
 mm2$deviance
 -2 * logLik(mm)
 -2 * mm3$`Log-Likelihood`
