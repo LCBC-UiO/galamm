@@ -24,7 +24,7 @@ The `galamm` package includes a function for computing the Laplace approximate m
 
 ## Linear mixed model with factor structure
 
-We will use an example dataset from the `PLmixed` package [@rockwoodEstimatingComplexMeasurement2019]. The `PLmixed` is probably a better choice for this model, but this way we get a gentle start before we try estimating generalized multilevel models with semiparametric terms.
+We will use an example dataset from the `PLmixed` package [@rockwoodEstimatingComplexMeasurement2019]. `PLmixed` is probably a better choice for this model, but this way we get a gentle start before we try estimating generalized multilevel models with semiparametric terms.
 
 ```{r}
 library(PLmixed)
@@ -35,7 +35,6 @@ IRTsub <- IRTsub[sample(nrow(IRTsub), 300), ]
 IRTsub <- IRTsub[order(IRTsub$item), ]
 irt.lam = c(1, NA, NA)
 ```
-
 
 ### Estimation with PLmixed
 
@@ -73,11 +72,11 @@ The fixed effects matrix does not contain any factor loadings, so we keep it as 
 X <- lmod$X
 ```
 
-The random effects matrix does contain factor loadings, so we need a mapping.
+The random effects matrix does contain factor loadings, so we need a mapping. `Zt` is on compressed sparse column format, and `diff(Zt@p)` thus shows us the number of entries in each column of this transposed matrix.
 
 ```{r}
 Zt <- lmod$reTrms$Zt
-diff(Zt@p)
+table(diff(Zt@p))
 lambda_mapping_Zt <- rep(dat$item, each = 2) - 2L
 ```
 
@@ -104,16 +103,15 @@ ml <- marginal_likelihood(
   lambda_mapping_X = integer(),
   lambda_mapping_Zt = lambda_mapping_Zt,
   family = "gaussian",
-  maxit_conditional_modes = 1, 
-  compute_hessian = TRUE
+  maxit_conditional_modes = 1
 )
 ```
 
-The `marginal_likelihood` function returns the deviance, which we can compare with that from `PLmixed`:
+The `marginal_likelihood` function returns the log-likelihood, which we can compare with that from `PLmixed`:
 
 ```{r}
--2 * irt.model$`Log-Likelihood`
-ml$deviance
+irt.model$`Log-Likelihood`
+ml$logLik
 ```
 
 The `marginal_likelihood` function also returns the gradient of the marginal likelihood with respect to $\theta$, $\beta$, and $\lambda$, in that order. Reassuringly, it is close to zero. Not however that `PLmixed` returns the maximum of the profile likelihood, which albeit consistent, is not the same as the maximum likelihood estimate [@gongPseudoMaximumLikelihood1981;@parkePseudoMaximumLikelihood1986;@pawitanAllLikelihood2001].
@@ -123,14 +121,6 @@ ml$gradient
 ```
 
 This gradient is computed with algorithmic differentiation using the `autodiff` C++ library [@lealAutodiffModernFast2018], which means that it is exact to computer precision.
-
-The Hessian is also positive definite, but note that setting `compute_hessian = TRUE` as we did above typically increases the runtime.
-
-```{r}
-qr(ml$hessian)$rank
-dim(ml$hessian)
-```
-
 
 We can use this gradient to find the maximum likelihood estimates of the model (technically, the Laplace approximate marginal maximum likelihood estimates). We also use `memoise` to avoid evaluating the function unnecessarily.
 
@@ -161,7 +151,7 @@ mlwrapper <- function(par){
 
 mlmem <- memoise(mlwrapper)
 fn <- function(par){
-  mlmem(par)$deviance
+  mlmem(par)$logLik
 }
 gr <- function(par){
   mlmem(par)$gradient
@@ -169,15 +159,16 @@ gr <- function(par){
 
 ```
 
-We start the optimization from some pretty arbitrary values, and it converges quite fast, to a solution which is identical to the one the `PLmixed` found:
+We start the optimization from some pretty arbitrary values, and it converges quite fast, to a solution which is identical to the one the `PLmixed` found. We set `fnscale = -1` to get the *negative* log-likelihood, which `optim` then minimizes.
 
 ```{r}
 par_init <- c(1, 1, 0, 0, 0, 1, 1)
 opt <- optim(par_init, fn = fn, gr = gr, 
-             method = "L-BFGS-B", lower = bounds)
+             method = "L-BFGS-B", lower = bounds,
+             control = list(fnscale = -1), hessian = TRUE)
 
 opt$value
--2 * irt.model$`Log-Likelihood`
+irt.model$`Log-Likelihood`
 ```
 
 We can confirm that the parameters are almost identical:
@@ -191,12 +182,13 @@ plot(
 abline(0, 1)
 ```
 
-It should also be clear to the reader the `PLmixed` is MUCH more convenient to use. However, the optimization shown here is faster:
+It should also be clear to the reader the `PLmixed` is much more convenient to use. However, the optimization shown here is faster:
 
 ```{r}
 system.time({
   opt <- optim(par_init, fn = fn, gr = gr, 
-             method = "L-BFGS-B", lower = bounds)
+             method = "L-BFGS-B", lower = bounds,
+             control = list(fnscale = -1), hessian = TRUE)
 })
 ```
 
@@ -207,6 +199,26 @@ system.time({
                      REML = FALSE, factor = list(c("abil.sid")), 
                      lambda = list(irt.lam), iter.count = FALSE)
 })
+```
+
+The inverse of the negative Hessian matrix is the covariance matrix of the model.
+
+```{r}
+S <- solve(-opt$hessian)
+```
+
+We can confirm that also these standard errors agree with `PLmixed`. Both for $\hat{\beta}$
+
+```{r}
+sqrt(diag(S))[beta_inds]
+summary(irt.model)$`Fixed Effects`
+```
+
+and for $\hat{\lambda}$.
+
+```{r}
+sqrt(diag(S))[lambda_inds]
+summary(irt.model)$Lambda
 ```
 
 
@@ -252,7 +264,7 @@ mlwrapper <- function(par){
 
 mlmem <- memoise(mlwrapper)
 fn <- function(par){
-  mlmem(par)$deviance
+  mlmem(par)$logLik
 }
 gr <- function(par){
   mlmem(par)$gradient
@@ -261,15 +273,16 @@ gr <- function(par){
 opt <- optim(
   par = c(1, rep(0, 4)), fn = fn, gr = gr,
   method = "L-BFGS-B", lower = c(0, rep(-Inf, 4)),
-  control = list(maxit = 2000)
+  control = list(fnscale = -1, maxit = 2000), 
+  hessian = TRUE
 )
 ```
 
-Using `optim()` with L-BFGS-B yields slightly higher deviance than `lme4`.
+Using `optim()` with L-BFGS-B yields slightly likelihood deviance than `lme4`.
 
 ```{r}
 opt$value
--2 * logLik(fMod)
+logLik(fMod)
 ```
 
 On the other hand, for given parameter values, they almost perfectly agree, confirming that our implementation is correct, but that some work is needed to check the optimization algorithms.
@@ -277,6 +290,14 @@ On the other hand, for given parameter values, they almost perfectly agree, conf
 ```{r}
 fn(opt2$par)
 ```
+
+Also the estimated standard errors are close.
+
+```{r}
+sqrt(diag(solve(-opt$hessian)))[beta_inds]
+sqrt(diag(vcov(fMod)))
+```
+
 
 ## Generalized additive mixed model with factor structures
 
@@ -286,9 +307,7 @@ library(gamm4)
 ```
 
 
-We can now fit the model illustrates in the Introduction vignette, which we refer to for details.
-
-We start by adding a weight column to `dat1`, to hold factor loadings.
+We can now fit the model illustrates in the Introduction vignette, which we refer to for details. We start by adding a weight column to `dat1`, to hold factor loadings.
 
 ```{r}
 lambda_init <- c(item1 = 1, item2 = 2, item3 = .4)
@@ -375,25 +394,21 @@ plot(
 
 Having gained some confidence in our ability to fit a GAMM as a mixed model, we can now move on to also estimating the factor loadings. For this we use the `marginal_likelihood` function provided by this package, and we start by confirming that we get the same likelihood as with the two approaches shown above. 
 
-We first remove the factor loading from the design matrices.
-
-The lambda mapping for `X` runs through each column.
+We first remove the factor loading from the design matrices. The lambda mapping for `X` runs through each column.
 
 ```{r}
 lambda_mapping_X <- rep(as.integer(factor(dat1$item)) - 2L, ncol(lmod$X))
 ```
 
-The lambda mapping for `Zt` runs through the vector of structural nonzeros. Compressed sparse column format is used, so the `x` vector runs through columns. Each loading is repeated the following number of times:
+The lambda mapping for `Zt` runs through the vector of structural nonzeros. Compressed sparse column format is used, so the `x` vector runs through columns. Each loading is repeated nine times:
 
 ```{r}
-(diffs <- diff(lmod$reTrms$Zt@p))
+table(diff(lmod$reTrms$Zt@p))
 ```
 
 
 ```{r}
-lambda_mapping_Zt <- unlist(Map(function(item, times){
-  rep(item, each = times)
-}, item = as.integer(as.factor(dat1$item)), times = diffs)) - 2L
+lambda_mapping_Zt <- rep(-1:1, each = 9, times = 300)
 ```
 
 ```{r}
@@ -444,8 +459,8 @@ margl <- marginal_likelihood(
   maxit_conditional_modes = 1
 )
 
-margl$deviance
--2 * logLik(mod1)
+margl$logLik
+logLik(mod1)
 ```
 
 Finally, we can fit the model directly, using the same memoization technique as above.
@@ -476,7 +491,7 @@ mlwrapper <- function(par){
 
 mlmem <- memoise(mlwrapper)
 fn <- function(par){
-  mlmem(par)$deviance
+  mlmem(par)$logLik
 }
 gr <- function(par){
   mlmem(par)$gradient
@@ -491,10 +506,11 @@ par_init <- c(1, 1, 0, 0, 1, 1)
 
 opt <- optim(par_init, fn = fn, gr = gr, 
            method = "L-BFGS-B", lower = bounds, 
-           control = list(maxit = 2000))
+           control = list(fnscale = -1, maxit = 2000),
+           hessian = TRUE)
 
 opt$value
--2 * logLik(mod1)
+logLik(mod1)
 ```
 
 
@@ -502,32 +518,6 @@ opt$value
 opt
 ```
 
-Finally we can compute the Hessian at the maximum likelihood estimates.
-
-```{r}
-ml_final <- marginal_likelihood(
-    y = mdat$y,
-    trials = numeric(),
-    X = X,
-    Zt = Zt,
-    Lambdat = Lambdat,
-    beta = opt$par[beta_inds],
-    theta = opt$par[theta_inds],
-    theta_mapping = lmod$reTrms$Lind - 1L,
-    lambda = opt$par[lambda_inds],
-    lambda_mapping_X = lambda_mapping_X,
-    lambda_mapping_Zt = lambda_mapping_Zt,
-    family = "gaussian",
-    maxit_conditional_modes = 1,
-    compute_hessian = TRUE
-  )
-```
-
-The inverse of the Hessian is the covariance matrix.
-
-```{r}
-solve(ml_final$hessian)
-```
 
 
 

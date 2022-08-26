@@ -5,50 +5,32 @@ using namespace autodiff;
 // [[Rcpp::depends(RcppEigen)]]
 
 template <typename T>
-T deviance(
+T logLik(
     Model<T>& mod,
     Eigen::SimplicialLDLT<Eigen::SparseMatrix<T> >& solver){
   mod.get_conditional_modes(solver);
-  return -2 * (mod.exponent_g() - solver.vectorD().array().log().sum() / 2);
+  return (mod.exponent_g() - solver.vectorD().array().log().sum() / 2);
 }
 
-Rcpp::List compute(Model<dual1st>& mod){
+template <typename T>
+Rcpp::List compute(Model<T>& mod){
 
-  Eigen::SimplicialLDLT<Eigen::SparseMatrix<dual1st> > solver;
+  Eigen::SimplicialLDLT<Eigen::SparseMatrix<T> > solver;
   solver.setShift(1);
   solver.analyzePattern(mod.get_inner_hessian());
 
-  dual1st dev{};
+  T dev{};
   Eigen::VectorXd g;
 
-  gradient(deviance<dual1st>, wrt(mod.theta, mod.beta, mod.lambda),
+  gradient(logLik<T>, wrt(mod.theta, mod.beta, mod.lambda),
            at(mod, solver), dev, g);
 
   return Rcpp::List::create(
-    Rcpp::Named("deviance") = static_cast<double>(dev),
+    Rcpp::Named("logLik") = static_cast<double>(dev),
     Rcpp::Named("gradient") = g.cast<double>()
   );
 }
 
-Rcpp::List compute(Model<dual2nd>& mod){
-
-  Eigen::SimplicialLDLT<Eigen::SparseMatrix<dual2nd> > solver;
-  solver.setShift(1);
-  solver.analyzePattern(mod.get_inner_hessian());
-
-  dual2nd dev{};
-  Eigen::VectorXd g;
-  Eigen::MatrixXd H;
-
-  hessian(deviance<dual2nd>, wrt(mod.theta, mod.beta, mod.lambda),
-          at(mod, solver), dev, g, H);
-
-  return Rcpp::List::create(
-    Rcpp::Named("deviance") = static_cast<double>(dev),
-    Rcpp::Named("gradient") = g.cast<double>(),
-    Rcpp::Named("hessian") = H.cast<double>()
-  );
-}
 
 //' Compute the marginal likelihood of a GLLAMM or GALAMM
 //'
@@ -82,12 +64,8 @@ Rcpp::List compute(Model<dual2nd>& mod){
 //' @param family A length one \code{character} denoting the family.
 //' @param maxit_conditional_modes Maximum number of iterations for
 //' conditional models. Can be 1 when \code{family = "gaussian"}.
-//' @param compute_hessian Boolean specifying whether or not to compute the Hessian
-//' matrix. If \code{TRUE}, the Hessian at the given parameters are computed to
-//' machine precision using algorithmic differentiation. Defaults to
-//' \code{FALSE}.
 //'
-//' @return A \code{list} with elements \code{deviance} and \code{gradient}.
+//' @return A \code{list} with elements \code{logLik} and \code{gradient}.
 //' @export
 //'
 //' @details For examples, see the vignette on maximum likelihood estimation.
@@ -105,46 +83,24 @@ Rcpp::List marginal_likelihood(
     const Eigen::Map<Eigen::VectorXi> lambda_mapping_X,
     const Eigen::Map<Eigen::VectorXi> lambda_mapping_Zt,
     const std::string family,
-    const int maxit_conditional_modes,
-    const bool compute_hessian = false
+    const int maxit_conditional_modes
 ){
 
   if(family == "gaussian"){
-    if(compute_hessian){
-      Gaussian<dual2nd> mod{
-        y, trials, X, Zt, Lambdat, beta, theta, theta_mapping,
-        lambda, lambda_mapping_X, lambda_mapping_Zt, maxit_conditional_modes};
-      return compute(mod);
-    } else {
-      Gaussian<dual1st> mod{
-        y, trials, X, Zt, Lambdat, beta, theta, theta_mapping,
-        lambda, lambda_mapping_X, lambda_mapping_Zt, maxit_conditional_modes};
-      return compute(mod);
-    }
+    Gaussian<dual1st> mod{
+      y, trials, X, Zt, Lambdat, beta, theta, theta_mapping,
+      lambda, lambda_mapping_X, lambda_mapping_Zt, maxit_conditional_modes};
+    return compute(mod);
   } else if(family == "binomial"){
-    if(compute_hessian){
-      Binomial<dual2nd> mod{
-        y, trials, X, Zt, Lambdat, beta, theta, theta_mapping,
-        lambda, lambda_mapping_X, lambda_mapping_Zt, maxit_conditional_modes};
-      return compute(mod);
-    } else {
-      Binomial<dual1st> mod{
-        y, trials, X, Zt, Lambdat, beta, theta, theta_mapping,
-        lambda, lambda_mapping_X, lambda_mapping_Zt, maxit_conditional_modes};
-      return compute(mod);
-    }
+    Binomial<dual1st> mod{
+      y, trials, X, Zt, Lambdat, beta, theta, theta_mapping,
+      lambda, lambda_mapping_X, lambda_mapping_Zt, maxit_conditional_modes};
+    return compute(mod);
   } else if(family == "poisson"){
-    if(compute_hessian){
-      Poisson<dual2nd> mod{
-        y, trials, X, Zt, Lambdat, beta, theta, theta_mapping,
-        lambda, lambda_mapping_X, lambda_mapping_Zt, maxit_conditional_modes};
-      return compute(mod);
-    } else {
-      Poisson<dual1st> mod{
-        y, trials, X, Zt, Lambdat, beta, theta, theta_mapping,
-        lambda, lambda_mapping_X, lambda_mapping_Zt, maxit_conditional_modes};
-      return compute(mod);
-    }
+    Poisson<dual1st> mod{
+      y, trials, X, Zt, Lambdat, beta, theta, theta_mapping,
+      lambda, lambda_mapping_X, lambda_mapping_Zt, maxit_conditional_modes};
+    return compute(mod);
   } else {
     Rcpp::stop("Unknown family.");
   }
