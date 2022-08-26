@@ -64,7 +64,9 @@ likelihood.</p>
 <span>  <span class="va">lambda</span>,</span>
 <span>  <span class="va">lambda_mapping_X</span>,</span>
 <span>  <span class="va">lambda_mapping_Zt</span>,</span>
-<span>  <span class="va">family</span></span>
+<span>  <span class="va">family</span>,</span>
+<span>  <span class="va">maxit_conditional_modes</span>,</span>
+<span>  compute_hessian <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -129,6 +131,18 @@ as in the case where the first element of <code>lambda</code> is fixed to 1.</p>
 
 <dt>family</dt>
 <dd><p>A length one <code>character</code> denoting the family.</p></dd>
+
+
+<dt>maxit_conditional_modes</dt>
+<dd><p>Maximum number of iterations for
+conditional models. Can be 1 when <code>family = "gaussian"</code>.</p></dd>
+
+
+<dt>compute_hessian</dt>
+<dd><p>Boolean specifying whether or not to compute the Hessian
+matrix. If <code>TRUE</code>, the Hessian at the given parameters are computed to
+machine precision using algorithmic differentiation. Defaults to
+<code>FALSE</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
