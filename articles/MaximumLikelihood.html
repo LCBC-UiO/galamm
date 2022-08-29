@@ -215,7 +215,7 @@
 <span>             control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>fnscale <span class="op">=</span> <span class="op">-</span><span class="fl">1</span><span class="op">)</span>, hessian <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.005   0.000   0.006</span></span></code></pre></div>
+<span><span class="co">#&gt;   0.006   0.000   0.006</span></span></code></pre></div>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="op">{</span></span>
 <span>  <span class="va">irt.model</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/PLmixed/man/PLmixed.html" class="external-link">PLmixed</a></span><span class="op">(</span><span class="va">form</span>,</span>
@@ -224,7 +224,7 @@
 <span>                     lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">irt.lam</span><span class="op">)</span>, iter.count <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   2.477   0.004   2.482</span></span></code></pre>
+<span><span class="co">#&gt;   2.855   0.012   2.867</span></span></code></pre>
 <p>The inverse of the negative Hessian matrix is the covariance matrix of the model.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">S</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Matrix/man/solve-methods.html" class="external-link">solve</a></span><span class="op">(</span><span class="op">-</span><span class="va">opt</span><span class="op">$</span><span class="va">hessian</span><span class="op">)</span></span></code></pre></div>
@@ -320,6 +320,9 @@
 <div class="section level2">
 <h2 id="generalized-additive-mixed-model-with-factor-structures">Generalized additive mixed model with factor structures<a class="anchor" aria-label="anchor" href="#generalized-additive-mixed-model-with-factor-structures"></a>
 </h2>
+<div class="section level3">
+<h3 id="warm-up">Warm-up<a class="anchor" aria-label="anchor" href="#warm-up"></a>
+</h3>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">mgcv</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Loading required package: nlme</span></span>
@@ -403,24 +406,35 @@
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/nlme/man/random.effects.html" class="external-link">ranef</a></span><span class="op">(</span><span class="va">mod1</span><span class="op">)</span><span class="op">$</span><span class="va">pseudoGroups</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>  xlab <span class="op">=</span> <span class="st">"gamm4"</span>, ylab <span class="op">=</span> <span class="st">"lme4"</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 <p><img src="MaximumLikelihood_files/figure-html/unnamed-chunk-35-1.png" width="384"></p>
+<p>We now try to convert back to the original spline coefficients.</p>
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span></span>
+<span>  <span class="va">re</span><span class="op">$</span><span class="va">trans.U</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="va">re</span><span class="op">$</span><span class="va">trans.D</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/nlme/man/random.effects.html" class="external-link">ranef</a></span><span class="op">(</span><span class="va">mod1</span><span class="op">)</span><span class="op">$</span><span class="va">pseudoGroups</span><span class="op">$</span><span class="va">`(Intercept)`</span>, <span class="fu"><a href="https://rdrr.io/pkg/nlme/man/fixed.effects.html" class="external-link">fixef</a></span><span class="op">(</span><span class="va">mod1</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">mod0</span><span class="op">$</span><span class="va">gam</span><span class="op">)</span></span>
+<span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
+<p><img src="MaximumLikelihood_files/figure-html/unnamed-chunk-36-1.png" width="700"></p>
+</div>
+<div class="section level3">
+<h3 id="maximum-likelihood-estimation">Maximum likelihood estimation<a class="anchor" aria-label="anchor" href="#maximum-likelihood-estimation"></a>
+</h3>
 <p>Having gained some confidence in our ability to fit a GAMM as a mixed model, we can now move on to also estimating the factor loadings. For this we use the <code>marginal_likelihood</code> function provided by this package, and we start by confirming that we get the same likelihood as with the two approaches shown above.</p>
 <p>We first remove the factor loading from the design matrices. The lambda mapping for <code>X</code> runs through each column.</p>
-<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">lambda_mapping_X</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">dat1</span><span class="op">$</span><span class="va">item</span><span class="op">)</span><span class="op">)</span> <span class="op">-</span> <span class="fl">2L</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">lmod</span><span class="op">$</span><span class="va">X</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>The lambda mapping for <code>Zt</code> runs through the vector of structural nonzeros. Compressed sparse column format is used, so the <code>x</code> vector runs through columns. Each loading is repeated nine times:</p>
-<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/diff.html" class="external-link">diff</a></span><span class="op">(</span><span class="va">lmod</span><span class="op">$</span><span class="va">reTrms</span><span class="op">$</span><span class="va">Zt</span><span class="op">@</span><span class="va">p</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;   9 </span></span>
 <span><span class="co">#&gt; 300</span></span></code></pre></div>
-<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">lambda_mapping_Zt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span><span class="op">:</span><span class="fl">1</span>, each <span class="op">=</span> <span class="fl">9</span>, times <span class="op">=</span> <span class="fl">300</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">lambda_mapping_Zt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span><span class="op">:</span><span class="fl">1</span>, each <span class="op">=</span> <span class="fl">9</span>, times <span class="op">=</span> <span class="fl">300</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">X</span> <span class="op">&lt;-</span> <span class="va">lmod</span><span class="op">$</span><span class="va">X</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">lambda_init</span><span class="op">[</span><span class="va">lambda_mapping_X</span> <span class="op">+</span> <span class="fl">2L</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="va">Zt</span> <span class="op">&lt;-</span> <span class="va">lmod</span><span class="op">$</span><span class="va">reTrms</span><span class="op">$</span><span class="va">Zt</span></span>
 <span><span class="va">Zt</span><span class="op">@</span><span class="va">x</span> <span class="op">&lt;-</span> <span class="va">Zt</span><span class="op">@</span><span class="va">x</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">lambda_init</span><span class="op">[</span><span class="va">lambda_mapping_Zt</span> <span class="op">+</span> <span class="fl">2L</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <p>We can confirm that they now are free of factor loadings:</p>
-<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Before</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">lmod</span><span class="op">$</span><span class="va">X</span><span class="op">)</span></span>
 <span><span class="co">#&gt;         Xf1 Xf2</span></span>
@@ -439,7 +453,7 @@
 <span><span class="co">#&gt; 4 0.7921988   1</span></span>
 <span><span class="co">#&gt; 5 0.7921988   1</span></span>
 <span><span class="co">#&gt; 6 0.7921988   1</span></span></code></pre></div>
-<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">compmat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span>before <span class="op">=</span> <span class="va">lmod</span><span class="op">$</span><span class="va">reTrms</span><span class="op">$</span><span class="va">Zt</span><span class="op">@</span><span class="va">x</span>, after <span class="op">=</span> <span class="va">Zt</span><span class="op">@</span><span class="va">x</span><span class="op">)</span></span>
 <span><span class="va">compmat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">compmat</span>, ratio <span class="op">=</span> <span class="va">compmat</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span> <span class="op">/</span> <span class="va">compmat</span><span class="op">[</span>, <span class="fl">2</span><span class="op">]</span><span class="op">)</span></span>
 <span></span>
@@ -473,11 +487,11 @@
 <span><span class="co">#&gt; [26,]  0.065059006  0.162647515   0.4</span></span>
 <span><span class="co">#&gt; [27,] -0.199138845 -0.497847112   0.4</span></span></code></pre></div>
 <p>We also remove the estimated values from <code>Lambdat</code>.</p>
-<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">Lambdat</span> <span class="op">&lt;-</span> <span class="va">lmod</span><span class="op">$</span><span class="va">reTrms</span><span class="op">$</span><span class="va">Lambdat</span></span>
 <span><span class="va">Lambdat</span><span class="op">@</span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">Lambdat</span><span class="op">@</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>We then compute the marginal likelihood.</p>
-<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">margl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/marginal_likelihood.html">marginal_likelihood</a></span><span class="op">(</span></span>
 <span>  y <span class="op">=</span> <span class="va">mdat</span><span class="op">$</span><span class="va">y</span>,</span>
 <span>  trials <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
@@ -499,7 +513,7 @@
 <span><span class="fu"><a href="https://rdrr.io/r/stats/logLik.html" class="external-link">logLik</a></span><span class="op">(</span><span class="va">mod1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 'log Lik.' -384.4884 (df=5)</span></span></code></pre></div>
 <p>Finally, we can fit the model directly, using the same memoization technique as above.</p>
-<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">theta_inds</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span></span>
 <span><span class="va">beta_inds</span> <span class="op">&lt;-</span> <span class="fl">3</span><span class="op">:</span><span class="fl">4</span></span>
 <span><span class="va">lambda_inds</span> <span class="op">&lt;-</span> <span class="fl">5</span><span class="op">:</span><span class="fl">6</span></span>
@@ -531,7 +545,7 @@
 <span>  <span class="fu">mlmem</span><span class="op">(</span><span class="va">par</span><span class="op">)</span><span class="op">$</span><span class="va">gradient</span></span>
 <span><span class="op">}</span></span></code></pre></div>
 <p>It ends up at the right values. Profile likelihood estimation fails from these initial values, and is much slower. Note that the deviance is lower now, because the factor loadings are estimated, rather than fixed at <span class="math inline">\((1, 2, .4)\)</span>.</p>
-<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">par_init</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">opt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/optim.html" class="external-link">optim</a></span><span class="op">(</span><span class="va">par_init</span>, fn <span class="op">=</span> <span class="va">fn</span>, gr <span class="op">=</span> <span class="va">gr</span>, </span>
@@ -543,7 +557,7 @@
 <span><span class="co">#&gt; [1] -384.1714</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/stats/logLik.html" class="external-link">logLik</a></span><span class="op">(</span><span class="va">mod1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 'log Lik.' -384.4884 (df=5)</span></span></code></pre></div>
-<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">opt</span></span>
 <span><span class="co">#&gt; $par</span></span>
 <span><span class="co">#&gt; [1]  8.0771295 73.4513744  6.3207880 11.5653265  2.0036828  0.4030861</span></span>
@@ -576,6 +590,49 @@
 <span><span class="co">#&gt; [4,] -3.177677e-02</span></span>
 <span><span class="co">#&gt; [5,]  1.193329e+04</span></span>
 <span><span class="co">#&gt; [6,] -7.411637e+04</span></span></code></pre></div>
+<p>We can also now convert the spline coefficients back to their original parametrization. They are not identical to the coefficients found above because we now have also estimated the factor loadings.</p>
+<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">ml_final</span> <span class="op">&lt;-</span> <span class="fu">mlwrapper</span><span class="op">(</span><span class="va">opt</span><span class="op">$</span><span class="va">par</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">u</span> <span class="op">&lt;-</span> <span class="va">re</span><span class="op">$</span><span class="va">trans.U</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="va">re</span><span class="op">$</span><span class="va">trans.D</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">ml_final</span><span class="op">$</span><span class="va">u</span><span class="op">[</span><span class="fl">101</span><span class="op">:</span><span class="fl">108</span><span class="op">]</span>, <span class="va">opt</span><span class="op">$</span><span class="va">par</span><span class="op">[</span><span class="va">beta_inds</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="va">Lambdat</span><span class="op">@</span><span class="va">x</span> <span class="op">&lt;-</span> <span class="va">opt</span><span class="op">$</span><span class="va">par</span><span class="op">[</span><span class="va">theta_inds</span><span class="op">]</span><span class="op">[</span><span class="va">lmod</span><span class="op">$</span><span class="va">reTrms</span><span class="op">$</span><span class="va">Lind</span><span class="op">]</span></span>
+<span><span class="va">b</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">Lambdat</span><span class="op">[</span><span class="fl">101</span><span class="op">:</span><span class="fl">108</span>, <span class="fl">101</span><span class="op">:</span><span class="fl">108</span><span class="op">]</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">u</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">8</span><span class="op">]</span><span class="op">)</span>, <span class="va">u</span><span class="op">[</span><span class="fl">9</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">b</span>, <span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">mod0</span><span class="op">$</span><span class="va">gam</span><span class="op">)</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
+<p><img src="MaximumLikelihood_files/figure-html/unnamed-chunk-48-1.png" width="700"></p>
+<p>An approximate covariance matrix for the spline coefficients is given by <span class="citation">(Wood 2006)</span></p>
+<p><span class="math display">\[\left(\mathbf{X}^{T}\mathbf{W}\mathbf{X} + \lambda \mathbf{S}\right)^{-1} \phi\]</span></p>
+<p>where (for the Gaussian case considered here), <span class="math inline">\(\mathbf{W}\)</span> is diagonal with elements <span class="math inline">\(\phi^{-1}\)</span>. The smoothing parameter <span class="math inline">\(\lambda\)</span> is the reciprocal the corresponding variance component. We thus have</p>
+<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">XR</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">re</span><span class="op">$</span><span class="va">trans.U</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">8</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">8</span><span class="op">]</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="op">(</span><span class="va">Zt</span><span class="op">[</span><span class="fl">101</span><span class="op">:</span><span class="fl">108</span>, <span class="op">]</span> <span class="op">*</span> <span class="op">(</span><span class="fl">1</span> <span class="op">/</span> <span class="va">re</span><span class="op">$</span><span class="va">trans.D</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">XF</span> <span class="op">&lt;-</span> <span class="va">X</span></span>
+<span></span>
+<span><span class="va">X</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">XR</span>, <span class="va">XF</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/Matrix/man/solve-methods.html" class="external-link">solve</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">X</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">X</span> <span class="op">*</span> <span class="va">ml_final</span><span class="op">$</span><span class="va">phi</span> <span class="op">+</span> <span class="va">sm</span><span class="op">$</span><span class="va">S</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">/</span> <span class="va">opt</span><span class="op">$</span><span class="va">par</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="co">#&gt; 10 x 10 Matrix of class "dgeMatrix"</span></span>
+<span><span class="co">#&gt;               [,1]          [,2]          [,3]         [,4]          [,5]</span></span>
+<span><span class="co">#&gt;  [1,]  0.004587478 -0.0007177420  0.0018097372 -0.005335717 -0.0033192925</span></span>
+<span><span class="co">#&gt;  [2,] -0.000717742  0.0078338596 -0.0002636471 -0.002398626  0.0008411893</span></span>
+<span><span class="co">#&gt;  [3,]  0.001809737 -0.0002636471  0.0289433298 -0.002542395  0.0318477834</span></span>
+<span><span class="co">#&gt;  [4,] -0.005335717 -0.0023986259 -0.0025423946  0.081503605  0.0176352290</span></span>
+<span><span class="co">#&gt;  [5,] -0.003319292  0.0008411893  0.0318477834  0.017635229  0.1012876046</span></span>
+<span><span class="co">#&gt;  [6,]  0.000542433  0.0121013446 -0.0065542278 -0.032875854 -0.0346997285</span></span>
+<span><span class="co">#&gt;  [7,] -0.007635062 -0.0016796377 -0.0093975681 -0.001783678 -0.0219668401</span></span>
+<span><span class="co">#&gt;  [8,] -0.001185799  0.0099412491 -0.0081211009  0.028859642 -0.0088796752</span></span>
+<span><span class="co">#&gt;  [9,]  0.004866865 -0.0355900059  0.0182834429 -0.062916304  0.0363557888</span></span>
+<span><span class="co">#&gt; [10,]  0.021325299 -0.0044364037  0.0028073121 -0.020177235 -0.0348183767</span></span>
+<span><span class="co">#&gt;                [,6]         [,7]         [,8]         [,9]         [,10]</span></span>
+<span><span class="co">#&gt;  [1,]  0.0005424330 -0.007635062 -0.001185799  0.004866865  0.0213252989</span></span>
+<span><span class="co">#&gt;  [2,]  0.0121013446 -0.001679638  0.009941249 -0.035590006 -0.0044364037</span></span>
+<span><span class="co">#&gt;  [3,] -0.0065542278 -0.009397568 -0.008121101  0.018283443  0.0028073121</span></span>
+<span><span class="co">#&gt;  [4,] -0.0328758536 -0.001783678  0.028859642 -0.062916304 -0.0201772355</span></span>
+<span><span class="co">#&gt;  [5,] -0.0346997285 -0.021966840 -0.008879675  0.036355789 -0.0348183767</span></span>
+<span><span class="co">#&gt;  [6,]  0.1696459262 -0.003677401  0.013908468 -0.141935990  0.0009337865</span></span>
+<span><span class="co">#&gt;  [7,] -0.0036774012  0.112817962 -0.016627087  0.024723584 -0.0480348315</span></span>
+<span><span class="co">#&gt;  [8,]  0.0139084680 -0.016627087  0.162621484 -0.161121099  0.0023095687</span></span>
+<span><span class="co">#&gt;  [9,] -0.1419359903  0.024723584 -0.161121099  0.408239712  0.0114079593</span></span>
+<span><span class="co">#&gt; [10,]  0.0009337865 -0.048034832  0.002309569  0.011407959  0.1411821466</span></span></code></pre></div>
+</div>
 </div>
 <div class="section level2 unnumbered">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
@@ -598,6 +655,9 @@ Pawitan, Yudi. 2001. <em>In All Likelihood</em>. <span>New York, NY</span>: <spa
 </div>
 <div id="ref-rockwoodEstimatingComplexMeasurement2019" class="csl-entry">
 Rockwood, Nicholas J., and Minjeong Jeon. 2019. <span>“Estimating <span>Complex Measurement</span> and <span>Growth Models Using</span> the <span>R Package PLmixed</span>.”</span> <em>Multivariate Behavioral Research</em> 54 (2): 288–306. <a href="https://doi.org/10.1080/00273171.2018.1516541" class="external-link">https://doi.org/10.1080/00273171.2018.1516541</a>.
+</div>
+<div id="ref-woodConfidenceIntervalsGeneralized2006" class="csl-entry">
+Wood, Simon N. 2006. <span>“On <span>Confidence Intervals</span> for <span>Generalized Additive Models Based</span> on <span>Penalized Regression Splines</span>.”</span> <em>Australian &amp; New Zealand Journal of Statistics</em> 48 (4): 445–64. <a href="https://doi.org/10.1111/j.1467-842X.2006.00450.x" class="external-link">https://doi.org/10.1111/j.1467-842X.2006.00450.x</a>.
 </div>
 </div>
 </div>
