@@ -27,7 +27,10 @@ Rcpp::List compute(Model<T>& mod){
 
   return Rcpp::List::create(
     Rcpp::Named("logLik") = static_cast<double>(dev),
-    Rcpp::Named("gradient") = g.cast<double>()
+    Rcpp::Named("gradient") = g.cast<double>(),
+    Rcpp::Named("u") = mod.u.template cast<double>(),
+    Rcpp::Named("phi") = static_cast<double>(mod.phi),
+    Rcpp::Named("V") = mod.V.diagonal().array().template cast<double>()
   );
 }
 

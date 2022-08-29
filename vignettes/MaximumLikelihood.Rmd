@@ -299,13 +299,15 @@ sqrt(diag(vcov(fMod)))
 ```
 
 
+
 ## Generalized additive mixed model with factor structures
+
+### Warm-up
 
 ```{r}
 library(mgcv)
 library(gamm4)
 ```
-
 
 We can now fit the model illustrates in the Introduction vignette, which we refer to for details. We start by adding a weight column to `dat1`, to hold factor loadings.
 
@@ -391,6 +393,19 @@ plot(
   ranef(mod1)$pseudoGroups[[1]],
   xlab = "gamm4", ylab = "lme4"); abline(0, 1)
 ```
+
+We now try to convert back to the original spline coefficients.
+
+```{r}
+plot(
+  re$trans.U %*% diag(re$trans.D) %*% c(ranef(mod1)$pseudoGroups$`(Intercept)`, fixef(mod1)),
+  coef(mod0$gam)
+); abline(0, 1)
+```
+
+
+
+### Maximum likelihood estimation
 
 Having gained some confidence in our ability to fit a GAMM as a mixed model, we can now move on to also estimating the factor loadings. For this we use the `marginal_likelihood` function provided by this package, and we start by confirming that we get the same likelihood as with the two approaches shown above. 
 
@@ -518,8 +533,31 @@ logLik(mod1)
 opt
 ```
 
+We can also now convert the spline coefficients back to their original parametrization. They are not identical to the coefficients found above because we now have also estimated the factor loadings.
 
+```{r}
+ml_final <- mlwrapper(opt$par)
 
+u <- re$trans.U %*% diag(re$trans.D) %*% c(ml_final$u[101:108], opt$par[beta_inds])
+Lambdat@x <- opt$par[theta_inds][lmod$reTrms$Lind]
+b <- c(as.numeric(Lambdat[101:108, 101:108] %*% u[1:8]), u[9:10])
+
+plot(b, coef(mod0$gam)); abline(0, 1)
+```
+
+An approximate covariance matrix for the spline coefficients is given by [@woodConfidenceIntervalsGeneralized2006]
+
+$$\left(\mathbf{X}^{T}\mathbf{W}\mathbf{X} + \lambda \mathbf{S}\right)^{-1} \phi$$
+
+where (for the Gaussian case considered here), $\mathbf{W}$ is diagonal with elements $\phi^{-1}$. The smoothing parameter $\lambda$ is the reciprocal the corresponding variance component. We thus have
+
+```{r}
+XR <- t(re$trans.U[1:8, 1:8] %*% (Zt[101:108, ] * (1 / re$trans.D)))
+XF <- X
+
+X <- cbind(XR, XF)
+solve(t(X) %*% X * ml_final$phi + sm$S[[1]] / opt$par[[2]])
+```
 
 
 ## References
