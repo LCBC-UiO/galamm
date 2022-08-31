@@ -182,13 +182,21 @@ plot(
 abline(0, 1)
 ```
 
-It should also be clear to the reader the `PLmixed` is much more convenient to use. However, the optimization shown here is faster:
+It should also be clear to the reader the `PLmixed` is much more convenient to use. However, the optimization shown here is faster. In practice, it is useful to test different values for the `lmm` argument, which defines how many iterations the L-BFGS-B algorithm will keep in memory when approximating the Hessian.
 
 ```{r}
+set.seed(2123)
 system.time({
-  opt <- optim(par_init, fn = fn, gr = gr, 
+  opt <- optim(par_init + runif(length(par_init), max = .5), 
+               fn = fn, gr = gr, 
              method = "L-BFGS-B", lower = bounds,
              control = list(fnscale = -1), hessian = TRUE)
+})
+system.time({
+  opt <- optim(par_init + runif(length(par_init), max = .5), 
+               fn = fn, gr = gr, 
+             method = "L-BFGS-B", lower = bounds,
+             control = list(fnscale = -1, lmm = 20), hessian = TRUE)
 })
 ```
 
@@ -270,10 +278,11 @@ gr <- function(par){
   mlmem(par)$gradient
 }
 
+set.seed(123)
 opt <- optim(
-  par = c(1, rep(0, 4)), fn = fn, gr = gr,
+  par = c(1, runif(4)), fn = fn, gr = gr,
   method = "L-BFGS-B", lower = c(0, rep(-Inf, 4)),
-  control = list(fnscale = -1, maxit = 2000), 
+  control = list(fnscale = -1, maxit = 2000, lmm = 20), 
   hessian = TRUE
 )
 ```
@@ -398,18 +407,165 @@ We now try to convert back to the original spline coefficients.
 
 ```{r}
 plot(
-  re$trans.U %*% diag(re$trans.D) %*% c(ranef(mod1)$pseudoGroups$`(Intercept)`, fixef(mod1)),
+  re$trans.U %*% (re$trans.D * c(ranef(mod1)$pseudoGroups$`(Intercept)`, fixef(mod1))),
   coef(mod0$gam)
 ); abline(0, 1)
+```
+
+Next, we us `marginal_likelihood` to fit the same model, still treating the factor loadings as fixed.
+
+```{r}
+theta_inds <- 1:2
+beta_inds <- 3:4
+bounds <- c(0, 0, rep(-Inf, 2))
+
+Lambdat <- lmod$reTrms$Lambdat
+Lambdat@x <- 1
+
+mlwrapper <- function(par){
+  marginal_likelihood(
+    y = mod0$gam$y,
+    trials = 1,
+    X = lmod$X,
+    Zt = lmod$reTrms$Zt,
+    Lambdat = Lambdat,
+    beta = par[beta_inds],
+    theta = par[theta_inds],
+    theta_mapping = lmod$reTrms$Lind - 1L,
+    lambda = numeric(),
+    lambda_mapping_X = integer(),
+    lambda_mapping_Zt = integer(),
+    family = "gaussian",
+    maxit_conditional_modes = 1
+    )
+}
+
+mlmem <- memoise(mlwrapper)
+fn <- function(par){
+  mlmem(par)$logLik
+}
+gr <- function(par){
+  mlmem(par)$gradient
+}
+
+```
+
+We reach the same maximum likelihood estimate also now.
+
+```{r}
+opt <- optim(par = runif(4, 10, 100), fn = fn, gr = gr, 
+             method = "L-BFGS-B", lower = bounds, 
+             control = list(fnscale = -1, lmm = 20), hessian = TRUE)
+opt
+```
+
+Also now we can transform the spline coefficients back to their original parametrization.
+
+```{r}
+ml_final <- marginal_likelihood(
+    y = mod0$gam$y,
+    trials = 1,
+    X = lmod$X,
+    Zt = lmod$reTrms$Zt,
+    Lambdat = Lambdat,
+    beta = opt$par[beta_inds],
+    theta = opt$par[theta_inds],
+    theta_mapping = lmod$reTrms$Lind - 1L,
+    lambda = numeric(),
+    lambda_mapping_X = integer(),
+    lambda_mapping_Zt = integer(),
+    family = "gaussian",
+    maxit_conditional_modes = 1
+    )
+```
+
+The random effects coming out of `marginal_likelihood` are standard normal, so we need to apply the transformation $\mathbf{b} = \boldsymbol{\Lambda}^{T} \mathbf{u}$ to get random effects on the same scale as `mod0` and `mod1`.
+
+```{r}
+Lambdat@x <- opt$par[theta_inds][lmod$reTrms$Lind]
+b <- as.numeric(Lambdat[101:108, 101:108] %*% ml_final$u[101:108])
+plot(
+  c(b, opt$par[beta_inds]),
+  c(ranef(mod0$mer)$Xr[[1]], fixef(mod0$mer))
+); abline(0, 1)
+```
+
+Then we can transform them back to their original parametrization (many steps involved here!!)
+
+```{r}
+beta_spline <- re$trans.U %*% (re$trans.D * c(b, opt$par[beta_inds]))
+plot(
+  beta_spline,
+  coef(mod0$gam)
+); abline(0, 1)
+```
+
+We can also confirm that the smooth functions are the same at the sample values:
+
+```{r}
+B <- t(re$trans.D * t(re$trans.U))
+Xfp <- cbind(re$rand$Xr, re$Xf)
+GXf <- PredictMat(sm, data = dat1)
+plot(
+  dat1$x, 
+  GXf %*% beta_spline,
+  col = 2)
+points(dat1$x, predict(mod0$gam), col = 3)
+```
+
+Finally we find confidence bands for the smooth term. First we need to reproduce the following covariance matrix:
+
+```{r}
+vcov(mod0$gam)
+```
+
+We now compute it, following the source code of `gamm4::gamm4()`:
+
+```{r}
+V <- Diagonal(n = nrow(dat1), x = ml_final$phi) + 
+  crossprod(Lambdat[1:100, 1:100] %*% lmod$reTrms$Zt[1:100, ]) * ml_final$phi
+R <- Matrix::chol(V,pivot=TRUE);piv <- attr(R,"pivot") 
+Xfp <- as(Xfp, "dgCMatrix")
+
+WX <- as(solve(t(R), Xfp[piv, ]), "matrix")
+Sp <- diag(c(rep(1 / opt$par[[2]], 8), 0, 0))
+qrx <- qr(rbind(WX,Sp/sqrt(ml_final$phi)),LAPACK=TRUE)
+Ri <- backsolve(qr.R(qrx),diag(ncol(WX)))
+ind <- qrx$pivot;ind[ind] <- 1:length(ind)
+Ri <- Ri[ind, ]
+Vb <- B%*%Ri; Vb <- Vb%*%t(Vb)
+```
+
+We can confirm that we landed at the correct covariance matrix:
+
+```{r}
+plot(as.numeric(vcov(mod0$gam)), as.numeric(Vb)); abline(0, 1)
+```
+
+We then compute confidence bands around the smooth term:
+
+```{r}
+Xlp <- PredictMat(sm, data = dat1)
+v <- rowSums((Xlp %*% Vb) * Xlp)
+
+inds <- order(dat1$x)[dat1$item == "item1"]
+f <- (Xlp %*% beta_spline)
+flo <- f - sqrt(v) * 2
+fhi <- f + sqrt(v) * 2
+plot(
+  dat1$x[inds], f[inds], type = "l", ylim = c(0, 13)
+)
+lines(dat1$x[inds], flo[inds], lty = 2)
+lines(dat1$x[inds], fhi[inds], lty = 2)
 ```
 
 
 
 ### Maximum likelihood estimation
 
-Having gained some confidence in our ability to fit a GAMM as a mixed model, we can now move on to also estimating the factor loadings. For this we use the `marginal_likelihood` function provided by this package, and we start by confirming that we get the same likelihood as with the two approaches shown above. 
+Having gained some confidence in our ability to fit a GAMM as a mixed model, we can now move on to also estimating the factor loadings.
 
-We first remove the factor loading from the design matrices. The lambda mapping for `X` runs through each column.
+We first creating mappings between factor loadings and element indices in the design matrices. The lambda mapping for `X` runs through each column.
 
 ```{r}
 lambda_mapping_X <- rep(as.integer(factor(dat1$item)) - 2L, ncol(lmod$X))
@@ -521,7 +677,7 @@ par_init <- c(1, 1, 0, 0, 1, 1)
 
 opt <- optim(par_init, fn = fn, gr = gr, 
            method = "L-BFGS-B", lower = bounds, 
-           control = list(fnscale = -1, maxit = 2000),
+           control = list(fnscale = -1, maxit = 2000, lmm = 20),
            hessian = TRUE)
 
 opt$value
@@ -533,30 +689,17 @@ logLik(mod1)
 opt
 ```
 
-We can also now convert the spline coefficients back to their original parametrization. They are not identical to the coefficients found above because we now have also estimated the factor loadings.
+We can also now convert the spline coefficients back to their original parametrization. 
 
 ```{r}
 ml_final <- mlwrapper(opt$par)
 
-u <- re$trans.U %*% diag(re$trans.D) %*% c(ml_final$u[101:108], opt$par[beta_inds])
+u <- re$trans.U %*% (re$trans.D * c(ml_final$u[101:108], opt$par[beta_inds]))
 Lambdat@x <- opt$par[theta_inds][lmod$reTrms$Lind]
 b <- c(as.numeric(Lambdat[101:108, 101:108] %*% u[1:8]), u[9:10])
 
 plot(b, coef(mod0$gam)); abline(0, 1)
-```
-
-An approximate covariance matrix for the spline coefficients is given by [@woodConfidenceIntervalsGeneralized2006]
-
-$$\left(\mathbf{X}^{T}\mathbf{W}\mathbf{X} + \lambda \mathbf{S}\right)^{-1} \phi$$
-
-where (for the Gaussian case considered here), $\mathbf{W}$ is diagonal with elements $\phi^{-1}$. The smoothing parameter $\lambda$ is the reciprocal the corresponding variance component. We thus have
-
-```{r}
-XR <- t(re$trans.U[1:8, 1:8] %*% (Zt[101:108, ] * (1 / re$trans.D)))
-XF <- X
-
-X <- cbind(XR, XF)
-solve(t(X) %*% X * ml_final$phi + sm$S[[1]] / opt$par[[2]])
+hist(b - coef(mod0$gam))
 ```
 
 
