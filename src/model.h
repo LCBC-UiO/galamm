@@ -228,7 +228,11 @@ struct Binomial : Model<T> {
       Model<T>::trials.array();
   };
 
-  // How to update diagonal variance matrix is model dependent
+  // Binomial variance function
+  // meanfun() includes the number of trials, and hence returns the number of
+  // expected successes, and not the expected proportion of successes.
+  // Thus, mu(eta) = N * exp(eta) / (1 + exp(eta)) and
+  // m'(eta) = d''(eta) = mu * (N - mu) / N.
   void update_V() override {
     Model<T>::V.diagonal().array() = meanfun().array() /
       Model<T>::trials.array() *
