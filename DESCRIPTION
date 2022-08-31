@@ -26,7 +26,7 @@ Imports:
     numDeriv (>= 2016.8-1-1),
     gamm4 (>= 0.2-6),
     lme4 (>= 1.1-26),
-    Rcpp (>= 1.0.9)
+    Rcpp (>= 1.0.0)
 Depends:
     R (>= 3.5.0)
 LinkingTo:
