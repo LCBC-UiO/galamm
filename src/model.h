@@ -84,6 +84,10 @@ template <typename T> struct Model{
         }
         update_u(delta_u, -step);
         step /= 2;
+        if(j == 9){
+          Rcpp::Rcout << "Could not find reducing step: i = " << i << ", j = " << j << std::endl;
+          Rcpp::stop("Error");
+        }
       }
 
       Rcpp::checkUserInterrupt();
@@ -116,7 +120,10 @@ template <typename T> struct Model{
       for (typename SpMdual::InnerIterator
              it(Lambdat, k); it; ++it)
       {
-        it.valueRef() = theta(theta_mapping(lind_counter));
+        int ind = theta_mapping(lind_counter);
+        if(ind != -1){
+          it.valueRef() = theta(ind);
+        }
         lind_counter++;
       }
     }
