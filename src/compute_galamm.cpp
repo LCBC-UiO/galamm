@@ -19,10 +19,30 @@ Rcpp::List compute(Model<T>& mod){
   solver.setShift(1);
   solver.analyzePattern(mod.get_inner_hessian());
 
-  T dev{};
+  T dev = logLik<T>(mod, solver);
   Eigen::VectorXd g;
 
-  gradient(logLik<T>, wrt(mod.theta, mod.beta, mod.lambda),
+  return Rcpp::List::create(
+    Rcpp::Named("logLik") = static_cast<double>(dev),
+    Rcpp::Named("gradient") = g.cast<double>(),
+    Rcpp::Named("u") = mod.u.template cast<double>(),
+    Rcpp::Named("phi") = static_cast<double>(mod.phi),
+    Rcpp::Named("V") = mod.V.diagonal().array().template cast<double>()
+  );
+}
+
+// Special implementation for dual1st
+template <>
+Rcpp::List compute<dual1st>(Model<dual1st>& mod){
+
+  Eigen::SimplicialLDLT<Eigen::SparseMatrix<dual1st> > solver;
+  solver.setShift(1);
+  solver.analyzePattern(mod.get_inner_hessian());
+
+  dual1st dev{};
+  Eigen::VectorXd g;
+
+  gradient(logLik<dual1st>, wrt(mod.theta, mod.beta, mod.lambda),
            at(mod, solver), dev, g);
 
   return Rcpp::List::create(
@@ -95,12 +115,12 @@ Rcpp::List marginal_likelihood(
       lambda, lambda_mapping_X, lambda_mapping_Zt, maxit_conditional_modes};
     return compute(mod);
   } else if(family == "binomial"){
-    Binomial<dual1st> mod{
+    Binomial<double> mod{
       y, trials, X, Zt, Lambdat, beta, theta, theta_mapping,
       lambda, lambda_mapping_X, lambda_mapping_Zt, maxit_conditional_modes};
     return compute(mod);
   } else if(family == "poisson"){
-    Poisson<dual1st> mod{
+    Poisson<double> mod{
       y, trials, X, Zt, Lambdat, beta, theta, theta_mapping,
       lambda, lambda_mapping_X, lambda_mapping_Zt, maxit_conditional_modes};
     return compute(mod);
