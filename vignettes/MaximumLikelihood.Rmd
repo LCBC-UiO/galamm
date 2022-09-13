@@ -274,17 +274,19 @@ mlmem <- memoise(mlwrapper)
 fn <- function(par){
   mlmem(par)$logLik
 }
-gr <- function(par){
-  mlmem(par)$gradient
-}
 
-set.seed(123)
-opt <- optim(
-  par = c(1, runif(4)), fn = fn, gr = gr,
-  method = "L-BFGS-B", lower = c(0, rep(-Inf, 4)),
-  control = list(fnscale = -1, maxit = 2000, lmm = 20), 
-  hessian = TRUE
-)
+# gr <- function(par){
+#   mlmem(par)$gradient
+# }
+
+# set.seed(123)
+# opt <- optim(
+#   par = c(1, runif(4)), fn = fn, gr = gr,
+#   method = "L-BFGS-B", lower = c(0, rep(-Inf, 4)),
+#   control = list(fnscale = -1, maxit = 2000, lmm = 20), 
+#   hessian = TRUE
+# )
+fn(opt2$par)
 ```
 
 Using `optim()` with L-BFGS-B yields slightly likelihood deviance than `lme4`.
