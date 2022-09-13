@@ -41,11 +41,11 @@ template <typename T> struct Model{
     lambda_mapping_Zt { lambda_mapping_Zt0 },
     maxit_conditional_modes { maxit_conditional_modes0 }
   {
-    n = X.rows();
-    p = X.cols();
-    q = Zt.rows();
-    u = Vdual::Zero(q);
-    V = Ddual(n);
+      n = X.rows();
+      p = X.cols();
+      q = Zt.rows();
+      u = Vdual::Zero(q);
+      V = Ddual(n);
   };
 
   Eigen::VectorXd y;
@@ -63,49 +63,17 @@ template <typename T> struct Model{
   const Eigen::VectorXi lambda_mapping_Zt;
   int maxit_conditional_modes;
 
-  // Function to compute regression coefficients in inner loop
-  void get_conditional_modes(Eigen::SimplicialLDLT<SpMdual>& solver){
-    Vdual delta_u{};
-    solver.factorize(get_inner_hessian());
-    T deviance_prev = -2 * (exponent_g() - solver.vectorD().array().log().sum() / 2);
-    T deviance_new;
-
-    for(int i{}; i < maxit_conditional_modes; i++){
-      delta_u = solver.solve((get_Lambdat() * get_Zt() * (y - meanfun()) - u));
-      if(delta_u.squaredNorm() < 1e-10) break;
-
-      double step = 1;
-      for(int j{}; j < 10; j++){
-        update_u(delta_u, step);
-        solver.factorize(get_inner_hessian());
-        deviance_new = -2 * (exponent_g() - solver.vectorD().array().log().sum() / 2);
-        if(deviance_new < deviance_prev){
-          break;
-        }
-        update_u(delta_u, -step);
-        step /= 2;
-        if(j == 9){
-          Rcpp::Rcout << "Could not find reducing step: i = " << i << ", j = " << j << std::endl;
-          Rcpp::stop("Error");
-        }
-      }
-
-      Rcpp::checkUserInterrupt();
-      deviance_prev = deviance_new;
-    }
-  };
-
   // Exponent in the Laplace approximation
   T exponent_g(){
-    return (y.dot(get_linpred()) - cumulant()) / get_phi() + constfun() -
+    return (y.dot(linpred()) - cumulant()) / get_phi() + constfun() -
       u.squaredNorm() / 2 / get_phi();
   };
 
   // Hessian matrix used in penalized iteratively reweighted least squares
   void update_inner_hessian(){
     inner_hessian = (1 / get_phi()) *
-      get_Lambdat() * get_Zt() * get_V() *
-      get_Zt().transpose() * get_Lambdat().transpose();
+      Lambdat * Zt * get_V() *
+      Zt.transpose() * Lambdat.transpose();
   };
   SpMdual& get_inner_hessian(){
     update_inner_hessian();
@@ -128,10 +96,6 @@ template <typename T> struct Model{
       }
     }
   };
-  SpMdual& get_Lambdat(){
-    update_Lambdat();
-    return Lambdat;
-  };
 
   // Scale parameter
   virtual void update_phi() = 0;
@@ -144,31 +108,20 @@ template <typename T> struct Model{
   // Diagonal variance matrix, common parts
   virtual void update_V() = 0;
   Ddual V;
-  Ddual& get_V(){
+  virtual Ddual& get_V(){
     update_V();
     return V;
   };
 
   // Linear predictor
-  void update_linpred(){
-    linpred = get_X() * beta +
-      get_Zt().transpose() * get_Lambdat().transpose() * u;
+  Vdual linpred(){
+    return X * beta + Zt.transpose() * Lambdat.transpose() * u;
   };
-  Vdual& get_linpred(){
-    update_linpred();
-    return linpred;
-  };
-  Vdual linpred;
 
   // GLM functions defined in derived classes
   virtual T cumulant() = 0;
   virtual T constfun() = 0;
   virtual Vdual meanfun() = 0;
-
-  // Regression coefficients
-  void update_u(const Vdual& delta_u, double alpha_bar){
-    u += alpha_bar * delta_u;
-  };
 
   void update_X(){
     if(lambda_mapping_X.size() == 0) return;
@@ -180,10 +133,6 @@ template <typename T> struct Model{
         *(X.data() + i) *= lambda(newind);
       }
     }
-  };
-  Mdual& get_X(){
-    update_X();
-    return X;
   };
 
   void update_Zt(){
@@ -200,10 +149,6 @@ template <typename T> struct Model{
       }
     }
   };
-  SpMdual& get_Zt(){
-    update_Zt();
-    return Zt;
-  };
   Vdual u;
 
   int n;
@@ -219,7 +164,7 @@ struct Binomial : Model<T> {
   using Model<T>::Model;
 
   T cumulant() override {
-    return ((1 + Model<T>::get_linpred().array().exp()).log() *
+    return ((1 + Model<T>::linpred().array().exp()).log() *
             Model<T>::trials.array()).sum();
   };
   T constfun() override {
@@ -230,8 +175,9 @@ struct Binomial : Model<T> {
   };
 
   typename Model<T>::Vdual meanfun() override {
-    return Model<T>::get_linpred().array().exp() /
-      (1 + Model<T>::get_linpred().array().exp()) *
+
+    return Model<T>::linpred().array().exp() /
+      (1 + Model<T>::linpred().array().exp()) *
       Model<T>::trials.array();
   };
 
@@ -256,14 +202,15 @@ struct Gaussian : Model<T> {
   using Model<T>::Model;
 
   T cumulant() override {
-    return Model<T>::get_linpred().squaredNorm() / 2;
+    return Model<T>::linpred().squaredNorm() / 2;
   };
   T constfun() override {
     return -.5 * (Model<T>::y.squaredNorm() / Model<T>::get_phi() +
                   Model<T>::n * log(2 * M_PI * Model<T>::get_phi()));
   };
   typename Model<T>::Vdual meanfun() override {
-    return Model<T>::get_linpred();
+    return Model<T>::X * Model<T>::beta +
+      Model<T>::Zt.transpose() * Model<T>::Lambdat.transpose() * Model<T>::u;
   };
 
   // How to update diagonal variance matrix is model dependent
@@ -271,7 +218,7 @@ struct Gaussian : Model<T> {
     Model<T>::V.diagonal().array() = Model<T>::get_phi();
   };
   void update_phi() override {
-    Model<T>::phi = ((Model<T>::y - Model<T>::get_linpred()).squaredNorm() +
+    Model<T>::phi = ((Model<T>::y - Model<T>::linpred()).squaredNorm() +
       Model<T>::u.squaredNorm()) / Model<T>::n;
   };
 
@@ -284,13 +231,13 @@ struct Poisson : Model<T> {
   using Model<T>::Model;
 
   T cumulant() override {
-    return Model<T>::get_linpred().array().exp().sum();
+    return Model<T>::linpred().array().exp().sum();
   };
   T constfun() override {
     return -(Model<T>::y.array() + 1).lgamma().sum();
   };
   typename Model<T>::Vdual meanfun() override {
-    return Model<T>::get_linpred().array().exp();
+    return Model<T>::linpred().array().exp();
   };
 
   // How to update diagonal variance matrix is model dependent

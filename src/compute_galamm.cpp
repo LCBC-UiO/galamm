@@ -5,25 +5,66 @@ using namespace autodiff;
 // [[Rcpp::depends(RcppEigen)]]
 
 template <typename T>
-T logLik(
-    Model<T>& mod,
-    Eigen::SimplicialLDLT<Eigen::SparseMatrix<T> >& solver){
-  mod.get_conditional_modes(solver);
-  return (mod.exponent_g() - solver.vectorD().array().log().sum() / 2);
+T loss(Model<T>& mod, Eigen::SimplicialLDLT<Eigen::SparseMatrix<T> >& solver){
+  return mod.exponent_g() - solver.vectorD().array().log().sum() / 2;
+}
+
+
+template <typename T>
+T logLik(Model<T>& mod){
+  typedef Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> Mdual;
+  typedef Eigen::SparseMatrix<T> SpMdual;
+  typedef Eigen::Matrix<T, Eigen::Dynamic, 1> Vdual;
+  typedef Eigen::DiagonalMatrix<T, Eigen::Dynamic> Ddual;
+
+  mod.update_Zt();
+  mod.update_X();
+  mod.update_Lambdat();
+  Eigen::SimplicialLDLT<Eigen::SparseMatrix<T> > solver;
+  solver.setShift(1);
+  SpMdual H = mod.get_inner_hessian();
+  solver.analyzePattern(H);
+
+  Vdual delta_u{};
+  solver.factorize(H);
+  T deviance_prev = -2 * loss(mod, solver);
+  T deviance_new;
+
+  for(int i{}; i < mod.maxit_conditional_modes; i++){
+    delta_u = solver.solve((mod.Lambdat * mod.Zt * (mod.y - mod.meanfun()) - mod.u));
+    if(delta_u.squaredNorm() < 1e-10) break;
+
+    double step = 1;
+    for(int j{}; j < 10; j++){
+      mod.u += step * delta_u;
+      H = mod.get_inner_hessian();
+      solver.factorize(H);
+      deviance_new = -2 * loss(mod, solver);
+      if(deviance_new < deviance_prev){
+        break;
+      }
+      mod.u -= step * delta_u;
+      step /= 2;
+      if(j == 9){
+        Rcpp::Rcout << "Could not find reducing step: i = " << i << ", j = " << j << std::endl;
+        Rcpp::stop("Error");
+      }
+    }
+
+    Rcpp::checkUserInterrupt();
+    deviance_prev = deviance_new;
+  }
+
+  return loss(mod, solver);
 }
 
 template <typename T>
 Rcpp::List compute(Model<T>& mod){
 
-  Eigen::SimplicialLDLT<Eigen::SparseMatrix<T> > solver;
-  solver.setShift(1);
-  solver.analyzePattern(mod.get_inner_hessian());
-
   T dev{};
   Eigen::VectorXd g;
 
-  gradient(logLik<T>, wrt(mod.theta, mod.beta, mod.lambda),
-           at(mod, solver), dev, g);
+  gradient(logLik<T>, wrt(mod.theta, mod.beta, mod.lambda), at(mod), dev, g);
 
   return Rcpp::List::create(
     Rcpp::Named("logLik") = static_cast<double>(dev),
@@ -33,6 +74,8 @@ Rcpp::List compute(Model<T>& mod){
     Rcpp::Named("V") = mod.V.diagonal().array().template cast<double>()
   );
 }
+
+
 
 
 //' Compute the marginal likelihood of a GLLAMM or GALAMM
