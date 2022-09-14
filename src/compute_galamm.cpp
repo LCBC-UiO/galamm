@@ -1,59 +1,221 @@
 #include "model.h"
-
+#include <unsupported/Eigen/SpecialFunctions>
 using namespace autodiff;
 
 // [[Rcpp::depends(RcppEigen)]]
 
 template <typename T>
-T logLik(
-    Model<T>& mod,
-    Eigen::SimplicialLDLT<Eigen::SparseMatrix<T> >& solver){
-  mod.get_conditional_modes(solver);
-  return (mod.exponent_g() - solver.vectorD().array().log().sum() / 2);
-}
+Eigen::Matrix<T, Eigen::Dynamic, 1> linpred(
+    const Eigen::Matrix<T, Eigen::Dynamic, 1>& beta,
+    const Eigen::Matrix<T, Eigen::Dynamic, 1>& u,
+    const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& X,
+    const Eigen::SparseMatrix<T>& Zt,
+    const Eigen::SparseMatrix<T>& Lambdat,
+    Model<T>& mod
+  ){
+  return X * beta + Zt.transpose() * Lambdat.transpose() * u;
+};
 
 template <typename T>
-Rcpp::List compute(Model<T>& mod){
+T exponent_g(
+    const Eigen::Matrix<T, Eigen::Dynamic, 1>& beta,
+    const Eigen::Matrix<T, Eigen::Dynamic, 1>& u,
+    const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& X,
+    const Eigen::SparseMatrix<T>& Zt,
+    const Eigen::SparseMatrix<T>& Lambdat,
+    const Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
+    const Eigen::Matrix<T, Eigen::Dynamic, 1>& trials,
+    const T k,
+    Model<T>& mod
+  ){
+  Eigen::Matrix<T, Eigen::Dynamic, 1> lp = linpred(beta, u, X, Zt, Lambdat, mod);
+  T phi = mod.get_phi(lp, u, y);
+  return (y.dot(lp) - mod.cumulant(lp, trials)) / phi + mod.constfun(lp, u, y, trials, k) -
+    u.squaredNorm() / 2 / phi;
+};
 
+template <typename T>
+T loss(
+    const Eigen::Matrix<T, Eigen::Dynamic, 1>& beta,
+    const Eigen::Matrix<T, Eigen::Dynamic, 1>& u,
+    const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& X,
+    const Eigen::SparseMatrix<T>& Zt,
+    const Eigen::SparseMatrix<T>& Lambdat,
+    const Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
+    const Eigen::Matrix<T, Eigen::Dynamic, 1>& trials,
+    const T k,
+    Model<T>& mod,
+    Eigen::SimplicialLDLT<Eigen::SparseMatrix<T> >& solver){
+  return exponent_g(beta, u, X, Zt, Lambdat, y, trials, k, mod) - solver.vectorD().array().log().sum() / 2;
+}
+
+// Hessian matrix used in penalized iteratively reweighted least squares
+template <typename T>
+Eigen::SparseMatrix<T> inner_hessian(
+    const Eigen::Matrix<T, Eigen::Dynamic, 1>& beta,
+    const Eigen::Matrix<T, Eigen::Dynamic, 1>& u,
+    const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& X,
+    const Eigen::SparseMatrix<T>& Zt,
+    const Eigen::SparseMatrix<T>& Lambdat,
+    const Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
+    const Eigen::Matrix<T, Eigen::Dynamic, 1>& trials,
+    Eigen::DiagonalMatrix<T, Eigen::Dynamic> V,
+    Model<T>& mod
+  ){
+  Eigen::Matrix<T, Eigen::Dynamic, 1> lp = linpred(beta, u, X, Zt, Lambdat, mod);
+  return (1 / mod.get_phi(lp, u, y)) *
+    Lambdat * Zt * mod.get_V(V, lp, u, y, trials) *
+    Zt.transpose() * Lambdat.transpose();
+};
+
+template <typename T>
+void update_Lambdat(Eigen::SparseMatrix<T>& Lambdat,
+                    Eigen::Matrix<T, Eigen::Dynamic, 1> theta,
+                    const Eigen::VectorXi& theta_mapping
+                      ){
+  int lind_counter{};
+  for (int k{}; k < Lambdat.outerSize(); ++k){
+    for (typename Eigen::SparseMatrix<T>::InnerIterator
+           it(Lambdat, k); it; ++it)
+    {
+      int ind = theta_mapping(lind_counter);
+      if(ind != -1){
+        it.valueRef() = theta(ind);
+      }
+      lind_counter++;
+    }
+  }
+};
+
+template <typename T>
+void update_X(Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& X,
+              Eigen::Matrix<T, Eigen::Dynamic, 1> lambda,
+              const Eigen::VectorXi& lambda_mapping_X){
+  if(lambda_mapping_X.size() == 0) return;
+  for(int i = 0; i < X.size(); i++){
+    int newind = lambda_mapping_X(i);
+    if(newind != -1){
+      *(X.data() + i) *= lambda(newind);
+    }
+  }
+};
+
+template <typename T>
+void update_Zt(Eigen::SparseMatrix<T>& Zt,
+               Eigen::Matrix<T, Eigen::Dynamic, 1> lambda,
+               const Eigen::VectorXi& lambda_mapping_Zt){
+  if(lambda_mapping_Zt.size() == 0) return;
+  int counter{};
+  for(int k{}; k < Zt.outerSize(); ++k){
+    for(typename Eigen::SparseMatrix<T>::InnerIterator it(Zt, k); it; ++it){
+      int newind = lambda_mapping_Zt(counter);
+      if(newind != -1){
+        it.valueRef() = lambda(newind) * it.value();
+      }
+      counter++;
+    }
+  }
+};
+
+
+template <typename T>
+T logLik(
+    Eigen::Matrix<T, Eigen::Dynamic, 1> theta,
+    Eigen::Matrix<T, Eigen::Dynamic, 1> beta,
+    Eigen::Matrix<T, Eigen::Dynamic, 1> lambda,
+    Eigen::Matrix<T, Eigen::Dynamic, 1> u,
+    const Eigen::VectorXi& theta_mapping,
+    const Eigen::VectorXi& lambda_mapping_X,
+    const Eigen::VectorXi& lambda_mapping_Zt,
+    Eigen::Matrix<T, Eigen::Dynamic, 1> y,
+    Eigen::Matrix<T, Eigen::Dynamic, 1> trials,
+    Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> X,
+    Eigen::SparseMatrix<T> Zt,
+    Eigen::SparseMatrix<T> Lambdat,
+    const T k,
+    Model<T>& mod,
+    const int maxit_conditional_modes
+  ){
+  typedef Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> Mdual;
+  typedef Eigen::SparseMatrix<T> SpMdual;
+  typedef Eigen::Matrix<T, Eigen::Dynamic, 1> Vdual;
+  typedef Eigen::DiagonalMatrix<T, Eigen::Dynamic> Ddual;
+
+  update_Zt(Zt, lambda, lambda_mapping_Zt);
+  update_X(X, lambda, lambda_mapping_X);
+
+  int n = X.rows();
+  Ddual V(n);
+
+  update_Lambdat(Lambdat, theta, theta_mapping);
   Eigen::SimplicialLDLT<Eigen::SparseMatrix<T> > solver;
   solver.setShift(1);
-  solver.analyzePattern(mod.get_inner_hessian());
+  SpMdual H = inner_hessian(beta, u, X, Zt, Lambdat, y, trials, V, mod);
+  solver.analyzePattern(H);
 
-  T dev = logLik<T>(mod, solver);
-  Eigen::VectorXd g;
+  Vdual delta_u{};
+  solver.factorize(H);
+  T deviance_prev = -2 * loss(beta, u, X, Zt, Lambdat, y, trials, k, mod, solver);
+  T deviance_new;
 
-  return Rcpp::List::create(
-    Rcpp::Named("logLik") = static_cast<double>(dev),
-    Rcpp::Named("gradient") = g.cast<double>(),
-    Rcpp::Named("u") = mod.u.template cast<double>(),
-    Rcpp::Named("phi") = static_cast<double>(mod.phi),
-    Rcpp::Named("V") = mod.V.diagonal().array().template cast<double>()
-  );
+  for(int i{}; i < maxit_conditional_modes; i++){
+    delta_u = solver.solve((Lambdat * Zt * (y - mod.meanfun(linpred(beta, u, X, Zt, Lambdat, mod), trials)) - u));
+    if(delta_u.squaredNorm() < 1e-10) break;
+
+    double step = 1;
+    for(int j{}; j < 10; j++){
+      u += step * delta_u;
+      H = inner_hessian(beta, u, X, Zt, Lambdat, y, trials, V, mod);
+      solver.factorize(H);
+      deviance_new = -2 * loss(beta, u, X, Zt, Lambdat, y, trials, k, mod, solver);
+      if(deviance_new < deviance_prev){
+        break;
+      }
+      u -= step * delta_u;
+      step /= 2;
+      if(j == 9){
+        Rcpp::Rcout << "Could not find reducing step: i = " << i << ", j = " << j << std::endl;
+        Rcpp::stop("Error");
+      }
+    }
+    deviance_prev = deviance_new;
+  }
+
+  return - deviance_new / 2;
 }
 
-// Special implementation for dual1st
-template <>
-Rcpp::List compute<dual1st>(Model<dual1st>& mod){
 
-  Eigen::SimplicialLDLT<Eigen::SparseMatrix<dual1st> > solver;
-  solver.setShift(1);
-  solver.analyzePattern(mod.get_inner_hessian());
+template <typename T>
+Rcpp::List wrapper(
+    Eigen::Matrix<T, Eigen::Dynamic, 1> theta,
+    Eigen::Matrix<T, Eigen::Dynamic, 1> beta,
+    Eigen::Matrix<T, Eigen::Dynamic, 1> lambda,
+    Eigen::Matrix<T, Eigen::Dynamic, 1> u,
+    const Eigen::VectorXi& theta_mapping,
+    const Eigen::VectorXi& lambda_mapping_X,
+    const Eigen::VectorXi& lambda_mapping_Zt,
+    Eigen::Matrix<T, Eigen::Dynamic, 1> y,
+    Eigen::Matrix<T, Eigen::Dynamic, 1> trials,
+    Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> X,
+    Eigen::SparseMatrix<T> Zt,
+    Eigen::SparseMatrix<T> Lambdat,
+    const T k,
+    Model<T>& mod,
+    const int maxit_conditional_modes
+  ){
 
-  dual1st dev{};
-  Eigen::VectorXd g;
+  T ll{};
+  Eigen::VectorXd g = gradient(logLik<T>, wrt(theta, beta, lambda),
+                               at(theta, beta, lambda, u, theta_mapping, lambda_mapping_X,
+                                  lambda_mapping_Zt, y, trials, X, Zt, Lambdat, k, mod,
+                                  maxit_conditional_modes), ll);
 
-  gradient(logLik<dual1st>, wrt(mod.theta, mod.beta, mod.lambda),
-           at(mod, solver), dev, g);
 
   return Rcpp::List::create(
-    Rcpp::Named("logLik") = static_cast<double>(dev),
-    Rcpp::Named("gradient") = g.cast<double>(),
-    Rcpp::Named("u") = mod.u.template cast<double>(),
-    Rcpp::Named("phi") = static_cast<double>(mod.phi),
-    Rcpp::Named("V") = mod.V.diagonal().array().template cast<double>()
+    Rcpp::Named("logLik") = static_cast<double>(ll),
+    Rcpp::Named("gradient") = g.cast<double>()
   );
 }
-
 
 //' Compute the marginal likelihood of a GLLAMM or GALAMM
 //'
@@ -84,6 +246,7 @@ Rcpp::List compute<dual1st>(Model<dual1st>& mod){
 //' \code{integer()} if not used. An entry \code{-1} indicates that the
 //' corresponding value of \code{X} does not depend on \code{lambda},
 //' as in the case where the first element of \code{lambda} is fixed to 1.
+//' @param u A \code{numeric} vector of initial values for the random effects.
 //' @param family A length one \code{character} denoting the family.
 //' @param maxit_conditional_modes Maximum number of iterations for
 //' conditional models. Can be 1 when \code{family = "gaussian"}.
@@ -105,25 +268,51 @@ Rcpp::List marginal_likelihood(
     const Eigen::Map<Eigen::VectorXd> lambda,
     const Eigen::Map<Eigen::VectorXi> lambda_mapping_X,
     const Eigen::Map<Eigen::VectorXi> lambda_mapping_Zt,
+    const Eigen::Map<Eigen::VectorXd> u,
     const std::string family,
     const int maxit_conditional_modes
 ){
 
   if(family == "gaussian"){
-    Gaussian<dual1st> mod{
-      y, trials, X, Zt, Lambdat, beta, theta, theta_mapping,
-      lambda, lambda_mapping_X, lambda_mapping_Zt, maxit_conditional_modes};
-    return compute(mod);
+    Gaussian<dual1st> mod{};
+    double k = 0;
+
+    return wrapper<dual1st>(
+      theta.cast<dual1st>(), beta.cast<dual1st>(), lambda.cast<dual1st>(),
+      u.cast<dual1st>(),
+      theta_mapping, lambda_mapping_X, lambda_mapping_Zt,
+      y.cast<dual1st>(), trials.cast<dual1st>(),
+      X.cast<dual1st>(), Zt.cast<dual1st>(), Lambdat.cast<dual1st>(),
+      static_cast<dual1st>(k), mod, maxit_conditional_modes
+    );
   } else if(family == "binomial"){
-    Binomial<double> mod{
-      y, trials, X, Zt, Lambdat, beta, theta, theta_mapping,
-      lambda, lambda_mapping_X, lambda_mapping_Zt, maxit_conditional_modes};
-    return compute(mod);
+
+    Binomial<dual1st> mod{};
+    double k = (lgamma(trials.array() + 1) - lgamma(y.array() + 1) -
+      lgamma(trials.array() - y.array() + 1)).sum();
+
+    return wrapper<dual1st>(
+      theta.cast<dual1st>(), beta.cast<dual1st>(), lambda.cast<dual1st>(),
+      u.cast<dual1st>(),
+      theta_mapping, lambda_mapping_X, lambda_mapping_Zt,
+      y.cast<dual1st>(), trials.cast<dual1st>(),
+      X.cast<dual1st>(), Zt.cast<dual1st>(), Lambdat.cast<dual1st>(),
+      static_cast<dual1st>(k), mod, maxit_conditional_modes
+    );
+
   } else if(family == "poisson"){
-    Poisson<double> mod{
-      y, trials, X, Zt, Lambdat, beta, theta, theta_mapping,
-      lambda, lambda_mapping_X, lambda_mapping_Zt, maxit_conditional_modes};
-    return compute(mod);
+    Poisson<dual1st> mod{};
+    double k = -(y.array() + 1).lgamma().sum();
+
+    return wrapper<dual1st>(
+      theta.cast<dual1st>(), beta.cast<dual1st>(), lambda.cast<dual1st>(),
+      u.cast<dual1st>(),
+      theta_mapping, lambda_mapping_X, lambda_mapping_Zt,
+      y.cast<dual1st>(), trials.cast<dual1st>(),
+      X.cast<dual1st>(), Zt.cast<dual1st>(), Lambdat.cast<dual1st>(),
+      static_cast<dual1st>(k), mod, maxit_conditional_modes
+    );
+
   } else {
     Rcpp::stop("Unknown family.");
   }

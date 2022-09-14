@@ -2,237 +2,54 @@
 #define MODEL_H
 
 #include <RcppEigen.h>
-#include <unsupported/Eigen/SpecialFunctions>
 #include <autodiff/forward/dual.hpp>
 #include <autodiff/forward/dual/eigen.hpp>
 
 template <typename T> struct Model{
-  typedef Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> Mdual;
-  typedef Eigen::SparseMatrix<T> SpMdual;
   typedef Eigen::Matrix<T, Eigen::Dynamic, 1> Vdual;
   typedef Eigen::DiagonalMatrix<T, Eigen::Dynamic> Ddual;
 
-  // Constructor, converting objects to autodiff
-  Model(
-    const Eigen::VectorXd& y0,
-    const Eigen::VectorXd& trials0,
-    const Eigen::MatrixXd& X0,
-    const Eigen::MappedSparseMatrix<double>& Zt0,
-    const Eigen::MappedSparseMatrix<double>& Lambdat0,
-    const Eigen::VectorXd& beta0,
-    const Eigen::VectorXd& theta0,
-    const Eigen::VectorXi& theta_mapping0,
-    const Eigen::VectorXd& lambda0,
-    const Eigen::VectorXi& lambda_mapping_X0,
-    const Eigen::VectorXi& lambda_mapping_Zt0,
-    const int maxit_conditional_modes0
-  ) : y { y0 },
-    trials { trials0 },
-    X_init { X0.cast<T>() },
-    X { X0.cast<T>() },
-    Zt_init { Zt0.cast<T>() },
-    Zt { Zt0.cast<T>() },
-    Lambdat { Lambdat0.cast<T>() },
-    beta { beta0.cast<T>() },
-    theta { theta0.cast<T>() },
-    theta_mapping { theta_mapping0 },
-    lambda { lambda0.cast<T>() },
-    lambda_mapping_X { lambda_mapping_X0 },
-    lambda_mapping_Zt { lambda_mapping_Zt0 },
-    maxit_conditional_modes { maxit_conditional_modes0 }
-  {
-    n = X.rows();
-    p = X.cols();
-    q = Zt.rows();
-    u = Vdual::Zero(q);
-    V = Ddual(n);
-  };
-
-  Eigen::VectorXd y;
-  Eigen::VectorXd trials;
-  Mdual X_init;
-  Mdual X;
-  SpMdual Zt_init;
-  SpMdual Zt;
-  SpMdual Lambdat;
-  Vdual beta;
-  Vdual theta;
-  const Eigen::VectorXi theta_mapping;
-  Vdual lambda;
-  const Eigen::VectorXi lambda_mapping_X;
-  const Eigen::VectorXi lambda_mapping_Zt;
-  int maxit_conditional_modes;
-
-  // Function to compute regression coefficients in inner loop
-  void get_conditional_modes(Eigen::SimplicialLDLT<SpMdual>& solver){
-    Vdual delta_u{};
-    solver.factorize(get_inner_hessian());
-    T deviance_prev = -2 * (exponent_g() - solver.vectorD().array().log().sum() / 2);
-    T deviance_new;
-
-    for(int i{}; i < maxit_conditional_modes; i++){
-      delta_u = solver.solve((get_Lambdat() * get_Zt() * (y - meanfun()) - u));
-      if(delta_u.squaredNorm() < 1e-10) break;
-
-      double step = 1;
-      for(int j{}; j < 10; j++){
-        update_u(delta_u, step);
-        solver.factorize(get_inner_hessian());
-        deviance_new = -2 * (exponent_g() - solver.vectorD().array().log().sum() / 2);
-        if(deviance_new < deviance_prev){
-          break;
-        }
-        update_u(delta_u, -step);
-        step /= 2;
-        if(j == 9){
-          Rcpp::Rcout << "Could not find reducing step: i = " << i << ", j = " << j << std::endl;
-          Rcpp::stop("Error");
-        }
-      }
-
-      Rcpp::checkUserInterrupt();
-      deviance_prev = deviance_new;
-    }
-  };
-
-  // Exponent in the Laplace approximation
-  T exponent_g(){
-    return (y.dot(get_linpred()) - cumulant()) / get_phi() + constfun() -
-      u.squaredNorm() / 2 / get_phi();
-  };
-
-  // Hessian matrix used in penalized iteratively reweighted least squares
-  void update_inner_hessian(){
-    inner_hessian = (1 / get_phi()) *
-      get_Lambdat() * get_Zt() * get_V() *
-      get_Zt().transpose() * get_Lambdat().transpose();
-  };
-  SpMdual& get_inner_hessian(){
-    update_inner_hessian();
-    return inner_hessian;
-  };
-  SpMdual inner_hessian;
-
-  // Lower Cholesky factor of scaled covariance matrix
-  void update_Lambdat(){
-    int lind_counter{};
-    for (int k{}; k < Lambdat.outerSize(); ++k){
-      for (typename SpMdual::InnerIterator
-             it(Lambdat, k); it; ++it)
-      {
-        int ind = theta_mapping(lind_counter);
-        if(ind != -1){
-          it.valueRef() = theta(ind);
-        }
-        lind_counter++;
-      }
-    }
-  };
-  SpMdual& get_Lambdat(){
-    update_Lambdat();
-    return Lambdat;
-  };
-
   // Scale parameter
-  virtual void update_phi() = 0;
+  virtual void update_phi(const Vdual& linpred, const Vdual& u,
+                          const Vdual& y) = 0;
   T phi{1};
-  T& get_phi(){
-    update_phi();
+  T& get_phi(const Vdual& linpred, const Vdual& u, const Vdual& y){
+    update_phi(linpred, u, y);
     return phi;
   };
 
   // Diagonal variance matrix, common parts
-  virtual void update_V() = 0;
-  Ddual V;
-  Ddual& get_V(){
-    update_V();
-    return V;
-  };
-
-  // Linear predictor
-  void update_linpred(){
-    linpred = get_X() * beta +
-      get_Zt().transpose() * get_Lambdat().transpose() * u;
-  };
-  Vdual& get_linpred(){
-    update_linpred();
-    return linpred;
-  };
-  Vdual linpred;
+  virtual Ddual get_V(Ddual V, const Vdual& linpred, const Vdual& u,
+                      const Vdual& y, const Vdual& trials) = 0;
 
   // GLM functions defined in derived classes
-  virtual T cumulant() = 0;
-  virtual T constfun() = 0;
-  virtual Vdual meanfun() = 0;
-
-  // Regression coefficients
-  void update_u(const Vdual& delta_u, double alpha_bar){
-    u += alpha_bar * delta_u;
-  };
-
-  void update_X(){
-    if(lambda_mapping_X.size() == 0) return;
-    X = X_init;
-    if(lambda_mapping_X.size() == 0) return;
-    for(int i = 0; i < X.size(); i++){
-      int newind = lambda_mapping_X(i);
-      if(newind != -1){
-        *(X.data() + i) *= lambda(newind);
-      }
-    }
-  };
-  Mdual& get_X(){
-    update_X();
-    return X;
-  };
-
-  void update_Zt(){
-    if(lambda_mapping_Zt.size() == 0) return;
-    Zt = Zt_init;
-    int counter{};
-    for(int k{}; k < Zt.outerSize(); ++k){
-      for(typename Model<T>::SpMdual::InnerIterator it(Zt, k); it; ++it){
-        int newind = lambda_mapping_Zt(counter);
-        if(newind != -1){
-          it.valueRef() = lambda(newind) * it.value();
-        }
-        counter++;
-      }
-    }
-  };
-  SpMdual& get_Zt(){
-    update_Zt();
-    return Zt;
-  };
-  Vdual u;
-
-  int n;
-  int p;
-  int q;
+  virtual T cumulant(const Vdual& linpred, const Vdual& trials) = 0;
+  virtual T constfun(const Vdual& linpred, const Vdual& u,
+                     const Vdual& y, const Vdual& trials, T k) = 0;
+  virtual Vdual meanfun(const Vdual& linpred, const Vdual& trials) = 0;
+  long n;
 
 };
 
 template <typename T>
 struct Binomial : Model<T> {
 
-  // // Inherit base class constructor
-  using Model<T>::Model;
-
-  T cumulant() override {
-    return ((1 + Model<T>::get_linpred().array().exp()).log() *
-            Model<T>::trials.array()).sum();
+  T cumulant(const typename Model<T>::Vdual& linpred,
+             const typename Model<T>::Vdual& trials) override {
+    return ((1 + linpred.array().exp()).log() *
+            trials.array()).sum();
   };
-  T constfun() override {
-    return (lgamma(Model<T>::trials.array() + 1) -
-            lgamma(Model<T>::y.array() + 1) -
-            lgamma(Model<T>::trials.array() -
-            Model<T>::y.array() + 1)).sum();
+  T constfun(const typename Model<T>::Vdual& linpred,
+             const typename Model<T>::Vdual& u,
+             const typename Model<T>::Vdual& y,
+             const typename Model<T>::Vdual& trials,
+             const T k) override {
+    return k;
   };
 
-  typename Model<T>::Vdual meanfun() override {
-    return Model<T>::get_linpred().array().exp() /
-      (1 + Model<T>::get_linpred().array().exp()) *
-      Model<T>::trials.array();
+  typename Model<T>::Vdual meanfun(const typename Model<T>::Vdual& linpred,
+                                   const typename Model<T>::Vdual& trials) override {
+    return linpred.array().exp() / (1 + linpred.array().exp()) * trials.array();
   };
 
   // Binomial variance function
@@ -240,39 +57,64 @@ struct Binomial : Model<T> {
   // expected successes, and not the expected proportion of successes.
   // Thus, mu(eta) = N * exp(eta) / (1 + exp(eta)) and
   // m'(eta) = d''(eta) = mu * (N - mu) / N.
-  void update_V() override {
-    Model<T>::V.diagonal().array() = meanfun().array() /
-      Model<T>::trials.array() *
-      (Model<T>::trials.array() - meanfun().array());
+  typename Model<T>::Ddual get_V(
+      typename Model<T>::Ddual V,
+      const typename Model<T>::Vdual& linpred,
+      const typename Model<T>::Vdual& u,
+      const typename Model<T>::Vdual& y,
+      const typename Model<T>::Vdual& trials) override {
+        typename Model<T>::Ddual V0 = V;
+        V0.diagonal().array() = meanfun(linpred, trials).array() /
+          trials.array() *
+            (trials.array() - meanfun(linpred, trials).array());
+        return V0;
   };
-  void update_phi() override{};
+  void update_phi(const typename Model<T>::Vdual& linpred,
+                  const typename Model<T>::Vdual& u,
+                  const typename Model<T>::Vdual& y) override{};
 
 };
 
 template <typename T>
 struct Gaussian : Model<T> {
 
-  // Inherit base class constructor
-  using Model<T>::Model;
-
-  T cumulant() override {
-    return Model<T>::get_linpred().squaredNorm() / 2;
+  T cumulant(const typename Model<T>::Vdual& linpred,
+             const typename Model<T>::Vdual& trials) override {
+    return linpred.squaredNorm() / 2;
   };
-  T constfun() override {
-    return -.5 * (Model<T>::y.squaredNorm() / Model<T>::get_phi() +
-                  Model<T>::n * log(2 * M_PI * Model<T>::get_phi()));
+  T constfun(
+      const typename Model<T>::Vdual& linpred,
+      const typename Model<T>::Vdual& u,
+      const typename Model<T>::Vdual& y,
+      const typename Model<T>::Vdual& trials,
+      const T k) override {
+        int n = y.size();
+    return -.5 * (y.squaredNorm() / Model<T>::get_phi(linpred, u, y) +
+                  n * log(2 * M_PI * Model<T>::get_phi(linpred, u, y)));
   };
-  typename Model<T>::Vdual meanfun() override {
-    return Model<T>::get_linpred();
+  typename Model<T>::Vdual meanfun(const typename Model<T>::Vdual& linpred,
+                                   const typename Model<T>::Vdual& trials) override {
+    return linpred;
   };
 
   // How to update diagonal variance matrix is model dependent
-  void update_V() override {
-    Model<T>::V.diagonal().array() = Model<T>::get_phi();
+  typename Model<T>::Ddual get_V(
+      typename Model<T>::Ddual V,
+      const typename Model<T>::Vdual& linpred,
+      const typename Model<T>::Vdual& u,
+      const typename Model<T>::Vdual& y,
+      const typename Model<T>::Vdual& trials) override {
+        typename Model<T>::Ddual V0 = V;
+        V0.diagonal().array() = Model<T>::get_phi(linpred, u, y);
+        return V0;
   };
-  void update_phi() override {
-    Model<T>::phi = ((Model<T>::y - Model<T>::get_linpred()).squaredNorm() +
-      Model<T>::u.squaredNorm()) / Model<T>::n;
+  void update_phi(
+      const typename Model<T>::Vdual& linpred,
+      const typename Model<T>::Vdual& u,
+      const typename Model<T>::Vdual& y) override {
+        int n = y.size();
+    Model<T>::phi = ((y - linpred).squaredNorm() +
+      u.squaredNorm()) / n;
   };
 
 };
@@ -280,24 +122,36 @@ struct Gaussian : Model<T> {
 template <typename T>
 struct Poisson : Model<T> {
 
-  // Inherit base class constructor
-  using Model<T>::Model;
-
-  T cumulant() override {
-    return Model<T>::get_linpred().array().exp().sum();
+  T cumulant(const typename Model<T>::Vdual& linpred,
+             const typename Model<T>::Vdual& trials) override {
+    return linpred.array().exp().sum();
   };
-  T constfun() override {
-    return -(Model<T>::y.array() + 1).lgamma().sum();
+  T constfun(const typename Model<T>::Vdual& linpred,
+             const typename Model<T>::Vdual& u,
+             const typename Model<T>::Vdual& y,
+             const typename Model<T>::Vdual& trials,
+             const T k) override {
+    return k;
   };
-  typename Model<T>::Vdual meanfun() override {
-    return Model<T>::get_linpred().array().exp();
+  typename Model<T>::Vdual meanfun(const typename Model<T>::Vdual& linpred,
+                                   const typename Model<T>::Vdual& trials) override {
+    return linpred.array().exp();
   };
 
   // How to update diagonal variance matrix is model dependent
-  void update_V() override {
-    Model<T>::V.diagonal().array() = meanfun().array();
+  typename Model<T>::Ddual get_V(
+      typename Model<T>::Ddual V,
+      const typename Model<T>::Vdual& linpred,
+      const typename Model<T>::Vdual& u,
+      const typename Model<T>::Vdual& y,
+      const typename Model<T>::Vdual& trials) override {
+        typename Model<T>::Ddual V0 = V;
+        V0.diagonal().array() = meanfun(linpred, trials).array();
+        return V0;
   };
-  void update_phi() override{};
+  void update_phi(const typename Model<T>::Vdual& linpred,
+                  const typename Model<T>::Vdual& u,
+                  const typename Model<T>::Vdual& y) override{};
 
 };
 
