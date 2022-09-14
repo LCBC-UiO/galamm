@@ -2,18 +2,13 @@
 #define MODEL_H
 
 #include <RcppEigen.h>
-#include <unsupported/Eigen/SpecialFunctions>
 #include <autodiff/forward/dual.hpp>
 #include <autodiff/forward/dual/eigen.hpp>
 
 template <typename T> struct Model{
-  typedef Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> Mdual;
-  typedef Eigen::SparseMatrix<T> SpMdual;
   typedef Eigen::Matrix<T, Eigen::Dynamic, 1> Vdual;
   typedef Eigen::DiagonalMatrix<T, Eigen::Dynamic> Ddual;
 
-  // Constructor, converting objects to autodiff
-  Model(){};
   // Scale parameter
   virtual void update_phi(const Vdual& linpred, const Vdual& u,
                           const Vdual& y) = 0;
@@ -38,9 +33,6 @@ template <typename T> struct Model{
 
 template <typename T>
 struct Binomial : Model<T> {
-
-  // // Inherit base class constructor
-  using Model<T>::Model;
 
   T cumulant(const typename Model<T>::Vdual& linpred,
              const typename Model<T>::Vdual& trials) override {
@@ -86,9 +78,6 @@ struct Binomial : Model<T> {
 template <typename T>
 struct Gaussian : Model<T> {
 
-  // Inherit base class constructor
-  using Model<T>::Model;
-
   T cumulant(const typename Model<T>::Vdual& linpred,
              const typename Model<T>::Vdual& trials) override {
     return linpred.squaredNorm() / 2;
@@ -132,9 +121,6 @@ struct Gaussian : Model<T> {
 
 template <typename T>
 struct Poisson : Model<T> {
-
-  // Inherit base class constructor
-  using Model<T>::Model;
 
   T cumulant(const typename Model<T>::Vdual& linpred,
              const typename Model<T>::Vdual& trials) override {

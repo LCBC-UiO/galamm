@@ -1,5 +1,5 @@
 #include "model.h"
-
+#include <unsupported/Eigen/SpecialFunctions>
 using namespace autodiff;
 
 // [[Rcpp::depends(RcppEigen)]]
@@ -107,7 +107,7 @@ void update_Zt(Eigen::SparseMatrix<T>& Zt,
   if(lambda_mapping_Zt.size() == 0) return;
   int counter{};
   for(int k{}; k < Zt.outerSize(); ++k){
-    for(typename Model<T>::SpMdual::InnerIterator it(Zt, k); it; ++it){
+    for(typename Eigen::SparseMatrix<T>::InnerIterator it(Zt, k); it; ++it){
       int newind = lambda_mapping_Zt(counter);
       if(newind != -1){
         it.valueRef() = lambda(newind) * it.value();
