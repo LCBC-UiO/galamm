@@ -184,6 +184,7 @@ T logLik(
   return - deviance_new / 2;
 }
 
+
 template <typename T>
 Rcpp::List wrapper(
     Eigen::Matrix<T, Eigen::Dynamic, 1> theta,
@@ -208,6 +209,7 @@ Rcpp::List wrapper(
                                at(theta, beta, lambda, u, theta_mapping, lambda_mapping_X,
                                   lambda_mapping_Zt, y, trials, X, Zt, Lambdat, k, mod,
                                   maxit_conditional_modes), ll);
+
 
   return Rcpp::List::create(
     Rcpp::Named("logLik") = static_cast<double>(ll),
@@ -284,6 +286,7 @@ Rcpp::List marginal_likelihood(
       static_cast<dual1st>(k), mod, maxit_conditional_modes
     );
   } else if(family == "binomial"){
+
     Binomial<dual1st> mod{};
     double k = (lgamma(trials.array() + 1) - lgamma(y.array() + 1) -
       lgamma(trials.array() - y.array() + 1)).sum();
@@ -309,6 +312,7 @@ Rcpp::List marginal_likelihood(
       X.cast<dual1st>(), Zt.cast<dual1st>(), Lambdat.cast<dual1st>(),
       static_cast<dual1st>(k), mod, maxit_conditional_modes
     );
+
   } else {
     Rcpp::stop("Unknown family.");
   }

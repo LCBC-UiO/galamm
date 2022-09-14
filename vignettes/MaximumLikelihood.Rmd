@@ -269,7 +269,7 @@ mlwrapper <- function(par){
     lambda_mapping_Zt = integer(),
     u = rep(0, nrow(glmod$reTrms$Zt)),
     family = "binomial",
-    maxit_conditional_modes = 50
+    maxit_conditional_modes = 6
   )
 }
 
@@ -278,13 +278,15 @@ fn <- function(par){
   mlmem(par)$logLik
 }
 
+
 gr <- function(par){
   mlmem(par)$gradient
 }
 
+
 set.seed(123)
 opt <- optim(
-  par = c(1, runif(4)), fn = fn, gr = gr,
+  par = c(1, runif(4)), fn = fn, 
   method = "L-BFGS-B", lower = c(0, rep(-Inf, 4)),
   control = list(fnscale = -1, maxit = 2000, lmm = 20),
   hessian = TRUE
