@@ -174,11 +174,12 @@ Rcpp::List wrapper(
   ){
 
   T ll{};
-  Eigen::VectorXd g = gradient(
-    logLik<T>, wrt(parlist.theta, parlist.beta, parlist.lambda),
-    at(parlist, datlist,
-       k, mod, maxit_conditional_modes), ll);
+  auto fx = [=, &mod](parameters<T>& parlist){
+    return logLik(parlist, datlist, k, mod, maxit_conditional_modes);
+    };
 
+  Eigen::VectorXd g = gradient(
+    fx, wrt(parlist.theta, parlist.beta, parlist.lambda), at(parlist), ll);
 
   return Rcpp::List::create(
     Rcpp::Named("logLik") = static_cast<double>(ll),
