@@ -10,32 +10,28 @@ using namespace autodiff;
 
 template <typename T>
 Eigen::Matrix<T, Eigen::Dynamic, 1> linpred(
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& beta,
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& u,
+    const parameters<T>& parlist,
     const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& X,
     const Eigen::SparseMatrix<T>& Zt,
-    const Eigen::SparseMatrix<T>& Lambdat,
     Model<T>& mod
   ){
-  return X * beta + Zt.transpose() * Lambdat.transpose() * u;
+  return X * parlist.beta + Zt.transpose() * parlist.Lambdat.transpose() * parlist.u;
 };
 
 template <typename T>
 T exponent_g(
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& beta,
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& u,
+    const parameters<T>& parlist,
     const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& X,
     const Eigen::SparseMatrix<T>& Zt,
-    const Eigen::SparseMatrix<T>& Lambdat,
     const Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
     const Eigen::Matrix<T, Eigen::Dynamic, 1>& trials,
     const T k,
     Model<T>& mod
   ){
-  Eigen::Matrix<T, Eigen::Dynamic, 1> lp = linpred(beta, u, X, Zt, Lambdat, mod);
-  T phi = mod.get_phi(lp, u, y);
-  return (y.dot(lp) - mod.cumulant(lp, trials)) / phi + mod.constfun(lp, u, y, trials, k) -
-    u.squaredNorm() / 2 / phi;
+  Eigen::Matrix<T, Eigen::Dynamic, 1> lp = linpred(parlist, X, Zt, mod);
+  T phi = mod.get_phi(lp, parlist.u, y);
+  return (y.dot(lp) - mod.cumulant(lp, trials)) / phi + mod.constfun(lp, parlist.u, y, trials, k) -
+    parlist.u.squaredNorm() / 2 / phi;
 };
 
 template <typename T>
@@ -48,27 +44,25 @@ T loss(
     const T k,
     Model<T>& mod,
     Eigen::SimplicialLDLT<Eigen::SparseMatrix<T> >& solver){
-  return exponent_g(parlist.beta, parlist.u, X, Zt, parlist.Lambdat, y, trials, k, mod) -
+  return exponent_g(parlist, X, Zt, y, trials, k, mod) -
     solver.vectorD().array().log().sum() / 2;
 }
 
 // Hessian matrix used in penalized iteratively reweighted least squares
 template <typename T>
 Eigen::SparseMatrix<T> inner_hessian(
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& beta,
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& u,
+    const parameters<T>& parlist,
     const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& X,
     const Eigen::SparseMatrix<T>& Zt,
-    const Eigen::SparseMatrix<T>& Lambdat,
     const Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
     const Eigen::Matrix<T, Eigen::Dynamic, 1>& trials,
     Eigen::DiagonalMatrix<T, Eigen::Dynamic> V,
     Model<T>& mod
   ){
-  Eigen::Matrix<T, Eigen::Dynamic, 1> lp = linpred(beta, u, X, Zt, Lambdat, mod);
-  T inv_phi = (1 / mod.get_phi(lp, u, y));
-  return inv_phi * Lambdat * Zt * mod.get_V(V, lp, u, y, trials) *
-    Zt.transpose() * Lambdat.transpose();
+  Eigen::Matrix<T, Eigen::Dynamic, 1> lp = linpred(parlist, X, Zt, mod);
+  T inv_phi = (1 / mod.get_phi(lp, parlist.u, y));
+  return inv_phi * parlist.Lambdat * Zt * mod.get_V(V, lp, parlist.u, y, trials) *
+    Zt.transpose() * parlist.Lambdat.transpose();
 };
 
 template <typename T>
@@ -143,7 +137,7 @@ T logLik(
   update_Lambdat(parlist.Lambdat, parlist.theta, parlist.theta_mapping);
   Eigen::SimplicialLDLT<Eigen::SparseMatrix<T> > solver;
   solver.setShift(1);
-  SpMdual H = inner_hessian(parlist.beta, parlist.u, datlist.X, datlist.Zt, parlist.Lambdat, datlist.y, datlist.trials, V, mod);
+  SpMdual H = inner_hessian(parlist, datlist.X, datlist.Zt, datlist.y, datlist.trials, V, mod);
   solver.analyzePattern(H);
 
   Vdual delta_u{};
@@ -153,13 +147,13 @@ T logLik(
 
   for(int i{}; i < maxit_conditional_modes; i++){
     delta_u = solver.solve((parlist.Lambdat * datlist.Zt *
-      (datlist.y - mod.meanfun(linpred(parlist.beta, parlist.u, datlist.X, datlist.Zt, parlist.Lambdat, mod), datlist.trials)) - parlist.u));
+      (datlist.y - mod.meanfun(linpred(parlist, datlist.X, datlist.Zt, mod), datlist.trials)) - parlist.u));
     if(delta_u.squaredNorm() < 1e-10) break;
 
     double step = 1;
     for(int j{}; j < 10; j++){
       parlist.u += step * delta_u;
-      H = inner_hessian(parlist.beta, parlist.u, datlist.X, datlist.Zt, parlist.Lambdat, datlist.y, datlist.trials, V, mod);
+      H = inner_hessian(parlist, datlist.X, datlist.Zt, datlist.y, datlist.trials, V, mod);
       solver.factorize(H);
       deviance_new = -2 * loss(parlist, datlist.X, datlist.Zt, datlist.y, datlist.trials, k, mod, solver);
       if(deviance_new < deviance_prev){
