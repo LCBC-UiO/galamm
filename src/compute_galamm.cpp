@@ -244,19 +244,10 @@ Rcpp::List marginal_likelihood(
     const int maxit_conditional_modes
 ){
 
-  data<dual1st> datlist(
-      y.cast<dual1st>(), trials.cast<dual1st>(),
-      X.cast<dual1st>(), Zt.cast<dual1st>());
+  data<dual1st> datlist(y, trials, X, Zt);
 
-  parameters<dual1st> parlist(
-      theta.cast<dual1st>(),
-      beta.cast<dual1st>(),
-      lambda.cast<dual1st>(),
-      u.cast<dual1st>(),
-      theta_mapping,
-      lambda_mapping_X,
-      lambda_mapping_Zt,
-      Lambdat.cast<dual1st>());
+  parameters<dual1st> parlist(theta, beta, lambda, u, theta_mapping,
+      lambda_mapping_X, lambda_mapping_Zt, Lambdat);
 
   if(family == "gaussian"){
     Gaussian<dual1st> mod{};
