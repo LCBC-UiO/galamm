@@ -30,7 +30,7 @@ template <typename T> struct Model{
   // GLM functions defined in derived classes
   virtual T cumulant(const Vdual& linpred, const Vdual& trials) = 0;
   virtual T constfun(const Vdual& linpred, const Vdual& u,
-                     const Vdual& y, const Vdual& trials) = 0;
+                     const Vdual& y, const Vdual& trials, T k) = 0;
   virtual Vdual meanfun(const Vdual& linpred, const Vdual& trials) = 0;
   long n;
 
@@ -50,9 +50,9 @@ struct Binomial : Model<T> {
   T constfun(const typename Model<T>::Vdual& linpred,
              const typename Model<T>::Vdual& u,
              const typename Model<T>::Vdual& y,
-             const typename Model<T>::Vdual& trials) override {
-    return 1; //(lgamma(trials.array() + 1) - lgamma(y.array() + 1) -
-            //lgamma(trials.array() - y.array() + 1)).sum();
+             const typename Model<T>::Vdual& trials,
+             const T k) override {
+    return k;
   };
 
   typename Model<T>::Vdual meanfun(const typename Model<T>::Vdual& linpred,
@@ -97,7 +97,8 @@ struct Gaussian : Model<T> {
       const typename Model<T>::Vdual& linpred,
       const typename Model<T>::Vdual& u,
       const typename Model<T>::Vdual& y,
-      const typename Model<T>::Vdual& trials) override {
+      const typename Model<T>::Vdual& trials,
+      const T k) override {
         int n = y.size();
     return -.5 * (y.squaredNorm() / Model<T>::get_phi(linpred, u, y) +
                   n * log(2 * M_PI * Model<T>::get_phi(linpred, u, y)));
@@ -142,8 +143,9 @@ struct Poisson : Model<T> {
   T constfun(const typename Model<T>::Vdual& linpred,
              const typename Model<T>::Vdual& u,
              const typename Model<T>::Vdual& y,
-             const typename Model<T>::Vdual& trials) override {
-    return 1; //-(y.array() + 1).lgamma().sum();
+             const typename Model<T>::Vdual& trials,
+             const T k) override {
+    return k;
   };
   typename Model<T>::Vdual meanfun(const typename Model<T>::Vdual& linpred,
                                    const typename Model<T>::Vdual& trials) override {
