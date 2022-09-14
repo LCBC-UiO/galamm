@@ -6,6 +6,8 @@ using namespace autodiff;
 
 // [[Rcpp::depends(RcppEigen)]]
 
+
+
 template <typename T>
 Eigen::Matrix<T, Eigen::Dynamic, 1> linpred(
     const parameters<T>& parlist,
@@ -19,12 +21,13 @@ template <typename T>
 T exponent_g(
     const parameters<T>& parlist,
     const data<T>& datlist,
+    const T k,
     Model<T>& mod
   ){
   Eigen::Matrix<T, Eigen::Dynamic, 1> lp = linpred(parlist, datlist, mod);
   T phi = mod.get_phi(lp, parlist.u, datlist.y);
   return (datlist.y.dot(lp) - mod.cumulant(lp, datlist.trials)) / phi +
-    mod.constfun(lp, parlist.u, datlist.y, datlist.trials) -
+    mod.constfun(lp, parlist.u, datlist.y, datlist.trials, k) -
     parlist.u.squaredNorm() / 2 / phi;
 };
 
@@ -32,9 +35,10 @@ template <typename T>
 T loss(
     const parameters<T>& parlist,
     const data<T>& datlist,
+    const T k,
     Model<T>& mod,
     Eigen::SimplicialLDLT<Eigen::SparseMatrix<T> >& solver){
-  return exponent_g(parlist, datlist, mod) -
+  return exponent_g(parlist, datlist, k, mod) -
     solver.vectorD().array().log().sum() / 2;
 }
 
@@ -85,10 +89,9 @@ void update_X(Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& X,
 };
 
 template <typename T>
-void update_Zt(
-    Eigen::SparseMatrix<T>& Zt,
-    Eigen::Matrix<T, Eigen::Dynamic, 1> lambda,
-    const Eigen::VectorXi& lambda_mapping_Zt){
+void update_Zt(Eigen::SparseMatrix<T>& Zt,
+               Eigen::Matrix<T, Eigen::Dynamic, 1> lambda,
+               const Eigen::VectorXi& lambda_mapping_Zt){
   if(lambda_mapping_Zt.size() == 0) return;
   int counter{};
   for(int k{}; k < Zt.outerSize(); ++k){
@@ -105,7 +108,10 @@ void update_Zt(
 
 template <typename T>
 T logLik(
-    parameters<T> parlist, data<T> datlist, Model<T>& mod,
+    parameters<T> parlist,
+    data<T> datlist,
+    const T k,
+    Model<T>& mod,
     const int maxit_conditional_modes
   ){
   typedef Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> Mdual;
@@ -127,7 +133,7 @@ T logLik(
 
   Vdual delta_u{};
   solver.factorize(H);
-  T deviance_prev = -2 * loss(parlist, datlist, mod, solver);
+  T deviance_prev = -2 * loss(parlist, datlist, k, mod, solver);
   T deviance_new;
 
   for(int i{}; i < maxit_conditional_modes; i++){
@@ -140,7 +146,7 @@ T logLik(
       parlist.u += step * delta_u;
       H = inner_hessian(parlist, datlist, V, mod);
       solver.factorize(H);
-      deviance_new = -2 * loss(parlist, datlist, mod, solver);
+      deviance_new = -2 * loss(parlist, datlist, k, mod, solver);
       if(deviance_new < deviance_prev){
         break;
       }
@@ -160,39 +166,23 @@ T logLik(
 
 template <typename T>
 Rcpp::List wrapper(
-    parameters<T>& parlist, data<T>& datlist, Model<T>& mod,
+    parameters<T>& parlist,
+    data<T>& datlist,
+    const T k,
+    Model<T>& mod,
     const int maxit_conditional_modes
   ){
 
   T ll{};
   Eigen::VectorXd g = gradient(
     logLik<T>, wrt(parlist.theta, parlist.beta, parlist.lambda),
-    at(parlist, datlist, mod, maxit_conditional_modes), ll);
+    at(parlist, datlist,
+       k, mod, maxit_conditional_modes), ll);
+
 
   return Rcpp::List::create(
     Rcpp::Named("logLik") = static_cast<double>(ll),
-    Rcpp::Named("gradient") = g
-  );
-}
-
-template <>
-Rcpp::List wrapper<dual2nd>(
-    parameters<dual2nd>& parlist, data<dual2nd>& datlist, Model<dual2nd>& mod,
-    const int maxit_conditional_modes
-){
-
-  dual2nd ll{};
-  Eigen::VectorXd g{};
-  Eigen::MatrixXd H{};
-  H = hessian(
-    logLik<dual2nd>,
-    wrt(parlist.theta, parlist.beta, parlist.lambda),
-    at(parlist, datlist, mod, maxit_conditional_modes), ll, g);
-
-  return Rcpp::List::create(
-    Rcpp::Named("logLik") = static_cast<double>(ll),
-    Rcpp::Named("gradient") = g,
-    Rcpp::Named("hessian") = H
+    Rcpp::Named("gradient") = g.cast<double>()
   );
 }
 
@@ -231,9 +221,6 @@ Rcpp::List wrapper<dual2nd>(
 //' @param family A length one \code{character} denoting the family.
 //' @param maxit_conditional_modes Maximum number of iterations for
 //' conditional models. Can be 1 when \code{family = "gaussian"}.
-//' @param final Boolean value, defaults to \code{FALSE}. If \code{TRUE},
-//' the function returns all parameters and the Hessian matrix at the given parameters,
-//' if \code{FALSE} only the log-likelihood and gradient are returned.
 //'
 //' @return A \code{list} with elements \code{logLik} and \code{gradient}.
 //' @export
@@ -254,59 +241,56 @@ Rcpp::List marginal_likelihood(
     const Eigen::Map<Eigen::VectorXi> lambda_mapping_Zt,
     const Eigen::Map<Eigen::VectorXd> u,
     const std::string family,
-    const int maxit_conditional_modes,
-    const bool final = false
+    const int maxit_conditional_modes
 ){
 
-  if(final){
-    data<dual2nd> datlist(y, trials, X, Zt);
-    parameters<dual2nd> parlist(theta, beta,
-                                lambda, u, theta_mapping, lambda_mapping_X, lambda_mapping_Zt, Lambdat);
+  data<dual1st> datlist(
+      y.cast<dual1st>(), trials.cast<dual1st>(),
+      X.cast<dual1st>(), Zt.cast<dual1st>());
 
-    if(family == "gaussian"){
-      Gaussian<dual2nd> mod{0};
-      return wrapper<dual2nd>(parlist, datlist, mod, maxit_conditional_modes);
-    } else if(family == "binomial"){
+  parameters<dual1st> parlist(
+      theta.cast<dual1st>(),
+      beta.cast<dual1st>(),
+      lambda.cast<dual1st>(),
+      u.cast<dual1st>(),
+      theta_mapping,
+      lambda_mapping_X,
+      lambda_mapping_Zt,
+      Lambdat.cast<dual1st>());
 
-      double k = (lgamma(trials.array() + 1) - lgamma(y.array() + 1) -
-                  lgamma(trials.array() - y.array() + 1)).sum();
+  if(family == "gaussian"){
+    Gaussian<dual1st> mod{};
+    double k = 0;
 
-      Binomial<dual2nd> mod{ static_cast<dual2nd>(k) };
-      return wrapper<dual2nd>(parlist, datlist, mod, maxit_conditional_modes);
+    return wrapper<dual1st>(
+      parlist,
+      datlist,
+      static_cast<dual1st>(k), mod, maxit_conditional_modes
+    );
+  } else if(family == "binomial"){
 
-    } else if(family == "poisson"){
-      double k = -(y.array() + 1).lgamma().sum();
-      Poisson<dual2nd> mod{ static_cast<dual2nd>(k) };
-      return wrapper<dual2nd>(parlist, datlist, mod, maxit_conditional_modes);
+    Binomial<dual1st> mod{};
+    double k = (lgamma(trials.array() + 1) - lgamma(y.array() + 1) -
+      lgamma(trials.array() - y.array() + 1)).sum();
 
-    } else {
-      Rcpp::stop("Unknown family.");
-    }
+    return wrapper<dual1st>(
+      parlist,
+      datlist,
+      static_cast<dual1st>(k), mod, maxit_conditional_modes
+    );
+
+  } else if(family == "poisson"){
+    Poisson<dual1st> mod{};
+    double k = -(y.array() + 1).lgamma().sum();
+
+    return wrapper<dual1st>(
+      parlist,
+      datlist,
+      static_cast<dual1st>(k), mod, maxit_conditional_modes
+    );
+
   } else {
-    data<dual1st> datlist(y, trials, X, Zt);
-    parameters<dual1st> parlist(theta, beta,
-                                lambda, u, theta_mapping, lambda_mapping_X, lambda_mapping_Zt, Lambdat);
-
-    if(family == "gaussian"){
-      Gaussian<dual1st> mod{0};
-      return wrapper<dual1st>(parlist, datlist, mod, maxit_conditional_modes);
-    } else if(family == "binomial"){
-
-      double k = (lgamma(trials.array() + 1) - lgamma(y.array() + 1) -
-                  lgamma(trials.array() - y.array() + 1)).sum();
-
-      Binomial<dual1st> mod{ static_cast<dual1st>(k) };
-      return wrapper<dual1st>(parlist, datlist, mod, maxit_conditional_modes);
-
-    } else if(family == "poisson"){
-      double k = -(y.array() + 1).lgamma().sum();
-      Poisson<dual1st> mod{ static_cast<dual1st>(k) };
-      return wrapper<dual1st>(parlist, datlist, mod, maxit_conditional_modes);
-
-    } else {
-      Rcpp::stop("Unknown family.");
-    }
+    Rcpp::stop("Unknown family.");
   }
-
 
 }

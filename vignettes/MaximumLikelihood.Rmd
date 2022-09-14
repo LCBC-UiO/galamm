@@ -217,32 +217,6 @@ The inverse of the negative Hessian matrix is the covariance matrix of the model
 S <- solve(-opt$hessian)
 ```
 
-We can also compute the Hessian exactly using autodiff, with the argument `final = TRUE`:
-
-```{r}
-final_model <- marginal_likelihood(
-    y = dat$y,
-    trials = rep(1, length(dat$y)),
-    X = X,
-    Zt = Zt,
-    Lambdat = Lambdat,
-    beta = opt$par[beta_inds],
-    theta = opt$par[theta_inds],
-    theta_mapping = theta_mapping,
-    lambda = opt$par[lambda_inds],
-    lambda_mapping_X = integer(),
-    lambda_mapping_Zt = lambda_mapping_Zt,
-    u = rep(0, nrow(Zt)),
-    family = "gaussian",
-    maxit_conditional_modes = 1,
-    final = TRUE
-    )
-S_autodiff <- solve(-final_model$hessian)
-
-plot(S, S_autodiff, main = "Finite difference and autodiff Hessian"); abline(0, 1)
-```
-
-
 We can confirm that also these standard errors agree with `PLmixed`. Both for $\hat{\beta}$
 
 ```{r}
