@@ -40,17 +40,16 @@ T exponent_g(
 
 template <typename T>
 T loss(
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& beta,
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& u,
+    const parameters<T>& parlist,
     const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& X,
     const Eigen::SparseMatrix<T>& Zt,
-    const Eigen::SparseMatrix<T>& Lambdat,
     const Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
     const Eigen::Matrix<T, Eigen::Dynamic, 1>& trials,
     const T k,
     Model<T>& mod,
     Eigen::SimplicialLDLT<Eigen::SparseMatrix<T> >& solver){
-  return exponent_g(beta, u, X, Zt, Lambdat, y, trials, k, mod) - solver.vectorD().array().log().sum() / 2;
+  return exponent_g(parlist.beta, parlist.u, X, Zt, parlist.Lambdat, y, trials, k, mod) -
+    solver.vectorD().array().log().sum() / 2;
 }
 
 // Hessian matrix used in penalized iteratively reweighted least squares
@@ -149,7 +148,7 @@ T logLik(
 
   Vdual delta_u{};
   solver.factorize(H);
-  T deviance_prev = -2 * loss(parlist.beta, parlist.u, datlist.X, datlist.Zt, parlist.Lambdat, datlist.y, datlist.trials, k, mod, solver);
+  T deviance_prev = -2 * loss(parlist, datlist.X, datlist.Zt, datlist.y, datlist.trials, k, mod, solver);
   T deviance_new;
 
   for(int i{}; i < maxit_conditional_modes; i++){
@@ -162,7 +161,7 @@ T logLik(
       parlist.u += step * delta_u;
       H = inner_hessian(parlist.beta, parlist.u, datlist.X, datlist.Zt, parlist.Lambdat, datlist.y, datlist.trials, V, mod);
       solver.factorize(H);
-      deviance_new = -2 * loss(parlist.beta, parlist.u, datlist.X, datlist.Zt, parlist.Lambdat, datlist.y, datlist.trials, k, mod, solver);
+      deviance_new = -2 * loss(parlist, datlist.X, datlist.Zt, datlist.y, datlist.trials, k, mod, solver);
       if(deviance_new < deviance_prev){
         break;
       }
