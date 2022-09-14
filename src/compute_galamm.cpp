@@ -141,6 +141,9 @@ T logLik(
   typedef Eigen::Matrix<T, Eigen::Dynamic, 1> Vdual;
   typedef Eigen::DiagonalMatrix<T, Eigen::Dynamic> Ddual;
 
+  update_Zt(Zt, lambda, lambda_mapping_Zt);
+  update_X(X, lambda, lambda_mapping_X);
+
   int n = X.rows();
   Ddual V(n);
 
@@ -200,17 +203,15 @@ Rcpp::List wrapper(
     const int maxit_conditional_modes
   ){
 
-  T ll = logLik(theta, beta, lambda, u, theta_mapping, lambda_mapping_X,
-                lambda_mapping_Zt, y, trials, X, Zt, Lambdat, k, mod,
-                maxit_conditional_modes);
+  T ll{};
   Eigen::VectorXd g = gradient(logLik<T>, wrt(theta, beta, lambda),
                                at(theta, beta, lambda, u, theta_mapping, lambda_mapping_X,
                                   lambda_mapping_Zt, y, trials, X, Zt, Lambdat, k, mod,
-                                  maxit_conditional_modes));
+                                  maxit_conditional_modes), ll);
 
   return Rcpp::List::create(
-    Rcpp::Named("ll") = static_cast<double>(ll),
-    Rcpp::Named("g") = g.cast<double>()
+    Rcpp::Named("logLik") = static_cast<double>(ll),
+    Rcpp::Named("gradient") = g.cast<double>()
   );
 }
 
@@ -243,6 +244,7 @@ Rcpp::List wrapper(
 //' \code{integer()} if not used. An entry \code{-1} indicates that the
 //' corresponding value of \code{X} does not depend on \code{lambda},
 //' as in the case where the first element of \code{lambda} is fixed to 1.
+//' @param u A \code{numeric} vector of initial values for the random effects.
 //' @param family A length one \code{character} denoting the family.
 //' @param maxit_conditional_modes Maximum number of iterations for
 //' conditional models. Can be 1 when \code{family = "gaussian"}.

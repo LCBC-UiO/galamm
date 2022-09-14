@@ -102,6 +102,7 @@ ml <- marginal_likelihood(
   lambda = irt.model$Lambda[[1]][, "abil.sid", drop = TRUE][2:3],
   lambda_mapping_X = integer(),
   lambda_mapping_Zt = lambda_mapping_Zt,
+  u = rep(0, nrow(Zt)),
   family = "gaussian",
   maxit_conditional_modes = 1
 )
@@ -144,6 +145,7 @@ mlwrapper <- function(par){
     lambda = par[lambda_inds],
     lambda_mapping_X = integer(),
     lambda_mapping_Zt = lambda_mapping_Zt,
+    u = rep(0, nrow(Zt)),
     family = "gaussian",
     maxit_conditional_modes = 1
     )
@@ -219,14 +221,14 @@ We can confirm that also these standard errors agree with `PLmixed`. Both for $\
 
 ```{r}
 sqrt(diag(S))[beta_inds]
-summary(irt.model)$`Fixed Effects`
+as.data.frame(summary(irt.model)$`Fixed Effects`)[["SE"]]
 ```
 
 and for $\hat{\lambda}$.
 
 ```{r}
 sqrt(diag(S))[lambda_inds]
-summary(irt.model)$Lambda
+na.omit(as.data.frame(summary(irt.model)$Lambda))[["lambda.item.SE"]]
 ```
 
 
@@ -265,6 +267,7 @@ mlwrapper <- function(par){
     lambda = numeric(),
     lambda_mapping_X = integer(),
     lambda_mapping_Zt = integer(),
+    u = rep(0, nrow(glmod$reTrms$Zt)),
     family = "binomial",
     maxit_conditional_modes = 50
   )
@@ -275,28 +278,27 @@ fn <- function(par){
   mlmem(par)$logLik
 }
 
-# gr <- function(par){
-#   mlmem(par)$gradient
-# }
+gr <- function(par){
+  mlmem(par)$gradient
+}
 
-# set.seed(123)
-# opt <- optim(
-#   par = c(1, runif(4)), fn = fn, gr = gr,
-#   method = "L-BFGS-B", lower = c(0, rep(-Inf, 4)),
-#   control = list(fnscale = -1, maxit = 2000, lmm = 20), 
-#   hessian = TRUE
-# )
-fn(opt2$par)
+set.seed(123)
+opt <- optim(
+  par = c(1, runif(4)), fn = fn, gr = gr,
+  method = "L-BFGS-B", lower = c(0, rep(-Inf, 4)),
+  control = list(fnscale = -1, maxit = 2000, lmm = 20),
+  hessian = TRUE
+)
 ```
 
-Using `optim()` with L-BFGS-B yields slightly likelihood deviance than `lme4`.
+Using `optim()` with L-BFGS-B yields slighlty higher likelihood than `lme4`.
 
 ```{r}
 opt$value
 logLik(fMod)
 ```
 
-On the other hand, for given parameter values, they almost perfectly agree, confirming that our implementation is correct, but that some work is needed to check the optimization algorithms.
+However, this tiny difference might be due to small numerical differences, as we can see be plugging the `lme4` solution into our function.
 
 ```{r}
 fn(opt2$par)
@@ -437,6 +439,7 @@ mlwrapper <- function(par){
     lambda = numeric(),
     lambda_mapping_X = integer(),
     lambda_mapping_Zt = integer(),
+    u = rep(0, nrow(lmod$reTrms$Zt)),
     family = "gaussian",
     maxit_conditional_modes = 1
     )
@@ -476,6 +479,7 @@ ml_final <- marginal_likelihood(
     lambda = numeric(),
     lambda_mapping_X = integer(),
     lambda_mapping_Zt = integer(),
+    u = rep(0, nrow(lmod$reTrms$Zt)),
     family = "gaussian",
     maxit_conditional_modes = 1
     )
