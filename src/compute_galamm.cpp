@@ -21,13 +21,12 @@ template <typename T>
 T exponent_g(
     const parameters<T>& parlist,
     const data<T>& datlist,
-    const T k,
     Model<T>& mod
   ){
   Eigen::Matrix<T, Eigen::Dynamic, 1> lp = linpred(parlist, datlist, mod);
   T phi = mod.get_phi(lp, parlist.u, datlist.y);
   return (datlist.y.dot(lp) - mod.cumulant(lp, datlist.trials)) / phi +
-    mod.constfun(lp, parlist.u, datlist.y, datlist.trials, k) -
+    mod.constfun(lp, parlist.u, datlist.y, datlist.trials) -
     parlist.u.squaredNorm() / 2 / phi;
 };
 
@@ -35,10 +34,9 @@ template <typename T>
 T loss(
     const parameters<T>& parlist,
     const data<T>& datlist,
-    const T k,
     Model<T>& mod,
     Eigen::SimplicialLDLT<Eigen::SparseMatrix<T> >& solver){
-  return exponent_g(parlist, datlist, k, mod) -
+  return exponent_g(parlist, datlist, mod) -
     solver.vectorD().array().log().sum() / 2;
 }
 
@@ -110,7 +108,6 @@ template <typename T>
 T logLik(
     parameters<T> parlist,
     data<T> datlist,
-    const T k,
     Model<T>& mod,
     const int maxit_conditional_modes
   ){
@@ -133,7 +130,7 @@ T logLik(
 
   Vdual delta_u{};
   solver.factorize(H);
-  T deviance_prev = -2 * loss(parlist, datlist, k, mod, solver);
+  T deviance_prev = -2 * loss(parlist, datlist, mod, solver);
   T deviance_new;
 
   for(int i{}; i < maxit_conditional_modes; i++){
@@ -146,7 +143,7 @@ T logLik(
       parlist.u += step * delta_u;
       H = inner_hessian(parlist, datlist, V, mod);
       solver.factorize(H);
-      deviance_new = -2 * loss(parlist, datlist, k, mod, solver);
+      deviance_new = -2 * loss(parlist, datlist, mod, solver);
       if(deviance_new < deviance_prev){
         break;
       }
@@ -168,7 +165,6 @@ template <typename T>
 Rcpp::List wrapper(
     parameters<T>& parlist,
     data<T>& datlist,
-    const T k,
     Model<T>& mod,
     const int maxit_conditional_modes
   ){
@@ -176,9 +172,7 @@ Rcpp::List wrapper(
   T ll{};
   Eigen::VectorXd g = gradient(
     logLik<T>, wrt(parlist.theta, parlist.beta, parlist.lambda),
-    at(parlist, datlist,
-       k, mod, maxit_conditional_modes), ll);
-
+    at(parlist, datlist, mod, maxit_conditional_modes), ll);
 
   return Rcpp::List::create(
     Rcpp::Named("logLik") = static_cast<double>(ll),
@@ -259,34 +253,36 @@ Rcpp::List marginal_likelihood(
       Lambdat.cast<dual1st>());
 
   if(family == "gaussian"){
-    Gaussian<dual1st> mod{};
-    double k = 0;
+    Gaussian<dual1st> mod{0};
 
     return wrapper<dual1st>(
       parlist,
       datlist,
-      static_cast<dual1st>(k), mod, maxit_conditional_modes
+      mod, maxit_conditional_modes
     );
   } else if(family == "binomial"){
 
-    Binomial<dual1st> mod{};
     double k = (lgamma(trials.array() + 1) - lgamma(y.array() + 1) -
-      lgamma(trials.array() - y.array() + 1)).sum();
+                lgamma(trials.array() - y.array() + 1)).sum();
+
+    Binomial<dual1st> mod{ static_cast<dual1st>(k) };
 
     return wrapper<dual1st>(
       parlist,
       datlist,
-      static_cast<dual1st>(k), mod, maxit_conditional_modes
+      mod,
+      maxit_conditional_modes
     );
 
   } else if(family == "poisson"){
-    Poisson<dual1st> mod{};
     double k = -(y.array() + 1).lgamma().sum();
+    Poisson<dual1st> mod{ static_cast<dual1st>(k) };
+
 
     return wrapper<dual1st>(
       parlist,
       datlist,
-      static_cast<dual1st>(k), mod, maxit_conditional_modes
+      mod, maxit_conditional_modes
     );
 
   } else {

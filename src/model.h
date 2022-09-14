@@ -8,12 +8,14 @@
 
 template <typename T>
 struct Model {
+  Model(T k) : k { k }{};
+  int k;
   typedef Eigen::Matrix<T, Eigen::Dynamic, 1> Vdual;
   typedef Eigen::DiagonalMatrix<T, Eigen::Dynamic> Ddual;
 
   virtual T cumulant(const Vdual& linpred, const Vdual& trials) = 0;
   virtual T constfun(const Vdual& linpred, const Vdual& u, const Vdual& y,
-                     const Vdual& trials, const T k) = 0;
+                     const Vdual& trials) = 0;
 
   virtual Vdual meanfun(const Vdual& linpred, const Vdual& trials) = 0;
 
@@ -25,6 +27,7 @@ struct Model {
 
 template <typename T>
 struct Binomial : Model<T> {
+  using Model<T>::Model;
   typedef Eigen::Matrix<T, Eigen::Dynamic, 1> Vdual;
   typedef Eigen::DiagonalMatrix<T, Eigen::Dynamic> Ddual;
 
@@ -36,9 +39,8 @@ struct Binomial : Model<T> {
   T constfun(const Vdual& linpred,
              const Vdual& u,
              const Vdual& y,
-             const Vdual& trials,
-             const T k) override {
-    return k;
+             const Vdual& trials) override {
+    return Model<T>::k;
   };
 
   Vdual meanfun(const Vdual& linpred,
@@ -73,6 +75,7 @@ struct Binomial : Model<T> {
 
 template <typename T>
 struct Gaussian : Model<T> {
+  using Model<T>::Model;
   typedef Eigen::Matrix<T, Eigen::Dynamic, 1> Vdual;
   typedef Eigen::DiagonalMatrix<T, Eigen::Dynamic> Ddual;
 
@@ -84,8 +87,7 @@ struct Gaussian : Model<T> {
       const Vdual& linpred,
       const Vdual& u,
       const Vdual& y,
-      const Vdual& trials,
-      const T k) override {
+      const Vdual& trials) override {
         int n = y.size();
     return -.5 * (y.squaredNorm() / get_phi(linpred, u, y) +
                   n * log(2 * M_PI * get_phi(linpred, u, y)));
@@ -113,6 +115,7 @@ struct Gaussian : Model<T> {
 
 template <typename T>
 struct Poisson : Model<T> {
+  using Model<T>::Model;
   typedef Eigen::Matrix<T, Eigen::Dynamic, 1> Vdual;
   typedef Eigen::DiagonalMatrix<T, Eigen::Dynamic> Ddual;
 
@@ -123,9 +126,8 @@ struct Poisson : Model<T> {
   T constfun(const Vdual& linpred,
              const Vdual& u,
              const Vdual& y,
-             const Vdual& trials,
-             const T k) override {
-    return k;
+             const Vdual& trials) override {
+    return Model<T>::k;
   };
   Vdual meanfun(const Vdual& linpred, const Vdual& trials) override {
     return linpred.array().exp();
