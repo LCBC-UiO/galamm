@@ -1,8 +1,11 @@
+#include "data.h"
 #include "model.h"
 #include <unsupported/Eigen/SpecialFunctions>
 using namespace autodiff;
 
 // [[Rcpp::depends(RcppEigen)]]
+
+
 
 template <typename T>
 Eigen::Matrix<T, Eigen::Dynamic, 1> linpred(
@@ -63,8 +66,8 @@ Eigen::SparseMatrix<T> inner_hessian(
     Model<T>& mod
   ){
   Eigen::Matrix<T, Eigen::Dynamic, 1> lp = linpred(beta, u, X, Zt, Lambdat, mod);
-  return (1 / mod.get_phi(lp, u, y)) *
-    Lambdat * Zt * mod.get_V(V, lp, u, y, trials) *
+  T inv_phi = (1 / mod.get_phi(lp, u, y));
+  return inv_phi * Lambdat * Zt * mod.get_V(V, lp, u, y, trials) *
     Zt.transpose() * Lambdat.transpose();
 };
 
@@ -127,10 +130,7 @@ T logLik(
     const Eigen::VectorXi& theta_mapping,
     const Eigen::VectorXi& lambda_mapping_X,
     const Eigen::VectorXi& lambda_mapping_Zt,
-    Eigen::Matrix<T, Eigen::Dynamic, 1> y,
-    Eigen::Matrix<T, Eigen::Dynamic, 1> trials,
-    Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> X,
-    Eigen::SparseMatrix<T> Zt,
+    data<T> datlist,
     Eigen::SparseMatrix<T> Lambdat,
     const T k,
     Model<T>& mod,
@@ -141,33 +141,34 @@ T logLik(
   typedef Eigen::Matrix<T, Eigen::Dynamic, 1> Vdual;
   typedef Eigen::DiagonalMatrix<T, Eigen::Dynamic> Ddual;
 
-  update_Zt(Zt, lambda, lambda_mapping_Zt);
-  update_X(X, lambda, lambda_mapping_X);
+  update_Zt(datlist.Zt, lambda, lambda_mapping_Zt);
+  update_X(datlist.X, lambda, lambda_mapping_X);
 
-  int n = X.rows();
+  int n = datlist.X.rows();
   Ddual V(n);
 
   update_Lambdat(Lambdat, theta, theta_mapping);
   Eigen::SimplicialLDLT<Eigen::SparseMatrix<T> > solver;
   solver.setShift(1);
-  SpMdual H = inner_hessian(beta, u, X, Zt, Lambdat, y, trials, V, mod);
+  SpMdual H = inner_hessian(beta, u, datlist.X, datlist.Zt, Lambdat, datlist.y, datlist.trials, V, mod);
   solver.analyzePattern(H);
 
   Vdual delta_u{};
   solver.factorize(H);
-  T deviance_prev = -2 * loss(beta, u, X, Zt, Lambdat, y, trials, k, mod, solver);
+  T deviance_prev = -2 * loss(beta, u, datlist.X, datlist.Zt, Lambdat, datlist.y, datlist.trials, k, mod, solver);
   T deviance_new;
 
   for(int i{}; i < maxit_conditional_modes; i++){
-    delta_u = solver.solve((Lambdat * Zt * (y - mod.meanfun(linpred(beta, u, X, Zt, Lambdat, mod), trials)) - u));
+    delta_u = solver.solve((Lambdat * datlist.Zt *
+      (datlist.y - mod.meanfun(linpred(beta, u, datlist.X, datlist.Zt, Lambdat, mod), datlist.trials)) - u));
     if(delta_u.squaredNorm() < 1e-10) break;
 
     double step = 1;
     for(int j{}; j < 10; j++){
       u += step * delta_u;
-      H = inner_hessian(beta, u, X, Zt, Lambdat, y, trials, V, mod);
+      H = inner_hessian(beta, u, datlist.X, datlist.Zt, Lambdat, datlist.y, datlist.trials, V, mod);
       solver.factorize(H);
-      deviance_new = -2 * loss(beta, u, X, Zt, Lambdat, y, trials, k, mod, solver);
+      deviance_new = -2 * loss(beta, u, datlist.X, datlist.Zt, Lambdat, datlist.y, datlist.trials, k, mod, solver);
       if(deviance_new < deviance_prev){
         break;
       }
@@ -194,10 +195,7 @@ Rcpp::List wrapper(
     const Eigen::VectorXi& theta_mapping,
     const Eigen::VectorXi& lambda_mapping_X,
     const Eigen::VectorXi& lambda_mapping_Zt,
-    Eigen::Matrix<T, Eigen::Dynamic, 1> y,
-    Eigen::Matrix<T, Eigen::Dynamic, 1> trials,
-    Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> X,
-    Eigen::SparseMatrix<T> Zt,
+    data<T>& datlist,
     Eigen::SparseMatrix<T> Lambdat,
     const T k,
     Model<T>& mod,
@@ -205,10 +203,11 @@ Rcpp::List wrapper(
   ){
 
   T ll{};
-  Eigen::VectorXd g = gradient(logLik<T>, wrt(theta, beta, lambda),
-                               at(theta, beta, lambda, u, theta_mapping, lambda_mapping_X,
-                                  lambda_mapping_Zt, y, trials, X, Zt, Lambdat, k, mod,
-                                  maxit_conditional_modes), ll);
+  Eigen::VectorXd g = gradient(
+    logLik<T>, wrt(theta, beta, lambda),
+    at(theta, beta, lambda, u, theta_mapping, lambda_mapping_X,
+       lambda_mapping_Zt, datlist,
+       Lambdat, k, mod, maxit_conditional_modes), ll);
 
 
   return Rcpp::List::create(
@@ -216,6 +215,8 @@ Rcpp::List wrapper(
     Rcpp::Named("gradient") = g.cast<double>()
   );
 }
+
+
 
 //' Compute the marginal likelihood of a GLLAMM or GALAMM
 //'
@@ -273,6 +274,10 @@ Rcpp::List marginal_likelihood(
     const int maxit_conditional_modes
 ){
 
+  data<dual1st> datlist(
+      y.cast<dual1st>(), trials.cast<dual1st>(),
+      X.cast<dual1st>(), Zt.cast<dual1st>());
+
   if(family == "gaussian"){
     Gaussian<dual1st> mod{};
     double k = 0;
@@ -281,8 +286,7 @@ Rcpp::List marginal_likelihood(
       theta.cast<dual1st>(), beta.cast<dual1st>(), lambda.cast<dual1st>(),
       u.cast<dual1st>(),
       theta_mapping, lambda_mapping_X, lambda_mapping_Zt,
-      y.cast<dual1st>(), trials.cast<dual1st>(),
-      X.cast<dual1st>(), Zt.cast<dual1st>(), Lambdat.cast<dual1st>(),
+      datlist, Lambdat.cast<dual1st>(),
       static_cast<dual1st>(k), mod, maxit_conditional_modes
     );
   } else if(family == "binomial"){
@@ -295,8 +299,7 @@ Rcpp::List marginal_likelihood(
       theta.cast<dual1st>(), beta.cast<dual1st>(), lambda.cast<dual1st>(),
       u.cast<dual1st>(),
       theta_mapping, lambda_mapping_X, lambda_mapping_Zt,
-      y.cast<dual1st>(), trials.cast<dual1st>(),
-      X.cast<dual1st>(), Zt.cast<dual1st>(), Lambdat.cast<dual1st>(),
+      datlist, Lambdat.cast<dual1st>(),
       static_cast<dual1st>(k), mod, maxit_conditional_modes
     );
 
@@ -308,8 +311,7 @@ Rcpp::List marginal_likelihood(
       theta.cast<dual1st>(), beta.cast<dual1st>(), lambda.cast<dual1st>(),
       u.cast<dual1st>(),
       theta_mapping, lambda_mapping_X, lambda_mapping_Zt,
-      y.cast<dual1st>(), trials.cast<dual1st>(),
-      X.cast<dual1st>(), Zt.cast<dual1st>(), Lambdat.cast<dual1st>(),
+      datlist, Lambdat.cast<dual1st>(),
       static_cast<dual1st>(k), mod, maxit_conditional_modes
     );
 
