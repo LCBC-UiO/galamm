@@ -17,7 +17,7 @@ struct Model {
 
   virtual Vdual meanfun(const Vdual& linpred, const Vdual& trials) = 0;
 
-  virtual Ddual get_V(Ddual V, const Vdual& linpred, const Vdual& u,
+  virtual Vdual get_V(const Vdual& linpred, const Vdual& u,
               const Vdual& y, const Vdual& trials) = 0;
 
   virtual T get_phi(const Vdual& linpred, const Vdual& u, const Vdual& y) = 0;
@@ -51,17 +51,14 @@ struct Binomial : Model<T> {
   // expected successes, and not the expected proportion of successes.
   // Thus, mu(eta) = N * exp(eta) / (1 + exp(eta)) and
   // m'(eta) = d''(eta) = mu * (N - mu) / N.
-  Ddual get_V(
-      Ddual V,
+  Vdual get_V(
       const Vdual& linpred,
       const Vdual& u,
       const Vdual& y,
       const Vdual& trials) override {
-        Ddual V0 = V;
-        V0.diagonal().array() = meanfun(linpred, trials).array() /
-          trials.array() *
+
+        return meanfun(linpred, trials).array() / trials.array() *
             (trials.array() - meanfun(linpred, trials).array());
-        return V0;
   };
 
   T get_phi(const Vdual& linpred,
@@ -95,12 +92,14 @@ struct Gaussian : Model<T> {
   };
 
   // How to update diagonal variance matrix is model dependent
-  Ddual get_V(
-      Ddual V, const Vdual& linpred, const Vdual& u, const Vdual& y,
+  Vdual get_V(
+      const Vdual& linpred, const Vdual& u, const Vdual& y,
       const Vdual& trials) override {
-        Ddual V0 = V;
-        V0.diagonal().array() = get_phi(linpred, u, y);
-        return V0;
+        int n = y.size();
+        Vdual ret;
+        ret.setConstant(n, get_phi(linpred, u, y));
+        return ret;
+
   };
 
   T get_phi(
@@ -132,12 +131,10 @@ struct Poisson : Model<T> {
   };
 
   // How to update diagonal variance matrix is model dependent
-  Ddual get_V(
-      Ddual V, const Vdual& linpred, const Vdual& u, const Vdual& y,
+  Vdual get_V(
+      const Vdual& linpred, const Vdual& u, const Vdual& y,
       const Vdual& trials) override {
-        Ddual V0 = V;
-        V0.diagonal().array() = meanfun(linpred, trials).array();
-        return V0;
+        return meanfun(linpred, trials).array();
   };
 
   T get_phi(const Vdual& linpred,

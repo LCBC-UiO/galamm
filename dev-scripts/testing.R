@@ -12,7 +12,7 @@ beta_inds <- 2:5
 glmod$reTrms$Lambdat@x <- rep(1, 15)
 
 
-marginal_likelihood(
+tmp <- marginal_likelihood(
   y = cbpp$incidence,
   trials = cbpp$size,
   X = glmod$X,
@@ -26,8 +26,10 @@ marginal_likelihood(
   lambda_mapping_Zt = integer(),
   u = rep(0, nrow(glmod$reTrms$Zt)),
   family = "binomial",
-  maxit_conditional_modes = 50
+  maxit_conditional_modes = 50,
+  hessian = FALSE
 )
 
+plot(tmp$u, getME(fMod, "u")); abline(0,1)
 
 

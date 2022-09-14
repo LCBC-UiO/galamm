@@ -21,10 +21,10 @@ template <typename T>
 T exponent_g(
     const parameters<T>& parlist,
     const data<T>& datlist,
+    const Eigen::Matrix<T, Eigen::Dynamic, 1>& lp,
     const T k,
     Model<T>& mod
   ){
-  Eigen::Matrix<T, Eigen::Dynamic, 1> lp = linpred(parlist, datlist, mod);
   T phi = mod.get_phi(lp, parlist.u, datlist.y);
   return (datlist.y.dot(lp) - mod.cumulant(lp, datlist.trials)) / phi +
     mod.constfun(lp, parlist.u, datlist.y, datlist.trials, k) -
@@ -35,10 +35,11 @@ template <typename T>
 T loss(
     const parameters<T>& parlist,
     const data<T>& datlist,
+    const Eigen::Matrix<T, Eigen::Dynamic, 1>& lp,
     const T k,
     Model<T>& mod,
     Eigen::SimplicialLDLT<Eigen::SparseMatrix<T> >& solver){
-  return exponent_g(parlist, datlist, k, mod) -
+  return exponent_g(parlist, datlist, lp, k, mod) -
     solver.vectorD().array().log().sum() / 2;
 }
 
@@ -47,12 +48,12 @@ template <typename T>
 Eigen::SparseMatrix<T> inner_hessian(
     const parameters<T>& parlist,
     const data<T>& datlist,
-    Eigen::DiagonalMatrix<T, Eigen::Dynamic> V,
+    const Eigen::Matrix<T, Eigen::Dynamic, 1>& lp,
+    const T& phi,
+    const Eigen::DiagonalMatrix<T, Eigen::Dynamic>& V,
     Model<T>& mod
   ){
-  Eigen::Matrix<T, Eigen::Dynamic, 1> lp = linpred(parlist, datlist, mod);
-  T inv_phi = (1 / mod.get_phi(lp, parlist.u, datlist.y));
-  return inv_phi * parlist.Lambdat * datlist.Zt * mod.get_V(V, lp, parlist.u, datlist.y, datlist.trials) *
+  return (1 / phi) * parlist.Lambdat * datlist.Zt * V *
     datlist.Zt.transpose() * parlist.Lambdat.transpose();
 };
 
@@ -105,9 +106,16 @@ void update_Zt(Eigen::SparseMatrix<T>& Zt,
   }
 };
 
+template <typename T>
+struct logLikObject {
+  T logLikValue;
+  Eigen::Matrix<T, Eigen::Dynamic, 1> V;
+  Eigen::Matrix<T, Eigen::Dynamic, 1> u;
+  T phi;
+};
 
 template <typename T>
-T logLik(
+logLikObject<T> logLik(
     parameters<T> parlist,
     data<T> datlist,
     const T k,
@@ -123,17 +131,20 @@ T logLik(
   update_X(datlist.X, parlist.lambda, parlist.lambda_mapping_X);
 
   int n = datlist.X.rows();
+  Vdual lp = linpred(parlist, datlist, mod);
   Ddual V(n);
+  V.diagonal() = mod.get_V(lp, parlist.u, datlist.y, datlist.trials);
+  T phi = mod.get_phi(lp, parlist.u, datlist.y);
 
   update_Lambdat(parlist.Lambdat, parlist.theta, parlist.theta_mapping);
   Eigen::SimplicialLDLT<Eigen::SparseMatrix<T> > solver;
   solver.setShift(1);
-  SpMdual H = inner_hessian(parlist, datlist, V, mod);
+  SpMdual H = inner_hessian(parlist, datlist, lp, phi, V, mod);
   solver.analyzePattern(H);
 
   Vdual delta_u{};
   solver.factorize(H);
-  T deviance_prev = -2 * loss(parlist, datlist, k, mod, solver);
+  T deviance_prev = -2 * loss(parlist, datlist, lp, k, mod, solver);
   T deviance_new;
 
   for(int i{}; i < maxit_conditional_modes; i++){
@@ -144,9 +155,12 @@ T logLik(
     double step = 1;
     for(int j{}; j < 10; j++){
       parlist.u += step * delta_u;
-      H = inner_hessian(parlist, datlist, V, mod);
+      lp = linpred(parlist, datlist, mod);
+      phi = mod.get_phi(lp, parlist.u, datlist.y);
+      V.diagonal() = mod.get_V(lp, parlist.u, datlist.y, datlist.trials);
+      H = inner_hessian(parlist, datlist, lp, phi, V, mod);
       solver.factorize(H);
-      deviance_new = -2 * loss(parlist, datlist, k, mod, solver);
+      deviance_new = -2 * loss(parlist, datlist, lp, k, mod, solver);
       if(deviance_new < deviance_prev){
         break;
       }
@@ -160,7 +174,13 @@ T logLik(
     deviance_prev = deviance_new;
   }
 
-  return - deviance_new / 2;
+  logLikObject<T> ret;
+  ret.logLikValue = - deviance_new / 2;
+  ret.V = V.diagonal();
+  ret.u = parlist.u;
+  ret.phi = phi;
+
+  return ret;
 }
 
 
@@ -175,7 +195,8 @@ Rcpp::List wrapper(
 
   T ll{};
   auto fx = [=, &mod](parameters<T>& parlist){
-    return logLik(parlist, datlist, k, mod, maxit_conditional_modes);
+    auto lll = logLik(parlist, datlist, k, mod, maxit_conditional_modes);
+    return lll.logLikValue;
     };
 
   Eigen::VectorXd g = gradient(
@@ -183,7 +204,38 @@ Rcpp::List wrapper(
 
   return Rcpp::List::create(
     Rcpp::Named("logLik") = static_cast<double>(ll),
-    Rcpp::Named("gradient") = g.cast<double>()
+    Rcpp::Named("gradient") = g
+  );
+}
+
+template <>
+Rcpp::List wrapper(
+    parameters<dual2nd>& parlist,
+    data<dual2nd>& datlist,
+    Model<dual2nd>& mod,
+    const int maxit_conditional_modes,
+    const dual2nd k
+){
+
+  dual2nd ll{};
+  auto fx = [=, &mod](parameters<dual2nd>& parlist){
+    auto lll = logLik(parlist, datlist, k, mod, maxit_conditional_modes);
+    return lll.logLikValue;
+  };
+
+  Eigen::VectorXd g{};
+  Eigen::MatrixXd H = hessian(
+    fx, wrt(parlist.theta, parlist.beta, parlist.lambda), at(parlist), ll, g);
+
+  logLikObject extras = logLik(parlist, datlist, k, mod, maxit_conditional_modes);
+
+  return Rcpp::List::create(
+    Rcpp::Named("logLik") = static_cast<double>(ll),
+    Rcpp::Named("gradient") = g,
+    Rcpp::Named("hessian") = H,
+    Rcpp::Named("u") = extras.u.cast<double>(),
+    Rcpp::Named("V") = extras.V.cast<double>(),
+    Rcpp::Named("phi") = static_cast<double>(extras.phi)
   );
 }
 
@@ -242,36 +294,57 @@ Rcpp::List marginal_likelihood(
     const Eigen::Map<Eigen::VectorXi> lambda_mapping_Zt,
     const Eigen::Map<Eigen::VectorXd> u,
     const std::string family,
-    const int maxit_conditional_modes
+    const int maxit_conditional_modes,
+    const bool hessian = false
 ){
 
-  data<dual1st> datlist(y, trials, X, Zt);
+  if(hessian){
+    data<dual2nd> datlist(y, trials, X, Zt);
+    parameters<dual2nd> parlist(theta, beta, lambda, u, theta_mapping,
+                                lambda_mapping_X, lambda_mapping_Zt, Lambdat);
 
-  parameters<dual1st> parlist(theta, beta, lambda, u, theta_mapping,
-      lambda_mapping_X, lambda_mapping_Zt, Lambdat);
+    if(family == "gaussian"){
+      Gaussian<dual2nd> mod{};
+      return wrapper<dual2nd>(parlist, datlist, mod, maxit_conditional_modes);
+    } else if(family == "binomial"){
 
-  if(family == "gaussian"){
-    Gaussian<dual1st> mod{};
+      Binomial<dual2nd> mod{};
+      dual2nd k = static_cast<dual2nd>((lgamma(trials.array() + 1) - lgamma(y.array() + 1) -
+        lgamma(trials.array() - y.array() + 1)).sum());
+      return wrapper<dual2nd>(parlist, datlist, mod, maxit_conditional_modes, k);
 
-    return wrapper<dual1st>(
-      parlist, datlist, mod, maxit_conditional_modes
-    );
-  } else if(family == "binomial"){
+    } else if(family == "poisson"){
+      Poisson<dual2nd> mod{};
+      dual2nd k = static_cast<dual2nd>(-(y.array() + 1).lgamma().sum());
+      return wrapper<dual2nd>(parlist, datlist, mod, maxit_conditional_modes, k);
 
-    Binomial<dual1st> mod{};
-    dual1st k = static_cast<dual1st>((lgamma(trials.array() + 1) - lgamma(y.array() + 1) -
-      lgamma(trials.array() - y.array() + 1)).sum());
-
-    return wrapper<dual1st>(parlist, datlist, mod, maxit_conditional_modes, k);
-
-  } else if(family == "poisson"){
-    Poisson<dual1st> mod{};
-    dual1st k = static_cast<dual1st>(-(y.array() + 1).lgamma().sum());
-
-    return wrapper<dual1st>(parlist, datlist, mod, maxit_conditional_modes, k);
-
+    } else {
+      Rcpp::stop("Unknown family.");
+    }
   } else {
-    Rcpp::stop("Unknown family.");
+    data<dual1st> datlist(y, trials, X, Zt);
+    parameters<dual1st> parlist(theta, beta, lambda, u, theta_mapping,
+                                lambda_mapping_X, lambda_mapping_Zt, Lambdat);
+
+    if(family == "gaussian"){
+      Gaussian<dual1st> mod{};
+      return wrapper<dual1st>(parlist, datlist, mod, maxit_conditional_modes);
+    } else if(family == "binomial"){
+
+      Binomial<dual1st> mod{};
+      dual1st k = static_cast<dual1st>((lgamma(trials.array() + 1) - lgamma(y.array() + 1) -
+        lgamma(trials.array() - y.array() + 1)).sum());
+      return wrapper<dual1st>(parlist, datlist, mod, maxit_conditional_modes, k);
+
+    } else if(family == "poisson"){
+      Poisson<dual1st> mod{};
+      dual1st k = static_cast<dual1st>(-(y.array() + 1).lgamma().sum());
+      return wrapper<dual1st>(parlist, datlist, mod, maxit_conditional_modes, k);
+
+    } else {
+      Rcpp::stop("Unknown family.");
+    }
   }
+
 
 }
