@@ -168,9 +168,9 @@ template <typename T>
 Rcpp::List wrapper(
     parameters<T>& parlist,
     data<T>& datlist,
-    const T k,
     Model<T>& mod,
-    const int maxit_conditional_modes
+    const int maxit_conditional_modes,
+    const T k = 0
   ){
 
   T ll{};
@@ -260,34 +260,23 @@ Rcpp::List marginal_likelihood(
 
   if(family == "gaussian"){
     Gaussian<dual1st> mod{};
-    double k = 0;
 
     return wrapper<dual1st>(
-      parlist,
-      datlist,
-      static_cast<dual1st>(k), mod, maxit_conditional_modes
+      parlist, datlist, mod, maxit_conditional_modes
     );
   } else if(family == "binomial"){
 
     Binomial<dual1st> mod{};
-    double k = (lgamma(trials.array() + 1) - lgamma(y.array() + 1) -
-      lgamma(trials.array() - y.array() + 1)).sum();
+    dual1st k = static_cast<dual1st>((lgamma(trials.array() + 1) - lgamma(y.array() + 1) -
+      lgamma(trials.array() - y.array() + 1)).sum());
 
-    return wrapper<dual1st>(
-      parlist,
-      datlist,
-      static_cast<dual1st>(k), mod, maxit_conditional_modes
-    );
+    return wrapper<dual1st>(parlist, datlist, mod, maxit_conditional_modes, k);
 
   } else if(family == "poisson"){
     Poisson<dual1st> mod{};
-    double k = -(y.array() + 1).lgamma().sum();
+    dual1st k = static_cast<dual1st>(-(y.array() + 1).lgamma().sum());
 
-    return wrapper<dual1st>(
-      parlist,
-      datlist,
-      static_cast<dual1st>(k), mod, maxit_conditional_modes
-    );
+    return wrapper<dual1st>(parlist, datlist, mod, maxit_conditional_modes, k);
 
   } else {
     Rcpp::stop("Unknown family.");
