@@ -64,8 +64,10 @@ likelihood.</p>
 <span>  <span class="va">lambda</span>,</span>
 <span>  <span class="va">lambda_mapping_X</span>,</span>
 <span>  <span class="va">lambda_mapping_Zt</span>,</span>
+<span>  <span class="va">u</span>,</span>
 <span>  <span class="va">family</span>,</span>
-<span>  <span class="va">maxit_conditional_modes</span></span>
+<span>  <span class="va">maxit_conditional_modes</span>,</span>
+<span>  hessian <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -128,6 +130,10 @@ corresponding value of <code>X</code> does not depend on <code>lambda</code>,
 as in the case where the first element of <code>lambda</code> is fixed to 1.</p></dd>
 
 
+<dt>u</dt>
+<dd><p>A <code>numeric</code> vector of initial values for the random effects.</p></dd>
+
+
 <dt>family</dt>
 <dd><p>A length one <code>character</code> denoting the family.</p></dd>
 
@@ -135,6 +141,11 @@ as in the case where the first element of <code>lambda</code> is fixed to 1.</p>
 <dt>maxit_conditional_modes</dt>
 <dd><p>Maximum number of iterations for
 conditional models. Can be 1 when <code>family = "gaussian"</code>.</p></dd>
+
+
+<dt>hessian</dt>
+<dd><p>Boolean specifying whether to include the Hessian matrix
+at the given parameters. Defaults to <code>FALSE</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
