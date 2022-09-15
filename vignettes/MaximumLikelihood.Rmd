@@ -17,6 +17,9 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(galamm)
+library(mgcv)
+library(gamm4)
+library(Matrix)
 ```
 
 
@@ -334,10 +337,7 @@ unname(sqrt(diag(vcov(fMod))))
 
 ### Warm-up
 
-```{r}
-library(mgcv)
-library(gamm4)
-```
+
 
 We can now fit the model illustrates in the Introduction vignette, which we refer to for details. We start by adding a weight column to `dat1`, to hold factor loadings.
 

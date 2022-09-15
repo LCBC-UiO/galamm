@@ -34,6 +34,8 @@
 #' @param family A length one \code{character} denoting the family.
 #' @param maxit_conditional_modes Maximum number of iterations for
 #' conditional models. Can be 1 when \code{family = "gaussian"}.
+#' @param hessian Boolean specifying whether to include the Hessian matrix
+#' at the given parameters. Defaults to \code{FALSE}.
 #'
 #' @return A \code{list} with elements \code{logLik} and \code{gradient}.
 #' @export

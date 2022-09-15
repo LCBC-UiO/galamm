@@ -18,7 +18,8 @@ marginal_likelihood(
   lambda_mapping_Zt,
   u,
   family,
-  maxit_conditional_modes
+  maxit_conditional_modes,
+  hessian = FALSE
 )
 }
 \arguments{
@@ -63,6 +64,9 @@ as in the case where the first element of \code{lambda} is fixed to 1.}
 
 \item{maxit_conditional_modes}{Maximum number of iterations for
 conditional models. Can be 1 when \code{family = "gaussian"}.}
+
+\item{hessian}{Boolean specifying whether to include the Hessian matrix
+at the given parameters. Defaults to \code{FALSE}.}
 }
 \value{
 A \code{list} with elements \code{logLik} and \code{gradient}.
