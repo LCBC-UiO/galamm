@@ -30,15 +30,18 @@
 #' \code{integer()} if not used. An entry \code{-1} indicates that the
 #' corresponding value of \code{X} does not depend on \code{lambda},
 #' as in the case where the first element of \code{lambda} is fixed to 1.
+#' @param u A \code{numeric} vector of initial values for the random effects.
 #' @param family A length one \code{character} denoting the family.
 #' @param maxit_conditional_modes Maximum number of iterations for
 #' conditional models. Can be 1 when \code{family = "gaussian"}.
+#' @param hessian Boolean specifying whether to include the Hessian matrix
+#' at the given parameters. Defaults to \code{FALSE}.
 #'
 #' @return A \code{list} with elements \code{logLik} and \code{gradient}.
 #' @export
 #'
 #' @details For examples, see the vignette on maximum likelihood estimation.
-marginal_likelihood <- function(y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, lambda, lambda_mapping_X, lambda_mapping_Zt, family, maxit_conditional_modes) {
-    .Call(`_galamm_marginal_likelihood`, y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, lambda, lambda_mapping_X, lambda_mapping_Zt, family, maxit_conditional_modes)
+marginal_likelihood <- function(y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, lambda, lambda_mapping_X, lambda_mapping_Zt, u, family, maxit_conditional_modes, hessian = FALSE) {
+    .Call(`_galamm_marginal_likelihood`, y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, lambda, lambda_mapping_X, lambda_mapping_Zt, u, family, maxit_conditional_modes, hessian)
 }
 

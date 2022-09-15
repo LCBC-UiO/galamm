@@ -17,6 +17,9 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(galamm)
+library(mgcv)
+library(gamm4)
+library(Matrix)
 ```
 
 
@@ -102,6 +105,7 @@ ml <- marginal_likelihood(
   lambda = irt.model$Lambda[[1]][, "abil.sid", drop = TRUE][2:3],
   lambda_mapping_X = integer(),
   lambda_mapping_Zt = lambda_mapping_Zt,
+  u = rep(0, nrow(Zt)),
   family = "gaussian",
   maxit_conditional_modes = 1
 )
@@ -144,6 +148,7 @@ mlwrapper <- function(par){
     lambda = par[lambda_inds],
     lambda_mapping_X = integer(),
     lambda_mapping_Zt = lambda_mapping_Zt,
+    u = rep(0, nrow(Zt)),
     family = "gaussian",
     maxit_conditional_modes = 1
     )
@@ -165,13 +170,13 @@ We start the optimization from some pretty arbitrary values, and it converges qu
 par_init <- c(1, 1, 0, 0, 0, 1, 1)
 opt <- optim(par_init, fn = fn, gr = gr, 
              method = "L-BFGS-B", lower = bounds,
-             control = list(fnscale = -1), hessian = TRUE)
+             control = list(fnscale = -1))
 
 opt$value
 irt.model$`Log-Likelihood`
 ```
 
-We can confirm that the parameters are almost identical:
+We can confirm that the parameters are identical:
 
 ```{r, fig.width=4}
 plot(
@@ -190,13 +195,13 @@ system.time({
   opt <- optim(par_init + runif(length(par_init), max = .5), 
                fn = fn, gr = gr, 
              method = "L-BFGS-B", lower = bounds,
-             control = list(fnscale = -1), hessian = TRUE)
+             control = list(fnscale = -1))
 })
 system.time({
   opt <- optim(par_init + runif(length(par_init), max = .5), 
                fn = fn, gr = gr, 
              method = "L-BFGS-B", lower = bounds,
-             control = list(fnscale = -1, lmm = 20), hessian = TRUE)
+             control = list(fnscale = -1, lmm = 20))
 })
 ```
 
@@ -209,24 +214,41 @@ system.time({
 })
 ```
 
-The inverse of the negative Hessian matrix is the covariance matrix of the model.
+The inverse of the negative Hessian matrix is the covariance matrix of the model. We can obtain this one with a single call at the final parameter estimates, using the argument `hessian = TRUE`. 
 
 ```{r}
-S <- solve(-opt$hessian)
+final_model <- marginal_likelihood(
+  y = dat$y,
+  trials = rep(1, length(dat$y)),
+  X = X,
+  Zt = Zt,
+  Lambdat = Lambdat,
+  beta = opt$par[beta_inds],
+  theta = opt$par[theta_inds],
+  theta_mapping = theta_mapping,
+  lambda = opt$par[lambda_inds],
+  lambda_mapping_X = integer(),
+  lambda_mapping_Zt = lambda_mapping_Zt,
+  u = rep(0, nrow(Zt)),
+  family = "gaussian",
+  maxit_conditional_modes = 1,
+  hessian = TRUE
+  )
+S <- solve(-final_model$hessian)
 ```
 
 We can confirm that also these standard errors agree with `PLmixed`. Both for $\hat{\beta}$
 
 ```{r}
 sqrt(diag(S))[beta_inds]
-summary(irt.model)$`Fixed Effects`
+as.data.frame(summary(irt.model)$`Fixed Effects`)[["SE"]]
 ```
 
 and for $\hat{\lambda}$.
 
 ```{r}
 sqrt(diag(S))[lambda_inds]
-summary(irt.model)$Lambda
+na.omit(as.data.frame(summary(irt.model)$Lambda))[["lambda.item.SE"]]
 ```
 
 
@@ -252,7 +274,7 @@ Then we do it using `marginal_likelihood`:
 theta_inds <- 1
 beta_inds <- 2:5
 
-mlwrapper <- function(par){
+mlwrapper <- function(par, hessian = FALSE){
   marginal_likelihood(
     y = cbpp$incidence,
     trials = cbpp$size,
@@ -265,8 +287,10 @@ mlwrapper <- function(par){
     lambda = numeric(),
     lambda_mapping_X = integer(),
     lambda_mapping_Zt = integer(),
+    u = rep(0, nrow(glmod$reTrms$Zt)),
     family = "binomial",
-    maxit_conditional_modes = 6
+    maxit_conditional_modes = 50,
+    hessian = hessian
   )
 }
 
@@ -274,27 +298,27 @@ mlmem <- memoise(mlwrapper)
 fn <- function(par){
   mlmem(par)$logLik
 }
-# gr <- function(par){
-#   mlmem(par)$gradient
-# }
+gr <- function(par){
+  mlmem(par)$gradient
+}
 
 set.seed(123)
 opt <- optim(
   par = c(1, runif(4)), fn = fn, 
   method = "L-BFGS-B", lower = c(0, rep(-Inf, 4)),
-  control = list(fnscale = -1, maxit = 2000, lmm = 20), 
-  hessian = TRUE
+  control = list(fnscale = -1, maxit = 2000, lmm = 20)
 )
+final_model <- mlwrapper(opt$par, hessian = TRUE)
 ```
 
-Using `optim()` with L-BFGS-B yields slightly likelihood deviance than `lme4`.
+Using `optim()` with L-BFGS-B yields slightly higher likelihood than `lme4`.
 
 ```{r}
-opt$value
+final_model$logLik
 logLik(fMod)
 ```
 
-On the other hand, for given parameter values, they almost perfectly agree, confirming that our implementation is correct, but that some work is needed to check the optimization algorithms.
+However, this tiny difference might be due to small numerical differences, as we can see be plugging the `lme4` solution into our function.
 
 ```{r}
 fn(opt2$par)
@@ -303,8 +327,8 @@ fn(opt2$par)
 Also the estimated standard errors are close.
 
 ```{r}
-sqrt(diag(solve(-opt$hessian)))[beta_inds]
-sqrt(diag(vcov(fMod)))
+sqrt(diag(solve(-final_model$hessian)))[beta_inds]
+unname(sqrt(diag(vcov(fMod))))
 ```
 
 
@@ -313,10 +337,7 @@ sqrt(diag(vcov(fMod)))
 
 ### Warm-up
 
-```{r}
-library(mgcv)
-library(gamm4)
-```
+
 
 We can now fit the model illustrates in the Introduction vignette, which we refer to for details. We start by adding a weight column to `dat1`, to hold factor loadings.
 
@@ -386,12 +407,9 @@ logLik(mod1)
 
 As are the fixed effects and variance components.
 
-```{r}
-fixef(mod0$mer)
-fixef(mod1)
-
-getME(mod0$mer, "theta")
-getME(mod1, "theta")
+```{r, fig.width=4}
+plot(c(fixef(mod1), getME(mod0$mer, "theta")),
+  c(fixef(mod0$mer), getME(mod1, "theta"))); abline(0, 1)
 ```
 
 We can also compare the penalized spline coefficients.
@@ -422,7 +440,7 @@ bounds <- c(0, 0, rep(-Inf, 2))
 Lambdat <- lmod$reTrms$Lambdat
 Lambdat@x <- 1
 
-mlwrapper <- function(par){
+mlwrapper <- function(par, hessian = FALSE){
   marginal_likelihood(
     y = mod0$gam$y,
     trials = 1,
@@ -435,8 +453,10 @@ mlwrapper <- function(par){
     lambda = numeric(),
     lambda_mapping_X = integer(),
     lambda_mapping_Zt = integer(),
+    u = rep(0, nrow(lmod$reTrms$Zt)),
     family = "gaussian",
-    maxit_conditional_modes = 1
+    maxit_conditional_modes = 1, 
+    hessian = hessian
     )
 }
 
@@ -455,28 +475,14 @@ We reach the same maximum likelihood estimate also now.
 ```{r}
 opt <- optim(par = runif(4, 10, 100), fn = fn, gr = gr, 
              method = "L-BFGS-B", lower = bounds, 
-             control = list(fnscale = -1, lmm = 20), hessian = TRUE)
+             control = list(fnscale = -1, lmm = 20))
 opt
 ```
 
 Also now we can transform the spline coefficients back to their original parametrization.
 
 ```{r}
-ml_final <- marginal_likelihood(
-    y = mod0$gam$y,
-    trials = 1,
-    X = lmod$X,
-    Zt = lmod$reTrms$Zt,
-    Lambdat = Lambdat,
-    beta = opt$par[beta_inds],
-    theta = opt$par[theta_inds],
-    theta_mapping = lmod$reTrms$Lind - 1L,
-    lambda = numeric(),
-    lambda_mapping_X = integer(),
-    lambda_mapping_Zt = integer(),
-    family = "gaussian",
-    maxit_conditional_modes = 1
-    )
+ml_final <- mlwrapper(opt$par, hessian = TRUE)
 ```
 
 The random effects coming out of `marginal_likelihood` are standard normal, so we need to apply the transformation $\mathbf{b} = \boldsymbol{\Lambda}^{T} \mathbf{u}$ to get random effects on the same scale as `mod0` and `mod1`.
@@ -522,7 +528,7 @@ vcov(mod0$gam)
 We now compute it, following the source code of `gamm4::gamm4()`:
 
 ```{r}
-V <- Diagonal(n = nrow(dat1), x = ml_final$phi) + 
+V <- diag(ml_final$V) + 
   crossprod(Lambdat[1:100, 1:100] %*% lmod$reTrms$Zt[1:100, ]) * ml_final$phi
 R <- Matrix::chol(V,pivot=TRUE);piv <- attr(R,"pivot") 
 Xfp <- as(Xfp, "dgCMatrix")
@@ -626,6 +632,7 @@ margl <- marginal_likelihood(
   lambda = lambda_init[-1],
   lambda_mapping_X = lambda_mapping_X,
   lambda_mapping_Zt = lambda_mapping_Zt,
+  u = rep(0, nrow(Zt)),
   family = "gaussian",
   maxit_conditional_modes = 1
 )
@@ -642,7 +649,7 @@ beta_inds <- 3:4
 lambda_inds <- 5:6
 bounds <- c(0, 0, rep(-Inf, 4))
 
-mlwrapper <- function(par){
+mlwrapper <- function(par, hessian = FALSE){
   marginal_likelihood(
     y = mdat$y,
     trials = numeric(),
@@ -655,8 +662,10 @@ mlwrapper <- function(par){
     lambda = par[lambda_inds],
     lambda_mapping_X = lambda_mapping_X,
     lambda_mapping_Zt = lambda_mapping_Zt,
+    u = rep(0, nrow(Zt)),
     family = "gaussian",
-    maxit_conditional_modes = 1
+    maxit_conditional_modes = 1,
+    hessian = hessian
   )
 }
 
@@ -677,8 +686,7 @@ par_init <- c(1, 1, 0, 0, 1, 1)
 
 opt <- optim(par_init, fn = fn, gr = gr, 
            method = "L-BFGS-B", lower = bounds, 
-           control = list(fnscale = -1, maxit = 2000, lmm = 20),
-           hessian = TRUE)
+           control = list(fnscale = -1, maxit = 2000, lmm = 20))
 
 opt$value
 logLik(mod1)
@@ -692,7 +700,7 @@ opt
 We can also now convert the spline coefficients back to their original parametrization. 
 
 ```{r}
-ml_final <- mlwrapper(opt$par)
+ml_final <- mlwrapper(opt$par, hessian = TRUE)
 
 u <- re$trans.U %*% (re$trans.D * c(ml_final$u[101:108], opt$par[beta_inds]))
 Lambdat@x <- opt$par[theta_inds][lmod$reTrms$Lind]

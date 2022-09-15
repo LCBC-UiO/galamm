@@ -12,8 +12,8 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // marginal_likelihood
-Rcpp::List marginal_likelihood(const Eigen::Map<Eigen::VectorXd> y, const Eigen::Map<Eigen::VectorXd> trials, const Eigen::Map<Eigen::MatrixXd> X, const Eigen::MappedSparseMatrix<double> Zt, const Eigen::MappedSparseMatrix<double> Lambdat, const Eigen::Map<Eigen::VectorXd> beta, const Eigen::Map<Eigen::VectorXd> theta, const Eigen::Map<Eigen::VectorXi> theta_mapping, const Eigen::Map<Eigen::VectorXd> lambda, const Eigen::Map<Eigen::VectorXi> lambda_mapping_X, const Eigen::Map<Eigen::VectorXi> lambda_mapping_Zt, const std::string family, const int maxit_conditional_modes);
-RcppExport SEXP _galamm_marginal_likelihood(SEXP ySEXP, SEXP trialsSEXP, SEXP XSEXP, SEXP ZtSEXP, SEXP LambdatSEXP, SEXP betaSEXP, SEXP thetaSEXP, SEXP theta_mappingSEXP, SEXP lambdaSEXP, SEXP lambda_mapping_XSEXP, SEXP lambda_mapping_ZtSEXP, SEXP familySEXP, SEXP maxit_conditional_modesSEXP) {
+Rcpp::List marginal_likelihood(const Eigen::Map<Eigen::VectorXd> y, const Eigen::Map<Eigen::VectorXd> trials, const Eigen::Map<Eigen::MatrixXd> X, const Eigen::MappedSparseMatrix<double> Zt, const Eigen::MappedSparseMatrix<double> Lambdat, const Eigen::Map<Eigen::VectorXd> beta, const Eigen::Map<Eigen::VectorXd> theta, const Eigen::Map<Eigen::VectorXi> theta_mapping, const Eigen::Map<Eigen::VectorXd> lambda, const Eigen::Map<Eigen::VectorXi> lambda_mapping_X, const Eigen::Map<Eigen::VectorXi> lambda_mapping_Zt, const Eigen::Map<Eigen::VectorXd> u, const std::string family, const int maxit_conditional_modes, const bool hessian);
+RcppExport SEXP _galamm_marginal_likelihood(SEXP ySEXP, SEXP trialsSEXP, SEXP XSEXP, SEXP ZtSEXP, SEXP LambdatSEXP, SEXP betaSEXP, SEXP thetaSEXP, SEXP theta_mappingSEXP, SEXP lambdaSEXP, SEXP lambda_mapping_XSEXP, SEXP lambda_mapping_ZtSEXP, SEXP uSEXP, SEXP familySEXP, SEXP maxit_conditional_modesSEXP, SEXP hessianSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -28,15 +28,17 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Eigen::Map<Eigen::VectorXd> >::type lambda(lambdaSEXP);
     Rcpp::traits::input_parameter< const Eigen::Map<Eigen::VectorXi> >::type lambda_mapping_X(lambda_mapping_XSEXP);
     Rcpp::traits::input_parameter< const Eigen::Map<Eigen::VectorXi> >::type lambda_mapping_Zt(lambda_mapping_ZtSEXP);
+    Rcpp::traits::input_parameter< const Eigen::Map<Eigen::VectorXd> >::type u(uSEXP);
     Rcpp::traits::input_parameter< const std::string >::type family(familySEXP);
     Rcpp::traits::input_parameter< const int >::type maxit_conditional_modes(maxit_conditional_modesSEXP);
-    rcpp_result_gen = Rcpp::wrap(marginal_likelihood(y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, lambda, lambda_mapping_X, lambda_mapping_Zt, family, maxit_conditional_modes));
+    Rcpp::traits::input_parameter< const bool >::type hessian(hessianSEXP);
+    rcpp_result_gen = Rcpp::wrap(marginal_likelihood(y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, lambda, lambda_mapping_X, lambda_mapping_Zt, u, family, maxit_conditional_modes, hessian));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_galamm_marginal_likelihood", (DL_FUNC) &_galamm_marginal_likelihood, 13},
+    {"_galamm_marginal_likelihood", (DL_FUNC) &_galamm_marginal_likelihood, 15},
     {NULL, NULL, 0}
 };
 
