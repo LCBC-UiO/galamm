@@ -11,8 +11,7 @@ using namespace autodiff;
 template <typename T>
 Eigen::Matrix<T, Eigen::Dynamic, 1> linpred(
     const parameters<T>& parlist,
-    const data<T>& datlist,
-    Model<T>& mod
+    const data<T>& datlist
   ){
   return datlist.X * parlist.beta + datlist.Zt.transpose() * parlist.Lambdat.transpose() * parlist.u;
 };
@@ -50,8 +49,7 @@ Eigen::SparseMatrix<T> inner_hessian(
     const data<T>& datlist,
     const Eigen::Matrix<T, Eigen::Dynamic, 1>& lp,
     const T& phi,
-    const Eigen::DiagonalMatrix<T, Eigen::Dynamic>& V,
-    Model<T>& mod
+    const Eigen::DiagonalMatrix<T, Eigen::Dynamic>& V
   ){
   return (1 / phi) * parlist.Lambdat * datlist.Zt * V *
     datlist.Zt.transpose() * parlist.Lambdat.transpose();
@@ -130,7 +128,7 @@ logLikObject<T> logLik(
   update_X(datlist.X, parlist.lambda, parlist.lambda_mapping_X);
 
   int n = datlist.X.rows();
-  Vdual lp = linpred(parlist, datlist, mod);
+  Vdual lp = linpred(parlist, datlist);
   Ddual V(n);
   V.diagonal() = mod.get_V(lp, parlist.u, datlist.y, datlist.trials);
   T phi = mod.get_phi(lp, parlist.u, datlist.y);
@@ -138,7 +136,7 @@ logLikObject<T> logLik(
   update_Lambdat(parlist.Lambdat, parlist.theta, parlist.theta_mapping);
   Eigen::SimplicialLDLT<Eigen::SparseMatrix<T> > solver;
   solver.setShift(1);
-  SpMdual H = inner_hessian(parlist, datlist, lp, phi, V, mod);
+  SpMdual H = inner_hessian(parlist, datlist, lp, phi, V);
   solver.analyzePattern(H);
 
   Vdual delta_u{};
@@ -148,16 +146,16 @@ logLikObject<T> logLik(
 
   for(int i{}; i < mod.maxit_conditional_modes; i++){
     delta_u = solver.solve((parlist.Lambdat * datlist.Zt *
-      (datlist.y - mod.meanfun(linpred(parlist, datlist, mod), datlist.trials)) - parlist.u));
+      (datlist.y - mod.meanfun(linpred(parlist, datlist), datlist.trials)) - parlist.u));
     if(delta_u.squaredNorm() < mod.epsilon_u) break;
 
     double step = 1;
     for(int j{}; j < 10; j++){
       parlist.u += step * delta_u;
-      lp = linpred(parlist, datlist, mod);
+      lp = linpred(parlist, datlist);
       phi = mod.get_phi(lp, parlist.u, datlist.y);
       V.diagonal() = mod.get_V(lp, parlist.u, datlist.y, datlist.trials);
-      H = inner_hessian(parlist, datlist, lp, phi, V, mod);
+      H = inner_hessian(parlist, datlist, lp, phi, V);
       solver.factorize(H);
       deviance_new = -2 * loss(parlist, datlist, lp, k, mod, solver);
       if(deviance_new < deviance_prev){
