@@ -24,7 +24,13 @@ T loss(
     Model<T>& mod,
     Eigen::SimplicialLDLT<Eigen::SparseMatrix<T> >& solver){
   T phi = mod.get_phi_component(lp, parlist.u, datlist.y);
-  T exponent_g = (datlist.y.dot(lp) - mod.cumulant(lp, datlist.trials)) / phi +
+
+  T cum = 0;
+  for(int i = 0; i < lp.size(); i++){
+    cum += mod.cumulant(lp(i), datlist.trials(i));
+  }
+
+  T exponent_g = (datlist.y.dot(lp) - cum) / phi +
     mod.constfun(datlist.y, phi, k) -
     parlist.u.squaredNorm() / 2 / phi;
 

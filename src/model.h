@@ -18,7 +18,7 @@ struct Model {
   typedef Eigen::Matrix<T, Eigen::Dynamic, 1> Vdual;
   typedef Eigen::DiagonalMatrix<T, Eigen::Dynamic> Ddual;
 
-  virtual T cumulant(const Vdual& linpred, const Vdual& trials) = 0;
+  virtual T cumulant(const T& linpred, const T& trials) = 0;
   virtual T constfun(const Vdual& y, const T& phi, const T k) = 0;
 
   virtual Vdual meanfun(const Vdual& linpred, const Vdual& trials) = 0;
@@ -35,10 +35,8 @@ struct Binomial : Model<T> {
 
   using Model<T>::Model;
 
-  T cumulant(const Vdual& linpred,
-             const Vdual& trials) override {
-    return ((1 + linpred.array().exp()).log() *
-            trials.array()).sum();
+  T cumulant(const T& linpred, const T& trials) override {
+    return log(1 + exp(linpred)) * trials;
   };
   T constfun(const Vdual& y, const T& phi, const T k) override {
     return k;
@@ -76,9 +74,8 @@ struct Gaussian : Model<T> {
 
   using Model<T>::Model;
 
-  T cumulant(const Vdual& linpred,
-             const Vdual& trials) override {
-    return linpred.squaredNorm() / 2;
+  T cumulant(const T& linpred, const T& trials) override {
+    return pow(linpred, 2) / 2;
   };
   T constfun(const Vdual& y, const T& phi, const T k) override {
         int n = y.size();
@@ -114,8 +111,8 @@ struct Poisson : Model<T> {
 
   using Model<T>::Model;
 
-  T cumulant(const Vdual& linpred, const Vdual& trials) override {
-    return linpred.array().exp().sum();
+  T cumulant(const T& linpred, const T& trials) override {
+    return exp(linpred);
   };
   T constfun(const Vdual& y, const T& phi, const T k) override {
     return k;
