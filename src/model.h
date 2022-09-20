@@ -82,8 +82,7 @@ struct Gaussian : Model<T> {
   };
   T constfun(const Vdual& y, const T& phi, const T k) override {
         int n = y.size();
-    return -.5 * (y.squaredNorm() / phi +
-                  n * log(2 * M_PI * phi));
+    return -.5 * (y.squaredNorm() / phi + n * log(2 * M_PI * phi));
   };
   Vdual meanfun(const Vdual& linpred, const Vdual& trials) override {
     return linpred;

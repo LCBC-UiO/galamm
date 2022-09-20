@@ -17,14 +17,6 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> linpred(
 };
 
 template <typename T>
-T get_phi(const Eigen::Matrix<T, Eigen::Dynamic, 1>& linpred,
-          const Eigen::Matrix<T, Eigen::Dynamic, 1>& u,
-          const Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
-          Model<T>& mod){
-  return mod.get_phi_component(linpred, u, y);
-}
-
-template <typename T>
 T exponent_g(
     const parameters<T>& parlist,
     const data<T>& datlist,
@@ -32,7 +24,7 @@ T exponent_g(
     const T k,
     Model<T>& mod
   ){
-  T phi = get_phi(lp, parlist.u, datlist.y, mod);
+  T phi = mod.get_phi_component(lp, parlist.u, datlist.y);
   return (datlist.y.dot(lp) - mod.cumulant(lp, datlist.trials)) / phi +
     mod.constfun(datlist.y, phi, k) -
     parlist.u.squaredNorm() / 2 / phi;
