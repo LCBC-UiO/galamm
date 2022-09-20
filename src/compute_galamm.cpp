@@ -26,13 +26,14 @@ T loss(
   T phi = mod.get_phi_component(lp, parlist.u, datlist.y);
 
   T cum = 0;
+  T cf = 0;
   for(int i = 0; i < lp.size(); i++){
     cum += mod.cumulant(lp(i), datlist.trials(i));
+    cf += mod.constfun(datlist.y(i), phi, k);
   }
 
   T exponent_g = (datlist.y.dot(lp) - cum) / phi +
-    mod.constfun(datlist.y, phi, k) -
-    parlist.u.squaredNorm() / 2 / phi;
+    cf - parlist.u.squaredNorm() / 2 / phi;
 
   return exponent_g - solver.vectorD().array().log().sum() / 2;
 }
@@ -246,13 +247,13 @@ Rcpp::List marginal_likelihood(
     } else if(family == "binomial"){
 
       Binomial<dual2nd> mod{ maxit_conditional_modes, epsilon_u };
-      dual2nd k = static_cast<dual2nd>((lgamma(trials.array() + 1) - lgamma(y.array() + 1) -
-        lgamma(trials.array() - y.array() + 1)).sum());
+      dual2nd k = static_cast<dual2nd>(((lgamma(trials.array() + 1) - lgamma(y.array() + 1) -
+        lgamma(trials.array() - y.array() + 1)).sum()) / y.size());
       return wrapper<dual2nd>(parlist, datlist, mod, k);
 
     } else if(family == "poisson"){
       Poisson<dual2nd> mod{ maxit_conditional_modes, epsilon_u };
-      dual2nd k = static_cast<dual2nd>(-(y.array() + 1).lgamma().sum());
+      dual2nd k = static_cast<dual2nd>(-(y.array() + 1).lgamma().sum() / y.size());
       return wrapper<dual2nd>(parlist, datlist, mod, k);
 
     } else {
@@ -270,13 +271,13 @@ Rcpp::List marginal_likelihood(
     } else if(family == "binomial"){
 
       Binomial<dual1st> mod{ maxit_conditional_modes, epsilon_u };
-      dual1st k = static_cast<dual1st>((lgamma(trials.array() + 1) - lgamma(y.array() + 1) -
-        lgamma(trials.array() - y.array() + 1)).sum());
+      dual1st k = static_cast<dual1st>(((lgamma(trials.array() + 1) - lgamma(y.array() + 1) -
+        lgamma(trials.array() - y.array() + 1)).sum()) / y.size());
       return wrapper<dual1st>(parlist, datlist, mod, k);
 
     } else if(family == "poisson"){
       Poisson<dual1st> mod{ maxit_conditional_modes, epsilon_u };
-      dual1st k = static_cast<dual1st>(-(y.array() + 1).lgamma().sum());
+      dual1st k = static_cast<dual1st>(-(y.array() + 1).lgamma().sum() / y.size());
       return wrapper<dual1st>(parlist, datlist, mod, k);
 
     } else {
