@@ -55,8 +55,6 @@ template <typename T>
 Eigen::SparseMatrix<T> inner_hessian(
     const parameters<T>& parlist,
     const data<T>& datlist,
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& lp,
-    const T& phi,
     const Eigen::DiagonalMatrix<T, Eigen::Dynamic>& V
   ){
   return parlist.Lambdat * datlist.Zt * V *
@@ -144,7 +142,7 @@ logLikObject<T> logLik(
   update_Lambdat(parlist.Lambdat, parlist.theta, parlist.theta_mapping);
   Eigen::SimplicialLDLT<Eigen::SparseMatrix<T> > solver;
   solver.setShift(1);
-  SpMdual H = inner_hessian(parlist, datlist, lp, phi, V);
+  SpMdual H = inner_hessian(parlist, datlist, V);
   solver.analyzePattern(H);
 
   Vdual delta_u{};
@@ -163,7 +161,7 @@ logLikObject<T> logLik(
       lp = linpred(parlist, datlist);
       phi = get_phi(lp, parlist.u, datlist.y, mod);
       V.diagonal() = mod.get_V(lp, datlist.trials);
-      H = inner_hessian(parlist, datlist, lp, phi, V);
+      H = inner_hessian(parlist, datlist, V);
       solver.factorize(H);
       deviance_new = -2 * loss(parlist, datlist, lp, k, mod, solver);
       if(deviance_new < deviance_prev){
