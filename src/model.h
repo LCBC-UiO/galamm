@@ -25,7 +25,7 @@ struct Model {
   virtual Vdual meanfun(const Vdual& linpred, const Vdual& trials) = 0;
 
   virtual Vdual get_V(const Vdual& linpred, const Vdual& u,
-              const Vdual& y, const Vdual& trials) = 0;
+              const Vdual& y, const Vdual& trials, const T& phi) = 0;
 
   virtual T get_phi(const Vdual& linpred, const Vdual& u, const Vdual& y) = 0;
 };
@@ -64,7 +64,7 @@ struct Binomial : Model<T> {
       const Vdual& linpred,
       const Vdual& u,
       const Vdual& y,
-      const Vdual& trials) override {
+      const Vdual& trials, const T& phi) override {
 
         return meanfun(linpred, trials).array() / trials.array() *
             (trials.array() - meanfun(linpred, trials).array());
@@ -105,10 +105,10 @@ struct Gaussian : Model<T> {
   // How to update diagonal variance matrix is model dependent
   Vdual get_V(
       const Vdual& linpred, const Vdual& u, const Vdual& y,
-      const Vdual& trials) override {
+      const Vdual& trials, const T& phi) override {
         int n = y.size();
         Vdual ret;
-        ret.setConstant(n, get_phi(linpred, u, y));
+        ret.setConstant(n, phi);
         return ret;
 
   };
@@ -147,7 +147,7 @@ struct Poisson : Model<T> {
   // How to update diagonal variance matrix is model dependent
   Vdual get_V(
       const Vdual& linpred, const Vdual& u, const Vdual& y,
-      const Vdual& trials) override {
+      const Vdual& trials, const T& phi) override {
         return meanfun(linpred, trials).array();
   };
 
