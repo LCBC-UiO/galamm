@@ -17,6 +17,14 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> linpred(
 };
 
 template <typename T>
+T get_phi(const Eigen::Matrix<T, Eigen::Dynamic, 1>& linpred,
+          const Eigen::Matrix<T, Eigen::Dynamic, 1>& u,
+          const Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
+          Model<T>& mod){
+  return mod.get_phi_component(linpred, u, y);
+}
+
+template <typename T>
 T exponent_g(
     const parameters<T>& parlist,
     const data<T>& datlist,
@@ -24,7 +32,7 @@ T exponent_g(
     const T k,
     Model<T>& mod
   ){
-  T phi = mod.get_phi(lp, parlist.u, datlist.y);
+  T phi = get_phi(lp, parlist.u, datlist.y, mod);
   return (datlist.y.dot(lp) - mod.cumulant(lp, datlist.trials)) / phi +
     mod.constfun(datlist.y, phi, k) -
     parlist.u.squaredNorm() / 2 / phi;
@@ -130,7 +138,7 @@ logLikObject<T> logLik(
   int n = datlist.X.rows();
   Vdual lp = linpred(parlist, datlist);
   Ddual V(n);
-  T phi = mod.get_phi(lp, parlist.u, datlist.y);
+  T phi = get_phi(lp, parlist.u, datlist.y, mod);
   V.diagonal() = mod.get_V(lp, parlist.u, datlist.y, datlist.trials, phi);
 
   update_Lambdat(parlist.Lambdat, parlist.theta, parlist.theta_mapping);
@@ -153,7 +161,7 @@ logLikObject<T> logLik(
     for(int j{}; j < 10; j++){
       parlist.u += step * delta_u;
       lp = linpred(parlist, datlist);
-      phi = mod.get_phi(lp, parlist.u, datlist.y);
+      phi = get_phi(lp, parlist.u, datlist.y, mod);
       V.diagonal() = mod.get_V(lp, parlist.u, datlist.y, datlist.trials, phi);
       H = inner_hessian(parlist, datlist, lp, phi, V);
       solver.factorize(H);
