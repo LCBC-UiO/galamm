@@ -1,34 +1,18 @@
 #include "data.h"
 #include "parameters.h"
 #include "model.h"
+#include "update_funs.h"
 #include <unsupported/Eigen/SpecialFunctions>
 using namespace autodiff;
 
 // [[Rcpp::depends(RcppEigen)]]
 
-
-
 template <typename T>
 Eigen::Matrix<T, Eigen::Dynamic, 1> linpred(
     const parameters<T>& parlist,
-    const data<T>& datlist,
-    Model<T>& mod
+    const data<T>& datlist
   ){
   return datlist.X * parlist.beta + datlist.Zt.transpose() * parlist.Lambdat.transpose() * parlist.u;
-};
-
-template <typename T>
-T exponent_g(
-    const parameters<T>& parlist,
-    const data<T>& datlist,
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& lp,
-    const T k,
-    Model<T>& mod
-  ){
-  T phi = mod.get_phi(lp, parlist.u, datlist.y);
-  return (datlist.y.dot(lp) - mod.cumulant(lp, datlist.trials)) / phi +
-    mod.constfun(lp, parlist.u, datlist.y, datlist.trials, k) -
-    parlist.u.squaredNorm() / 2 / phi;
 };
 
 template <typename T>
@@ -39,8 +23,12 @@ T loss(
     const T k,
     Model<T>& mod,
     Eigen::SimplicialLDLT<Eigen::SparseMatrix<T> >& solver){
-  return exponent_g(parlist, datlist, lp, k, mod) -
-    solver.vectorD().array().log().sum() / 2;
+  T phi = mod.get_phi_component(lp, parlist.u, datlist.y);
+  T exponent_g = (datlist.y.dot(lp) - mod.cumulant(lp, datlist.trials)) / phi +
+    mod.constfun(datlist.y, phi, k) -
+    parlist.u.squaredNorm() / 2 / phi;
+
+  return exponent_g - solver.vectorD().array().log().sum() / 2;
 }
 
 // Hessian matrix used in penalized iteratively reweighted least squares
@@ -48,62 +36,10 @@ template <typename T>
 Eigen::SparseMatrix<T> inner_hessian(
     const parameters<T>& parlist,
     const data<T>& datlist,
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& lp,
-    const T& phi,
-    const Eigen::DiagonalMatrix<T, Eigen::Dynamic>& V,
-    Model<T>& mod
+    const Eigen::DiagonalMatrix<T, Eigen::Dynamic>& V
   ){
-  return (1 / phi) * parlist.Lambdat * datlist.Zt * V *
+  return parlist.Lambdat * datlist.Zt * V *
     datlist.Zt.transpose() * parlist.Lambdat.transpose();
-};
-
-template <typename T>
-void update_Lambdat(Eigen::SparseMatrix<T>& Lambdat,
-                    Eigen::Matrix<T, Eigen::Dynamic, 1> theta,
-                    const Eigen::VectorXi& theta_mapping
-                      ){
-  int lind_counter{};
-  for (int k{}; k < Lambdat.outerSize(); ++k){
-    for (typename Eigen::SparseMatrix<T>::InnerIterator
-           it(Lambdat, k); it; ++it)
-    {
-      int ind = theta_mapping(lind_counter);
-      if(ind != -1){
-        it.valueRef() = theta(ind);
-      }
-      lind_counter++;
-    }
-  }
-};
-
-template <typename T>
-void update_X(Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& X,
-              Eigen::Matrix<T, Eigen::Dynamic, 1> lambda,
-              const Eigen::VectorXi& lambda_mapping_X){
-  if(lambda_mapping_X.size() == 0) return;
-  for(int i = 0; i < X.size(); i++){
-    int newind = lambda_mapping_X(i);
-    if(newind != -1){
-      *(X.data() + i) *= lambda(newind);
-    }
-  }
-};
-
-template <typename T>
-void update_Zt(Eigen::SparseMatrix<T>& Zt,
-               Eigen::Matrix<T, Eigen::Dynamic, 1> lambda,
-               const Eigen::VectorXi& lambda_mapping_Zt){
-  if(lambda_mapping_Zt.size() == 0) return;
-  int counter{};
-  for(int k{}; k < Zt.outerSize(); ++k){
-    for(typename Eigen::SparseMatrix<T>::InnerIterator it(Zt, k); it; ++it){
-      int newind = lambda_mapping_Zt(counter);
-      if(newind != -1){
-        it.valueRef() = lambda(newind) * it.value();
-      }
-      counter++;
-    }
-  }
 };
 
 template <typename T>
@@ -111,7 +47,6 @@ struct logLikObject {
   T logLikValue;
   Eigen::Matrix<T, Eigen::Dynamic, 1> V;
   Eigen::Matrix<T, Eigen::Dynamic, 1> u;
-  T phi;
 };
 
 template <typename T>
@@ -130,15 +65,14 @@ logLikObject<T> logLik(
   update_X(datlist.X, parlist.lambda, parlist.lambda_mapping_X);
 
   int n = datlist.X.rows();
-  Vdual lp = linpred(parlist, datlist, mod);
+  Vdual lp = linpred(parlist, datlist);
   Ddual V(n);
-  V.diagonal() = mod.get_V(lp, parlist.u, datlist.y, datlist.trials);
-  T phi = mod.get_phi(lp, parlist.u, datlist.y);
+  V.diagonal() = mod.get_V(lp, datlist.trials);
 
   update_Lambdat(parlist.Lambdat, parlist.theta, parlist.theta_mapping);
   Eigen::SimplicialLDLT<Eigen::SparseMatrix<T> > solver;
   solver.setShift(1);
-  SpMdual H = inner_hessian(parlist, datlist, lp, phi, V, mod);
+  SpMdual H = inner_hessian(parlist, datlist, V);
   solver.analyzePattern(H);
 
   Vdual delta_u{};
@@ -148,16 +82,15 @@ logLikObject<T> logLik(
 
   for(int i{}; i < mod.maxit_conditional_modes; i++){
     delta_u = solver.solve((parlist.Lambdat * datlist.Zt *
-      (datlist.y - mod.meanfun(linpred(parlist, datlist, mod), datlist.trials)) - parlist.u));
+      (datlist.y - mod.meanfun(linpred(parlist, datlist), datlist.trials)) - parlist.u));
     if(delta_u.squaredNorm() < mod.epsilon_u) break;
 
     double step = 1;
     for(int j{}; j < 10; j++){
       parlist.u += step * delta_u;
-      lp = linpred(parlist, datlist, mod);
-      phi = mod.get_phi(lp, parlist.u, datlist.y);
-      V.diagonal() = mod.get_V(lp, parlist.u, datlist.y, datlist.trials);
-      H = inner_hessian(parlist, datlist, lp, phi, V, mod);
+      lp = linpred(parlist, datlist);
+      V.diagonal() = mod.get_V(lp, datlist.trials);
+      H = inner_hessian(parlist, datlist, V);
       solver.factorize(H);
       deviance_new = -2 * loss(parlist, datlist, lp, k, mod, solver);
       if(deviance_new < deviance_prev){
@@ -177,7 +110,6 @@ logLikObject<T> logLik(
   ret.logLikValue = - deviance_new / 2;
   ret.V = V.diagonal();
   ret.u = parlist.u;
-  ret.phi = phi;
 
   return ret;
 }
@@ -231,8 +163,7 @@ Rcpp::List wrapper(
     Rcpp::Named("gradient") = g,
     Rcpp::Named("hessian") = H,
     Rcpp::Named("u") = extras.u.cast<double>(),
-    Rcpp::Named("V") = extras.V.cast<double>(),
-    Rcpp::Named("phi") = static_cast<double>(extras.phi)
+    Rcpp::Named("V") = extras.V.cast<double>()
   );
 }
 
