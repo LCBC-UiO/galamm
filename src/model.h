@@ -8,6 +8,13 @@
 
 template <typename T>
 struct Model {
+  Model(int maxit_conditional_modes, double epsilon_u) :
+  maxit_conditional_modes { maxit_conditional_modes },
+  epsilon_u { epsilon_u }{}
+
+  int maxit_conditional_modes;
+  double epsilon_u;
+
   typedef Eigen::Matrix<T, Eigen::Dynamic, 1> Vdual;
   typedef Eigen::DiagonalMatrix<T, Eigen::Dynamic> Ddual;
 
@@ -27,6 +34,8 @@ template <typename T>
 struct Binomial : Model<T> {
   typedef Eigen::Matrix<T, Eigen::Dynamic, 1> Vdual;
   typedef Eigen::DiagonalMatrix<T, Eigen::Dynamic> Ddual;
+
+  using Model<T>::Model;
 
   T cumulant(const Vdual& linpred,
              const Vdual& trials) override {
@@ -73,6 +82,8 @@ struct Gaussian : Model<T> {
   typedef Eigen::Matrix<T, Eigen::Dynamic, 1> Vdual;
   typedef Eigen::DiagonalMatrix<T, Eigen::Dynamic> Ddual;
 
+  using Model<T>::Model;
+
   T cumulant(const Vdual& linpred,
              const Vdual& trials) override {
     return linpred.squaredNorm() / 2;
@@ -112,8 +123,11 @@ struct Gaussian : Model<T> {
 
 template <typename T>
 struct Poisson : Model<T> {
+
   typedef Eigen::Matrix<T, Eigen::Dynamic, 1> Vdual;
   typedef Eigen::DiagonalMatrix<T, Eigen::Dynamic> Ddual;
+
+  using Model<T>::Model;
 
   T cumulant(const Vdual& linpred,
              const Vdual& trials) override {

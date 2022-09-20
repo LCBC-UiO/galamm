@@ -12,23 +12,28 @@ beta_inds <- 2:5
 glmod$reTrms$Lambdat@x <- rep(1, 15)
 
 
-tmp <- marginal_likelihood(
-  y = cbpp$incidence,
-  trials = cbpp$size,
-  X = glmod$X,
-  Zt = glmod$reTrms$Zt,
-  Lambdat = glmod$reTrms$Lambdat,
-  beta = opt2$par[beta_inds],
-  theta = opt2$par[theta_inds],
-  theta_mapping = glmod$reTrms$Lind - 1L,
-  lambda = numeric(),
-  lambda_mapping_X = integer(),
-  lambda_mapping_Zt = integer(),
-  u = rep(0, nrow(glmod$reTrms$Zt)),
-  family = "binomial",
-  maxit_conditional_modes = 50,
-  hessian = FALSE
-)
+system.time({
+  tmp <- marginal_likelihood(
+    y = cbpp$incidence,
+    trials = cbpp$size,
+    X = glmod$X,
+    Zt = glmod$reTrms$Zt,
+    Lambdat = glmod$reTrms$Lambdat,
+    beta = opt2$par[beta_inds],
+    theta = opt2$par[theta_inds],
+    theta_mapping = glmod$reTrms$Lind - 1L,
+    lambda = numeric(),
+    lambda_mapping_X = integer(),
+    lambda_mapping_Zt = integer(),
+    u = rep(0, nrow(glmod$reTrms$Zt)),
+    family = "binomial",
+    maxit_conditional_modes = 50,
+    hessian = FALSE,
+    epsilon_u = 1e-10
+  )
+})
+
+tmp
 
 plot(tmp$u, getME(fMod, "u")); abline(0,1)
 

@@ -36,12 +36,13 @@
 #' conditional models. Can be 1 when \code{family = "gaussian"}.
 #' @param hessian Boolean specifying whether to include the Hessian matrix
 #' at the given parameters. Defaults to \code{FALSE}.
+#' @param epsilon_u Toleranse in the inner iteration. Defaults to \code{1e-10}.
 #'
 #' @return A \code{list} with elements \code{logLik} and \code{gradient}.
 #' @export
 #'
 #' @details For examples, see the vignette on maximum likelihood estimation.
-marginal_likelihood <- function(y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, lambda, lambda_mapping_X, lambda_mapping_Zt, u, family, maxit_conditional_modes, hessian = FALSE) {
-    .Call(`_galamm_marginal_likelihood`, y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, lambda, lambda_mapping_X, lambda_mapping_Zt, u, family, maxit_conditional_modes, hessian)
+marginal_likelihood <- function(y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, lambda, lambda_mapping_X, lambda_mapping_Zt, u, family, maxit_conditional_modes, hessian = FALSE, epsilon_u = 1e-10) {
+    .Call(`_galamm_marginal_likelihood`, y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, lambda, lambda_mapping_X, lambda_mapping_Zt, u, family, maxit_conditional_modes, hessian, epsilon_u)
 }
 
