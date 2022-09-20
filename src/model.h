@@ -20,7 +20,7 @@ struct Model {
 
   virtual T cumulant(const Vdual& linpred, const Vdual& trials) = 0;
   virtual T constfun(const Vdual& linpred, const Vdual& u, const Vdual& y,
-                     const Vdual& trials, const T k) = 0;
+                     const Vdual& trials, const T& phi, const T k) = 0;
 
   virtual Vdual meanfun(const Vdual& linpred, const Vdual& trials) = 0;
 
@@ -46,6 +46,7 @@ struct Binomial : Model<T> {
              const Vdual& u,
              const Vdual& y,
              const Vdual& trials,
+             const T& phi,
              const T k) override {
     return k;
   };
@@ -93,10 +94,11 @@ struct Gaussian : Model<T> {
       const Vdual& u,
       const Vdual& y,
       const Vdual& trials,
+      const T& phi,
       const T k) override {
         int n = y.size();
-    return -.5 * (y.squaredNorm() / get_phi(linpred, u, y) +
-                  n * log(2 * M_PI * get_phi(linpred, u, y)));
+    return -.5 * (y.squaredNorm() / phi +
+                  n * log(2 * M_PI * phi));
   };
   Vdual meanfun(const Vdual& linpred, const Vdual& trials) override {
     return linpred;
@@ -137,6 +139,7 @@ struct Poisson : Model<T> {
              const Vdual& u,
              const Vdual& y,
              const Vdual& trials,
+             const T& phi,
              const T k) override {
     return k;
   };
