@@ -67,7 +67,8 @@ likelihood.</p>
 <span>  <span class="va">u</span>,</span>
 <span>  <span class="va">family</span>,</span>
 <span>  <span class="va">maxit_conditional_modes</span>,</span>
-<span>  hessian <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  hessian <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  epsilon_u <span class="op">=</span> <span class="fl">1e-10</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -146,6 +147,10 @@ conditional models. Can be 1 when <code>family = "gaussian"</code>.</p></dd>
 <dt>hessian</dt>
 <dd><p>Boolean specifying whether to include the Hessian matrix
 at the given parameters. Defaults to <code>FALSE</code>.</p></dd>
+
+
+<dt>epsilon_u</dt>
+<dd><p>Toleranse in the inner iteration. Defaults to <code>1e-10</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
