@@ -139,7 +139,7 @@ logLikObject<T> logLik(
   Vdual lp = linpred(parlist, datlist);
   Ddual V(n);
   T phi = get_phi(lp, parlist.u, datlist.y, mod);
-  V.diagonal() = mod.get_V(lp, parlist.u, datlist.y, datlist.trials);
+  V.diagonal() = mod.get_V(lp, datlist.trials);
 
   update_Lambdat(parlist.Lambdat, parlist.theta, parlist.theta_mapping);
   Eigen::SimplicialLDLT<Eigen::SparseMatrix<T> > solver;
@@ -162,7 +162,7 @@ logLikObject<T> logLik(
       parlist.u += step * delta_u;
       lp = linpred(parlist, datlist);
       phi = get_phi(lp, parlist.u, datlist.y, mod);
-      V.diagonal() = mod.get_V(lp, parlist.u, datlist.y, datlist.trials);
+      V.diagonal() = mod.get_V(lp, datlist.trials);
       H = inner_hessian(parlist, datlist, lp, phi, V);
       solver.factorize(H);
       deviance_new = -2 * loss(parlist, datlist, lp, k, mod, solver);
