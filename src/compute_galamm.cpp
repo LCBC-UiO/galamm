@@ -115,7 +115,6 @@ struct logLikObject {
   T logLikValue;
   Eigen::Matrix<T, Eigen::Dynamic, 1> V;
   Eigen::Matrix<T, Eigen::Dynamic, 1> u;
-  T phi;
 };
 
 template <typename T>
@@ -136,7 +135,6 @@ logLikObject<T> logLik(
   int n = datlist.X.rows();
   Vdual lp = linpred(parlist, datlist);
   Ddual V(n);
-  T phi = get_phi(lp, parlist.u, datlist.y, mod);
   V.diagonal() = mod.get_V(lp, datlist.trials);
 
   update_Lambdat(parlist.Lambdat, parlist.theta, parlist.theta_mapping);
@@ -159,7 +157,6 @@ logLikObject<T> logLik(
     for(int j{}; j < 10; j++){
       parlist.u += step * delta_u;
       lp = linpred(parlist, datlist);
-      phi = get_phi(lp, parlist.u, datlist.y, mod);
       V.diagonal() = mod.get_V(lp, datlist.trials);
       H = inner_hessian(parlist, datlist, V);
       solver.factorize(H);
@@ -181,7 +178,6 @@ logLikObject<T> logLik(
   ret.logLikValue = - deviance_new / 2;
   ret.V = V.diagonal();
   ret.u = parlist.u;
-  ret.phi = phi;
 
   return ret;
 }
@@ -235,8 +231,7 @@ Rcpp::List wrapper(
     Rcpp::Named("gradient") = g,
     Rcpp::Named("hessian") = H,
     Rcpp::Named("u") = extras.u.cast<double>(),
-    Rcpp::Named("V") = extras.V.cast<double>(),
-    Rcpp::Named("phi") = static_cast<double>(extras.phi)
+    Rcpp::Named("V") = extras.V.cast<double>()
   );
 }
 
