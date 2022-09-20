@@ -59,7 +59,7 @@ Eigen::SparseMatrix<T> inner_hessian(
     const T& phi,
     const Eigen::DiagonalMatrix<T, Eigen::Dynamic>& V
   ){
-  return (1 / phi) * parlist.Lambdat * datlist.Zt * V *
+  return parlist.Lambdat * datlist.Zt * V *
     datlist.Zt.transpose() * parlist.Lambdat.transpose();
 };
 
@@ -139,7 +139,7 @@ logLikObject<T> logLik(
   Vdual lp = linpred(parlist, datlist);
   Ddual V(n);
   T phi = get_phi(lp, parlist.u, datlist.y, mod);
-  V.diagonal() = mod.get_V(lp, parlist.u, datlist.y, datlist.trials, phi);
+  V.diagonal() = mod.get_V(lp, parlist.u, datlist.y, datlist.trials);
 
   update_Lambdat(parlist.Lambdat, parlist.theta, parlist.theta_mapping);
   Eigen::SimplicialLDLT<Eigen::SparseMatrix<T> > solver;
@@ -162,7 +162,7 @@ logLikObject<T> logLik(
       parlist.u += step * delta_u;
       lp = linpred(parlist, datlist);
       phi = get_phi(lp, parlist.u, datlist.y, mod);
-      V.diagonal() = mod.get_V(lp, parlist.u, datlist.y, datlist.trials, phi);
+      V.diagonal() = mod.get_V(lp, parlist.u, datlist.y, datlist.trials);
       H = inner_hessian(parlist, datlist, lp, phi, V);
       solver.factorize(H);
       deviance_new = -2 * loss(parlist, datlist, lp, k, mod, solver);
