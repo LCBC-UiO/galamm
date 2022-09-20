@@ -105,7 +105,6 @@ ml <- marginal_likelihood(
   lambda = irt.model$Lambda[[1]][, "abil.sid", drop = TRUE][2:3],
   lambda_mapping_X = integer(),
   lambda_mapping_Zt = lambda_mapping_Zt,
-  u = rep(0, nrow(Zt)),
   family = "gaussian",
   maxit_conditional_modes = 1
 )
@@ -148,7 +147,6 @@ mlwrapper <- function(par){
     lambda = par[lambda_inds],
     lambda_mapping_X = integer(),
     lambda_mapping_Zt = lambda_mapping_Zt,
-    u = rep(0, nrow(Zt)),
     family = "gaussian",
     maxit_conditional_modes = 1
     )
@@ -229,7 +227,6 @@ final_model <- marginal_likelihood(
   lambda = opt$par[lambda_inds],
   lambda_mapping_X = integer(),
   lambda_mapping_Zt = lambda_mapping_Zt,
-  u = rep(0, nrow(Zt)),
   family = "gaussian",
   maxit_conditional_modes = 1,
   hessian = TRUE
@@ -287,7 +284,6 @@ mlwrapper <- function(par, hessian = FALSE){
     lambda = numeric(),
     lambda_mapping_X = integer(),
     lambda_mapping_Zt = integer(),
-    u = rep(0, nrow(glmod$reTrms$Zt)),
     family = "binomial",
     maxit_conditional_modes = 50,
     hessian = hessian
@@ -453,7 +449,6 @@ mlwrapper <- function(par, hessian = FALSE){
     lambda = numeric(),
     lambda_mapping_X = integer(),
     lambda_mapping_Zt = integer(),
-    u = rep(0, nrow(lmod$reTrms$Zt)),
     family = "gaussian",
     maxit_conditional_modes = 1, 
     hessian = hessian
@@ -581,14 +576,9 @@ The lambda mapping for `Zt` runs through the vector of structural nonzeros. Comp
 
 ```{r}
 table(diff(lmod$reTrms$Zt@p))
-```
 
-
-```{r}
 lambda_mapping_Zt <- rep(-1:1, each = 9, times = 300)
-```
 
-```{r}
 X <- lmod$X / as.numeric(lambda_init[lambda_mapping_X + 2L])
 Zt <- lmod$reTrms$Zt
 Zt@x <- Zt@x / as.numeric(lambda_init[lambda_mapping_Zt + 2L])
@@ -632,7 +622,6 @@ margl <- marginal_likelihood(
   lambda = lambda_init[-1],
   lambda_mapping_X = lambda_mapping_X,
   lambda_mapping_Zt = lambda_mapping_Zt,
-  u = rep(0, nrow(Zt)),
   family = "gaussian",
   maxit_conditional_modes = 1
 )
@@ -662,7 +651,6 @@ mlwrapper <- function(par, hessian = FALSE){
     lambda = par[lambda_inds],
     lambda_mapping_X = lambda_mapping_X,
     lambda_mapping_Zt = lambda_mapping_Zt,
-    u = rep(0, nrow(Zt)),
     family = "gaussian",
     maxit_conditional_modes = 1,
     hessian = hessian

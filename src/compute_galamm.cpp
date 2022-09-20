@@ -267,7 +267,6 @@ Rcpp::List wrapper(
 //' \code{integer()} if not used. An entry \code{-1} indicates that the
 //' corresponding value of \code{X} does not depend on \code{lambda},
 //' as in the case where the first element of \code{lambda} is fixed to 1.
-//' @param u A \code{numeric} vector of initial values for the random effects.
 //' @param family A length one \code{character} denoting the family.
 //' @param maxit_conditional_modes Maximum number of iterations for
 //' conditional models. Can be 1 when \code{family = "gaussian"}.
@@ -292,7 +291,6 @@ Rcpp::List marginal_likelihood(
     const Eigen::Map<Eigen::VectorXd> lambda,
     const Eigen::Map<Eigen::VectorXi> lambda_mapping_X,
     const Eigen::Map<Eigen::VectorXi> lambda_mapping_Zt,
-    const Eigen::Map<Eigen::VectorXd> u,
     const std::string family,
     const int maxit_conditional_modes,
     const bool hessian = false,
@@ -301,8 +299,9 @@ Rcpp::List marginal_likelihood(
 
   if(hessian){
     data<dual2nd> datlist(y, trials, X, Zt);
-    parameters<dual2nd> parlist(theta, beta, lambda, u, theta_mapping,
-                                lambda_mapping_X, lambda_mapping_Zt, Lambdat);
+    parameters<dual2nd> parlist(
+        theta, beta, lambda, Eigen::VectorXd::Zero(Zt.rows()), theta_mapping,
+        lambda_mapping_X, lambda_mapping_Zt, Lambdat);
 
     if(family == "gaussian"){
       Gaussian<dual2nd> mod{ maxit_conditional_modes, epsilon_u };
@@ -324,8 +323,9 @@ Rcpp::List marginal_likelihood(
     }
   } else {
     data<dual1st> datlist(y, trials, X, Zt);
-    parameters<dual1st> parlist(theta, beta, lambda, u, theta_mapping,
-                                lambda_mapping_X, lambda_mapping_Zt, Lambdat);
+    parameters<dual1st> parlist(
+        theta, beta, lambda, Eigen::VectorXd::Zero(Zt.rows()), theta_mapping,
+        lambda_mapping_X, lambda_mapping_Zt, Lambdat);
 
     if(family == "gaussian"){
       Gaussian<dual1st> mod{ maxit_conditional_modes, epsilon_u };
