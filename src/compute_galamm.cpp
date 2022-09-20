@@ -17,20 +17,6 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> linpred(
 };
 
 template <typename T>
-T exponent_g(
-    const parameters<T>& parlist,
-    const data<T>& datlist,
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& lp,
-    const T k,
-    Model<T>& mod
-  ){
-  T phi = mod.get_phi_component(lp, parlist.u, datlist.y);
-  return (datlist.y.dot(lp) - mod.cumulant(lp, datlist.trials)) / phi +
-    mod.constfun(datlist.y, phi, k) -
-    parlist.u.squaredNorm() / 2 / phi;
-};
-
-template <typename T>
 T loss(
     const parameters<T>& parlist,
     const data<T>& datlist,
@@ -38,8 +24,12 @@ T loss(
     const T k,
     Model<T>& mod,
     Eigen::SimplicialLDLT<Eigen::SparseMatrix<T> >& solver){
-  return exponent_g(parlist, datlist, lp, k, mod) -
-    solver.vectorD().array().log().sum() / 2;
+  T phi = mod.get_phi_component(lp, parlist.u, datlist.y);
+  T exponent_g = (datlist.y.dot(lp) - mod.cumulant(lp, datlist.trials)) / phi +
+    mod.constfun(datlist.y, phi, k) -
+    parlist.u.squaredNorm() / 2 / phi;
+
+  return exponent_g - solver.vectorD().array().log().sum() / 2;
 }
 
 // Hessian matrix used in penalized iteratively reweighted least squares
