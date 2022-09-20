@@ -26,7 +26,7 @@ T exponent_g(
   ){
   T phi = mod.get_phi(lp, parlist.u, datlist.y);
   return (datlist.y.dot(lp) - mod.cumulant(lp, datlist.trials)) / phi +
-    mod.constfun(lp, parlist.u, datlist.y, datlist.trials, phi, k) -
+    mod.constfun(datlist.y, phi, k) -
     parlist.u.squaredNorm() / 2 / phi;
 };
 
