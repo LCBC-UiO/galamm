@@ -9,6 +9,12 @@ template <typename T>
 using Vdual = Eigen::Matrix<T, Eigen::Dynamic, 1>;
 template <typename T>
 using Ddual = Eigen::DiagonalMatrix<T, Eigen::Dynamic>;
+template <typename T>
+using SpMdual = Eigen::SparseMatrix<T>;
+template <typename T>
+using Mdual = Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>;
+template <typename T>
+using ldlt = Eigen::SimplicialLDLT<Eigen::SparseMatrix<T> >;
 
 template <typename T>
 struct Model {

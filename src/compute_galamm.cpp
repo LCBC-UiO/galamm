@@ -8,7 +8,7 @@ using namespace autodiff;
 // [[Rcpp::depends(RcppEigen)]]
 
 template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, 1> linpred(
+Vdual<T> linpred(
     const parameters<T>& parlist,
     const data<T>& datlist
   ){
@@ -19,10 +19,10 @@ template <typename T>
 T loss(
     const parameters<T>& parlist,
     const data<T>& datlist,
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& lp,
+    const Vdual<T>& lp,
     const T k,
     Model<T>& mod,
-    Eigen::SimplicialLDLT<Eigen::SparseMatrix<T> >& solver){
+    ldlt<T>& solver){
   T phi = mod.get_phi_component(lp, parlist.u, datlist.y);
 
   int n = lp.size();
@@ -41,7 +41,7 @@ T loss(
 
 // Hessian matrix used in penalized iteratively reweighted least squares
 template <typename T>
-Eigen::SparseMatrix<T> inner_hessian(
+SpMdual<T> inner_hessian(
     const parameters<T>& parlist,
     const data<T>& datlist,
     const Eigen::DiagonalMatrix<T, Eigen::Dynamic>& V
@@ -53,8 +53,8 @@ Eigen::SparseMatrix<T> inner_hessian(
 template <typename T>
 struct logLikObject {
   T logLikValue;
-  Eigen::Matrix<T, Eigen::Dynamic, 1> V;
-  Eigen::Matrix<T, Eigen::Dynamic, 1> u;
+  Vdual<T> V;
+  Vdual<T> u;
 };
 
 template <typename T>
@@ -64,8 +64,6 @@ logLikObject<T> logLik(
     const T k,
     Model<T>& mod
   ){
-  typedef Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> Mdual;
-  typedef Eigen::SparseMatrix<T> SpMdual;
 
   update_Zt(datlist.Zt, parlist.lambda, parlist.lambda_mapping_Zt);
   update_X(datlist.X, parlist.lambda, parlist.lambda_mapping_X);
@@ -76,9 +74,9 @@ logLikObject<T> logLik(
   V.diagonal() = mod.get_V(lp, datlist.trials);
 
   update_Lambdat(parlist.Lambdat, parlist.theta, parlist.theta_mapping);
-  Eigen::SimplicialLDLT<Eigen::SparseMatrix<T> > solver;
+  ldlt<T> solver;
   solver.setShift(1);
-  SpMdual H = inner_hessian(parlist, datlist, V);
+  SpMdual<T> H = inner_hessian(parlist, datlist, V);
   solver.analyzePattern(H);
 
   Vdual<T> delta_u{};

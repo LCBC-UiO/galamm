@@ -4,13 +4,12 @@
 #include "model.h"
 
 template <typename T>
-void update_Lambdat(Eigen::SparseMatrix<T>& Lambdat,
-                    Eigen::Matrix<T, Eigen::Dynamic, 1> theta,
+void update_Lambdat(SpMdual<T>& Lambdat, Vdual<T> theta,
                     const Eigen::VectorXi& theta_mapping
                       ){
   int lind_counter{};
   for (int k{}; k < Lambdat.outerSize(); ++k){
-    for (typename Eigen::SparseMatrix<T>::InnerIterator
+    for (typename SpMdual<T>::InnerIterator
            it(Lambdat, k); it; ++it)
     {
       int ind = theta_mapping(lind_counter);
@@ -23,8 +22,7 @@ void update_Lambdat(Eigen::SparseMatrix<T>& Lambdat,
 };
 
 template <typename T>
-void update_X(Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& X,
-              Eigen::Matrix<T, Eigen::Dynamic, 1> lambda,
+void update_X(Mdual<T>& X, Vdual<T> lambda,
               const Eigen::VectorXi& lambda_mapping_X){
   if(lambda_mapping_X.size() == 0) return;
   for(int i = 0; i < X.size(); i++){
@@ -36,13 +34,12 @@ void update_X(Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& X,
 };
 
 template <typename T>
-void update_Zt(Eigen::SparseMatrix<T>& Zt,
-               Eigen::Matrix<T, Eigen::Dynamic, 1> lambda,
+void update_Zt(SpMdual<T>& Zt, Vdual<T> lambda,
                const Eigen::VectorXi& lambda_mapping_Zt){
   if(lambda_mapping_Zt.size() == 0) return;
   int counter{};
   for(int k{}; k < Zt.outerSize(); ++k){
-    for(typename Eigen::SparseMatrix<T>::InnerIterator it(Zt, k); it; ++it){
+    for(typename SpMdual<T>::InnerIterator it(Zt, k); it; ++it){
       int newind = lambda_mapping_Zt(counter);
       if(newind != -1){
         it.valueRef() = lambda(newind) * it.value();
