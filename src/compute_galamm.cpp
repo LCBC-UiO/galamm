@@ -25,9 +25,10 @@ T loss(
     Eigen::SimplicialLDLT<Eigen::SparseMatrix<T> >& solver){
   T phi = mod.get_phi_component(lp, parlist.u, datlist.y);
 
+  int n = lp.size();
   T cum = 0;
   T cf = 0;
-  for(int i = 0; i < lp.size(); i++){
+  for(int i = 0; i < n; i++){
     cum += mod.cumulant(lp(i), datlist.trials(i));
     cf += mod.constfun(datlist.y(i), phi, k);
   }
