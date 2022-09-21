@@ -7,6 +7,8 @@
 
 template <typename T>
 using Vdual = Eigen::Matrix<T, Eigen::Dynamic, 1>;
+template <typename T>
+using Ddual = Eigen::DiagonalMatrix<T, Eigen::Dynamic>;
 
 template <typename T>
 struct Model {
@@ -18,7 +20,7 @@ struct Model {
   double epsilon_u;
 
 
-  typedef Eigen::DiagonalMatrix<T, Eigen::Dynamic> Ddual;
+
 
   virtual T cumulant(const T& linpred, const T& trials) = 0;
   virtual T constfun(const T& y, const T& phi, const T k) = 0;
@@ -32,8 +34,6 @@ struct Model {
 
 template <typename T>
 struct Binomial : Model<T> {
-
-  typedef Eigen::DiagonalMatrix<T, Eigen::Dynamic> Ddual;
 
   using Model<T>::Model;
 
@@ -72,8 +72,6 @@ struct Binomial : Model<T> {
 template <typename T>
 struct Gaussian : Model<T> {
 
-  typedef Eigen::DiagonalMatrix<T, Eigen::Dynamic> Ddual;
-
   using Model<T>::Model;
 
   T cumulant(const T& linpred, const T& trials) override {
@@ -106,8 +104,6 @@ struct Gaussian : Model<T> {
 
 template <typename T>
 struct Poisson : Model<T> {
-
-  typedef Eigen::DiagonalMatrix<T, Eigen::Dynamic> Ddual;
 
   using Model<T>::Model;
 
