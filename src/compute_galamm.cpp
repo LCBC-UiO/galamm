@@ -66,14 +66,13 @@ logLikObject<T> logLik(
   ){
   typedef Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> Mdual;
   typedef Eigen::SparseMatrix<T> SpMdual;
-  typedef Eigen::Matrix<T, Eigen::Dynamic, 1> Vdual;
   typedef Eigen::DiagonalMatrix<T, Eigen::Dynamic> Ddual;
 
   update_Zt(datlist.Zt, parlist.lambda, parlist.lambda_mapping_Zt);
   update_X(datlist.X, parlist.lambda, parlist.lambda_mapping_X);
 
   int n = datlist.X.rows();
-  Vdual lp = linpred(parlist, datlist);
+  Vdual<T> lp = linpred(parlist, datlist);
   Ddual V(n);
   V.diagonal() = mod.get_V(lp, datlist.trials);
 
@@ -83,7 +82,7 @@ logLikObject<T> logLik(
   SpMdual H = inner_hessian(parlist, datlist, V);
   solver.analyzePattern(H);
 
-  Vdual delta_u{};
+  Vdual<T> delta_u{};
   solver.factorize(H);
   T deviance_prev = -2 * loss(parlist, datlist, lp, k, mod, solver);
   T deviance_new;

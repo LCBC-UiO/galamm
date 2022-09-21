@@ -5,6 +5,8 @@
 #include <autodiff/forward/dual.hpp>
 #include <autodiff/forward/dual/eigen.hpp>
 
+template <typename T>
+using Vdual = Eigen::Matrix<T, Eigen::Dynamic, 1>;
 
 template <typename T>
 struct Model {
@@ -15,22 +17,22 @@ struct Model {
   int maxit_conditional_modes;
   double epsilon_u;
 
-  typedef Eigen::Matrix<T, Eigen::Dynamic, 1> Vdual;
+
   typedef Eigen::DiagonalMatrix<T, Eigen::Dynamic> Ddual;
 
   virtual T cumulant(const T& linpred, const T& trials) = 0;
   virtual T constfun(const T& y, const T& phi, const T k) = 0;
 
-  virtual Vdual meanfun(const Vdual& linpred, const Vdual& trials) = 0;
+  virtual Vdual<T> meanfun(const Vdual<T>& linpred, const Vdual<T>& trials) = 0;
 
-  virtual Vdual get_V(const Vdual& linpred, const Vdual& trials) = 0;
+  virtual Vdual<T> get_V(const Vdual<T>& linpred, const Vdual<T>& trials) = 0;
 
-  virtual T get_phi_component(const Vdual& linpred, const Vdual& u, const Vdual& y) = 0;
+  virtual T get_phi_component(const Vdual<T>& linpred, const Vdual<T>& u, const Vdual<T>& y) = 0;
 };
 
 template <typename T>
 struct Binomial : Model<T> {
-  typedef Eigen::Matrix<T, Eigen::Dynamic, 1> Vdual;
+
   typedef Eigen::DiagonalMatrix<T, Eigen::Dynamic> Ddual;
 
   using Model<T>::Model;
@@ -42,8 +44,8 @@ struct Binomial : Model<T> {
     return k;
   };
 
-  Vdual meanfun(const Vdual& linpred,
-                                   const Vdual& trials) override {
+  Vdual<T> meanfun(const Vdual<T>& linpred,
+                                   const Vdual<T>& trials) override {
     return linpred.array().exp() / (1 + linpred.array().exp()) * trials.array();
   };
 
@@ -52,24 +54,24 @@ struct Binomial : Model<T> {
   // expected successes, and not the expected proportion of successes.
   // Thus, mu(eta) = N * exp(eta) / (1 + exp(eta)) and
   // m'(eta) = d''(eta) = mu * (N - mu) / N.
-  Vdual get_V(
-      const Vdual& linpred,
-      const Vdual& trials) override {
+  Vdual<T> get_V(
+      const Vdual<T>& linpred,
+      const Vdual<T>& trials) override {
 
         return meanfun(linpred, trials).array() / trials.array() *
             (trials.array() - meanfun(linpred, trials).array());
   };
 
-  T get_phi_component(const Vdual& linpred,
-            const Vdual& u,
-            const Vdual& y) override {
+  T get_phi_component(const Vdual<T>& linpred,
+            const Vdual<T>& u,
+            const Vdual<T>& y) override {
               return 1;
   };
 };
 
 template <typename T>
 struct Gaussian : Model<T> {
-  typedef Eigen::Matrix<T, Eigen::Dynamic, 1> Vdual;
+
   typedef Eigen::DiagonalMatrix<T, Eigen::Dynamic> Ddual;
 
   using Model<T>::Model;
@@ -80,22 +82,22 @@ struct Gaussian : Model<T> {
   T constfun(const T& y, const T& phi, const T k) override {
     return -.5 * (pow(y, 2) / phi + log(2 * M_PI * phi));
   };
-  Vdual meanfun(const Vdual& linpred, const Vdual& trials) override {
+  Vdual<T> meanfun(const Vdual<T>& linpred, const Vdual<T>& trials) override {
     return linpred;
   };
 
   // How to update diagonal variance matrix is model dependent
-  Vdual get_V(
-      const Vdual& linpred, const Vdual& trials) override {
+  Vdual<T> get_V(
+      const Vdual<T>& linpred, const Vdual<T>& trials) override {
         int n = linpred.size();
-        Vdual ret;
+        Vdual<T> ret;
         ret.setConstant(n, 1);
         return ret;
 
   };
 
   T get_phi_component(
-      const Vdual& linpred, const Vdual& u, const Vdual& y) override {
+      const Vdual<T>& linpred, const Vdual<T>& u, const Vdual<T>& y) override {
         int n = y.size();
         return ((y - linpred).squaredNorm() + u.squaredNorm()) / n;
   };
@@ -105,7 +107,6 @@ struct Gaussian : Model<T> {
 template <typename T>
 struct Poisson : Model<T> {
 
-  typedef Eigen::Matrix<T, Eigen::Dynamic, 1> Vdual;
   typedef Eigen::DiagonalMatrix<T, Eigen::Dynamic> Ddual;
 
   using Model<T>::Model;
@@ -116,18 +117,18 @@ struct Poisson : Model<T> {
   T constfun(const T& y, const T& phi, const T k) override {
     return k;
   };
-  Vdual meanfun(const Vdual& linpred, const Vdual& trials) override {
+  Vdual<T> meanfun(const Vdual<T>& linpred, const Vdual<T>& trials) override {
     return linpred.array().exp();
   };
 
   // How to update diagonal variance matrix is model dependent
-  Vdual get_V(
-      const Vdual& linpred,
-      const Vdual& trials) override {
+  Vdual<T> get_V(
+      const Vdual<T>& linpred,
+      const Vdual<T>& trials) override {
         return meanfun(linpred, trials).array();
   };
 
-  T get_phi_component(const Vdual& linpred, const Vdual& u, const Vdual& y) override {
+  T get_phi_component(const Vdual<T>& linpred, const Vdual<T>& u, const Vdual<T>& y) override {
     return 1;
   };
 
