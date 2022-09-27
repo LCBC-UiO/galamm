@@ -30,6 +30,7 @@
 #' \code{integer()} if not used. An entry \code{-1} indicates that the
 #' corresponding value of \code{X} does not depend on \code{lambda},
 #' as in the case where the first element of \code{lambda} is fixed to 1.
+#' @param weights Vector of weights.
 #' @param family A length one \code{character} denoting the family.
 #' @param maxit_conditional_modes Maximum number of iterations for
 #' conditional models. Can be 1 when \code{family = "gaussian"}.
@@ -41,7 +42,7 @@
 #' @export
 #'
 #' @details For examples, see the vignette on maximum likelihood estimation.
-marginal_likelihood <- function(y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, lambda, lambda_mapping_X, lambda_mapping_Zt, family, maxit_conditional_modes, hessian = FALSE, epsilon_u = 1e-10) {
-    .Call(`_galamm_marginal_likelihood`, y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, lambda, lambda_mapping_X, lambda_mapping_Zt, family, maxit_conditional_modes, hessian, epsilon_u)
+marginal_likelihood <- function(y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, lambda, lambda_mapping_X, lambda_mapping_Zt, weights, family, maxit_conditional_modes, hessian = FALSE, epsilon_u = 1e-10) {
+    .Call(`_galamm_marginal_likelihood`, y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, lambda, lambda_mapping_X, lambda_mapping_Zt, weights, family, maxit_conditional_modes, hessian, epsilon_u)
 }
 

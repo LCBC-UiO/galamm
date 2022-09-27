@@ -157,6 +157,7 @@ Rcpp::List wrapper(
     Eigen::VectorXd lambda,
     Eigen::VectorXi lambda_mapping_X,
     Eigen::VectorXi lambda_mapping_Zt,
+    Eigen::VectorXd weights,
     std::string family,
     int maxit_conditional_modes,
     double epsilon_u
@@ -165,8 +166,8 @@ Rcpp::List wrapper(
   data<T> datlist{y, trials, X, Zt};
   parameters<T> parlist{
       theta, beta, lambda, Eigen::VectorXd::Zero(Zt.rows()), theta_mapping,
-      lambda_mapping_X, lambda_mapping_Zt, Lambdat, maxit_conditional_modes,
-      epsilon_u};
+      lambda_mapping_X, lambda_mapping_Zt, Lambdat, weights,
+      maxit_conditional_modes, epsilon_u};
 
   T k{0};
   if(family == "binomial"){
@@ -231,6 +232,7 @@ Rcpp::List wrapper(
 //' \code{integer()} if not used. An entry \code{-1} indicates that the
 //' corresponding value of \code{X} does not depend on \code{lambda},
 //' as in the case where the first element of \code{lambda} is fixed to 1.
+//' @param weights Vector of weights.
 //' @param family A length one \code{character} denoting the family.
 //' @param maxit_conditional_modes Maximum number of iterations for
 //' conditional models. Can be 1 when \code{family = "gaussian"}.
@@ -255,6 +257,7 @@ Rcpp::List marginal_likelihood(
     const Eigen::Map<Eigen::VectorXd> lambda,
     const Eigen::Map<Eigen::VectorXi> lambda_mapping_X,
     const Eigen::Map<Eigen::VectorXi> lambda_mapping_Zt,
+    const Eigen::Map<Eigen::VectorXd> weights,
     const std::string family,
     const int maxit_conditional_modes,
     const bool hessian = false,
@@ -264,12 +267,12 @@ Rcpp::List marginal_likelihood(
   if(hessian){
     return wrapper<dual2nd>(
       y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, lambda,
-      lambda_mapping_X, lambda_mapping_Zt,
+      lambda_mapping_X, lambda_mapping_Zt, weights,
       family, maxit_conditional_modes, epsilon_u);
   } else {
     return wrapper<dual1st>(
       y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, lambda,
-      lambda_mapping_X, lambda_mapping_Zt,
+      lambda_mapping_X, lambda_mapping_Zt, weights,
       family, maxit_conditional_modes, epsilon_u);
   }
 

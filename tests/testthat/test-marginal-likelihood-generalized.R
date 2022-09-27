@@ -25,6 +25,7 @@ mlwrapper <- function(par, hessian = FALSE){
     lambda = numeric(),
     lambda_mapping_X = integer(),
     lambda_mapping_Zt = integer(),
+    weights = rep(1, length(cbpp$y)),
     family = "binomial",
     maxit_conditional_modes = 50,
     hessian = hessian
