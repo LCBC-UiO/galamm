@@ -24,7 +24,10 @@ T loss(
     Model<T>* mod,
     ldlt<T>& solver){
   T phi = mod->get_phi(lp, parlist.u, datlist.y, parlist.Winv);
-  T exponent_g = ((datlist.y).dot(lp) - mod->cumulant(lp, datlist.trials)) / phi +
+  T part1 = (parlist.Winv.diagonal().array() * datlist.y.array() * lp.array()).sum();
+
+  T exponent_g = (part1
+                    - mod->cumulant(lp, datlist.trials)) / phi +
     mod->constfun(datlist.y, phi, k) - parlist.u.squaredNorm() / 2 / phi;
 
   return exponent_g - solver.vectorD().array().log().sum() / 2;

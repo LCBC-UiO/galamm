@@ -28,7 +28,8 @@ struct parameters{
   Lambdat { Lambdat.cast<T>() },
   weights { weights.cast<T>() },
   maxit_conditional_modes { maxit_conditional_modes },
-  epsilon_u { epsilon_u }{
+  epsilon_u { epsilon_u }
+  {
     Winv.diagonal() = 1 / weights.array();
   }
 
