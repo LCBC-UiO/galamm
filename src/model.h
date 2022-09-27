@@ -24,18 +24,11 @@ struct Model {
 
   int maxit_conditional_modes;
   double epsilon_u;
-
-
-
-
-  virtual T cumulant(const T& linpred, const T& trials) = 0;
-  virtual T constfun(const T& y, const T& phi, const T k) = 0;
-
+  virtual T cumulant(const Vdual<T>& linpred, const Vdual<T>& trials) = 0;
+  virtual T constfun(const Vdual<T>& y, const T& phi, const T k) = 0;
   virtual Vdual<T> meanfun(const Vdual<T>& linpred, const Vdual<T>& trials) = 0;
-
   virtual Vdual<T> get_V(const Vdual<T>& linpred, const Vdual<T>& trials) = 0;
-
-  virtual T get_phi_component(const Vdual<T>& linpred, const Vdual<T>& u, const Vdual<T>& y) = 0;
+  virtual T get_phi(const Vdual<T>& linpred, const Vdual<T>& u, const Vdual<T>& y) = 0;
 };
 
 template <typename T>
@@ -43,10 +36,10 @@ struct Binomial : Model<T> {
 
   using Model<T>::Model;
 
-  T cumulant(const T& linpred, const T& trials) override {
-    return log(1 + exp(linpred)) * trials;
+  T cumulant(const Vdual<T>& linpred, const Vdual<T>& trials) override {
+    return ((1 + linpred.array().exp()).log() * trials.array()).sum();
   };
-  T constfun(const T& y, const T& phi, const T k) override {
+  T constfun(const Vdual<T>& y, const T& phi, const T k) override {
     return k;
   };
 
@@ -68,7 +61,7 @@ struct Binomial : Model<T> {
             (trials.array() - meanfun(linpred, trials).array());
   };
 
-  T get_phi_component(const Vdual<T>& linpred,
+  T get_phi(const Vdual<T>& linpred,
             const Vdual<T>& u,
             const Vdual<T>& y) override {
               return 1;
@@ -80,11 +73,12 @@ struct Gaussian : Model<T> {
 
   using Model<T>::Model;
 
-  T cumulant(const T& linpred, const T& trials) override {
-    return pow(linpred, 2) / 2;
+  T cumulant(const Vdual<T>& linpred, const Vdual<T>& trials) override {
+    return linpred.squaredNorm() / 2;
   };
-  T constfun(const T& y, const T& phi, const T k) override {
-    return -.5 * (pow(y, 2) / phi + log(2 * M_PI * phi));
+  T constfun(const Vdual<T>& y, const T& phi, const T k) override {
+    int n = y.size();
+    return -.5 * (y.squaredNorm() / phi + n * log(2 * M_PI * phi));
   };
   Vdual<T> meanfun(const Vdual<T>& linpred, const Vdual<T>& trials) override {
     return linpred;
@@ -100,7 +94,7 @@ struct Gaussian : Model<T> {
 
   };
 
-  T get_phi_component(
+  T get_phi(
       const Vdual<T>& linpred, const Vdual<T>& u, const Vdual<T>& y) override {
         int n = y.size();
         return ((y - linpred).squaredNorm() + u.squaredNorm()) / n;
@@ -113,10 +107,10 @@ struct Poisson : Model<T> {
 
   using Model<T>::Model;
 
-  T cumulant(const T& linpred, const T& trials) override {
-    return exp(linpred);
+  T cumulant(const Vdual<T>& linpred, const Vdual<T>& trials) override {
+    return linpred.array().exp().sum();
   };
-  T constfun(const T& y, const T& phi, const T k) override {
+  T constfun(const Vdual<T>& y, const T& phi, const T k) override {
     return k;
   };
   Vdual<T> meanfun(const Vdual<T>& linpred, const Vdual<T>& trials) override {
@@ -130,7 +124,7 @@ struct Poisson : Model<T> {
         return meanfun(linpred, trials).array();
   };
 
-  T get_phi_component(const Vdual<T>& linpred, const Vdual<T>& u, const Vdual<T>& y) override {
+  T get_phi(const Vdual<T>& linpred, const Vdual<T>& u, const Vdual<T>& y) override {
     return 1;
   };
 
