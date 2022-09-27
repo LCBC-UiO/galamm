@@ -30,7 +30,7 @@ struct parameters{
   maxit_conditional_modes { maxit_conditional_modes },
   epsilon_u { epsilon_u }
   {
-    Winv.diagonal() = 1 / weights.array();
+    WinvSqrt.diagonal() = 1 / weights.array().sqrt();
   }
 
 
@@ -43,9 +43,17 @@ struct parameters{
   Eigen::VectorXi lambda_mapping_Zt;
   Eigen::SparseMatrix<T> Lambdat;
   Vdual<T> weights;
-  Ddual<T> Winv;
+  Ddual<T> WinvSqrt;
   int maxit_conditional_modes;
   double epsilon_u;
+};
+
+template <typename T>
+struct logLikObject {
+  T logLikValue;
+  Vdual<T> V;
+  Vdual<T> u;
+  T phi;
 };
 
 #endif

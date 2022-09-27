@@ -12,7 +12,8 @@ Vdual<T> linpred(
     const parameters<T>& parlist,
     const data<T>& datlist
   ){
-  return datlist.X * parlist.beta + datlist.Zt.transpose() * parlist.Lambdat.transpose() * parlist.u;
+  return datlist.X * parlist.beta + datlist.Zt.transpose() *
+    parlist.Lambdat.transpose() * parlist.u;
 };
 
 template <typename T>
@@ -23,11 +24,11 @@ T loss(
     const T k,
     Model<T>* mod,
     ldlt<T>& solver){
-  T phi = mod->get_phi(lp, parlist.u, datlist.y, parlist.Winv);
+  T phi = mod->get_phi(lp, parlist.u, datlist.y, parlist.WinvSqrt);
 
-  T exponent_g = ((parlist.Winv * datlist.y).dot(lp) -
-    mod->cumulant(lp, datlist.trials, parlist.Winv)) / phi +
-    mod->constfun(datlist.y, phi, k, parlist.Winv) - parlist.u.squaredNorm() / 2 / phi;
+  T exponent_g = ((datlist.y.array() / parlist.weights.array() * lp.array()).sum() -
+    mod->cumulant(lp, datlist.trials, parlist.WinvSqrt)) / phi +
+    mod->constfun(datlist.y, phi, k, parlist.WinvSqrt) - parlist.u.squaredNorm() / 2 / phi;
 
   return exponent_g - solver.vectorD().array().log().sum() / 2;
 }
@@ -44,14 +45,6 @@ SpMdual<T> inner_hessian(
 };
 
 template <typename T>
-struct logLikObject {
-  T logLikValue;
-  Vdual<T> V;
-  Vdual<T> u;
-  T phi;
-};
-
-template <typename T>
 logLikObject<T> logLik(
     parameters<T> parlist,
     data<T> datlist,
@@ -62,9 +55,8 @@ logLikObject<T> logLik(
   update_Zt(datlist.Zt, parlist.lambda, parlist.lambda_mapping_Zt);
   update_X(datlist.X, parlist.lambda, parlist.lambda_mapping_X);
 
-  int n = datlist.X.rows();
   Vdual<T> lp = linpred(parlist, datlist);
-  Ddual<T> V(n);
+  Ddual<T> V;
   V.diagonal() = mod->get_V(lp, datlist.trials, parlist.weights);
 
   update_Lambdat(parlist.Lambdat, parlist.theta, parlist.theta_mapping);
@@ -79,8 +71,9 @@ logLikObject<T> logLik(
   T deviance_new;
 
   for(int i{}; i < parlist.maxit_conditional_modes; i++){
-    delta_u = solver.solve((parlist.Lambdat * datlist.Zt *
-      (datlist.y - mod->meanfun(linpred(parlist, datlist), datlist.trials)) - parlist.u));
+    delta_u = solver.solve(
+      (parlist.Lambdat * datlist.Zt * parlist.WinvSqrt * parlist.WinvSqrt *
+        (datlist.y - mod->meanfun(linpred(parlist, datlist), datlist.trials))) - parlist.u);
     if(delta_u.squaredNorm() < parlist.epsilon_u) break;
 
     double step = 1;
@@ -108,7 +101,7 @@ logLikObject<T> logLik(
   ret.logLikValue = - deviance_new / 2;
   ret.V = V.diagonal();
   ret.u = parlist.u;
-  ret.phi = mod->get_phi(lp, parlist.u, datlist.y, parlist.Winv);
+  ret.phi = mod->get_phi(lp, parlist.u, datlist.y, parlist.WinvSqrt);
 
   return ret;
 }
@@ -148,21 +141,21 @@ Rcpp::List create_result(Functor1 fx, Functor2 gx, parameters<dual2nd>& parlist)
 
 template <typename T>
 Rcpp::List wrapper(
-    Eigen::VectorXd y,
-    Eigen::VectorXd trials,
-    Eigen::MatrixXd X,
-    Eigen::SparseMatrix<double> Zt,
-    Eigen::SparseMatrix<double> Lambdat,
-    Eigen::VectorXd beta,
-    Eigen::VectorXd theta,
-    Eigen::VectorXi theta_mapping,
-    Eigen::VectorXd lambda,
-    Eigen::VectorXi lambda_mapping_X,
-    Eigen::VectorXi lambda_mapping_Zt,
-    Eigen::VectorXd weights,
-    std::string family,
-    int maxit_conditional_modes,
-    double epsilon_u
+    const Eigen::VectorXd& y,
+    const Eigen::VectorXd& trials,
+    const Eigen::MatrixXd& X,
+    const Eigen::SparseMatrix<double>& Zt,
+    const Eigen::SparseMatrix<double>& Lambdat,
+    const Eigen::VectorXd& beta,
+    const Eigen::VectorXd& theta,
+    const Eigen::VectorXi& theta_mapping,
+    const Eigen::VectorXd& lambda,
+    const Eigen::VectorXi& lambda_mapping_X,
+    const Eigen::VectorXi& lambda_mapping_Zt,
+    const Eigen::VectorXd& weights,
+    const std::string& family,
+    const int& maxit_conditional_modes,
+    const double& epsilon_u
   ){
 
   data<T> datlist{y, trials, X, Zt};
