@@ -4,14 +4,15 @@
 #include <RcppEigen.h>
 #include <autodiff/forward/dual.hpp>
 #include <autodiff/forward/dual/eigen.hpp>
+#include "model.h"
 
 template <typename T>
 struct parameters{
   parameters(
-    Eigen::Matrix<double, Eigen::Dynamic, 1> theta,
-    Eigen::Matrix<double, Eigen::Dynamic, 1> beta,
-    Eigen::Matrix<double, Eigen::Dynamic, 1> lambda,
-    Eigen::Matrix<double, Eigen::Dynamic, 1> u,
+    Eigen::VectorXd theta,
+    Eigen::VectorXd beta,
+    Eigen::VectorXd lambda,
+    Eigen::VectorXd u,
     Eigen::VectorXi theta_mapping,
     Eigen::VectorXi lambda_mapping_X,
     Eigen::VectorXi lambda_mapping_Zt,
@@ -24,10 +25,10 @@ struct parameters{
   Lambdat { Lambdat.cast<T>() }
   {}
 
-  Eigen::Matrix<T, Eigen::Dynamic, 1> theta;
-  Eigen::Matrix<T, Eigen::Dynamic, 1> beta;
-  Eigen::Matrix<T, Eigen::Dynamic, 1> lambda;
-  Eigen::Matrix<T, Eigen::Dynamic, 1> u;
+  Vdual<T> theta;
+  Vdual<T> beta;
+  Vdual<T> lambda;
+  Vdual<T> u;
   Eigen::VectorXi theta_mapping;
   Eigen::VectorXi lambda_mapping_X;
   Eigen::VectorXi lambda_mapping_Zt;
