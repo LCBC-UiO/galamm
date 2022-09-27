@@ -23,8 +23,8 @@ T loss(
     const T k,
     Model<T>* mod,
     ldlt<T>& solver){
-  T phi = mod->get_phi(lp, parlist.u, datlist.y);
-  T exponent_g = (datlist.y.dot(lp) - mod->cumulant(lp, datlist.trials)) / phi +
+  T phi = mod->get_phi(lp, parlist.u, datlist.y, parlist.Winv);
+  T exponent_g = ((datlist.y).dot(lp) - mod->cumulant(lp, datlist.trials)) / phi +
     mod->constfun(datlist.y, phi, k) - parlist.u.squaredNorm() / 2 / phi;
 
   return exponent_g - solver.vectorD().array().log().sum() / 2;
@@ -106,7 +106,7 @@ logLikObject<T> logLik(
   ret.logLikValue = - deviance_new / 2;
   ret.V = V.diagonal();
   ret.u = parlist.u;
-  ret.phi = mod->get_phi(lp, parlist.u, datlist.y);
+  ret.phi = mod->get_phi(lp, parlist.u, datlist.y, parlist.Winv);
 
   return ret;
 }
