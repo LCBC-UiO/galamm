@@ -24,13 +24,13 @@ T loss(
     Model<T>* mod,
     ldlt<T>& solver){
   T phi = mod->get_phi(lp, parlist.u, datlist.y, parlist.Winv);
-  T part1 = (parlist.Winv.diagonal().array() * datlist.y.array() * lp.array()).sum();
 
-  T exponent_g = (part1
-                    - mod->cumulant(lp, datlist.trials)) / phi +
+  T exponent_g = ((parlist.Winv * datlist.y).dot(lp) -
+    mod->cumulant(lp, datlist.trials, parlist.Winv)) / phi +
     mod->constfun(datlist.y, phi, k) - parlist.u.squaredNorm() / 2 / phi;
 
-  return exponent_g - solver.vectorD().array().log().sum() / 2;
+  return exponent_g - solver.vectorD().array().log().sum() / 2 +
+    parlist.weights.array().log().sum() / 2;
 }
 
 // Hessian matrix used in penalized iteratively reweighted least squares

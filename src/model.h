@@ -18,7 +18,8 @@ using ldlt = Eigen::SimplicialLDLT<Eigen::SparseMatrix<T> >;
 
 template <typename T>
 struct Model {
-  virtual T cumulant(const Vdual<T>& linpred, const Vdual<T>& trials) = 0;
+  virtual T cumulant(const Vdual<T>& linpred, const Vdual<T>& trials,
+                     const Ddual<T>& Winv) = 0;
   virtual T constfun(const Vdual<T>& y, const T& phi, const T k) = 0;
   virtual Vdual<T> meanfun(const Vdual<T>& linpred, const Vdual<T>& trials) = 0;
   virtual Vdual<T> get_V(const Vdual<T>& linpred, const Vdual<T>& trials,
@@ -29,7 +30,8 @@ struct Model {
 
 template <typename T>
 struct Binomial : Model<T> {
-  T cumulant(const Vdual<T>& linpred, const Vdual<T>& trials) override {
+  T cumulant(const Vdual<T>& linpred, const Vdual<T>& trials,
+             const Ddual<T>& Winv) override {
     return ((1 + linpred.array().exp()).log() * trials.array()).sum();
   };
   T constfun(const Vdual<T>& y, const T& phi, const T k) override {
@@ -63,8 +65,9 @@ struct Binomial : Model<T> {
 template <typename T>
 struct Gaussian : Model<T> {
 
-  T cumulant(const Vdual<T>& linpred, const Vdual<T>& trials) override {
-    return (linpred).squaredNorm() / 2;
+  T cumulant(const Vdual<T>& linpred, const Vdual<T>& trials,
+             const Ddual<T>& Winv) override {
+    return (Winv * linpred).squaredNorm() / 2;
   };
   T constfun(const Vdual<T>& y, const T& phi, const T k) override {
     int n = y.size();
@@ -92,7 +95,8 @@ struct Gaussian : Model<T> {
 
 template <typename T>
 struct Poisson : Model<T> {
-  T cumulant(const Vdual<T>& linpred, const Vdual<T>& trials) override {
+  T cumulant(const Vdual<T>& linpred, const Vdual<T>& trials,
+             const Ddual<T>& Winv) override {
     return linpred.array().exp().sum();
   };
   T constfun(const Vdual<T>& y, const T& phi, const T k) override {
