@@ -18,12 +18,6 @@ using ldlt = Eigen::SimplicialLDLT<Eigen::SparseMatrix<T> >;
 
 template <typename T>
 struct Model {
-  Model(int maxit_conditional_modes, double epsilon_u) :
-  maxit_conditional_modes { maxit_conditional_modes },
-  epsilon_u { epsilon_u }{}
-
-  int maxit_conditional_modes;
-  double epsilon_u;
   virtual T cumulant(const Vdual<T>& linpred, const Vdual<T>& trials) = 0;
   virtual T constfun(const Vdual<T>& y, const T& phi, const T k) = 0;
   virtual Vdual<T> meanfun(const Vdual<T>& linpred, const Vdual<T>& trials) = 0;
@@ -33,9 +27,6 @@ struct Model {
 
 template <typename T>
 struct Binomial : Model<T> {
-
-  using Model<T>::Model;
-
   T cumulant(const Vdual<T>& linpred, const Vdual<T>& trials) override {
     return ((1 + linpred.array().exp()).log() * trials.array()).sum();
   };
@@ -71,8 +62,6 @@ struct Binomial : Model<T> {
 template <typename T>
 struct Gaussian : Model<T> {
 
-  using Model<T>::Model;
-
   T cumulant(const Vdual<T>& linpred, const Vdual<T>& trials) override {
     return linpred.squaredNorm() / 2;
   };
@@ -104,9 +93,6 @@ struct Gaussian : Model<T> {
 
 template <typename T>
 struct Poisson : Model<T> {
-
-  using Model<T>::Model;
-
   T cumulant(const Vdual<T>& linpred, const Vdual<T>& trials) override {
     return linpred.array().exp().sum();
   };
