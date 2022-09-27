@@ -27,10 +27,9 @@ T loss(
 
   T exponent_g = ((parlist.Winv * datlist.y).dot(lp) -
     mod->cumulant(lp, datlist.trials, parlist.Winv)) / phi +
-    mod->constfun(datlist.y, phi, k) - parlist.u.squaredNorm() / 2 / phi;
+    mod->constfun(datlist.y, phi, k, parlist.Winv) - parlist.u.squaredNorm() / 2 / phi;
 
-  return exponent_g - solver.vectorD().array().log().sum() / 2 +
-    parlist.weights.array().log().sum() / 2;
+  return exponent_g - solver.vectorD().array().log().sum() / 2;
 }
 
 // Hessian matrix used in penalized iteratively reweighted least squares
