@@ -46,6 +46,7 @@ struct logLikObject {
   T logLikValue;
   Vdual<T> V;
   Vdual<T> u;
+  T phi;
 };
 
 template <typename T>
@@ -105,6 +106,7 @@ logLikObject<T> logLik(
   ret.logLikValue = - deviance_new / 2;
   ret.V = V.diagonal();
   ret.u = parlist.u;
+  ret.phi = mod->get_phi(lp, parlist.u, datlist.y);
 
   return ret;
 }
@@ -137,7 +139,8 @@ Rcpp::List create_result(Functor1 fx, Functor2 gx, parameters<dual2nd>& parlist)
     Rcpp::Named("gradient") = g,
     Rcpp::Named("hessian") = H,
     Rcpp::Named("u") = extras.u.template cast<double>(),
-    Rcpp::Named("V") = extras.V.template cast<double>()
+    Rcpp::Named("V") = extras.V.template cast<double>(),
+    Rcpp::Named("phi") = static_cast<double>(extras.phi)
   );
 }
 
