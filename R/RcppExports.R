@@ -36,7 +36,7 @@
 #' conditional models. Can be 1 when \code{family = "gaussian"}.
 #' @param hessian Boolean specifying whether to include the Hessian matrix
 #' at the given parameters. Defaults to \code{FALSE}.
-#' @param epsilon_u Toleranse in the inner iteration. Defaults to \code{1e-10}.
+#' @param epsilon_u Tolerance in the inner iteration. Defaults to \code{1e-10}.
 #'
 #' @return A \code{list} with elements \code{logLik} and \code{gradient}.
 #' @export

@@ -21,7 +21,8 @@ struct Model {
   virtual T cumulant(const Vdual<T>& linpred, const Vdual<T>& trials) = 0;
   virtual T constfun(const Vdual<T>& y, const T& phi, const T k) = 0;
   virtual Vdual<T> meanfun(const Vdual<T>& linpred, const Vdual<T>& trials) = 0;
-  virtual Vdual<T> get_V(const Vdual<T>& linpred, const Vdual<T>& trials) = 0;
+  virtual Vdual<T> get_V(const Vdual<T>& linpred, const Vdual<T>& trials,
+                         const Vdual<T>& weights) = 0;
   virtual T get_phi(const Vdual<T>& linpred, const Vdual<T>& u, const Vdual<T>& y) = 0;
 };
 
@@ -45,8 +46,8 @@ struct Binomial : Model<T> {
   // Thus, mu(eta) = N * exp(eta) / (1 + exp(eta)) and
   // m'(eta) = d''(eta) = mu * (N - mu) / N.
   Vdual<T> get_V(
-      const Vdual<T>& linpred,
-      const Vdual<T>& trials) override {
+      const Vdual<T>& linpred, const Vdual<T>& trials,
+      const Vdual<T>& weights) override {
 
         return meanfun(linpred, trials).array() / trials.array() *
             (trials.array() - meanfun(linpred, trials).array());
@@ -74,12 +75,9 @@ struct Gaussian : Model<T> {
   };
 
   // How to update diagonal variance matrix is model dependent
-  Vdual<T> get_V(
-      const Vdual<T>& linpred, const Vdual<T>& trials) override {
-        int n = linpred.size();
-        Vdual<T> ret;
-        ret.setConstant(n, 1);
-        return ret;
+  Vdual<T> get_V(const Vdual<T>& linpred, const Vdual<T>& trials,
+                 const Vdual<T>& weights) override {
+        return 1 / weights.array();
 
   };
 
@@ -105,8 +103,7 @@ struct Poisson : Model<T> {
 
   // How to update diagonal variance matrix is model dependent
   Vdual<T> get_V(
-      const Vdual<T>& linpred,
-      const Vdual<T>& trials) override {
+      const Vdual<T>& linpred, const Vdual<T>& trials, const Vdual<T>& weights) override {
         return meanfun(linpred, trials).array();
   };
 

@@ -63,7 +63,7 @@ logLikObject<T> logLik(
   int n = datlist.X.rows();
   Vdual<T> lp = linpred(parlist, datlist);
   Ddual<T> V(n);
-  V.diagonal() = mod->get_V(lp, datlist.trials);
+  V.diagonal() = mod->get_V(lp, datlist.trials, parlist.weights);
 
   update_Lambdat(parlist.Lambdat, parlist.theta, parlist.theta_mapping);
   ldlt<T> solver;
@@ -85,7 +85,7 @@ logLikObject<T> logLik(
     for(int j{}; j < 10; j++){
       parlist.u += step * delta_u;
       lp = linpred(parlist, datlist);
-      V.diagonal() = mod->get_V(lp, datlist.trials);
+      V.diagonal() = mod->get_V(lp, datlist.trials, parlist.weights);
       H = inner_hessian(parlist, datlist, V);
       solver.factorize(H);
       deviance_new = -2 * loss(parlist, datlist, lp, k, mod, solver);
@@ -238,7 +238,7 @@ Rcpp::List wrapper(
 //' conditional models. Can be 1 when \code{family = "gaussian"}.
 //' @param hessian Boolean specifying whether to include the Hessian matrix
 //' at the given parameters. Defaults to \code{FALSE}.
-//' @param epsilon_u Toleranse in the inner iteration. Defaults to \code{1e-10}.
+//' @param epsilon_u Tolerance in the inner iteration. Defaults to \code{1e-10}.
 //'
 //' @return A \code{list} with elements \code{logLik} and \code{gradient}.
 //' @export
