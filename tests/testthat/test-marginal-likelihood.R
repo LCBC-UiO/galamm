@@ -1,4 +1,5 @@
 library(PLmixed)
+library(Matrix)
 data("IRTsim")
 IRTsub <- IRTsim[IRTsim$item < 4, ]
 set.seed(12345)
