@@ -5,7 +5,7 @@ library(tidyr, quietly = TRUE, warn.conflicts = FALSE)
 library(memoise)
 
 set.seed(11)
-n <- 2000
+n <- 200
 dat <- tibble(
   id = 1:n,
   b = rnorm(n)
@@ -19,8 +19,7 @@ dat <- tibble(
   )
 
 w <- 1 / dat$winv
-lmod <- lFormula(y ~ x + (1 | id), data = dat, REML = FALSE,
-                 weights = w)
+lmod <- lFormula(y ~ x + (1 | id), data = dat, REML = FALSE, weights = w)
 devfun <- do.call(mkLmerDevfun, lmod)
 opt <- optimizeLmer(devfun)
 mm <- mkMerMod(environment(devfun), opt, lmod$reTrms, fr = lmod$fr)
@@ -70,3 +69,17 @@ expect_equal(fm$phi, sigma(mm)^2, tolerance = 1e-3)
 expect_equal(opt$par[[theta_inds]], getME(mm, "theta")[[1]], tolerance = 1e-3)
 expect_equal(as.numeric(opt$value), as.numeric(logLik(mm)), tolerance = 1e-3)
 expect_equal(opt$par[beta_inds], as.numeric(fixef(mm)), tolerance = 1e-3)
+
+# Confirm that all equal weights are correct also
+comp <- lmer(y ~ x + (1 | id), data = dat, REML = FALSE, weights = rep(2, nrow(dat)))
+opt <- optim(par_init, fn = fn, gr = gr, weights = rep(2, nrow(dat)),
+             method = "L-BFGS-B", lower = bounds, control = list(fnscale = -1))
+
+tmp <- mlwrapper(opt$par, rep(2, nrow(dat)), TRUE)
+fn(c(getME(comp, "theta"), fixef(comp)), weights = rep(2, nrow(dat)))
+logLik(comp)
+
+expect_equal(as.numeric(logLik(comp)), opt$value)
+expect_equal(as.numeric(getME(comp, "theta")), opt$par[theta_inds], tolerance = 1e-4)
+expect_equal(as.numeric(fixef(comp)), opt$par[beta_inds], tolerance = 1e-4)
+
