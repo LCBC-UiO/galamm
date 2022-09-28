@@ -64,6 +64,7 @@ likelihood.</p>
 <span>  <span class="va">lambda</span>,</span>
 <span>  <span class="va">lambda_mapping_X</span>,</span>
 <span>  <span class="va">lambda_mapping_Zt</span>,</span>
+<span>  <span class="va">weights</span>,</span>
 <span>  <span class="va">family</span>,</span>
 <span>  <span class="va">maxit_conditional_modes</span>,</span>
 <span>  hessian <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -128,6 +129,10 @@ as can be found by <code>Zt@x</code>. Should be set to
 <code><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer()</a></code> if not used. An entry <code>-1</code> indicates that the
 corresponding value of <code>X</code> does not depend on <code>lambda</code>,
 as in the case where the first element of <code>lambda</code> is fixed to 1.</p></dd>
+
+
+<dt>weights</dt>
+<dd><p>Vector of weights.</p></dd>
 
 
 <dt>family</dt>
