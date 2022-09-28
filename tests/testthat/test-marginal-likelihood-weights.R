@@ -1,8 +1,9 @@
-library(nlme)
-library(galamm)
-library(tidyverse)
-library(memoise)
+library(Matrix)
 library(lme4)
+library(dplyr, quietly = TRUE, warn.conflicts = FALSE)
+library(tidyr, quietly = TRUE, warn.conflicts = FALSE)
+library(memoise)
+
 set.seed(11)
 n <- 2000
 dat <- tibble(
@@ -17,19 +18,12 @@ dat <- tibble(
     y = x + b + rnorm(nrow(.), sd = sqrt(winv))
   )
 
-# mod <- lme(y ~ x, data = dat, random = list(id =~ 1),
-#            weights = varIdent(form =~ 1 | item), method = "ML")
-
-###
 w <- 1 / dat$winv
 lmod <- lFormula(y ~ x + (1 | id), data = dat, REML = FALSE,
                  weights = w)
 devfun <- do.call(mkLmerDevfun, lmod)
 opt <- optimizeLmer(devfun)
 mm <- mkMerMod(environment(devfun), opt, lmod$reTrms, fr = lmod$fr)
-cmp <- getME(mm, "devcomp")$cmp
-dims <- getME(mm, "devcomp")$dims
-
 
 theta_inds <- 1
 beta_inds <- 2:3
@@ -71,4 +65,8 @@ opt <- optim(par_init, fn = fn, gr = gr,
              control = list(fnscale = -1))
 
 fm <- mlwrapper(opt$par, w, TRUE)
-fm$phi
+
+expect_equal(fm$phi, sigma(mm)^2, tolerance = 1e-3)
+expect_equal(opt$par[[theta_inds]], getME(mm, "theta")[[1]], tolerance = 1e-3)
+expect_equal(as.numeric(opt$value), as.numeric(logLik(mm)), tolerance = 1e-3)
+expect_equal(opt$par[beta_inds], as.numeric(fixef(mm)), tolerance = 1e-3)

@@ -30,7 +30,7 @@ struct parameters{
   maxit_conditional_modes { maxit_conditional_modes },
   epsilon_u { epsilon_u }
   {
-    WinvSqrt.diagonal() = 1 / weights.array().sqrt();
+    WSqrt.diagonal() = weights.array().sqrt();
   }
 
 
@@ -43,7 +43,7 @@ struct parameters{
   Eigen::VectorXi lambda_mapping_Zt;
   Eigen::SparseMatrix<T> Lambdat;
   Vdual<T> weights;
-  Ddual<T> WinvSqrt;
+  Ddual<T> WSqrt;
   int maxit_conditional_modes;
   double epsilon_u;
 };

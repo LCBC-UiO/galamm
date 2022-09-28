@@ -19,24 +19,24 @@ using ldlt = Eigen::SimplicialLDLT<Eigen::SparseMatrix<T> >;
 template <typename T>
 struct Model {
   virtual T cumulant(const Vdual<T>& linpred, const Vdual<T>& trials,
-                     const Ddual<T>& WinvSqrt) = 0;
+                     const Ddual<T>& WSqrt) = 0;
   virtual T constfun(const Vdual<T>& y, const T& phi, const T k,
-                     const Ddual<T>& WinvSqrt) = 0;
+                     const Ddual<T>& WSqrt) = 0;
   virtual Vdual<T> meanfun(const Vdual<T>& linpred, const Vdual<T>& trials) = 0;
   virtual Vdual<T> get_V(const Vdual<T>& linpred, const Vdual<T>& trials,
                          const Vdual<T>& weights) = 0;
   virtual T get_phi(const Vdual<T>& linpred, const Vdual<T>& u,
-                    const Vdual<T>& y, const Ddual<T>& WinvSqrt) = 0;
+                    const Vdual<T>& y, const Ddual<T>& WSqrt) = 0;
 };
 
 template <typename T>
 struct Binomial : Model<T> {
   T cumulant(const Vdual<T>& linpred, const Vdual<T>& trials,
-             const Ddual<T>& WinvSqrt) override {
+             const Ddual<T>& WSqrt) override {
     return ((1 + linpred.array().exp()).log() * trials.array()).sum();
   };
   T constfun(const Vdual<T>& y, const T& phi, const T k,
-             const Ddual<T>& WinvSqrt) override {
+             const Ddual<T>& WSqrt) override {
     return k;
   };
 
@@ -59,7 +59,7 @@ struct Binomial : Model<T> {
   };
 
   T get_phi(const Vdual<T>& linpred, const Vdual<T>& u,
-            const Vdual<T>& y, const Ddual<T>& WinvSqrt) override {
+            const Vdual<T>& y, const Ddual<T>& WSqrt) override {
               return 1;
   };
 };
@@ -68,14 +68,14 @@ template <typename T>
 struct Gaussian : Model<T> {
 
   T cumulant(const Vdual<T>& linpred, const Vdual<T>& trials,
-             const Ddual<T>& WinvSqrt) override {
-    return (WinvSqrt * linpred).squaredNorm() / 2;
+             const Ddual<T>& WSqrt) override {
+    return (WSqrt * linpred).squaredNorm() / 2;
   };
   T constfun(const Vdual<T>& y, const T& phi, const T k,
-             const Ddual<T>& WinvSqrt) override {
+             const Ddual<T>& WSqrt) override {
     int n = y.size();
-    return -.5 * ((WinvSqrt * y).squaredNorm() / phi + n * log(2 * M_PI * phi)) +
-      WinvSqrt.diagonal().array().log().sum();
+    return -.5 * ((WSqrt * y).squaredNorm() / phi + n * log(2 * M_PI * phi))
+      + WSqrt.diagonal().array().log().sum();
   };
   Vdual<T> meanfun(const Vdual<T>& linpred, const Vdual<T>& trials) override {
     return linpred;
@@ -84,15 +84,15 @@ struct Gaussian : Model<T> {
   // How to update diagonal variance matrix is model dependent
   Vdual<T> get_V(const Vdual<T>& linpred, const Vdual<T>& trials,
                  const Vdual<T>& weights) override {
-        return 1 / weights.array();
+        return weights.array();
 
   };
 
   T get_phi(
       const Vdual<T>& linpred, const Vdual<T>& u, const Vdual<T>& y,
-      const Ddual<T>& WinvSqrt) override {
+      const Ddual<T>& WSqrt) override {
         int n = y.size();
-        return ((WinvSqrt * (y - linpred)).squaredNorm() + u.squaredNorm()) / n;
+        return ((WSqrt * (y - linpred)).squaredNorm() + u.squaredNorm()) / n;
   };
 
 };
@@ -100,11 +100,11 @@ struct Gaussian : Model<T> {
 template <typename T>
 struct Poisson : Model<T> {
   T cumulant(const Vdual<T>& linpred, const Vdual<T>& trials,
-             const Ddual<T>& WinvSqrt) override {
+             const Ddual<T>& WSqrt) override {
     return linpred.array().exp().sum();
   };
   T constfun(const Vdual<T>& y, const T& phi, const T k,
-             const Ddual<T>& WinvSqrt) override {
+             const Ddual<T>& WSqrt) override {
     return k;
   };
   Vdual<T> meanfun(const Vdual<T>& linpred, const Vdual<T>& trials) override {
@@ -118,7 +118,7 @@ struct Poisson : Model<T> {
   };
 
   T get_phi(const Vdual<T>& linpred, const Vdual<T>& u, const Vdual<T>& y,
-            const Ddual<T>& WinvSqrt) override {
+            const Ddual<T>& WSqrt) override {
     return 1;
   };
 

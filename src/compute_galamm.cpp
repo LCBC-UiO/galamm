@@ -1,6 +1,7 @@
 #include "data.h"
 #include "parameters.h"
 #include "model.h"
+#include "misc.h"
 #include "update_funs.h"
 #include <unsupported/Eigen/SpecialFunctions>
 using namespace autodiff;
@@ -8,41 +9,21 @@ using namespace autodiff;
 // [[Rcpp::depends(RcppEigen)]]
 
 template <typename T>
-Vdual<T> linpred(
-    const parameters<T>& parlist,
-    const data<T>& datlist
-  ){
-  return datlist.X * parlist.beta + datlist.Zt.transpose() *
-    parlist.Lambdat.transpose() * parlist.u;
-};
+T loss(const parameters<T>& parlist, const data<T>& datlist, const Vdual<T>& lp,
+       const T k, Model<T>* mod, ldlt<T>& solver){
+  T phi = mod->get_phi(lp, parlist.u, datlist.y, parlist.WSqrt);
 
-template <typename T>
-T loss(
-    const parameters<T>& parlist,
-    const data<T>& datlist,
-    const Vdual<T>& lp,
-    const T k,
-    Model<T>* mod,
-    ldlt<T>& solver){
-  T phi = mod->get_phi(lp, parlist.u, datlist.y, parlist.WinvSqrt);
+  T yDotLinpred = (parlist.WSqrt * datlist.y).dot(parlist.WSqrt * lp);
+  T bSquared = mod->cumulant(lp, datlist.trials, parlist.WSqrt);
+  T c_phi = mod->constfun(datlist.y, phi, k, parlist.WSqrt);
+  T exponent_g = (yDotLinpred - bSquared) / phi +
+    c_phi - parlist.u.squaredNorm() / 2 / phi;
 
-  T exponent_g = ((datlist.y.array() / parlist.weights.array() * lp.array()).sum() -
-    mod->cumulant(lp, datlist.trials, parlist.WinvSqrt)) / phi +
-    mod->constfun(datlist.y, phi, k, parlist.WinvSqrt) - parlist.u.squaredNorm() / 2 / phi;
+  T hessian_determinant = solver.vectorD().array().log().sum();
+  T res = exponent_g - hessian_determinant / 2;
 
-  return exponent_g - solver.vectorD().array().log().sum() / 2;
+  return res;
 }
-
-// Hessian matrix used in penalized iteratively reweighted least squares
-template <typename T>
-SpMdual<T> inner_hessian(
-    const parameters<T>& parlist,
-    const data<T>& datlist,
-    const Eigen::DiagonalMatrix<T, Eigen::Dynamic>& V
-  ){
-  return parlist.Lambdat * datlist.Zt * V *
-    datlist.Zt.transpose() * parlist.Lambdat.transpose();
-};
 
 template <typename T>
 logLikObject<T> logLik(
@@ -71,9 +52,11 @@ logLikObject<T> logLik(
   T deviance_new;
 
   for(int i{}; i < parlist.maxit_conditional_modes; i++){
+    Vdual<T> residual =
+      (datlist.y - mod->meanfun(linpred(parlist, datlist), datlist.trials)).array();
+    Vdual<T> weighted_residual = parlist.weights.array() * residual.array();
     delta_u = solver.solve(
-      (parlist.Lambdat * datlist.Zt * parlist.WinvSqrt * parlist.WinvSqrt *
-        (datlist.y - mod->meanfun(linpred(parlist, datlist), datlist.trials))) - parlist.u);
+      (parlist.Lambdat * datlist.Zt * weighted_residual) - parlist.u);
     if(delta_u.squaredNorm() < parlist.epsilon_u) break;
 
     double step = 1;
@@ -101,42 +84,9 @@ logLikObject<T> logLik(
   ret.logLikValue = - deviance_new / 2;
   ret.V = V.diagonal();
   ret.u = parlist.u;
-  ret.phi = mod->get_phi(lp, parlist.u, datlist.y, parlist.WinvSqrt);
+  ret.phi = mod->get_phi(lp, parlist.u, datlist.y, parlist.WSqrt);
 
   return ret;
-}
-
-template <typename T, typename Functor1, typename Functor2>
-Rcpp::List create_result(Functor1 fx, Functor2 gx, parameters<T>& parlist){
-  T ll{};
-  Eigen::VectorXd g{};
-  g = gradient(fx, wrt(parlist.theta, parlist.beta, parlist.lambda),
-               at(parlist), ll);
-
-  return Rcpp::List::create(
-    Rcpp::Named("logLik") = static_cast<double>(ll),
-    Rcpp::Named("gradient") = g
-  );
-}
-
-// Specialization for dual2nd, gives Hessian matrix plus some extra info
-template <typename Functor1, typename Functor2>
-Rcpp::List create_result(Functor1 fx, Functor2 gx, parameters<dual2nd>& parlist){
-  dual2nd ll{};
-  Eigen::VectorXd g{};
-  Eigen::MatrixXd H{};
-  H = hessian(fx, wrt(parlist.theta, parlist.beta, parlist.lambda),
-              at(parlist), ll, g);
-  logLikObject extras = gx(parlist);
-
-  return Rcpp::List::create(
-    Rcpp::Named("logLik") = static_cast<double>(ll),
-    Rcpp::Named("gradient") = g,
-    Rcpp::Named("hessian") = H,
-    Rcpp::Named("u") = extras.u.template cast<double>(),
-    Rcpp::Named("V") = extras.V.template cast<double>(),
-    Rcpp::Named("phi") = static_cast<double>(extras.phi)
-  );
 }
 
 template <typename T>
