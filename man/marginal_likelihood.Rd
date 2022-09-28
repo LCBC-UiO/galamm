@@ -69,7 +69,7 @@ conditional models. Can be 1 when \code{family = "gaussian"}.}
 \item{hessian}{Boolean specifying whether to include the Hessian matrix
 at the given parameters. Defaults to \code{FALSE}.}
 
-\item{epsilon_u}{Toleranse in the inner iteration. Defaults to \code{1e-10}.}
+\item{epsilon_u}{Tolerance in the inner iteration. Defaults to \code{1e-10}.}
 }
 \value{
 A \code{list} with elements \code{logLik} and \code{gradient}.
