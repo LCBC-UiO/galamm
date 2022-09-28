@@ -1,6 +1,7 @@
 #include "data.h"
 #include "parameters.h"
 #include "model.h"
+#include "misc.h"
 #include "update_funs.h"
 #include <unsupported/Eigen/SpecialFunctions>
 using namespace autodiff;
@@ -8,46 +9,21 @@ using namespace autodiff;
 // [[Rcpp::depends(RcppEigen)]]
 
 template <typename T>
-Vdual<T> linpred(
-    const parameters<T>& parlist,
-    const data<T>& datlist
-  ){
-  return datlist.X * parlist.beta + datlist.Zt.transpose() * parlist.Lambdat.transpose() * parlist.u;
-};
+T loss(const parameters<T>& parlist, const data<T>& datlist, const Vdual<T>& lp,
+       const T k, Model<T>* mod, ldlt<T>& solver){
+  T phi = mod->get_phi(lp, parlist.u, datlist.y, parlist.WSqrt);
 
-template <typename T>
-T loss(
-    const parameters<T>& parlist,
-    const data<T>& datlist,
-    const Vdual<T>& lp,
-    const T k,
-    Model<T>* mod,
-    ldlt<T>& solver){
-  T phi = mod->get_phi(lp, parlist.u, datlist.y);
-  T exponent_g = (datlist.y.dot(lp) - mod->cumulant(lp, datlist.trials)) / phi +
-    mod->constfun(datlist.y, phi, k) - parlist.u.squaredNorm() / 2 / phi;
+  T yDotLinpred = (parlist.WSqrt * datlist.y).dot(parlist.WSqrt * lp);
+  T bSquared = mod->cumulant(lp, datlist.trials, parlist.WSqrt);
+  T c_phi = mod->constfun(datlist.y, phi, k, parlist.WSqrt);
+  T exponent_g = (yDotLinpred - bSquared) / phi +
+    c_phi - parlist.u.squaredNorm() / 2 / phi;
 
-  return exponent_g - solver.vectorD().array().log().sum() / 2;
+  T hessian_determinant = solver.vectorD().array().log().sum();
+  T res = exponent_g - hessian_determinant / 2;
+
+  return res;
 }
-
-// Hessian matrix used in penalized iteratively reweighted least squares
-template <typename T>
-SpMdual<T> inner_hessian(
-    const parameters<T>& parlist,
-    const data<T>& datlist,
-    const Eigen::DiagonalMatrix<T, Eigen::Dynamic>& V
-  ){
-  return parlist.Lambdat * datlist.Zt * V *
-    datlist.Zt.transpose() * parlist.Lambdat.transpose();
-};
-
-template <typename T>
-struct logLikObject {
-  T logLikValue;
-  Vdual<T> V;
-  Vdual<T> u;
-  T phi;
-};
 
 template <typename T>
 logLikObject<T> logLik(
@@ -60,10 +36,9 @@ logLikObject<T> logLik(
   update_Zt(datlist.Zt, parlist.lambda, parlist.lambda_mapping_Zt);
   update_X(datlist.X, parlist.lambda, parlist.lambda_mapping_X);
 
-  int n = datlist.X.rows();
   Vdual<T> lp = linpred(parlist, datlist);
-  Ddual<T> V(n);
-  V.diagonal() = mod->get_V(lp, datlist.trials);
+  Ddual<T> V;
+  V.diagonal() = mod->get_V(lp, datlist.trials, parlist.weights);
 
   update_Lambdat(parlist.Lambdat, parlist.theta, parlist.theta_mapping);
   ldlt<T> solver;
@@ -77,15 +52,18 @@ logLikObject<T> logLik(
   T deviance_new;
 
   for(int i{}; i < parlist.maxit_conditional_modes; i++){
-    delta_u = solver.solve((parlist.Lambdat * datlist.Zt *
-      (datlist.y - mod->meanfun(linpred(parlist, datlist), datlist.trials)) - parlist.u));
+    Vdual<T> residual =
+      (datlist.y - mod->meanfun(linpred(parlist, datlist), datlist.trials)).array();
+    Vdual<T> weighted_residual = parlist.weights.array() * residual.array();
+    delta_u = solver.solve(
+      (parlist.Lambdat * datlist.Zt * weighted_residual) - parlist.u);
     if(delta_u.squaredNorm() < parlist.epsilon_u) break;
 
     double step = 1;
     for(int j{}; j < 10; j++){
       parlist.u += step * delta_u;
       lp = linpred(parlist, datlist);
-      V.diagonal() = mod->get_V(lp, datlist.trials);
+      V.diagonal() = mod->get_V(lp, datlist.trials, parlist.weights);
       H = inner_hessian(parlist, datlist, V);
       solver.factorize(H);
       deviance_new = -2 * loss(parlist, datlist, lp, k, mod, solver);
@@ -106,67 +84,35 @@ logLikObject<T> logLik(
   ret.logLikValue = - deviance_new / 2;
   ret.V = V.diagonal();
   ret.u = parlist.u;
-  ret.phi = mod->get_phi(lp, parlist.u, datlist.y);
+  ret.phi = mod->get_phi(lp, parlist.u, datlist.y, parlist.WSqrt);
 
   return ret;
 }
 
-template <typename T, typename Functor1, typename Functor2>
-Rcpp::List create_result(Functor1 fx, Functor2 gx, parameters<T>& parlist){
-  T ll{};
-  Eigen::VectorXd g{};
-  g = gradient(fx, wrt(parlist.theta, parlist.beta, parlist.lambda),
-               at(parlist), ll);
-
-  return Rcpp::List::create(
-    Rcpp::Named("logLik") = static_cast<double>(ll),
-    Rcpp::Named("gradient") = g
-  );
-}
-
-// Specialization for dual2nd, gives Hessian matrix plus some extra info
-template <typename Functor1, typename Functor2>
-Rcpp::List create_result(Functor1 fx, Functor2 gx, parameters<dual2nd>& parlist){
-  dual2nd ll{};
-  Eigen::VectorXd g{};
-  Eigen::MatrixXd H{};
-  H = hessian(fx, wrt(parlist.theta, parlist.beta, parlist.lambda),
-              at(parlist), ll, g);
-  logLikObject extras = gx(parlist);
-
-  return Rcpp::List::create(
-    Rcpp::Named("logLik") = static_cast<double>(ll),
-    Rcpp::Named("gradient") = g,
-    Rcpp::Named("hessian") = H,
-    Rcpp::Named("u") = extras.u.template cast<double>(),
-    Rcpp::Named("V") = extras.V.template cast<double>(),
-    Rcpp::Named("phi") = static_cast<double>(extras.phi)
-  );
-}
-
 template <typename T>
 Rcpp::List wrapper(
-    Eigen::VectorXd y,
-    Eigen::VectorXd trials,
-    Eigen::MatrixXd X,
-    Eigen::SparseMatrix<double> Zt,
-    Eigen::SparseMatrix<double> Lambdat,
-    Eigen::VectorXd beta,
-    Eigen::VectorXd theta,
-    Eigen::VectorXi theta_mapping,
-    Eigen::VectorXd lambda,
-    Eigen::VectorXi lambda_mapping_X,
-    Eigen::VectorXi lambda_mapping_Zt,
-    std::string family,
-    int maxit_conditional_modes,
-    double epsilon_u
+    const Eigen::VectorXd& y,
+    const Eigen::VectorXd& trials,
+    const Eigen::MatrixXd& X,
+    const Eigen::SparseMatrix<double>& Zt,
+    const Eigen::SparseMatrix<double>& Lambdat,
+    const Eigen::VectorXd& beta,
+    const Eigen::VectorXd& theta,
+    const Eigen::VectorXi& theta_mapping,
+    const Eigen::VectorXd& lambda,
+    const Eigen::VectorXi& lambda_mapping_X,
+    const Eigen::VectorXi& lambda_mapping_Zt,
+    const Eigen::VectorXd& weights,
+    const std::string& family,
+    const int& maxit_conditional_modes,
+    const double& epsilon_u
   ){
 
   data<T> datlist{y, trials, X, Zt};
   parameters<T> parlist{
       theta, beta, lambda, Eigen::VectorXd::Zero(Zt.rows()), theta_mapping,
-      lambda_mapping_X, lambda_mapping_Zt, Lambdat, maxit_conditional_modes,
-      epsilon_u};
+      lambda_mapping_X, lambda_mapping_Zt, Lambdat, weights,
+      maxit_conditional_modes, epsilon_u};
 
   T k{0};
   if(family == "binomial"){
@@ -231,12 +177,13 @@ Rcpp::List wrapper(
 //' \code{integer()} if not used. An entry \code{-1} indicates that the
 //' corresponding value of \code{X} does not depend on \code{lambda},
 //' as in the case where the first element of \code{lambda} is fixed to 1.
+//' @param weights Vector of weights.
 //' @param family A length one \code{character} denoting the family.
 //' @param maxit_conditional_modes Maximum number of iterations for
 //' conditional models. Can be 1 when \code{family = "gaussian"}.
 //' @param hessian Boolean specifying whether to include the Hessian matrix
 //' at the given parameters. Defaults to \code{FALSE}.
-//' @param epsilon_u Toleranse in the inner iteration. Defaults to \code{1e-10}.
+//' @param epsilon_u Tolerance in the inner iteration. Defaults to \code{1e-10}.
 //'
 //' @return A \code{list} with elements \code{logLik} and \code{gradient}.
 //' @export
@@ -255,6 +202,7 @@ Rcpp::List marginal_likelihood(
     const Eigen::Map<Eigen::VectorXd> lambda,
     const Eigen::Map<Eigen::VectorXi> lambda_mapping_X,
     const Eigen::Map<Eigen::VectorXi> lambda_mapping_Zt,
+    const Eigen::Map<Eigen::VectorXd> weights,
     const std::string family,
     const int maxit_conditional_modes,
     const bool hessian = false,
@@ -264,12 +212,12 @@ Rcpp::List marginal_likelihood(
   if(hessian){
     return wrapper<dual2nd>(
       y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, lambda,
-      lambda_mapping_X, lambda_mapping_Zt,
+      lambda_mapping_X, lambda_mapping_Zt, weights,
       family, maxit_conditional_modes, epsilon_u);
   } else {
     return wrapper<dual1st>(
       y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, lambda,
-      lambda_mapping_X, lambda_mapping_Zt,
+      lambda_mapping_X, lambda_mapping_Zt, weights,
       family, maxit_conditional_modes, epsilon_u);
   }
 

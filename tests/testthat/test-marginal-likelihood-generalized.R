@@ -3,14 +3,10 @@ library(lme4)
 library(memoise)
 glmod <- glFormula(cbind(incidence, size - incidence) ~ period + (1 | herd),
                    data = cbpp, family = binomial)
-devfun <- do.call(mkGlmerDevfun, glmod)
-opt1 <- optimizeGlmer(devfun)
-devfun <- updateGlmerDevfun(devfun, glmod$reTrms)
-opt2 <- optimizeGlmer(devfun, stage=2)
-fMod <- mkMerMod(environment(devfun), opt2, glmod$reTrms, fr = glmod$fr)
 
 theta_inds <- 1
 beta_inds <- 2:5
+Lambdat <- glmod$reTrms$Lambdat
 
 mlwrapper <- function(par, hessian = FALSE){
   marginal_likelihood(
@@ -18,13 +14,14 @@ mlwrapper <- function(par, hessian = FALSE){
     trials = cbpp$size,
     X = glmod$X,
     Zt = glmod$reTrms$Zt,
-    Lambdat = glmod$reTrms$Lambdat,
+    Lambdat = Lambdat,
     beta = par[beta_inds],
     theta = par[theta_inds],
     theta_mapping = glmod$reTrms$Lind - 1L,
     lambda = numeric(),
     lambda_mapping_X = integer(),
     lambda_mapping_Zt = integer(),
+    weights = rep(1, length(cbpp$incidence)),
     family = "binomial",
     maxit_conditional_modes = 50,
     hessian = hessian
@@ -64,3 +61,4 @@ test_that("ML GLMM works", {
                                 -0.370028528730888, -0.842234822036188, -0.131779630554482, -0.100919537727657,
                                 -1.07420575068253, 1.51140492225922, -0.825950799579577))
 })
+

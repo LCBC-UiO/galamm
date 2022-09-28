@@ -29,6 +29,7 @@ ml <- marginal_likelihood(
   lambda = c(`2` = 1.05448883376966, `3` = 1.02127875663853),
   lambda_mapping_X = integer(),
   lambda_mapping_Zt = lambda_mapping_Zt,
+  weights = rep(1, length(dat$y)),
   family = "gaussian",
   maxit_conditional_modes = 1
 )
@@ -60,6 +61,7 @@ mlwrapper <- function(par){
     lambda = par[lambda_inds],
     lambda_mapping_X = integer(),
     lambda_mapping_Zt = lambda_mapping_Zt,
+    weights = rep(1, length(dat$y)),
     family = "gaussian",
     maxit_conditional_modes = 1
   )
@@ -97,6 +99,7 @@ final_model <- marginal_likelihood(
   lambda = opt$par[lambda_inds],
   lambda_mapping_X = integer(),
   lambda_mapping_Zt = lambda_mapping_Zt,
+  weights = rep(1, length(dat$y)),
   family = "gaussian",
   maxit_conditional_modes = 1,
   hessian = TRUE

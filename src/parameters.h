@@ -17,6 +17,7 @@ struct parameters{
     const Eigen::VectorXi& lambda_mapping_X,
     const Eigen::VectorXi& lambda_mapping_Zt,
     const Eigen::SparseMatrix<double>& Lambdat,
+    const Eigen::VectorXd& weights,
     const int& maxit_conditional_modes,
     const double& epsilon_u
   ) :
@@ -25,8 +26,12 @@ struct parameters{
   lambda_mapping_X { lambda_mapping_X },
   lambda_mapping_Zt { lambda_mapping_Zt },
   Lambdat { Lambdat.cast<T>() },
+  weights { weights.cast<T>() },
   maxit_conditional_modes { maxit_conditional_modes },
-  epsilon_u { epsilon_u }{}
+  epsilon_u { epsilon_u }
+  {
+    WSqrt.diagonal() = weights.array().sqrt();
+  }
 
 
   Vdual<T> theta;
@@ -37,8 +42,18 @@ struct parameters{
   Eigen::VectorXi lambda_mapping_X;
   Eigen::VectorXi lambda_mapping_Zt;
   Eigen::SparseMatrix<T> Lambdat;
+  Vdual<T> weights;
+  Ddual<T> WSqrt;
   int maxit_conditional_modes;
   double epsilon_u;
+};
+
+template <typename T>
+struct logLikObject {
+  T logLikValue;
+  Vdual<T> V;
+  Vdual<T> u;
+  T phi;
 };
 
 #endif
