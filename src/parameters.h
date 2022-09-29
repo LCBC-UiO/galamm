@@ -18,8 +18,10 @@ struct parameters{
     const Eigen::VectorXi& lambda_mapping_Zt,
     const Eigen::SparseMatrix<double>& Lambdat,
     const Eigen::VectorXd& weights,
+    const Eigen::VectorXi& weights_mapping,
     const int& maxit_conditional_modes,
-    const double& epsilon_u
+    const double& epsilon_u,
+    const int& n
   ) :
   theta { theta.cast<T>() }, beta { beta.cast<T>() }, lambda { lambda.cast<T>() },
   u { u.cast<T>() }, theta_mapping { theta_mapping },
@@ -27,10 +29,11 @@ struct parameters{
   lambda_mapping_Zt { lambda_mapping_Zt },
   Lambdat { Lambdat.cast<T>() },
   weights { weights.cast<T>() },
+  weights_mapping { weights_mapping },
   maxit_conditional_modes { maxit_conditional_modes },
-  epsilon_u { epsilon_u }
+  epsilon_u { epsilon_u }, n { n }
   {
-    WSqrt.diagonal() = weights.array().sqrt();
+    WSqrt.diagonal() = Vdual<T>::Constant(n, 1);
   }
 
 
@@ -43,9 +46,11 @@ struct parameters{
   Eigen::VectorXi lambda_mapping_Zt;
   Eigen::SparseMatrix<T> Lambdat;
   Vdual<T> weights;
+  Eigen::VectorXi weights_mapping;
   Ddual<T> WSqrt;
   int maxit_conditional_modes;
   double epsilon_u;
+  int n;
 };
 
 template <typename T>

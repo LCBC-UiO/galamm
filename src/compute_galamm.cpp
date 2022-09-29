@@ -27,14 +27,11 @@ T loss(const parameters<T>& parlist, const data<T>& datlist, const Vdual<T>& lp,
 
 template <typename T>
 logLikObject<T> logLik(
-    parameters<T> parlist,
-    data<T> datlist,
-    const T k,
-    Model<T>* mod
-  ){
+    parameters<T> parlist, data<T> datlist, const T k, Model<T>* mod){
 
   update_Zt(datlist.Zt, parlist.lambda, parlist.lambda_mapping_Zt);
   update_X(datlist.X, parlist.lambda, parlist.lambda_mapping_X);
+  update_WSqrt(parlist.WSqrt, parlist.weights, parlist.weights_mapping);
 
   Vdual<T> lp = linpred(parlist, datlist);
   Ddual<T> V;
@@ -103,6 +100,7 @@ Rcpp::List wrapper(
     const Eigen::VectorXi& lambda_mapping_X,
     const Eigen::VectorXi& lambda_mapping_Zt,
     const Eigen::VectorXd& weights,
+    const Eigen::VectorXi& weights_mapping,
     const std::string& family,
     const int& maxit_conditional_modes,
     const double& epsilon_u
@@ -111,8 +109,8 @@ Rcpp::List wrapper(
   data<T> datlist{y, trials, X, Zt};
   parameters<T> parlist{
       theta, beta, lambda, Eigen::VectorXd::Zero(Zt.rows()), theta_mapping,
-      lambda_mapping_X, lambda_mapping_Zt, Lambdat, weights,
-      maxit_conditional_modes, epsilon_u};
+      lambda_mapping_X, lambda_mapping_Zt, Lambdat, weights, weights_mapping,
+      maxit_conditional_modes, epsilon_u, y.size()};
 
   T k{0};
   if(family == "binomial"){
@@ -203,6 +201,7 @@ Rcpp::List marginal_likelihood(
     const Eigen::Map<Eigen::VectorXi> lambda_mapping_X,
     const Eigen::Map<Eigen::VectorXi> lambda_mapping_Zt,
     const Eigen::Map<Eigen::VectorXd> weights,
+    const Eigen::Map<Eigen::VectorXi> weights_mapping,
     const std::string family,
     const int maxit_conditional_modes,
     const bool hessian = false,
@@ -212,12 +211,12 @@ Rcpp::List marginal_likelihood(
   if(hessian){
     return wrapper<dual2nd>(
       y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, lambda,
-      lambda_mapping_X, lambda_mapping_Zt, weights,
+      lambda_mapping_X, lambda_mapping_Zt, weights, weights_mapping,
       family, maxit_conditional_modes, epsilon_u);
   } else {
     return wrapper<dual1st>(
       y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, lambda,
-      lambda_mapping_X, lambda_mapping_Zt, weights,
+      lambda_mapping_X, lambda_mapping_Zt, weights, weights_mapping,
       family, maxit_conditional_modes, epsilon_u);
   }
 

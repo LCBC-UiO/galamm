@@ -49,4 +49,16 @@ void update_Zt(SpMdual<T>& Zt, Vdual<T> lambda,
   }
 };
 
+template <typename T>
+void update_WSqrt(Ddual<T>& WSqrt, Vdual<T> weights,
+                  const Eigen::VectorXi& weights_mapping){
+  if(weights_mapping.size() == 0) return;
+  for(int i = 0; i < weights_mapping.size(); i++){
+    int newind = weights_mapping(i);
+    if(newind != -1){
+      WSqrt.diagonal()(i) = sqrt(weights(newind));
+    }
+  }
+}
+
 #endif
