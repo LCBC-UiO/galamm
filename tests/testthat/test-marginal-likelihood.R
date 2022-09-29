@@ -29,7 +29,8 @@ ml <- marginal_likelihood(
   lambda = c(`2` = 1.05448883376966, `3` = 1.02127875663853),
   lambda_mapping_X = integer(),
   lambda_mapping_Zt = lambda_mapping_Zt,
-  weights = rep(1, length(dat$y)),
+  weights = numeric(),
+  weights_mapping = integer(),
   family = "gaussian",
   maxit_conditional_modes = 1
 )
@@ -61,7 +62,8 @@ mlwrapper <- function(par){
     lambda = par[lambda_inds],
     lambda_mapping_X = integer(),
     lambda_mapping_Zt = lambda_mapping_Zt,
-    weights = rep(1, length(dat$y)),
+    weights = numeric(),
+    weights_mapping = integer(),
     family = "gaussian",
     maxit_conditional_modes = 1
   )
@@ -99,7 +101,8 @@ final_model <- marginal_likelihood(
   lambda = opt$par[lambda_inds],
   lambda_mapping_X = integer(),
   lambda_mapping_Zt = lambda_mapping_Zt,
-  weights = rep(1, length(dat$y)),
+  weights = numeric(),
+  weights_mapping = integer(),
   family = "gaussian",
   maxit_conditional_modes = 1,
   hessian = TRUE
@@ -125,3 +128,4 @@ test_that("Hessian is correct", {
                               0.000288029013481692, 0.000552379489896932, 0.0252733561893344,
                               0.0560849371316741), dim = c(7L, 7L)))
 })
+
