@@ -38,7 +38,7 @@ logLikObject<T> logLik(
 
   Vdual<T> lp = linpred(parlist, datlist);
   Ddual<T> V;
-  V.diagonal() = mod->get_V(lp, datlist.trials, parlist.weights);
+  V.diagonal() = mod->get_V(lp, datlist.trials, parlist.WSqrt);
 
   update_Lambdat(parlist.Lambdat, parlist.theta, parlist.theta_mapping);
   ldlt<T> solver;
@@ -54,7 +54,7 @@ logLikObject<T> logLik(
   for(int i{}; i < parlist.maxit_conditional_modes; i++){
     Vdual<T> residual =
       (datlist.y - mod->meanfun(linpred(parlist, datlist), datlist.trials)).array();
-    Vdual<T> weighted_residual = parlist.weights.array() * residual.array();
+    Vdual<T> weighted_residual = parlist.WSqrt.diagonal().array().pow(2) * residual.array();
     delta_u = solver.solve(
       (parlist.Lambdat * datlist.Zt * weighted_residual) - parlist.u);
     if(delta_u.squaredNorm() < parlist.epsilon_u) break;
@@ -63,7 +63,7 @@ logLikObject<T> logLik(
     for(int j{}; j < 10; j++){
       parlist.u += step * delta_u;
       lp = linpred(parlist, datlist);
-      V.diagonal() = mod->get_V(lp, datlist.trials, parlist.weights);
+      V.diagonal() = mod->get_V(lp, datlist.trials, parlist.WSqrt);
       H = inner_hessian(parlist, datlist, V);
       solver.factorize(H);
       deviance_new = -2 * loss(parlist, datlist, lp, k, mod, solver);

@@ -24,7 +24,7 @@ struct Model {
                      const Ddual<T>& WSqrt) = 0;
   virtual Vdual<T> meanfun(const Vdual<T>& linpred, const Vdual<T>& trials) = 0;
   virtual Vdual<T> get_V(const Vdual<T>& linpred, const Vdual<T>& trials,
-                         const Vdual<T>& weights) = 0;
+                         const Ddual<T>& WSqrt) = 0;
   virtual T get_phi(const Vdual<T>& linpred, const Vdual<T>& u,
                     const Vdual<T>& y, const Ddual<T>& WSqrt) = 0;
 };
@@ -52,7 +52,7 @@ struct Binomial : Model<T> {
   // m'(eta) = d''(eta) = mu * (N - mu) / N.
   Vdual<T> get_V(
       const Vdual<T>& linpred, const Vdual<T>& trials,
-      const Vdual<T>& weights) override {
+      const Ddual<T>& WSqrt) override {
 
         return meanfun(linpred, trials).array() / trials.array() *
             (trials.array() - meanfun(linpred, trials).array());
@@ -83,8 +83,8 @@ struct Gaussian : Model<T> {
 
   // How to update diagonal variance matrix is model dependent
   Vdual<T> get_V(const Vdual<T>& linpred, const Vdual<T>& trials,
-                 const Vdual<T>& weights) override {
-        return weights.array();
+                 const Ddual<T>& WSqrt) override {
+        return WSqrt.diagonal().array().pow(2);
 
   };
 
@@ -113,7 +113,7 @@ struct Poisson : Model<T> {
 
   // How to update diagonal variance matrix is model dependent
   Vdual<T> get_V(
-      const Vdual<T>& linpred, const Vdual<T>& trials, const Vdual<T>& weights) override {
+      const Vdual<T>& linpred, const Vdual<T>& trials, const Ddual<T>& WSqrt) override {
         return meanfun(linpred, trials).array();
   };
 
