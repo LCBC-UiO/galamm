@@ -54,7 +54,7 @@ logLikObject<T> logLik(
   for(int i{}; i < parlist.maxit_conditional_modes; i++){
     Vdual<T> residual =
       (datlist.y - mod->meanfun(linpred(parlist, datlist), datlist.trials)).array();
-    Vdual<T> weighted_residual = parlist.weights.array() * residual.array();
+    Vdual<T> weighted_residual = parlist.WSqrt.diagonal().array().pow(2) * residual.array();
     delta_u = solver.solve(
       (parlist.Lambdat * datlist.Zt * weighted_residual) - parlist.u);
     if(delta_u.squaredNorm() < parlist.epsilon_u) break;
