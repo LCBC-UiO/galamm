@@ -55,7 +55,7 @@ fn <- function(par, weights, weights_mapping){
   mlmem(par, weights, weights_mapping)$logLik
 }
 gr <- function(par, weights, weights_mapping){
-  mlmem(par, weights, weights_mapping)$gradient
+  mlmem(par, weights, weights_mapping)$gradient[c(theta_inds, beta_inds, lambda_inds)]
 }
 
 par_init <- c(1, 0, 0)
