@@ -38,7 +38,7 @@ logLikObject<T> logLik(
 
   Vdual<T> lp = linpred(parlist, datlist);
   Ddual<T> V;
-  V.diagonal() = mod->get_V(lp, datlist.trials, parlist.weights);
+  V.diagonal() = mod->get_V(lp, datlist.trials, parlist.WSqrt);
 
   update_Lambdat(parlist.Lambdat, parlist.theta, parlist.theta_mapping);
   ldlt<T> solver;
@@ -63,7 +63,7 @@ logLikObject<T> logLik(
     for(int j{}; j < 10; j++){
       parlist.u += step * delta_u;
       lp = linpred(parlist, datlist);
-      V.diagonal() = mod->get_V(lp, datlist.trials, parlist.weights);
+      V.diagonal() = mod->get_V(lp, datlist.trials, parlist.WSqrt);
       H = inner_hessian(parlist, datlist, V);
       solver.factorize(H);
       deviance_new = -2 * loss(parlist, datlist, lp, k, mod, solver);
