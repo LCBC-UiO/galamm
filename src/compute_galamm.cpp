@@ -10,12 +10,12 @@ using namespace autodiff;
 
 template <typename T>
 T loss(const parameters<T>& parlist, const data<T>& datlist, const Vdual<T>& lp,
-       const T k, Model<T>* mod, ldlt<T>& solver){
+       Model<T>* mod, ldlt<T>& solver){
   T phi = mod->get_phi(lp, parlist.u, datlist.y, parlist.WSqrt);
 
   T yDotLinpred = (parlist.WSqrt * datlist.y).dot(parlist.WSqrt * lp);
   T bSquared = mod->cumulant(lp, datlist.trials, parlist.WSqrt);
-  T c_phi = mod->constfun(datlist.y, phi, k, parlist.WSqrt);
+  T c_phi = mod->constfun(datlist.y, phi, parlist.k, parlist.WSqrt);
   T exponent_g = (yDotLinpred - bSquared) / phi +
     c_phi - parlist.u.squaredNorm() / 2 / phi;
 
@@ -27,7 +27,7 @@ T loss(const parameters<T>& parlist, const data<T>& datlist, const Vdual<T>& lp,
 
 template <typename T>
 logLikObject<T> logLik(
-    parameters<T> parlist, data<T> datlist, const T k, std::vector<Model<T>*> mod){
+    parameters<T> parlist, data<T> datlist, std::vector<Model<T>*> mod){
 
   update_Zt(datlist.Zt, parlist.lambda, parlist.lambda_mapping_Zt);
   update_X(datlist.X, parlist.lambda, parlist.lambda_mapping_X);
@@ -45,7 +45,7 @@ logLikObject<T> logLik(
 
   Vdual<T> delta_u{};
   solver.factorize(H);
-  T deviance_prev = -2 * loss(parlist, datlist, lp, k, mod[0], solver);
+  T deviance_prev = -2 * loss(parlist, datlist, lp, mod[0], solver);
   T deviance_new;
 
   for(int i{}; i < parlist.maxit_conditional_modes; i++){
@@ -63,7 +63,7 @@ logLikObject<T> logLik(
       V.diagonal() = mod[0]->get_V(lp, datlist.trials, parlist.WSqrt);
       H = inner_hessian(parlist, datlist, V);
       solver.factorize(H);
-      deviance_new = -2 * loss(parlist, datlist, lp, k, mod[0], solver);
+      deviance_new = -2 * loss(parlist, datlist, lp, mod[0], solver);
       if(deviance_new < deviance_prev){
         break;
       }
@@ -107,18 +107,19 @@ Rcpp::List wrapper(
   ){
 
   data<T> datlist{y, trials, X, Zt};
+
+  double k{0};
+  if(family == "binomial"){
+    k = ((lgamma(trials.array() + 1) - lgamma(y.array() + 1) -
+      lgamma(trials.array() - y.array() + 1)).sum());
+  } else if(family == "poisson"){
+    k = -(y.array() + 1).lgamma().sum();
+  }
+
   parameters<T> parlist{
       theta, beta, lambda, Eigen::VectorXd::Zero(Zt.rows()), theta_mapping,
       lambda_mapping_X, lambda_mapping_Zt, Lambdat, weights, weights_mapping,
-      maxit_conditional_modes, epsilon_u, y.size()};
-
-  T k{0};
-  if(family == "binomial"){
-    k = static_cast<T>(((lgamma(trials.array() + 1) - lgamma(y.array() + 1) -
-      lgamma(trials.array() - y.array() + 1)).sum()));
-  } else if(family == "poisson"){
-    k = static_cast<T>(-(y.array() + 1).lgamma().sum());
-  }
+      maxit_conditional_modes, epsilon_u, y.size(), k};
 
   std::vector<Model<T>*> mod;
   Gaussian<T> gaussianMod{};
@@ -135,11 +136,11 @@ Rcpp::List wrapper(
   }
 
   auto fx = [=, &mod, &datlist](parameters<T>& parlist){
-    auto lll = logLik(parlist, datlist, k, mod);
+    auto lll = logLik(parlist, datlist, mod);
     return lll.logLikValue;
   };
   auto gx = [=, &mod, &datlist](parameters<T>& parlist){
-    return logLik(parlist, datlist, k, mod);;
+    return logLik(parlist, datlist, mod);;
   };
 
   return create_result(fx, gx, parlist);
