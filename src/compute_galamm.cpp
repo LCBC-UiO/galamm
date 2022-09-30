@@ -195,7 +195,7 @@ Rcpp::List marginal_likelihood(
     const Eigen::Map<Eigen::VectorXi> lambda_mapping_Zt,
     const Eigen::Map<Eigen::VectorXd> weights,
     const Eigen::Map<Eigen::VectorXi> weights_mapping,
-    const std::string family,
+    const Rcpp::StringVector family,
     const int maxit_conditional_modes,
     const bool hessian = false,
     double epsilon_u = 1e-10

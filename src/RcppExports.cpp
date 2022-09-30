@@ -12,7 +12,7 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // marginal_likelihood
-Rcpp::List marginal_likelihood(const Eigen::Map<Eigen::VectorXd> y, const Eigen::Map<Eigen::VectorXd> trials, const Eigen::Map<Eigen::MatrixXd> X, const Eigen::MappedSparseMatrix<double> Zt, const Eigen::MappedSparseMatrix<double> Lambdat, const Eigen::Map<Eigen::VectorXd> beta, const Eigen::Map<Eigen::VectorXd> theta, const Eigen::Map<Eigen::VectorXi> theta_mapping, const Eigen::Map<Eigen::VectorXd> lambda, const Eigen::Map<Eigen::VectorXi> lambda_mapping_X, const Eigen::Map<Eigen::VectorXi> lambda_mapping_Zt, const Eigen::Map<Eigen::VectorXd> weights, const Eigen::Map<Eigen::VectorXi> weights_mapping, const std::string family, const int maxit_conditional_modes, const bool hessian, double epsilon_u);
+Rcpp::List marginal_likelihood(const Eigen::Map<Eigen::VectorXd> y, const Eigen::Map<Eigen::VectorXd> trials, const Eigen::Map<Eigen::MatrixXd> X, const Eigen::MappedSparseMatrix<double> Zt, const Eigen::MappedSparseMatrix<double> Lambdat, const Eigen::Map<Eigen::VectorXd> beta, const Eigen::Map<Eigen::VectorXd> theta, const Eigen::Map<Eigen::VectorXi> theta_mapping, const Eigen::Map<Eigen::VectorXd> lambda, const Eigen::Map<Eigen::VectorXi> lambda_mapping_X, const Eigen::Map<Eigen::VectorXi> lambda_mapping_Zt, const Eigen::Map<Eigen::VectorXd> weights, const Eigen::Map<Eigen::VectorXi> weights_mapping, const Rcpp::StringVector family, const int maxit_conditional_modes, const bool hessian, double epsilon_u);
 RcppExport SEXP _galamm_marginal_likelihood(SEXP ySEXP, SEXP trialsSEXP, SEXP XSEXP, SEXP ZtSEXP, SEXP LambdatSEXP, SEXP betaSEXP, SEXP thetaSEXP, SEXP theta_mappingSEXP, SEXP lambdaSEXP, SEXP lambda_mapping_XSEXP, SEXP lambda_mapping_ZtSEXP, SEXP weightsSEXP, SEXP weights_mappingSEXP, SEXP familySEXP, SEXP maxit_conditional_modesSEXP, SEXP hessianSEXP, SEXP epsilon_uSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -30,7 +30,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Eigen::Map<Eigen::VectorXi> >::type lambda_mapping_Zt(lambda_mapping_ZtSEXP);
     Rcpp::traits::input_parameter< const Eigen::Map<Eigen::VectorXd> >::type weights(weightsSEXP);
     Rcpp::traits::input_parameter< const Eigen::Map<Eigen::VectorXi> >::type weights_mapping(weights_mappingSEXP);
-    Rcpp::traits::input_parameter< const std::string >::type family(familySEXP);
+    Rcpp::traits::input_parameter< const Rcpp::StringVector >::type family(familySEXP);
     Rcpp::traits::input_parameter< const int >::type maxit_conditional_modes(maxit_conditional_modesSEXP);
     Rcpp::traits::input_parameter< const bool >::type hessian(hessianSEXP);
     Rcpp::traits::input_parameter< double >::type epsilon_u(epsilon_uSEXP);
