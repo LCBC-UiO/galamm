@@ -4,6 +4,7 @@
 #include <RcppEigen.h>
 #include <autodiff/forward/dual.hpp>
 #include <autodiff/forward/dual/eigen.hpp>
+#include <unsupported/Eigen/SpecialFunctions>
 
 template <typename T>
 using Vdual = Eigen::Matrix<T, Eigen::Dynamic, 1>;
@@ -18,7 +19,7 @@ using ldlt = Eigen::SimplicialLDLT<Eigen::SparseMatrix<T> >;
 
 template <typename T>
 struct Model {
-  Model(double k = 0) : k { static_cast<T>(k) } {}
+  Model() {};
   virtual T cumulant(const Vdual<T>& linpred, const Vdual<T>& trials,
                      const Ddual<T>& WSqrt) = 0;
   virtual T constfun(const Vdual<T>& y, const T& phi, const Ddual<T>& WSqrt) = 0;
@@ -27,18 +28,21 @@ struct Model {
                          const Ddual<T>& WSqrt) = 0;
   virtual T get_phi(const Vdual<T>& linpred, const Vdual<T>& u,
                     const Vdual<T>& y, const Ddual<T>& WSqrt) = 0;
-  T k{0};
 };
 
 template <typename T>
 struct Binomial : Model<T> {
-  using Model<T>::Model;
+  Binomial(const Eigen::VectorXd& y, const Eigen::VectorXd& trials){
+    k = static_cast<T>(((lgamma(trials.array() + 1) - lgamma(y.array() + 1) -
+      lgamma(trials.array() - y.array() + 1)).sum()));
+  }
+  T k;
   T cumulant(const Vdual<T>& linpred, const Vdual<T>& trials,
              const Ddual<T>& WSqrt) override {
     return ((1 + linpred.array().exp()).log() * trials.array()).sum();
   };
   T constfun(const Vdual<T>& y, const T& phi, const Ddual<T>& WSqrt) override {
-    return Model<T>::k;
+    return k;
   };
 
   Vdual<T> meanfun(const Vdual<T>& linpred,
@@ -99,13 +103,16 @@ struct Gaussian : Model<T> {
 
 template <typename T>
 struct Poisson : Model<T> {
-  using Model<T>::Model;
+  Poisson(const Eigen::VectorXd& y){
+    k = static_cast<T>(-(y.array() + 1).lgamma().sum());
+  }
+  T k;
   T cumulant(const Vdual<T>& linpred, const Vdual<T>& trials,
              const Ddual<T>& WSqrt) override {
     return linpred.array().exp().sum();
   };
   T constfun(const Vdual<T>& y, const T& phi, const Ddual<T>& WSqrt) override {
-    return Model<T>::k;
+    return k;
   };
   Vdual<T> meanfun(const Vdual<T>& linpred, const Vdual<T>& trials) override {
     return linpred.array().exp();

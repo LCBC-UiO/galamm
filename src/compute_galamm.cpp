@@ -119,12 +119,9 @@ Rcpp::List wrapper(
     if(family(i) == "gaussian") {
       mod.push_back(new Gaussian<T>);
     } else if(family(i) == "binomial"){
-      double k = ((lgamma(trials.array() + 1) - lgamma(y.array() + 1) -
-                  lgamma(trials.array() - y.array() + 1)).sum());
-      mod.push_back(new Binomial<T>{k});
+      mod.push_back(new Binomial<T>{y, trials});
     } else if(family(i) == "poisson"){
-      double k = -(y.array() + 1).lgamma().sum();
-      mod.push_back(new Poisson<T>{k});
+      mod.push_back(new Poisson<T>{y});
     } else {
       Rcpp::stop("Unknown family.");
     }
