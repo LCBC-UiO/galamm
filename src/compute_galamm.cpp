@@ -102,6 +102,7 @@ Rcpp::List wrapper(
     const Eigen::VectorXd& weights,
     const Eigen::VectorXi& weights_mapping,
     const Rcpp::StringVector& family,
+    const Eigen::VectorXi& family_mapping,
     const int& maxit_conditional_modes,
     const double& epsilon_u
   ){
@@ -196,6 +197,7 @@ Rcpp::List marginal_likelihood(
     const Eigen::Map<Eigen::VectorXd> weights,
     const Eigen::Map<Eigen::VectorXi> weights_mapping,
     const Rcpp::StringVector family,
+    const Eigen::Map<Eigen::VectorXi> family_mapping,
     const int maxit_conditional_modes,
     const bool hessian = false,
     double epsilon_u = 1e-10
@@ -205,12 +207,12 @@ Rcpp::List marginal_likelihood(
     return wrapper<dual2nd>(
       y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, lambda,
       lambda_mapping_X, lambda_mapping_Zt, weights, weights_mapping,
-      family, maxit_conditional_modes, epsilon_u);
+      family, family_mapping, maxit_conditional_modes, epsilon_u);
   } else {
     return wrapper<dual1st>(
       y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, lambda,
       lambda_mapping_X, lambda_mapping_Zt, weights, weights_mapping,
-      family, maxit_conditional_modes, epsilon_u);
+      family, family_mapping, maxit_conditional_modes, epsilon_u);
   }
 
 }

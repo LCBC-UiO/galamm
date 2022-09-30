@@ -42,7 +42,7 @@
 #' @export
 #'
 #' @details For examples, see the vignette on maximum likelihood estimation.
-marginal_likelihood <- function(y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, lambda, lambda_mapping_X, lambda_mapping_Zt, weights, weights_mapping, family, maxit_conditional_modes, hessian = FALSE, epsilon_u = 1e-10) {
-    .Call(`_galamm_marginal_likelihood`, y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, lambda, lambda_mapping_X, lambda_mapping_Zt, weights, weights_mapping, family, maxit_conditional_modes, hessian, epsilon_u)
+marginal_likelihood <- function(y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, lambda, lambda_mapping_X, lambda_mapping_Zt, weights, weights_mapping, family, family_mapping, maxit_conditional_modes, hessian = FALSE, epsilon_u = 1e-10) {
+    .Call(`_galamm_marginal_likelihood`, y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, lambda, lambda_mapping_X, lambda_mapping_Zt, weights, weights_mapping, family, family_mapping, maxit_conditional_modes, hessian, epsilon_u)
 }
 

@@ -24,6 +24,7 @@ mlwrapper <- function(par, hessian = FALSE){
     weights = numeric(),
     weights_mapping = integer(),
     family = "binomial",
+    family_mapping = 0L,
     maxit_conditional_modes = 50,
     hessian = hessian
   )

@@ -43,6 +43,7 @@ mlwrapper <- function(par, hessian = FALSE){
     weights = par[weights_inds],
     weights_mapping = weights_mapping,
     family = "gaussian",
+    family_mapping = 0L,
     maxit_conditional_modes = 1,
     hessian = hessian
   )
