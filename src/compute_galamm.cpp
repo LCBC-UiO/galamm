@@ -122,15 +122,13 @@ Rcpp::List wrapper(
       maxit_conditional_modes, epsilon_u, y.size(), k};
 
   std::vector<Model<T>*> mod;
-  Gaussian<T> gaussianMod{};
-  Binomial<T> binomialMod{};
-  Poisson<T> poissonMod{};
+
   if(family == "gaussian") {
-    mod.push_back(&gaussianMod);
+    mod.push_back(new Gaussian<T>);
   } else if(family == "binomial"){
-    mod.push_back(&binomialMod);
+    mod.push_back(new Binomial<T>);
   } else if(family == "poisson"){
-    mod.push_back(&poissonMod);
+    mod.push_back(new Poisson<T>);
   } else {
     Rcpp::stop("Unknown family.");
   }
