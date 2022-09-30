@@ -27,7 +27,7 @@ T loss(const parameters<T>& parlist, const data<T>& datlist, const Vdual<T>& lp,
 
 template <typename T>
 logLikObject<T> logLik(
-    parameters<T> parlist, data<T> datlist, const T k, Model<T>* mod){
+    parameters<T> parlist, data<T> datlist, const T k, std::vector<Model<T>*> mod){
 
   update_Zt(datlist.Zt, parlist.lambda, parlist.lambda_mapping_Zt);
   update_X(datlist.X, parlist.lambda, parlist.lambda_mapping_X);
@@ -35,7 +35,7 @@ logLikObject<T> logLik(
 
   Vdual<T> lp = linpred(parlist, datlist);
   Ddual<T> V;
-  V.diagonal() = mod->get_V(lp, datlist.trials, parlist.WSqrt);
+  V.diagonal() = mod[0]->get_V(lp, datlist.trials, parlist.WSqrt);
 
   update_Lambdat(parlist.Lambdat, parlist.theta, parlist.theta_mapping);
   ldlt<T> solver;
@@ -45,12 +45,12 @@ logLikObject<T> logLik(
 
   Vdual<T> delta_u{};
   solver.factorize(H);
-  T deviance_prev = -2 * loss(parlist, datlist, lp, k, mod, solver);
+  T deviance_prev = -2 * loss(parlist, datlist, lp, k, mod[0], solver);
   T deviance_new;
 
   for(int i{}; i < parlist.maxit_conditional_modes; i++){
     Vdual<T> residual =
-      (datlist.y - mod->meanfun(linpred(parlist, datlist), datlist.trials)).array();
+      (datlist.y - mod[0]->meanfun(linpred(parlist, datlist), datlist.trials)).array();
     Vdual<T> weighted_residual = parlist.WSqrt.diagonal().array().pow(2) * residual.array();
     delta_u = solver.solve(
       (parlist.Lambdat * datlist.Zt * weighted_residual) - parlist.u);
@@ -60,10 +60,10 @@ logLikObject<T> logLik(
     for(int j{}; j < 10; j++){
       parlist.u += step * delta_u;
       lp = linpred(parlist, datlist);
-      V.diagonal() = mod->get_V(lp, datlist.trials, parlist.WSqrt);
+      V.diagonal() = mod[0]->get_V(lp, datlist.trials, parlist.WSqrt);
       H = inner_hessian(parlist, datlist, V);
       solver.factorize(H);
-      deviance_new = -2 * loss(parlist, datlist, lp, k, mod, solver);
+      deviance_new = -2 * loss(parlist, datlist, lp, k, mod[0], solver);
       if(deviance_new < deviance_prev){
         break;
       }
@@ -81,7 +81,7 @@ logLikObject<T> logLik(
   ret.logLikValue = - deviance_new / 2;
   ret.V = V.diagonal();
   ret.u = parlist.u;
-  ret.phi = mod->get_phi(lp, parlist.u, datlist.y, parlist.WSqrt);
+  ret.phi = mod[0]->get_phi(lp, parlist.u, datlist.y, parlist.WSqrt);
 
   return ret;
 }
@@ -120,16 +120,16 @@ Rcpp::List wrapper(
     k = static_cast<T>(-(y.array() + 1).lgamma().sum());
   }
 
-  Model<T>* mod;
+  std::vector<Model<T>*> mod;
   Gaussian<T> gaussianMod{};
   Binomial<T> binomialMod{};
   Poisson<T> poissonMod{};
   if(family == "gaussian") {
-    mod = &gaussianMod;
+    mod.push_back(&gaussianMod);
   } else if(family == "binomial"){
-    mod = &binomialMod;
+    mod.push_back(&binomialMod);
   } else if(family == "poisson"){
-    mod = &poissonMod;
+    mod.push_back(&poissonMod);
   } else {
     Rcpp::stop("Unknown family.");
   }
