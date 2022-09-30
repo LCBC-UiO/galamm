@@ -15,7 +15,7 @@ T loss(const parameters<T>& parlist, const data<T>& datlist, const Vdual<T>& lp,
 
   T yDotLinpred = (parlist.WSqrt * datlist.y).dot(parlist.WSqrt * lp);
   T bSquared = mod->cumulant(lp, datlist.trials, parlist.WSqrt);
-  T c_phi = mod->constfun(datlist.y, phi, parlist.k, parlist.WSqrt);
+  T c_phi = mod->constfun(datlist.y, phi, parlist.WSqrt);
   T exponent_g = (yDotLinpred - bSquared) / phi +
     c_phi - parlist.u.squaredNorm() / 2 / phi;
 
@@ -101,36 +101,33 @@ Rcpp::List wrapper(
     const Eigen::VectorXi& lambda_mapping_Zt,
     const Eigen::VectorXd& weights,
     const Eigen::VectorXi& weights_mapping,
-    const std::string& family,
+    const Rcpp::StringVector& family,
     const int& maxit_conditional_modes,
     const double& epsilon_u
   ){
 
   data<T> datlist{y, trials, X, Zt};
 
-  double k{0};
-  if(family == "binomial"){
-    k = ((lgamma(trials.array() + 1) - lgamma(y.array() + 1) -
-      lgamma(trials.array() - y.array() + 1)).sum());
-  } else if(family == "poisson"){
-    k = -(y.array() + 1).lgamma().sum();
-  }
-
   parameters<T> parlist{
       theta, beta, lambda, Eigen::VectorXd::Zero(Zt.rows()), theta_mapping,
       lambda_mapping_X, lambda_mapping_Zt, Lambdat, weights, weights_mapping,
-      maxit_conditional_modes, epsilon_u, y.size(), k};
+      maxit_conditional_modes, epsilon_u, y.size()};
 
   std::vector<Model<T>*> mod;
 
-  if(family == "gaussian") {
-    mod.push_back(new Gaussian<T>);
-  } else if(family == "binomial"){
-    mod.push_back(new Binomial<T>);
-  } else if(family == "poisson"){
-    mod.push_back(new Poisson<T>);
-  } else {
-    Rcpp::stop("Unknown family.");
+  for(size_t i{}; i < family.length(); i++){
+    if(family(i) == "gaussian") {
+      mod.push_back(new Gaussian<T>);
+    } else if(family(i) == "binomial"){
+      double k = ((lgamma(trials.array() + 1) - lgamma(y.array() + 1) -
+                  lgamma(trials.array() - y.array() + 1)).sum());
+      mod.push_back(new Binomial<T>{k});
+    } else if(family(i) == "poisson"){
+      double k = -(y.array() + 1).lgamma().sum();
+      mod.push_back(new Poisson<T>{k});
+    } else {
+      Rcpp::stop("Unknown family.");
+    }
   }
 
   auto fx = [=, &mod, &datlist](parameters<T>& parlist){

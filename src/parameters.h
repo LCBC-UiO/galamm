@@ -21,8 +21,7 @@ struct parameters{
     const Eigen::VectorXi& weights_mapping,
     const int& maxit_conditional_modes,
     const double& epsilon_u,
-    const int& n,
-    const double& k
+    const int& n
   ) :
   theta { theta.cast<T>() }, beta { beta.cast<T>() }, lambda { lambda.cast<T>() },
   u { u.cast<T>() }, theta_mapping { theta_mapping },
@@ -32,7 +31,7 @@ struct parameters{
   weights { weights.cast<T>() },
   weights_mapping { weights_mapping },
   maxit_conditional_modes { maxit_conditional_modes },
-  epsilon_u { epsilon_u }, n { n }, k { static_cast<T>(k) }
+  epsilon_u { epsilon_u }, n { n }
   {
     WSqrt.diagonal() = Vdual<T>::Constant(n, 1);
   }
@@ -52,7 +51,6 @@ struct parameters{
   int maxit_conditional_modes;
   double epsilon_u;
   int n;
-  T k;
 };
 
 template <typename T>

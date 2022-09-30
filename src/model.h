@@ -18,26 +18,27 @@ using ldlt = Eigen::SimplicialLDLT<Eigen::SparseMatrix<T> >;
 
 template <typename T>
 struct Model {
+  Model(double k = 0) : k { static_cast<T>(k) } {}
   virtual T cumulant(const Vdual<T>& linpred, const Vdual<T>& trials,
                      const Ddual<T>& WSqrt) = 0;
-  virtual T constfun(const Vdual<T>& y, const T& phi, const T k,
-                     const Ddual<T>& WSqrt) = 0;
+  virtual T constfun(const Vdual<T>& y, const T& phi, const Ddual<T>& WSqrt) = 0;
   virtual Vdual<T> meanfun(const Vdual<T>& linpred, const Vdual<T>& trials) = 0;
   virtual Vdual<T> get_V(const Vdual<T>& linpred, const Vdual<T>& trials,
                          const Ddual<T>& WSqrt) = 0;
   virtual T get_phi(const Vdual<T>& linpred, const Vdual<T>& u,
                     const Vdual<T>& y, const Ddual<T>& WSqrt) = 0;
+  T k{0};
 };
 
 template <typename T>
 struct Binomial : Model<T> {
+  using Model<T>::Model;
   T cumulant(const Vdual<T>& linpred, const Vdual<T>& trials,
              const Ddual<T>& WSqrt) override {
     return ((1 + linpred.array().exp()).log() * trials.array()).sum();
   };
-  T constfun(const Vdual<T>& y, const T& phi, const T k,
-             const Ddual<T>& WSqrt) override {
-    return k;
+  T constfun(const Vdual<T>& y, const T& phi, const Ddual<T>& WSqrt) override {
+    return Model<T>::k;
   };
 
   Vdual<T> meanfun(const Vdual<T>& linpred,
@@ -66,13 +67,12 @@ struct Binomial : Model<T> {
 
 template <typename T>
 struct Gaussian : Model<T> {
-
+  using Model<T>::Model;
   T cumulant(const Vdual<T>& linpred, const Vdual<T>& trials,
              const Ddual<T>& WSqrt) override {
     return (WSqrt * linpred).squaredNorm() / 2;
   };
-  T constfun(const Vdual<T>& y, const T& phi, const T k,
-             const Ddual<T>& WSqrt) override {
+  T constfun(const Vdual<T>& y, const T& phi, const Ddual<T>& WSqrt) override {
     int n = y.size();
     return -.5 * ((WSqrt * y).squaredNorm() / phi + n * log(2 * M_PI * phi))
       + WSqrt.diagonal().array().log().sum();
@@ -99,13 +99,13 @@ struct Gaussian : Model<T> {
 
 template <typename T>
 struct Poisson : Model<T> {
+  using Model<T>::Model;
   T cumulant(const Vdual<T>& linpred, const Vdual<T>& trials,
              const Ddual<T>& WSqrt) override {
     return linpred.array().exp().sum();
   };
-  T constfun(const Vdual<T>& y, const T& phi, const T k,
-             const Ddual<T>& WSqrt) override {
-    return k;
+  T constfun(const Vdual<T>& y, const T& phi, const Ddual<T>& WSqrt) override {
+    return Model<T>::k;
   };
   Vdual<T> meanfun(const Vdual<T>& linpred, const Vdual<T>& trials) override {
     return linpred.array().exp();
