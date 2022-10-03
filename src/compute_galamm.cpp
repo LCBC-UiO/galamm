@@ -204,7 +204,9 @@ Rcpp::List wrapper(
 //' corresponding value of \code{X} does not depend on \code{lambda},
 //' as in the case where the first element of \code{lambda} is fixed to 1.
 //' @param weights Vector of weights.
+//' @param weights_mapping Mapping
 //' @param family A length one \code{character} denoting the family.
+//' @param family_mapping Mapping
 //' @param maxit_conditional_modes Maximum number of iterations for
 //' conditional models. Can be 1 when \code{family = "gaussian"}.
 //' @param hessian Boolean specifying whether to include the Hessian matrix

@@ -63,7 +63,11 @@ as in the case where the first element of \code{lambda} is fixed to 1.}
 
 \item{weights}{Vector of weights.}
 
+\item{weights_mapping}{Mapping}
+
 \item{family}{A length one \code{character} denoting the family.}
+
+\item{family_mapping}{Mapping}
 
 \item{maxit_conditional_modes}{Maximum number of iterations for
 conditional models. Can be 1 when \code{family = "gaussian"}.}
