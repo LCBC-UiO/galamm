@@ -34,7 +34,7 @@ logLikObject<T> logLik(
   update_WSqrt(parlist.WSqrt, parlist.weights, parlist.weights_mapping);
 
   Vdual<T> lp = linpred(parlist, datlist);
-  Ddual<T> V;
+  Ddual<T> V(parlist.n);
   V.diagonal() = mod[0]->get_V(lp, datlist.trials, parlist.WSqrt);
 
   update_Lambdat(parlist.Lambdat, parlist.theta, parlist.theta_mapping);
