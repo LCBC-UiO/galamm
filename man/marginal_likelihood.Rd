@@ -17,7 +17,9 @@ marginal_likelihood(
   lambda_mapping_X,
   lambda_mapping_Zt,
   weights,
+  weights_mapping,
   family,
+  family_mapping,
   maxit_conditional_modes,
   hessian = FALSE,
   epsilon_u = 1e-10

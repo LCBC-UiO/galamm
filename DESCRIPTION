@@ -38,6 +38,7 @@ RoxygenNote: 7.2.1
 Suggests: 
     covr,
     dplyr,
+    purrr,
     tidyr,
     Matrix (>= 1.0),
     knitr,

@@ -1,11 +1,9 @@
-devtools::load_all()
 library(Matrix)
 library(lme4)
-library(dplyr)
-library(tidyr)
-library(purrr)
 library(memoise)
+library(purrr, warn.conflicts = FALSE)
 
+set.seed(100)
 dat <- tibble(id = 1:1000) %>%
   mutate(b = rnorm(nrow(.))) %>%
   uncount(4, .id = "item") %>%
@@ -50,4 +48,16 @@ gr <- function(par){
 }
 opt <- optim(c(1, 0), fn, gr, method = "L-BFGS-B",
              lower = c(0, -Inf), control = list(fnscale = -1))
+
+fmod <- mlmem(opt$par, TRUE)
+
+test_that("mixed response works", {
+  expect_equal(opt$par, c(0.954250269190533, 0.011596500858636))
+  expect_equal(opt$value, -7634.42849692686)
+  expect_equal(fmod$phi, 0.920149570635862)
+  expect_equal(fmod$hessian, structure(c(-616.442272406721, -1.40589348444479, -1.40589348444479,
+                                         -683.517659772292), dim = c(2L, 2L)))
+})
+
+
 
