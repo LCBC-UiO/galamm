@@ -65,7 +65,9 @@ likelihood.</p>
 <span>  <span class="va">lambda_mapping_X</span>,</span>
 <span>  <span class="va">lambda_mapping_Zt</span>,</span>
 <span>  <span class="va">weights</span>,</span>
+<span>  <span class="va">weights_mapping</span>,</span>
 <span>  <span class="va">family</span>,</span>
+<span>  <span class="va">family_mapping</span>,</span>
 <span>  <span class="va">maxit_conditional_modes</span>,</span>
 <span>  hessian <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  epsilon_u <span class="op">=</span> <span class="fl">1e-10</span></span>
@@ -135,8 +137,16 @@ as in the case where the first element of <code>lambda</code> is fixed to 1.</p>
 <dd><p>Vector of weights.</p></dd>
 
 
+<dt>weights_mapping</dt>
+<dd><p>Mapping</p></dd>
+
+
 <dt>family</dt>
 <dd><p>A length one <code>character</code> denoting the family.</p></dd>
+
+
+<dt>family_mapping</dt>
+<dd><p>Mapping</p></dd>
 
 
 <dt>maxit_conditional_modes</dt>
