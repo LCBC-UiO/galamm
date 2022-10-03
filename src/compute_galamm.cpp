@@ -53,7 +53,14 @@ logLikObject<T> logLik(
   T deviance_new;
 
   for(int i{}; i < parlist.maxit_conditional_modes; i++){
-    Vdual<T> meanvec = modvec[0]->meanfun(linpred(parlist, datlist), datlist.trials).array() * (parlist.family_mapping.array() == 0).array().template cast<T>();
+    Vdual<T> meanvec(parlist.n);
+    meanvec.setZero();
+    for(int k{}; k < modvec.size(); k++){
+      Vdual<T> upd = modvec[k]->meanfun(linpred(parlist, datlist), datlist.trials).array() *
+        (parlist.family_mapping.array() == k).array().template cast<T>();
+      meanvec += upd;
+    }
+
     Vdual<T> weighted_residual = parlist.WSqrt.diagonal().array().pow(2) * (datlist.y - meanvec).array();
     delta_u = solver.solve((parlist.Lambdat * datlist.Zt * weighted_residual) - parlist.u);
     if(delta_u.squaredNorm() < parlist.epsilon_u) break;
