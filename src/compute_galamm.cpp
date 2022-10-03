@@ -12,12 +12,34 @@ template <typename T>
 T loss(const parameters<T>& parlist, const data<T>& datlist, const Vdual<T>& lp,
        std::vector<Model<T>*> modvec, ldlt<T>& solver){
 
-  T phi = modvec[0]->get_phi(lp, parlist.u, datlist.y, parlist.WSqrt, parlist.n);
+  T ret{};
+  T phi{};
+  T phi0{};
+  for(int k{}; k < modvec.size(); k++){
+    int size0 = (parlist.family_mapping.array() == k).template cast<int>().sum();
+    Vdual<T> y0(size0);
+    Vdual<T> trials0(size0);
+    Vdual<T> lp0(size0);
+    Ddual<T> WSqrt0(size0);
+    int counter{0};
+    for(int i{}; i < parlist.n; i++){
+      if(parlist.family_mapping(i) == k){
+        y0(counter) = datlist.y(i);
+        trials0(counter) = datlist.trials(i);
+        lp0(counter) = lp(i);
+        WSqrt0.diagonal()(counter) = parlist.WSqrt.diagonal()(i);
+        ++counter;
+      }
+    }
+    phi = modvec[k]->get_phi(lp0, parlist.u, y0, WSqrt0, size0);
+    if(k == 0) phi0 = phi; // Reference level for phi
 
-  return ((parlist.WSqrt * datlist.y).dot(parlist.WSqrt * lp) -
-    modvec[0]->cumulant(lp, datlist.trials, parlist.WSqrt) -
-    parlist.u.squaredNorm() / 2) / phi +
-    modvec[0]->constfun(datlist.y, phi, parlist.WSqrt) -
+    ret += ((WSqrt0 * y0).dot(WSqrt0 * lp0) -
+      modvec[k]->cumulant(lp0, trials0, WSqrt0)) / phi +
+      modvec[k]->constfun(y0, phi, WSqrt0);
+  }
+
+  return ret - parlist.u.squaredNorm() / 2 / phi0 -
     solver.vectorD().array().log().sum() / 2;
 
 }
