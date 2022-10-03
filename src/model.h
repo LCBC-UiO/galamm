@@ -27,7 +27,7 @@ struct Model {
   virtual Vdual<T> get_V(const Vdual<T>& linpred, const Vdual<T>& trials,
                          const Ddual<T>& WSqrt) = 0;
   virtual T get_phi(const Vdual<T>& linpred, const Vdual<T>& u,
-                    const Vdual<T>& y, const Ddual<T>& WSqrt) = 0;
+                    const Vdual<T>& y, const Ddual<T>& WSqrt, int n) = 0;
 };
 
 template <typename T>
@@ -64,7 +64,7 @@ struct Binomial : Model<T> {
   };
 
   T get_phi(const Vdual<T>& linpred, const Vdual<T>& u,
-            const Vdual<T>& y, const Ddual<T>& WSqrt) override {
+            const Vdual<T>& y, const Ddual<T>& WSqrt, int n) override {
               return 1;
   };
 };
@@ -94,8 +94,7 @@ struct Gaussian : Model<T> {
 
   T get_phi(
       const Vdual<T>& linpred, const Vdual<T>& u, const Vdual<T>& y,
-      const Ddual<T>& WSqrt) override {
-        int n = y.size();
+      const Ddual<T>& WSqrt, int n) override {
         return ((WSqrt * (y - linpred)).squaredNorm() + u.squaredNorm()) / n;
   };
 
@@ -125,7 +124,7 @@ struct Poisson : Model<T> {
   };
 
   T get_phi(const Vdual<T>& linpred, const Vdual<T>& u, const Vdual<T>& y,
-            const Ddual<T>& WSqrt) override {
+            const Ddual<T>& WSqrt, int n) override {
     return 1;
   };
 

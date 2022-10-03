@@ -10,19 +10,16 @@ using namespace autodiff;
 
 template <typename T>
 T loss(const parameters<T>& parlist, const data<T>& datlist, const Vdual<T>& lp,
-       Model<T>* mod, ldlt<T>& solver){
-  T phi = mod->get_phi(lp, parlist.u, datlist.y, parlist.WSqrt);
+       std::vector<Model<T>*> modvec, ldlt<T>& solver){
 
-  T yDotLinpred = (parlist.WSqrt * datlist.y).dot(parlist.WSqrt * lp);
-  T bSquared = mod->cumulant(lp, datlist.trials, parlist.WSqrt);
-  T c_phi = mod->constfun(datlist.y, phi, parlist.WSqrt);
-  T exponent_g = (yDotLinpred - bSquared) / phi +
-    c_phi - parlist.u.squaredNorm() / 2 / phi;
+  T phi = modvec[0]->get_phi(lp, parlist.u, datlist.y, parlist.WSqrt, parlist.n);
 
-  T hessian_determinant = solver.vectorD().array().log().sum();
-  T res = exponent_g - hessian_determinant / 2;
+  return ((parlist.WSqrt * datlist.y).dot(parlist.WSqrt * lp) -
+    modvec[0]->cumulant(lp, datlist.trials, parlist.WSqrt) -
+    parlist.u.squaredNorm() / 2) / phi +
+    modvec[0]->constfun(datlist.y, phi, parlist.WSqrt) -
+    solver.vectorD().array().log().sum() / 2;
 
-  return res;
 }
 
 template <typename T>
@@ -49,7 +46,7 @@ logLikObject<T> logLik(
   solver.analyzePattern(H);
   Vdual<T> delta_u{};
   solver.factorize(H);
-  T deviance_prev = -2 * loss(parlist, datlist, lp, modvec[0], solver);
+  T deviance_prev = -2 * loss(parlist, datlist, lp, modvec, solver);
   T deviance_new;
 
   for(int i{}; i < parlist.maxit_conditional_modes; i++){
@@ -78,7 +75,7 @@ logLikObject<T> logLik(
 
       H = inner_hessian(parlist, datlist, V);
       solver.factorize(H);
-      deviance_new = -2 * loss(parlist, datlist, lp, modvec[0], solver);
+      deviance_new = -2 * loss(parlist, datlist, lp, modvec, solver);
       if(deviance_new < deviance_prev){
         break;
       }
@@ -96,7 +93,7 @@ logLikObject<T> logLik(
   ret.logLikValue = - deviance_new / 2;
   ret.V = V.diagonal();
   ret.u = parlist.u;
-  ret.phi = modvec[0]->get_phi(lp, parlist.u, datlist.y, parlist.WSqrt);
+  ret.phi = modvec[0]->get_phi(lp, parlist.u, datlist.y, parlist.WSqrt, parlist.n);
 
   return ret;
 }
