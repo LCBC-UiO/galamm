@@ -31,5 +31,6 @@ margl <- marginal_likelihood(
   weights_mapping = integer(),
   family = c("gaussian", "binomial"),
   family_mapping = if_else(dat$item %in% c(1, 2), 0L, 1L),
-  maxit_conditional_modes = 3
+  maxit_conditional_modes = 3,
+  hessian = TRUE
 )

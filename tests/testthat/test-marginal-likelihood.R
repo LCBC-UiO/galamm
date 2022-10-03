@@ -32,7 +32,7 @@ ml <- marginal_likelihood(
   weights = numeric(),
   weights_mapping = integer(),
   family = "gaussian",
-  family_mapping = 0L,
+  family_mapping = rep(0L, nrow(dat)),
   maxit_conditional_modes = 1
 )
 
@@ -66,7 +66,7 @@ mlwrapper <- function(par){
     weights = numeric(),
     weights_mapping = integer(),
     family = "gaussian",
-    family_mapping = 0L,
+    family_mapping = rep(0L, nrow(dat)),
     maxit_conditional_modes = 1
   )
 }
@@ -106,7 +106,7 @@ final_model <- marginal_likelihood(
   weights = numeric(),
   weights_mapping = integer(),
   family = "gaussian",
-  family_mapping = 0L,
+  family_mapping = rep(0L, nrow(dat)),
   maxit_conditional_modes = 1,
   hessian = TRUE
 )

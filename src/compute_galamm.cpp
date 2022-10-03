@@ -27,7 +27,7 @@ T loss(const parameters<T>& parlist, const data<T>& datlist, const Vdual<T>& lp,
 
 template <typename T>
 logLikObject<T> logLik(
-    parameters<T> parlist, data<T> datlist, std::vector<Model<T>*> mod){
+    parameters<T> parlist, data<T> datlist, std::vector<Model<T>*> modvec){
 
   update_Zt(datlist.Zt, parlist.lambda, parlist.lambda_mapping_Zt);
   update_X(datlist.X, parlist.lambda, parlist.lambda_mapping_X);
@@ -35,35 +35,43 @@ logLikObject<T> logLik(
 
   Vdual<T> lp = linpred(parlist, datlist);
   Ddual<T> V(parlist.n);
-  V.diagonal() = mod[0]->get_V(lp, datlist.trials, parlist.WSqrt);
+  V.setZero();
+  for(int k{}; k < modvec.size(); k++){
+    Vdual<T> upd = modvec[k]->get_V(lp, datlist.trials, parlist.WSqrt).array() *
+      (parlist.family_mapping.array() == k).array().template cast<T>();
+    V.diagonal() += upd;
+  }
 
   update_Lambdat(parlist.Lambdat, parlist.theta, parlist.theta_mapping);
   ldlt<T> solver;
   solver.setShift(1);
   SpMdual<T> H = inner_hessian(parlist, datlist, V);
   solver.analyzePattern(H);
-
   Vdual<T> delta_u{};
   solver.factorize(H);
-  T deviance_prev = -2 * loss(parlist, datlist, lp, mod[0], solver);
+  T deviance_prev = -2 * loss(parlist, datlist, lp, modvec[0], solver);
   T deviance_new;
 
   for(int i{}; i < parlist.maxit_conditional_modes; i++){
-    Vdual<T> residual =
-      (datlist.y - mod[0]->meanfun(linpred(parlist, datlist), datlist.trials)).array();
-    Vdual<T> weighted_residual = parlist.WSqrt.diagonal().array().pow(2) * residual.array();
-    delta_u = solver.solve(
-      (parlist.Lambdat * datlist.Zt * weighted_residual) - parlist.u);
+    Vdual<T> meanvec = modvec[0]->meanfun(linpred(parlist, datlist), datlist.trials).array() * (parlist.family_mapping.array() == 0).array().template cast<T>();
+    Vdual<T> weighted_residual = parlist.WSqrt.diagonal().array().pow(2) * (datlist.y - meanvec).array();
+    delta_u = solver.solve((parlist.Lambdat * datlist.Zt * weighted_residual) - parlist.u);
     if(delta_u.squaredNorm() < parlist.epsilon_u) break;
 
     double step = 1;
     for(int j{}; j < 10; j++){
       parlist.u += step * delta_u;
       lp = linpred(parlist, datlist);
-      V.diagonal() = mod[0]->get_V(lp, datlist.trials, parlist.WSqrt);
+      V.setZero();
+      for(int k{}; k < modvec.size(); k++){
+        Vdual<T> upd = modvec[k]->get_V(lp, datlist.trials, parlist.WSqrt).array() *
+          (parlist.family_mapping.array() == k).array().template cast<T>();
+        V.diagonal() += upd;
+      }
+
       H = inner_hessian(parlist, datlist, V);
       solver.factorize(H);
-      deviance_new = -2 * loss(parlist, datlist, lp, mod[0], solver);
+      deviance_new = -2 * loss(parlist, datlist, lp, modvec[0], solver);
       if(deviance_new < deviance_prev){
         break;
       }
@@ -81,7 +89,7 @@ logLikObject<T> logLik(
   ret.logLikValue = - deviance_new / 2;
   ret.V = V.diagonal();
   ret.u = parlist.u;
-  ret.phi = mod[0]->get_phi(lp, parlist.u, datlist.y, parlist.WSqrt);
+  ret.phi = modvec[0]->get_phi(lp, parlist.u, datlist.y, parlist.WSqrt);
 
   return ret;
 }
@@ -104,15 +112,15 @@ Rcpp::List wrapper(
     const Rcpp::StringVector& family,
     const Eigen::VectorXi& family_mapping,
     const int& maxit_conditional_modes,
-    const double& epsilon_u
-  ){
+    const double& epsilon_u  ){
+
 
   data<T> datlist{y, trials, X, Zt};
 
   parameters<T> parlist{
       theta, beta, lambda, Eigen::VectorXd::Zero(Zt.rows()), theta_mapping,
       lambda_mapping_X, lambda_mapping_Zt, Lambdat, weights, weights_mapping,
-      maxit_conditional_modes, epsilon_u, y.size()};
+      family_mapping, maxit_conditional_modes, epsilon_u, y.size()};
 
   std::vector<Model<T>*> mod;
 

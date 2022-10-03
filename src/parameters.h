@@ -19,6 +19,7 @@ struct parameters{
     const Eigen::SparseMatrix<double>& Lambdat,
     const Eigen::VectorXd& weights,
     const Eigen::VectorXi& weights_mapping,
+    const Eigen::VectorXi& family_mapping,
     const int& maxit_conditional_modes,
     const double& epsilon_u,
     const int& n
@@ -30,6 +31,7 @@ struct parameters{
   Lambdat { Lambdat.cast<T>() },
   weights { weights.cast<T>() },
   weights_mapping { weights_mapping },
+  family_mapping { family_mapping },
   maxit_conditional_modes { maxit_conditional_modes },
   epsilon_u { epsilon_u }, n { n }
   {
@@ -47,6 +49,7 @@ struct parameters{
   Eigen::SparseMatrix<T> Lambdat;
   Vdual<T> weights;
   Eigen::VectorXi weights_mapping;
+  Eigen::VectorXi family_mapping;
   Ddual<T> WSqrt;
   int maxit_conditional_modes;
   double epsilon_u;
