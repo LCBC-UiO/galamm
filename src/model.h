@@ -32,10 +32,7 @@ struct Model {
 
 template <typename T>
 struct Binomial : Model<T> {
-  Binomial(const Eigen::VectorXd& y, const Eigen::VectorXd& trials){
-    k = static_cast<T>(((lgamma(trials.array() + 1) - lgamma(y.array() + 1) -
-      lgamma(trials.array() - y.array() + 1)).sum()));
-  }
+  Binomial(double k) : k { static_cast<T>(k) } {}
   T k;
   T cumulant(const Vdual<T>& linpred, const Vdual<T>& trials,
              const Ddual<T>& WSqrt) override {
@@ -102,9 +99,7 @@ struct Gaussian : Model<T> {
 
 template <typename T>
 struct Poisson : Model<T> {
-  Poisson(const Eigen::VectorXd& y){
-    k = static_cast<T>(-(y.array() + 1).lgamma().sum());
-  }
+  Poisson(double k) : k {static_cast<T>(k)} {}
   T k;
   T cumulant(const Vdual<T>& linpred, const Vdual<T>& trials,
              const Ddual<T>& WSqrt) override {

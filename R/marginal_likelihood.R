@@ -55,11 +55,27 @@ marginal_likelihood <- function(
   stopifnot(length(beta) == ncol(X))
   stopifnot(length(y) == length(family_mapping))
   stopifnot(length(family) == length(unique(family_mapping)))
+  stopifnot(length(unique(family)) == length(family))
+
+  k <- numeric(length(family))
+  for(i in seq_along(k)){
+    if(family[[i]] == "gaussian"){
+      k[[i]] <- 0
+    } else if(family[[i]] == "binomial"){
+      trials0 <- trials[family_mapping == i - 1L]
+      y0 <- y[family_mapping == i - 1L]
+      k[[i]] <- sum(lgamma(trials0 + 1) - lgamma(y0 + 1) - lgamma(trials0 - y0 + 1))
+    } else if(family[[i]] == "poisson"){
+      trials0 <- trials[family_mapping == i - 1L]
+      y0 <- y[family_mapping == i - 1L]
+      k[[i]] <- -sum(lgamma(y0 + 1))
+    }
+  }
 
   marginal_likelihood_cpp(
     y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, lambda,
     lambda_mapping_X, lambda_mapping_Zt, weights, weights_mapping,
-    family, family_mapping, maxit_conditional_modes, hessian, epsilon_u
+    family, family_mapping, k, maxit_conditional_modes, hessian, epsilon_u
   )
 
 

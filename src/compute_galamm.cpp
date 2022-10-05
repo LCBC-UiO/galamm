@@ -37,8 +37,15 @@ T loss(const parameters<T>& parlist, const data<T>& datlist, const Vdual<T>& lp,
     ret += ((WSqrt0 * y0).dot(WSqrt0 * lp0) -
       modvec[k]->cumulant(lp0, trials0, WSqrt0)) / phi +
       modvec[k]->constfun(y0, phi, WSqrt0);
+
+    // Rcpp::Rcout << "k = " << k << std::endl
+    //             << "(WSqrt0 * y0).dot(WSqrt0 * lp0) = " << (WSqrt0 * y0).dot(WSqrt0 * lp0) << std::endl
+    //             << "modvec[k]->cumulant(lp0, trials0, WSqrt0)) / phi = " << modvec[k]->cumulant(lp0, trials0, WSqrt0) << std::endl
+    //             << "modvec[k]->constfun(y0, phi, WSqrt0)" << modvec[k]->constfun(y0, phi, WSqrt0) << std::endl << std::endl;
   }
 
+
+  // Rcpp::Rcout << "ret = " << ret << std::endl;
   return ret - parlist.u.squaredNorm() / 2 / phi0 -
     solver.vectorD().array().log().sum() / 2;
 
@@ -53,6 +60,7 @@ logLikObject<T> logLik(
   update_WSqrt(parlist.WSqrt, parlist.weights, parlist.weights_mapping);
 
   Vdual<T> lp = linpred(parlist, datlist);
+
   Ddual<T> V(parlist.n);
   V.setZero();
   for(int k{}; k < modvec.size(); k++){
@@ -137,6 +145,7 @@ Rcpp::List wrapper(
     const Eigen::VectorXi& weights_mapping,
     const Rcpp::StringVector& family,
     const Eigen::VectorXi& family_mapping,
+    const Eigen::VectorXd& k,
     const int& maxit_conditional_modes,
     const double& epsilon_u  ){
 
@@ -148,15 +157,17 @@ Rcpp::List wrapper(
       lambda_mapping_X, lambda_mapping_Zt, Lambdat, weights, weights_mapping,
       family_mapping, maxit_conditional_modes, epsilon_u, y.size()};
 
+
+
   std::vector<Model<T>*> mod;
 
   for(size_t i{}; i < family.length(); i++){
     if(family(i) == "gaussian") {
       mod.push_back(new Gaussian<T>);
     } else if(family(i) == "binomial"){
-      mod.push_back(new Binomial<T>{y, trials});
+      mod.push_back(new Binomial<T>{k(i)});
     } else if(family(i) == "poisson"){
-      mod.push_back(new Poisson<T>{y});
+      mod.push_back(new Poisson<T>{k(i)});
     } else {
       Rcpp::stop("Unknown family.");
     }
@@ -191,6 +202,7 @@ Rcpp::List marginal_likelihood_cpp(
     const Eigen::Map<Eigen::VectorXi> weights_mapping,
     const Rcpp::StringVector family,
     const Eigen::Map<Eigen::VectorXi> family_mapping,
+    const Eigen::Map<Eigen::VectorXd> k,
     const int maxit_conditional_modes,
     const bool hessian = false,
     double epsilon_u = 1e-10
@@ -200,12 +212,12 @@ Rcpp::List marginal_likelihood_cpp(
     return wrapper<dual2nd>(
       y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, lambda,
       lambda_mapping_X, lambda_mapping_Zt, weights, weights_mapping,
-      family, family_mapping, maxit_conditional_modes, epsilon_u);
+      family, family_mapping, k, maxit_conditional_modes, epsilon_u);
   } else {
     return wrapper<dual1st>(
       y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, lambda,
       lambda_mapping_X, lambda_mapping_Zt, weights, weights_mapping,
-      family, family_mapping, maxit_conditional_modes, epsilon_u);
+      family, family_mapping, k, maxit_conditional_modes, epsilon_u);
   }
 
 }

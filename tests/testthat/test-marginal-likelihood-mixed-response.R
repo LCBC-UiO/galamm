@@ -1,6 +1,8 @@
 library(Matrix)
 library(lme4)
 library(memoise)
+library(dplyr, warn.conflicts = FALSE)
+library(tidyr, warn.conflicts = FALSE)
 library(purrr, warn.conflicts = FALSE)
 
 set.seed(100)
@@ -53,7 +55,7 @@ fmod <- mlmem(opt$par, TRUE)
 
 test_that("mixed response works", {
   expect_equal(opt$par, c(0.954250269190533, 0.011596500858636))
-  expect_equal(opt$value, -7634.42849692686)
+  expect_equal(opt$value, -4646.94215595028)
   expect_equal(fmod$phi, 0.920149570635862)
   expect_equal(fmod$hessian, structure(c(-616.442272406721, -1.40589348444479, -1.40589348444479,
                                          -683.517659772292), dim = c(2L, 2L)))
