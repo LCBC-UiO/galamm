@@ -10,14 +10,16 @@ dat <- tibble(id = 1:1000) %>%
   mutate(b = rnorm(nrow(.))) %>%
   uncount(4, .id = "item") %>%
   mutate(
-    y = map2_dbl(
-      b, item, ~ if_else(.y %in% c(1, 2), rnorm(1, .x), as.numeric(rbinom(1, 1, plogis(.x)))))
+    x = runif(nrow(.)),
+    y = pmap_dbl(
+      list(b, item, x), ~ if_else(..2 %in% c(1, 2), rnorm(1, ..3 + ..1), as.numeric(rbinom(1, 1, plogis(..3 + ..1))))),
+    itemgroup = if_else(item %in% c(1, 2), "a", "b")
   )
 
-lmod <- lFormula(y ~ (1 | id), data = dat)
+lmod <- lFormula(y ~ x + (0 + itemgroup | id), data = dat)
 
-theta_inds <- 1
-beta_inds <- 2
+theta_inds <- seq_along(lmod$reTrms$theta)
+beta_inds <- seq(from = max(theta_inds) + 1, length.out = ncol(lmod$X))
 
 mlwrapper <- function(par, hessian = FALSE, epsilon_u = .1){
   marginal_likelihood(
@@ -29,11 +31,6 @@ mlwrapper <- function(par, hessian = FALSE, epsilon_u = .1){
     beta = par[beta_inds],
     theta = par[theta_inds],
     theta_mapping = lmod$reTrms$Lind - 1L,
-    lambda = numeric(),
-    lambda_mapping_X = integer(),
-    lambda_mapping_Zt = integer(),
-    weights = numeric(),
-    weights_mapping = integer(),
     family = c("gaussian", "binomial"),
     family_mapping = if_else(dat$item %in% c(1, 2), 0L, 1L),
     maxit_conditional_modes = 10,
@@ -50,92 +47,24 @@ gr <- function(par, epsilon_u = .1){
   mlmem(par, epsilon_u = epsilon_u)$gradient
 }
 
-opt <- optim(c(1, 0), fn, gr, method = "L-BFGS-B",
-             lower = c(0, -Inf), control = list(fnscale = -1))
-
-opt <- optim(opt$par, fn, gr, epsilon_u = 1e-5, method = "L-BFGS-B",
-             lower = c(0, -Inf), control = list(fnscale = -1))
+par_init <- c(lmod$reTrms$theta, rep(.3, ncol(lmod$X)))
+lbound <- c(lmod$reTrms$lower, rep(-Inf, ncol(lmod$X)))
+opt <- optim(par_init, fn, gr, epsilon_u = 1e-5, method = "L-BFGS-B",
+             lower = lbound, control = list(fnscale = -1))
 
 fmod <- mlmem(opt$par, TRUE)
 
 
 test_that("mixed response works", {
-  expect_equal(opt$par, c(0.95732902946743, 0.0114817102301233))
-  expect_equal(opt$value, -4646.14884571025)
-  expect_equal(fmod$phi, c(1.10252490523535, 1))
-  expect_equal(fmod$hessian, structure(c(-610.404791141158, -1.55077195603924, -1.55077195603924,
-                                         -684.949541922932), dim = c(2L, 2L)))
+  expect_equal(opt$par, c(0.957958409447422, 1.06067106767555, 0.285720962425644, 0.0405115541598134,
+                          0.974239048611714))
+  expect_equal(opt$value, -4619.2040054477)
+  expect_equal(fmod$phi, c(1.13720882645928, 1))
+  expect_equal(fmod$hessian, structure(c(-411.353084880177, 3.4458649094352, -26.472360587959,
+                                         -6.530760197769, 0.0684283841271554, 3.4458649094352, -157.58230702932,
+                                         0.765762636440734, 12.0754780421646, 10.6803963000759, -26.472360587959,
+                                         0.765762636440734, -15.0026336279258, 4.30449020846456, 5.33747040748976,
+                                         -6.530760197769, 12.0754780421646, 4.30449020846456, -645.035172590591,
+                                         -320.704973053981, 0.0684283841271554, 10.6803963000759, 5.33747040748976,
+                                         -320.704973053981, -292.803601488173), dim = c(5L, 5L)))
 })
-
-
-# Test with varying number of trials
-set.seed(100)
-dat <- tibble(id = 1:1000) %>%
-  mutate(b = rnorm(nrow(.))) %>%
-  uncount(4, .id = "item") %>%
-  mutate(
-    trials = as.numeric(sample(10, nrow(.), replace = TRUE)),
-    y = pmap_dbl(
-      list(b, item, trials), ~ if_else(..2 %in% c(1, 2), rnorm(1, ..1), as.numeric(rbinom(1, ..3, plogis(..1)))))
-  )
-
-lmod <- lFormula(y ~ (1 | id), data = dat)
-
-theta_inds <- 1
-beta_inds <- 2
-
-mlwrapper <- function(par, hessian = FALSE, epsilon_u = .1){
-  marginal_likelihood(
-    y = dat$y,
-    trials = dat$trials,
-    X = lmod$X,
-    Zt = lmod$reTrms$Zt,
-    Lambdat = lmod$reTrms$Lambdat,
-    beta = par[beta_inds],
-    theta = par[theta_inds],
-    theta_mapping = lmod$reTrms$Lind - 1L,
-    lambda = numeric(),
-    lambda_mapping_X = integer(),
-    lambda_mapping_Zt = integer(),
-    weights = numeric(),
-    weights_mapping = integer(),
-    family = c("gaussian", "binomial"),
-    family_mapping = if_else(dat$item %in% c(1, 2), 0L, 1L),
-    maxit_conditional_modes = 10,
-    hessian = hessian,
-    epsilon_u = epsilon_u
-  )
-}
-
-mlmem <- memoise(mlwrapper)
-fn <- function(par, epsilon_u = .1){
-  mlmem(par, epsilon_u = epsilon_u)$logLik
-}
-gr <- function(par, epsilon_u = .1){
-  mlmem(par, epsilon_u = epsilon_u)$gradient
-}
-
-opt <- optim(c(1, 0), fn, gr, epsilon_u = 1, method = "L-BFGS-B",
-             lower = c(0, -Inf), control = list(fnscale = -1))
-
-opt <- optim(opt$par, fn, gr, epsilon_u = .1, method = "L-BFGS-B",
-             lower = c(0, -Inf), control = list(fnscale = -1))
-
-opt <- optim(opt$par, fn, gr, epsilon_u = .01, method = "L-BFGS-B",
-             lower = c(0, -Inf), control = list(fnscale = -1))
-
-opt <- optim(opt$par, fn, gr, epsilon_u = .001, method = "L-BFGS-B",
-             lower = c(0, -Inf), control = list(fnscale = -1))
-
-
-fmod <- mlmem(opt$par, TRUE)
-
-test_that("mixed response varying number of trials works", {
-  expect_equal(opt$par, c(0.872205160510487, 0.0166011748937604))
-  expect_equal(opt$value, -6322.91801530508)
-  expect_equal(fmod$phi, c(1.31544526738152, 1))
-  expect_equal(fmod$hessian, structure(c(-1120.14782091153, -0.122199502560083, -0.122199502560083,
-                                         -785.439816986964), dim = c(2L, 2L)))
-})
-
-
