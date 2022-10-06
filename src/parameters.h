@@ -61,7 +61,7 @@ struct logLikObject {
   T logLikValue;
   Vdual<T> V;
   Vdual<T> u;
-  T phi;
+  Vdual<T> phi;
 };
 
 #endif

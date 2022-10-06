@@ -55,7 +55,7 @@ Rcpp::List create_result(Functor1 fx, Functor2 gx, parameters<autodiff::dual2nd>
     Rcpp::Named("hessian") = H,
     Rcpp::Named("u") = extras.u.template cast<double>(),
     Rcpp::Named("V") = extras.V.template cast<double>(),
-    Rcpp::Named("phi") = static_cast<double>(extras.phi)
+    Rcpp::Named("phi") = extras.phi.template cast<double>()
   );
 }
 

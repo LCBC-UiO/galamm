@@ -61,7 +61,7 @@ fmod <- mlmem(opt$par, TRUE)
 test_that("mixed response works", {
   expect_equal(opt$par, c(0.95732902946743, 0.0114817102301233))
   expect_equal(opt$value, -4646.14884571025)
-  expect_equal(fmod$phi, 0.929084053682197)
+  expect_equal(fmod$phi, c(1.10252490523535, 1))
   expect_equal(fmod$hessian, structure(c(-610.404791141158, -1.55077195603924, -1.55077195603924,
                                          -684.949541922932), dim = c(2L, 2L)))
 })
