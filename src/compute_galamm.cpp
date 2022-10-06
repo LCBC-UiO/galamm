@@ -90,7 +90,7 @@ logLikObject<T> logLik(
 
     Vdual<T> weighted_residual = parlist.WSqrt.diagonal().array().pow(2) * (datlist.y - meanvec).array();
     delta_u = solver.solve((parlist.Lambdat * datlist.Zt * weighted_residual) - parlist.u);
-    if(delta_u.squaredNorm() < parlist.epsilon_u) break;
+    if(delta_u.array().abs().maxCoeff() < parlist.epsilon_u) break;
 
     double step = 1;
     for(int j{}; j < 10; j++){
