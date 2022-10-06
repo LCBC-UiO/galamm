@@ -44,7 +44,7 @@ irt.lam = c(1, NA, NA)
 
 The model can be fit with `PLmixed` as follows, where we're pretending for now the the response is normally distributed, although the binomial distribution would be correct.
 
-```{r, cache=TRUE}
+```{r}
 form <- y ~ 0 + as.factor(item) + (0 + abil.sid |sid) +(0 + abil.sid |school)
 irt.model <- PLmixed(form,
                      data = IRTsub, load.var = c("item"), # family = binomial,

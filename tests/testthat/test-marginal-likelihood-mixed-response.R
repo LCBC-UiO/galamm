@@ -19,7 +19,7 @@ lmod <- lFormula(y ~ (1 | id), data = dat)
 theta_inds <- 1
 beta_inds <- 2
 
-mlwrapper <- function(par, hessian = FALSE){
+mlwrapper <- function(par, hessian = FALSE, epsilon_u = .1){
   marginal_likelihood(
     y = dat$y,
     trials = rep(1, nrow(dat)),
@@ -36,29 +36,34 @@ mlwrapper <- function(par, hessian = FALSE){
     weights_mapping = integer(),
     family = c("gaussian", "binomial"),
     family_mapping = if_else(dat$item %in% c(1, 2), 0L, 1L),
-    maxit_conditional_modes = 1,
-    hessian = hessian
+    maxit_conditional_modes = 10,
+    hessian = hessian,
+    epsilon_u = epsilon_u
   )
 }
 
 mlmem <- memoise(mlwrapper)
-fn <- function(par){
-  mlmem(par)$logLik
+fn <- function(par, epsilon_u = .1){
+  mlmem(par, epsilon_u)$logLik
 }
-gr <- function(par){
-  mlmem(par)$gradient
+gr <- function(par, epsilon_u = .1){
+  mlmem(par, epsilon_u)$gradient
 }
+
 opt <- optim(c(1, 0), fn, gr, method = "L-BFGS-B",
+             lower = c(0, -Inf), control = list(fnscale = -1))
+
+opt <- optim(opt$par, fn, gr, epsilon_u = 1e-5, method = "L-BFGS-B",
              lower = c(0, -Inf), control = list(fnscale = -1))
 
 fmod <- mlmem(opt$par, TRUE)
 
 test_that("mixed response works", {
-  expect_equal(opt$par, c(0.954250269190533, 0.011596500858636))
-  expect_equal(opt$value, -4646.94215595028)
-  expect_equal(fmod$phi, 0.920149570635862)
-  expect_equal(fmod$hessian, structure(c(-616.442272406721, -1.40589348444479, -1.40589348444479,
-                                         -683.517659772292), dim = c(2L, 2L)))
+  expect_equal(opt$par, c(0.957327886549659, 0.0114817254471899))
+  expect_equal(opt$value, -4646.14912303785)
+  expect_equal(fmod$phi, 0.929084089900586)
+  expect_equal(fmod$hessian, structure(c(-610.406083940261, -1.55076892912207, -1.55076892912207,
+                                         -684.950216108444), dim = c(2L, 2L)))
 })
 
 
