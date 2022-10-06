@@ -44,10 +44,10 @@ mlwrapper <- function(par, hessian = FALSE, epsilon_u = .1){
 
 mlmem <- memoise(mlwrapper)
 fn <- function(par, epsilon_u = .1){
-  mlmem(par, epsilon_u)$logLik
+  mlmem(par, epsilon_u = epsilon_u)$logLik
 }
 gr <- function(par, epsilon_u = .1){
-  mlmem(par, epsilon_u)$gradient
+  mlmem(par, epsilon_u = epsilon_u)$gradient
 }
 
 opt <- optim(c(1, 0), fn, gr, method = "L-BFGS-B",
@@ -59,11 +59,11 @@ opt <- optim(opt$par, fn, gr, epsilon_u = 1e-5, method = "L-BFGS-B",
 fmod <- mlmem(opt$par, TRUE)
 
 test_that("mixed response works", {
-  expect_equal(opt$par, c(0.957327886549659, 0.0114817254471899))
-  expect_equal(opt$value, -4646.14912303785)
-  expect_equal(fmod$phi, 0.929084089900586)
-  expect_equal(fmod$hessian, structure(c(-610.406083940261, -1.55076892912207, -1.55076892912207,
-                                         -684.950216108444), dim = c(2L, 2L)))
+  expect_equal(opt$par, c(0.95732902946743, 0.0114817102301233))
+  expect_equal(opt$value, -4646.14884571025)
+  expect_equal(fmod$phi, 0.929084053682197)
+  expect_equal(fmod$hessian, structure(c(-610.404791141158, -1.55077195603924, -1.55077195603924,
+                                         -684.949541922932), dim = c(2L, 2L)))
 })
 
 
