@@ -10,11 +10,9 @@ using namespace autodiff;
 
 template <typename T>
 T loss(const parameters<T>& parlist, const data<T>& datlist, const Vdual<T>& lp,
-       std::vector<Model<T>*> modvec, ldlt<T>& solver){
+       std::vector<Model<T>*> modvec, ldlt<T>& solver, Vdual<T>& phi){
 
   T ret{};
-  T phi{};
-  T phi0{};
   for(int k{}; k < modvec.size(); k++){
     int size0 = (parlist.family_mapping.array() == k).template cast<int>().sum();
     Vdual<T> y0(size0);
@@ -31,22 +29,14 @@ T loss(const parameters<T>& parlist, const data<T>& datlist, const Vdual<T>& lp,
         ++counter;
       }
     }
-    phi = modvec[k]->get_phi(lp0, parlist.u, y0, WSqrt0, size0);
-    if(k == 0) phi0 = phi; // Reference level for phi
+    phi(k) = modvec[k]->get_phi(lp0, parlist.u, y0, WSqrt0, size0);
 
     ret += ((WSqrt0 * y0).dot(WSqrt0 * lp0) -
-      modvec[k]->cumulant(lp0, trials0, WSqrt0)) / phi +
-      modvec[k]->constfun(y0, phi, WSqrt0);
-
-    // Rcpp::Rcout << "k = " << k << std::endl
-    //             << "(WSqrt0 * y0).dot(WSqrt0 * lp0) = " << (WSqrt0 * y0).dot(WSqrt0 * lp0) << std::endl
-    //             << "modvec[k]->cumulant(lp0, trials0, WSqrt0)) / phi = " << modvec[k]->cumulant(lp0, trials0, WSqrt0) << std::endl
-    //             << "modvec[k]->constfun(y0, phi, WSqrt0)" << modvec[k]->constfun(y0, phi, WSqrt0) << std::endl << std::endl;
+      modvec[k]->cumulant(lp0, trials0, WSqrt0)) / phi(k) +
+      modvec[k]->constfun(y0, phi(k), WSqrt0);
   }
 
-
-  // Rcpp::Rcout << "ret = " << ret << std::endl;
-  return ret - parlist.u.squaredNorm() / 2 / phi0 -
+  return ret - parlist.u.squaredNorm() / 2 / phi(0) -
     solver.vectorD().array().log().sum() / 2;
 
 }
@@ -60,7 +50,7 @@ logLikObject<T> logLik(
   update_WSqrt(parlist.WSqrt, parlist.weights, parlist.weights_mapping);
 
   Vdual<T> lp = linpred(parlist, datlist);
-
+  Vdual<T> phi(modvec.size());
   Ddual<T> V(parlist.n);
   V.setZero();
   for(int k{}; k < modvec.size(); k++){
@@ -76,7 +66,7 @@ logLikObject<T> logLik(
   solver.analyzePattern(H);
   Vdual<T> delta_u{};
   solver.factorize(H);
-  T deviance_prev = -2 * loss(parlist, datlist, lp, modvec, solver);
+  T deviance_prev = -2 * loss(parlist, datlist, lp, modvec, solver, phi);
   T deviance_new;
 
   for(int i{}; i < parlist.maxit_conditional_modes; i++){
@@ -105,7 +95,7 @@ logLikObject<T> logLik(
 
       H = inner_hessian(parlist, datlist, V);
       solver.factorize(H);
-      deviance_new = -2 * loss(parlist, datlist, lp, modvec, solver);
+      deviance_new = -2 * loss(parlist, datlist, lp, modvec, solver, phi);
       if(deviance_new < deviance_prev){
         break;
       }
@@ -123,7 +113,7 @@ logLikObject<T> logLik(
   ret.logLikValue = - deviance_new / 2;
   ret.V = V.diagonal();
   ret.u = parlist.u;
-  ret.phi = modvec[0]->get_phi(lp, parlist.u, datlist.y, parlist.WSqrt, parlist.n);
+  ret.phi = phi;
 
   return ret;
 }
@@ -156,8 +146,6 @@ Rcpp::List wrapper(
       theta, beta, lambda, Eigen::VectorXd::Zero(Zt.rows()), theta_mapping,
       lambda_mapping_X, lambda_mapping_Zt, Lambdat, weights, weights_mapping,
       family_mapping, maxit_conditional_modes, epsilon_u, y.size()};
-
-
 
   std::vector<Model<T>*> mod;
 
