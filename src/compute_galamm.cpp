@@ -128,6 +128,7 @@ Rcpp::List wrapper(
     const Eigen::VectorXd& beta,
     const Eigen::VectorXd& theta,
     const Eigen::VectorXi& theta_mapping,
+    const Eigen::VectorXd& u_init,
     const Eigen::VectorXd& lambda,
     const Eigen::VectorXi& lambda_mapping_X,
     const Eigen::VectorXi& lambda_mapping_Zt,
@@ -143,7 +144,7 @@ Rcpp::List wrapper(
   data<T> datlist{y, trials, X, Zt};
 
   parameters<T> parlist{
-      theta, beta, lambda, Eigen::VectorXd::Zero(Zt.rows()), theta_mapping,
+      theta, beta, lambda, u_init, theta_mapping,
       lambda_mapping_X, lambda_mapping_Zt, Lambdat, weights, weights_mapping,
       family_mapping, maxit_conditional_modes, epsilon_u, y.size()};
 
@@ -183,6 +184,7 @@ Rcpp::List marginal_likelihood_cpp(
     const Eigen::Map<Eigen::VectorXd> beta,
     const Eigen::Map<Eigen::VectorXd> theta,
     const Eigen::Map<Eigen::VectorXi> theta_mapping,
+    const Eigen::Map<Eigen::VectorXd> u_init,
     const Eigen::Map<Eigen::VectorXd> lambda,
     const Eigen::Map<Eigen::VectorXi> lambda_mapping_X,
     const Eigen::Map<Eigen::VectorXi> lambda_mapping_Zt,
@@ -192,18 +194,24 @@ Rcpp::List marginal_likelihood_cpp(
     const Eigen::Map<Eigen::VectorXi> family_mapping,
     const Eigen::Map<Eigen::VectorXd> k,
     const int maxit_conditional_modes,
+    const bool gradient = true,
     const bool hessian = false,
     double epsilon_u = 1e-10
 ){
 
   if(hessian){
     return wrapper<dual2nd>(
-      y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, lambda,
+      y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, u_init, lambda,
+      lambda_mapping_X, lambda_mapping_Zt, weights, weights_mapping,
+      family, family_mapping, k, maxit_conditional_modes, epsilon_u);
+  } else if(gradient){
+    return wrapper<dual1st>(
+      y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, u_init, lambda,
       lambda_mapping_X, lambda_mapping_Zt, weights, weights_mapping,
       family, family_mapping, k, maxit_conditional_modes, epsilon_u);
   } else {
-    return wrapper<dual1st>(
-      y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, lambda,
+    return wrapper<double>(
+      y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, u_init, lambda,
       lambda_mapping_X, lambda_mapping_Zt, weights, weights_mapping,
       family, family_mapping, k, maxit_conditional_modes, epsilon_u);
   }

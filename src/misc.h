@@ -27,11 +27,20 @@ SpMdual<T> inner_hessian(
 
 template <typename T, typename Functor1, typename Functor2>
 Rcpp::List create_result(Functor1 fx, Functor2 gx, parameters<T>& parlist){
-  T ll{};
+  T ll = fx(parlist);
+  return Rcpp::List::create(
+    Rcpp::Named("logLik") = static_cast<double>(ll)
+  );
+}
+
+// Specialization for dual1st, gives gradient vector
+template <typename Functor1, typename Functor2>
+Rcpp::List create_result(Functor1 fx, Functor2 gx, parameters<autodiff::dual1st>& parlist){
+  autodiff::dual1st ll{};
   Eigen::VectorXd g{};
   g = gradient(fx, wrt(parlist.theta, parlist.beta, parlist.lambda,
                        parlist.weights),
-               at(parlist), ll);
+                       at(parlist), ll);
 
   return Rcpp::List::create(
     Rcpp::Named("logLik") = static_cast<double>(ll),

@@ -18,13 +18,7 @@ mlwrapper <- function(par, hessian = FALSE){
     beta = par[beta_inds],
     theta = par[theta_inds],
     theta_mapping = glmod$reTrms$Lind - 1L,
-    lambda = numeric(),
-    lambda_mapping_X = integer(),
-    lambda_mapping_Zt = integer(),
-    weights = numeric(),
-    weights_mapping = integer(),
     family = "binomial",
-    family_mapping = rep(0L, nrow(cbpp)),
     maxit_conditional_modes = 50,
     hessian = hessian
   )

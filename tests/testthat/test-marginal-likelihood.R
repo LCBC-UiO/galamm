@@ -27,12 +27,7 @@ ml <- marginal_likelihood(
   theta = c(sid.abil.sid = 0.634427344994445, school.abil.sid = 0.578028244846488),
   theta_mapping = theta_mapping,
   lambda = c(`2` = 1.05448883376966, `3` = 1.02127875663853),
-  lambda_mapping_X = integer(),
   lambda_mapping_Zt = lambda_mapping_Zt,
-  weights = numeric(),
-  weights_mapping = integer(),
-  family = "gaussian",
-  family_mapping = rep(0L, nrow(dat)),
   maxit_conditional_modes = 1
 )
 
@@ -61,12 +56,7 @@ mlwrapper <- function(par){
     theta = par[theta_inds],
     theta_mapping = theta_mapping,
     lambda = par[lambda_inds],
-    lambda_mapping_X = integer(),
     lambda_mapping_Zt = lambda_mapping_Zt,
-    weights = numeric(),
-    weights_mapping = integer(),
-    family = "gaussian",
-    family_mapping = rep(0L, nrow(dat)),
     maxit_conditional_modes = 1
   )
 }
@@ -101,14 +91,24 @@ final_model <- marginal_likelihood(
   theta = opt$par[theta_inds],
   theta_mapping = theta_mapping,
   lambda = opt$par[lambda_inds],
-  lambda_mapping_X = integer(),
   lambda_mapping_Zt = lambda_mapping_Zt,
-  weights = numeric(),
-  weights_mapping = integer(),
-  family = "gaussian",
-  family_mapping = rep(0L, nrow(dat)),
   maxit_conditional_modes = 1,
   hessian = TRUE
+)
+double_model <- marginal_likelihood(
+  y = dat$y,
+  trials = rep(1, length(dat$y)),
+  X = X,
+  Zt = Zt,
+  Lambdat = Lambdat,
+  beta = opt$par[beta_inds],
+  theta = opt$par[theta_inds],
+  theta_mapping = theta_mapping,
+  lambda = opt$par[lambda_inds],
+  lambda_mapping_Zt = lambda_mapping_Zt,
+  maxit_conditional_modes = 1,
+  gradient = FALSE,
+  hessian = FALSE
 )
 S <- solve(-final_model$hessian)
 
@@ -132,3 +132,7 @@ test_that("Hessian is correct", {
                               0.0560849371316741), dim = c(7L, 7L)))
 })
 
+test_that("templates work", {
+  expect_equal(opt$value, double_model$logLik)
+  expect_equal(opt$value, final_model$logLik)
+})

@@ -13,6 +13,7 @@ marginal_likelihood(
   beta,
   theta,
   theta_mapping,
+  u_init = rep(0, nrow(Zt)),
   lambda = numeric(),
   lambda_mapping_X = integer(),
   lambda_mapping_Zt = integer(),
@@ -21,6 +22,7 @@ marginal_likelihood(
   family = "gaussian",
   family_mapping = rep(0L, length(y)),
   maxit_conditional_modes = 1L,
+  gradient = TRUE,
   hessian = FALSE,
   epsilon_u = 1e-10
 )
@@ -45,6 +47,9 @@ parametrized identically to \code{lme4}.}
 
 \item{theta_mapping}{An \code{integer} vector corresponding to
 \code{Lind} used by \code{lme4}, but with base zero indexing.}
+
+\item{u_init}{Initial values from random effects. Defaults to a vector of
+zeros.}
 
 \item{lambda}{A \code{numeric} vector of factor loadings.}
 
@@ -71,6 +76,9 @@ as in the case where the first element of \code{lambda} is fixed to 1.}
 
 \item{maxit_conditional_modes}{Maximum number of iterations for
 conditional models. Can be 1 when \code{family = "gaussian"}.}
+
+\item{gradient}{Boolean specifying whether to including the gradient
+at the given parameters. Defaults to \code{TRUE}.}
 
 \item{hessian}{Boolean specifying whether to include the Hessian matrix
 at the given parameters. Defaults to \code{FALSE}.}

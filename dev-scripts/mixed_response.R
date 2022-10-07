@@ -9,9 +9,10 @@ library(memoise)
 library(mvtnorm)
 
 n_groups <- 2
-D <- diag(c(1, 1))
-n_rep <- 4
+D <- diag(c(1, 3))
+n_rep <- 10
 set.seed(1)
+trials <- 10
 dat <- tibble(id = 1:300) %>%
   pmap_dfr(function(id){
     re <- matrix(rmvnorm(1, mean = rep(0, n_groups), sigma = D),
@@ -25,20 +26,20 @@ dat <- tibble(id = 1:300) %>%
   mutate(
     y = case_when(
       name == "gaussian" ~ rnorm(nrow(.), mean = b),
-      name == "binomial" ~ as.numeric(rbinom(nrow(.), 1, plogis(b)))
+      name == "binomial" ~ as.numeric(rbinom(nrow(.), trials, plogis(b)))
     ),
     name = factor(name, levels = c("gaussian", "binomial")),
     name_gaussian = as.numeric(name == "gaussian"),
     name_binomial = as.numeric(name == "binomial")
   )
 
-lmod <- lFormula(y ~ (0 + name | id), data = dat)
-#lmod <- lFormula(y ~ (0 + name_gaussian | id) + (0 + name_binomial | id), data = dat)
+#lmod <- lFormula(y ~ (0 + name | id), data = dat)
+lmod <- lFormula(y ~ (0 + name_gaussian | id) + (0 + name_binomial | id), data = dat)
 
 
 mod1 <- lmer(y ~ (0 + name_gaussian | id), data = filter(dat, name == "gaussian"),
              REML = FALSE)
-mod2 <- glmer(y ~ (0 + name_binomial | id), data = filter(dat, name == "binomial"),
+mod2 <- glmer(cbind(y, trials - y) ~ (0 + name_binomial | id), data = filter(dat, name == "binomial"),
               family = "binomial")
 
 lmod$reTrms$theta
@@ -51,7 +52,7 @@ mlwrapper <- function(par, epsilon_u, hessian = FALSE){
 
   marginal_likelihood(
     y = dat$y,
-    trials = rep(1, nrow(dat)),
+    trials = rep(trials, nrow(dat)),
     X = lmod$X,
     Zt = lmod$reTrms$Zt,
     Lambdat = lmod$reTrms$Lambdat,
@@ -78,7 +79,7 @@ par_init <- c(lmod$reTrms$theta, mean(fixef(mod1), fixef(mod2)))
 fn(par_init, .001)
 logLik(mod1) + logLik(mod2)
 
-opt <- optim(par_init, fn, gr, epsilon_u = 1, method = "L-BFGS-B",
+opt <- optim(c(1, 1, 1), fn, gr, epsilon_u = 1, method = "L-BFGS-B",
              lower = c(lmod$reTrms$lower, rep(-Inf, length(beta_inds))),
              control = list(fnscale = -1))
 opt <- optim(opt$par, fn, gr, epsilon_u = .01, method = "L-BFGS-B",
@@ -94,17 +95,14 @@ Lambdat <- lmod$reTrms$Lambdat
 Lambdat@x <- opt$par[lmod$reTrms$Lind]
 fmod$phi[[1]] * unique((Lambdat %*% t(Lambdat))@x)
 
-lmod$reTrms$Zt
+fmod$phi[[1]] * opt$par[[1]]^2
+getME(mod1, "theta")^2
 
+fmod$phi[[1]] * opt$par[[2]]^2
+getME(mod2, "theta")^2
 
-par(mfrow = c(1, 2))
 plot(fmod$u, c(getME(mod1, "u"), getME(mod2, "u"))); abline(0, 1)
-plot(fmod$phi[[1]] * Lambdat %*% fmod$u,
-     c(getME(mod1, "b")[, 1], getME(mod2, "b")[, 1]));abline(0,1)
 
-logLik(mod1) + logLik(mod2)
 opt$value
+logLik(mod1) + logLik(mod2)
 
-
-plot(c(getME(mod1, "u"), getME(mod2, "u")),
-     c(getME(mod1, "b")[, 1], getME(mod2, "b")[, 1])); abline(0,1)

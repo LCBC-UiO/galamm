@@ -38,12 +38,8 @@ mlwrapper <- function(par, hessian = FALSE){
     theta = par[theta_inds],
     theta_mapping = lmod$reTrms$Lind - 1L,
     lambda = par[lambda_inds],
-    lambda_mapping_X = integer(),
-    lambda_mapping_Zt = integer(),
     weights = par[weights_inds],
     weights_mapping = weights_mapping,
-    family = "gaussian",
-    family_mapping = rep(0L, nrow(dat)),
     maxit_conditional_modes = 1,
     hessian = hessian
   )
