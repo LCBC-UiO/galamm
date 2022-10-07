@@ -36,7 +36,7 @@ set.seed(123)
 opt <- optim(
   par = c(1, runif(4)), fn = fn,
   method = "L-BFGS-B", lower = c(0, rep(-Inf, 4)),
-  control = list(fnscale = -1, maxit = 2000, lmm = 20)
+  control = list(fnscale = -1)
 )
 final_model <- mlwrapper(opt$par, hessian = TRUE)
 

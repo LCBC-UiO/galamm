@@ -67,7 +67,7 @@ logLikObject<T> logLik(
   Vdual<T> delta_u{};
   solver.factorize(H);
   T deviance_prev = -2 * loss(parlist, datlist, lp, modvec, solver, phi);
-  T deviance_new;
+  T deviance_new{};
 
   for(int i{}; i < parlist.maxit_conditional_modes; i++){
     Vdual<T> meanvec(parlist.n);
@@ -80,7 +80,6 @@ logLikObject<T> logLik(
 
     Vdual<T> weighted_residual = parlist.WSqrt.diagonal().array().pow(2) * (datlist.y - meanvec).array();
     delta_u = solver.solve((parlist.Lambdat * datlist.Zt * weighted_residual) - parlist.u);
-    if(delta_u.array().abs().maxCoeff() < parlist.epsilon_u) break;
 
     double step = 1;
     for(int j{}; j < 10; j++){
@@ -96,7 +95,7 @@ logLikObject<T> logLik(
       H = inner_hessian(parlist, datlist, V);
       solver.factorize(H);
       deviance_new = -2 * loss(parlist, datlist, lp, modvec, solver, phi);
-      if(deviance_new < deviance_prev){
+      if(delta_u.array().abs().maxCoeff() < parlist.epsilon_u || deviance_new < deviance_prev){
         break;
       }
       parlist.u -= step * delta_u;
