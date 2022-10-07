@@ -35,6 +35,8 @@
 #' @param family_mapping Mapping
 #' @param maxit_conditional_modes Maximum number of iterations for
 #' conditional models. Can be 1 when \code{family = "gaussian"}.
+#' @param gradient Boolean specifying whether to including the gradient
+#' at the given parameters. Defaults to \code{TRUE}.
 #' @param hessian Boolean specifying whether to include the Hessian matrix
 #' at the given parameters. Defaults to \code{FALSE}.
 #' @param epsilon_u Tolerance in the inner iteration. Defaults to \code{1e-10}.
@@ -50,7 +52,8 @@ marginal_likelihood <- function(
     lambda_mapping_Zt = integer(), weights = numeric(),
     weights_mapping = integer(), family = "gaussian",
     family_mapping = rep(0L, length(y)),
-    maxit_conditional_modes = 1L, hessian = FALSE, epsilon_u = 1e-10){
+    maxit_conditional_modes = 1L, gradient = TRUE, hessian = FALSE,
+    epsilon_u = 1e-10){
 
   stopifnot(length(y) == length(trials))
   stopifnot(length(y) == nrow(X))
@@ -78,10 +81,12 @@ marginal_likelihood <- function(
   marginal_likelihood_cpp(
     y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, u_init, lambda,
     lambda_mapping_X, lambda_mapping_Zt, weights, weights_mapping,
-    family, family_mapping, k, maxit_conditional_modes, hessian, epsilon_u
+    family, family_mapping, k, maxit_conditional_modes, gradient, hessian,
+    epsilon_u
   )
 
 
 
 }
+
 

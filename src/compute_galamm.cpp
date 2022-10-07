@@ -194,6 +194,7 @@ Rcpp::List marginal_likelihood_cpp(
     const Eigen::Map<Eigen::VectorXi> family_mapping,
     const Eigen::Map<Eigen::VectorXd> k,
     const int maxit_conditional_modes,
+    const bool gradient = true,
     const bool hessian = false,
     double epsilon_u = 1e-10
 ){
@@ -203,8 +204,13 @@ Rcpp::List marginal_likelihood_cpp(
       y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, u_init, lambda,
       lambda_mapping_X, lambda_mapping_Zt, weights, weights_mapping,
       family, family_mapping, k, maxit_conditional_modes, epsilon_u);
-  } else {
+  } else if(gradient){
     return wrapper<dual1st>(
+      y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, u_init, lambda,
+      lambda_mapping_X, lambda_mapping_Zt, weights, weights_mapping,
+      family, family_mapping, k, maxit_conditional_modes, epsilon_u);
+  } else {
+    return wrapper<double>(
       y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, u_init, lambda,
       lambda_mapping_X, lambda_mapping_Zt, weights, weights_mapping,
       family, family_mapping, k, maxit_conditional_modes, epsilon_u);

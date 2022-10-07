@@ -22,6 +22,7 @@ marginal_likelihood(
   family = "gaussian",
   family_mapping = rep(0L, length(y)),
   maxit_conditional_modes = 1L,
+  gradient = TRUE,
   hessian = FALSE,
   epsilon_u = 1e-10
 )
@@ -75,6 +76,9 @@ as in the case where the first element of \code{lambda} is fixed to 1.}
 
 \item{maxit_conditional_modes}{Maximum number of iterations for
 conditional models. Can be 1 when \code{family = "gaussian"}.}
+
+\item{gradient}{Boolean specifying whether to including the gradient
+at the given parameters. Defaults to \code{TRUE}.}
 
 \item{hessian}{Boolean specifying whether to include the Hessian matrix
 at the given parameters. Defaults to \code{FALSE}.}
