@@ -15,6 +15,8 @@
 #' parametrized identically to \code{lme4}.
 #' @param theta_mapping An \code{integer} vector corresponding to
 #' \code{Lind} used by \code{lme4}, but with base zero indexing.
+#' @param u_init Initial values from random effects. Defaults to a vector of
+#' zeros.
 #' @param lambda A \code{numeric} vector of factor loadings.
 #' @param lambda_mapping_X An \code{integer} vector of mappings between
 #' \code{X} and \code{lambda}, columnwise. Should be set to
@@ -43,6 +45,7 @@
 #' @details For examples, see the vignette on maximum likelihood estimation.
 marginal_likelihood <- function(
     y, trials = rep(1, length(y)), X, Zt, Lambdat, beta, theta, theta_mapping,
+    u_init = rep(0, nrow(Zt)),
     lambda = numeric(), lambda_mapping_X = integer(),
     lambda_mapping_Zt = integer(), weights = numeric(),
     weights_mapping = integer(), family = "gaussian",
@@ -73,7 +76,7 @@ marginal_likelihood <- function(
   }
 
   marginal_likelihood_cpp(
-    y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, lambda,
+    y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, u_init, lambda,
     lambda_mapping_X, lambda_mapping_Zt, weights, weights_mapping,
     family, family_mapping, k, maxit_conditional_modes, hessian, epsilon_u
   )

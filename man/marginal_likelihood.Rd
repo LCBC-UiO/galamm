@@ -13,6 +13,7 @@ marginal_likelihood(
   beta,
   theta,
   theta_mapping,
+  u_init = rep(0, nrow(Zt)),
   lambda = numeric(),
   lambda_mapping_X = integer(),
   lambda_mapping_Zt = integer(),
@@ -45,6 +46,9 @@ parametrized identically to \code{lme4}.}
 
 \item{theta_mapping}{An \code{integer} vector corresponding to
 \code{Lind} used by \code{lme4}, but with base zero indexing.}
+
+\item{u_init}{Initial values from random effects. Defaults to a vector of
+zeros.}
 
 \item{lambda}{A \code{numeric} vector of factor loadings.}
 
