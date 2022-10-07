@@ -61,6 +61,7 @@ likelihood.</p>
 <span>  <span class="va">beta</span>,</span>
 <span>  <span class="va">theta</span>,</span>
 <span>  <span class="va">theta_mapping</span>,</span>
+<span>  u_init <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">Zt</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  lambda_mapping_X <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  lambda_mapping_Zt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span>,</span>
@@ -69,6 +70,7 @@ likelihood.</p>
 <span>  family <span class="op">=</span> <span class="st">"gaussian"</span>,</span>
 <span>  family_mapping <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0L</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  maxit_conditional_modes <span class="op">=</span> <span class="fl">1L</span>,</span>
+<span>  gradient <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  hessian <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  epsilon_u <span class="op">=</span> <span class="fl">1e-10</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -112,6 +114,11 @@ parametrized identically to <code>lme4</code>.</p></dd>
 <code>Lind</code> used by <code>lme4</code>, but with base zero indexing.</p></dd>
 
 
+<dt>u_init</dt>
+<dd><p>Initial values from random effects. Defaults to a vector of
+zeros.</p></dd>
+
+
 <dt>lambda</dt>
 <dd><p>A <code>numeric</code> vector of factor loadings.</p></dd>
 
@@ -152,6 +159,11 @@ as in the case where the first element of <code>lambda</code> is fixed to 1.</p>
 <dt>maxit_conditional_modes</dt>
 <dd><p>Maximum number of iterations for
 conditional models. Can be 1 when <code>family = "gaussian"</code>.</p></dd>
+
+
+<dt>gradient</dt>
+<dd><p>Boolean specifying whether to including the gradient
+at the given parameters. Defaults to <code>TRUE</code>.</p></dd>
 
 
 <dt>hessian</dt>
