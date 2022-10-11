@@ -291,13 +291,7 @@ mlwrapper <- function(par, hessian = FALSE){
     beta = par[beta_inds],
     theta = par[theta_inds],
     theta_mapping = glmod$reTrms$Lind - 1L,
-    lambda = numeric(),
-    lambda_mapping_X = integer(),
-    lambda_mapping_Zt = integer(),
-    weights = numeric(),
-    weights_mapping = integer(),
     family = "binomial",
-    family_mapping = rep(0L, nrow(cbpp)),
     maxit_conditional_modes = 50,
     hessian = hessian
   )
@@ -660,7 +654,6 @@ bounds <- c(0, 0, rep(-Inf, 4))
 mlwrapper <- function(par, hessian = FALSE){
   marginal_likelihood(
     y = mdat$y,
-    trials = numeric(length(mdat$y)),
     X = X,
     Zt = Zt,
     Lambdat = Lambdat,
@@ -670,10 +663,7 @@ mlwrapper <- function(par, hessian = FALSE){
     lambda = par[lambda_inds],
     lambda_mapping_X = lambda_mapping_X,
     lambda_mapping_Zt = lambda_mapping_Zt,
-    weights = numeric(),
-    weights_mapping = integer(),
     family = "gaussian",
-    family_mapping = rep(0L, length(mdat$y)),
     maxit_conditional_modes = 1,
     hessian = hessian
   )
