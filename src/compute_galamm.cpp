@@ -193,9 +193,9 @@ Rcpp::List marginal_likelihood_cpp(
     const Eigen::Map<Eigen::VectorXi> family_mapping,
     const Eigen::Map<Eigen::VectorXd> k,
     const int maxit_conditional_modes,
-    const bool gradient = true,
-    const bool hessian = false,
-    double epsilon_u = 1e-10
+    const bool gradient,
+    const bool hessian,
+    double epsilon_u
 ){
 
   if(hessian){

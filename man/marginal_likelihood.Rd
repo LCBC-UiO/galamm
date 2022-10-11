@@ -24,7 +24,8 @@ marginal_likelihood(
   maxit_conditional_modes = 1L,
   gradient = TRUE,
   hessian = FALSE,
-  epsilon_u = 1e-10
+  epsilon_u = 1e-10,
+  return_u = hessian
 )
 }
 \arguments{
@@ -84,6 +85,9 @@ at the given parameters. Defaults to \code{TRUE}.}
 at the given parameters. Defaults to \code{FALSE}.}
 
 \item{epsilon_u}{Tolerance in the inner iteration. Defaults to \code{1e-10}.}
+
+\item{return_u}{Boolean specifying whether to return the vector of random
+effects.}
 }
 \value{
 A \code{list} with elements \code{logLik} and \code{gradient}.

@@ -40,6 +40,8 @@
 #' @param hessian Boolean specifying whether to include the Hessian matrix
 #' at the given parameters. Defaults to \code{FALSE}.
 #' @param epsilon_u Tolerance in the inner iteration. Defaults to \code{1e-10}.
+#' @param return_u Boolean specifying whether to return the vector of random
+#' effects.
 #'
 #' @return A \code{list} with elements \code{logLik} and \code{gradient}.
 #' @export
@@ -53,7 +55,7 @@ marginal_likelihood <- function(
     weights_mapping = integer(), family = "gaussian",
     family_mapping = rep(0L, length(y)),
     maxit_conditional_modes = 1L, gradient = TRUE, hessian = FALSE,
-    epsilon_u = 1e-10){
+    epsilon_u = 1e-10, return_u = hessian){
 
   stopifnot(length(y) == length(trials))
   stopifnot(length(y) == nrow(X))
