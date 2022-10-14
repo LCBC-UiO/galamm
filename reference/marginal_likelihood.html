@@ -72,7 +72,8 @@ likelihood.</p>
 <span>  maxit_conditional_modes <span class="op">=</span> <span class="fl">1L</span>,</span>
 <span>  gradient <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  hessian <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  epsilon_u <span class="op">=</span> <span class="fl">1e-10</span></span>
+<span>  epsilon_u <span class="op">=</span> <span class="fl">1e-10</span>,</span>
+<span>  return_u <span class="op">=</span> <span class="va">hessian</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -173,6 +174,11 @@ at the given parameters. Defaults to <code>FALSE</code>.</p></dd>
 
 <dt>epsilon_u</dt>
 <dd><p>Tolerance in the inner iteration. Defaults to <code>1e-10</code>.</p></dd>
+
+
+<dt>return_u</dt>
+<dd><p>Boolean specifying whether to return the vector of random
+effects.</p></dd>
 
 </dl></div>
     <div class="section level2">
