@@ -21,7 +21,6 @@ dat <- tibble(
 
 theta_inds <- 1
 beta_inds <- 2:3
-lambda_inds <- integer()
 weights_inds <- 4
 bounds <- c(0, -Inf, -Inf, 0)
 weights_mapping <- if_else(dat$item == 1, -1L, 0L)
@@ -37,7 +36,6 @@ mlwrapper <- function(par, hessian = FALSE){
     beta = par[beta_inds],
     theta = par[theta_inds],
     theta_mapping = lmod$reTrms$Lind - 1L,
-    lambda = par[lambda_inds],
     weights = par[weights_inds],
     weights_mapping = weights_mapping,
     maxit_conditional_modes = 1,

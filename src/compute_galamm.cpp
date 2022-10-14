@@ -51,6 +51,7 @@ logLikObject<T> logLik(
 
   Vdual<T> lp = linpred(parlist, datlist);
   Vdual<T> phi(modvec.size());
+
   Ddual<T> V(parlist.n);
   V.setZero();
   for(int k{}; k < modvec.size(); k++){
