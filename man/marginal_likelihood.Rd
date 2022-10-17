@@ -24,8 +24,7 @@ marginal_likelihood(
   maxit_conditional_modes = 1L,
   gradient = TRUE,
   hessian = FALSE,
-  epsilon_u = 1e-10,
-  return_u = hessian
+  epsilon_u = 1e-10
 )
 }
 \arguments{
