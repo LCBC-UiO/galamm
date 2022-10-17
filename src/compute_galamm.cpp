@@ -111,7 +111,7 @@ logLikObject<T> logLik(
       }
     }
     // Cannot improve likelihood more in this PWIRLS iteration
-    if(abs(deviance_new - deviance_prev) < parlist.deviance_tol){
+    if((deviance_prev - deviance_new) < parlist.deviance_tol){
       break;
     }
     deviance_prev = deviance_new;
