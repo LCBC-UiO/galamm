@@ -96,18 +96,24 @@ logLikObject<T> logLik(
       H = inner_hessian(parlist, datlist, V);
       solver.factorize(H);
       deviance_new = -2 * loss(parlist, datlist, lp, modvec, solver, phi);
-      if(delta_u.array().abs().maxCoeff() < parlist.epsilon_u || deviance_new < deviance_prev){
+
+      if(deviance_new <= deviance_prev){
+        // Appropriate stepsize found for this candidate u, break out of innermost loop
         break;
       }
       parlist.u -= step * delta_u;
       step /= 2;
       if(j == 9){
         Rcpp::Rcout << "Could not find reducing step: i = " << i << ", j = " << j << std::endl;
-        Rcpp::stop("Error");
       }
+    }
+    // Cannot improve likelihood more in this PWIRLS iteration
+    if(abs(deviance_new - deviance_prev) < parlist.deviance_tol){
+      break;
     }
     deviance_prev = deviance_new;
   }
+
 
   logLikObject<T> ret;
   ret.logLikValue = - deviance_new / 2;

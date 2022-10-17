@@ -55,8 +55,9 @@ marginal_likelihood <- function(
     weights_mapping = integer(), family = "gaussian",
     family_mapping = rep(0L, length(y)),
     maxit_conditional_modes = 1L, gradient = TRUE, hessian = FALSE,
-    epsilon_u = 1e-10, return_u = hessian){
+    epsilon_u = 1e-10){
 
+  stopifnot(length(u_init) == nrow(Zt))
   stopifnot(length(y) == length(trials))
   stopifnot(length(y) == nrow(X))
   stopifnot(ncol(Zt) == length(y))
