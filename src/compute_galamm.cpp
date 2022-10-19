@@ -103,18 +103,21 @@ logLikObject<T> logLik(
       }
       parlist.u -= step * delta_u;
       step /= 2;
+      // If we cannot find a reducing step, then it's not possible to reduce the
+      // deviance any more, and also the outer loop should break
       if(j == 9){
         Rcpp::Rcout << "Could not find reducing step: i = " << i << ", j = " << j << std::endl;
+        goto jump; // go all the way down to after the loop
       }
     }
     // Cannot improve likelihood more in this PWIRLS iteration
-    if(abs(deviance_new - deviance_prev) < parlist.deviance_tol){
+    if((deviance_prev - deviance_new) < parlist.deviance_tol){
       break;
     }
     deviance_prev = deviance_new;
   }
 
-
+  jump: // if reducing step could not be found, we end up here.
   logLikObject<T> ret;
   ret.logLikValue = - deviance_new / 2;
   ret.V = V.diagonal();
