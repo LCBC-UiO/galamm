@@ -14,8 +14,8 @@ struct parameters{
     const Eigen::VectorXd& lambda,
     const Eigen::VectorXd& u,
     const std::vector<int>& theta_mapping,
-    const std::vector<std::vector<int>>& lambda_mapping_X,
-    const std::vector<std::vector<int>>& lambda_mapping_Zt,
+    const Rcpp::ListOf<Rcpp::IntegerVector>& lambda_mapping_X0,
+    const Rcpp::ListOf<Rcpp::IntegerVector>& lambda_mapping_Zt0,
     const Eigen::SparseMatrix<double>& Lambdat,
     const Eigen::VectorXd& weights,
     const std::vector<int>& weights_mapping,
@@ -26,8 +26,6 @@ struct parameters{
   ) :
   theta { theta.cast<T>() }, beta { beta.cast<T>() }, lambda { lambda.cast<T>() },
   u { u.cast<T>() }, theta_mapping { theta_mapping },
-  lambda_mapping_X { lambda_mapping_X },
-  lambda_mapping_Zt { lambda_mapping_Zt },
   Lambdat { Lambdat.cast<T>() },
   weights { weights.cast<T>() },
   weights_mapping { weights_mapping },
@@ -35,6 +33,12 @@ struct parameters{
   maxit_conditional_modes { maxit_conditional_modes },
   epsilon_u { epsilon_u }, n { n }
   {
+    for(int i{}; i < lambda_mapping_X0.size(); i++){
+      lambda_mapping_X.push_back(Rcpp::as<std::vector<int>>(lambda_mapping_X0[i]));
+    }
+    for(int i{}; i < lambda_mapping_Zt0.size(); i++){
+      lambda_mapping_Zt.push_back(Rcpp::as<std::vector<int>>(lambda_mapping_Zt0[i]));
+    }
     WSqrt.diagonal() = Vdual<T>::Constant(n, 1);
   }
 

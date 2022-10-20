@@ -139,8 +139,8 @@ Rcpp::List wrapper(
     const std::vector<int>& theta_mapping,
     const Eigen::VectorXd& u_init,
     const Eigen::VectorXd& lambda,
-    const std::vector<std::vector<int>>& lambda_mapping_X,
-    const std::vector<std::vector<int>>& lambda_mapping_Zt,
+    const Rcpp::ListOf<Rcpp::IntegerVector>& lambda_mapping_X,
+    const Rcpp::ListOf<Rcpp::IntegerVector>& lambda_mapping_Zt,
     const Eigen::VectorXd& weights,
     const std::vector<int>& weights_mapping,
     const std::vector<std::string>& family,
@@ -208,29 +208,20 @@ Rcpp::List marginal_likelihood_cpp(
     double epsilon_u
 ){
 
-  std::vector<std::vector<int>> lambda_mapping_X0;
-  for(int i{}; i < lambda_mapping_X.size(); i++){
-    lambda_mapping_X0.push_back(Rcpp::as<std::vector<int>>(lambda_mapping_X[i]));
-  }
-  std::vector<std::vector<int>> lambda_mapping_Zt0;
-  for(int i{}; i < lambda_mapping_Zt.size(); i++){
-    lambda_mapping_Zt0.push_back(Rcpp::as<std::vector<int>>(lambda_mapping_Zt[i]));
-  }
-
   if(hessian){
     return wrapper<dual2nd>(
       y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, u_init, lambda,
-      lambda_mapping_X0, lambda_mapping_Zt0, weights, weights_mapping,
+      lambda_mapping_X, lambda_mapping_Zt, weights, weights_mapping,
       family, family_mapping, k, maxit_conditional_modes, epsilon_u);
   } else if(gradient){
     return wrapper<dual1st>(
       y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, u_init, lambda,
-      lambda_mapping_X0, lambda_mapping_Zt0, weights, weights_mapping,
+      lambda_mapping_X, lambda_mapping_Zt, weights, weights_mapping,
       family, family_mapping, k, maxit_conditional_modes, epsilon_u);
   } else {
     return wrapper<double>(
       y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, u_init, lambda,
-      lambda_mapping_X0, lambda_mapping_Zt0, weights, weights_mapping,
+      lambda_mapping_X, lambda_mapping_Zt, weights, weights_mapping,
       family, family_mapping, k, maxit_conditional_modes, epsilon_u);
   }
 
