@@ -23,10 +23,10 @@ void update_Lambdat(SpMdual<T>& Lambdat, Vdual<T> theta,
 
 template <typename T>
 void update_X(Mdual<T>& X, const Vdual<T>& lambda,
-              const std::vector<int>& lambda_mapping_X){
+              const std::vector<std::vector<int>>& lambda_mapping_X){
   if(lambda_mapping_X.size() == 0) return;
   for(int i = 0; i < X.size(); i++){
-    int newind = lambda_mapping_X[i];
+    int newind = lambda_mapping_X[i][0];
     if(newind != -1){
       *(X.data() + i) *= lambda(newind);
     }
@@ -35,12 +35,12 @@ void update_X(Mdual<T>& X, const Vdual<T>& lambda,
 
 template <typename T>
 void update_Zt(SpMdual<T>& Zt, const Vdual<T>& lambda,
-               const std::vector<int>& lambda_mapping_Zt){
+               const std::vector<std::vector<int>>& lambda_mapping_Zt){
   if(lambda_mapping_Zt.size() == 0) return;
   int counter{};
   for(int k{}; k < Zt.outerSize(); ++k){
     for(typename SpMdual<T>::InnerIterator it(Zt, k); it; ++it){
-      int newind = lambda_mapping_Zt[counter];
+      int newind = lambda_mapping_Zt[counter][0];
       if(newind != -1){
         it.valueRef() = lambda(newind) * it.value();
       }

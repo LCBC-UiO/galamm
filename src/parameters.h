@@ -14,8 +14,8 @@ struct parameters{
     const Eigen::VectorXd& lambda,
     const Eigen::VectorXd& u,
     const std::vector<int>& theta_mapping,
-    const std::vector<int>& lambda_mapping_X,
-    const std::vector<int>& lambda_mapping_Zt,
+    const std::vector<std::vector<int>>& lambda_mapping_X,
+    const std::vector<std::vector<int>>& lambda_mapping_Zt,
     const Eigen::SparseMatrix<double>& Lambdat,
     const Eigen::VectorXd& weights,
     const std::vector<int>& weights_mapping,
@@ -44,8 +44,8 @@ struct parameters{
   Vdual<T> lambda;
   Vdual<T> u;
   std::vector<int> theta_mapping;
-  std::vector<int> lambda_mapping_X;
-  std::vector<int> lambda_mapping_Zt;
+  std::vector<std::vector<int>> lambda_mapping_X;
+  std::vector<std::vector<int>> lambda_mapping_Zt;
   Eigen::SparseMatrix<T> Lambdat;
   Vdual<T> weights;
   std::vector<int> weights_mapping;
