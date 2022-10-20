@@ -50,6 +50,7 @@ struct parameters{
   std::vector<int> theta_mapping;
   std::vector<std::vector<int>> lambda_mapping_X;
   std::vector<std::vector<int>> lambda_mapping_Zt;
+  std::vector<std::vector<double>> lambda_mapping_Zt_covs = {};
   Eigen::SparseMatrix<T> Lambdat;
   Vdual<T> weights;
   std::vector<int> weights_mapping;

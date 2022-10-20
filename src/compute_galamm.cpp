@@ -45,7 +45,7 @@ template <typename T>
 logLikObject<T> logLik(
     parameters<T> parlist, data<T> datlist, std::vector<Model<T>*> modvec){
 
-  update_Zt(datlist.Zt, parlist.lambda, parlist.lambda_mapping_Zt);
+  update_Zt(datlist.Zt, parlist.lambda, parlist.lambda_mapping_Zt, parlist.lambda_mapping_Zt_covs);
   update_X(datlist.X, parlist.lambda, parlist.lambda_mapping_X);
   update_WSqrt(parlist.WSqrt, parlist.weights, parlist.weights_mapping);
 
