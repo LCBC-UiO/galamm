@@ -5,14 +5,14 @@
 
 template <typename T>
 void update_Lambdat(SpMdual<T>& Lambdat, Vdual<T> theta,
-                    const Eigen::VectorXi& theta_mapping
+                    const std::vector<int>& theta_mapping
                       ){
   int lind_counter{};
   for (int k{}; k < Lambdat.outerSize(); ++k){
     for (typename SpMdual<T>::InnerIterator
            it(Lambdat, k); it; ++it)
     {
-      int ind = theta_mapping(lind_counter);
+      int ind = theta_mapping[lind_counter];
       if(ind != -1){
         it.valueRef() = theta(ind);
       }
@@ -23,10 +23,10 @@ void update_Lambdat(SpMdual<T>& Lambdat, Vdual<T> theta,
 
 template <typename T>
 void update_X(Mdual<T>& X, const Vdual<T>& lambda,
-              const Eigen::VectorXi& lambda_mapping_X){
+              const std::vector<int>& lambda_mapping_X){
   if(lambda_mapping_X.size() == 0) return;
   for(int i = 0; i < X.size(); i++){
-    int newind = lambda_mapping_X(i);
+    int newind = lambda_mapping_X[i];
     if(newind != -1){
       *(X.data() + i) *= lambda(newind);
     }
@@ -35,12 +35,12 @@ void update_X(Mdual<T>& X, const Vdual<T>& lambda,
 
 template <typename T>
 void update_Zt(SpMdual<T>& Zt, const Vdual<T>& lambda,
-               const Eigen::VectorXi& lambda_mapping_Zt){
+               const std::vector<int>& lambda_mapping_Zt){
   if(lambda_mapping_Zt.size() == 0) return;
   int counter{};
   for(int k{}; k < Zt.outerSize(); ++k){
     for(typename SpMdual<T>::InnerIterator it(Zt, k); it; ++it){
-      int newind = lambda_mapping_Zt(counter);
+      int newind = lambda_mapping_Zt[counter];
       if(newind != -1){
         it.valueRef() = lambda(newind) * it.value();
       }
@@ -51,10 +51,10 @@ void update_Zt(SpMdual<T>& Zt, const Vdual<T>& lambda,
 
 template <typename T>
 void update_WSqrt(Ddual<T>& WSqrt, const Vdual<T>& weights,
-                  const Eigen::VectorXi& weights_mapping){
+                  const std::vector<int>& weights_mapping){
   if(weights_mapping.size() == 0) return;
   for(int i = 0; i < weights_mapping.size(); i++){
-    int newind = weights_mapping(i);
+    int newind = weights_mapping[i];
     if(newind != -1){
       WSqrt.diagonal()(i) = sqrt(weights(newind));
     }

@@ -13,12 +13,12 @@ struct parameters{
     const Eigen::VectorXd& beta,
     const Eigen::VectorXd& lambda,
     const Eigen::VectorXd& u,
-    const Eigen::VectorXi& theta_mapping,
-    const Eigen::VectorXi& lambda_mapping_X,
-    const Eigen::VectorXi& lambda_mapping_Zt,
+    const std::vector<int>& theta_mapping,
+    const std::vector<int>& lambda_mapping_X,
+    const std::vector<int>& lambda_mapping_Zt,
     const Eigen::SparseMatrix<double>& Lambdat,
     const Eigen::VectorXd& weights,
-    const Eigen::VectorXi& weights_mapping,
+    const std::vector<int>& weights_mapping,
     const Eigen::VectorXi& family_mapping,
     const int& maxit_conditional_modes,
     const double& epsilon_u,
@@ -43,12 +43,12 @@ struct parameters{
   Vdual<T> beta;
   Vdual<T> lambda;
   Vdual<T> u;
-  Eigen::VectorXi theta_mapping;
-  Eigen::VectorXi lambda_mapping_X;
-  Eigen::VectorXi lambda_mapping_Zt;
+  std::vector<int> theta_mapping;
+  std::vector<int> lambda_mapping_X;
+  std::vector<int> lambda_mapping_Zt;
   Eigen::SparseMatrix<T> Lambdat;
   Vdual<T> weights;
-  Eigen::VectorXi weights_mapping;
+  std::vector<int> weights_mapping;
   Eigen::VectorXi family_mapping;
   Ddual<T> WSqrt;
   int maxit_conditional_modes;

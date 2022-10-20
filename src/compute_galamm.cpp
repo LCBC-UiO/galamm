@@ -136,14 +136,14 @@ Rcpp::List wrapper(
     const Eigen::SparseMatrix<double>& Lambdat,
     const Eigen::VectorXd& beta,
     const Eigen::VectorXd& theta,
-    const Eigen::VectorXi& theta_mapping,
+    const std::vector<int>& theta_mapping,
     const Eigen::VectorXd& u_init,
     const Eigen::VectorXd& lambda,
-    const Eigen::VectorXi& lambda_mapping_X,
-    const Eigen::VectorXi& lambda_mapping_Zt,
+    const std::vector<int>& lambda_mapping_X,
+    const std::vector<int>& lambda_mapping_Zt,
     const Eigen::VectorXd& weights,
-    const Eigen::VectorXi& weights_mapping,
-    const Rcpp::StringVector& family,
+    const std::vector<int>& weights_mapping,
+    const std::vector<std::string>& family,
     const Eigen::VectorXi& family_mapping,
     const Eigen::VectorXd& k,
     const int& maxit_conditional_modes,
@@ -159,12 +159,12 @@ Rcpp::List wrapper(
 
   std::vector<Model<T>*> mod;
 
-  for(size_t i{}; i < family.length(); i++){
-    if(family(i) == "gaussian") {
+  for(size_t i{}; i < family.size(); i++){
+    if(family[i] == "gaussian") {
       mod.push_back(new Gaussian<T>);
-    } else if(family(i) == "binomial"){
+    } else if(family[i] == "binomial"){
       mod.push_back(new Binomial<T>{k(i)});
-    } else if(family(i) == "poisson"){
+    } else if(family[i] == "poisson"){
       mod.push_back(new Poisson<T>{k(i)});
     } else {
       Rcpp::stop("Unknown family.");
@@ -192,14 +192,14 @@ Rcpp::List marginal_likelihood_cpp(
     const Eigen::MappedSparseMatrix<double> Lambdat,
     const Eigen::Map<Eigen::VectorXd> beta,
     const Eigen::Map<Eigen::VectorXd> theta,
-    const Eigen::Map<Eigen::VectorXi> theta_mapping,
+    const std::vector<int> theta_mapping,
     const Eigen::Map<Eigen::VectorXd> u_init,
     const Eigen::Map<Eigen::VectorXd> lambda,
-    const Eigen::Map<Eigen::VectorXi> lambda_mapping_X,
-    const Eigen::Map<Eigen::VectorXi> lambda_mapping_Zt,
+    const std::vector<int> lambda_mapping_X,
+    const std::vector<int> lambda_mapping_Zt,
     const Eigen::Map<Eigen::VectorXd> weights,
-    const Eigen::Map<Eigen::VectorXi> weights_mapping,
-    const Rcpp::StringVector family,
+    const std::vector<int> weights_mapping,
+    const std::vector<std::string> family,
     const Eigen::Map<Eigen::VectorXi> family_mapping,
     const Eigen::Map<Eigen::VectorXd> k,
     const int maxit_conditional_modes,
