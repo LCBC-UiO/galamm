@@ -22,7 +22,7 @@ void update_Lambdat(SpMdual<T>& Lambdat, Vdual<T> theta,
 };
 
 template <typename T>
-void update_X(Mdual<T>& X, Vdual<T> lambda,
+void update_X(Mdual<T>& X, const Vdual<T>& lambda,
               const Eigen::VectorXi& lambda_mapping_X){
   if(lambda_mapping_X.size() == 0) return;
   for(int i = 0; i < X.size(); i++){
@@ -34,7 +34,7 @@ void update_X(Mdual<T>& X, Vdual<T> lambda,
 };
 
 template <typename T>
-void update_Zt(SpMdual<T>& Zt, Vdual<T> lambda,
+void update_Zt(SpMdual<T>& Zt, const Vdual<T>& lambda,
                const Eigen::VectorXi& lambda_mapping_Zt){
   if(lambda_mapping_Zt.size() == 0) return;
   int counter{};
@@ -50,7 +50,7 @@ void update_Zt(SpMdual<T>& Zt, Vdual<T> lambda,
 };
 
 template <typename T>
-void update_WSqrt(Ddual<T>& WSqrt, Vdual<T> weights,
+void update_WSqrt(Ddual<T>& WSqrt, const Vdual<T>& weights,
                   const Eigen::VectorXi& weights_mapping){
   if(weights_mapping.size() == 0) return;
   for(int i = 0; i < weights_mapping.size(); i++){
