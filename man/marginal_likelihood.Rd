@@ -17,6 +17,7 @@ marginal_likelihood(
   lambda = numeric(),
   lambda_mapping_X = integer(),
   lambda_mapping_Zt = integer(),
+  lambda_mapping_Zt_covs = integer(),
   weights = numeric(),
   weights_mapping = integer(),
   family = "gaussian",
@@ -65,6 +66,8 @@ as can be found by \code{Zt@x}. Should be set to
 \code{integer()} if not used. An entry \code{-1} indicates that the
 corresponding value of \code{X} does not depend on \code{lambda},
 as in the case where the first element of \code{lambda} is fixed to 1.}
+
+\item{lambda_mapping_Zt_covs}{Optional list of covariates.}
 
 \item{weights}{Vector of weights.}
 

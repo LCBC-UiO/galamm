@@ -141,6 +141,7 @@ Rcpp::List wrapper(
     const Eigen::VectorXd& lambda,
     const Rcpp::ListOf<Rcpp::IntegerVector>& lambda_mapping_X,
     const Rcpp::ListOf<Rcpp::IntegerVector>& lambda_mapping_Zt,
+    const Rcpp::ListOf<Rcpp::NumericVector>& lambda_mapping_Zt_covs,
     const Eigen::VectorXd& weights,
     const std::vector<int>& weights_mapping,
     const std::vector<std::string>& family,
@@ -154,7 +155,8 @@ Rcpp::List wrapper(
 
   parameters<T> parlist{
       theta, beta, lambda, u_init, theta_mapping,
-      lambda_mapping_X, lambda_mapping_Zt, Lambdat, weights, weights_mapping,
+      lambda_mapping_X, lambda_mapping_Zt, lambda_mapping_Zt_covs, Lambdat,
+      weights, weights_mapping,
       family_mapping, maxit_conditional_modes, epsilon_u, y.size()};
 
   std::vector<Model<T>*> mod;
@@ -197,6 +199,7 @@ Rcpp::List marginal_likelihood_cpp(
     const Eigen::Map<Eigen::VectorXd> lambda,
     Rcpp::ListOf<Rcpp::IntegerVector> lambda_mapping_X,
     Rcpp::ListOf<Rcpp::IntegerVector> lambda_mapping_Zt,
+    Rcpp::ListOf<Rcpp::NumericVector> lambda_mapping_Zt_covs,
     const Eigen::Map<Eigen::VectorXd> weights,
     const std::vector<int> weights_mapping,
     const std::vector<std::string> family,
@@ -211,18 +214,21 @@ Rcpp::List marginal_likelihood_cpp(
   if(hessian){
     return wrapper<dual2nd>(
       y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, u_init, lambda,
-      lambda_mapping_X, lambda_mapping_Zt, weights, weights_mapping,
-      family, family_mapping, k, maxit_conditional_modes, epsilon_u);
+      lambda_mapping_X, lambda_mapping_Zt, lambda_mapping_Zt_covs,
+      weights, weights_mapping, family, family_mapping, k,
+      maxit_conditional_modes, epsilon_u);
   } else if(gradient){
     return wrapper<dual1st>(
       y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, u_init, lambda,
-      lambda_mapping_X, lambda_mapping_Zt, weights, weights_mapping,
-      family, family_mapping, k, maxit_conditional_modes, epsilon_u);
+      lambda_mapping_X, lambda_mapping_Zt, lambda_mapping_Zt_covs,
+      weights, weights_mapping, family, family_mapping, k,
+      maxit_conditional_modes, epsilon_u);
   } else {
     return wrapper<double>(
       y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, u_init, lambda,
-      lambda_mapping_X, lambda_mapping_Zt, weights, weights_mapping,
-      family, family_mapping, k, maxit_conditional_modes, epsilon_u);
+      lambda_mapping_X, lambda_mapping_Zt, lambda_mapping_Zt_covs,
+      weights, weights_mapping, family, family_mapping, k,
+      maxit_conditional_modes, epsilon_u);
   }
 
 }

@@ -16,6 +16,7 @@ struct parameters{
     const std::vector<int>& theta_mapping,
     const Rcpp::ListOf<Rcpp::IntegerVector>& lambda_mapping_X0,
     const Rcpp::ListOf<Rcpp::IntegerVector>& lambda_mapping_Zt0,
+    const Rcpp::ListOf<Rcpp::NumericVector>& lambda_mapping_Zt_covs0,
     const Eigen::SparseMatrix<double>& Lambdat,
     const Eigen::VectorXd& weights,
     const std::vector<int>& weights_mapping,
@@ -48,9 +49,9 @@ struct parameters{
   Vdual<T> lambda;
   Vdual<T> u;
   std::vector<int> theta_mapping;
-  std::vector<std::vector<int>> lambda_mapping_X;
-  std::vector<std::vector<int>> lambda_mapping_Zt;
-  std::vector<std::vector<double>> lambda_mapping_Zt_covs = {};
+  std::vector<std::vector<int>> lambda_mapping_X = {};
+  std::vector<std::vector<int>> lambda_mapping_Zt = {};
+  std::vector<std::vector<T>> lambda_mapping_Zt_covs = {};
   Eigen::SparseMatrix<T> Lambdat;
   Vdual<T> weights;
   std::vector<int> weights_mapping;

@@ -36,7 +36,7 @@ void update_X(Mdual<T>& X, const Vdual<T>& lambda,
 template <typename T>
 void update_Zt(SpMdual<T>& Zt, const Vdual<T>& lambda,
                const std::vector<std::vector<int>>& lambda_mapping_Zt,
-               const std::vector<std::vector<double>>& lambda_mapping_Zt_covs = {}){
+               const std::vector<std::vector<T>>& lambda_mapping_Zt_covs = {}){
   if(lambda_mapping_Zt.empty()) return;
   int counter{0};
   for(int k{}; k < Zt.outerSize(); ++k){
@@ -48,7 +48,7 @@ void update_Zt(SpMdual<T>& Zt, const Vdual<T>& lambda,
 
       for(int newind : newinds){
         if(newind != -1){
-          double cov{1};
+          T cov{1};
           if(!lambda_mapping_Zt_covs.empty()){
             cov = lambda_mapping_Zt_covs[counter][inner_counter];
           }

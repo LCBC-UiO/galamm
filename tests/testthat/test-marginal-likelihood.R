@@ -110,6 +110,23 @@ double_model <- marginal_likelihood(
   gradient = FALSE,
   hessian = FALSE
 )
+# Add Zt_covs
+covs_model <- marginal_likelihood(
+  y = dat$y,
+  trials = rep(1, length(dat$y)),
+  X = X,
+  Zt = Zt,
+  Lambdat = Lambdat,
+  beta = opt$par[beta_inds],
+  theta = opt$par[theta_inds],
+  theta_mapping = theta_mapping,
+  lambda = opt$par[lambda_inds],
+  lambda_mapping_Zt = lambda_mapping_Zt,
+  lambda_mapping_Zt_covs = rep(1, length(lambda_mapping_Zt)),
+  maxit_conditional_modes = 1,
+  gradient = FALSE,
+  hessian = FALSE
+)
 S <- solve(-final_model$hessian)
 
 test_that("Hessian is correct", {
@@ -134,5 +151,6 @@ test_that("Hessian is correct", {
 
 test_that("templates work", {
   expect_equal(opt$value, double_model$logLik)
+  expect_equal(opt$value, covs_model$logLik)
   expect_equal(opt$value, final_model$logLik)
 })
