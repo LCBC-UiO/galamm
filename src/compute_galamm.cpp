@@ -155,7 +155,9 @@ Rcpp::List wrapper(
 
   parameters<T> parlist{
       theta, beta, lambda, u_init, theta_mapping,
-      lambda_mapping_X, lambda_mapping_Zt, lambda_mapping_Zt_covs, Lambdat,
+      lambda_mapping_X, lambda_mapping_Zt,
+      lambda_mapping_Zt_covs,
+      Lambdat,
       weights, weights_mapping,
       family_mapping, maxit_conditional_modes, epsilon_u, y.size()};
 
