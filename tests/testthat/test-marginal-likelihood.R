@@ -110,6 +110,39 @@ double_model <- marginal_likelihood(
   gradient = FALSE,
   hessian = FALSE
 )
+# Use list
+list_model <- marginal_likelihood(
+  y = dat$y,
+  trials = rep(1, length(dat$y)),
+  X = X,
+  Zt = Zt,
+  Lambdat = Lambdat,
+  beta = opt$par[beta_inds],
+  theta = opt$par[theta_inds],
+  theta_mapping = theta_mapping,
+  lambda = opt$par[lambda_inds],
+  lambda_mapping_Zt = lapply(lambda_mapping_Zt, function(x) x),
+  maxit_conditional_modes = 1,
+  gradient = FALSE,
+  hessian = FALSE
+)
+# Add Zt_covs
+covs_model <- marginal_likelihood(
+  y = dat$y,
+  trials = rep(1, length(dat$y)),
+  X = X,
+  Zt = Zt,
+  Lambdat = Lambdat,
+  beta = opt$par[beta_inds],
+  theta = opt$par[theta_inds],
+  theta_mapping = theta_mapping,
+  lambda = opt$par[lambda_inds],
+  lambda_mapping_Zt = lambda_mapping_Zt,
+  lambda_mapping_Zt_covs = rep(1, length(lambda_mapping_Zt)),
+  maxit_conditional_modes = 1,
+  gradient = FALSE,
+  hessian = FALSE
+)
 S <- solve(-final_model$hessian)
 
 test_that("Hessian is correct", {
@@ -134,5 +167,48 @@ test_that("Hessian is correct", {
 
 test_that("templates work", {
   expect_equal(opt$value, double_model$logLik)
+  expect_equal(opt$value, covs_model$logLik)
+  expect_equal(opt$value, list_model$logLik)
   expect_equal(opt$value, final_model$logLik)
 })
+
+# Check that list with covariates works
+mlwrapper <- function(par){
+  marginal_likelihood(
+    y = dat$y,
+    trials = rep(1, length(dat$y)),
+    X = X,
+    Zt = Zt,
+    Lambdat = Lambdat,
+    beta = par[beta_inds],
+    theta = par[theta_inds],
+    theta_mapping = theta_mapping,
+    lambda = par[lambda_inds],
+    lambda_mapping_Zt = lapply(lambda_mapping_Zt, function(x) if(x == -1L) {
+      rep(-1L, 3)
+    } else if(x == 0L){
+      c(-1L, 0L, -1L)
+    } else {
+      c(-1L, -1L, 1L)
+    }),
+    lambda_mapping_Zt_covs = lapply(lambda_mapping_Zt, function(x) rep(1, 3)),
+    maxit_conditional_modes = 1
+  )
+}
+
+mlmem <- memoise(mlwrapper)
+fn <- function(par){
+  mlmem(par)$logLik
+}
+gr <- function(par){
+  mlmem(par)$gradient
+}
+
+par_init <- c(1, 1, 0, 0, 0, 1, 1)
+opt <- optim(par_init, fn = fn, gr = gr,
+             method = "L-BFGS-B", lower = bounds,
+             control = list(fnscale = -1))
+
+expect_equal(
+  opt$value, double_model$logLik
+)

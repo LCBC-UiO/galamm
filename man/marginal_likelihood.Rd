@@ -16,7 +16,9 @@ marginal_likelihood(
   u_init = rep(0, nrow(Zt)),
   lambda = numeric(),
   lambda_mapping_X = integer(),
+  lambda_mapping_X_covs = integer(),
   lambda_mapping_Zt = integer(),
+  lambda_mapping_Zt_covs = integer(),
   weights = numeric(),
   weights_mapping = integer(),
   family = "gaussian",
@@ -59,12 +61,16 @@ zeros.}
 corresponding value of \code{X} does not depend on \code{lambda},
 as in the case where the first element of \code{lambda} is fixed to 1.}
 
+\item{lambda_mapping_X_covs}{Optional list of covariates.}
+
 \item{lambda_mapping_Zt}{An \code{integer} vector of mappings between
 \code{Zt} and \code{lambda}, along the nonzero elements of \code{Zt}
 as can be found by \code{Zt@x}. Should be set to
 \code{integer()} if not used. An entry \code{-1} indicates that the
 corresponding value of \code{X} does not depend on \code{lambda},
 as in the case where the first element of \code{lambda} is fixed to 1.}
+
+\item{lambda_mapping_Zt_covs}{Optional list of covariates.}
 
 \item{weights}{Vector of weights.}
 
@@ -84,9 +90,6 @@ at the given parameters. Defaults to \code{TRUE}.}
 at the given parameters. Defaults to \code{FALSE}.}
 
 \item{epsilon_u}{Tolerance in the inner iteration. Defaults to \code{1e-10}.}
-
-\item{return_u}{Boolean specifying whether to return the vector of random
-effects.}
 }
 \value{
 A \code{list} with elements \code{logLik} and \code{gradient}.

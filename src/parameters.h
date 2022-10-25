@@ -13,12 +13,14 @@ struct parameters{
     const Eigen::VectorXd& beta,
     const Eigen::VectorXd& lambda,
     const Eigen::VectorXd& u,
-    const Eigen::VectorXi& theta_mapping,
-    const Eigen::VectorXi& lambda_mapping_X,
-    const Eigen::VectorXi& lambda_mapping_Zt,
+    const std::vector<int>& theta_mapping,
+    const Rcpp::ListOf<Rcpp::IntegerVector>& lambda_mapping_X0,
+    const Rcpp::ListOf<Rcpp::NumericVector>& lambda_mapping_X_covs0,
+    const Rcpp::ListOf<Rcpp::IntegerVector>& lambda_mapping_Zt0,
+    const Rcpp::ListOf<Rcpp::NumericVector>& lambda_mapping_Zt_covs0,
     const Eigen::SparseMatrix<double>& Lambdat,
     const Eigen::VectorXd& weights,
-    const Eigen::VectorXi& weights_mapping,
+    const std::vector<int>& weights_mapping,
     const Eigen::VectorXi& family_mapping,
     const int& maxit_conditional_modes,
     const double& epsilon_u,
@@ -26,8 +28,6 @@ struct parameters{
   ) :
   theta { theta.cast<T>() }, beta { beta.cast<T>() }, lambda { lambda.cast<T>() },
   u { u.cast<T>() }, theta_mapping { theta_mapping },
-  lambda_mapping_X { lambda_mapping_X },
-  lambda_mapping_Zt { lambda_mapping_Zt },
   Lambdat { Lambdat.cast<T>() },
   weights { weights.cast<T>() },
   weights_mapping { weights_mapping },
@@ -35,6 +35,19 @@ struct parameters{
   maxit_conditional_modes { maxit_conditional_modes },
   epsilon_u { epsilon_u }, n { n }
   {
+    for(int i{}; i < lambda_mapping_X0.size(); i++){
+      lambda_mapping_X.push_back(Rcpp::as<std::vector<int>>(lambda_mapping_X0[i]));
+    }
+    for(int i{}; i < lambda_mapping_Zt0.size(); i++){
+      lambda_mapping_Zt.push_back(Rcpp::as<std::vector<int>>(lambda_mapping_Zt0[i]));
+    }
+    for(int i{}; i < lambda_mapping_X_covs0.size(); i++){
+      lambda_mapping_Zt_covs.push_back(Rcpp::as<std::vector<double>>(lambda_mapping_X_covs0[i]));
+    }
+    for(int i{}; i < lambda_mapping_Zt_covs0.size(); i++){
+      lambda_mapping_Zt_covs.push_back(Rcpp::as<std::vector<double>>(lambda_mapping_Zt_covs0[i]));
+    }
+
     WSqrt.diagonal() = Vdual<T>::Constant(n, 1);
   }
 
@@ -43,12 +56,14 @@ struct parameters{
   Vdual<T> beta;
   Vdual<T> lambda;
   Vdual<T> u;
-  Eigen::VectorXi theta_mapping;
-  Eigen::VectorXi lambda_mapping_X;
-  Eigen::VectorXi lambda_mapping_Zt;
+  std::vector<int> theta_mapping;
+  std::vector<std::vector<int>> lambda_mapping_X = {};
+  std::vector<std::vector<double>> lambda_mapping_X_covs = {};
+  std::vector<std::vector<int>> lambda_mapping_Zt = {};
+  std::vector<std::vector<double>> lambda_mapping_Zt_covs = {};
   Eigen::SparseMatrix<T> Lambdat;
   Vdual<T> weights;
-  Eigen::VectorXi weights_mapping;
+  std::vector<int> weights_mapping;
   Eigen::VectorXi family_mapping;
   Ddual<T> WSqrt;
   int maxit_conditional_modes;
