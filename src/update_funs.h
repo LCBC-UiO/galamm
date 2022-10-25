@@ -23,13 +23,30 @@ void update_Lambdat(SpMdual<T>& Lambdat, Vdual<T> theta,
 
 template <typename T>
 void update_X(Mdual<T>& X, const Vdual<T>& lambda,
-              const std::vector<std::vector<int>>& lambda_mapping_X){
+              const std::vector<std::vector<int>>& lambda_mapping_X,
+              const std::vector<std::vector<double>>& lambda_mapping_X_covs = {}){
   if(lambda_mapping_X.size() == 0) return;
   for(int i = 0; i < X.size(); i++){
-    int newind = lambda_mapping_X[i][0];
-    if(newind != -1){
-      *(X.data() + i) *= lambda(newind);
+    std::vector<int> newinds = lambda_mapping_X[i];
+    T loading{0};
+    bool update{false};
+    int j{0};
+
+    for(int newind : newinds){
+      if(newind != -1){
+        double cov{1};
+        if(!lambda_mapping_X_covs.empty()){
+          cov = lambda_mapping_X_covs[i][j];
+        }
+        loading += lambda(newind) * cov;
+        update = true;
+      }
+      j++;
     }
+    if(update){
+      *(X.data() + i) *= loading;
+    }
+
   }
 };
 
@@ -48,7 +65,7 @@ void update_Zt(SpMdual<T>& Zt, const Vdual<T>& lambda,
 
       for(int newind : newinds){
         if(newind != -1){
-          T cov{1};
+          double cov{1};
           if(!lambda_mapping_Zt_covs.empty()){
             cov = lambda_mapping_Zt_covs[counter][inner_counter];
           }
