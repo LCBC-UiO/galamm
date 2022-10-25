@@ -64,7 +64,9 @@ likelihood.</p>
 <span>  u_init <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">Zt</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  lambda_mapping_X <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  lambda_mapping_X_covs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  lambda_mapping_Zt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  lambda_mapping_Zt_covs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  weights <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  weights_mapping <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  family <span class="op">=</span> <span class="st">"gaussian"</span>,</span>
@@ -131,6 +133,10 @@ corresponding value of <code>X</code> does not depend on <code>lambda</code>,
 as in the case where the first element of <code>lambda</code> is fixed to 1.</p></dd>
 
 
+<dt>lambda_mapping_X_covs</dt>
+<dd><p>Optional list of covariates.</p></dd>
+
+
 <dt>lambda_mapping_Zt</dt>
 <dd><p>An <code>integer</code> vector of mappings between
 <code>Zt</code> and <code>lambda</code>, along the nonzero elements of <code>Zt</code>
@@ -138,6 +144,10 @@ as can be found by <code>Zt@x</code>. Should be set to
 <code><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer()</a></code> if not used. An entry <code>-1</code> indicates that the
 corresponding value of <code>X</code> does not depend on <code>lambda</code>,
 as in the case where the first element of <code>lambda</code> is fixed to 1.</p></dd>
+
+
+<dt>lambda_mapping_Zt_covs</dt>
+<dd><p>Optional list of covariates.</p></dd>
 
 
 <dt>weights</dt>
@@ -173,11 +183,6 @@ at the given parameters. Defaults to <code>FALSE</code>.</p></dd>
 
 <dt>epsilon_u</dt>
 <dd><p>Tolerance in the inner iteration. Defaults to <code>1e-10</code>.</p></dd>
-
-
-<dt>return_u</dt>
-<dd><p>Boolean specifying whether to return the vector of random
-effects.</p></dd>
 
 </dl></div>
     <div class="section level2">
