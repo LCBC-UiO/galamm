@@ -173,6 +173,18 @@ test_that("templates work", {
 })
 
 # Check that list with covariates works
+lambda_mapping_Zt2 <- lapply(lambda_mapping_Zt, function(x) if(x == -1L) {
+  -1L
+} else if(x == 0L){
+  c(0L, -1L)
+} else {
+  c(-1L, 1L)
+})
+lambda_mapping_Zt_covs2 <- lapply(lambda_mapping_Zt2, function(x) {
+  if(length(x) == 1) 1
+  else rep(1, 2)
+})
+
 mlwrapper <- function(par){
   marginal_likelihood(
     y = dat$y,
@@ -184,14 +196,8 @@ mlwrapper <- function(par){
     theta = par[theta_inds],
     theta_mapping = theta_mapping,
     lambda = par[lambda_inds],
-    lambda_mapping_Zt = lapply(lambda_mapping_Zt, function(x) if(x == -1L) {
-      rep(-1L, 3)
-    } else if(x == 0L){
-      c(-1L, 0L, -1L)
-    } else {
-      c(-1L, -1L, 1L)
-    }),
-    lambda_mapping_Zt_covs = lapply(lambda_mapping_Zt, function(x) rep(1, 3)),
+    lambda_mapping_Zt = lambda_mapping_Zt2,
+    lambda_mapping_Zt_covs = lambda_mapping_Zt_covs2,
     maxit_conditional_modes = 1
   )
 }
