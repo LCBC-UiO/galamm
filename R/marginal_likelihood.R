@@ -42,8 +42,6 @@
 #' @param hessian Boolean specifying whether to include the Hessian matrix
 #' at the given parameters. Defaults to \code{FALSE}.
 #' @param epsilon_u Tolerance in the inner iteration. Defaults to \code{1e-10}.
-#' @param return_u Boolean specifying whether to return the vector of random
-#' effects.
 #'
 #' @return A \code{list} with elements \code{logLik} and \code{gradient}.
 #' @export
