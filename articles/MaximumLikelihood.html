@@ -278,7 +278,7 @@ Hessian.</p>
 <span>             control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>fnscale <span class="op">=</span> <span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.128   0.000   0.128</span></span>
+<span><span class="co">#&gt;     0.1     0.0     0.1</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="op">{</span></span>
 <span>  <span class="va">opt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/optim.html" class="external-link">optim</a></span><span class="op">(</span><span class="va">par_init</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">par_init</span><span class="op">)</span>, max <span class="op">=</span> <span class="fl">.5</span><span class="op">)</span>, </span>
 <span>               fn <span class="op">=</span> <span class="va">fn</span>, gr <span class="op">=</span> <span class="va">gr</span>, </span>
@@ -286,7 +286,7 @@ Hessian.</p>
 <span>             control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>fnscale <span class="op">=</span> <span class="op">-</span><span class="fl">1</span>, lmm <span class="op">=</span> <span class="fl">20</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.093   0.000   0.094</span></span></code></pre></div>
+<span><span class="co">#&gt;   0.074   0.000   0.073</span></span></code></pre></div>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="op">{</span></span>
 <span>  <span class="va">irt.model</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/PLmixed/man/PLmixed.html" class="external-link">PLmixed</a></span><span class="op">(</span><span class="va">form</span>,</span>
@@ -295,7 +295,7 @@ Hessian.</p>
 <span>                     lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">irt.lam</span><span class="op">)</span>, iter.count <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   2.615   0.000   2.616</span></span></code></pre>
+<span><span class="co">#&gt;   2.193   0.004   2.197</span></span></code></pre>
 <p>The inverse of the negative Hessian matrix is the covariance matrix
 of the model. We can obtain this one with a single call at the final
 parameter estimates, using the argument <code>hessian = TRUE</code>.</p>
@@ -496,7 +496,6 @@ still treating the factor loadings as fixed.</p>
 <span><span class="va">mlwrapper</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">par</span>, <span class="va">hessian</span> <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">{</span></span>
 <span>  <span class="fu"><a href="../reference/marginal_likelihood.html">marginal_likelihood</a></span><span class="op">(</span></span>
 <span>    y <span class="op">=</span> <span class="va">mod0</span><span class="op">$</span><span class="va">gam</span><span class="op">$</span><span class="va">y</span>,</span>
-<span>    trials <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">mod0</span><span class="op">$</span><span class="va">gam</span><span class="op">$</span><span class="va">y</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>    X <span class="op">=</span> <span class="va">lmod</span><span class="op">$</span><span class="va">X</span>,</span>
 <span>    Zt <span class="op">=</span> <span class="va">lmod</span><span class="op">$</span><span class="va">reTrms</span><span class="op">$</span><span class="va">Zt</span>,</span>
 <span>    Lambdat <span class="op">=</span> <span class="va">Lambdat</span>,</span>
