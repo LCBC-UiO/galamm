@@ -23,10 +23,10 @@ Description: Estimates generalized additive latent and
 License: GPL (>= 3)
 Encoding: UTF-8
 Imports: 
-    numDeriv (>= 2016.8-1-1),
-    gamm4 (>= 0.2-6),
-    lme4 (>= 1.1-26),
-    Rcpp (>= 1.0.0)
+    numDeriv,
+    gamm4,
+    lme4,
+    Rcpp
 Depends:
     R (>= 3.5.0)
 LinkingTo:
@@ -41,7 +41,7 @@ Suggests:
     purrr,
     tidyr,
     nlme,
-    Matrix (>= 1.0),
+    Matrix,
     knitr,
     memoise,
     mgcv,

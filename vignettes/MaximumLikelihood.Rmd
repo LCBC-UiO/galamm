@@ -453,13 +453,7 @@ mlwrapper <- function(par, hessian = FALSE){
     beta = par[beta_inds],
     theta = par[theta_inds],
     theta_mapping = lmod$reTrms$Lind - 1L,
-    lambda = numeric(),
-    lambda_mapping_X = integer(),
-    lambda_mapping_Zt = integer(),
-    weights = numeric(),
-    weights_mapping = integer(),
     family = "gaussian",
-    family_mapping = rep(0L, nrow(dat)),
     maxit_conditional_modes = 1, 
     hessian = hessian
     )
@@ -533,7 +527,7 @@ vcov(mod0$gam)
 We now compute it, following the source code of `gamm4::gamm4()`:
 
 ```{r}
-V <- diag(ml_final$V) + 
+V <- Matrix::Diagonal(length(ml_final$V), ml_final$V) + 
   crossprod(Lambdat[1:100, 1:100] %*% lmod$reTrms$Zt[1:100, ]) * ml_final$phi
 R <- Matrix::chol(V,pivot=TRUE);piv <- attr(R,"pivot") 
 Xfp <- as(Xfp, "dgCMatrix")
