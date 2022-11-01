@@ -73,11 +73,16 @@
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://lcbc-uio.github.io/galamm/">galamm</a></span><span class="op">)</span></span></code></pre></div>
-<p>The <code>galamm</code> packages estimates generalized additive latent and mixed models (GALAMMs). GALAMMs are described in <span class="citation">Sørensen, Fjell, and Walhovd (2021)</span> as an extension of generalized linear latent and mixed models (GLLAMMs) <span class="citation">(Rabe-Hesketh, Skrondal, and Pickles 2004)</span>. If you don’t need nonlinear smooth terms, you should probably use the <a href="https://cran.r-project.org/package=PLmixed" class="external-link">PLmixed</a> package instead.</p>
+<p>The <code>galamm</code> packages estimates generalized additive
+latent and mixed models (GALAMMs). GALAMMs are described in <span class="citation">Sørensen, Fjell, and Walhovd (2021)</span> as an
+extension of generalized linear latent and mixed models (GLLAMMs) <span class="citation">(Rabe-Hesketh, Skrondal, and Pickles 2004)</span>. If
+you don’t need nonlinear smooth terms, you should probably use the <a href="https://cran.r-project.org/package=PLmixed" class="external-link">PLmixed</a> package
+instead.</p>
 <div class="section level2">
 <h2 id="fitting-a-latent-response-model">Fitting a latent response model<a class="anchor" aria-label="anchor" href="#fitting-a-latent-response-model"></a>
 </h2>
-<p>In this vignette we illustrate a basic use case with the simulated dataset <code>dat1</code> which is part of the package.</p>
+<p>In this vignette we illustrate a basic use case with the simulated
+dataset <code>dat1</code> which is part of the package.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">dat1</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   id  item         y         x</span></span>
@@ -87,12 +92,14 @@
 <span><span class="co">#&gt; 4  2 item1 10.144956 0.6560528</span></span>
 <span><span class="co">#&gt; 5  2 item2 19.633269 0.6560528</span></span>
 <span><span class="co">#&gt; 6  2 item3  4.525468 0.6560528</span></span></code></pre></div>
-<p>The dataset illustrates measurements of a latent response variable. The variables are</p>
+<p>The dataset illustrates measurements of a latent response variable.
+The variables are</p>
 <ul>
 <li>
 <code>id</code>: an identifier for the study subjects.</li>
 <li>
-<code>item</code>: an identifier for one of three items which measure an underlying latent trait of interest.</li>
+<code>item</code>: an identifier for one of three items which
+measure an underlying latent trait of interest.</li>
 <li>
 <code>y</code>: the measurement of the given item.</li>
 <li>
@@ -110,20 +117,52 @@
 <div class="section level3">
 <h3 id="model-definition">Model definition<a class="anchor" aria-label="anchor" href="#model-definition"></a>
 </h3>
-<p>Letting <span class="math inline">\(y_{ij}\)</span> denotes the <span class="math inline">\(i\)</span>th measurement of the <span class="math inline">\(j\)</span>th subject, we assume the measurement part</p>
-<p><span class="math display">\[y_{ij} = \beta_{0} + \eta_{j} \boldsymbol{\lambda}^{T} \boldsymbol{\delta}_{ij}  + \epsilon_{ij}\]</span></p>
-<p>where <span class="math inline">\(\boldsymbol{\delta}_{ij}\)</span> is a vector whose <span class="math inline">\(k\)</span>th element equals 1 if the <span class="math inline">\(i\)</span>th measurement of the <span class="math inline">\(j\)</span>th subject is a measurement of item <span class="math inline">\(k\)</span>, and <span class="math inline">\(\boldsymbol{\lambda} = (1, \lambda_{2}, \lambda_{3})^{T}\)</span> is a vector of factor loadings, whose first element is set to 1 for identifiability. Furthermore, <span class="math inline">\(\eta_{j}\)</span> denotes a latent variable for subject <span class="math inline">\(j\)</span>, assumed identical across all three items, and <span class="math inline">\(\epsilon_{ij} \sim N(0, \sigma^{2})\)</span> is the residual term.</p>
-<p>Next, the structural part relates the latent variables to the predictor variables,</p>
-<p><span class="math display">\[\eta_{j} = f(x_{j}) + \zeta_{j}\]</span></p>
-<p>where <span class="math inline">\(x_{j}\)</span> is a predictor variable for subject <span class="math inline">\(j\)</span> which does not vary within subjects, and <span class="math inline">\(\zeta_{j} \sim N(0, \psi)\)</span> is a disturbance term (random intercept).</p>
-<p>Plugging the structural model into the measurement model yields the reduced form</p>
-<p><span class="math display">\[y_{ij} = \beta_{0} + f(x_{j}) \boldsymbol{\lambda}^{T} \boldsymbol{\delta}_{ij} + \zeta_{j} \boldsymbol{\lambda}^{T} \boldsymbol{\delta}_{ij}  + \epsilon_{ij}\]</span></p>
-<p>At fixed values of <span class="math inline">\(\boldsymbol{\lambda}\)</span>, the reduced form defines a generalized additive mixed model (GAMM) <span class="citation">(Wood 2017)</span> with varying coefficient term <span class="math inline">\(f(x_{j}) \boldsymbol{\lambda}^{T} \boldsymbol{\delta}_{ij}\)</span> and random effect term <span class="math inline">\(\zeta_{j} \boldsymbol{\lambda}^{T} \boldsymbol{\delta}_{ij}\)</span>. Identifying this lets us use profile likelihood estimation similar to what <span class="citation">Jeon and Rabe-Hesketh (2012)</span> proposed for a subset of GLLAMMs, and <span class="citation">Rockwood and Jeon (2019)</span> implemented in the R package <code>PLmixed</code>. The current implementation in <code>galamm</code> uses this profile likelihood algorithm, extended to smooth nonlinear functions.</p>
+<p>Letting <span class="math inline">\(y_{ij}\)</span> denotes the <span class="math inline">\(i\)</span>th measurement of the <span class="math inline">\(j\)</span>th subject, we assume the measurement
+part</p>
+<p><span class="math display">\[y_{ij} = \beta_{0} + \eta_{j}
+\boldsymbol{\lambda}^{T} \boldsymbol{\delta}_{ij}  +
+\epsilon_{ij}\]</span></p>
+<p>where <span class="math inline">\(\boldsymbol{\delta}_{ij}\)</span>
+is a vector whose <span class="math inline">\(k\)</span>th element
+equals 1 if the <span class="math inline">\(i\)</span>th measurement of
+the <span class="math inline">\(j\)</span>th subject is a measurement of
+item <span class="math inline">\(k\)</span>, and <span class="math inline">\(\boldsymbol{\lambda} = (1, \lambda_{2},
+\lambda_{3})^{T}\)</span> is a vector of factor loadings, whose first
+element is set to 1 for identifiability. Furthermore, <span class="math inline">\(\eta_{j}\)</span> denotes a latent variable for
+subject <span class="math inline">\(j\)</span>, assumed identical across
+all three items, and <span class="math inline">\(\epsilon_{ij} \sim N(0,
+\sigma^{2})\)</span> is the residual term.</p>
+<p>Next, the structural part relates the latent variables to the
+predictor variables,</p>
+<p><span class="math display">\[\eta_{j} = f(x_{j}) +
+\zeta_{j}\]</span></p>
+<p>where <span class="math inline">\(x_{j}\)</span> is a predictor
+variable for subject <span class="math inline">\(j\)</span> which does
+not vary within subjects, and <span class="math inline">\(\zeta_{j} \sim
+N(0, \psi)\)</span> is a disturbance term (random intercept).</p>
+<p>Plugging the structural model into the measurement model yields the
+reduced form</p>
+<p><span class="math display">\[y_{ij} = \beta_{0} + f(x_{j})
+\boldsymbol{\lambda}^{T} \boldsymbol{\delta}_{ij} + \zeta_{j}
+\boldsymbol{\lambda}^{T} \boldsymbol{\delta}_{ij}  +
+\epsilon_{ij}\]</span></p>
+<p>At fixed values of <span class="math inline">\(\boldsymbol{\lambda}\)</span>, the reduced form
+defines a generalized additive mixed model (GAMM) <span class="citation">(Wood 2017)</span> with varying coefficient term <span class="math inline">\(f(x_{j}) \boldsymbol{\lambda}^{T}
+\boldsymbol{\delta}_{ij}\)</span> and random effect term <span class="math inline">\(\zeta_{j} \boldsymbol{\lambda}^{T}
+\boldsymbol{\delta}_{ij}\)</span>. Identifying this lets us use profile
+likelihood estimation similar to what <span class="citation">Jeon and
+Rabe-Hesketh (2012)</span> proposed for a subset of GLLAMMs, and <span class="citation">Rockwood and Jeon (2019)</span> implemented in the R
+package <code>PLmixed</code>. The current implementation in
+<code>galamm</code> uses this profile likelihood algorithm, extended to
+smooth nonlinear functions.</p>
 </div>
 <div class="section level3">
 <h3 id="profile-likelihood-estimation-with-galamm">Profile likelihood estimation with galamm<a class="anchor" aria-label="anchor" href="#profile-likelihood-estimation-with-galamm"></a>
 </h3>
-<p>We start by defining that loading matrix, using the same syntax as <code>PLmixed</code>. <code>NA</code> means that the loading is free to be estimated, whereas a value means that we fix the corresponding loading.</p>
+<p>We start by defining that loading matrix, using the same syntax as
+<code>PLmixed</code>. <code>NA</code> means that the loading is free to
+be estimated, whereas a value means that we fix the corresponding
+loading.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">load.mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/dimnames.html" class="external-link">dimnames</a></span><span class="op">(</span><span class="va">load.mat</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"item1"</span>, <span class="st">"item2"</span>, <span class="st">"item3"</span><span class="op">)</span>, <span class="cn">NULL</span><span class="op">)</span></span>
@@ -132,7 +171,10 @@
 <span><span class="co">#&gt; item1    1</span></span>
 <span><span class="co">#&gt; item2   NA</span></span>
 <span><span class="co">#&gt; item3   NA</span></span></code></pre></div>
-<p>We then fit the model. We set the initial values <code>lambda_init = c(2, .4)</code> to speed up convergence in this example case. If initial values are not provided, random starting points are used instead.</p>
+<p>We then fit the model. We set the initial values
+<code>lambda_init = c(2, .4)</code> to speed up convergence in this
+example case. If initial values are not provided, random starting points
+are used instead.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="fu">s</span><span class="op">(</span><span class="va">x</span>, by <span class="op">=</span> <span class="va">weight</span><span class="op">)</span>,</span>
@@ -143,16 +185,23 @@
 <span>  factor <span class="op">=</span> <span class="st">"weight"</span>,</span>
 <span>  lambda_init <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">.4</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
-<p>NB! The model as set up will as set up is not identified if all <span class="math inline">\(\lambda\)</span> are equal, since the term <code>s(x, by = weight)</code> also contains a constant component. This problem can be fixed by using the mixed model representation described in the vignette on maximum likelihood estimation.</p>
+<p>NB! The model as set up will as set up is not identified if all <span class="math inline">\(\lambda\)</span> are equal, since the term
+<code>s(x, by = weight)</code> also contains a constant component. This
+problem can be fixed by using the mixed model representation described
+in the vignette on maximum likelihood estimation.</p>
 </div>
 <div class="section level3">
 <h3 id="inspecting-the-model">Inspecting the model<a class="anchor" aria-label="anchor" href="#inspecting-the-model"></a>
 </h3>
-<p>We can plot the estimated smooth function with corresponding 95 % confidence bands. The confidence bands take uncertainty in the factor loadings into account.</p>
+<p>We can plot the estimated smooth function with corresponding 95 %
+confidence bands. The confidence bands take uncertainty in the factor
+loadings into account.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span></code></pre></div>
 <p><img src="Introduction_files/figure-html/unnamed-chunk-6-1.png" width="384"></p>
-<p>The  function for  objects takes any arguments that can be provided to ’s  function. For example, we can get shaded confidence bands and remove the rug and add more informative labels and titles.</p>
+<p>The function for objects takes any arguments that can be provided to
+’s function. For example, we can get shaded confidence bands and remove
+the rug and add more informative labels and titles.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mod</span>, rug <span class="op">=</span> <span class="cn">FALSE</span>, shade <span class="op">=</span> <span class="cn">TRUE</span>, ylab <span class="op">=</span> <span class="st">"latent variable"</span>, </span>
 <span>     xlab <span class="op">=</span> <span class="st">"predictor"</span>, main <span class="op">=</span> <span class="st">"Estimated smooth function"</span><span class="op">)</span></span></code></pre></div>
@@ -196,19 +245,33 @@
 </h2>
 <div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-jeonProfileLikelihoodApproachEstimating2012" class="csl-entry">
-Jeon, Minjeong, and Sophia Rabe-Hesketh. 2012. <span>“Profile-<span>Likelihood Approach</span> for <span>Estimating Generalized Linear Mixed Models With Factor Structures</span>.”</span> <em>Journal of Educational and Behavioral Statistics</em> 37 (4): 518–42. <a href="https://doi.org/10.3102/1076998611417628" class="external-link">https://doi.org/10.3102/1076998611417628</a>.
+Jeon, Minjeong, and Sophia Rabe-Hesketh. 2012.
+<span>“Profile-<span>Likelihood Approach</span> for <span>Estimating
+Generalized Linear Mixed Models With Factor Structures</span>.”</span>
+<em>Journal of Educational and Behavioral Statistics</em> 37 (4):
+518–42. <a href="https://doi.org/10.3102/1076998611417628" class="external-link">https://doi.org/10.3102/1076998611417628</a>.
 </div>
 <div id="ref-rabe-heskethGeneralizedMultilevelStructural2004" class="csl-entry">
-Rabe-Hesketh, Sophia, Anders Skrondal, and Andrew Pickles. 2004. <span>“Generalized Multilevel Structural Equation Modeling.”</span> <em>Psychometrika</em> 69 (2): 167–90. <a href="https://doi.org/10.1007/BF02295939" class="external-link">https://doi.org/10.1007/BF02295939</a>.
+Rabe-Hesketh, Sophia, Anders Skrondal, and Andrew Pickles. 2004.
+<span>“Generalized Multilevel Structural Equation Modeling.”</span>
+<em>Psychometrika</em> 69 (2): 167–90. <a href="https://doi.org/10.1007/BF02295939" class="external-link">https://doi.org/10.1007/BF02295939</a>.
 </div>
 <div id="ref-rockwoodEstimatingComplexMeasurement2019" class="csl-entry">
-Rockwood, Nicholas J., and Minjeong Jeon. 2019. <span>“Estimating <span>Complex Measurement</span> and <span>Growth Models Using</span> the <span>R Package PLmixed</span>.”</span> <em>Multivariate Behavioral Research</em> 54 (2): 288–306. <a href="https://doi.org/10.1080/00273171.2018.1516541" class="external-link">https://doi.org/10.1080/00273171.2018.1516541</a>.
+Rockwood, Nicholas J., and Minjeong Jeon. 2019. <span>“Estimating
+<span>Complex Measurement</span> and <span>Growth Models Using</span>
+the <span>R Package PLmixed</span>.”</span> <em>Multivariate Behavioral
+Research</em> 54 (2): 288–306. <a href="https://doi.org/10.1080/00273171.2018.1516541" class="external-link">https://doi.org/10.1080/00273171.2018.1516541</a>.
 </div>
 <div id="ref-sorensenLongitudinalModelingAgedependent2021" class="csl-entry">
-Sørensen, Øystein, Anders M. Fjell, and Kristine B. Walhovd. 2021. <span>“Longitudinal Modeling of Age-Dependent Latent Traits with Generalized Additive Latent and Mixed Models.”</span> <span>arXiv</span>. <a href="https://doi.org/10.48550/arXiv.2105.02488" class="external-link">https://doi.org/10.48550/arXiv.2105.02488</a>.
+Sørensen, Øystein, Anders M. Fjell, and Kristine B. Walhovd. 2021.
+<span>“Longitudinal Modeling of Age-Dependent Latent Traits with
+Generalized Additive Latent and Mixed Models.”</span>
+<span>arXiv</span>. <a href="https://doi.org/10.48550/arXiv.2105.02488" class="external-link">https://doi.org/10.48550/arXiv.2105.02488</a>.
 </div>
 <div id="ref-woodGeneralizedAdditiveModels2017a" class="csl-entry">
-Wood, Simon N. 2017. <em>Generalized Additive Models: <span>An</span> Introduction with <span>R</span></em>. Second. <span>Chapman and Hall/CRC</span>.
+Wood, Simon N. 2017. <em>Generalized Additive Models: <span>An</span>
+Introduction with <span>R</span></em>. Second. <span>Chapman and
+Hall/CRC</span>.
 </div>
 </div>
 </div>
