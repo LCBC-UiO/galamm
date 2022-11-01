@@ -446,7 +446,6 @@ Lambdat@x <- 1
 mlwrapper <- function(par, hessian = FALSE){
   marginal_likelihood(
     y = mod0$gam$y,
-    trials = rep(1, length(mod0$gam$y)),
     X = lmod$X,
     Zt = lmod$reTrms$Zt,
     Lambdat = Lambdat,
