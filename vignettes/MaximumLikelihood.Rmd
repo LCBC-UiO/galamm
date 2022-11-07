@@ -526,23 +526,17 @@ vcov(mod0$gam)
 We now compute it, following the source code of `gamm4::gamm4()`:
 
 ```{r}
-V <- Matrix::Diagonal(length(ml_final$V), ml_final$V) + 
+V <- Matrix::Diagonal(length(ml_final$V), ml_final$phi) + 
   crossprod(Lambdat[1:100, 1:100] %*% lmod$reTrms$Zt[1:100, ]) * ml_final$phi
-R <- Matrix::chol(V,pivot=TRUE);piv <- attr(R,"pivot") 
+R <- Matrix::chol(V,pivot=FALSE)
 Xfp <- as(Xfp, "dgCMatrix")
 
-WX <- as(solve(t(R), Xfp[piv, ]), "matrix")
+WX <- as(solve(t(R), Xfp), "matrix")
 Sp <- diag(c(rep(1 / opt$par[[2]], 8), 0, 0))
-qrx <- qr(rbind(WX,Sp/sqrt(ml_final$phi)),LAPACK=TRUE)
+qrx <- qr(rbind(WX,Sp/sqrt(ml_final$phi)),pivot = FALSE)
 Ri <- backsolve(qr.R(qrx),diag(ncol(WX)))
-ind <- qrx$pivot;ind[ind] <- 1:length(ind)
-Ri <- Ri[ind, ]
 Vb <- B%*%Ri; Vb <- Vb%*%t(Vb)
-```
 
-We can confirm that we landed at the correct covariance matrix:
-
-```{r}
 plot(as.numeric(vcov(mod0$gam)), as.numeric(Vb)); abline(0, 1)
 ```
 
