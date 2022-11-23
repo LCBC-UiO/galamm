@@ -48,7 +48,7 @@
 #'
 #' @details For examples, see the vignette on maximum likelihood estimation.
 marginal_likelihood <- function(
-    y, trials = rep(1, length(y)), X, Zt, Lambdat, beta, theta, theta_mapping,
+    y, trials = NULL, X, Zt, Lambdat, beta, theta, theta_mapping,
     u_init = rep(0, nrow(Zt)),
     lambda = numeric(),
     lambda_mapping_X = integer(),
@@ -61,6 +61,7 @@ marginal_likelihood <- function(
     maxit_conditional_modes = 1L, gradient = TRUE, hessian = FALSE,
     epsilon_u = 1e-10){
 
+  if(is.null(trials)) trials <- rep(1, length(y))
   stopifnot(length(u_init) == nrow(Zt))
   stopifnot(length(y) == length(trials))
   stopifnot(length(y) == nrow(X))
