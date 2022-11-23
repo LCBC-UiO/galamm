@@ -54,8 +54,8 @@ Rcpp::List create_result(Functor1 fx, Functor2 gx, parameters<autodiff::dual2nd>
   autodiff::dual2nd ll{};
   Eigen::VectorXd g{};
   Eigen::MatrixXd H{};
-  H = hessian(fx, wrt(parlist.theta, parlist.beta, parlist.lambda,
-                      parlist.weights), at(parlist), ll, g);
+  g = gradient(fx, wrt(parlist.theta, parlist.beta, parlist.lambda, parlist.weights), at(parlist), ll);
+  H = hessian(fx, wrt(parlist.beta, parlist.lambda), at(parlist));
   logLikObject extras = gx(parlist);
 
   return Rcpp::List::create(

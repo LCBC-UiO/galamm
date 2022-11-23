@@ -247,14 +247,14 @@ S <- solve(-final_model$hessian)
 We can confirm that also these standard errors agree with `PLmixed`. Both for $\hat{\beta}$
 
 ```{r}
-sqrt(diag(S))[beta_inds]
+sqrt(diag(S))[seq_along(beta_inds)]
 as.data.frame(summary(irt.model)$`Fixed Effects`)[["SE"]]
 ```
 
 and for $\hat{\lambda}$.
 
 ```{r}
-sqrt(diag(S))[lambda_inds]
+sqrt(diag(S))[length(beta_inds) + seq_along(lambda_inds)]
 na.omit(as.data.frame(summary(irt.model)$Lambda))[["lambda.item.SE"]]
 ```
 
@@ -330,7 +330,7 @@ fn(opt2$par)
 Also the estimated standard errors are close.
 
 ```{r}
-sqrt(diag(solve(-final_model$hessian)))[beta_inds]
+sqrt(diag(solve(-final_model$hessian)))[seq_along(beta_inds)]
 unname(sqrt(diag(vcov(fMod))))
 ```
 
