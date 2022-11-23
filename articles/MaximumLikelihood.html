@@ -278,7 +278,7 @@ Hessian.</p>
 <span>             control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>fnscale <span class="op">=</span> <span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.136   0.000   0.135</span></span>
+<span><span class="co">#&gt;   0.112   0.000   0.112</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="op">{</span></span>
 <span>  <span class="va">opt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/optim.html" class="external-link">optim</a></span><span class="op">(</span><span class="va">par_init</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">par_init</span><span class="op">)</span>, max <span class="op">=</span> <span class="fl">.5</span><span class="op">)</span>, </span>
 <span>               fn <span class="op">=</span> <span class="va">fn</span>, gr <span class="op">=</span> <span class="va">gr</span>, </span>
@@ -286,7 +286,7 @@ Hessian.</p>
 <span>             control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>fnscale <span class="op">=</span> <span class="op">-</span><span class="fl">1</span>, lmm <span class="op">=</span> <span class="fl">20</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.092   0.000   0.093</span></span></code></pre></div>
+<span><span class="co">#&gt;   0.081   0.000   0.082</span></span></code></pre></div>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="op">{</span></span>
 <span>  <span class="va">irt.model</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/PLmixed/man/PLmixed.html" class="external-link">PLmixed</a></span><span class="op">(</span><span class="va">form</span>,</span>
@@ -295,7 +295,7 @@ Hessian.</p>
 <span>                     lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">irt.lam</span><span class="op">)</span>, iter.count <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   2.915   0.008   2.927</span></span></code></pre>
+<span><span class="co">#&gt;   2.155   0.036   2.097</span></span></code></pre>
 <p>The inverse of the negative Hessian matrix is the covariance matrix
 of the model. We can obtain this one with a single call at the final
 parameter estimates, using the argument <code>hessian = TRUE</code>.</p>
@@ -323,14 +323,14 @@ parameter estimates, using the argument <code>hessian = TRUE</code>.</p>
 <p>We can confirm that also these standard errors agree with
 <code>PLmixed</code>. Both for <span class="math inline">\(\hat{\beta}\)</span></p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="va">S</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="va">beta_inds</span><span class="op">]</span></span>
-<span><span class="co">#&gt; [1] 0.06306928 0.06220404 0.06327383</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="va">S</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">beta_inds</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="co">#&gt; [1] 0.06299119 0.06215440 0.06323201</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">irt.model</span><span class="op">)</span><span class="op">$</span><span class="va">`Fixed Effects`</span><span class="op">)</span><span class="op">[[</span><span class="st">"SE"</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="co">#&gt; [1] 0.06299815 0.06216950 0.06320914</span></span></code></pre></div>
 <p>and for <span class="math inline">\(\hat{\lambda}\)</span>.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="va">S</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="va">lambda_inds</span><span class="op">]</span></span>
-<span><span class="co">#&gt; [1] 0.2178833 0.2368199</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="va">S</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">beta_inds</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">lambda_inds</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="co">#&gt; [1] 0.1898281 0.2168588</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/stats/na.fail.html" class="external-link">na.omit</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">irt.model</span><span class="op">)</span><span class="op">$</span><span class="va">Lambda</span><span class="op">)</span><span class="op">)</span><span class="op">[[</span><span class="st">"lambda.item.SE"</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="co">#&gt; [1] 0.2178841 0.2368201</span></span></code></pre></div>
 </div>
@@ -400,8 +400,8 @@ into our function.</p>
 <span><span class="co">#&gt; [1] -92.02629</span></span></code></pre></div>
 <p>Also the estimated standard errors are close.</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/Matrix/man/solve-methods.html" class="external-link">solve</a></span><span class="op">(</span><span class="op">-</span><span class="va">final_model</span><span class="op">$</span><span class="va">hessian</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="va">beta_inds</span><span class="op">]</span></span>
-<span><span class="co">#&gt; [1] 0.2324714 0.3066424 0.3266377 0.4274364</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/Matrix/man/solve-methods.html" class="external-link">solve</a></span><span class="op">(</span><span class="op">-</span><span class="va">final_model</span><span class="op">$</span><span class="va">hessian</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">beta_inds</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="co">#&gt; [1] 0.2291252 0.3051912 0.3253897 0.4261366</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/unname.html" class="external-link">unname</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/vcov.html" class="external-link">vcov</a></span><span class="op">(</span><span class="va">fMod</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 0.2312140 0.3031506 0.3228302 0.4220492</span></span></code></pre></div>
 </div>
@@ -522,7 +522,7 @@ still treating the factor loadings as fixed.</p>
 <span>             control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>fnscale <span class="op">=</span> <span class="op">-</span><span class="fl">1</span>, lmm <span class="op">=</span> <span class="fl">20</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">opt</span></span>
 <span><span class="co">#&gt; $par</span></span>
-<span><span class="co">#&gt; [1]  8.094555 75.164818  6.439333 12.305424</span></span>
+<span><span class="co">#&gt; [1]  8.094555 75.164817  6.439333 12.305424</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $value</span></span>
 <span><span class="co">#&gt; [1] -384.4884</span></span>
@@ -578,38 +578,38 @@ to reproduce the following covariance matrix:</p>
 <div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/vcov.html" class="external-link">vcov</a></span><span class="op">(</span><span class="va">mod0</span><span class="op">$</span><span class="va">gam</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                s(x):weight.1 s(x):weight.2 s(x):weight.3 s(x):weight.4</span></span>
-<span><span class="co">#&gt; s(x):weight.1     93.1087997   0.680273911  -24.69827884    0.40378788</span></span>
-<span><span class="co">#&gt; s(x):weight.2      0.6802739   2.954222754    0.20591981    0.94761517</span></span>
-<span><span class="co">#&gt; s(x):weight.3    -24.6982788   0.205919810    7.59260971    0.06390848</span></span>
-<span><span class="co">#&gt; s(x):weight.4      0.4037879   0.947615170    0.06390848    1.32625872</span></span>
-<span><span class="co">#&gt; s(x):weight.5     12.2640050  -0.390003167   -2.84378296   -0.08155424</span></span>
-<span><span class="co">#&gt; s(x):weight.6      2.0592072   1.001975542   -0.29123751    0.17279982</span></span>
-<span><span class="co">#&gt; s(x):weight.7      9.4646959   0.002171801   -2.05853695   -0.00440880</span></span>
-<span><span class="co">#&gt; s(x):weight.8      0.1319892   0.820144860    0.10295556    0.13118449</span></span>
-<span><span class="co">#&gt; s(x):weight.9     52.4884155   0.440738160  -13.92516684    0.25157079</span></span>
-<span><span class="co">#&gt; s(x):weight.10    -5.0619540  -5.601841246    0.48326272   -2.51359690</span></span>
+<span><span class="co">#&gt; s(x):weight.1     93.1087992   0.680273909  -24.69827873    0.40378788</span></span>
+<span><span class="co">#&gt; s(x):weight.2      0.6802739   2.954222744    0.20591981    0.94761517</span></span>
+<span><span class="co">#&gt; s(x):weight.3    -24.6982787   0.205919809    7.59260968    0.06390848</span></span>
+<span><span class="co">#&gt; s(x):weight.4      0.4037879   0.947615167    0.06390848    1.32625871</span></span>
+<span><span class="co">#&gt; s(x):weight.5     12.2640049  -0.390003165   -2.84378295   -0.08155424</span></span>
+<span><span class="co">#&gt; s(x):weight.6     -2.0592072  -1.001975536    0.29123751   -0.17279982</span></span>
+<span><span class="co">#&gt; s(x):weight.7      9.4646959   0.002171801   -2.05853693   -0.00440880</span></span>
+<span><span class="co">#&gt; s(x):weight.8      0.1319892   0.820144854    0.10295556    0.13118449</span></span>
+<span><span class="co">#&gt; s(x):weight.9     52.4884152   0.440738158  -13.92516678    0.25157079</span></span>
+<span><span class="co">#&gt; s(x):weight.10    -5.0619540  -5.601841222    0.48326272   -2.51359689</span></span>
 <span><span class="co">#&gt;                s(x):weight.5 s(x):weight.6 s(x):weight.7 s(x):weight.8</span></span>
-<span><span class="co">#&gt; s(x):weight.1    12.26400496    2.05920724   9.464695919    0.13198918</span></span>
-<span><span class="co">#&gt; s(x):weight.2    -0.39000317    1.00197554   0.002171801    0.82014486</span></span>
-<span><span class="co">#&gt; s(x):weight.3    -2.84378296   -0.29123751  -2.058536948    0.10295556</span></span>
-<span><span class="co">#&gt; s(x):weight.4    -0.08155424    0.17279982  -0.004408800    0.13118449</span></span>
-<span><span class="co">#&gt; s(x):weight.5     2.97847746    0.04194028   0.553002882   -0.05623104</span></span>
-<span><span class="co">#&gt; s(x):weight.6     0.04194028    1.64043593   0.052771137    0.06954989</span></span>
-<span><span class="co">#&gt; s(x):weight.7     0.55300288    0.05277114   2.225399140   -0.01042005</span></span>
-<span><span class="co">#&gt; s(x):weight.8    -0.05623104    0.06954989  -0.010420046    1.27605274</span></span>
-<span><span class="co">#&gt; s(x):weight.9     6.83590882    1.17729764   5.266189707    0.09903052</span></span>
-<span><span class="co">#&gt; s(x):weight.10    0.50399267   -2.81658868  -0.435935607   -2.25217441</span></span>
+<span><span class="co">#&gt; s(x):weight.1    12.26400490   -2.05920722   9.464695857    0.13198918</span></span>
+<span><span class="co">#&gt; s(x):weight.2    -0.39000317   -1.00197554   0.002171801    0.82014485</span></span>
+<span><span class="co">#&gt; s(x):weight.3    -2.84378295    0.29123751  -2.058536935    0.10295556</span></span>
+<span><span class="co">#&gt; s(x):weight.4    -0.08155424   -0.17279982  -0.004408800    0.13118449</span></span>
+<span><span class="co">#&gt; s(x):weight.5     2.97847745   -0.04194028   0.553002878   -0.05623104</span></span>
+<span><span class="co">#&gt; s(x):weight.6    -0.04194028    1.64043592  -0.052771137   -0.06954989</span></span>
+<span><span class="co">#&gt; s(x):weight.7     0.55300288   -0.05277114   2.225399125   -0.01042005</span></span>
+<span><span class="co">#&gt; s(x):weight.8    -0.05623104   -0.06954989  -0.010420046    1.27605273</span></span>
+<span><span class="co">#&gt; s(x):weight.9     6.83590879   -1.17729764   5.266189673    0.09903052</span></span>
+<span><span class="co">#&gt; s(x):weight.10    0.50399267    2.81658866  -0.435935604   -2.25217440</span></span>
 <span><span class="co">#&gt;                s(x):weight.9 s(x):weight.10</span></span>
-<span><span class="co">#&gt; s(x):weight.1    52.48841546     -5.0619540</span></span>
+<span><span class="co">#&gt; s(x):weight.1    52.48841521     -5.0619540</span></span>
 <span><span class="co">#&gt; s(x):weight.2     0.44073816     -5.6018412</span></span>
-<span><span class="co">#&gt; s(x):weight.3   -13.92516684      0.4832627</span></span>
+<span><span class="co">#&gt; s(x):weight.3   -13.92516678      0.4832627</span></span>
 <span><span class="co">#&gt; s(x):weight.4     0.25157079     -2.5135969</span></span>
-<span><span class="co">#&gt; s(x):weight.5     6.83590882      0.5039927</span></span>
-<span><span class="co">#&gt; s(x):weight.6     1.17729764     -2.8165887</span></span>
-<span><span class="co">#&gt; s(x):weight.7     5.26618971     -0.4359356</span></span>
+<span><span class="co">#&gt; s(x):weight.5     6.83590879      0.5039927</span></span>
+<span><span class="co">#&gt; s(x):weight.6    -1.17729764      2.8165887</span></span>
+<span><span class="co">#&gt; s(x):weight.7     5.26618967     -0.4359356</span></span>
 <span><span class="co">#&gt; s(x):weight.8     0.09903052     -2.2521744</span></span>
-<span><span class="co">#&gt; s(x):weight.9    29.75360416     -2.9801871</span></span>
-<span><span class="co">#&gt; s(x):weight.10   -2.98018714     13.0588139</span></span></code></pre></div>
+<span><span class="co">#&gt; s(x):weight.9    29.75360402     -2.9801871</span></span>
+<span><span class="co">#&gt; s(x):weight.10   -2.98018712     13.0588138</span></span></code></pre></div>
 <p>We now compute it, following the source code of
 <code><a href="https://rdrr.io/pkg/gamm4/man/gamm4.html" class="external-link">gamm4::gamm4()</a></code>:</p>
 <div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
@@ -698,7 +698,7 @@ nine times:</p>
 <span><span class="co">#&gt;  [3,] -0.015441528 -0.015441528   1.0</span></span>
 <span><span class="co">#&gt;  [4,] -0.031062718 -0.031062718   1.0</span></span>
 <span><span class="co">#&gt;  [5,] -0.022059973 -0.022059973   1.0</span></span>
-<span><span class="co">#&gt;  [6,]  0.007786932  0.007786932   1.0</span></span>
+<span><span class="co">#&gt;  [6,] -0.007786932 -0.007786932   1.0</span></span>
 <span><span class="co">#&gt;  [7,] -0.011682907 -0.011682907   1.0</span></span>
 <span><span class="co">#&gt;  [8,]  0.162647515  0.162647515   1.0</span></span>
 <span><span class="co">#&gt;  [9,] -0.497847112 -0.497847112   1.0</span></span>
@@ -707,7 +707,7 @@ nine times:</p>
 <span><span class="co">#&gt; [12,] -0.030883057 -0.015441528   2.0</span></span>
 <span><span class="co">#&gt; [13,] -0.062125436 -0.031062718   2.0</span></span>
 <span><span class="co">#&gt; [14,] -0.044119947 -0.022059973   2.0</span></span>
-<span><span class="co">#&gt; [15,]  0.015573864  0.007786932   2.0</span></span>
+<span><span class="co">#&gt; [15,] -0.015573864 -0.007786932   2.0</span></span>
 <span><span class="co">#&gt; [16,] -0.023365813 -0.011682907   2.0</span></span>
 <span><span class="co">#&gt; [17,]  0.325295030  0.162647515   2.0</span></span>
 <span><span class="co">#&gt; [18,] -0.995694225 -0.497847112   2.0</span></span>
@@ -716,7 +716,7 @@ nine times:</p>
 <span><span class="co">#&gt; [21,] -0.006176611 -0.015441528   0.4</span></span>
 <span><span class="co">#&gt; [22,] -0.012425087 -0.031062718   0.4</span></span>
 <span><span class="co">#&gt; [23,] -0.008823989 -0.022059973   0.4</span></span>
-<span><span class="co">#&gt; [24,]  0.003114773  0.007786932   0.4</span></span>
+<span><span class="co">#&gt; [24,] -0.003114773 -0.007786932   0.4</span></span>
 <span><span class="co">#&gt; [25,] -0.004673163 -0.011682907   0.4</span></span>
 <span><span class="co">#&gt; [26,]  0.065059006  0.162647515   0.4</span></span>
 <span><span class="co">#&gt; [27,] -0.199138845 -0.497847112   0.4</span></span></code></pre></div>
