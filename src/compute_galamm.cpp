@@ -162,7 +162,7 @@ Rcpp::List wrapper(
       lambda_mapping_Zt_covs,
       Lambdat,
       weights, weights_mapping,
-      family_mapping, maxit_conditional_modes, epsilon_u, y.size()};
+      family_mapping, maxit_conditional_modes, epsilon_u, static_cast<int>(y.size())};
 
   std::vector<Model<T>*> mod;
 
