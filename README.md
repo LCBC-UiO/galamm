@@ -47,27 +47,7 @@ remotes::install_github("LCBC-UiO/galamm")
 
 ## Example
 
-Here is a basic example with three items measuring an underlying latent
-trait.
-
-``` r
-library(galamm)
-
-# Define factor loading matrix
-load.mat <- matrix(c(1, NA, NA), ncol = 1)
-dimnames(load.mat) <- list(c("item1", "item2", "item3"), NULL)
-
-# Fit a galamm
-mod <- galamm(
-  formula = value ~ s(x, by = weight),
-  random = ~(1|id),
-  data = dat1,
-  load.var = "item",
-  lambda = load.mat,
-  factor = "weight",
-  optim_control = list(trace = 3)
-  )
-```
+Example will come.
 
 ## References
 
