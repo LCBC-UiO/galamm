@@ -24,7 +24,7 @@ library(galamm)
 ```
 
 
-The `galamm` package includes a function for computing the Laplace approximate marginal likelihood of both GLLAMMs and GALAMMs. In the future, this will replace the profile likelihood method, but due to the complexity of the matter, it will take some time to develop a decent API. This vignette describes how to perform maximum likelihood estimation with the currently available functions; it is complicated, but also gives the benefit of understanding what's going on, in addition to a more accurate algorithm which scales better. Before continuing, make sure you've read the Introduction vignette.
+The `galamm` package includes a function for computing the Laplace approximate marginal likelihood of both GLLAMMs and GALAMMs. This vignette describes how to perform maximum likelihood estimation with the currently available functions; it is complicated, but also gives the benefit of understanding what's going on, in addition to a more accurate algorithm which scales better. Before continuing, make sure you've read the Introduction vignette. We are working on defining a more user friendly API which is closer to commonly used R functions for estimation of multilevel models.
 
 ## Linear mixed model with factor structure
 
