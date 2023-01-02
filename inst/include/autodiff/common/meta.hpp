@@ -38,19 +38,25 @@ namespace autodiff {
 namespace detail {
 
 template<bool value>
-using EnableIf = typename std::enable_if<value>::type;
+using EnableIf = std::enable_if_t<value>;
+
+template<bool value>
+using Requires = std::enable_if_t<value, bool>;
 
 template<typename T>
-using PlainType = typename std::remove_cv<typename std::remove_reference<T>::type>::type;
+using PlainType = std::remove_cv_t<std::remove_reference_t<T>>;
 
 template<bool Cond, typename WhenTrue, typename WhenFalse>
-using ConditionalType = typename std::conditional<Cond, WhenTrue, WhenFalse>::type;
+using ConditionalType = std::conditional_t<Cond, WhenTrue, WhenFalse>;
 
 template<typename A, typename B>
-using CommonType = typename std::common_type<A, B>::type;
+using CommonType = std::common_type_t<A, B>;
 
 template<typename Fun, typename... Args>
 using ReturnType = std::invoke_result_t<Fun, Args...>;
+
+template<typename T>
+constexpr bool isConst = std::is_const_v<std::remove_reference_t<T>>;
 
 template<typename T, typename U>
 constexpr bool isConvertible = std::is_convertible<PlainType<T>, U>::value;
