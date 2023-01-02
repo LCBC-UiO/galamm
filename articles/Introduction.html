@@ -75,14 +75,8 @@
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://lcbc-uio.github.io/galamm/">galamm</a></span><span class="op">)</span></span></code></pre></div>
 <p>The <code>galamm</code> packages estimates generalized additive
 latent and mixed models (GALAMMs). GALAMMs are described in <span class="citation">Sørensen, Fjell, and Walhovd (2021)</span> as an
-extension of generalized linear latent and mixed models (GLLAMMs) <span class="citation">(Rabe-Hesketh, Skrondal, and Pickles 2004)</span>. If
-you don’t need nonlinear smooth terms, you should probably use the <a href="https://cran.r-project.org/package=PLmixed" class="external-link">PLmixed</a> package
-instead.</p>
-<div class="section level2">
-<h2 id="fitting-a-latent-response-model">Fitting a latent response model<a class="anchor" aria-label="anchor" href="#fitting-a-latent-response-model"></a>
-</h2>
-<p>In this vignette we illustrate a basic use case with the simulated
-dataset <code>dat1</code> which is part of the package.</p>
+extension of generalized linear latent and mixed models (GLLAMMs) <span class="citation">(Rabe-Hesketh, Skrondal, and Pickles 2004)</span>.</p>
+<p>In this vignette we demonstrate basic model formulation.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">dat1</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   id  item         y         x</span></span>
@@ -152,93 +146,9 @@ defines a generalized additive mixed model (GAMM) <span class="citation">(Wood 2
 \boldsymbol{\delta}_{ij}\)</span>. Identifying this lets us use profile
 likelihood estimation similar to what <span class="citation">Jeon and
 Rabe-Hesketh (2012)</span> proposed for a subset of GLLAMMs, and <span class="citation">Rockwood and Jeon (2019)</span> implemented in the R
-package <code>PLmixed</code>. The current implementation in
-<code>galamm</code> uses this profile likelihood algorithm, extended to
-smooth nonlinear functions.</p>
-</div>
-<div class="section level3">
-<h3 id="profile-likelihood-estimation-with-galamm">Profile likelihood estimation with galamm<a class="anchor" aria-label="anchor" href="#profile-likelihood-estimation-with-galamm"></a>
-</h3>
-<p>We start by defining that loading matrix, using the same syntax as
-<code>PLmixed</code>. <code>NA</code> means that the loading is free to
-be estimated, whereas a value means that we fix the corresponding
-loading.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">load.mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/dimnames.html" class="external-link">dimnames</a></span><span class="op">(</span><span class="va">load.mat</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"item1"</span>, <span class="st">"item2"</span>, <span class="st">"item3"</span><span class="op">)</span>, <span class="cn">NULL</span><span class="op">)</span></span>
-<span><span class="va">load.mat</span></span>
-<span><span class="co">#&gt;       [,1]</span></span>
-<span><span class="co">#&gt; item1    1</span></span>
-<span><span class="co">#&gt; item2   NA</span></span>
-<span><span class="co">#&gt; item3   NA</span></span></code></pre></div>
-<p>We then fit the model. We set the initial values
-<code>lambda_init = c(2, .4)</code> to speed up convergence in this
-example case. If initial values are not provided, random starting points
-are used instead.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
-<span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="fu">s</span><span class="op">(</span><span class="va">x</span>, by <span class="op">=</span> <span class="va">weight</span><span class="op">)</span>,</span>
-<span>  random <span class="op">=</span> <span class="op">~</span><span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">weight</span><span class="op">|</span><span class="va">id</span><span class="op">)</span>,</span>
-<span>  data <span class="op">=</span> <span class="va">dat1</span>,</span>
-<span>  load_var <span class="op">=</span> <span class="st">"item"</span>,</span>
-<span>  lambda <span class="op">=</span> <span class="va">load.mat</span>,</span>
-<span>  factor <span class="op">=</span> <span class="st">"weight"</span>,</span>
-<span>  lambda_init <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">.4</span><span class="op">)</span></span>
-<span>  <span class="op">)</span></span></code></pre></div>
-<p>NB! The model as set up will as set up is not identified if all <span class="math inline">\(\lambda\)</span> are equal, since the term
-<code>s(x, by = weight)</code> also contains a constant component. This
-problem can be fixed by using the mixed model representation described
-in the vignette on maximum likelihood estimation.</p>
-</div>
-<div class="section level3">
-<h3 id="inspecting-the-model">Inspecting the model<a class="anchor" aria-label="anchor" href="#inspecting-the-model"></a>
-</h3>
-<p>We can plot the estimated smooth function with corresponding 95 %
-confidence bands. The confidence bands take uncertainty in the factor
-loadings into account.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Introduction_files/figure-html/unnamed-chunk-6-1.png" width="384"></p>
-<p>The function for objects takes any arguments that can be provided to
-’s function. For example, we can get shaded confidence bands and remove
-the rug and add more informative labels and titles.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mod</span>, rug <span class="op">=</span> <span class="cn">FALSE</span>, shade <span class="op">=</span> <span class="cn">TRUE</span>, ylab <span class="op">=</span> <span class="st">"latent variable"</span>, </span>
-<span>     xlab <span class="op">=</span> <span class="st">"predictor"</span>, main <span class="op">=</span> <span class="st">"Estimated smooth function"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Introduction_files/figure-html/unnamed-chunk-7-1.png" width="384"></p>
-<p>We can also print some summary information.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Generalized additive latent and mixed model fit with profile likelihood</span></span>
-<span><span class="co">#&gt; Formula:  y ~ s(x, by = weight) </span></span>
-<span><span class="co">#&gt;  Family: gaussian  ( identity )</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;      AIC      BIC   logLik deviance df.resid </span></span>
-<span><span class="co">#&gt;   781.31   807.23  -383.65   767.31      292 </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Scaled residuals: </span></span>
-<span><span class="co">#&gt;      Min       1Q   Median       3Q      Max </span></span>
-<span><span class="co">#&gt; -3.07552 -0.49018  0.01068  0.51409  2.57879 </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Lambda:  item </span></span>
-<span><span class="co">#&gt;         [,1]</span></span>
-<span><span class="co">#&gt; item1 1.0000</span></span>
-<span><span class="co">#&gt; item2 2.0126</span></span>
-<span><span class="co">#&gt; item3 0.3977</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Random effects:</span></span>
-<span><span class="co">#&gt;  Groups   Name        Variance  Std.Dev.</span></span>
-<span><span class="co">#&gt;  id       weight        6.47172  2.5440 </span></span>
-<span><span class="co">#&gt;  Xr       s(x):weight 557.95152 23.6210 </span></span>
-<span><span class="co">#&gt;  Residual               0.09887  0.3144 </span></span>
-<span><span class="co">#&gt; Number of obs: 300, groups:  id, 100; Xr, 8</span></span>
-<span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt; Fixed effects: </span></span>
-<span><span class="co">#&gt;                Beta     SE</span></span>
-<span><span class="co">#&gt; (Intercept) 0.08537 0.0846</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Optim Iterations:  7</span></span></code></pre></div>
-</div>
+package <code>PLmixed</code>. The <code>galamm</code> package instead
+maximizes the Laplace approximate marginal likelihood directly, as
+described in another vignette.</p>
 </div>
 <div class="section level2 unnumbered">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>

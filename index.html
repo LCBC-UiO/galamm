@@ -6,15 +6,13 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="description" content="Estimates generalized additive latent and
-    mixed models, as defined in Sorensen et al. (2021) 
+    mixed models using maximum marginal likelihood, 
+    as defined in Sorensen et al. (2021) 
     &lt;doi:10.48550/arXiv.2105.02488&gt;. Factor analysis and 
     item response models in which the responses depend 
     nonlinearly on observed predictors can be estimated, 
     with crossed or nested random effects structures defined
-    using lme4 syntax. Computations use either the profile 
-    likelihood algorithm proposed by Jeon and Rabe-Hesketh 
-    (2012) &lt;doi:10.3102/1076998611417628&gt; or Laplace
-    approximate marginal likelihood. Also provides functions
+    using lme4 syntax. Also provides functions
     for evaluating the likelihood of complex mixed models
     at given parameter values, and evaluating the gradient
     exactly using automatic differentiation.">
@@ -25,15 +23,13 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Generalized Additive Latent and Mixed Models">
 <meta property="og:description" content="Estimates generalized additive latent and
-    mixed models, as defined in Sorensen et al. (2021) 
+    mixed models using maximum marginal likelihood, 
+    as defined in Sorensen et al. (2021) 
     &lt;doi:10.48550/arXiv.2105.02488&gt;. Factor analysis and 
     item response models in which the responses depend 
     nonlinearly on observed predictors can be estimated, 
     with crossed or nested random effects structures defined
-    using lme4 syntax. Computations use either the profile 
-    likelihood algorithm proposed by Jeon and Rabe-Hesketh 
-    (2012) &lt;doi:10.3102/1076998611417628&gt; or Laplace
-    approximate marginal likelihood. Also provides functions
+    using lme4 syntax. Also provides functions
     for evaluating the likelihood of complex mixed models
     at given parameter values, and evaluating the gradient
     exactly using automatic differentiation.">
@@ -100,24 +96,7 @@
 <div class="section level2">
 <h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
 </h2>
-<p>Here is a basic example with three items measuring an underlying latent trait.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://lcbc-uio.github.io/galamm/">galamm</a></span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Define factor loading matrix</span></span>
-<span><span class="va">load.mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/dimnames.html" class="external-link">dimnames</a></span><span class="op">(</span><span class="va">load.mat</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"item1"</span>, <span class="st">"item2"</span>, <span class="st">"item3"</span><span class="op">)</span>, <span class="cn">NULL</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Fit a galamm</span></span>
-<span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/galamm.html">galamm</a></span><span class="op">(</span></span>
-<span>  formula <span class="op">=</span> <span class="va">value</span> <span class="op">~</span> <span class="fu">s</span><span class="op">(</span><span class="va">x</span>, by <span class="op">=</span> <span class="va">weight</span><span class="op">)</span>,</span>
-<span>  random <span class="op">=</span> <span class="op">~</span><span class="op">(</span><span class="fl">1</span><span class="op">|</span><span class="va">id</span><span class="op">)</span>,</span>
-<span>  data <span class="op">=</span> <span class="va">dat1</span>,</span>
-<span>  load.var <span class="op">=</span> <span class="st">"item"</span>,</span>
-<span>  lambda <span class="op">=</span> <span class="va">load.mat</span>,</span>
-<span>  factor <span class="op">=</span> <span class="st">"weight"</span>,</span>
-<span>  optim_control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>trace <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
-<span>  <span class="op">)</span></span></code></pre></div>
+<p>Example will come.</p>
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
