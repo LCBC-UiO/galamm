@@ -13,4 +13,4 @@ cd ..
 rm -rf tmp/
 
 R CMD BATCH dev-scripts/insert_sparse_autodiff.R
-
+rm insert_sparse_autodiff.Rout
