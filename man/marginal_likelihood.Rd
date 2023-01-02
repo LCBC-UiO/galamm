@@ -6,7 +6,7 @@
 \usage{
 marginal_likelihood(
   y,
-  trials = rep(1, length(y)),
+  trials = NULL,
   X,
   Zt,
   Lambdat,
