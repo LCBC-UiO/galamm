@@ -18,7 +18,6 @@ knitr::opts_chunk$set(
 ```{r setup}
 library(Matrix)
 library(lme4)
-library(mgcv)
 library(gamm4)
 library(galamm)
 ```

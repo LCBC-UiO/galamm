@@ -21,7 +21,6 @@ Description: Estimates generalized additive latent and
 License: GPL (>= 3)
 Encoding: UTF-8
 Imports: 
-    gamm4,
     lme4,
     Rcpp
 Depends:
@@ -32,7 +31,8 @@ LinkingTo:
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
-Suggests: 
+Suggests:
+    gamm4,
     covr,
     dplyr,
     purrr,
@@ -41,7 +41,6 @@ Suggests:
     Matrix,
     knitr,
     memoise,
-    mgcv,
     PLmixed,
     rmarkdown,
     testthat (>= 3.0.0)
