@@ -10,7 +10,7 @@ using namespace autodiff;
 
 template <typename T>
 T loss(const parameters<T>& parlist, const data<T>& datlist, const Vdual<T>& lp,
-       std::vector<Model<T>*> modvec, ldlt<T>& solver, Vdual<T>& phi){
+       std::vector<std::unique_ptr<Model<T>>>& modvec, ldlt<T>& solver, Vdual<T>& phi){
 
   T ret{};
   for(int k{}; k < modvec.size(); k++){
@@ -43,7 +43,7 @@ T loss(const parameters<T>& parlist, const data<T>& datlist, const Vdual<T>& lp,
 
 template <typename T>
 logLikObject<T> logLik(
-    parameters<T> parlist, data<T> datlist, std::vector<Model<T>*> modvec){
+    parameters<T> parlist, data<T> datlist, std::vector<std::unique_ptr<Model<T>>>& modvec){
 
   update_Zt(datlist.Zt, parlist.lambda, parlist.lambda_mapping_Zt, parlist.lambda_mapping_Zt_covs);
   update_X(datlist.X, parlist.lambda, parlist.lambda_mapping_X, parlist.lambda_mapping_X_covs);
@@ -164,15 +164,15 @@ Rcpp::List wrapper(
       weights, weights_mapping,
       family_mapping, maxit_conditional_modes, epsilon_u, static_cast<int>(y.size())};
 
-  std::vector<Model<T>*> mod;
+  std::vector<std::unique_ptr<Model<T>>> mod;
 
   for(size_t i{}; i < family.size(); i++){
     if(family[i] == "gaussian") {
-      mod.push_back(new Gaussian<T>);
+      mod.push_back(std::unique_ptr<Model<T>>{new Gaussian<T>});
     } else if(family[i] == "binomial"){
-      mod.push_back(new Binomial<T>{k(i)});
+      mod.push_back(std::unique_ptr<Model<T>>{new Binomial<T>{k(i)}});
     } else if(family[i] == "poisson"){
-      mod.push_back(new Poisson<T>{k(i)});
+      mod.push_back(std::unique_ptr<Model<T>>{new Poisson<T>{k(i)}});
     } else {
       Rcpp::stop("Unknown family.");
     }
