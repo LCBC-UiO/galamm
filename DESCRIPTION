@@ -27,10 +27,11 @@ Depends:
     R (>= 3.5.0)
 LinkingTo:
     Rcpp,
-    RcppEigen
+    RcppEigen (>= 0.3.3.99.0)
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
+Remotes: yixuan/RcppEigen@6d87938bf4d6ade8caf5e8377228e5177dcbb9bf
 Suggests:
     gamm4,
     covr,
