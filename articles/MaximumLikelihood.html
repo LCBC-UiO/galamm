@@ -278,7 +278,7 @@ Hessian.</p>
 <span>             control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>fnscale <span class="op">=</span> <span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.165   0.000   0.165</span></span>
+<span><span class="co">#&gt;    0.12    0.00    0.12</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="op">{</span></span>
 <span>  <span class="va">opt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/optim.html" class="external-link">optim</a></span><span class="op">(</span><span class="va">par_init</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">par_init</span><span class="op">)</span>, max <span class="op">=</span> <span class="fl">.5</span><span class="op">)</span>, </span>
 <span>               fn <span class="op">=</span> <span class="va">fn</span>, gr <span class="op">=</span> <span class="va">gr</span>, </span>
@@ -286,7 +286,7 @@ Hessian.</p>
 <span>             control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>fnscale <span class="op">=</span> <span class="op">-</span><span class="fl">1</span>, lmm <span class="op">=</span> <span class="fl">20</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.123   0.000   0.123</span></span></code></pre></div>
+<span><span class="co">#&gt;   0.087   0.000   0.087</span></span></code></pre></div>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="op">{</span></span>
 <span>  <span class="va">irt.model</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/PLmixed/man/PLmixed.html" class="external-link">PLmixed</a></span><span class="op">(</span><span class="va">form</span>,</span>
@@ -295,7 +295,7 @@ Hessian.</p>
 <span>                     lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">irt.lam</span><span class="op">)</span>, iter.count <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   3.594   0.068   3.545</span></span></code></pre>
+<span><span class="co">#&gt;   2.284   0.052   2.238</span></span></code></pre>
 <p>The inverse of the negative Hessian matrix is the covariance matrix
 of the model. We can obtain this one with a single call at the final
 parameter estimates, using the argument <code>hessian = TRUE</code>.</p>
@@ -522,7 +522,7 @@ still treating the factor loadings as fixed.</p>
 <span>             control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>fnscale <span class="op">=</span> <span class="op">-</span><span class="fl">1</span>, lmm <span class="op">=</span> <span class="fl">20</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">opt</span></span>
 <span><span class="co">#&gt; $par</span></span>
-<span><span class="co">#&gt; [1]  8.094555 75.164818  6.439333 12.305423</span></span>
+<span><span class="co">#&gt; [1]  8.094555 75.164817  6.439333 12.305424</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $value</span></span>
 <span><span class="co">#&gt; [1] -384.4884</span></span>
@@ -578,38 +578,38 @@ to reproduce the following covariance matrix:</p>
 <div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/vcov.html" class="external-link">vcov</a></span><span class="op">(</span><span class="va">mod0</span><span class="op">$</span><span class="va">gam</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                s(x):weight.1 s(x):weight.2 s(x):weight.3 s(x):weight.4</span></span>
-<span><span class="co">#&gt; s(x):weight.1     93.1087971   0.680273899  -24.69827825   0.403787874</span></span>
-<span><span class="co">#&gt; s(x):weight.2      0.6802739   2.954222706    0.20591980   0.947615154</span></span>
-<span><span class="co">#&gt; s(x):weight.3    -24.6982783   0.205919805    7.59260957   0.063908482</span></span>
-<span><span class="co">#&gt; s(x):weight.4      0.4037879   0.947615154    0.06390848   1.326258701</span></span>
-<span><span class="co">#&gt; s(x):weight.5     12.2640046  -0.390003157   -2.84378289  -0.081554240</span></span>
-<span><span class="co">#&gt; s(x):weight.6     -2.0592072  -1.001975510    0.29123750  -0.172799814</span></span>
-<span><span class="co">#&gt; s(x):weight.7      9.4646955   0.002171801   -2.05853687  -0.004408799</span></span>
-<span><span class="co">#&gt; s(x):weight.8      0.1319892   0.820144824    0.10295556   0.131184485</span></span>
-<span><span class="co">#&gt; s(x):weight.9     52.4884140   0.440738152  -13.92516651   0.251570784</span></span>
-<span><span class="co">#&gt; s(x):weight.10    -5.0619539  -5.601841117    0.48326271  -2.513596859</span></span>
+<span><span class="co">#&gt; s(x):weight.1     93.1087992   0.680273909  -24.69827873    0.40378788</span></span>
+<span><span class="co">#&gt; s(x):weight.2      0.6802739   2.954222744    0.20591981    0.94761517</span></span>
+<span><span class="co">#&gt; s(x):weight.3    -24.6982787   0.205919809    7.59260968    0.06390848</span></span>
+<span><span class="co">#&gt; s(x):weight.4      0.4037879   0.947615167    0.06390848    1.32625871</span></span>
+<span><span class="co">#&gt; s(x):weight.5     12.2640049  -0.390003165   -2.84378295   -0.08155424</span></span>
+<span><span class="co">#&gt; s(x):weight.6     -2.0592072  -1.001975536    0.29123751   -0.17279982</span></span>
+<span><span class="co">#&gt; s(x):weight.7      9.4646959   0.002171801   -2.05853693   -0.00440880</span></span>
+<span><span class="co">#&gt; s(x):weight.8      0.1319892   0.820144854    0.10295556    0.13118449</span></span>
+<span><span class="co">#&gt; s(x):weight.9     52.4884152   0.440738158  -13.92516678    0.25157079</span></span>
+<span><span class="co">#&gt; s(x):weight.10    -5.0619540  -5.601841222    0.48326272   -2.51359689</span></span>
 <span><span class="co">#&gt;                s(x):weight.5 s(x):weight.6 s(x):weight.7 s(x):weight.8</span></span>
-<span><span class="co">#&gt; s(x):weight.1    12.26400463   -2.05920717   9.464695541    0.13198918</span></span>
-<span><span class="co">#&gt; s(x):weight.2    -0.39000316   -1.00197551   0.002171801    0.82014482</span></span>
-<span><span class="co">#&gt; s(x):weight.3    -2.84378289    0.29123750  -2.058536866    0.10295556</span></span>
-<span><span class="co">#&gt; s(x):weight.4    -0.08155424   -0.17279981  -0.004408799    0.13118449</span></span>
-<span><span class="co">#&gt; s(x):weight.5     2.97847739   -0.04194028   0.553002858   -0.05623104</span></span>
-<span><span class="co">#&gt; s(x):weight.6    -0.04194028    1.64043588  -0.052771135   -0.06954988</span></span>
-<span><span class="co">#&gt; s(x):weight.7     0.55300286   -0.05277113   2.225399053   -0.01042005</span></span>
-<span><span class="co">#&gt; s(x):weight.8    -0.05623104   -0.06954988  -0.010420045    1.27605269</span></span>
-<span><span class="co">#&gt; s(x):weight.9     6.83590864   -1.17729760   5.266189497    0.09903051</span></span>
-<span><span class="co">#&gt; s(x):weight.10    0.50399266    2.81658859  -0.435935590   -2.25217431</span></span>
+<span><span class="co">#&gt; s(x):weight.1    12.26400490   -2.05920722   9.464695857    0.13198918</span></span>
+<span><span class="co">#&gt; s(x):weight.2    -0.39000317   -1.00197554   0.002171801    0.82014485</span></span>
+<span><span class="co">#&gt; s(x):weight.3    -2.84378295    0.29123751  -2.058536935    0.10295556</span></span>
+<span><span class="co">#&gt; s(x):weight.4    -0.08155424   -0.17279982  -0.004408800    0.13118449</span></span>
+<span><span class="co">#&gt; s(x):weight.5     2.97847745   -0.04194028   0.553002878   -0.05623104</span></span>
+<span><span class="co">#&gt; s(x):weight.6    -0.04194028    1.64043592  -0.052771137   -0.06954989</span></span>
+<span><span class="co">#&gt; s(x):weight.7     0.55300288   -0.05277114   2.225399125   -0.01042005</span></span>
+<span><span class="co">#&gt; s(x):weight.8    -0.05623104   -0.06954989  -0.010420046    1.27605273</span></span>
+<span><span class="co">#&gt; s(x):weight.9     6.83590879   -1.17729764   5.266189673    0.09903052</span></span>
+<span><span class="co">#&gt; s(x):weight.10    0.50399267    2.81658866  -0.435935604   -2.25217440</span></span>
 <span><span class="co">#&gt;                s(x):weight.9 s(x):weight.10</span></span>
-<span><span class="co">#&gt; s(x):weight.1    52.48841403     -5.0619539</span></span>
-<span><span class="co">#&gt; s(x):weight.2     0.44073815     -5.6018411</span></span>
-<span><span class="co">#&gt; s(x):weight.3   -13.92516651      0.4832627</span></span>
-<span><span class="co">#&gt; s(x):weight.4     0.25157078     -2.5135969</span></span>
-<span><span class="co">#&gt; s(x):weight.5     6.83590864      0.5039927</span></span>
-<span><span class="co">#&gt; s(x):weight.6    -1.17729760      2.8165886</span></span>
-<span><span class="co">#&gt; s(x):weight.7     5.26618950     -0.4359356</span></span>
-<span><span class="co">#&gt; s(x):weight.8     0.09903051     -2.2521743</span></span>
-<span><span class="co">#&gt; s(x):weight.9    29.75360337     -2.9801871</span></span>
-<span><span class="co">#&gt; s(x):weight.10   -2.98018705     13.0588135</span></span></code></pre></div>
+<span><span class="co">#&gt; s(x):weight.1    52.48841521     -5.0619540</span></span>
+<span><span class="co">#&gt; s(x):weight.2     0.44073816     -5.6018412</span></span>
+<span><span class="co">#&gt; s(x):weight.3   -13.92516678      0.4832627</span></span>
+<span><span class="co">#&gt; s(x):weight.4     0.25157079     -2.5135969</span></span>
+<span><span class="co">#&gt; s(x):weight.5     6.83590879      0.5039927</span></span>
+<span><span class="co">#&gt; s(x):weight.6    -1.17729764      2.8165887</span></span>
+<span><span class="co">#&gt; s(x):weight.7     5.26618967     -0.4359356</span></span>
+<span><span class="co">#&gt; s(x):weight.8     0.09903052     -2.2521744</span></span>
+<span><span class="co">#&gt; s(x):weight.9    29.75360402     -2.9801871</span></span>
+<span><span class="co">#&gt; s(x):weight.10   -2.98018712     13.0588138</span></span></code></pre></div>
 <p>We now compute it, following the source code of
 <code><a href="https://rdrr.io/pkg/gamm4/man/gamm4.html" class="external-link">gamm4::gamm4()</a></code>:</p>
 <div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
