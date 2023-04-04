@@ -83,8 +83,8 @@
 <!-- badges: start -->
 
 <p>galamm is an R package for fitting multivariate generalized additive mixed models with factor structures. The package is currently under development, and changes to the API must be expected.</p>
-<p>The package uses an interface similar to <a href="https://cran.r-project.org/package=PLmixed" class="external-link">PLmixed</a>, which fits generalized linear mixed models with factor structures. However, galamm allows semiparametric estimations with <a href="https://cran.r-project.org/package=gamm4" class="external-link">gamm4</a>, and hence more flexibly allows estimation of nonlinear effects. If you don’t need semiparametric estimation, on the other hand, your should use definitely <a href="https://cran.r-project.org/package=PLmixed" class="external-link">PLmixed</a>, as it is a much more mature package.</p>
-<p>The plan for the package is to provide tool for fast and scalable estimation of generalized linear latent and mixed models (GLLAMMs) (Rabe-Hesketh, Skrondal, and Pickles 2004) and their semiparametric extensions which we have termed generalized additive latent and mixed models (GALAMMs) (Sørensen, Fjell, and Walhovd 2021). This is already possible to some extent, using the function <code>marginal_likelihood</code>, as is documented in the vignette on maximum likelihood estimation. To obtain this, we combine sparse matrix computations with RcppEigen (Bates and Eddelbuettel 2013) and automatic differentiation using the C++ library <a href="https://autodiff.github.io/" class="external-link">autodiff</a> (Leal 2018).</p>
+<p>The package uses an interface similar to <a href="https://cran.r-project.org/package=PLmixed" class="external-link">PLmixed</a>, which fits generalized linear mixed models with factor structures. However, galamm allows semiparametric estimations with <a href="https://cran.r-project.org/package=gamm4" class="external-link">gamm4</a>, and hence more flexibly allows estimation of nonlinear effects.</p>
+<p>The plan for the package is to provide tool for fast and scalable estimation of generalized linear latent and mixed models (GLLAMMs) (Rabe-Hesketh, Skrondal, and Pickles 2004) and their semiparametric extensions which we have termed generalized additive latent and mixed models (GALAMMs) (Sørensen, Fjell, and Walhovd 2023). This is already possible to some extent, using the function <code>marginal_likelihood</code>, as is documented in the vignette on maximum likelihood estimation. To obtain this, we combine sparse matrix computations with RcppEigen (Bates and Eddelbuettel 2013) and automatic differentiation using the C++ library <a href="https://autodiff.github.io/" class="external-link">autodiff</a> (Leal 2018).</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -96,7 +96,7 @@
 <div class="section level2">
 <h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
 </h2>
-<p>Example will come.</p>
+<p>For now, please refer to <a href="https://github.com/LCBC-UiO/galamm-scripts" class="external-link">this repository</a> for code that can be used to reproduce the results of (Sørensen, Fjell, and Walhovd 2023).</p>
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
@@ -111,8 +111,8 @@ Leal, Allan M. M. 2018. “Autodiff, a Modern, Fast and Expressive C++ Library f
 <div id="ref-rabe-heskethGeneralizedMultilevelStructural2004" class="csl-entry">
 Rabe-Hesketh, Sophia, Anders Skrondal, and Andrew Pickles. 2004. “Generalized Multilevel Structural Equation Modeling.” <em>Psychometrika</em> 69 (2): 167–90. <a href="https://doi.org/10.1007/BF02295939" class="external-link uri">https://doi.org/10.1007/BF02295939</a>.
 </div>
-<div id="ref-sorensenLongitudinalModelingAgedependent2021" class="csl-entry">
-Sørensen, Øystein, Anders M. Fjell, and Kristine B. Walhovd. 2021. “Longitudinal Modeling of Age-Dependent Latent Traits with Generalized Additive Latent and Mixed Models.” arXiv. <a href="https://doi.org/10.48550/arXiv.2105.02488" class="external-link uri">https://doi.org/10.48550/arXiv.2105.02488</a>.
+<div id="ref-sorensenLongitudinalModelingAgeDependent2023" class="csl-entry">
+Sørensen, Øystein, Anders M. Fjell, and Kristine B. Walhovd. 2023. “Longitudinal Modeling of Age-Dependent Latent Traits with Generalized Additive Latent and Mixed Models.” <em>Psychometrika</em>, March. <a href="https://doi.org/10.1007/s11336-023-09910-z" class="external-link uri">https://doi.org/10.1007/s11336-023-09910-z</a>.
 </div>
 </div>
 </div>
