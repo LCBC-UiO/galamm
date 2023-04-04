@@ -23,7 +23,9 @@ library(galamm)
 ```
 
 
-The `galamm` package includes a function for computing the Laplace approximate marginal likelihood of both GLLAMMs and GALAMMs. This vignette describes how to perform maximum likelihood estimation with the currently available functions; it is complicated, but also gives the benefit of understanding what's going on, in addition to a more accurate algorithm which scales better. Before continuing, make sure you've read the Introduction vignette. We are working on defining a more user friendly API which is closer to commonly used R functions for estimation of multilevel models.
+The `galamm` package includes a function for computing the Laplace approximate marginal likelihood of both GLLAMMs and GALAMMs. This vignette describes how to perform maximum likelihood estimation with the currently available functions; it is complicated, but also gives the benefit of understanding what's going on, in addition to a more accurate algorithm which scales better. Before continuing, make sure you've read the Introduction vignette. We are working on defining a more user friendly API which is closer to commonly used R functions for estimation of multilevel models. 
+
+For a full reference, see @sorensenLongitudinalModelingAgeDependent2023. For scripts for reproducing the results of @sorensenLongitudinalModelingAgeDependent2023, see https://github.com/LCBC-UiO/galamm-scripts.
 
 ## Linear mixed model with factor structure
 

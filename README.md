@@ -19,16 +19,13 @@ The package uses an interface similar to
 generalized linear mixed models with factor structures. However, galamm
 allows semiparametric estimations with
 [gamm4](https://cran.r-project.org/package=gamm4), and hence more
-flexibly allows estimation of nonlinear effects. If you don’t need
-semiparametric estimation, on the other hand, your should use definitely
-[PLmixed](https://cran.r-project.org/package=PLmixed), as it is a much
-more mature package.
+flexibly allows estimation of nonlinear effects.
 
 The plan for the package is to provide tool for fast and scalable
 estimation of generalized linear latent and mixed models (GLLAMMs)
 (Rabe-Hesketh, Skrondal, and Pickles 2004) and their semiparametric
 extensions which we have termed generalized additive latent and mixed
-models (GALAMMs) (Sørensen, Fjell, and Walhovd 2021). This is already
+models (GALAMMs) (Sørensen, Fjell, and Walhovd 2023). This is already
 possible to some extent, using the function `marginal_likelihood`, as is
 documented in the vignette on maximum likelihood estimation. To obtain
 this, we combine sparse matrix computations with RcppEigen (Bates and
@@ -47,7 +44,10 @@ remotes::install_github("LCBC-UiO/galamm")
 
 ## Example
 
-Example will come.
+For now, please refer to [this
+repository](https://github.com/LCBC-UiO/galamm-scripts) for code that
+can be used to reproduce the results of (Sørensen, Fjell, and Walhovd
+2023).
 
 ## References
 
@@ -77,13 +77,13 @@ Rabe-Hesketh, Sophia, Anders Skrondal, and Andrew Pickles. 2004.
 
 </div>
 
-<div id="ref-sorensenLongitudinalModelingAgedependent2021"
+<div id="ref-sorensenLongitudinalModelingAgeDependent2023"
 class="csl-entry">
 
-Sørensen, Øystein, Anders M. Fjell, and Kristine B. Walhovd. 2021.
+Sørensen, Øystein, Anders M. Fjell, and Kristine B. Walhovd. 2023.
 “Longitudinal Modeling of Age-Dependent Latent Traits with Generalized
-Additive Latent and Mixed Models.” arXiv.
-<https://doi.org/10.48550/arXiv.2105.02488>.
+Additive Latent and Mixed Models.” *Psychometrika*, March.
+<https://doi.org/10.1007/s11336-023-09910-z>.
 
 </div>
 

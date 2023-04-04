@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 library(galamm)
 ```
 
-The `galamm` packages estimates generalized additive latent and mixed models (GALAMMs). GALAMMs are described in @sorensenLongitudinalModelingAgedependent2021 as an extension of generalized linear latent and mixed models (GLLAMMs) [@rabe-heskethGeneralizedMultilevelStructural2004]. 
+The `galamm` packages estimates generalized additive latent and mixed models (GALAMMs). GALAMMs are described in @sorensenLongitudinalModelingAgeDependent2023 as an extension of generalized linear latent and mixed models (GLLAMMs) [@rabe-heskethGeneralizedMultilevelStructural2004]. 
 
 In this vignette we demonstrate basic model formulation.
 
