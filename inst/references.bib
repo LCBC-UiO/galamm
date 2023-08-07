@@ -8,6 +8,7 @@
   pages = {1--24},
   issn = {1548-7660},
   doi = {10.18637/jss.v052.i05},
+  urldate = {2021-11-09},
   abstract = {The RcppEigen package provides access from R (R Core Team 2012a) to the Eigen (Guennebaud, Jacob, and others 2012) C++ template library for numerical linear algebra. Rcpp (Eddelbuettel and Fran\c{c}ois 2011, 2012) classes and specializations of the C++ templated functions as and wrap from Rcpp provide the "glue" for passing objects from R to C++ and back. Several introductory examples are presented. This is followed by an in-depth discussion of various available approaches for solving least-squares problems, including rank-revealing methods, concluding with an empirical run-time comparison. Last but not least, sparse matrix methods are discussed.},
   copyright = {Copyright (c) 2011 Douglas Bates, Dirk Eddelbuettel},
   langid = {english},
@@ -25,6 +26,7 @@
   pages = {1--48},
   issn = {1548-7660},
   doi = {10.18637/jss.v067.i01},
+  urldate = {2020-11-25},
   copyright = {Copyright (c) 2015 Douglas Bates, Martin M\"achler, Ben Bolker, Steve Walker},
   langid = {english},
   keywords = {Cholesky decomposition,linear mixed models,penalized least squares,sparse matrix methods},
@@ -39,9 +41,12 @@
   journal = {The Annals of Statistics},
   volume = {9},
   number = {4},
+  eprint = {2240854},
+  eprinttype = {jstor},
   pages = {861--869},
   publisher = {{Institute of Mathematical Statistics}},
   issn = {0090-5364},
+  urldate = {2021-03-18},
   abstract = {Let X\textsubscript{1}, {$\cdots$}, X\textsubscript{n} be i.i.d. random variables with probability distribution F\textsubscript{\texttheta, p} indexed by two real parameters. Let {\^p} = {\^p}(X\textsubscript{1}, {$\cdots$}, X\textsubscript{n}) be an estimate of p other than the maximum likelihood estimate, and let {\^\texttheta} be the solution of the likelihood equation {$\partial$}/{$\partial$} \texttheta{} ln L(x, \texttheta, {\^p}) = 0 which maximizes the likelihood. We call {\^\texttheta} a pseudo maximum likelihood estimate of \texttheta, and give conditions under which {\^\texttheta} is consistent and asymptotically normal. Pseudo maximum likelihood estimation easily extends to k-parameter models, and is of interest in problems in which the likelihood surface is ill-behaved in higher dimensions but well-behaved in lower dimensions. We examine several signal-plus-noise, or convolution, models which exhibit such behavior and satisfy the regularity conditions of the asymptotic theory. For specific models, a numerical comparison of asymptotic variances suggests that a pseudo maximum likelihood estimate of the signal parameter is uniformly more efficient than estimators proposed previously.},
   file = {/Users/oyss/Zotero/storage/GQWKTTPF/Gong and Samaniego - 1981 - Pseudo Maximum Likelihood Estimation Theory and A.pdf}
 }
@@ -58,6 +63,7 @@
   publisher = {{American Educational Research Association}},
   issn = {1076-9986},
   doi = {10.3102/1076998611417628},
+  urldate = {2020-11-05},
   abstract = {In this article, the authors suggest a profile-likelihood approach for estimating complex models by maximum likelihood (ML) using standard software and minimal programming. The method works whenever setting some of the parameters of the model to known constants turns the model into a standard model. An important class of models that can be estimated this way is generalized linear mixed models with factor structures. Such models are useful in educational research, for example, for estimation of value-added teacher or school effects with persistence parameters and for analysis of large-scale assessment data using multilevel item response models with discrimination parameters. The authors describe the profile-likelihood approach, implement it in the R software, and apply the method to longitudinal data and binary item response data. Simulation studies and comparison with gllamm show that the profile-likelihood method performs well in both types of applications. The authors also briefly discuss other types of models that can be estimated using the profile-likelihood idea.},
   langid = {english},
   file = {/Users/oyss/Zotero/storage/SQK5KJQ3/Jeon and Rabe-Hesketh - 2012 - Profile-Likelihood Approach for Estimating General.pdf}
@@ -77,9 +83,12 @@
   journal = {The Annals of Statistics},
   volume = {14},
   number = {1},
+  eprint = {2241287},
+  eprinttype = {jstor},
   pages = {355--357},
   publisher = {{Institute of Mathematical Statistics}},
   issn = {0090-5364},
+  urldate = {2020-12-08},
   abstract = {Gong and Samaniego (1981) define pseudo maximum likelihood estimation and derive the asymptotic distribution of the resulting estimates. This note gives a simpler and more elegant expression for the asymptotic variance of a pseudo maximum likelihood estimate.},
   file = {/Users/oyss/Zotero/storage/PYE2TSZ6/Parke - 1986 - Pseudo Maximum Likelihood Estimation The Asymptot.pdf}
 }
@@ -104,6 +113,7 @@
   pages = {167--190},
   issn = {1860-0980},
   doi = {10.1007/BF02295939},
+  urldate = {2020-11-03},
   abstract = {A unifying framework for generalized multilevel structural equation modeling is introduced. The models in the framework, called generalized linear latent and mixed models (GLLAMM), combine features of generalized linear mixed models (GLMM) and structural equation models (SEM) and consist of a response model and a structural model for the latent variables. The response model generalizes GLMMs to incorporate factor structures in addition to random intercepts and coefficients. As in GLMMs, the data can have an arbitrary number of levels and can be highly unbalanced with different numbers of lower-level units in the higher-level units and missing data. A wide range of response processes can be modeled including ordered and unordered categorical responses, counts, and responses of mixed types. The structural model is similar to the structural part of a SEM except that it may include latent and observed variables varying at different levels. For example, unit-level latent variables (factors or random coefficients) can be regressed on cluster-level latent variables. Special cases of this framework are explored and data from the British Social Attitudes Survey are used for illustration. Maximum likelihood estimation and empirical Bayes latent score prediction within the GLLAMM framework can be performed using adaptive quadrature in gllamm, a freely available program running in Stata.},
   langid = {english},
   file = {/Users/oyss/Zotero/storage/75KIMKIT/Rabe-Hesketh et al. - 2004 - Generalized multilevel structural equation modelin.pdf}
@@ -121,28 +131,39 @@
   publisher = {{Routledge}},
   issn = {0027-3171},
   doi = {10.1080/00273171.2018.1516541},
+  urldate = {2020-11-25},
   abstract = {Measurement models, such as factor analysis and item response theory models, are commonly implemented within educational, psychological, and behavioral science research to mitigate the negative effects of measurement error. These models can be formulated as an extension of generalized linear mixed models within a unifying framework that encompasses various kinds of multilevel models and longitudinal models, such as partially nonlinear latent growth models. We introduce the R package PLmixed, which implements profile maximum likelihood estimation to estimate complex measurement and growth models that can be formulated within the general modeling framework using the existing R package lme4 and function optim. We demonstrate the use of PLmixed through two examples before concluding with a brief overview of other possible models.},
   pmid = {30983418},
   keywords = {crossed random effects,GLMM,growth models,IRT,lme4,partially linear mixed models},
-  annotation = {\_eprint: https://doi.org/10.1080/00273171.2018.1516541},
   file = {/Users/oyss/Zotero/storage/DU7P3PXM/Rockwood and Jeon - 2019 - Estimating Complex Measurement and Growth Models U.pdf;/Users/oyss/Zotero/storage/9NH99JKL/00273171.2018.html}
+}
+
+@book{skrondalGeneralizedLatentVariable2004,
+  title = {Generalized Latent Variable Modeling},
+  author = {Skrondal, Anders and {Rabe-Hesketh}, Sophia},
+  year = {2004},
+  series = {Interdisciplinary {{Statistics Series}}},
+  publisher = {{Chapman and Hall/CRC}},
+  address = {{Boca Raton, Florida}}
 }
 
 @article{sorensenLongitudinalModelingAgeDependent2023,
   title = {Longitudinal {{Modeling}} of {{Age-Dependent Latent Traits}} with {{Generalized Additive Latent}} and {{Mixed Models}}},
   author = {S{\o}rensen, {\O}ystein and Fjell, Anders M. and Walhovd, Kristine B.},
   year = {2023},
-  month = mar,
+  month = jun,
   journal = {Psychometrika},
+  volume = {88},
+  number = {2},
+  pages = {456--486},
   issn = {1860-0980},
   doi = {10.1007/s11336-023-09910-z},
-  urldate = {2023-04-03},
+  urldate = {2023-05-25},
   abstract = {We present generalized additive latent and mixed models (GALAMMs) for analysis of clustered data with responses and latent variables depending smoothly on observed variables. A scalable maximum likelihood estimation algorithm is proposed, utilizing the Laplace approximation, sparse matrix computation, and automatic differentiation. Mixed response types, heteroscedasticity, and crossed random effects are naturally incorporated into the framework. The models developed were motivated by applications in cognitive neuroscience, and two case studies are presented. First, we show how GALAMMs can jointly model the complex lifespan trajectories of episodic memory, working memory, and speed/executive function, measured by the California Verbal Learning Test (CVLT), digit span tests, and Stroop tests, respectively. Next, we study the effect of socioeconomic status on brain structure, using data on education and income together with hippocampal volumes estimated by magnetic resonance imaging. By combining semiparametric estimation with latent variable modeling, GALAMMs allow a more realistic representation of how brain and cognition vary across the lifespan, while simultaneously estimating latent traits from measured items. Simulation experiments suggest that model estimates are accurate even with moderate sample sizes.},
   langid = {english},
   keywords = {brain and cognition,generalized additive mixed models,latent variable modeling,lifespan trajectories,mixed response},
-  file = {/Users/oyss/Zotero/storage/K743BHXU/Sørensen et al. - 2023 - Longitudinal Modeling of Age-Dependent Latent Trai.pdf}
+  file = {/Users/oyss/Zotero/storage/B4P5AH4W/Sørensen et al. - 2023 - Longitudinal Modeling of Age-Dependent Latent Trai.pdf}
 }
-
 
 @article{woodConfidenceIntervalsGeneralized2006,
   title = {On {{Confidence Intervals}} for {{Generalized Additive Models Based}} on {{Penalized Regression Splines}}},
@@ -154,10 +175,10 @@
   pages = {445--464},
   issn = {1467-842X},
   doi = {10.1111/j.1467-842X.2006.00450.x},
+  urldate = {2022-08-26},
   abstract = {Generalized additive models represented using low rank penalized regression splines, estimated by penalized likelihood maximisation and with smoothness selected by generalized cross validation or similar criteria, provide a computationally efficient general framework for practical smooth modelling. Various authors have proposed approximate Bayesian interval estimates for such models, based on extensions of the work of Wahba, G. (1983)[Bayesian confidence intervals for the cross validated smoothing spline. J. R. Statist. Soc. B45, 133\textendash 150] and Silverman, B.W. (1985)[Some aspects of the spline smoothing approach to nonparametric regression curve fitting. J. R. Statist. Soc. B47, 1\textendash 52] on smoothing spline models of Gaussian data, but testing of such intervals has been rather limited and there is little supporting theory for the approximations used in the generalized case. This paper aims to improve this situation by providing simulation tests and obtaining asymptotic results supporting the approximations employed for the generalized case. The simulation results suggest that while across-the-model performance is good, component-wise coverage probabilities are not as reliable. Since this is likely to result from the neglect of smoothing parameter variability, a simple and efficient simulation method is proposed to account for smoothing parameter uncertainty: this is demonstrated to substantially improve the performance of component-wise intervals.},
   langid = {english},
   keywords = {Bayesian confidence interval,generalized additive model (GAM),generalized cross validation (GCV),multiple smoothing parameters,penalized regression spline},
-  annotation = {\_eprint: https://onlinelibrary.wiley.com/doi/pdf/10.1111/j.1467-842X.2006.00450.x},
   file = {/Users/oyss/Zotero/storage/FHUZEL5K/Wood - 2006 - On Confidence Intervals for Generalized Additive M.pdf;/Users/oyss/Zotero/storage/DZ9VVKLC/j.1467-842X.2006.00450.html}
 }
 
@@ -165,7 +186,6 @@
   title = {Generalized Additive Models: {{An}} Introduction with {{R}}},
   author = {Wood, Simon N.},
   year = {2017},
-  edition = {Second},
+  edition = {2},
   publisher = {{Chapman and Hall/CRC}}
 }
-
