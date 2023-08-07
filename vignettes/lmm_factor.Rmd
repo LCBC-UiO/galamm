@@ -1,0 +1,62 @@
+---
+title: "Linear Mixed Models with Factor Structures"
+output: rmarkdown::html_vignette
+bibliography: ../inst/references.bib
+vignette: >
+  %\VignetteIndexEntry{Linear Mixed Models with Factor Structures}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(galamm)
+```
+
+This vignette describes how `galamm` can be used to estimate linear mixed models with factor structures. Such models are an instance of the generalized linear latent and mixed models (GLLAMM) framework described by @rabe-heskethGeneralizedMultilevelStructural2004. The R package `PLmixed` [@rockwoodEstimatingComplexMeasurement2019] estimates such models using a profile likelihood algorithm initially proposed by @jeonProfileLikelihoodApproachEstimating2012. The models are also a special case of generalized additive latent and mixed models (GALAMM), and in `galamm` these models are estimated using a more direct algorithm described in @sorensenLongitudinalModelingAgeDependent2023.
+
+We use a simulated dataset from the `PLmixed` package for the example in this vignette. The code chunk below create a small subset, in order to make the example run faster. The code is taken from the examples to the `PLmixed::PLmixed` function.
+
+```{r}
+library(PLmixed)
+data("IRTsim")
+IRTsub <- IRTsim[IRTsim$item < 4, ]
+set.seed(12345)
+IRTsub <- IRTsub[sample(nrow(IRTsub), 300), ]
+IRTsub <- IRTsub[order(IRTsub$item), ]
+irt.lam <- c(1, NA, NA)
+```
+
+Using `PLmixed`, the model is fitted as follows (again copied from the examples in `PLmixed::PLmixed`. We also check how long time it takes.
+
+```{r}
+system.time({
+  plm <- PLmixed(
+  y ~ 0 + as.factor(item) + (0 + abil.sid | sid) + (0 + abil.sid | school),
+  data = IRTsub, load.var = "item", 
+  factor = list(c("abil.sid")), lambda = list(irt.lam), iter.count = FALSE)
+})
+```
+
+With `galamm`, the syntax is identical, but note the time difference.
+
+```{r}
+system.time({
+  galamm_mod <- galamm(
+  formula = y ~ 0 + as.factor(item) + (0 + abil.sid | sid) + (0 + abil.sid | school),
+  data = IRTsub, load.var = "item", 
+  factor = list(c("abil.sid")), lambda = list(irt.lam))
+})
+
+```
+
+
+
+
+# References
