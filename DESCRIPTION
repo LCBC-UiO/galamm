@@ -9,15 +9,14 @@ Authors@R:
            comment = c(ORCID = "0000-0003-0724-3542"))
 Description: Estimates generalized additive latent and
     mixed models using maximum marginal likelihood, 
-    as defined in Sorensen et al. (2021) 
-    <doi:10.48550/arXiv.2105.02488>. Factor analysis and 
+    as defined in Sorensen et al. (2023) 
+    <doi:https://doi.org/10.1007/s11336-023-09910-z>. Factor analysis and 
     item response models in which the responses depend 
     nonlinearly on observed predictors can be estimated, 
     with crossed or nested random effects structures defined
-    using 'lme4' syntax. Also provides functions
-    for evaluating the likelihood of complex mixed models
-    at given parameter values, and evaluating the gradient
-    exactly using automatic differentiation.
+    using 'lme4' syntax. Provides efficient computation using
+    sparse matrix methods, automatic differentiation, and 
+    the Laplace approximation.
 License: GPL (>= 3)
 Encoding: UTF-8
 Imports: 
