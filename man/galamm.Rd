@@ -4,12 +4,21 @@
 \alias{galamm}
 \title{Fit a generalized additive latent and mixed model}
 \usage{
-galamm(formula, data, load.var = NULL, lambda = NULL, factor = NULL)
+galamm(
+  formula,
+  data,
+  family = gaussian,
+  load.var = NULL,
+  lambda = NULL,
+  factor = NULL
+)
 }
 \arguments{
 \item{formula}{A formula}
 
 \item{data}{A dataset}
+
+\item{family}{Family}
 
 \item{load.var}{Variable the factors load onto}
 

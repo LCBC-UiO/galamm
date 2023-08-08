@@ -2,6 +2,7 @@
 #'
 #' @param formula A formula
 #' @param data A dataset
+#' @param family Family
 #' @param load.var Variable the factors load onto
 #' @param lambda Loading
 #' @param factor list of factors
@@ -9,7 +10,14 @@
 #' @return A model object
 #' @export
 #'
-galamm <- function(formula, data, load.var = NULL, lambda = NULL, factor = NULL){
+galamm <- function(formula, data, family = gaussian,
+                   load.var = NULL, lambda = NULL, factor = NULL){
+
+  mc <- match.call()
+  if (is.character(family))
+    family <- get(family, mode = "function", envir = parent.frame(2))
+  if (is.function(family))
+    family <- family()
 
   for(f in factor){
     for(l in f){
@@ -35,7 +43,7 @@ galamm <- function(formula, data, load.var = NULL, lambda = NULL, factor = NULL)
     delta <- as.integer(names(table(diff(Zt@p))))
     stopifnot(length(delta) == 1)
     # Subtract one for zero indexing in C++ and another one for the reference case
-    lambda_mapping_Zt <- rep(data$item, each = delta) - 2L
+    lambda_mapping_Zt <- rep(as.integer(as.factor(data$item)), each = delta) - 2L
   }
 
   Lambdat <- lmod$reTrms$Lambdat
@@ -46,7 +54,7 @@ galamm <- function(formula, data, load.var = NULL, lambda = NULL, factor = NULL)
   lambda_inds <- max(beta_inds) + seq_along(lambda[[1]][is.na(lambda[[1]])])
   bounds <- c(lmod$reTrms$lower, rep(-Inf, length(beta_inds) + length(lambda_inds)))
 
-  mlwrapper <- function(par){
+  mlwrapper <- function(par, hessian = FALSE){
     marginal_likelihood(
       y = data$y,
       trials = rep(1, length(data$y)),
@@ -63,7 +71,8 @@ galamm <- function(formula, data, load.var = NULL, lambda = NULL, factor = NULL)
       weights_mapping = integer(),
       family = "gaussian",
       family_mapping = rep(0L, nrow(data)),
-      maxit_conditional_modes = 1
+      maxit_conditional_modes = 1,
+      hessian = hessian
     )
   }
 
@@ -75,10 +84,43 @@ galamm <- function(formula, data, load.var = NULL, lambda = NULL, factor = NULL)
     mlmem(par)$gradient
   }
 
-  par_init <- c(lmod$reTrms$theta, rep(0, length(beta_inds)), rep(1, length(lambda_inds)))
+  par_init <- c(lmod$reTrms$theta, rep(0, length(beta_inds)),
+                rep(1, length(lambda_inds)))
+
   opt <- optim(par_init, fn = fn, gr = gr,
                method = "L-BFGS-B", lower = bounds,
-               control = list(fnscale = -1))
+               control = list(fnscale = -1, lmm = 20))
 
-  opt
+  final_model <- mlwrapper(opt$par, TRUE)
+  S <- -solve(final_model$hessian)
+
+  # Update Cholesky factor of covariance matrix
+  Lambdat@x <- opt$par[theta_inds][lmod$reTrms$Lind]
+  # Update Zt to include factor loadings
+  Zt@x <- c(1, opt$par[lambda_inds])[lambda_mapping_Zt + 2L]
+  # Compute prediction
+  fit <- as.numeric(X %*% opt$par[beta_inds] + Matrix::t(Zt) %*% Matrix::t(Lambdat) %*% final_model$u)
+
+  ret <- list()
+  ret$cnms <- lmod$reTrms$cnms
+  ret$fixef_names <- colnames(X)
+  ret$vcov <- S
+  ret$par <- opt$par
+  ret$lambda_inds <- lambda_inds
+  ret$beta_inds <- beta_inds
+  ret$theta_inds <- theta_inds
+  ret$phi <- final_model$phi
+  ret$loglik <- opt$value
+
+  ret$lmod <- lmod
+  ret$mc <- mc
+  ret$family <- family
+  ret$df <- length(opt$par) + 1L
+
+  ret$n <- nrow(X)
+  ret$residuals <- data$y - fit
+
+  class(ret) <- "galamm"
+
+  ret
 }
