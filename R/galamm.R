@@ -10,6 +10,7 @@
 #' @return A model object
 #' @export
 #'
+#' @importFrom stats gaussian
 galamm <- function(formula, data, family = gaussian,
                    load.var = NULL, lambda = NULL, factor = NULL){
 
@@ -87,9 +88,9 @@ galamm <- function(formula, data, family = gaussian,
   par_init <- c(lmod$reTrms$theta, rep(0, length(beta_inds)),
                 rep(1, length(lambda_inds)))
 
-  opt <- optim(par_init, fn = fn, gr = gr,
-               method = "L-BFGS-B", lower = bounds,
-               control = list(fnscale = -1, lmm = 20))
+  opt <- stats::optim(par_init, fn = fn, gr = gr,
+                      method = "L-BFGS-B", lower = bounds,
+                      control = list(fnscale = -1, lmm = 20))
 
   final_model <- mlwrapper(opt$par, TRUE)
   S <- -solve(final_model$hessian)
