@@ -17,3 +17,22 @@ test_that("LMM with simple factor works", {
 
   expect_equal(mod$loglik, -193.563337783604)
 })
+
+test_that("LMM with two factors works", {
+  data("KYPSsim")
+  KYPSsim$time <- factor(KYPSsim$time)
+  kyps.lam <- rbind(c( 1, 0),
+                    c(NA, 0),
+                    c(NA, 1),
+                    c(NA, NA))
+
+  kyps_model <- galamm(
+    formula = esteem ~ time + (0 + hs | hid) + (0 + ms | mid) + (1 | sid),
+    data = KYPSsim,
+    factor = list(c("ms", "hs")),
+    load.var = "time",
+    lambda = list(kyps.lam)
+  )
+
+  expect_equal(kyps_model$loglik, -9681.98738847869)
+})
