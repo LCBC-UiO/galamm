@@ -37,7 +37,7 @@ galamm <- function(formula, data, family = gaussian,
   factor_in_random <- FALSE
   for(f in factor){
     factor_in_fixed <- factor_in_fixed || any(colnames(lmod$X) %in% f)
-    factor_in_random <- factor_in_random || any(lmod$reTrms$cnms %in% f)
+    factor_in_random <- factor_in_random || any(unlist(lmod$reTrms$cnms) %in% f)
   }
   X <- lmod$X
   if(factor_in_fixed){
@@ -46,21 +46,49 @@ galamm <- function(formula, data, family = gaussian,
   Zt <- lmod$reTrms$Zt
   if(factor_in_random){
 
-    lambda_tmp <- matrix(1, nrow = nrow(lambda[[1]]), ncol = length(lmod$reTrms$cnms))
+    mappings <- lapply(seq_along(lmod$reTrms$cnms), function(i){
+      delta <- diff(lmod$reTrms$Ztlist[[i]]@p)
+      cnms <- lmod$reTrms$cnms[[i]]
 
-    for(j in seq_along(lmod$reTrms$cnms)){
-      if(lmod$reTrms$cnms[[j]] %in% colnames(lambda[[1]])){
-        lambda_tmp[, j] <- lambda[[1]][, lmod$reTrms$cnms[[j]]]
+      if(any(cnms %in% colnames(lambda[[1]]))){
+        ll <- lambda[[1]][, cnms, drop = FALSE] - 2L
+      } else {
+        return(rep(-1L, sum(delta)))
       }
-    }
 
-    lambda_tmp <- lambda_tmp - 2L
-    # -2 means that it has been zeroed
-    # -1 means that the loading is fixed to 1
-    # 0, 1, 2, etc. means that the loading is a parameter to be estimated
+      mapping_component <- rep(NA_integer_, sum(delta))
+      for(j in seq_along(cnms)){
+        cn <- cnms[[j]]
+        inds <- which(data[, cn] != 0)
+        mapping_component[inds] <- unlist(Map(function(x, y) rep(ll[x, cn], each = y),
+                     x = data[inds, load.var], y = delta[inds]))
 
-    lambda_mapping_Zt <- vapply(data[, load.var], function(x) lambda_tmp[x, ], numeric(ncol(lambda_tmp)))
-    lambda_mapping_Zt <- lambda_mapping_Zt[lambda_mapping_Zt != -2]
+      }
+
+      mapping_component
+    })
+
+    lambda_mapping_Zt <- as.numeric(do.call(rbind, mappings))
+    lambda_mapping_Zt <- lambda_mapping_Zt[!is.na(lambda_mapping_Zt)]
+#
+#     cnms <- unlist(lmod$reTrms$cnms)
+#     lambda_tmp <- matrix(1, nrow = nrow(lambda[[1]]), ncol = length(cnms))
+#
+#     for(j in seq_along(cnms)){
+#       if(cnms[[j]] %in% colnames(lambda[[1]])){
+#         lambda_tmp[, j] <- lambda[[1]][, cnms[[j]]]
+#       }
+#     }
+#
+#     lambda_tmp <- lambda_tmp - 2L
+#     # -2 means that it has been zeroed
+#     # -1 means that the loading is fixed to 1
+#     # 0, 1, 2, etc. means that the loading is a parameter to be estimated
+#
+#     lmod$reTrms$cnms
+#
+#     lambda_mapping_Zt2 <- vapply(data[, load.var], function(x) lambda_tmp[x, ], numeric(ncol(lambda_tmp)))
+#     lambda_mapping_Zt2 <- lambda_mapping_Zt[lambda_mapping_Zt != -2]
 
     stopifnot(length(lambda_mapping_Zt) == sum(diff(Zt@p)))
   }
@@ -109,7 +137,8 @@ galamm <- function(formula, data, family = gaussian,
 
   opt <- stats::optim(par_init, fn = fn, gr = gr,
                       method = "L-BFGS-B", lower = bounds,
-                      control = list(fnscale = -1, lmm = 20))
+                      control = list(fnscale = -1, lmm = 20, trace = 3, factr = 1e4))
+
 
   final_model <- mlwrapper(opt$par, TRUE)
   S <- -solve(final_model$hessian)

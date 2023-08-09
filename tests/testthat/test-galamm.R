@@ -35,4 +35,29 @@ test_that("LMM with two factors works", {
   )
 
   expect_equal(kyps_model$loglik, -9681.98738847869)
+  expect_equal(kyps_model$par[kyps_model$lambda_inds],
+               c(0.875125492917495, 0.0443730786908383, 0.0209971796470513,
+                 1.50159825655477))
+})
+
+test_that("LMM with two raters works", {
+  data("JUDGEsim")
+  JUDGEsim <- JUDGEsim[order(JUDGEsim$item), ] # Order by item
+  JUDGEsim$item <- factor(JUDGEsim$item)
+
+  judge.lam <- rbind(c( 1,  0),
+                     c(NA,  0),
+                     c(NA,  0),
+                     c( 0,  1),
+                     c( 0, NA),
+                     c( 0, NA))
+
+  judge_galamm <- galamm(
+    formula = response ~ 0 + item + (1 | class) + (0 + teacher1 + teacher2 | tch),
+    data = JUDGEsim[JUDGEsim$item %in% 1:6, ],
+    lambda = list(judge.lam),
+    load.var = "item",
+    factor = list(c("teacher1", "teacher2")))
+
+  expect_equal(judge_galamm$loglik, -55047.4993084257)
 })
