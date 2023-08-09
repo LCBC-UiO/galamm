@@ -41,6 +41,7 @@ pl_mod <- PLmixed(
   formula = y ~ item + (0 + abil.sid | sid) + (0 + abil.sid | school),
   data = IRTsim, load.var = "item", 
   factor = list("abil.sid"), lambda = list(irt.lam), iter.count = FALSE)
+summary(pl_mod)
 ```
 
 Next we fit the model using `galamm`. This is typically 6-7 times faster than the corresponding call using `PLmixed`, and gives results that are identical up to some deviations due to numerics.
@@ -72,12 +73,15 @@ kyps.lam <- rbind(c( 1, 0),
 
 
 ```{r, eval=FALSE}
-kyps.model <- PLmixed(esteem ~ as.factor(time) +  (0 + hs | hid)
-                      + (0 + ms | mid) + (1 | sid), data = KYPSsim,
-                      factor = list(c("ms", "hs")), load.var = c("time"),
-                      lambda = list(kyps.lam))
-summary(kyps.model)
+kyps_plmixed <- PLmixed(
+  formula = esteem ~ as.factor(time) +  (0 + hs | hid) + (0 + ms | mid) + (1 | sid), 
+  data = KYPSsim,
+  factor = list(c("ms", "hs")), 
+  load.var = c("time"),
+  lambda = list(kyps.lam)
+  )
 
+summary(kyps_plmixed)
 ```
 
 

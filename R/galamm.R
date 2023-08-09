@@ -72,10 +72,11 @@ galamm <- function(formula, data, family = gaussian,
   beta_inds <- max(theta_inds) + seq_along(colnames(X))
   lambda_inds <- max(beta_inds) + seq_along(lambda[[1]][lambda[[1]] >= 2])
   bounds <- c(lmod$reTrms$lower, rep(-Inf, length(beta_inds) + length(lambda_inds)))
+  response <- data[[all.vars(formula)[[1]]]]
 
   mlwrapper <- function(par, hessian = FALSE){
     marginal_likelihood(
-      y = data[[all.vars(formula)[[1]]]],
+      y = response,
       trials = rep(1, nrow(data)),
       X = X,
       Zt = Zt,
@@ -121,6 +122,7 @@ galamm <- function(formula, data, family = gaussian,
   fit <- as.numeric(X %*% opt$par[beta_inds] + Matrix::t(Zt) %*% Matrix::t(Lambdat) %*% final_model$u)
 
   ret <- list()
+  ret$lambda <- lambda
   ret$cnms <- lmod$reTrms$cnms
   ret$fixef_names <- colnames(X)
   ret$vcov <- S
@@ -137,7 +139,7 @@ galamm <- function(formula, data, family = gaussian,
   ret$df <- length(opt$par) + 1L
 
   ret$n <- nrow(X)
-  ret$residuals <- data$y - fit
+  ret$residuals <- response - fit
 
   class(ret) <- "galamm"
 
