@@ -7,7 +7,7 @@ test_that("LMM with simple factor works", {
   IRTsub <- IRTsub[sample(nrow(IRTsub), 300), ] # Randomly sample 300 responses
 
   IRTsub <- IRTsub[order(IRTsub$item), ] # Order by item
-  irt.lam = c(1, NA, NA) # Specify the lambda matrix
+  irt.lam = matrix(c(1, NA, NA), ncol = 1) # Specify the lambda matrix
 
   mod <- galamm(
     y ~ 0 + as.factor(item) + (0 + abil.sid |sid) +(0 + abil.sid |school),

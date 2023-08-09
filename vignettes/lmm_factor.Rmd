@@ -31,33 +31,66 @@ First we set up the factor structures to be used:
 library(PLmixed)
 data("IRTsim")
 IRTsim$item <- factor(IRTsim$item)
-irt.lam <- c(1, NA, NA, NA, NA)
+irt.lam <- matrix(c(1, NA, NA, NA, NA), ncol = 1)
 ```
 
-Then we fit the model using `PLmixed`:
+We could use the following code to fit the model with `PLmixed`.
 
-```{r}
-system.time({
-  pl_mod <- PLmixed(
-    y ~ item + (0 + abil.sid | sid) + (0 + abil.sid | school),
-    data = IRTsim, load.var = "item", 
-    factor = list("abil.sid"), lambda = list(irt.lam), iter.count = FALSE)
-})
-
-summary(pl_mod)
+```{r, eval=FALSE}
+pl_mod <- PLmixed(
+  formula = y ~ item + (0 + abil.sid | sid) + (0 + abil.sid | school),
+  data = IRTsim, load.var = "item", 
+  factor = list("abil.sid"), lambda = list(irt.lam), iter.count = FALSE)
 ```
 
-Next we fit the model using `galamm`:
+Next we fit the model using `galamm`. This is typically 6-7 times faster than the corresponding call using `PLmixed`, and gives results that are identical up to some deviations due to numerics.
 
 ```{r}
-system.time({
-  galamm_mod <- galamm(
-    y ~ item + (0 + abil.sid | sid) + (0 + abil.sid | school),
-    data = IRTsim, load.var = "item", 
-    factor = list("abil.sid"), lambda = list(irt.lam))
-})
+galamm_mod <- galamm(
+  formula = y ~ item + (0 + abil.sid | sid) + (0 + abil.sid | school),
+  data = IRTsim, 
+  load.var = "item", 
+  factor = list("abil.sid"), 
+  lambda = list(irt.lam)
+  )
 
 summary(galamm_mod)
+```
+
+## Model with Multiple Factors
+
+We continue using the example data from `PLmixed`. We refer to  @rockwoodEstimatingComplexMeasurement2019 for a detailed description of the data and the model.
+
+```{r}
+data("KYPSsim")
+KYPSsim$time <- factor(KYPSsim$time)
+kyps.lam <- rbind(c( 1, 0),
+                  c(NA, 0),
+                  c(NA, 1),
+                  c(NA, NA))
+```
+
+
+```{r, eval=FALSE}
+kyps.model <- PLmixed(esteem ~ as.factor(time) +  (0 + hs | hid)
+                      + (0 + ms | mid) + (1 | sid), data = KYPSsim,
+                      factor = list(c("ms", "hs")), load.var = c("time"),
+                      lambda = list(kyps.lam))
+summary(kyps.model)
+
+```
+
+
+```{r}
+kyps_model <- galamm(
+  formula = esteem ~ time + (0 + hs | hid) + (0 + ms | mid) + (1 | sid),
+  data = KYPSsim, 
+  factor = list(c("ms", "hs")), 
+  load.var = "time",
+  lambda = list(kyps.lam)
+)
+
+summary(kyps_model)
 ```
 
 

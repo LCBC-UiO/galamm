@@ -20,10 +20,14 @@ galamm <- function(formula, data, family = gaussian,
   if (is.function(family))
     family <- family()
 
-  for(f in factor){
-    for(l in f){
-      if(l %in% colnames(data)) stop(paste("Name", l, "is already a column"))
-      eval(parse(text = paste("data$", l, "<-1")))
+  for(i in seq_along(factor)){
+    lambda[[i]][is.na(lambda[[i]])] <- seq(from = 2, length.out = sum(is.na(lambda[[i]])))
+    colnames(lambda[[i]]) <- factor[[i]]
+    if(any(factor[[i]] %in% colnames(data))) stop("Factor already a column in data.")
+    for(j in seq_along(factor[[i]])) {
+      eval(parse(text = paste("data$", factor[[i]][[j]], "<-1")))
+      rows_to_zero <- data[, load.var] %in% levels(data[, load.var])[lambda[[i]][, j] == 0]
+      eval(parse(text = paste("data$", factor[[i]][[j]], "[rows_to_zero] <- 0")))
     }
   }
 
@@ -41,10 +45,24 @@ galamm <- function(formula, data, family = gaussian,
   }
   Zt <- lmod$reTrms$Zt
   if(factor_in_random){
-    delta <- as.integer(names(table(diff(Zt@p))))
-    stopifnot(length(delta) == 1)
-    # Subtract one for zero indexing in C++ and another one for the reference case
-    lambda_mapping_Zt <- rep(as.integer(as.factor(data$item)), each = delta) - 2L
+
+    lambda_tmp <- matrix(1, nrow = nrow(lambda[[1]]), ncol = length(lmod$reTrms$cnms))
+
+    for(j in seq_along(lmod$reTrms$cnms)){
+      if(lmod$reTrms$cnms[[j]] %in% colnames(lambda[[1]])){
+        lambda_tmp[, j] <- lambda[[1]][, lmod$reTrms$cnms[[j]]]
+      }
+    }
+
+    lambda_tmp <- lambda_tmp - 2L
+    # -2 means that it has been zeroed
+    # -1 means that the loading is fixed to 1
+    # 0, 1, 2, etc. means that the loading is a parameter to be estimated
+
+    lambda_mapping_Zt <- vapply(data[, load.var], function(x) lambda_tmp[x, ], numeric(ncol(lambda_tmp)))
+    lambda_mapping_Zt <- lambda_mapping_Zt[lambda_mapping_Zt != -2]
+
+    stopifnot(length(lambda_mapping_Zt) == sum(diff(Zt@p)))
   }
 
   Lambdat <- lmod$reTrms$Lambdat
@@ -52,13 +70,13 @@ galamm <- function(formula, data, family = gaussian,
 
   theta_inds <- seq_along(lmod$reTrms$theta)
   beta_inds <- max(theta_inds) + seq_along(colnames(X))
-  lambda_inds <- max(beta_inds) + seq_along(lambda[[1]][is.na(lambda[[1]])])
+  lambda_inds <- max(beta_inds) + seq_along(lambda[[1]][lambda[[1]] >= 2])
   bounds <- c(lmod$reTrms$lower, rep(-Inf, length(beta_inds) + length(lambda_inds)))
 
   mlwrapper <- function(par, hessian = FALSE){
     marginal_likelihood(
-      y = data$y,
-      trials = rep(1, length(data$y)),
+      y = data[[all.vars(formula)[[1]]]],
+      trials = rep(1, nrow(data)),
       X = X,
       Zt = Zt,
       Lambdat = Lambdat,
