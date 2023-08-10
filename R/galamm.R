@@ -20,8 +20,9 @@ galamm <- function(formula, data, family = gaussian,
   if (is.function(family))
     family <- family()
 
+  parameter_index <- 2
   for(i in seq_along(factor)){
-    lambda[[i]][is.na(lambda[[i]])] <- seq(from = 2, length.out = sum(is.na(lambda[[i]])))
+    lambda[[i]][is.na(lambda[[i]])] <- seq(from = parameter_index, length.out = sum(is.na(lambda[[i]])))
     colnames(lambda[[i]]) <- factor[[i]]
     if(any(factor[[i]] %in% colnames(data))) stop("Factor already a column in data.")
     for(j in seq_along(factor[[i]])) {
@@ -29,6 +30,7 @@ galamm <- function(formula, data, family = gaussian,
       rows_to_zero <- data[, load.var] %in% levels(data[, load.var])[lambda[[i]][, j] == 0]
       eval(parse(text = paste("data$", factor[[i]][[j]], "[rows_to_zero] <- 0")))
     }
+    parameter_index <- max(lambda[[i]]) + 1
   }
 
   lmod <- lme4::lFormula(formula = formula, data = data, REML = FALSE)
@@ -40,6 +42,8 @@ galamm <- function(formula, data, family = gaussian,
 
   X <- lmod$X
   if(factor_in_fixed){
+    lambda_mapping_X <- rep(-1L, length(X))
+
     stop("Not implemented yet")
   }
   Zt <- lmod$reTrms$Zt
