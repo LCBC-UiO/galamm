@@ -36,8 +36,8 @@ test_that("LMM with two factors works", {
 
   expect_equal(kyps_model$loglik, -9681.98738847869)
   expect_equal(kyps_model$par[kyps_model$lambda_inds],
-               c(0.875125492917495, 0.0443730786908383, 0.0209971796470513,
-                 1.50159825655477))
+               c(0.875093100678968, 0.0443173993886863, 0.0209366325072532,
+                 1.50157384326851))
 })
 
 test_that("LMM with two raters works", {
@@ -61,3 +61,33 @@ test_that("LMM with two raters works", {
 
   expect_equal(judge_galamm$loglik, -55047.4993084257)
 })
+
+# test_that("Complex LMM works", {
+#   data("JUDGEsim")
+#   JUDGEsim$item <- factor(JUDGEsim$item)
+#   judge.lam <- rbind(c( 1,  0,  1,  0,  0,  0),
+#                      c(NA,  0, NA,  0,  0,  0),
+#                      c(NA,  0, NA,  0,  0,  0),
+#                      c( 0,  1,  0,  1,  0,  0),
+#                      c( 0, NA,  0, NA,  0,  0),
+#                      c( 0, NA,  0, NA,  0,  0),
+#                      c( 0,  0,  0,  0,  1,  0),
+#                      c( 0,  0,  0,  0, NA,  0),
+#                      c( 0,  0,  0,  0, NA,  0),
+#                      c( 0,  0,  0,  0,  0,  1),
+#                      c( 0,  0,  0,  0,  0, NA),
+#                      c( 0,  0,  0,  0,  0, NA))
+#
+#   judge_galamm <- galamm(
+#     formula = response ~ 0 + item + (1 | class) +
+#       (0 + trait1.t + trait2.t + trait1.s + trait2.s | stu) +
+#       (0 + teacher1 + teacher2 | tch),
+#     data = JUDGEsim,
+#     lambda = list(judge.lam),
+#     load.var = "item",
+#     factor = list(c("teacher1", "teacher2", "trait1.t",
+#                     "trait2.t", "trait1.s", "trait2.s"))
+#   )
+#
+#
+# })

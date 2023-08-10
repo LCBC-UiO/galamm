@@ -1,4 +1,3 @@
-devtools::load_all()
 library(PLmixed)
 library(tidyverse)
 data("JUDGEsim")
@@ -14,6 +13,7 @@ lambda_true <- rbind(
   c( 0, .1,  0,  3))
 
 set.seed(1)
+# Create simulated dataset
 data <- data0 %>%
   mutate(item = factor(as.integer(item))) %>%
   nest_by(class) %>%
@@ -34,7 +34,7 @@ data <- data0 %>%
     trait_lambda_ind = as.integer(item) + if_else(item %in% 1:2, 8L, 12L),
     trait_lambda = lambda_true[trait_lambda_ind],
     response = teacher_lambda * tch_intercept + trait_lambda * stu_intercept +
-      class_intercept + rnorm(nrow(.), sd = .01)
+      class_intercept + rnorm(nrow(.), sd = .1)
   ) %>%
   as.data.frame()
 
@@ -47,7 +47,7 @@ formula <- response ~ 0 + item + (1 | class) + (0 + trait1.t + trait2.t | stu) +
 factor <- list(c("teacher1", "teacher2", "trait1.t", "trait2.t"))
 load.var <- "item"
 
-judge_galamm <- galamm(
+judge_plm <- PLmixed(
   formula = formula,
   data = data,
   lambda = lambda,
@@ -55,63 +55,22 @@ judge_galamm <- galamm(
   factor = factor
 )
 
-judge_plm <- PLmixed(
-  formula = formula,
-  data = data,
-  lambda = lambda,
-  load.var = load.var,
-  factor = factor,
-  opt.control = list(maxit = 2)
-)
+# I get the following output Lambda:
+lambda_est <- judge_plm$Lambda$lambda.item[, c(1, 3, 5, 7)]
 
+# To save time, here is the structure without running the model above:
+lambda_es <- structure(c(1, 2.99765944766908, 0, 0, 0, 0, 1, 0.999385071733127,
+            1, 0.0994526598200496, 0, 0, 0, 0, 1, 2.99446923927171), dim = c(4L,
+                                                                             4L), dimnames = list(c("1", "2", "3", "4"), c("teacher1", "teacher2",
+                                                                                                                           "trait1.t", "trait2.t")))
 
-# In this vector they are in correct order
-judge_plm$Param
-judge_galamm$par[judge_galamm$lambda_inds]
-
-# But in Lambda the estimates are spread by row and not by column
-judge_plm$Lambda
-
-judge_plm$Lambda$lambda.item[, factor[[1]]]
+# Compare to truth
+# It seems like the Lambda output from PLmixed is filled by row rather than by column,
+# and hence does not put the correct estimates into the right places
+round(lambda_est, 2)
 lambda_true
 
+(lambda_est - lambda_true) / lambda_true
 
-
-lambda_true <- rbind(
-  c( 1,  0,  1,  0),
-  c( 3,  0,  1,  0),
-  c( 0,  1,  0,  1),
-  c( 0, .1,  0,  3))
-
-fill <- 1
-num <- 4
-col <- 4
-uniq <- 1:4
-factor.2 <- factor[[1]]
-lambda.1 <- lambda[[1]]
-Est <- c(3, .1, 1, 3)
-st.er <- c(1, 1, 1, 1) * .1
-final.lambda <- matrix(NA, nrow = num,
-                       ncol = 2 * (length(factor.2)))
-se.names <- rep("SE", length(factor.2))
-comb <- rbind(factor.2, se.names)
-comb <- matrix(comb, nrow = 1, ncol = 2 * length(factor.2),
-               byrow = F)
-rownames(final.lambda) <- uniq
-colnames(final.lambda) <- comb
-for (i in 1:nrow(as.matrix(lambda.1))) {
-  for (j in 1:ncol(as.matrix(lambda.1))) {
-    if (is.na(lambda.1[i, j]) == 1) {
-      final.lambda[i, (j * 2 - 1)] <- Est[fill]
-      final.lambda[i, j * 2] <- st.er[fill]
-      fill <- fill + 1
-    }
-    else {
-      final.lambda[i, (j * 2 - 1)] <- lambda.1[i, j]
-    }
-  }
-}
-fin.lam[[h]] <- final.lambda
-
-lam.names <- paste0("lambda.", load.var)
-names(fin.lam) <- lam.names
+# The Param element seems to have the lambdas in the right order
+judge_plm$Param

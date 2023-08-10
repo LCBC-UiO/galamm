@@ -33,12 +33,11 @@ galamm <- function(formula, data, family = gaussian,
 
   lmod <- lme4::lFormula(formula = formula, data = data, REML = FALSE)
 
-  factor_in_fixed <- FALSE
-  factor_in_random <- FALSE
-  for(f in factor){
-    factor_in_fixed <- factor_in_fixed || any(colnames(lmod$X) %in% f)
-    factor_in_random <- factor_in_random || any(unlist(lmod$reTrms$cnms) %in% f)
-  }
+  vars_in_fixed <- all.vars(lme4::nobars(formula)[-2])
+  factor_in_fixed <- any(vapply(factor, function(x) any(x %in% vars_in_fixed), TRUE))
+  vars_in_random <- do.call(c, lapply(lme4::findbars(formula), all.vars))
+  factor_in_random <- any(vapply(factor, function(x) any(x %in% vars_in_random), TRUE))
+
   X <- lmod$X
   if(factor_in_fixed){
     stop("Not implemented yet")
@@ -68,27 +67,16 @@ galamm <- function(formula, data, family = gaussian,
       mapping_component
     })
 
+    max_map <- max(vapply(mappings, length, 1))
+    mappings <- lapply(mappings, function(x){
+      if(length(x) < max_map){
+        x <- c(x, rep(NA_real_, max_map - length(x)))
+      } else {
+        x
+      }
+    })
     lambda_mapping_Zt <- as.numeric(do.call(rbind, mappings))
     lambda_mapping_Zt <- lambda_mapping_Zt[!is.na(lambda_mapping_Zt)]
-#
-#     cnms <- unlist(lmod$reTrms$cnms)
-#     lambda_tmp <- matrix(1, nrow = nrow(lambda[[1]]), ncol = length(cnms))
-#
-#     for(j in seq_along(cnms)){
-#       if(cnms[[j]] %in% colnames(lambda[[1]])){
-#         lambda_tmp[, j] <- lambda[[1]][, cnms[[j]]]
-#       }
-#     }
-#
-#     lambda_tmp <- lambda_tmp - 2L
-#     # -2 means that it has been zeroed
-#     # -1 means that the loading is fixed to 1
-#     # 0, 1, 2, etc. means that the loading is a parameter to be estimated
-#
-#     lmod$reTrms$cnms
-#
-#     lambda_mapping_Zt2 <- vapply(data[, load.var], function(x) lambda_tmp[x, ], numeric(ncol(lambda_tmp)))
-#     lambda_mapping_Zt2 <- lambda_mapping_Zt[lambda_mapping_Zt != -2]
 
     stopifnot(length(lambda_mapping_Zt) == sum(diff(Zt@p)))
   }
@@ -137,7 +125,7 @@ galamm <- function(formula, data, family = gaussian,
 
   opt <- stats::optim(par_init, fn = fn, gr = gr,
                       method = "L-BFGS-B", lower = bounds,
-                      control = list(fnscale = -1, lmm = 20, trace = 3, factr = 1e4))
+                      control = list(fnscale = -1, lmm = 20, trace = 3))
 
 
   final_model <- mlwrapper(opt$par, TRUE)
