@@ -45,6 +45,8 @@ galamm <- function(formula, data, family = gaussian,
     lambda_mapping_X <- rep(-1L, length(X))
 
     stop("Not implemented yet")
+  } else {
+    lambda_mapping_X <- integer()
   }
   Zt <- lmod$reTrms$Zt
   if(factor_in_random){
@@ -83,6 +85,8 @@ galamm <- function(formula, data, family = gaussian,
     lambda_mapping_Zt <- lambda_mapping_Zt[!is.na(lambda_mapping_Zt)]
 
     stopifnot(length(lambda_mapping_Zt) == sum(diff(Zt@p)))
+  } else {
+    lambda_mapping_Zt <- integer()
   }
 
   Lambdat <- lmod$reTrms$Lambdat
@@ -105,7 +109,7 @@ galamm <- function(formula, data, family = gaussian,
       theta = par[theta_inds],
       theta_mapping = theta_mapping,
       lambda = par[lambda_inds],
-      lambda_mapping_X = integer(),
+      lambda_mapping_X = lambda_mapping_X,
       lambda_mapping_Zt = lambda_mapping_Zt,
       weights = numeric(),
       weights_mapping = integer(),
