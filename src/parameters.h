@@ -68,7 +68,7 @@ struct parameters{
   Ddual<T> WSqrt;
   int maxit_conditional_modes;
   double epsilon_u;
-  double deviance_tol{.01};
+  double lossvalue_tol{.01};
   int n;
 };
 
