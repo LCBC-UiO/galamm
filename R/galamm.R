@@ -183,8 +183,12 @@ galamm <- function(formula, data, family = gaussian,
   ret$n <- nrow(X)
   if(family$family == "gaussian"){
     ret$residuals <- response - fit
+    ret$deviance <- -2 * ret$loglik
   } else {
-    ret$residuals <- sqrt(family$dev.resids(response, fit, 1))
+    # McCullagh and Nelder (1989), page 39
+    dev_res <- family$dev.resids(response, fit, 1)
+    ret$residuals <- sign(response - fit) * sqrt(dev_res)
+    ret$deviance <- sum(dev_res)
   }
 
 

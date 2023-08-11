@@ -14,10 +14,10 @@ summary.galamm <- function(object, ...){
   class(ret) <- append("summary.galamm", class(object))
 
   ret$AICtab <- c(
-    AIC = - 2 * object$loglik + 2 * object$df,
-    BIC = - 2 * object$loglik + object$df * log(object$n),
+    AIC = object$deviance + 2 * object$df,
+    BIC = object$deviance + object$df * log(object$n),
     logLik = object$loglik,
-    deviance = - 2 * object$loglik,
+    deviance = object$deviance,
     df.resid = object$n - object$df
   )
 
