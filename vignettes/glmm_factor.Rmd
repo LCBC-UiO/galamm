@@ -1,0 +1,190 @@
+---
+title: "Generalized Linear Mixed Models with Factor Structures"
+output: rmarkdown::html_vignette
+bibliography: ../inst/references.bib
+vignette: >
+  %\VignetteIndexEntry{Linear Mixed Models with Factor Structures}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(galamm)
+library(PLmixed)
+```
+
+This vignette describes how `galamm` can be used to estimate generalized linear mixed models with factor structures. Such models are an instance of the generalized linear latent and mixed models (GLLAMM) framework described by @rabe-heskethGeneralizedMultilevelStructural2004. The R package `PLmixed` [@rockwoodEstimatingComplexMeasurement2019] estimates such models using a profile likelihood algorithm initially proposed by @jeonProfileLikelihoodApproachEstimating2012. The models are also a special case of generalized additive latent and mixed models (GALAMM), and in `galamm` these models are estimated using a more direct algorithm described in @sorensenLongitudinalModelingAgeDependent2023.
+
+This vignette is completely based on the simulated datasets provided by `PLmixed` [@rockwoodEstimatingComplexMeasurement2019], which we refer to for all the details. The purpose of this vignette is to confirm that `galamm` gives the same results for these models, and to introduce the syntax. As will be clear if you run the code, `galamm` can often be considerably faster.
+
+## Model with a Single Factor
+
+We use a simulated dataset from the `PLmixed` package for the example in this vignette. In the vignette on linear mixed models with factor structures, the response was treated as Gaussian. Here we use the more appropriate assumption that the response is binomially distributed.
+
+First we set up the factor structures to be used:
+
+```{r}
+data("IRTsim")
+IRTsim$item <- factor(IRTsim$item)
+irt.lam <- matrix(c(1, NA, NA, NA, NA), ncol = 1)
+```
+
+We could use the following code to fit the model with `PLmixed`.
+
+```{r, eval=FALSE}
+pl_mod <- PLmixed(
+  formula = y ~ item + (0 + abil.sid | sid) + (0 + abil.sid | school),
+  data = IRTsim, family = binomial, load.var = "item", 
+  factor = list("abil.sid"), lambda = list(irt.lam), iter.count = FALSE)
+summary(pl_mod)
+```
+
+Next we fit the model using `galamm`.
+
+```{r}
+galamm_mod <- galamm(
+  formula = y ~ item + (0 + abil.sid | sid) + (0 + abil.sid | school),
+  data = IRTsim, 
+  family = binomial,
+  load.var = "item", 
+  factor = list("abil.sid"), 
+  lambda = list(irt.lam)
+  )
+
+summary(galamm_mod)
+```
+
+## Models with Multiple Factors
+
+This example comes from Section 3.1 in @jeonProfileLikelihoodApproachEstimating2012.
+
+```{r}
+data("KYPSsim")
+KYPSsim$time <- factor(KYPSsim$time)
+kyps.lam <- rbind(c( 1, 0),
+                  c(NA, 0),
+                  c(NA, 1),
+                  c(NA, NA))
+```
+
+
+```{r, eval=FALSE}
+kyps_plmixed <- PLmixed(
+  formula = esteem ~ as.factor(time) +  (0 + hs | hid) + (0 + ms | mid) + (1 | sid), 
+  data = KYPSsim,
+  factor = list(c("ms", "hs")), 
+  load.var = c("time"),
+  lambda = list(kyps.lam)
+  )
+
+summary(kyps_plmixed)
+```
+
+
+```{r}
+kyps_model <- galamm(
+  formula = esteem ~ time + (0 + hs | hid) + (0 + ms | mid) + (1 | sid),
+  data = KYPSsim, 
+  factor = list(c("ms", "hs")), 
+  load.var = "time",
+  lambda = list(kyps.lam)
+)
+
+summary(kyps_model)
+```
+
+The next is Example 1 in @rockwoodEstimatingComplexMeasurement2019. 
+
+```{r}
+data("JUDGEsim")
+JUDGEsim$item <- factor(JUDGEsim$item)
+judge.lam <- rbind(c( 1,  0,  1,  0,  0,  0),
+                   c(NA,  0, NA,  0,  0,  0),
+                   c(NA,  0, NA,  0,  0,  0),
+                   c( 0,  1,  0,  1,  0,  0),
+                   c( 0, NA,  0, NA,  0,  0),
+                   c( 0, NA,  0, NA,  0,  0),
+                   c( 0,  0,  0,  0,  1,  0),
+                   c( 0,  0,  0,  0, NA,  0),
+                   c( 0,  0,  0,  0, NA,  0),
+                   c( 0,  0,  0,  0,  0,  1),
+                   c( 0,  0,  0,  0,  0, NA),
+                   c( 0,  0,  0,  0,  0, NA))
+```
+
+We could run it using `PLmixed` with the following syntax, but it takes hours.
+
+```{r, eval=FALSE}
+judge_plmixed <- PLmixed(response ~ 0 + item + (1 | class)
+                         + (0 + trait1.t + trait2.t + trait1.s + trait2.s | stu)
+                         + (0 + teacher1 + teacher2 | tch), data = JUDGEsim,
+                         lambda = list(judge.lam), load.var = "item",
+                         factor = list(c("teacher1", "teacher2", "trait1.t",
+                                         "trait2.t", "trait1.s", "trait2.s")))
+
+summary(judge_plmixed)
+
+```
+
+We get identical results using `galamm` in less than five minutes. However, since five minutes is a bit too much for a vignette, we don't show the output here.
+
+```{r, eval=FALSE}
+judge_galamm <- galamm(
+formula = response ~ 0 + item + (1 | class) + 
+  (0 + trait1.t + trait2.t + trait1.s + trait2.s | stu) + 
+  (0 + teacher1 + teacher2 | tch), 
+data = JUDGEsim,
+lambda = list(judge.lam), 
+load.var = "item",
+factor = list(c("teacher1", "teacher2", "trait1.t", 
+                "trait2.t", "trait1.s", "trait2.s"))
+)
+
+
+```
+
+
+## Model with a Product of Factor Loadings
+
+Finally, in their Example 2, @rockwoodEstimatingComplexMeasurement2019 consider a model which contains products of factor loadings. We start by preparing the data:
+
+```{r, eval=FALSE}
+data("KYPSitemsim")
+
+time.lam <- rbind(c( 1,  0),  # Specify time lambda matrix
+                  c(NA,  0),
+                  c(NA,  1),
+                  c(NA, NA))
+
+item.lam <- matrix(c(1, NA, NA, NA, NA, NA), ncol = 1) # Specify item lambda matrix
+
+KYPSitemsim$time2 <- (KYPSitemsim$time == 2) * 1
+KYPSitemsim$time3 <- (KYPSitemsim$time == 3) * 1
+KYPSitemsim$time4 <- (KYPSitemsim$time == 4) * 1
+KYPSitemsim$item <- factor(KYPSitemsim$item)
+```
+
+The model can be fitted using `PLmixed` as follows. Note that "ms", "hs" and "lat.var" are factor, and that the formula contains products `hs:lat.var` and `ms:lat.var`.
+
+```{r, eval=FALSE}
+kyps.item.model <- PLmixed(response ~ 0 + as.factor(item) + lat.var:time2
+                           + lat.var:time3 + lat.var:time4 + (0 + hs:lat.var | hid)
+                           + (0 + ms:lat.var | mid) + (0 + lat.var:as.factor(time) | id),
+                           data = KYPSitemsim, lambda = list(time.lam, item.lam),
+                           factor = list(c("ms", "hs"), "lat.var"),
+                           load.var = c("time", "item"))
+
+summary(kyps.item.model)
+```
+
+A the moment, this model cannot be directly fitted with `galamm`, although a reformulation is likely possible. We will work on adding this functionality.
+
+
+# References

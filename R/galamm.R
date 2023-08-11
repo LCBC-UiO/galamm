@@ -128,9 +128,9 @@ galamm <- function(formula, data, family = gaussian,
       lambda_mapping_Zt = lambda_mapping_Zt,
       weights = numeric(),
       weights_mapping = integer(),
-      family = "gaussian",
+      family = family$family,
       family_mapping = rep(0L, nrow(data)),
-      maxit_conditional_modes = 1,
+      maxit_conditional_modes = ifelse(family$family == "gaussian", 1, 50),
       hessian = hessian
     )
   }
@@ -150,7 +150,6 @@ galamm <- function(formula, data, family = gaussian,
                       method = "L-BFGS-B", lower = bounds,
                       control = list(fnscale = -1, lmm = 20, trace = 3))
 
-
   final_model <- mlwrapper(opt$par, TRUE)
   S <- -solve(final_model$hessian)
 
@@ -159,7 +158,10 @@ galamm <- function(formula, data, family = gaussian,
   # Update Zt to include factor loadings
   Zt@x <- c(1, opt$par[lambda_inds])[lambda_mapping_Zt + 2L]
   # Compute prediction
-  fit <- as.numeric(X %*% opt$par[beta_inds] + Matrix::t(Zt) %*% Matrix::t(Lambdat) %*% final_model$u)
+  fit <- family$linkinv(
+    as.numeric(X %*% opt$par[beta_inds] +
+                 Matrix::t(Zt) %*% Matrix::t(Lambdat) %*% final_model$u)
+  )
 
   ret <- list()
   ret$lambda <- lambda
@@ -176,10 +178,15 @@ galamm <- function(formula, data, family = gaussian,
   ret$lmod <- lmod
   ret$mc <- mc
   ret$family <- family
-  ret$df <- length(opt$par) + 1L
+  ret$df <- length(opt$par) + is.na(family$dispersion)
 
   ret$n <- nrow(X)
-  ret$residuals <- response - fit
+  if(family$family == "gaussian"){
+    ret$residuals <- response - fit
+  } else {
+    ret$residuals <- sqrt(family$dev.resids(response, fit, 1))
+  }
+
 
   class(ret) <- "galamm"
 

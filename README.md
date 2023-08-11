@@ -46,8 +46,8 @@ remotes::install_github("LCBC-UiO/galamm")
 
 For now, please refer to [this
 repository](https://github.com/LCBC-UiO/galamm-scripts) for code that
-can be used to reproduce the results of (Sørensen, Fjell, and Walhovd
-2023).
+can be used to reproduce the results of Sørensen, Fjell, and Walhovd
+(2023).
 
 ## References
 
