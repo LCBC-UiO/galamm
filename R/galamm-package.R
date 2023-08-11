@@ -2,8 +2,7 @@
 #' Mixed Models.
 #'
 #' @description This package performs maximum marginal likelihood estimation of
-#' generalized additive latent and mixed models. To get started, take a look at
-#' the vignettes. The main function is \code{\link{marginal_likelihood}}.
+#' generalized additive latent and mixed models.
 #'
 #' @docType package
 #' @name galamm-package

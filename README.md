@@ -82,7 +82,7 @@ class="csl-entry">
 
 Sørensen, Øystein, Anders M. Fjell, and Kristine B. Walhovd. 2023.
 “Longitudinal Modeling of Age-Dependent Latent Traits with Generalized
-Additive Latent and Mixed Models.” *Psychometrika*, March.
+Additive Latent and Mixed Models.” *Psychometrika* 88 (2): 456–86.
 <https://doi.org/10.1007/s11336-023-09910-z>.
 
 </div>
