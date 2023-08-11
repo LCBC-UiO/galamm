@@ -7,13 +7,10 @@
     <loc>https://lcbc-uio.github.io/galamm/LICENSE.html</loc>
   </url>
   <url>
-    <loc>https://lcbc-uio.github.io/galamm/articles/Introduction.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/articles/MaximumLikelihood.html</loc>
-  </url>
-  <url>
     <loc>https://lcbc-uio.github.io/galamm/articles/index.html</loc>
+  </url>
+  <url>
+    <loc>https://lcbc-uio.github.io/galamm/articles/lmm_factor.html</loc>
   </url>
   <url>
     <loc>https://lcbc-uio.github.io/galamm/authors.html</loc>
@@ -31,9 +28,18 @@
     <loc>https://lcbc-uio.github.io/galamm/reference/galamm-package.html</loc>
   </url>
   <url>
+    <loc>https://lcbc-uio.github.io/galamm/reference/galamm.html</loc>
+  </url>
+  <url>
     <loc>https://lcbc-uio.github.io/galamm/reference/index.html</loc>
   </url>
   <url>
     <loc>https://lcbc-uio.github.io/galamm/reference/marginal_likelihood.html</loc>
+  </url>
+  <url>
+    <loc>https://lcbc-uio.github.io/galamm/reference/print.summary.galamm.html</loc>
+  </url>
+  <url>
+    <loc>https://lcbc-uio.github.io/galamm/reference/summary.galamm.html</loc>
   </url>
 </urlset>
