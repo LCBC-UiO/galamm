@@ -11,6 +11,7 @@
 #' @export
 #'
 #' @importFrom stats gaussian
+#' @importFrom Rdpack reprompt
 galamm <- function(formula, data, family = gaussian,
                    load.var = NULL, lambda = NULL, factor = NULL){
 
@@ -21,16 +22,18 @@ galamm <- function(formula, data, family = gaussian,
     family <- family()
 
   parameter_index <- 2
-  for(i in seq_along(factor)){
-    lambda[[i]][is.na(lambda[[i]])] <- seq(from = parameter_index, length.out = sum(is.na(lambda[[i]])))
-    colnames(lambda[[i]]) <- factor[[i]]
-    if(any(factor[[i]] %in% colnames(data))) stop("Factor already a column in data.")
-    for(j in seq_along(factor[[i]])) {
-      eval(parse(text = paste("data$", factor[[i]][[j]], "<-1")))
-      rows_to_zero <- data[, load.var] %in% levels(data[, load.var])[lambda[[i]][, j] == 0]
-      eval(parse(text = paste("data$", factor[[i]][[j]], "[rows_to_zero] <- 0")))
+  if(!is.null(factor)){
+    for(i in seq_along(factor)){
+      lambda[[i]][is.na(lambda[[i]])] <- seq(from = parameter_index, length.out = sum(is.na(lambda[[i]])))
+      colnames(lambda[[i]]) <- factor[[i]]
+      if(any(factor[[i]] %in% colnames(data))) stop("Factor already a column in data.")
+      for(j in seq_along(factor[[i]])) {
+        eval(parse(text = paste("data$", factor[[i]][[j]], "<-1")))
+        rows_to_zero <- data[, load.var] %in% levels(data[, load.var])[lambda[[i]][, j] == 0]
+        eval(parse(text = paste("data$", factor[[i]][[j]], "[rows_to_zero] <- 0")))
+      }
+      parameter_index <- max(lambda[[i]]) + 1
     }
-    parameter_index <- max(lambda[[i]]) + 1
   }
 
   lmod <- lme4::lFormula(formula = formula, data = data, REML = FALSE)
@@ -103,7 +106,6 @@ galamm <- function(formula, data, family = gaussian,
     }
   }
 
-
   Lambdat <- lmod$reTrms$Lambdat
   theta_mapping <- lmod$reTrms$Lind - 1L
 
@@ -115,7 +117,7 @@ galamm <- function(formula, data, family = gaussian,
 
   mlwrapper <- function(par, hessian = FALSE){
     marginal_likelihood(
-      y = response,
+      y = as.numeric(response),
       trials = rep(1, nrow(data)),
       X = X,
       Zt = Zt,
@@ -155,8 +157,10 @@ galamm <- function(formula, data, family = gaussian,
 
   # Update Cholesky factor of covariance matrix
   Lambdat@x <- opt$par[theta_inds][lmod$reTrms$Lind]
-  # Update Zt to include factor loadings
-  Zt@x <- c(1, opt$par[lambda_inds])[lambda_mapping_Zt + 2L]
+  # Update Zt to include factor loadings (if there are factor loadings)
+  if(length(lambda_inds) > 1){
+    Zt@x <- c(1, opt$par[lambda_inds])[lambda_mapping_Zt + 2L]
+  }
   # Compute prediction
   fit <- family$linkinv(
     as.numeric(X %*% opt$par[beta_inds] +
@@ -181,16 +185,20 @@ galamm <- function(formula, data, family = gaussian,
   ret$df <- length(opt$par) + is.na(family$dispersion)
 
   ret$n <- nrow(X)
+
+  ret$pearson_residuals <- (response - fit) / sqrt(family$variance(fit))
+
   if(family$family == "gaussian"){
-    ret$residuals <- response - fit
+    ret$deviance_residuals <- response - fit
     ret$deviance <- -2 * ret$loglik
   } else {
     # McCullagh and Nelder (1989), page 39
-    dev_res <- family$dev.resids(response, fit, 1)
-    ret$residuals <- sign(response - fit) * sqrt(dev_res)
-    ret$deviance <- sum(dev_res)
+    dev_res <- sqrt(family$dev.resids(response, fit, 1))
+    ret$deviance_residuals <- sign(response - fit) * dev_res
+    ret$deviance <- sum((dev_res)^2)
   }
-
+  ret$fit <- fit
+  ret$response <- response
 
   class(ret) <- "galamm"
 

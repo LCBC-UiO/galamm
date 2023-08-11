@@ -3,7 +3,7 @@ title: "Generalized Linear Mixed Models with Factor Structures"
 output: rmarkdown::html_vignette
 bibliography: ../inst/references.bib
 vignette: >
-  %\VignetteIndexEntry{Linear Mixed Models with Factor Structures}
+  %\VignetteIndexEntry{Generalized Linear Mixed Models with Factor Structures}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -18,6 +18,7 @@ knitr::opts_chunk$set(
 ```{r setup}
 library(galamm)
 library(PLmixed)
+library(lme4)
 ```
 
 This vignette describes how `galamm` can be used to estimate generalized linear mixed models with factor structures. Such models are an instance of the generalized linear latent and mixed models (GLLAMM) framework described by @rabe-heskethGeneralizedMultilevelStructural2004. The R package `PLmixed` [@rockwoodEstimatingComplexMeasurement2019] estimates such models using a profile likelihood algorithm initially proposed by @jeonProfileLikelihoodApproachEstimating2012. The models are also a special case of generalized additive latent and mixed models (GALAMM), and in `galamm` these models are estimated using a more direct algorithm described in @sorensenLongitudinalModelingAgeDependent2023.
@@ -51,7 +52,38 @@ galamm_mod <- galamm(
 summary(galamm_mod)
 ```
 
+## Model with Poisson Distributed Responses
+
+To illustrate the model for counts, we consider an example from Chapter 11.3 in @skrondalGeneralizedLatentVariable2004. The model does not contain factor loadings, but we use it to demonstrate how to fit GLMMs with Poisson distributed responses. 
+
+```{r}
+count_mod <- galamm(
+  formula = y ~ lbas * treat + lage + v4 + (1|subj),
+  data = epilep,
+  family = poisson
+)
+summary(count_mod)
+```
 
 
+In this case we can confirm that the `galamm` function is correctly implemented by comparing it to the output of `lme4::glmer`. For a model like this, it would also be best to use `lme4`, but with factor structures or other nonlinearities, `lme4` no longer provides the flexibility we need.
+
+```{r}
+library(lme4)
+count_mod_lme4 <- glmer(
+  formula = y ~ lbas * treat + lage + v4 + (1|subj),
+  data = epilep,
+  family = poisson
+)
+summary(count_mod_lme4)
+```
+
+You might note that the deviance in the summary output of the model fitted by lme4 is different from the deviance of the model fitted by galamm. This is because in the summary output, lme4 shows the deviance as minus two times the log likelihood. In contrast, calling the deviance function on a model object fitted by glmer gives the same output as galamm. 
+
+```{r}
+deviance(count_mod_lme4)
+```
+
+For details on deviance calculation in lme4, see `help(deviance.merMod, "lme4")`.
 
 # References

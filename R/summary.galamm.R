@@ -21,15 +21,18 @@ summary.galamm <- function(object, ...){
     df.resid = object$n - object$df
   )
 
-  lambda_tmp_est <- lambda_tmp_se <- object$lambda[[1]]
-  to_fill <- lambda_tmp_est > 0
-  lambda_tmp_est[to_fill] <- c(1, object$par[object$lambda_inds])[lambda_tmp_est[to_fill]]
-  lambda_tmp_se[to_fill] <- c(NA_real_, sqrt(diag(object$vcov[object$lambda_inds, object$lambda_inds])))[lambda_tmp_se[to_fill]]
+  if(exists("lambda", object)){
+    lambda_tmp_est <- lambda_tmp_se <- object$lambda[[1]]
+    to_fill <- lambda_tmp_est > 0
+    lambda_tmp_est[to_fill] <- c(1, object$par[object$lambda_inds])[lambda_tmp_est[to_fill]]
+    lambda_tmp_se[to_fill] <- c(NA_real_, sqrt(diag(object$vcov[object$lambda_inds, object$lambda_inds])))[lambda_tmp_se[to_fill]]
 
-  ret$Lambda <- matrix(rbind(lambda_tmp_est, lambda_tmp_se), nrow = nrow(lambda_tmp_est),
-         dimnames = list(NULL, as.character(rbind(colnames(lambda_tmp_est), "SE"))))
+    ret$Lambda <- matrix(rbind(lambda_tmp_est, lambda_tmp_se), nrow = nrow(lambda_tmp_est),
+                         dimnames = list(NULL, as.character(rbind(colnames(lambda_tmp_est), "SE"))))
 
-  rownames(ret$Lambda) <- seq_len(nrow(ret$Lambda))
+    rownames(ret$Lambda) <- seq_len(nrow(ret$Lambda))
+  }
+
 
   ret$VarCorr <- structure(
     lme4::mkVarCorr(sqrt(ret$phi), ret$cnms, nc = lengths(ret$cnms),
@@ -62,11 +65,13 @@ print.summary.galamm <- function(x, digits = max(3, getOption("digits") - 3), ..
   cat("\n")
   lme4::.prt.aictab(x$AICtab)
   cat("\n")
-  lme4::.prt.resids(x$residuals / sqrt(x$phi), digits = digits)
-  cat("Lambda:\n")
-  x$Lambda[x$Lambda == 0] <- NA
-  print(x$Lambda, digits = digits, na.print = ".")
-  cat("\n")
+  lme4::.prt.resids(x$pearson_residuals / sqrt(x$phi), digits = digits)
+  if(exists("Lambda", x)){
+    cat("Lambda:\n")
+    x$Lambda[x$Lambda == 0] <- NA
+    print(x$Lambda, digits = digits, na.print = ".")
+    cat("\n")
+  }
   lme4::.prt.VC(x$VarCorr, digits = digits, comp = c("Var", "Std.Dev."))
   lme4::.prt.grps(vapply(x$lmod$reTrms$flist, nlevels, 1), x$n)
   cat("\n")
