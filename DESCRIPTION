@@ -21,7 +21,8 @@ License: GPL (>= 3)
 Encoding: UTF-8
 Imports: 
     lme4,
-    Rcpp
+    Rcpp,
+    Rdpack
 Depends:
     R (>= 3.5.0)
 LinkingTo:
@@ -46,3 +47,4 @@ Suggests:
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 URL: https://lcbc-uio.github.io/galamm/
+RdMacros: Rdpack

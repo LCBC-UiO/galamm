@@ -67,8 +67,8 @@ logLikObject<T> logLik(
   solver.analyzePattern(H);
   Vdual<T> delta_u{};
   solver.factorize(H);
-  T deviance_prev = -2 * loss(parlist, datlist, lp, modvec, solver, phi);
-  T deviance_new{};
+  T lossvalue_prev = -2 * loss(parlist, datlist, lp, modvec, solver, phi);
+  T lossvalue_new{};
 
   for(int i{}; i < parlist.maxit_conditional_modes; i++){
     Vdual<T> meanvec(parlist.n);
@@ -95,31 +95,31 @@ logLikObject<T> logLik(
 
       H = inner_hessian(parlist, datlist, V);
       solver.factorize(H);
-      deviance_new = -2 * loss(parlist, datlist, lp, modvec, solver, phi);
+      lossvalue_new = -2 * loss(parlist, datlist, lp, modvec, solver, phi);
 
-      if(deviance_new <= deviance_prev){
+      if(lossvalue_new <= lossvalue_prev){
         // Appropriate stepsize found for this candidate u, break out of innermost loop
         break;
       }
       parlist.u -= step * delta_u;
       step /= 2;
       // If we cannot find a reducing step, then it's not possible to reduce the
-      // deviance any more, and also the outer loop should break
+      // lossvalue any more, and also the outer loop should break
       if(j == 9){
         Rcpp::Rcout << "Could not find reducing step: i = " << i << ", j = " << j << std::endl;
         goto jump; // go all the way down to after the loop
       }
     }
     // Cannot improve likelihood more in this PWIRLS iteration
-    if((deviance_prev - deviance_new) < parlist.deviance_tol){
+    if((lossvalue_prev - lossvalue_new) < parlist.lossvalue_tol){
       break;
     }
-    deviance_prev = deviance_new;
+    lossvalue_prev = lossvalue_new;
   }
 
   jump: // if reducing step could not be found, we end up here.
   logLikObject<T> ret;
-  ret.logLikValue = - deviance_new / 2;
+  ret.logLikValue = - lossvalue_new / 2;
   ret.V = V.diagonal();
   ret.u = parlist.u;
   ret.phi = phi;

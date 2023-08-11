@@ -37,6 +37,6 @@ remotes::install_github("LCBC-UiO/galamm")
 ```
 ## Example
 
-For now, please refer to [this repository](https://github.com/LCBC-UiO/galamm-scripts) for code that can be used to reproduce the results of [@sorensenLongitudinalModelingAgeDependent2023].
+For now, please refer to [this repository](https://github.com/LCBC-UiO/galamm-scripts) for code that can be used to reproduce the results of @sorensenLongitudinalModelingAgeDependent2023.
 
 ## References
