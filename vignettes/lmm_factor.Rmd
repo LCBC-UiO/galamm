@@ -149,9 +149,12 @@ factor = list(c("teacher1", "teacher2", "trait1.t",
 
 ```
 
-Finally we consider the second example in @rockwoodEstimatingComplexMeasurement2019.
 
-```{r}
+## Model with a Product of Factor Loadings
+
+Finally, in their Example 2, @rockwoodEstimatingComplexMeasurement2019 consider a model which contains products of factor loadings. We start by preparing the data:
+
+```{r, eval=FALSE}
 data("KYPSitemsim")
 
 time.lam <- rbind(c( 1,  0),  # Specify time lambda matrix
@@ -167,18 +170,20 @@ KYPSitemsim$time4 <- (KYPSitemsim$time == 4) * 1
 KYPSitemsim$item <- factor(KYPSitemsim$item)
 ```
 
+The model can be fitted using `PLmixed` as follows. Note that "ms", "hs" and "lat.var" are factor, and that the formula contains products `hs:lat.var` and `ms:lat.var`.
 
 ```{r, eval=FALSE}
-kyps.item.model <- galamm(
-  formula = response ~ 0 + item + lat.var:time2 + lat.var:time3 + lat.var:time4 + (0 + hs:lat.var | hid) + (0 + ms:lat.var | mid) + (0 + lat.var:as.factor(time) | id),
-  data = KYPSitemsim, 
-  lambda = list(time.lam, item.lam),
-  factor = list(c("ms", "hs"), "lat.var"),
-  load.var = c("time", "item")
-  )
+kyps.item.model <- PLmixed(response ~ 0 + as.factor(item) + lat.var:time2
+                           + lat.var:time3 + lat.var:time4 + (0 + hs:lat.var | hid)
+                           + (0 + ms:lat.var | mid) + (0 + lat.var:as.factor(time) | id),
+                           data = KYPSitemsim, lambda = list(time.lam, item.lam),
+                           factor = list(c("ms", "hs"), "lat.var"),
+                           load.var = c("time", "item"))
 
 summary(kyps.item.model)
 ```
+
+A the moment, this model cannot be directly fitted with `galamm`, although a reformulation is likely possible. We will work on adding this functionality.
 
 
 # References

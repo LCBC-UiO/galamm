@@ -36,58 +36,73 @@ galamm <- function(formula, data, family = gaussian,
   lmod <- lme4::lFormula(formula = formula, data = data, REML = FALSE)
 
   vars_in_fixed <- all.vars(lme4::nobars(formula)[-2])
-  factor_in_fixed <- any(vapply(factor, function(x) any(x %in% vars_in_fixed), TRUE))
+  factor_in_fixed <- vapply(factor, function(x) any(x %in% vars_in_fixed), TRUE)
   vars_in_random <- do.call(c, lapply(lme4::findbars(formula), all.vars))
-  factor_in_random <- any(vapply(factor, function(x) any(x %in% vars_in_random), TRUE))
+  factor_in_random <- vapply(factor, function(x) any(x %in% vars_in_random), TRUE)
 
   X <- lmod$X
-  if(factor_in_fixed){
+  if(any(factor_in_fixed)){
     lambda_mapping_X <- rep(-1L, length(X))
-
-    stop("Not implemented yet")
   } else {
     lambda_mapping_X <- integer()
   }
+
+  for(f in seq_along(factor_in_fixed)){
+    if(factor_in_fixed[[f]]){
+
+      stop("Not implemented yet")
+    }
+  }
+
   Zt <- lmod$reTrms$Zt
-  if(factor_in_random){
 
-    mappings <- lapply(seq_along(lmod$reTrms$cnms), function(i){
-      delta <- diff(lmod$reTrms$Ztlist[[i]]@p)
-      cnms <- lmod$reTrms$cnms[[i]]
-
-      if(any(cnms %in% colnames(lambda[[1]]))){
-        ll <- lambda[[1]][, cnms, drop = FALSE] - 2L
-      } else {
-        return(rep(-1L, sum(delta)))
-      }
-
-      mapping_component <- rep(NA_integer_, sum(delta))
-      for(j in seq_along(cnms)){
-        cn <- cnms[[j]]
-        inds <- which(data[, cn] != 0)
-        mapping_component[inds] <- unlist(Map(function(x, y) rep(ll[x, cn], each = y),
-                     x = data[inds, load.var], y = delta[inds]))
-
-      }
-
-      mapping_component
-    })
-
-    max_map <- max(vapply(mappings, length, 1))
-    mappings <- lapply(mappings, function(x){
-      if(length(x) < max_map){
-        x <- c(x, rep(NA_real_, max_map - length(x)))
-      } else {
-        x
-      }
-    })
-    lambda_mapping_Zt <- as.numeric(do.call(rbind, mappings))
-    lambda_mapping_Zt <- lambda_mapping_Zt[!is.na(lambda_mapping_Zt)]
-
-    stopifnot(length(lambda_mapping_Zt) == sum(diff(Zt@p)))
+  if(any(factor_in_random)){
+    lambda_mapping_Zt <- rep(-1L, sum(diff(Zt@p)))
   } else {
     lambda_mapping_Zt <- integer()
   }
+
+  for(f in seq_along(factor_in_random)){
+    if(factor_in_random[[f]]){
+      mappings <- lapply(seq_along(lmod$reTrms$cnms), function(i){
+        delta <- diff(lmod$reTrms$Ztlist[[i]]@p)
+        cnms <- lmod$reTrms$cnms[[i]]
+
+        cnms_match <- vapply(colnames(lambda[[f]]), function(x) any(grepl(x, cnms)), TRUE)
+        if(any(cnms_match)){
+          ll <- lambda[[f]][, names(cnms_match[cnms_match]), drop = FALSE] - 2L
+        } else {
+          return(rep(-1L, sum(delta)))
+        }
+
+        mapping_component <- rep(NA_integer_, sum(delta))
+        for(j in seq_along(cnms)){
+          cn <- cnms[[j]]
+          inds <- which(data[, cn] != 0)
+          mapping_component[inds] <- unlist(Map(function(x, y) rep(ll[x, cn], each = y),
+                                                x = data[inds, load.var], y = delta[inds]))
+
+        }
+
+        mapping_component
+      })
+
+      max_map <- max(vapply(mappings, length, 1))
+      mappings <- lapply(mappings, function(x){
+        if(length(x) < max_map){
+          x <- c(x, rep(NA_real_, max_map - length(x)))
+        } else {
+          x
+        }
+      })
+      lambda_mapping_Zt <- as.numeric(do.call(rbind, mappings))
+      lambda_mapping_Zt <- lambda_mapping_Zt[!is.na(lambda_mapping_Zt)]
+
+      stopifnot(length(lambda_mapping_Zt) == sum(diff(Zt@p)))
+
+    }
+  }
+
 
   Lambdat <- lmod$reTrms$Lambdat
   theta_mapping <- lmod$reTrms$Lind - 1L
