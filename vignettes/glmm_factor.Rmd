@@ -52,6 +52,16 @@ galamm_mod <- galamm(
 summary(galamm_mod)
 ```
 
+## Binomial Model with Multiple Trials
+
+
+We simulate such data by computing predictions from the model fitted above, and drawing binomial samples with multiple trials.
+
+```{r}
+# Need to implement predict function first.
+```
+
+
 ## Model with Poisson Distributed Responses
 
 To illustrate the model for counts, we consider an example from Chapter 11.3 in @skrondalGeneralizedLatentVariable2004. The model does not contain factor loadings, but we use it to demonstrate how to fit GLMMs with Poisson distributed responses. 

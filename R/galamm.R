@@ -2,7 +2,10 @@
 #'
 #' @param formula A formula
 #' @param data A dataset
-#' @param family Family
+#' @param family A vector of families
+#' @param family_mapping A vector mapping from the elements of "family" to rows
+#'   of "data". Defaults to \code{rep(1L, nrow(data))}, which means that all
+#'   observations are distributed according to the first element of "family".
 #' @param load.var Variable the factors load onto
 #' @param lambda Loading
 #' @param factor list of factors
@@ -13,13 +16,19 @@
 #' @importFrom stats gaussian
 #' @importFrom Rdpack reprompt
 galamm <- function(formula, data, family = gaussian,
+                   family_mapping = rep(1L, nrow(data)),
                    load.var = NULL, lambda = NULL, factor = NULL){
 
+  stopifnot(length(family) == length(unique(family_mapping)))
   mc <- match.call()
-  if (is.character(family))
-    family <- get(family, mode = "function", envir = parent.frame(2))
-  if (is.function(family))
-    family <- family()
+  if(!is.list(family)) family <- list(family)
+  family_list <- lapply(family, function(f){
+    if (is.character(f))
+      get(f, mode = "function", envir = parent.frame(2))
+    if (is.function(f))
+      f()
+
+  })
 
   parameter_index <- 2
   if(!is.null(factor)){
@@ -52,8 +61,11 @@ galamm <- function(formula, data, family = gaussian,
 
   for(f in seq_along(factor_in_fixed)){
     if(factor_in_fixed[[f]]){
-
-      stop("Not implemented yet")
+      cols <- grep(factor[[1]], colnames(X))
+      for(cc in cols){
+        lambda_mapping_X[seq(from = (cc - 1) * nrow(X) + 1, to = cc * nrow(X))] <-
+          lambda[[1]][data[, load.var]] - 2L
+      }
     }
   }
 
@@ -130,9 +142,9 @@ galamm <- function(formula, data, family = gaussian,
       lambda_mapping_Zt = lambda_mapping_Zt,
       weights = numeric(),
       weights_mapping = integer(),
-      family = family$family,
-      family_mapping = rep(0L, nrow(data)),
-      maxit_conditional_modes = ifelse(family$family == "gaussian", 1, 50),
+      family = vapply(family_list, function(f) f$family, "a"),
+      family_mapping = as.integer(family_mapping) - 1L,
+      maxit_conditional_modes = ifelse(length(family_list) == 1 & family_list[[1]]$family == "gaussian", 1, 50),
       hessian = hessian
     )
   }
@@ -162,10 +174,17 @@ galamm <- function(formula, data, family = gaussian,
     Zt@x <- c(1, opt$par[lambda_inds])[lambda_mapping_Zt + 2L]
   }
   # Compute prediction
-  fit <- family$linkinv(
-    as.numeric(X %*% opt$par[beta_inds] +
-                 Matrix::t(Zt) %*% Matrix::t(Lambdat) %*% final_model$u)
-  )
+  preds <- vapply(family_list, function(fam){
+    fam$linkinv(
+      as.numeric(X %*% opt$par[beta_inds] +
+                   Matrix::t(Zt) %*% Matrix::t(Lambdat) %*% final_model$u)
+    )
+  }, numeric(nrow(X)))
+
+  fit <- unlist(Map(function(i, j){
+    preds[i, j]
+  }, i = seq_len(nrow(preds)), j = family_mapping))
+
 
   ret <- list()
   ret$lambda <- lambda
@@ -182,21 +201,25 @@ galamm <- function(formula, data, family = gaussian,
   ret$lmod <- lmod
   ret$mc <- mc
   ret$family <- family
-  ret$df <- length(opt$par) + is.na(family$dispersion)
+  ret$df <- length(opt$par) + vapply(family_list, function(x) is.na(x$dispersion), logical(1))
 
   ret$n <- nrow(X)
 
-  ret$pearson_residuals <- (response - fit) / sqrt(family$variance(fit))
+  ret$pearson_residuals <- (response - fit) / unlist(Map(function(x, y) sqrt(family_list[[x]]$variance(y)),
+                                                         x = family_mapping, y = fit))
 
-  if(family$family == "gaussian"){
-    ret$deviance_residuals <- response - fit
-    ret$deviance <- -2 * ret$loglik
-  } else {
-    # McCullagh and Nelder (1989), page 39
-    dev_res <- sqrt(family$dev.resids(response, fit, 1))
-    ret$deviance_residuals <- sign(response - fit) * dev_res
-    ret$deviance <- sum((dev_res)^2)
+  if(length(family_list) == 1){
+    if(family_list[[1]]$family == "gaussian"){
+      ret$deviance_residuals <- response - fit
+      ret$deviance <- -2 * ret$loglik
+    } else {
+      # McCullagh and Nelder (1989), page 39
+      dev_res <- sqrt(family_list[[1]]$dev.resids(response, fit, 1))
+      ret$deviance_residuals <- sign(response - fit) * dev_res
+      ret$deviance <- sum((dev_res)^2)
+    }
   }
+
   ret$fit <- fit
   ret$response <- response
 

@@ -20,6 +20,18 @@
 #' @references \insertAllCited{}
 "epilep"
 
+#' Simulated Mixed Response Data
+#'
+#' Very basic mixed response dataset with one set of normally distributed
+#' responses and one set of binomially distributed responses.
+#'
+#' @format ## `mresp` A data frame with 2000 rows and 3 columns:
+#' \describe{
+#'   \item{id}{Subject ID.}
+#'   \item{item}{Item indicator. Equals 1 for normally distributed response and 2 for binomially distributed response.}
+#'   \item{y}{Response.}
+#' }
+"mresp"
 
 #' Diet Data
 #'
@@ -35,9 +47,9 @@
 #'   \item{id}{Subject ID.}
 #'   \item{age}{Age in years.}
 #'   \item{bus}{Dummy variable indicating whether the subject is a bus driver or banking staff.}
+#'   \item{item}{Integer indicating whether the outcome is fiber intake at time 1 (item = 1), fiber intake at time 2 (item = 2), or coronary heart disease (item = 3).}
 #'   \item{y}{Outcome.}
-#'   \item{d1, d2}{Dummy variables indicating whether y is measurement of fiber intake at timepoint 1 or 2.}
-#'   \item{d3}{Dummy variable indicating whether y is an indicator for coronary heart disease, coded as 0/1.}
+#'   \item{chd}{Dummy variable indicating whether y is an indicator for coronary heart disease, coded as 0/1.}
 #' }
 #' @source <http://www.gllamm.org/books/readme.html#14.2>
 #' @references \insertAllCited{}

@@ -11,7 +11,8 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  eval = FALSE
 )
 ```
 
@@ -23,7 +24,20 @@ library(lme4)
 
 This vignette describes how `galamm` can be used to estimate models with mixed response types.
 
-## Mixed Binomial and Gaussian Response Model
+## Mixed Normal and Binomial Response
+
+```{r}
+mod0 <- galamm(
+  formula = cbind(y, trials) ~ (0 + item | id),
+  data = mresp[mresp$item %in% 6:10, ],
+  family = binomial
+)
+
+
+```
+
+
+## Covariate Measurement Error Model
 
 This example is taken from Chapter 14.2 in @skrondalGeneralizedLatentVariable2004, which I refer to for further interpretation and discussion. The main purpose here is to confirm that we reproduce their results, and to show the syntax.
 
@@ -48,9 +62,26 @@ where $d_{1i}$ and $d_{2i}$ are indicators for fiber measurements at timepoints 
 At this point it may help to look at the first few rows of the dataset.
 
 ```{r}
-head(diet, 20)
+head(diet, 10)
 ```
 
+With this dataset, the response $y$ is normally distributed when $d_{1i}=1$ or $d_{2i}=1$, but binomially distributed when $d_{3i}=1$. These two response processes are connected through the latent variable $\eta_{j}$.
+
+
+```{r}
+lam <- matrix(c(1, 1, NA), ncol = 1)
+mod <- galamm(
+  # Add loadings in X
+  # Add mixed response option.
+  formula = y ~ (age * bus):chd + loading : (age * bus) + (0 + loading | id), 
+  data = diet,
+  family = c(gaussian, binomial),
+  family_mapping = ifelse(diet$item %in% 1:2, 1L, 2L),
+  factor = list("loading"), 
+  load.var = "item", 
+  lambda = list(lam)
+  )
+```
 
 
 
