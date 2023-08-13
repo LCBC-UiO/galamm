@@ -52,6 +52,37 @@ galamm_mod <- galamm(
 summary(galamm_mod)
 ```
 
+## Binomial Model with Multiple Trials
+
+
+We simulate such data by computing predictions from the model fitted above, and drawing binomial samples with multiple trials. 
+
+```{r}
+set.seed(1234)
+dat <- IRTsim
+dat$trials <- sample(1:10, nrow(dat), replace = TRUE)
+dat$y <- rbinom(n = nrow(dat), size = dat$trials, 
+                prob = predict(galamm_mod, type = "response"))
+head(dat)
+```
+
+For now, the number of trials has to be specified with a separate `trials` argument. Using `cbind(successes, failures)` as in `glm` is not yet implemented.
+
+```{r}
+galamm_mod_trials <- galamm(
+  formula = y ~ item + (0 + abil.sid | sid) + (0 + abil.sid | school),
+  data = dat, 
+  family = binomial,
+  load.var = "item", 
+  factor = list("abil.sid"), 
+  lambda = list(irt.lam),
+  trials = dat$trials
+  )
+
+summary(galamm_mod_trials)
+```
+
+
 ## Model with Poisson Distributed Responses
 
 To illustrate the model for counts, we consider an example from Chapter 11.3 in @skrondalGeneralizedLatentVariable2004. The model does not contain factor loadings, but we use it to demonstrate how to fit GLMMs with Poisson distributed responses. 

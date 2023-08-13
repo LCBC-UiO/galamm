@@ -8,13 +8,13 @@
 \subsection{\code{epilep} A data frame with 236 rows and 7 columns:}{
 
 \describe{
-\item{subj}{Subject ID}
-\item{y}{Number of seizures}
-\item{treat}{Dummy variable for treatment group}
-\item{visit}{Time at visit}
-\item{v4}{Dummy for visit 4}
-\item{lage}{Logarithm of age}
-\item{lbas}{Logarithm of a quarter of the number of seizures in the eight weeks preceeding entry into the trial}
+\item{subj}{Subject ID.}
+\item{y}{Number of seizures.}
+\item{treat}{Dummy variable for treatment group.}
+\item{visit}{Time at visit.}
+\item{v4}{Dummy for visit 4.}
+\item{lage}{Logarithm of age.}
+\item{lbas}{Logarithm of a quarter of the number of seizures in the eight weeks preceeding entry into the trial.}
 }
 }
 }

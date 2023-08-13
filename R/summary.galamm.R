@@ -35,7 +35,7 @@ summary.galamm <- function(object, ...){
 
 
   ret$VarCorr <- structure(
-    lme4::mkVarCorr(sqrt(ret$phi), ret$cnms, nc = lengths(ret$cnms),
+    lme4::mkVarCorr(sqrt(ret$phi)[[1]], ret$cnms, nc = lengths(ret$cnms),
                     theta = ret$par[ret$theta_inds], names(ret$cnms)),
     useSc = TRUE, class = "VarCorr.merMod")
 

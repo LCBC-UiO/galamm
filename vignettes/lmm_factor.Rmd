@@ -149,7 +149,6 @@ factor = list(c("teacher1", "teacher2", "trait1.t",
 
 ```
 
-
 ## Model with a Product of Factor Loadings
 
 Finally, in their Example 2, @rockwoodEstimatingComplexMeasurement2019 consider a model which contains products of factor loadings. We start by preparing the data:

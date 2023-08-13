@@ -1,0 +1,107 @@
+---
+title: "Models with Mixed Response Types"
+output: rmarkdown::html_vignette
+bibliography: ../inst/references.bib
+vignette: >
+  %\VignetteIndexEntry{Models with Mixed Response Types}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(galamm)
+library(PLmixed)
+library(lme4)
+```
+
+This vignette describes how `galamm` can be used to estimate models with mixed response types.
+
+## Mixed Normal and Binomial Response
+
+We start with the `mresp` dataset, which comes with the package. The variable "itemgroup" defines the response type; it equals "a" for normally distributed responses and "b" for binomially distributed responses.
+
+```{r}
+mixed_resp <- galamm(
+  formula = y ~ x + (0 + itemgroup | id),
+  data = mresp,
+  family = c(gaussian, binomial),
+  family_mapping = ifelse(mresp$itemgroup == "a", 1L, 2L)
+)
+
+summary(mixed_resp)
+```
+
+
+## Covariate Measurement Error Model
+
+This example is taken from Chapter 14.2 in @skrondalGeneralizedLatentVariable2004, which I refer to for further interpretation and discussion. The main purpose here is to confirm that we reproduce their results, and to show the syntax.
+
+The model is defined as follows. First, true fiber intake for subject $j$ is assumed to depend on age and on whether the person is a bus driver or banking staff, and their interaction.
+
+$$\eta_{j} = \mathbf{x}_{j}'\boldsymbol{\gamma} + \zeta_{j}.$$
+
+For a part of the sample, there are two measurements of fiber intake, and we can hence estimate a measurement model, as follows:
+
+$$y_{ij} = \eta_{j} + \epsilon_{ij}, \qquad \epsilon_{ij} = N(0, \theta)$$
+
+Finally we define a disease model for the probability of coronary heart disease, as
+
+$$\text{logit}[P(D_{j}=1 | \eta_{j})] = \mathbf{x}_{j}'\boldsymbol{\beta} + \lambda \eta_{j}.$$
+
+Stacking the three responses, which are fiber intake at times 1 and 2, and coronary heart disease, we can define the joint model as a GLLAMM with linear predictor
+
+$$\nu_{ij} = d_{3i} \mathbf{x}_{j}'\boldsymbol{\beta} + \mathbf{x}_{j}'\boldsymbol{\gamma}\left[(d_{1i} + d_{2i}) + \lambda d_{3i}\right] + \zeta_{j} \left[(d_{1i} + d_{2i}) + \lambda d_{3i}\right],$$
+
+where $d_{1i}$ and $d_{2i}$ are indicators for fiber measurements at timepoints 1 and 2, and $d_{3i}$ is an indicator for coronary heart disease.
+
+At this point it may help to look at the first few rows of the dataset.
+
+```{r}
+head(diet, 10)
+```
+
+With this dataset, the response $y$ is normally distributed when $d_{1i}=1$ or $d_{2i}=1$, but binomially distributed when $d_{3i}=1$. These two response processes are connected through the latent variable $\eta_{j}$.
+
+We compute estimates, but note that the Hessian is rank deficient.
+
+```{r}
+lam <- matrix(c(1, 1, NA), ncol = 1)
+mod <- galamm(
+  formula = y ~ item + (age * bus) : chd 
+  + (age * bus) : loading : fiber + (0 + loading | id), 
+  data = diet,
+  family = c(gaussian, binomial),
+  family_mapping = ifelse(diet$item == "chd", 2L, 1L),
+  factor = list("loading"), 
+  load.var = "item", 
+  lambda = list(lam)
+  )
+```
+
+Inspecting the parameters shows that the latent variable is estimated to have zero variance. We try to increase the initial value, and see what happens.
+
+
+```{r}
+mod <- galamm(
+  formula = y ~ item + (age * bus) : chd 
+  + (age * bus) : loading : fiber + (0 + loading | id), 
+  data = diet,
+  family = c(gaussian, binomial),
+  family_mapping = ifelse(diet$item == "chd", 2L, 1L),
+  factor = list("loading"), 
+  load.var = "item", 
+  lambda = list(lam),
+  start = list(theta = 10)
+  )
+```
+
+Now we were able to reproduce results very close to those in Table 14.1 on page 420 of @skrondalGeneralizedLatentVariable2004.
+
+# References

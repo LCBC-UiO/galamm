@@ -8,9 +8,12 @@ galamm(
   formula,
   data,
   family = gaussian,
+  family_mapping = rep(1L, nrow(data)),
   load.var = NULL,
   lambda = NULL,
-  factor = NULL
+  factor = NULL,
+  trials = rep(1, nrow(data)),
+  start = NULL
 )
 }
 \arguments{
@@ -18,13 +21,23 @@ galamm(
 
 \item{data}{A dataset}
 
-\item{family}{Family}
+\item{family}{A vector of families}
+
+\item{family_mapping}{A vector mapping from the elements of "family" to rows
+of "data". Defaults to \code{rep(1L, nrow(data))}, which means that all
+observations are distributed according to the first element of "family".}
 
 \item{load.var}{Variable the factors load onto}
 
 \item{lambda}{Loading}
 
 \item{factor}{list of factors}
+
+\item{trials}{Number of trials for binomial responses.}
+
+\item{start}{A named list of starting values for parameters. Possible names
+of list elements are "theta", "beta", and "lambda", all of which represent
+numerical vectors.}
 }
 \value{
 A model object
