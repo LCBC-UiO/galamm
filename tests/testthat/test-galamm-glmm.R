@@ -28,28 +28,12 @@ test_that("Logistic GLMM with simple factor works", {
 
   expect_equal(mod$pearson_residuals[c(2, 3, 9)],
                c(0.571079113462046, 0.809777597885337, -1.13850440935134))
-})
 
-test_that("Poisson GLMM works", {
-  count_mod <- galamm(
-    formula = y ~ lbas * treat + lage + v4 + (1|subj),
-    data = epilep,
-    family = poisson
-  )
-  expect_equal(count_mod$loglik, -665.358734786824)
-  expect_equal(count_mod$deviance, 407.006167030425)
-  expect_equal(count_mod$par,
-               c(0.501565551064086, 1.79356916017583, 0.884503952015789, -0.334962607667788,
-                 0.48458513737595, -0.161087431903879, 0.338389940944434))
-
-})
-
-test_that("Logistic GLMM with multiple trials works", {
   set.seed(1234)
   dat <- IRTsim
   dat$trials <- sample(1:10, nrow(dat), replace = TRUE)
   dat$y <- rbinom(n = nrow(dat), size = dat$trials,
-                  prob = predict(galamm_mod, type = "response"))
+                  prob = predict(mod, type = "response"))
 
   galamm_mod_trials <- galamm(
     formula = y ~ item + (1 | sid) + (1 | school),
@@ -79,3 +63,18 @@ test_that("Logistic GLMM with multiple trials works", {
       deviance = 2628.69306896257, df.resid = 2493)
   )
 })
+
+test_that("Poisson GLMM works", {
+  count_mod <- galamm(
+    formula = y ~ lbas * treat + lage + v4 + (1|subj),
+    data = epilep,
+    family = poisson
+  )
+  expect_equal(count_mod$loglik, -665.358734786824)
+  expect_equal(count_mod$deviance, 407.006167030425)
+  expect_equal(count_mod$par,
+               c(0.501565551064086, 1.79356916017583, 0.884503952015789, -0.334962607667788,
+                 0.48458513737595, -0.161087431903879, 0.338389940944434))
+
+})
+

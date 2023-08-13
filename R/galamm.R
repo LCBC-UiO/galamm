@@ -203,23 +203,25 @@ galamm <- function(formula, data, family = gaussian,
   ret$lmod <- lmod
   ret$mc <- mc
   ret$family <- family
-  ret$df <- length(opt$par) + vapply(family_list, function(x) is.na(x$dispersion), logical(1))
+  ret$df <- length(opt$par) + sum(vapply(family_list, function(x) is.na(x$dispersion), logical(1)))
 
   ret$n <- nrow(X)
 
   ret$pearson_residuals <- (response - fit) / unlist(Map(function(x, y) sqrt(family_list[[x]]$variance(y)),
                                                          x = family_mapping, y = fit))
 
-  if(length(family_list) == 1){
-    if(family_list[[1]]$family == "gaussian"){
-      ret$deviance_residuals <- response - fit
-      ret$deviance <- -2 * ret$loglik
+  if(length(family_list) == 1 && family_list[[1]]$family == "gaussian"){
+    ret$deviance_residuals <- response - fit
+    ret$deviance <- -2 * ret$loglik
     } else {
-      # McCullagh and Nelder (1989), page 39
-      dev_res <- sqrt(family_list[[1]]$dev.resids(response / trials, fit, trials))
+    # McCullagh and Nelder (1989), page 39
+      tmp <- lapply(family_list, function(x) x$dev.resids(response / trials, fit, trials))
+      dev_res <- sqrt(vapply(
+        seq_along(family_mapping),
+        function(i) tmp[[family_mapping[[i]]]][[i]], 1))
+
       ret$deviance_residuals <- sign(response - fit) * dev_res
       ret$deviance <- sum((dev_res)^2)
-    }
   }
 
   ret$fit <- fit
