@@ -16,6 +16,12 @@
     <loc>https://lcbc-uio.github.io/galamm/articles/lmm_factor.html</loc>
   </url>
   <url>
+    <loc>https://lcbc-uio.github.io/galamm/articles/lmm_heteroscedastic.html</loc>
+  </url>
+  <url>
+    <loc>https://lcbc-uio.github.io/galamm/articles/mixed_response.html</loc>
+  </url>
+  <url>
     <loc>https://lcbc-uio.github.io/galamm/authors.html</loc>
   </url>
   <url>
@@ -23,6 +29,9 @@
   </url>
   <url>
     <loc>https://lcbc-uio.github.io/galamm/news.html</loc>
+  </url>
+  <url>
+    <loc>https://lcbc-uio.github.io/galamm/reference/diet.html</loc>
   </url>
   <url>
     <loc>https://lcbc-uio.github.io/galamm/reference/epilep.html</loc>
@@ -38,6 +47,12 @@
   </url>
   <url>
     <loc>https://lcbc-uio.github.io/galamm/reference/marginal_likelihood.html</loc>
+  </url>
+  <url>
+    <loc>https://lcbc-uio.github.io/galamm/reference/mresp.html</loc>
+  </url>
+  <url>
+    <loc>https://lcbc-uio.github.io/galamm/reference/predict.galamm.html</loc>
   </url>
   <url>
     <loc>https://lcbc-uio.github.io/galamm/reference/print.summary.galamm.html</loc>

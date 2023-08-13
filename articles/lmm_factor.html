@@ -43,6 +43,8 @@
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/glmm_factor.html">Generalized Linear Mixed Models with Factor Structures</a>
     <a class="dropdown-item" href="../articles/lmm_factor.html">Linear Mixed Models with Factor Structures</a>
+    <a class="dropdown-item" href="../articles/lmm_heteroscedastic.html">Heteroscedastic Linear Mixed Models</a>
+    <a class="dropdown-item" href="../articles/mixed_response.html">Models with Mixed Response Types</a>
   </div>
 </li>
       </ul>
@@ -133,7 +135,7 @@ numerics.</p>
 <span><span class="co">#&gt; segments explored during Cauchy searches 28</span></span>
 <span><span class="co">#&gt; BFGS updates skipped 0</span></span>
 <span><span class="co">#&gt; active bounds at final generalized Cauchy point 0</span></span>
-<span><span class="co">#&gt; norm of the final projected gradient 0.0276741</span></span>
+<span><span class="co">#&gt; norm of the final projected gradient 0.027674</span></span>
 <span><span class="co">#&gt; final function value 1538.54</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; F = 1538.54</span></span>
@@ -144,7 +146,6 @@ numerics.</p>
 <span><span class="co">#&gt; Generalized additive latent and mixed model fit by maximum marginal likelihood.</span></span>
 <span><span class="co">#&gt; Formula: y ~ item + (0 + abil.sid | sid) + (0 + abil.sid | school)</span></span>
 <span><span class="co">#&gt;    Data: IRTsim</span></span>
-<span><span class="co">#&gt;  Family: gaussian  ( identity )</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;      AIC      BIC   logLik deviance df.resid </span></span>
 <span><span class="co">#&gt;   3101.1   3171.0  -1538.5   3077.1     2488 </span></span>
@@ -215,14 +216,14 @@ and Rabe-Hesketh (2012)</span>.</p>
 <span><span class="co">#&gt; At iterate    40  f =       9688.2  |proj g|=          26.3</span></span>
 <span><span class="co">#&gt; At iterate    50  f =       9682.5  |proj g|=        13.684</span></span>
 <span><span class="co">#&gt; At iterate    60  f =       9682.1  |proj g|=        16.198</span></span>
-<span><span class="co">#&gt; At iterate    70  f =         9682  |proj g|=       0.25487</span></span>
+<span><span class="co">#&gt; At iterate    70  f =         9682  |proj g|=       0.25503</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; iterations 76</span></span>
 <span><span class="co">#&gt; function evaluations 95</span></span>
 <span><span class="co">#&gt; segments explored during Cauchy searches 78</span></span>
 <span><span class="co">#&gt; BFGS updates skipped 0</span></span>
 <span><span class="co">#&gt; active bounds at final generalized Cauchy point 0</span></span>
-<span><span class="co">#&gt; norm of the final projected gradient 0.023069</span></span>
+<span><span class="co">#&gt; norm of the final projected gradient 0.0231238</span></span>
 <span><span class="co">#&gt; final function value 9681.99</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; F = 9681.99</span></span>
@@ -233,7 +234,6 @@ and Rabe-Hesketh (2012)</span>.</p>
 <span><span class="co">#&gt; Generalized additive latent and mixed model fit by maximum marginal likelihood.</span></span>
 <span><span class="co">#&gt; Formula: esteem ~ time + (0 + hs | hid) + (0 + ms | mid) + (1 | sid)</span></span>
 <span><span class="co">#&gt;    Data: KYPSsim</span></span>
-<span><span class="co">#&gt;  Family: gaussian  ( identity )</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;      AIC      BIC   logLik deviance df.resid </span></span>
 <span><span class="co">#&gt;  19388.0  19476.2  -9682.0  19364.0    11482 </span></span>

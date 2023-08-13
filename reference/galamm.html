@@ -26,6 +26,8 @@
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/glmm_factor.html">Generalized Linear Mixed Models with Factor Structures</a>
     <a class="dropdown-item" href="../articles/lmm_factor.html">Linear Mixed Models with Factor Structures</a>
+    <a class="dropdown-item" href="../articles/lmm_heteroscedastic.html">Heteroscedastic Linear Mixed Models</a>
+    <a class="dropdown-item" href="../articles/mixed_response.html">Models with Mixed Response Types</a>
   </div>
 </li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
@@ -53,9 +55,12 @@
 <span>  <span class="va">formula</span>,</span>
 <span>  <span class="va">data</span>,</span>
 <span>  family <span class="op">=</span> <span class="va">gaussian</span>,</span>
+<span>  family_mapping <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1L</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  load.var <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  lambda <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  factor <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  factor <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  trials <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  start <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -70,7 +75,13 @@
 
 
 <dt>family</dt>
-<dd><p>Family</p></dd>
+<dd><p>A vector of families</p></dd>
+
+
+<dt>family_mapping</dt>
+<dd><p>A vector mapping from the elements of "family" to rows
+of "data". Defaults to <code>rep(1L, nrow(data))</code>, which means that all
+observations are distributed according to the first element of "family".</p></dd>
 
 
 <dt>load.var</dt>
@@ -83,6 +94,16 @@
 
 <dt>factor</dt>
 <dd><p>list of factors</p></dd>
+
+
+<dt>trials</dt>
+<dd><p>Number of trials for binomial responses.</p></dd>
+
+
+<dt>start</dt>
+<dd><p>A named list of starting values for parameters. Possible names
+of list elements are "theta", "beta", and "lambda", all of which represent
+numerical vectors.</p></dd>
 
 </dl></div>
     <div class="section level2">
