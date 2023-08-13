@@ -11,7 +11,8 @@ galamm(
   family_mapping = rep(1L, nrow(data)),
   load.var = NULL,
   lambda = NULL,
-  factor = NULL
+  factor = NULL,
+  trials = rep(1, nrow(data))
 )
 }
 \arguments{
@@ -30,6 +31,8 @@ observations are distributed according to the first element of "family".}
 \item{lambda}{Loading}
 
 \item{factor}{list of factors}
+
+\item{trials}{Number of trials for binomial responses.}
 }
 \value{
 A model object

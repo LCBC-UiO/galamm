@@ -10,5 +10,14 @@
 #' @export
 #'
 predict.galamm <- function(object, newdata = NULL, type = c("link", "response")){
-  object$family
+  type <- match.arg(type)
+  if(!is.null(newdata)){
+    stop("Not implemented yet")
+  }
+
+  if(type == "response"){
+    object$fit
+  } else {
+    object$family[[1]]()$linkfun(object$fit)
+  }
 }

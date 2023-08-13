@@ -9,6 +9,7 @@
 #' @param load.var Variable the factors load onto
 #' @param lambda Loading
 #' @param factor list of factors
+#' @param trials Number of trials for binomial responses.
 #'
 #' @return A model object
 #' @export
@@ -17,7 +18,8 @@
 #' @importFrom Rdpack reprompt
 galamm <- function(formula, data, family = gaussian,
                    family_mapping = rep(1L, nrow(data)),
-                   load.var = NULL, lambda = NULL, factor = NULL){
+                   load.var = NULL, lambda = NULL, factor = NULL,
+                   trials = rep(1, nrow(data))){
 
   stopifnot(length(family) == length(unique(family_mapping)))
   mc <- match.call()
@@ -130,7 +132,7 @@ galamm <- function(formula, data, family = gaussian,
   mlwrapper <- function(par, hessian = FALSE){
     marginal_likelihood(
       y = as.numeric(response),
-      trials = rep(1, nrow(data)),
+      trials = as.numeric(trials),
       X = X,
       Zt = Zt,
       Lambdat = Lambdat,
@@ -214,7 +216,7 @@ galamm <- function(formula, data, family = gaussian,
       ret$deviance <- -2 * ret$loglik
     } else {
       # McCullagh and Nelder (1989), page 39
-      dev_res <- sqrt(family_list[[1]]$dev.resids(response, fit, 1))
+      dev_res <- sqrt(family_list[[1]]$dev.resids(response / trials, fit, trials))
       ret$deviance_residuals <- sign(response - fit) * dev_res
       ret$deviance <- sum((dev_res)^2)
     }

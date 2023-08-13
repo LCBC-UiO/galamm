@@ -43,3 +43,39 @@ test_that("Poisson GLMM works", {
                  0.48458513737595, -0.161087431903879, 0.338389940944434))
 
 })
+
+test_that("Logistic GLMM with multiple trials works", {
+  set.seed(1234)
+  dat <- IRTsim
+  dat$trials <- sample(1:10, nrow(dat), replace = TRUE)
+  dat$y <- rbinom(n = nrow(dat), size = dat$trials,
+                  prob = predict(galamm_mod, type = "response"))
+
+  galamm_mod_trials <- galamm(
+    formula = y ~ item + (1 | sid) + (1 | school),
+    data = dat,
+    family = binomial,
+    trials = dat$trials
+  )
+  ## Test results are confirmed in comparison to this model
+  # tmp <- lme4::glmer(
+  #   formula = cbind(y, trials - y) ~ item + (1 | sid) + (1 | school),
+  #   data = dat,
+  #   family = binomial,
+  # )
+  expect_equal(galamm_mod_trials$loglik, -3534.51945431292)
+  expect_equal(summary(galamm_mod_trials)$fixef,
+               structure(c(0.434857938909014, 0.355598397922802, -0.457362207203679,
+                           0.513797577453551, 0.581753809430895, 0.165404285537448, 0.0630256521208169,
+                           0.0618539379075891, 0.064439591822642, 0.0641691651190108, 2.6290608946197,
+                           5.64212167517345, -7.39422941651648, 7.97332141500342, 9.06594013420543
+               ), dim = c(5L, 3L), dimnames = list(c("(Intercept)", "item2",
+                                                     "item3", "item4", "item5"), c("Estimate", "Std. Error", "t value"
+                                                     ))))
+
+  expect_equal(
+    summary(galamm_mod_trials)$AICtab,
+    c(AIC = 2642.69306896257, BIC = 2683.46139103857, logLik = -3534.51945431292,
+      deviance = 2628.69306896257, df.resid = 2493)
+  )
+})
