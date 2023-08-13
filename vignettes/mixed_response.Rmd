@@ -11,8 +11,7 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>",
-  eval = FALSE
+  comment = "#>"
 )
 ```
 
@@ -70,22 +69,39 @@ head(diet, 10)
 
 With this dataset, the response $y$ is normally distributed when $d_{1i}=1$ or $d_{2i}=1$, but binomially distributed when $d_{3i}=1$. These two response processes are connected through the latent variable $\eta_{j}$.
 
+We compute estimates, but note that the Hessian is rank deficient.
 
 ```{r}
 lam <- matrix(c(1, 1, NA), ncol = 1)
 mod <- galamm(
-  # Add loadings in X
-  # Add mixed response option.
-  formula = y ~ (age * bus):chd + loading : (age * bus) + (0 + loading | id), 
+  formula = y ~ item + (age * bus) : chd 
+  + (age * bus) : loading : fiber + (0 + loading | id), 
   data = diet,
   family = c(gaussian, binomial),
-  family_mapping = ifelse(diet$item %in% 1:2, 1L, 2L),
+  family_mapping = ifelse(diet$item == "chd", 2L, 1L),
   factor = list("loading"), 
   load.var = "item", 
   lambda = list(lam)
   )
 ```
 
+Inspecting the parameters shows that the latent variable is estimated to have zero variance. We try to increase the initial value, and see what happens.
 
+
+```{r}
+mod <- galamm(
+  formula = y ~ item + (age * bus) : chd 
+  + (age * bus) : loading : fiber + (0 + loading | id), 
+  data = diet,
+  family = c(gaussian, binomial),
+  family_mapping = ifelse(diet$item == "chd", 2L, 1L),
+  factor = list("loading"), 
+  load.var = "item", 
+  lambda = list(lam),
+  start = list(theta = 10)
+  )
+```
+
+Now we were able to reproduce results very close to those in Table 14.1 on page 420 of @skrondalGeneralizedLatentVariable2004.
 
 # References

@@ -1,5 +1,6 @@
 library(tidyverse)
-diet0 <- read.delim("http://www.gllamm.org/books/diet.dat", header = TRUE, sep = "\t")
+#diet0 <- read.delim("http://www.gllamm.org/books/diet.dat", header = TRUE, sep = "\t")
+diet0 <- read.delim("data-raw/diet.dat", header = TRUE, sep = "\t")
 diet0$fiber2[diet0$fiber2 == -99] <- NA_real_
 
 diet <- diet0 %>%
@@ -9,7 +10,9 @@ diet <- diet0 %>%
     values_drop_na = TRUE) %>%
   mutate(
     chd = as.integer(item == "chd"),
-    item = as.integer(factor(item, levels = c("fiber1", "fiber2", "chd")))
+    fiber = 1L - chd,
+    fiber2 = item == "fiber2",
+    item = factor(item, levels = c("fiber1", "fiber2", "chd"))
   ) %>%
   as.data.frame()
 

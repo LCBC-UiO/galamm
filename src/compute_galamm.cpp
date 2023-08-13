@@ -106,7 +106,7 @@ logLikObject<T> logLik(
       // If we cannot find a reducing step, then it's not possible to reduce the
       // lossvalue any more, and also the outer loop should break
       if(j == 9){
-        Rcpp::Rcout << "Could not find reducing step: i = " << i << ", j = " << j << std::endl;
+        //Rcpp::Rcout << "Could not find reducing step: i = " << i << ", j = " << j << std::endl;
         goto jump; // go all the way down to after the loop
       }
     }

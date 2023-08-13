@@ -10,6 +10,9 @@
 #' @param lambda Loading
 #' @param factor list of factors
 #' @param trials Number of trials for binomial responses.
+#' @param start A named list of starting values for parameters. Possible names
+#'   of list elements are "theta", "beta", and "lambda", all of which represent
+#'   numerical vectors.
 #'
 #' @return A model object
 #' @export
@@ -19,7 +22,8 @@
 galamm <- function(formula, data, family = gaussian,
                    family_mapping = rep(1L, nrow(data)),
                    load.var = NULL, lambda = NULL, factor = NULL,
-                   trials = rep(1, nrow(data))){
+                   trials = rep(1, nrow(data)),
+                   start = NULL){
 
   stopifnot(length(family) == length(unique(family_mapping)))
   mc <- match.call()
@@ -146,7 +150,7 @@ galamm <- function(formula, data, family = gaussian,
       weights_mapping = integer(),
       family = vapply(family_list, function(f) f$family, "a"),
       family_mapping = as.integer(family_mapping) - 1L,
-      maxit_conditional_modes = ifelse(length(family_list) == 1 & family_list[[1]]$family == "gaussian", 1, 50),
+      maxit_conditional_modes = ifelse(length(family_list) == 1 & family_list[[1]]$family == "gaussian", 1, 10),
       hessian = hessian
     )
   }
@@ -159,15 +163,37 @@ galamm <- function(formula, data, family = gaussian,
     mlmem(par)$gradient
   }
 
-  par_init <- c(lmod$reTrms$theta, rep(0, length(beta_inds)),
-                rep(1, length(lambda_inds)))
+  theta_init <- if(!is.null(start$theta)){
+    start$theta
+  } else {
+    lmod$reTrms$theta
+  }
+  beta_init <- if(!is.null(start$beta)){
+    start$beta
+  } else {
+    rep(0, length(beta_inds))
+  }
+  lambda_init <- if(!is.null(start$lambda)){
+    start$lambda
+  } else {
+    rep(1, length(lambda_inds))
+  }
+  par_init <- c(theta_init, beta_init, lambda_init)
 
   opt <- stats::optim(par_init, fn = fn, gr = gr,
                       method = "L-BFGS-B", lower = bounds,
                       control = list(fnscale = -1, lmm = 20, trace = 3))
 
+
   final_model <- mlwrapper(opt$par, TRUE)
-  S <- -solve(final_model$hessian)
+  S <- tryCatch({
+    -solve(final_model$hessian)
+  },
+  error = function(e){
+    message("Hessian rank deficient. Could not compute covariance matrix.")
+    NULL
+  })
+
 
   # Update Cholesky factor of covariance matrix
   Lambdat@x <- opt$par[theta_inds][lmod$reTrms$Lind]
