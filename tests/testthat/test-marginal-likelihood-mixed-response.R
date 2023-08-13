@@ -1,30 +1,16 @@
 library(Matrix)
 library(lme4)
 library(memoise)
-library(dplyr, warn.conflicts = FALSE)
-library(tidyr, warn.conflicts = FALSE)
-library(purrr, warn.conflicts = FALSE)
 
-set.seed(100)
-dat <- tibble(id = 1:1000) %>%
-  mutate(b = rnorm(nrow(.))) %>%
-  uncount(4, .id = "item") %>%
-  mutate(
-    x = runif(nrow(.)),
-    y = pmap_dbl(
-      list(b, item, x), ~ if_else(..2 %in% c(1, 2), rnorm(1, ..3 + ..1), as.numeric(rbinom(1, 1, plogis(..3 + ..1))))),
-    itemgroup = if_else(item %in% c(1, 2), "a", "b")
-  )
-
-lmod <- lFormula(y ~ x + (0 + itemgroup | id), data = dat)
+lmod <- lFormula(y ~ x + (0 + itemgroup | id), data = mresp)
 
 theta_inds <- seq_along(lmod$reTrms$theta)
 beta_inds <- seq(from = max(theta_inds) + 1, length.out = ncol(lmod$X))
 
-mlwrapper <- function(par, hessian = FALSE, epsilon_u = .1){
+mlwrapper <- function(par, hessian = FALSE){
   marginal_likelihood(
-    y = dat$y,
-    trials = rep(1, nrow(dat)),
+    y = mresp$y,
+    trials = rep(1, nrow(mresp)),
     X = lmod$X,
     Zt = lmod$reTrms$Zt,
     Lambdat = lmod$reTrms$Lambdat,
@@ -32,24 +18,23 @@ mlwrapper <- function(par, hessian = FALSE, epsilon_u = .1){
     theta = par[theta_inds],
     theta_mapping = lmod$reTrms$Lind - 1L,
     family = c("gaussian", "binomial"),
-    family_mapping = if_else(dat$item %in% c(1, 2), 0L, 1L),
+    family_mapping = if_else(mresp$itemgroup == "a", 0L, 1L),
     maxit_conditional_modes = 10,
-    hessian = hessian,
-    epsilon_u = epsilon_u
+    hessian = hessian
   )
 }
 
 mlmem <- memoise(mlwrapper)
-fn <- function(par, epsilon_u = .1){
-  mlmem(par, epsilon_u = epsilon_u)$logLik
+fn <- function(par){
+  mlmem(par)$logLik
 }
-gr <- function(par, epsilon_u = .1){
-  mlmem(par, epsilon_u = epsilon_u)$gradient
+gr <- function(par){
+  mlmem(par)$gradient
 }
 
 par_init <- c(lmod$reTrms$theta, rep(.3, ncol(lmod$X)))
 lbound <- c(lmod$reTrms$lower, rep(-Inf, ncol(lmod$X)))
-opt <- optim(par_init, fn, gr, epsilon_u = 1e-5, method = "L-BFGS-B",
+opt <- optim(par_init, fn, gr, method = "L-BFGS-B",
              lower = lbound, control = list(fnscale = -1))
 
 fmod <- mlmem(opt$par, TRUE)

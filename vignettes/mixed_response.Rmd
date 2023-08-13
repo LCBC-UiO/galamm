@@ -26,14 +26,17 @@ This vignette describes how `galamm` can be used to estimate models with mixed r
 
 ## Mixed Normal and Binomial Response
 
+We start with the `mresp` dataset, which comes with the package. The variable "itemgroup" defines the response type; it equals "a" for normally distributed responses and "b" for binomially distributed responses.
+
 ```{r}
-mod0 <- galamm(
-  formula = cbind(y, trials) ~ (0 + item | id),
-  data = mresp[mresp$item %in% 6:10, ],
-  family = binomial
+mixed_resp <- galamm(
+  formula = y ~ x + (0 + itemgroup | id),
+  data = mresp,
+  family = c(gaussian, binomial),
+  family_mapping = ifelse(mresp$itemgroup == "a", 1L, 2L)
 )
 
-
+summary(mixed_resp)
 ```
 
 

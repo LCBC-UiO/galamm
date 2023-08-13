@@ -25,11 +25,12 @@
 #' Very basic mixed response dataset with one set of normally distributed
 #' responses and one set of binomially distributed responses.
 #'
-#' @format ## `mresp` A data frame with 2000 rows and 3 columns:
+#' @format ## `mresp` A data frame with 4000 rows and 5 columns:
 #' \describe{
 #'   \item{id}{Subject ID.}
-#'   \item{item}{Item indicator. Equals 1 for normally distributed response and 2 for binomially distributed response.}
+#'   \item{x}{Predictor variable.}
 #'   \item{y}{Response.}
+#'   \item{itemgroup}{Factor variable which equals "a" for the normally distributed responses and "b" for the binomially distributed response (with 1 trial).}
 #' }
 "mresp"
 
