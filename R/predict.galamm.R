@@ -9,13 +9,13 @@
 #' @return A number vector of predicted values.
 #' @export
 #'
-predict.galamm <- function(object, newdata = NULL, type = c("link", "response")){
+predict.galamm <- function(object, newdata = NULL, type = c("link", "response")) {
   type <- match.arg(type)
-  if(!is.null(newdata)){
+  if (!is.null(newdata)) {
     stop("Not implemented yet")
   }
 
-  if(type == "response"){
+  if (type == "response") {
     object$fit
   } else {
     object$family[[1]]()$linkfun(object$fit)

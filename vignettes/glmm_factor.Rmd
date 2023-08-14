@@ -42,12 +42,12 @@ We fit the model as follows:
 ```{r}
 galamm_mod <- galamm(
   formula = y ~ item + (0 + abil.sid | sid) + (0 + abil.sid | school),
-  data = IRTsim, 
+  data = IRTsim,
   family = binomial,
-  load.var = "item", 
-  factor = list("abil.sid"), 
+  load.var = "item",
+  factor = list("abil.sid"),
   lambda = list(irt.lam)
-  )
+)
 
 summary(galamm_mod)
 ```
@@ -61,8 +61,10 @@ We simulate such data by computing predictions from the model fitted above, and 
 set.seed(1234)
 dat <- IRTsim
 dat$trials <- sample(1:10, nrow(dat), replace = TRUE)
-dat$y <- rbinom(n = nrow(dat), size = dat$trials, 
-                prob = predict(galamm_mod, type = "response"))
+dat$y <- rbinom(
+  n = nrow(dat), size = dat$trials,
+  prob = predict(galamm_mod, type = "response")
+)
 head(dat)
 ```
 
@@ -71,12 +73,12 @@ For binomial models with more than one trial, the response should be specified `
 ```{r}
 galamm_mod_trials <- galamm(
   formula = cbind(y, trials - y) ~ item + (0 + abil.sid | sid) + (0 + abil.sid | school),
-  data = dat, 
+  data = dat,
   family = binomial,
-  load.var = "item", 
-  factor = list("abil.sid"), 
+  load.var = "item",
+  factor = list("abil.sid"),
   lambda = list(irt.lam)
-  )
+)
 
 summary(galamm_mod_trials)
 ```
@@ -88,7 +90,7 @@ To illustrate the model for counts, we consider an example from Chapter 11.3 in 
 
 ```{r}
 count_mod <- galamm(
-  formula = y ~ lbas * treat + lage + v4 + (1|subj),
+  formula = y ~ lbas * treat + lage + v4 + (1 | subj),
   data = epilep,
   family = poisson
 )
@@ -101,7 +103,7 @@ In this case we can confirm that the `galamm` function is correctly implemented 
 ```{r}
 library(lme4)
 count_mod_lme4 <- glmer(
-  formula = y ~ lbas * treat + lage + v4 + (1|subj),
+  formula = y ~ lbas * treat + lage + v4 + (1 | subj),
   data = epilep,
   family = poisson
 )
