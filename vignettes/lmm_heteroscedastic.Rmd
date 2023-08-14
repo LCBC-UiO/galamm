@@ -17,8 +17,33 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(galamm)
-library(PLmixed)
 ```
+
+## Group-Wise Heteroscedasticity
+
+The package includes a simulated dataset `hsced`, in which the residual variance varies between items.
+
+```{r}
+head(hsced)
+```
+
+We specify the error structure using an additional formula object, `~ (1 | item)`, specifying that a different constraint term should be included per item.
+
+```{r}
+mod <- galamm(
+  formula = y ~ x + (1 | id),
+  weights = ~ (1 | item),
+  data = hsced
+)
+```
+
+The output shows that for item 2, the residual variance is half that of item 1.
+
+```{r}
+summary(mod)
+```
+
+
 
 
 # References

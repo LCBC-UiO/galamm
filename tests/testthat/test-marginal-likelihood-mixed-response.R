@@ -18,7 +18,7 @@ mlwrapper <- function(par, hessian = FALSE){
     theta = par[theta_inds],
     theta_mapping = lmod$reTrms$Lind - 1L,
     family = c("gaussian", "binomial"),
-    family_mapping = if_else(mresp$itemgroup == "a", 0L, 1L),
+    family_mapping = ifelse(mresp$itemgroup == "a", 0L, 1L),
     maxit_conditional_modes = 10,
     hessian = hessian
   )
