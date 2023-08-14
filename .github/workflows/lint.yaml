@@ -41,7 +41,7 @@ jobs:
             unnecessary_concatenation_linter()
             )
           excluded_files <- c("tests/", "data-raw/", "R/RcppExports.R", "vignettes/")
-          lint_package(linters = styles_rules, exclusions = excluded_files)
+          lint_package(linters = style_rules, exclusions = excluded_files)
         shell: Rscript {0}
         env:
           LINTR_ERROR_ON_LINT: true
