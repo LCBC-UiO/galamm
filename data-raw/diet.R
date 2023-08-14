@@ -1,5 +1,4 @@
 library(tidyverse)
-# diet0 <- read.delim("http://www.gllamm.org/books/diet.dat", header = TRUE, sep = "\t")
 diet0 <- read.delim("data-raw/diet.dat", header = TRUE, sep = "\t")
 diet0$fiber2[diet0$fiber2 == -99] <- NA_real_
 

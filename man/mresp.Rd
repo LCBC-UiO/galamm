@@ -11,7 +11,9 @@
 \item{id}{Subject ID.}
 \item{x}{Predictor variable.}
 \item{y}{Response.}
-\item{itemgroup}{Factor variable which equals "a" for the normally distributed responses and "b" for the binomially distributed response (with 1 trial).}
+\item{itemgroup}{Factor variable which equals "a" for the normally
+distributed responses and "b" for the binomially distributed response
+(with 1 trial).}
 }
 }
 }
