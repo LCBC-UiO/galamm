@@ -1,24 +1,10 @@
 library(Matrix)
 library(lme4)
-library(dplyr, quietly = TRUE, warn.conflicts = FALSE)
-library(tidyr, quietly = TRUE, warn.conflicts = FALSE)
 library(memoise)
 
-set.seed(11)
-n <- 200
-dat <- tibble(
-  id = 1:n,
-  b = rnorm(n)
-) %>%
-  uncount(3, .id = "tp") %>%
-  uncount(2, .id = "item") %>%
-  mutate(
-    x = runif(nrow(.)),
-    winv = if_else(item == 1, 1, 2),
-    y = x + b + rnorm(nrow(.), sd = sqrt(winv))
-  )
+dat <- hsced
 
-w <- 1 / dat$winv
+w <- 1 / ifelse(dat$item == 1, 1, 2)
 lmod <- lFormula(y ~ x + (1 | id), data = dat, REML = FALSE, weights = w)
 devfun <- do.call(mkLmerDevfun, lmod)
 opt <- optimizeLmer(devfun)
