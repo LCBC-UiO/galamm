@@ -109,8 +109,12 @@ linear mixed models with factor structures.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">pl_mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/PLmixed/man/PLmixed.html" class="external-link">PLmixed</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">item</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">abil.sid</span> <span class="op">|</span> <span class="va">sid</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">abil.sid</span> <span class="op">|</span> <span class="va">school</span><span class="op">)</span>,</span>
-<span>  data <span class="op">=</span> <span class="va">IRTsim</span>, load.var <span class="op">=</span> <span class="st">"item"</span>, </span>
-<span>  factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"abil.sid"</span><span class="op">)</span>, lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">irt.lam</span><span class="op">)</span>, iter.count <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span>  data <span class="op">=</span> <span class="va">IRTsim</span>, </span>
+<span>  load.var <span class="op">=</span> <span class="st">"item"</span>, </span>
+<span>  factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"abil.sid"</span><span class="op">)</span>, </span>
+<span>  lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">irt.lam</span><span class="op">)</span>, </span>
+<span>  iter.count <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  <span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">pl_mod</span><span class="op">)</span></span></code></pre></div>
 <p>Next we fit the model using <code>galamm</code>. This is typically
 6-7 times faster than the corresponding call using <code>PLmixed</code>,

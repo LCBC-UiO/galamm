@@ -186,19 +186,16 @@ above, and drawing binomial samples with multiple trials.</p>
 <span><span class="co">#&gt; 1.4   1      1    4 6      9</span></span>
 <span><span class="co">#&gt; 1.5   1      1    5 3      5</span></span>
 <span><span class="co">#&gt; 2.1   2      1    1 0      6</span></span></code></pre></div>
-<p>For now, the number of trials has to be specified with a separate
-<code>trials</code> argument. Using
-<code>cbind(successes, failures)</code> as in <code>glm</code> is not
-yet implemented.</p>
+<p>For binomial models with more than one trial, the response should be
+specified <code>cbind(successes, failures)</code>.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">galamm_mod_trials</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
-<span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">item</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">abil.sid</span> <span class="op">|</span> <span class="va">sid</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">abil.sid</span> <span class="op">|</span> <span class="va">school</span><span class="op">)</span>,</span>
+<span>  formula <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">y</span>, <span class="va">trials</span> <span class="op">-</span> <span class="va">y</span><span class="op">)</span> <span class="op">~</span> <span class="va">item</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">abil.sid</span> <span class="op">|</span> <span class="va">sid</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">abil.sid</span> <span class="op">|</span> <span class="va">school</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">dat</span>, </span>
 <span>  family <span class="op">=</span> <span class="va">binomial</span>,</span>
 <span>  load.var <span class="op">=</span> <span class="st">"item"</span>, </span>
 <span>  factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"abil.sid"</span><span class="op">)</span>, </span>
-<span>  lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">irt.lam</span><span class="op">)</span>,</span>
-<span>  trials <span class="op">=</span> <span class="va">dat</span><span class="op">$</span><span class="va">trials</span></span>
+<span>  lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">irt.lam</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="co">#&gt; N = 11, M = 20 machine precision = 2.22045e-16</span></span>
 <span><span class="co">#&gt; At X0, 0 variables are exactly at the bounds</span></span>
@@ -220,7 +217,8 @@ yet implemented.</p>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">galamm_mod_trials</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Generalized additive latent and mixed model fit by maximum marginal likelihood.</span></span>
-<span><span class="co">#&gt; Formula: y ~ item + (0 + abil.sid | sid) + (0 + abil.sid | school)</span></span>
+<span><span class="co">#&gt; Formula: cbind(y, trials - y) ~ item + (0 + abil.sid | sid) + (0 + abil.sid |  </span></span>
+<span><span class="co">#&gt;     school)</span></span>
 <span><span class="co">#&gt;    Data: dat</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;      AIC      BIC   logLik deviance df.resid </span></span>
