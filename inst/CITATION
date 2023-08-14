@@ -1,0 +1,13 @@
+bibentry(
+  bibtype  = "Article",
+  title    = "Longitudinal Modeling of Age-Dependent Latent Traits with Generalized Additive Latent and Mixed Models",
+  author   = c(person("{\\O}ystein", "S{\\o}rensen"),
+                    person("Kristine B.", "Walhovd"),
+                    person("Anders M.", "Fjell")),
+  journal  = "Psychometrika",
+  year     = "2023",
+  volume   = "88",
+  number   = "2",
+  pages    = "456-486",
+  doi      = "10.1007/s11336-023-09910-z"
+)
