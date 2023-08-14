@@ -1,3 +1,4 @@
+#include <memory>
 #include "data.h"
 #include "parameters.h"
 #include "model.h"
