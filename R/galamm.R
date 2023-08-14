@@ -19,7 +19,7 @@
 #' @return A model object
 #' @export
 #'
-#' @importFrom stats gaussian
+#' @importFrom stats gaussian model.frame model.response
 #' @importFrom Rdpack reprompt
 galamm <- function(formula, weights = NULL, data, family = gaussian,
                    family_mapping = rep(1L, nrow(data)),
