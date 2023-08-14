@@ -40,13 +40,19 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   parameter_index <- 2
   if (!is.null(factor)) {
     for (i in seq_along(factor)) {
-      lambda[[i]][is.na(lambda[[i]])] <- seq(from = parameter_index, length.out = sum(is.na(lambda[[i]])))
+      lambda[[i]][is.na(lambda[[i]])] <-
+        seq(from = parameter_index, length.out = sum(is.na(lambda[[i]])))
       colnames(lambda[[i]]) <- factor[[i]]
-      if (any(factor[[i]] %in% colnames(data))) stop("Factor already a column in data.")
+      if (any(factor[[i]] %in% colnames(data)))
+        stop("Factor already a column in data.")
       for (j in seq_along(factor[[i]])) {
         eval(parse(text = paste("data$", factor[[i]][[j]], "<-1")))
-        rows_to_zero <- data[, load.var] %in% levels(data[, load.var])[lambda[[i]][, j] == 0]
-        eval(parse(text = paste("data$", factor[[i]][[j]], "[rows_to_zero] <- 0")))
+        rows_to_zero <-
+          data[, load.var] %in% levels(data[, load.var])[lambda[[i]][, j] == 0]
+        eval(
+          parse(
+            text =
+              paste("data$", factor[[i]][[j]], "[rows_to_zero] <- 0")))
       }
       parameter_index <- max(lambda[[i]]) + 1
     }
@@ -67,14 +73,18 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
       trials <- rep(1, sum(family_mapping == i))
       response <- mr
     }
-    response_obj[family_mapping == i, ] <- cbind(response = response, trials = trials)
+    response_obj[family_mapping == i, ] <-
+      cbind(response = response, trials = trials)
   }
   rm(trials, response)
 
   vars_in_fixed <- all.vars(lme4::nobars(formula)[-2])
-  factor_in_fixed <- vapply(factor, function(x) any(x %in% vars_in_fixed), TRUE)
-  vars_in_random <- do.call(c, lapply(lme4::findbars(formula), all.vars))
-  factor_in_random <- vapply(factor, function(x) any(x %in% vars_in_random), TRUE)
+  factor_in_fixed <-
+    vapply(factor, function(x) any(x %in% vars_in_fixed), TRUE)
+  vars_in_random <-
+    do.call(c, lapply(lme4::findbars(formula), all.vars))
+  factor_in_random <-
+    vapply(factor, function(x) any(x %in% vars_in_random), TRUE)
 
   X <- lmod$X
   if (any(factor_in_fixed)) {
@@ -87,7 +97,8 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
     if (factor_in_fixed[[f]]) {
       cols <- grep(factor[[1]], colnames(X))
       for (cc in cols) {
-        lambda_mapping_X[seq(from = (cc - 1) * nrow(X) + 1, to = cc * nrow(X))] <-
+        lambda_mapping_X[
+          seq(from = (cc - 1) * nrow(X) + 1, to = cc * nrow(X))] <-
           lambda[[1]][data[, load.var]] - 2L
       }
     }
@@ -107,7 +118,8 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
         delta <- diff(lmod$reTrms$Ztlist[[i]]@p)
         cnms <- lmod$reTrms$cnms[[i]]
 
-        cnms_match <- vapply(colnames(lambda[[f]]), function(x) any(grepl(x, cnms)), TRUE)
+        cnms_match <- vapply(colnames(lambda[[f]]),
+                             function(x) any(grepl(x, cnms)), TRUE)
         if (any(cnms_match)) {
           ll <- lambda[[f]][, names(cnms_match[cnms_match]), drop = FALSE] - 2L
         } else {
@@ -118,8 +130,9 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
         for (j in seq_along(cnms)) {
           cn <- cnms[[j]]
           inds <- which(data[, cn] != 0)
-          mapping_component[inds] <- unlist(Map(function(x, y) rep(ll[x, cn], each = y),
-            x = data[inds, load.var], y = delta[inds]
+          mapping_component[inds] <-
+            unlist(Map(function(x, y) rep(ll[x, cn], each = y),
+                       x = data[inds, load.var], y = delta[inds]
           ))
         }
 
@@ -147,7 +160,8 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   theta_inds <- seq_along(lmod$reTrms$theta)
   beta_inds <- max(theta_inds) + seq_along(colnames(X))
   lambda_inds <- max(beta_inds) + seq_along(lambda[[1]][lambda[[1]] >= 2])
-  bounds <- c(lmod$reTrms$lower, rep(-Inf, length(beta_inds) + length(lambda_inds)))
+  bounds <- c(lmod$reTrms$lower,
+              rep(-Inf, length(beta_inds) + length(lambda_inds)))
 
   if (!is.null(weights)) {
     weights_obj <- lme4::mkReTrms(lme4::findbars(weights), fr = data)
@@ -155,7 +169,8 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
       stop("Multiple grouping terms in weights not yet implemented.")
     }
     weights_mapping <- as.integer(weights_obj$flist[[1]]) - 2L
-    weights_inds <- length(unique(weights_mapping)) + max(c(theta_inds, beta_inds, lambda_inds)) - 1L
+    weights_inds <- length(unique(weights_mapping)) +
+      max(c(theta_inds, beta_inds, lambda_inds)) - 1L
   } else {
     weights_obj <- NULL
     weights_mapping <- integer()
@@ -180,7 +195,10 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
       weights_mapping = weights_mapping,
       family = vapply(family_list, function(f) f$family, "a"),
       family_mapping = as.integer(family_mapping) - 1L,
-      maxit_conditional_modes = ifelse(length(family_list) == 1 & family_list[[1]]$family == "gaussian", 1, 10),
+      maxit_conditional_modes =
+        ifelse(
+          length(family_list) == 1 & family_list[[1]]$family == "gaussian",
+          1, 10),
       hessian = hessian
     )
   }
@@ -270,11 +288,13 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   ret$weights_obj <- weights_obj
   ret$mc <- mc
   ret$family <- family
-  ret$df <- length(opt$par) + sum(vapply(family_list, function(x) is.na(x$dispersion), logical(1)))
+  ret$df <- length(opt$par) +
+    sum(vapply(family_list, function(x) is.na(x$dispersion), logical(1)))
 
   ret$n <- nrow(X)
 
-  ret$pearson_residuals <- (response_obj[, 1] - fit) / unlist(Map(function(x, y) sqrt(family_list[[x]]$variance(y)),
+  ret$pearson_residuals <- (response_obj[, 1] - fit) /
+    unlist(Map(function(x, y) sqrt(family_list[[x]]$variance(y)),
     x = family_mapping, y = fit
   ))
 
@@ -283,7 +303,12 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
     ret$deviance <- -2 * ret$loglik
   } else {
     # McCullagh and Nelder (1989), page 39
-    tmp <- lapply(family_list, function(x) x$dev.resids(response_obj[, 1] / response_obj[, 2], fit, response_obj[, 2]))
+    tmp <- lapply(
+      family_list,
+      function(x) {
+        x$dev.resids(response_obj[, 1] / response_obj[, 2],
+                     fit, response_obj[, 2])
+      })
     dev_res <- sqrt(vapply(
       seq_along(family_mapping),
       function(i) tmp[[family_mapping[[i]]]][[i]], 1
