@@ -10,19 +10,23 @@ Authors@R:
 Description: Estimates generalized additive latent and
     mixed models using maximum marginal likelihood, 
     as defined in Sorensen et al. (2023) 
-    <doi:https://doi.org/10.1007/s11336-023-09910-z>. Factor analysis and 
-    item response models in which the responses depend 
-    nonlinearly on observed predictors can be estimated, 
-    with crossed or nested random effects structures defined
-    using 'lme4' syntax. Provides efficient computation using
-    sparse matrix methods, automatic differentiation, and 
-    the Laplace approximation.
+    <doi:10.1007/s11336-023-09910-z>, which is an extension of Rabe-Hesketh and
+    Skrondal (2004)'s unifying framework for multilevel latent variable modeling <10.1007/BF02295939>. 
+    Efficient computation is done using sparse matrix methods, Laplace 
+    approximation, and automatic differentiation. The framework includes generalized multilevel 
+    models with heteroscedastic residuals, mixed response types, factor 
+    loadings, smoothing splines, crossed random effects, and combinations thereof. 
+    Syntax for model formulation is close to 'lme4' (Bates et al. (2015) <doi:10.18637/jss.v067.i01>) and 
+    'PLmixed' (Rockwood and Jeon (2019) <doi:10.1080/00273171.2018.1516541>).
 License: GPL (>= 3)
 URL: https://github.com/LCBC-UiO/galamm, https://lcbc-uio.github.io/galamm/
 BugReports: https://github.com/LCBC-UiO/galamm/issues
 Encoding: UTF-8
 Imports: 
     lme4,
+    Matrix,
+    memoise,
+    PLmixed,
     Rcpp,
     Rdpack
 Depends:
@@ -34,16 +38,8 @@ LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 Suggests:
-    gamm4,
     covr,
-    dplyr,
-    purrr,
-    tidyr,
-    nlme,
-    Matrix,
     knitr,
-    memoise,
-    PLmixed,
     rmarkdown,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3

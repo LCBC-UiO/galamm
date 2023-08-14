@@ -1,0 +1,174 @@
+{
+  "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+  "@type": "SoftwareSourceCode",
+  "identifier": "galamm",
+  "description": "Estimates generalized additive latent and mixed models using maximum marginal likelihood, as defined in Sorensen et al. (2023) <doi:10.1007/s11336-023-09910-z>, which is an extension of Rabe-Hesketh and Skrondal (2004)'s unifying framework for multilevel latent variable modeling <10.1007/BF02295939>. Efficient computation is done using sparse matrix methods, Laplace approximation, and automatic differentiation. The framework includes generalized multilevel models with heteroscedastic residuals, mixed response types, factor loadings, smoothing splines, crossed random effects, and combinations thereof. Syntax for model formulation is close to 'lme4' (Bates et al. (2015) <doi:10.18637/jss.v067.i01>) and 'PLmixed' (Rockwood and Jeon (2019) <doi:10.1080/00273171.2018.1516541>).",
+  "name": "galamm: Generalized Additive Latent and Mixed Models",
+  "relatedLink": "https://lcbc-uio.github.io/galamm/",
+  "codeRepository": "https://github.com/LCBC-UiO/galamm",
+  "issueTracker": "https://github.com/LCBC-UiO/galamm/issues",
+  "license": "https://spdx.org/licenses/GPL-3.0",
+  "version": "0.1.0",
+  "programmingLanguage": {
+    "@type": "ComputerLanguage",
+    "name": "R",
+    "url": "https://r-project.org"
+  },
+  "runtimePlatform": "R version 4.3.1 (2023-06-16)",
+  "author": [
+    {
+      "@type": "Person",
+      "givenName": "Øystein",
+      "familyName": "Sørensen",
+      "email": "oystein.sorensen@psykologi.uio.no",
+      "@id": "https://orcid.org/0000-0003-0724-3542"
+    }
+  ],
+  "maintainer": [
+    {
+      "@type": "Person",
+      "givenName": "Øystein",
+      "familyName": "Sørensen",
+      "email": "oystein.sorensen@psykologi.uio.no",
+      "@id": "https://orcid.org/0000-0003-0724-3542"
+    }
+  ],
+  "softwareSuggestions": [
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "covr",
+      "name": "covr",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=covr"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "knitr",
+      "name": "knitr",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=knitr"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "rmarkdown",
+      "name": "rmarkdown",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=rmarkdown"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "testthat",
+      "name": "testthat",
+      "version": ">= 3.0.0",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=testthat"
+    }
+  ],
+  "softwareRequirements": {
+    "1": {
+      "@type": "SoftwareApplication",
+      "identifier": "lme4",
+      "name": "lme4",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=lme4"
+    },
+    "2": {
+      "@type": "SoftwareApplication",
+      "identifier": "Matrix",
+      "name": "Matrix",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=Matrix"
+    },
+    "3": {
+      "@type": "SoftwareApplication",
+      "identifier": "memoise",
+      "name": "memoise",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=memoise"
+    },
+    "4": {
+      "@type": "SoftwareApplication",
+      "identifier": "PLmixed",
+      "name": "PLmixed",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=PLmixed"
+    },
+    "5": {
+      "@type": "SoftwareApplication",
+      "identifier": "Rcpp",
+      "name": "Rcpp",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=Rcpp"
+    },
+    "6": {
+      "@type": "SoftwareApplication",
+      "identifier": "Rdpack",
+      "name": "Rdpack",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=Rdpack"
+    },
+    "7": {
+      "@type": "SoftwareApplication",
+      "identifier": "R",
+      "name": "R",
+      "version": ">= 3.5.0"
+    },
+    "SystemRequirements": null
+  },
+  "fileSize": "24158.266KB",
+  "releaseNotes": "https://github.com/LCBC-UiO/galamm/blob/master/NEWS.md",
+  "readme": "https://github.com/LCBC-UiO/galamm/blob/main/README.md",
+  "contIntegration": ["https://github.com/LCBC-UiO/galamm/actions/workflows/R-CMD-check.yaml", "https://app.codecov.io/gh/LCBC-UiO/galamm?branch=main"],
+  "developmentStatus": "https://lifecycle.r-lib.org/articles/stages.html#experimental",
+  "keywords": ["structural-equation-models", "generalized-additive-models", "item-response-theory", "hierarchical-models", "latent-variable-models"]
+}

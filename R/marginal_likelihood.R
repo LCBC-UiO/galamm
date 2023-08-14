@@ -59,9 +59,8 @@ marginal_likelihood <- function(
     weights_mapping = integer(), family = "gaussian",
     family_mapping = rep(0L, length(y)),
     maxit_conditional_modes = 1L, gradient = TRUE, hessian = FALSE,
-    epsilon_u = 1e-10){
-
-  if(is.null(trials)) trials <- rep(1, length(y))
+    epsilon_u = 1e-10) {
+  if (is.null(trials)) trials <- rep(1, length(y))
   stopifnot(length(u_init) == nrow(Zt))
   stopifnot(length(y) == length(trials))
   stopifnot(length(y) == nrow(X))
@@ -72,14 +71,14 @@ marginal_likelihood <- function(
   stopifnot(length(unique(family)) == length(family))
 
   k <- numeric(length(family))
-  for(i in seq_along(k)){
-    if(family[[i]] == "gaussian"){
+  for (i in seq_along(k)) {
+    if (family[[i]] == "gaussian") {
       k[[i]] <- 0
-    } else if(family[[i]] == "binomial"){
+    } else if (family[[i]] == "binomial") {
       trials0 <- trials[family_mapping == i - 1L]
       y0 <- y[family_mapping == i - 1L]
       k[[i]] <- sum(lgamma(trials0 + 1) - lgamma(y0 + 1) - lgamma(trials0 - y0 + 1))
-    } else if(family[[i]] == "poisson"){
+    } else if (family[[i]] == "poisson") {
       trials0 <- trials[family_mapping == i - 1L]
       y0 <- y[family_mapping == i - 1L]
       k[[i]] <- -sum(lgamma(y0 + 1))
@@ -92,9 +91,4 @@ marginal_likelihood <- function(
     weights, weights_mapping, family, family_mapping, k,
     maxit_conditional_modes, gradient, hessian, epsilon_u
   )
-
-
-
 }
-
-

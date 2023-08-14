@@ -73,15 +73,15 @@ We compute estimates, but note that the Hessian is rank deficient.
 ```{r}
 lam <- matrix(c(1, 1, NA), ncol = 1)
 mod <- galamm(
-  formula = y ~ item + (age * bus) : chd 
-  + (age * bus) : loading : fiber + (0 + loading | id), 
+  formula = y ~ item + (age * bus):chd
+    + (age * bus):loading:fiber + (0 + loading | id),
   data = diet,
   family = c(gaussian, binomial),
   family_mapping = ifelse(diet$item == "chd", 2L, 1L),
-  factor = list("loading"), 
-  load.var = "item", 
+  factor = list("loading"),
+  load.var = "item",
   lambda = list(lam)
-  )
+)
 ```
 
 Inspecting the parameters shows that the latent variable is estimated to have zero variance. We try to increase the initial value, and see what happens.
@@ -89,15 +89,15 @@ Inspecting the parameters shows that the latent variable is estimated to have ze
 
 ```{r}
 mod <- galamm(
-  formula = y ~ item + (age * bus) : chd + (age * bus) : loading : fiber + (0 + loading | id), 
+  formula = y ~ item + (age * bus):chd + (age * bus):loading:fiber + (0 + loading | id),
   data = diet,
   family = c(gaussian, binomial),
   family_mapping = ifelse(diet$item == "chd", 2L, 1L),
-  factor = list("loading"), 
-  load.var = "item", 
+  factor = list("loading"),
+  load.var = "item",
   lambda = list(lam),
   start = list(theta = 10)
-  )
+)
 ```
 
 ```{r}

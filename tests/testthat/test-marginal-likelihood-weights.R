@@ -1,24 +1,10 @@
 library(Matrix)
 library(lme4)
-library(dplyr, quietly = TRUE, warn.conflicts = FALSE)
-library(tidyr, quietly = TRUE, warn.conflicts = FALSE)
 library(memoise)
 
-set.seed(11)
-n <- 200
-dat <- tibble(
-  id = 1:n,
-  b = rnorm(n)
-) %>%
-  uncount(3, .id = "tp") %>%
-  uncount(2, .id = "item") %>%
-  mutate(
-    x = runif(nrow(.)),
-    winv = if_else(item == 1, 1, 2),
-    y = x + b + rnorm(nrow(.), sd = sqrt(winv))
-  )
+dat <- hsced
 
-w <- 1 / dat$winv
+w <- 1 / ifelse(dat$item == 1, 1, 2)
 lmod <- lFormula(y ~ x + (1 | id), data = dat, REML = FALSE, weights = w)
 devfun <- do.call(mkLmerDevfun, lmod)
 opt <- optimizeLmer(devfun)
@@ -29,7 +15,7 @@ beta_inds <- 2:3
 lambda_inds <- integer()
 bounds <- c(0, -Inf, -Inf)
 
-mlwrapper <- function(par, weights, weights_mapping, hessian = FALSE){
+mlwrapper <- function(par, weights, weights_mapping, hessian = FALSE) {
   marginal_likelihood(
     y = dat$y,
     trials = rep(1, length(dat$y)),
@@ -48,20 +34,22 @@ mlwrapper <- function(par, weights, weights_mapping, hessian = FALSE){
 }
 
 mlmem <- memoise(mlwrapper)
-fn <- function(par, weights, weights_mapping){
+fn <- function(par, weights, weights_mapping) {
   mlmem(par, weights, weights_mapping)$logLik
 }
-gr <- function(par, weights, weights_mapping){
+gr <- function(par, weights, weights_mapping) {
   mlmem(par, weights, weights_mapping)$gradient[c(theta_inds, beta_inds, lambda_inds)]
 }
 
 par_init <- c(1, 0, 0)
 weights <- unique(w)
 weights_mapping <- sapply(w, function(x) which(weights == x)) - 2L
-opt <- optim(par_init, fn = fn, gr = gr,
-             weights = weights[-1], weights_mapping = weights_mapping,
-             method = "L-BFGS-B", lower = bounds,
-             control = list(fnscale = -1))
+opt <- optim(par_init,
+  fn = fn, gr = gr,
+  weights = weights[-1], weights_mapping = weights_mapping,
+  method = "L-BFGS-B", lower = bounds,
+  control = list(fnscale = -1)
+)
 
 fm <- mlwrapper(opt$par, weights[-1], weights_mapping, TRUE)
 
@@ -72,8 +60,10 @@ expect_equal(opt$par[beta_inds], as.numeric(fixef(mm)), tolerance = 1e-3)
 
 # Confirm that all equal weights are correct also
 comp <- lmer(y ~ x + (1 | id), data = dat, REML = FALSE, weights = rep(2, nrow(dat)))
-opt <- optim(par_init, fn = fn, gr = gr, weights = 2, weights_mapping = rep(0L, nrow(dat)),
-             method = "L-BFGS-B", lower = bounds, control = list(fnscale = -1))
+opt <- optim(par_init,
+  fn = fn, gr = gr, weights = 2, weights_mapping = rep(0L, nrow(dat)),
+  method = "L-BFGS-B", lower = bounds, control = list(fnscale = -1)
+)
 
 tmp <- mlwrapper(opt$par, weights = 2, weights_mapping = rep(0L, nrow(dat)), TRUE)
 fn(c(getME(comp, "theta"), fixef(comp)), weights = 2, weights_mapping = rep(0L, nrow(dat)))
@@ -82,4 +72,3 @@ logLik(comp)
 expect_equal(as.numeric(logLik(comp)), opt$value)
 expect_equal(as.numeric(getME(comp, "theta")), opt$par[theta_inds], tolerance = 1e-4)
 expect_equal(as.numeric(fixef(comp)), opt$par[beta_inds], tolerance = 1e-4)
-

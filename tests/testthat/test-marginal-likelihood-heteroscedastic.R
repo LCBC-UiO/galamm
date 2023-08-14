@@ -9,7 +9,7 @@ bounds <- c(0, -Inf, -Inf, 0)
 weights_mapping <- ifelse(dat$item == 1, -1L, 0L)
 lmod <- lFormula(y ~ x + (1 | id), data = dat, REML = FALSE)
 
-mlwrapper <- function(par, hessian = FALSE){
+mlwrapper <- function(par, hessian = FALSE) {
   marginal_likelihood(
     y = dat$y,
     trials = rep(1, length(dat$y)),
@@ -27,18 +27,20 @@ mlwrapper <- function(par, hessian = FALSE){
 }
 
 mlmem <- memoise(mlwrapper)
-fn <- function(par){
+fn <- function(par) {
   mlmem(par)$logLik
 }
-gr <- function(par, weights, weights_mapping){
+gr <- function(par, weights, weights_mapping) {
   mlmem(par)$gradient
 }
 
 par_init <- c(1, 0, 0, 1)
 
-opt <- optim(par_init, fn = fn, gr = gr,
-             method = "L-BFGS-B", lower = bounds,
-             control = list(fnscale = -1))
+opt <- optim(par_init,
+  fn = fn, gr = gr,
+  method = "L-BFGS-B", lower = bounds,
+  control = list(fnscale = -1)
+)
 
 # mod <- lme(y ~ x, data = dat, random = list(id =~ 1),
 #            weights = varIdent(form =~ 1 | item), method = "ML")
@@ -47,6 +49,7 @@ fm <- mlwrapper(opt$par, TRUE)
 
 expect_equal(fm$phi, 0.959699, tolerance = 1e-3)
 expect_equal(opt$par, c(1.01465252011755, 0.128895226513452, 0.706228524663702, 0.501311933841373),
-             tolerance = 1e-5)
+  tolerance = 1e-5
+)
 
 expect_equal(as.numeric(opt$value), -2058.14021326103, tolerance = 1e-3)
