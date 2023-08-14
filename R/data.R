@@ -14,7 +14,8 @@
 #'   \item{visit}{Time at visit.}
 #'   \item{v4}{Dummy for visit 4.}
 #'   \item{lage}{Logarithm of age.}
-#'   \item{lbas}{Logarithm of a quarter of the number of seizures in the eight weeks preceeding entry into the trial.}
+#'   \item{lbas}{Logarithm of a quarter of the number of seizures in the eight
+#'   weeks preceeding entry into the trial.}
 #' }
 #' @source <http://www.gllamm.org/books/readme.html#11.3>
 #' @references \insertAllCited{}
@@ -30,7 +31,9 @@
 #'   \item{id}{Subject ID.}
 #'   \item{x}{Predictor variable.}
 #'   \item{y}{Response.}
-#'   \item{itemgroup}{Factor variable which equals "a" for the normally distributed responses and "b" for the binomially distributed response (with 1 trial).}
+#'   \item{itemgroup}{Factor variable which equals "a" for the normally
+#'   distributed responses and "b" for the binomially distributed response
+#'   (with 1 trial).}
 #' }
 "mresp"
 
@@ -47,12 +50,18 @@
 #' \describe{
 #'   \item{id}{Subject ID.}
 #'   \item{age}{Age (standardized).}
-#'   \item{bus}{Dummy variable indicating whether the subject is a bus driver or banking staff.}
-#'   \item{item}{Integer indicating whether the outcome is fiber intake at time 1 (item = 1), fiber intake at time 2 (item = 2), or coronary heart disease (item = 3).}
+#'   \item{bus}{Dummy variable indicating whether the subject is a bus
+#'   driver or banking staff.}
+#'   \item{item}{Integer indicating whether the outcome is fiber intake at
+#'   time 1 (item = 1), fiber intake at time 2 (item = 2), or coronary heart
+#'   disease (item = 3).}
 #'   \item{y}{Outcome.}
-#'   \item{chd}{Dummy variable indicating whether y is an indicator for coronary heart disease, coded as 0/1.}
-#'   \item{fiber}{Dummary variable indicating whether y is a fiber measurement at either timepoint 1 or 2.}
-#'   \item{fiber2}{Dummary variable indicating whether y is a fiber measurement at timepoint 2.}
+#'   \item{chd}{Dummy variable indicating whether y is an indicator for
+#'   coronary heart disease, coded as 0/1.}
+#'   \item{fiber}{Dummary variable indicating whether y is a fiber measurement
+#'   at either timepoint 1 or 2.}
+#'   \item{fiber2}{Dummary variable indicating whether y is a fiber measurement
+#'   at timepoint 2.}
 #' }
 #' @source <http://www.gllamm.org/books/readme.html#14.2>
 #' @references \insertAllCited{}
@@ -60,7 +69,8 @@
 
 #' Example Data with Heteroscedastic Residuals
 #'
-#' Simulated dataset with residual standard deviation that varies between items.
+#' Simulated dataset with residual standard deviation that varies between
+#' items.
 #'
 #' @format ## `diet` A data frame with 1200 rows and 5 columns:
 #' \describe{

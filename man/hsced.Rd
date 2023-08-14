@@ -20,7 +20,8 @@
 hsced
 }
 \description{
-Simulated dataset with residual standard deviation that varies between items.
+Simulated dataset with residual standard deviation that varies between
+items.
 }
 \references{
 \insertAllCited{}

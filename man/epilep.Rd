@@ -14,7 +14,8 @@
 \item{visit}{Time at visit.}
 \item{v4}{Dummy for visit 4.}
 \item{lage}{Logarithm of age.}
-\item{lbas}{Logarithm of a quarter of the number of seizures in the eight weeks preceeding entry into the trial.}
+\item{lbas}{Logarithm of a quarter of the number of seizures in the eight
+weeks preceeding entry into the trial.}
 }
 }
 }
