@@ -74,13 +74,83 @@
     
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://lcbc-uio.github.io/galamm/">galamm</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">PLmixed</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://lcbc-uio.github.io/galamm/">galamm</a></span><span class="op">)</span></span></code></pre></div>
+<div class="section level3">
+<h3 id="group-wise-heteroscedasticity">Group-Wise Heteroscedasticity<a class="anchor" aria-label="anchor" href="#group-wise-heteroscedasticity"></a>
+</h3>
+<p>The package includes a simulated dataset <code>hsced</code>, in which
+the residual variance varies between items.</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">hsced</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   id tp item         x          y</span></span>
+<span><span class="co">#&gt; 1  1  1    1 0.7448212  0.1608286</span></span>
+<span><span class="co">#&gt; 2  1  1    2 0.7109629  2.2947255</span></span>
+<span><span class="co">#&gt; 3  1  2    1 0.9507326 -0.4731834</span></span>
+<span><span class="co">#&gt; 4  1  2    2 0.4205776  1.1280379</span></span>
+<span><span class="co">#&gt; 5  1  3    1 0.1045820 -0.5129498</span></span>
+<span><span class="co">#&gt; 6  1  3    2 0.3872984  1.0515916</span></span></code></pre></div>
+<p>We specify the error structure using an additional formula object,
+<code>~ (1 | item)</code>, specifying that a different constraint term
+should be included per item.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
+<span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">x</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span>,</span>
+<span>  weights <span class="op">=</span> <span class="op">~</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">item</span><span class="op">)</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">hsced</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; N = 4, M = 20 machine precision = 2.22045e-16</span></span>
+<span><span class="co">#&gt; At X0, 0 variables are exactly at the bounds</span></span>
+<span><span class="co">#&gt; At iterate     0  f=       2117.4  |proj g|=        74.56</span></span>
+<span><span class="co">#&gt; At iterate    10  f =       2058.1  |proj g|=    9.0535e-05</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; iterations 10</span></span>
+<span><span class="co">#&gt; function evaluations 12</span></span>
+<span><span class="co">#&gt; segments explored during Cauchy searches 12</span></span>
+<span><span class="co">#&gt; BFGS updates skipped 0</span></span>
+<span><span class="co">#&gt; active bounds at final generalized Cauchy point 0</span></span>
+<span><span class="co">#&gt; norm of the final projected gradient 9.05346e-05</span></span>
+<span><span class="co">#&gt; final function value 2058.14</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; F = 2058.14</span></span>
+<span><span class="co">#&gt; final  value 2058.140213 </span></span>
+<span><span class="co">#&gt; converged</span></span></code></pre></div>
+<p>The output shows that for item 2, the residual variance is half that
+of item 1.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Generalized additive latent and mixed model fit by maximum marginal likelihood.</span></span>
+<span><span class="co">#&gt; Formula: y ~ x + (1 | id)</span></span>
+<span><span class="co">#&gt;    Data: hsced</span></span>
+<span><span class="co">#&gt; Weights: ~(1 | item)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;      AIC      BIC   logLik deviance df.resid </span></span>
+<span><span class="co">#&gt;   4126.3   4151.7  -2058.1   4116.3     1195 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Scaled residuals: </span></span>
+<span><span class="co">#&gt;     Min      1Q  Median      3Q     Max </span></span>
+<span><span class="co">#&gt; -5.6545 -0.7105  0.0286  0.6827  4.3261 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Random effects:</span></span>
+<span><span class="co">#&gt;  Groups   Name        Variance Std.Dev.</span></span>
+<span><span class="co">#&gt;  id       (Intercept) 0.9880   0.9940  </span></span>
+<span><span class="co">#&gt;  Residual             0.9597   0.9796  </span></span>
+<span><span class="co">#&gt; Number of obs: 1200, groups:  id, 200</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Variance function:</span></span>
+<span><span class="co">#&gt;      1      2 </span></span>
+<span><span class="co">#&gt; 1.0000 0.5013 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Fixed effects:</span></span>
+<span><span class="co">#&gt;             Estimate Std. Error t value</span></span>
+<span><span class="co">#&gt; (Intercept)   0.1289     0.0992   1.299</span></span>
+<span><span class="co">#&gt; x             0.7062     0.1212   5.826</span></span></code></pre></div>
+</div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
 </div>
-  </main>
+  </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
+    </nav></aside>
 </div>
 
 

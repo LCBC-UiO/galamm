@@ -75,7 +75,6 @@
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://lcbc-uio.github.io/galamm/">galamm</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">PLmixed</span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/lme4/lme4/" class="external-link">lme4</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; Loading required package: Matrix</span></span></code></pre></div>
 <p>This vignette describes how <code>galamm</code> can be used to
@@ -223,8 +222,7 @@ to have zero variance. We try to increase the initial value, and see
 what happens.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
-<span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">item</span> <span class="op">+</span> <span class="op">(</span><span class="va">age</span> <span class="op">*</span> <span class="va">bus</span><span class="op">)</span> <span class="op">:</span> <span class="va">chd</span> </span>
-<span>  <span class="op">+</span> <span class="op">(</span><span class="va">age</span> <span class="op">*</span> <span class="va">bus</span><span class="op">)</span> <span class="op">:</span> <span class="va">loading</span> <span class="op">:</span> <span class="va">fiber</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">loading</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span>, </span>
+<span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">item</span> <span class="op">+</span> <span class="op">(</span><span class="va">age</span> <span class="op">*</span> <span class="va">bus</span><span class="op">)</span> <span class="op">:</span> <span class="va">chd</span> <span class="op">+</span> <span class="op">(</span><span class="va">age</span> <span class="op">*</span> <span class="va">bus</span><span class="op">)</span> <span class="op">:</span> <span class="va">loading</span> <span class="op">:</span> <span class="va">fiber</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">loading</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span>, </span>
 <span>  data <span class="op">=</span> <span class="va">diet</span>,</span>
 <span>  family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">gaussian</span>, <span class="va">binomial</span><span class="op">)</span>,</span>
 <span>  family_mapping <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">diet</span><span class="op">$</span><span class="va">item</span> <span class="op">==</span> <span class="st">"chd"</span>, <span class="fl">2L</span>, <span class="fl">1L</span><span class="op">)</span>,</span>
@@ -255,6 +253,43 @@ what happens.</p>
 <span><span class="co">#&gt; F = 1372.16</span></span>
 <span><span class="co">#&gt; final  value 1372.160386 </span></span>
 <span><span class="co">#&gt; converged</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Generalized additive latent and mixed model fit by maximum marginal likelihood.</span></span>
+<span><span class="co">#&gt; Formula: y ~ item + (age * bus):chd + (age * bus):loading:fiber + (0 +  </span></span>
+<span><span class="co">#&gt;     loading | id)</span></span>
+<span><span class="co">#&gt;    Data: diet</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;      AIC      BIC   logLik deviance df.resid </span></span>
+<span><span class="co">#&gt;   2026.9   2082.2  -1372.2   2002.9      730 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Scaled residuals: </span></span>
+<span><span class="co">#&gt;     Min      1Q  Median      3Q     Max </span></span>
+<span><span class="co">#&gt; -258553      -1       0       0      66 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Lambda:</span></span>
+<span><span class="co">#&gt;   loading      SE</span></span>
+<span><span class="co">#&gt; 1  1.0000       .</span></span>
+<span><span class="co">#&gt; 2  1.0000       .</span></span>
+<span><span class="co">#&gt; 3 -0.1339 0.05121</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Random effects:</span></span>
+<span><span class="co">#&gt;  Groups   Name    Variance Std.Dev.</span></span>
+<span><span class="co">#&gt;  id       loading 23.635   4.862   </span></span>
+<span><span class="co">#&gt;  Residual          6.962   2.639   </span></span>
+<span><span class="co">#&gt; Number of obs: 742, groups:  id, 333</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Fixed effects:</span></span>
+<span><span class="co">#&gt;                        Estimate Std. Error   t value</span></span>
+<span><span class="co">#&gt; (Intercept)            17.94854    0.48686  36.86603</span></span>
+<span><span class="co">#&gt; itemfiber2              0.22407    0.41783   0.53627</span></span>
+<span><span class="co">#&gt; itemchd               -19.86377    0.60069 -33.06838</span></span>
+<span><span class="co">#&gt; age:chd                 0.06614    0.05931   1.11515</span></span>
+<span><span class="co">#&gt; bus:chd                -0.02896    0.34355  -0.08431</span></span>
+<span><span class="co">#&gt; age:bus:chd            -0.04997    0.06507  -0.76800</span></span>
+<span><span class="co">#&gt; age:loading:fiber      -0.21201    0.10090  -2.10110</span></span>
+<span><span class="co">#&gt; bus:loading:fiber      -1.68309    0.63721  -2.64132</span></span>
+<span><span class="co">#&gt; age:bus:loading:fiber   0.16815    0.11223   1.49825</span></span></code></pre></div>
 <p>Now we were able to reproduce results very close to those in Table
 14.1 on page 420 of <span class="citation">Skrondal and Rabe-Hesketh
 (2004)</span>.</p>
