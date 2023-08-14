@@ -1,8 +1,8 @@
 ---
-title: "Optimization"
+title: "Semiparametric Latent Variable Modeling"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Optimization}
+  %\VignetteIndexEntry{Semiparametric Latent Variable Modeling}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

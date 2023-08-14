@@ -7,6 +7,8 @@
 
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+[![Project status: active development but no stable release
+yet.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
 [![R-CMD-check](https://github.com/LCBC-UiO/galamm/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/LCBC-UiO/galamm/actions/workflows/R-CMD-check.yaml)
 [![Codecov test
 coverage](https://codecov.io/gh/LCBC-UiO/galamm/branch/main/graph/badge.svg)](https://app.codecov.io/gh/LCBC-UiO/galamm?branch=main)
@@ -17,7 +19,9 @@ mixed models (GALAMM). The model framework was introduced by Sørensen,
 Fjell, and Walhovd (2023), which is available with open access from the
 [publisher’s website](https://doi.org/10.1007/s11336-023-09910-z). It is
 an extension of the GLLAMM framework for multilevel latent variable
-modeling detailed in Rabe-Hesketh, Skrondal, and Pickles (2004).
+modeling detailed in Rabe-Hesketh, Skrondal, and Pickles (2004), in
+particular by efficiently handling crossed random effects and
+semiparametric estimation.
 
 The package allows maximum likelihood estimation of complex multilevel
 models (aka mixed models). In particular, models with any combination of
@@ -32,7 +36,8 @@ vignettes:
   residuals](https://lcbc-uio.github.io/galamm/articles/lmm_heteroscedastic.html).
 - [Mixed models with mixed response
   types](https://lcbc-uio.github.io/galamm/articles/mixed_response.html).
-- Generalized additive mixed models with factor structures.
+- [Generalized additive mixed models with factor
+  structures](https://lcbc-uio.github.io/galamm/articles/semiparametric.html).
 
 The package uses an interface similar to
 [PLmixed](https://cran.r-project.org/package=PLmixed) (Rockwood and Jeon
@@ -90,26 +95,29 @@ model this process jointly, and the model is set up as follows:
 
 ``` r
 mixed_resp <- galamm(
-  formula = y ~ x + (0 + itemgroup | id),
+  formula = y ~ x + (0 + loading | id),
   data = mresp,
   family = c(gaussian, binomial),
-  family_mapping = ifelse(mresp$itemgroup == "a", 1L, 2L)
+  family_mapping = ifelse(mresp$itemgroup == "a", 1L, 2L),
+  load.var = "itemgroup",
+  lambda = list(matrix(c(1, NA), ncol = 1)),
+  factor = list("loading")
 )
-#> N = 5, M = 20 machine precision = 2.22045e-16
+#> N = 4, M = 20 machine precision = 2.22045e-16
 #> At X0, 0 variables are exactly at the bounds
-#> At iterate     0  f=         4904  |proj g|=       399.51
-#> At iterate    10  f =       4619.2  |proj g|=        1.5099
+#> At iterate     0  f=       4764.7  |proj g|=       300.51
+#> At iterate    10  f =       4619.3  |proj g|=       0.01885
 #> 
-#> iterations 15
-#> function evaluations 16
-#> segments explored during Cauchy searches 16
+#> iterations 11
+#> function evaluations 12
+#> segments explored during Cauchy searches 11
 #> BFGS updates skipped 0
 #> active bounds at final generalized Cauchy point 0
-#> norm of the final projected gradient 0.000585461
-#> final function value 4619.2
+#> norm of the final projected gradient 0.00181656
+#> final function value 4619.34
 #> 
-#> F = 4619.2
-#> final  value 4619.204005 
+#> F = 4619.34
+#> final  value 4619.341613 
 #> converged
 ```
 
@@ -118,33 +126,58 @@ The summary function gives some information about the model fit.
 ``` r
 summary(mixed_resp)
 #> Generalized additive latent and mixed model fit by maximum marginal likelihood.
-#> Formula: y ~ x + (0 + itemgroup | id)
+#> Formula: y ~ x + (0 + loading | id)
 #>    Data: mresp
 #> 
 #>      AIC      BIC   logLik deviance df.resid 
-#>   3584.8   3622.6  -4619.2   3572.8     3994 
+#>   3643.1   3674.5  -4619.3   3633.1     3995 
 #> 
 #> Scaled residuals: 
 #>     Min      1Q  Median      3Q     Max 
-#> -3.7489 -0.6793  0.2109  0.6297  2.7061 
+#> -3.5360 -0.7078  0.2156  0.6456  2.5978 
+#> 
+#> Lambda:
+#>   loading      SE
+#> 1   1.000       .
+#> 2   1.095 0.09982
 #> 
 #> Random effects:
-#>  Groups   Name       Variance Std.Dev. Corr
-#>  id       itemgroupa 1.044    1.022        
-#>           itemgroupb 1.372    1.171    0.97
-#>  Residual            1.137    1.066        
+#>  Groups   Name    Variance Std.Dev.
+#>  id       loading 1.05     1.025   
+#>  Residual         1.12     1.058   
 #> Number of obs: 4000, groups:  id, 1000
 #> 
 #> Fixed effects:
 #>             Estimate Std. Error t value
-#> (Intercept)  0.04053    0.05836  0.6944
-#> x            0.97422    0.08687 11.2143
+#> (Intercept)    0.041    0.05803  0.7065
+#> x              0.971    0.08594 11.2994
 ```
 
-For now, please refer to [this
-repository](https://github.com/LCBC-UiO/galamm-scripts) for code that
-can be used to reproduce the results of Sørensen, Fjell, and Walhovd
-(2023).
+## How to cite this package
+
+``` r
+citation("galamm")
+#> To cite package 'galamm' in publications use:
+#> 
+#>   Sørensen Ø, Walhovd K, Fjell A (2023). "Longitudinal Modeling of
+#>   Age-Dependent Latent Traits with Generalized Additive Latent and
+#>   Mixed Models." _Psychometrika_, *88*(2), 456-486.
+#>   doi:10.1007/s11336-023-09910-z
+#>   <https://doi.org/10.1007/s11336-023-09910-z>.
+#> 
+#> A BibTeX entry for LaTeX users is
+#> 
+#>   @Article{,
+#>     title = {Longitudinal Modeling of Age-Dependent Latent Traits with Generalized Additive Latent and Mixed Models},
+#>     author = {{\O}ystein S{\o}rensen and Kristine B. Walhovd and Anders M. Fjell},
+#>     journal = {Psychometrika},
+#>     year = {2023},
+#>     volume = {88},
+#>     number = {2},
+#>     pages = {456-486},
+#>     doi = {10.1007/s11336-023-09910-z},
+#>   }
+```
 
 ## References
 

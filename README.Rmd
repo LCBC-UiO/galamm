@@ -18,11 +18,12 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+[![Project status: active development but no stable release yet.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
 [![R-CMD-check](https://github.com/LCBC-UiO/galamm/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/LCBC-UiO/galamm/actions/workflows/R-CMD-check.yaml)
 [![Codecov test coverage](https://codecov.io/gh/LCBC-UiO/galamm/branch/main/graph/badge.svg)](https://app.codecov.io/gh/LCBC-UiO/galamm?branch=main)
 <!-- badges: end -->
 
-galamm is an R package for estimating generalized additive latent and mixed models (GALAMM). The model framework was introduced by @sorensenLongitudinalModelingAgeDependent2023, which is available with open access from the [publisher's website](https://doi.org/10.1007/s11336-023-09910-z). It is an extension of the GLLAMM framework for multilevel latent variable modeling detailed in @rabe-heskethGeneralizedMultilevelStructural2004. 
+galamm is an R package for estimating generalized additive latent and mixed models (GALAMM). The model framework was introduced by @sorensenLongitudinalModelingAgeDependent2023, which is available with open access from the [publisher's website](https://doi.org/10.1007/s11336-023-09910-z). It is an extension of the GLLAMM framework for multilevel latent variable modeling detailed in @rabe-heskethGeneralizedMultilevelStructural2004, in particular by efficiently handling crossed random effects and semiparametric estimation.
 
 The package allows maximum likelihood estimation of complex multilevel models (aka mixed models). In particular, models with any combination of the following features are supported, with links to the corresponding vignettes:
 
@@ -30,14 +31,11 @@ The package allows maximum likelihood estimation of complex multilevel models (a
 - [Generalized linear mixed models with factor structures](https://lcbc-uio.github.io/galamm/articles/glmm_factor.html).
 - [Linear mixed models with heteroscedastic residuals](https://lcbc-uio.github.io/galamm/articles/lmm_heteroscedastic.html).
 - [Mixed models with mixed response types](https://lcbc-uio.github.io/galamm/articles/mixed_response.html).
-- Generalized additive mixed models with factor structures.
+- [Generalized additive mixed models with factor structures](https://lcbc-uio.github.io/galamm/articles/semiparametric.html).
 
 The package uses an interface similar to [PLmixed](https://cran.r-project.org/package=PLmixed) [@rockwoodEstimatingComplexMeasurement2019], which fits generalized linear mixed models with factor structures. However, for the types of models supported by both PLmixed and galamm, galamm is usually considerably faster. The syntax for defining models is close to that of [lme4](https://cran.r-project.org/package=lme4) [@batesFittingLinearMixedEffects2015]. If your model can be estimated with lme4, then you should definitely prefer that package, as it's very mature, and also likely to be faster. galamm should however give results very similar to lme4.
 
 The core computations in galamm are done using sparse matrix methods supported by [RcppEigen](https://cran.r-project.org/package=RcppEigen) [@batesFastElegantNumerical2013] and automatic differentiation using the C++ library [autodiff](https://autodiff.github.io/) [@lealAutodiffModernFast2018]. The [optimization vignette](https://lcbc-uio.github.io/galamm/articles/optimization.html) provides more details.
-
-
-
 
 ## Installation
 
@@ -80,6 +78,11 @@ The summary function gives some information about the model fit.
 summary(mixed_resp)
 ```
 
+## How to cite this package
+
+```{r}
+citation("galamm")
+```
 
 
 ## References
