@@ -8,13 +8,14 @@
 <meta name="description" content="Estimates generalized additive latent and
     mixed models using maximum marginal likelihood, 
     as defined in Sorensen et al. (2023) 
-    &lt;doi:https://doi.org/10.1007/s11336-023-09910-z&gt;. Factor analysis and 
-    item response models in which the responses depend 
-    nonlinearly on observed predictors can be estimated, 
-    with crossed or nested random effects structures defined
-    using lme4 syntax. Provides efficient computation using
-    sparse matrix methods, automatic differentiation, and 
-    the Laplace approximation.">
+    &lt;doi:10.1007/s11336-023-09910-z&gt;, which is an extension of Rabe-Hesketh and
+    Skrondal (2004)s unifying framework for multilevel latent variable modeling &lt;10.1007/BF02295939&gt;. 
+    Efficient computation is done using sparse matrix methods, Laplace 
+    approximation, and automatic differentiation. The framework includes generalized multilevel 
+    models with heteroscedastic residuals, mixed response types, factor 
+    loadings, smoothing splines, crossed random effects, and combinations thereof. 
+    Syntax for model formulation is close to lme4 (Bates et al. (2015) &lt;doi:10.18637/jss.v067.i01&gt;) and 
+    PLmixed' (Rockwood and Jeon (2019) &lt;doi:10.1080/00273171.2018.1516541&gt;).">
 <title>Generalized Additive Latent and Mixed Models • galamm</title>
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet">
@@ -24,13 +25,14 @@
 <meta property="og:description" content="Estimates generalized additive latent and
     mixed models using maximum marginal likelihood, 
     as defined in Sorensen et al. (2023) 
-    &lt;doi:https://doi.org/10.1007/s11336-023-09910-z&gt;. Factor analysis and 
-    item response models in which the responses depend 
-    nonlinearly on observed predictors can be estimated, 
-    with crossed or nested random effects structures defined
-    using lme4 syntax. Provides efficient computation using
-    sparse matrix methods, automatic differentiation, and 
-    the Laplace approximation.">
+    &lt;doi:10.1007/s11336-023-09910-z&gt;, which is an extension of Rabe-Hesketh and
+    Skrondal (2004)s unifying framework for multilevel latent variable modeling &lt;10.1007/BF02295939&gt;. 
+    Efficient computation is done using sparse matrix methods, Laplace 
+    approximation, and automatic differentiation. The framework includes generalized multilevel 
+    models with heteroscedastic residuals, mixed response types, factor 
+    loadings, smoothing splines, crossed random effects, and combinations thereof. 
+    Syntax for model formulation is close to lme4 (Bates et al. (2015) &lt;doi:10.18637/jss.v067.i01&gt;) and 
+    PLmixed' (Rockwood and Jeon (2019) &lt;doi:10.1080/00273171.2018.1516541&gt;).">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
