@@ -6,6 +6,7 @@
 \usage{
 galamm(
   formula,
+  weights = NULL,
   data,
   family = gaussian,
   family_mapping = rep(1L, nrow(data)),
@@ -17,6 +18,10 @@ galamm(
 }
 \arguments{
 \item{formula}{A formula}
+
+\item{weights}{An optional formula object specifying an expression for the
+residual variance. Defaults to \code{NULL}, corresponding to homoscedastic
+errors.}
 
 \item{data}{A dataset}
 

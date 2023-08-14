@@ -1,6 +1,9 @@
 #' Fit a generalized additive latent and mixed model
 #'
 #' @param formula A formula
+#' @param weights An optional formula object specifying an expression for the
+#'   residual variance. Defaults to \code{NULL}, corresponding to homoscedastic
+#'   errors.
 #' @param data A dataset
 #' @param family A vector of families
 #' @param family_mapping A vector mapping from the elements of "family" to rows
@@ -18,7 +21,7 @@
 #'
 #' @importFrom stats gaussian
 #' @importFrom Rdpack reprompt
-galamm <- function(formula, data, family = gaussian,
+galamm <- function(formula, weights = NULL, data, family = gaussian,
                    family_mapping = rep(1L, nrow(data)),
                    load.var = NULL, lambda = NULL, factor = NULL,
                    start = NULL){
@@ -147,6 +150,20 @@ galamm <- function(formula, data, family = gaussian,
   lambda_inds <- max(beta_inds) + seq_along(lambda[[1]][lambda[[1]] >= 2])
   bounds <- c(lmod$reTrms$lower, rep(-Inf, length(beta_inds) + length(lambda_inds)))
 
+  if(!is.null(weights)){
+    weights_obj <- lme4::mkReTrms(lme4::findbars(weights), fr = data)
+    if(length(weights_obj$flist) > 1){
+      stop("Multiple grouping terms in weights not yet implemented.")
+    }
+    weights_mapping <- as.integer(weights_obj$flist[[1]]) - 2L
+    weights_inds <- length(unique(weights_mapping)) + max(c(theta_inds, beta_inds, lambda_inds)) - 1L
+  } else {
+    weights_obj <- NULL
+    weights_mapping <- integer()
+    weights_inds <- integer()
+  }
+
+
   mlwrapper <- function(par, hessian = FALSE){
     marginal_likelihood(
       y = response_obj[, 1],
@@ -160,8 +177,8 @@ galamm <- function(formula, data, family = gaussian,
       lambda = par[lambda_inds],
       lambda_mapping_X = lambda_mapping_X,
       lambda_mapping_Zt = lambda_mapping_Zt,
-      weights = numeric(),
-      weights_mapping = integer(),
+      weights = par[weights_inds],
+      weights_mapping = weights_mapping,
       family = vapply(family_list, function(f) f$family, "a"),
       family_mapping = as.integer(family_mapping) - 1L,
       maxit_conditional_modes = ifelse(length(family_list) == 1 & family_list[[1]]$family == "gaussian", 1, 10),
@@ -192,7 +209,12 @@ galamm <- function(formula, data, family = gaussian,
   } else {
     rep(1, length(lambda_inds))
   }
-  par_init <- c(theta_init, beta_init, lambda_init)
+  weights_init <- if(!is.null(start$weights)){
+    start$weights
+  } else {
+    rep(1, length(weights_inds))
+  }
+  par_init <- c(theta_init, beta_init, lambda_init, weights_init)
 
   opt <- stats::optim(par_init, fn = fn, gr = gr,
                       method = "L-BFGS-B", lower = bounds,
@@ -237,10 +259,12 @@ galamm <- function(formula, data, family = gaussian,
   ret$lambda_inds <- lambda_inds
   ret$beta_inds <- beta_inds
   ret$theta_inds <- theta_inds
+  ret$weights_inds <- weights_inds
   ret$phi <- final_model$phi
   ret$loglik <- opt$value
 
-  ret$lmod_list <- lmod
+  ret$lmod <- lmod
+  ret$weights_obj <- weights_obj
   ret$mc <- mc
   ret$family <- family
   ret$df <- length(opt$par) + sum(vapply(family_list, function(x) is.na(x$dispersion), logical(1)))

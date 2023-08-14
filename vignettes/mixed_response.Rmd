@@ -17,7 +17,6 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(galamm)
-library(PLmixed)
 library(lme4)
 ```
 
@@ -90,8 +89,7 @@ Inspecting the parameters shows that the latent variable is estimated to have ze
 
 ```{r}
 mod <- galamm(
-  formula = y ~ item + (age * bus) : chd 
-  + (age * bus) : loading : fiber + (0 + loading | id), 
+  formula = y ~ item + (age * bus) : chd + (age * bus) : loading : fiber + (0 + loading | id), 
   data = diet,
   family = c(gaussian, binomial),
   family_mapping = ifelse(diet$item == "chd", 2L, 1L),
@@ -101,6 +99,11 @@ mod <- galamm(
   start = list(theta = 10)
   )
 ```
+
+```{r}
+summary(mod)
+```
+
 
 Now we were able to reproduce results very close to those in Table 14.1 on page 420 of @skrondalGeneralizedLatentVariable2004.
 

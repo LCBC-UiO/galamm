@@ -57,3 +57,18 @@
 #' @source <http://www.gllamm.org/books/readme.html#14.2>
 #' @references \insertAllCited{}
 "diet"
+
+#' Example Data with Heteroscedastic Residuals
+#'
+#' Simulated dataset with residual standard deviation that varies between items.
+#'
+#' @format ## `diet` A data frame with 1200 rows and 5 columns:
+#' \describe{
+#'   \item{id}{Subject ID.}
+#'   \item{age}{Timepoint.}
+#'   \item{item}{Item indicator.}
+#'   \item{x}{Explanatory variable}
+#'   \item{y}{Outcome.}
+#' }
+#' @references \insertAllCited{}
+"hsced"
