@@ -66,17 +66,16 @@ dat$y <- rbinom(n = nrow(dat), size = dat$trials,
 head(dat)
 ```
 
-For now, the number of trials has to be specified with a separate `trials` argument. Using `cbind(successes, failures)` as in `glm` is not yet implemented.
+For binomial models with more than one trial, the response should be specified `cbind(successes, failures)`.
 
 ```{r}
 galamm_mod_trials <- galamm(
-  formula = y ~ item + (0 + abil.sid | sid) + (0 + abil.sid | school),
+  formula = cbind(y, trials - y) ~ item + (0 + abil.sid | sid) + (0 + abil.sid | school),
   data = dat, 
   family = binomial,
   load.var = "item", 
   factor = list("abil.sid"), 
-  lambda = list(irt.lam),
-  trials = dat$trials
+  lambda = list(irt.lam)
   )
 
 summary(galamm_mod_trials)

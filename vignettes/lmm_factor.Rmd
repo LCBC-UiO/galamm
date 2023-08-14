@@ -41,8 +41,12 @@ We could use the following code to fit the model with `PLmixed`.
 ```{r, eval=FALSE}
 pl_mod <- PLmixed(
   formula = y ~ item + (0 + abil.sid | sid) + (0 + abil.sid | school),
-  data = IRTsim, load.var = "item", 
-  factor = list("abil.sid"), lambda = list(irt.lam), iter.count = FALSE)
+  data = IRTsim, 
+  load.var = "item", 
+  factor = list("abil.sid"), 
+  lambda = list(irt.lam), 
+  iter.count = FALSE
+  )
 summary(pl_mod)
 ```
 

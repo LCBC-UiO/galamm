@@ -36,10 +36,9 @@ test_that("Logistic GLMM with simple factor works", {
                   prob = predict(mod, type = "response"))
 
   galamm_mod_trials <- galamm(
-    formula = y ~ item + (1 | sid) + (1 | school),
+    formula = cbind(y, trials - y) ~ item + (1 | sid) + (1 | school),
     data = dat,
-    family = binomial,
-    trials = dat$trials
+    family = binomial
   )
   ## Test results are confirmed in comparison to this model
   # tmp <- lme4::glmer(
