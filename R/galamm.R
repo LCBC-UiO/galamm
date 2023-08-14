@@ -43,8 +43,9 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
       lambda[[i]][is.na(lambda[[i]])] <-
         seq(from = parameter_index, length.out = sum(is.na(lambda[[i]])))
       colnames(lambda[[i]]) <- factor[[i]]
-      if (any(factor[[i]] %in% colnames(data)))
+      if (any(factor[[i]] %in% colnames(data))) {
         stop("Factor already a column in data.")
+      }
       for (j in seq_along(factor[[i]])) {
         eval(parse(text = paste("data$", factor[[i]][[j]], "<-1")))
         rows_to_zero <-
@@ -52,7 +53,9 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
         eval(
           parse(
             text =
-              paste("data$", factor[[i]][[j]], "[rows_to_zero] <- 0")))
+              paste("data$", factor[[i]][[j]], "[rows_to_zero] <- 0")
+          )
+        )
       }
       parameter_index <- max(lambda[[i]]) + 1
     }
@@ -98,7 +101,8 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
       cols <- grep(factor[[1]], colnames(X))
       for (cc in cols) {
         lambda_mapping_X[
-          seq(from = (cc - 1) * nrow(X) + 1, to = cc * nrow(X))] <-
+          seq(from = (cc - 1) * nrow(X) + 1, to = cc * nrow(X))
+        ] <-
           lambda[[1]][data[, load.var]] - 2L
       }
     }
@@ -118,8 +122,10 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
         delta <- diff(lmod$reTrms$Ztlist[[i]]@p)
         cnms <- lmod$reTrms$cnms[[i]]
 
-        cnms_match <- vapply(colnames(lambda[[f]]),
-                             function(x) any(grepl(x, cnms)), TRUE)
+        cnms_match <- vapply(
+          colnames(lambda[[f]]),
+          function(x) any(grepl(x, cnms)), TRUE
+        )
         if (any(cnms_match)) {
           ll <- lambda[[f]][, names(cnms_match[cnms_match]), drop = FALSE] - 2L
         } else {
@@ -132,8 +138,8 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
           inds <- which(data[, cn] != 0)
           mapping_component[inds] <-
             unlist(Map(function(x, y) rep(ll[x, cn], each = y),
-                       x = data[inds, load.var], y = delta[inds]
-          ))
+              x = data[inds, load.var], y = delta[inds]
+            ))
         }
 
         mapping_component
@@ -160,8 +166,10 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   theta_inds <- seq_along(lmod$reTrms$theta)
   beta_inds <- max(theta_inds) + seq_along(colnames(X))
   lambda_inds <- max(beta_inds) + seq_along(lambda[[1]][lambda[[1]] >= 2])
-  bounds <- c(lmod$reTrms$lower,
-              rep(-Inf, length(beta_inds) + length(lambda_inds)))
+  bounds <- c(
+    lmod$reTrms$lower,
+    rep(-Inf, length(beta_inds) + length(lambda_inds))
+  )
 
   if (!is.null(weights)) {
     weights_obj <- lme4::mkReTrms(lme4::findbars(weights), fr = data)
@@ -198,7 +206,8 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
       maxit_conditional_modes =
         ifelse(
           length(family_list) == 1 & family_list[[1]]$family == "gaussian",
-          1, 10),
+          1, 10
+        ),
       hessian = hessian
     )
   }
@@ -295,8 +304,8 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
 
   ret$pearson_residuals <- (response_obj[, 1] - fit) /
     unlist(Map(function(x, y) sqrt(family_list[[x]]$variance(y)),
-    x = family_mapping, y = fit
-  ))
+      x = family_mapping, y = fit
+    ))
 
   if (length(family_list) == 1 && family_list[[1]]$family == "gaussian") {
     ret$deviance_residuals <- response_obj[, 1] - fit
@@ -306,9 +315,12 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
     tmp <- lapply(
       family_list,
       function(x) {
-        x$dev.resids(response_obj[, 1] / response_obj[, 2],
-                     fit, response_obj[, 2])
-      })
+        x$dev.resids(
+          response_obj[, 1] / response_obj[, 2],
+          fit, response_obj[, 2]
+        )
+      }
+    )
     dev_res <- sqrt(vapply(
       seq_along(family_mapping),
       function(i) tmp[[family_mapping[[i]]]][[i]], 1
