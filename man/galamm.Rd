@@ -12,7 +12,6 @@ galamm(
   load.var = NULL,
   lambda = NULL,
   factor = NULL,
-  trials = rep(1, nrow(data)),
   start = NULL
 )
 }
@@ -32,8 +31,6 @@ observations are distributed according to the first element of "family".}
 \item{lambda}{Loading}
 
 \item{factor}{list of factors}
-
-\item{trials}{Number of trials for binomial responses.}
 
 \item{start}{A named list of starting values for parameters. Possible names
 of list elements are "theta", "beta", and "lambda", all of which represent

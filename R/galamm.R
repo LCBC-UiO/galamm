@@ -9,7 +9,6 @@
 #' @param load.var Variable the factors load onto
 #' @param lambda Loading
 #' @param factor list of factors
-#' @param trials Number of trials for binomial responses.
 #' @param start A named list of starting values for parameters. Possible names
 #'   of list elements are "theta", "beta", and "lambda", all of which represent
 #'   numerical vectors.
@@ -22,7 +21,6 @@
 galamm <- function(formula, data, family = gaussian,
                    family_mapping = rep(1L, nrow(data)),
                    load.var = NULL, lambda = NULL, factor = NULL,
-                   trials = rep(1, nrow(data)),
                    start = NULL){
 
   stopifnot(length(family) == length(unique(family_mapping)))
@@ -52,6 +50,23 @@ galamm <- function(formula, data, family = gaussian,
   }
 
   lmod <- lme4::lFormula(formula = formula, data = data, REML = FALSE)
+
+  response_obj <- matrix(nrow = nrow(lmod$X), ncol = 2)
+  for(i in seq_along(family_list)){
+    f <- family_list[[i]]
+    mf <- model.frame(nobars(formula), data = data[family_mapping == i, ])
+    mr <- model.response(mf)
+
+    if(f$family == "binomial" && !is.null(dim(mr))){
+      trials <- rowSums(mr)
+      response <- mr[, 1, drop = TRUE]
+    } else {
+      trials <- rep(1, sum(family_mapping == i))
+      response <- mr
+    }
+    response_obj[family_mapping == i, ] <- cbind(response = response, trials = trials)
+  }
+  rm(trials, response)
 
   vars_in_fixed <- all.vars(lme4::nobars(formula)[-2])
   factor_in_fixed <- vapply(factor, function(x) any(x %in% vars_in_fixed), TRUE)
@@ -131,12 +146,11 @@ galamm <- function(formula, data, family = gaussian,
   beta_inds <- max(theta_inds) + seq_along(colnames(X))
   lambda_inds <- max(beta_inds) + seq_along(lambda[[1]][lambda[[1]] >= 2])
   bounds <- c(lmod$reTrms$lower, rep(-Inf, length(beta_inds) + length(lambda_inds)))
-  response <- data[[all.vars(formula)[[1]]]]
 
   mlwrapper <- function(par, hessian = FALSE){
     marginal_likelihood(
-      y = as.numeric(response),
-      trials = as.numeric(trials),
+      y = response_obj[, 1],
+      trials = response_obj[, 2],
       X = X,
       Zt = Zt,
       Lambdat = Lambdat,
@@ -226,32 +240,32 @@ galamm <- function(formula, data, family = gaussian,
   ret$phi <- final_model$phi
   ret$loglik <- opt$value
 
-  ret$lmod <- lmod
+  ret$lmod_list <- lmod
   ret$mc <- mc
   ret$family <- family
   ret$df <- length(opt$par) + sum(vapply(family_list, function(x) is.na(x$dispersion), logical(1)))
 
   ret$n <- nrow(X)
 
-  ret$pearson_residuals <- (response - fit) / unlist(Map(function(x, y) sqrt(family_list[[x]]$variance(y)),
+  ret$pearson_residuals <- (response_obj[, 1] - fit) / unlist(Map(function(x, y) sqrt(family_list[[x]]$variance(y)),
                                                          x = family_mapping, y = fit))
 
   if(length(family_list) == 1 && family_list[[1]]$family == "gaussian"){
-    ret$deviance_residuals <- response - fit
+    ret$deviance_residuals <- response_obj[, 1] - fit
     ret$deviance <- -2 * ret$loglik
     } else {
     # McCullagh and Nelder (1989), page 39
-      tmp <- lapply(family_list, function(x) x$dev.resids(response / trials, fit, trials))
+      tmp <- lapply(family_list, function(x) x$dev.resids(response_obj[, 1] / response_obj[, 2], fit, response_obj[, 2]))
       dev_res <- sqrt(vapply(
         seq_along(family_mapping),
         function(i) tmp[[family_mapping[[i]]]][[i]], 1))
 
-      ret$deviance_residuals <- sign(response - fit) * dev_res
+      ret$deviance_residuals <- sign(response_obj[, 1] - fit) * dev_res
       ret$deviance <- sum((dev_res)^2)
   }
 
   ret$fit <- fit
-  ret$response <- response
+  ret$response <- response_obj[, 1]
 
   class(ret) <- "galamm"
 
