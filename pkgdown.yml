@@ -6,7 +6,9 @@ articles:
   lmm_factor: lmm_factor.html
   lmm_heteroscedastic: lmm_heteroscedastic.html
   mixed_response: mixed_response.html
-last_built: 2023-08-14T13:16Z
+  optimization: optimization.html
+  semiparametric: semiparametric.html
+last_built: 2023-08-14T13:32Z
 urls:
   reference: https://lcbc-uio.github.io/galamm/reference
   article: https://lcbc-uio.github.io/galamm/articles

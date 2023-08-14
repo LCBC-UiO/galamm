@@ -65,6 +65,8 @@
     <a class="dropdown-item" href="articles/lmm_factor.html">Linear Mixed Models with Factor Structures</a>
     <a class="dropdown-item" href="articles/lmm_heteroscedastic.html">Heteroscedastic Linear Mixed Models</a>
     <a class="dropdown-item" href="articles/mixed_response.html">Models with Mixed Response Types</a>
+    <a class="dropdown-item" href="articles/optimization.html">Optimization</a>
+    <a class="dropdown-item" href="articles/semiparametric.html">Semiparametric Latent Variable Modeling</a>
   </div>
 </li>
       </ul>
@@ -91,9 +93,22 @@
 </h1></div>
 <!-- badges: start -->
 
-<p>galamm is an R package for fitting multivariate generalized additive mixed models with factor structures. The package is currently under development, and changes to the API must be expected.</p>
-<p>The package uses an interface similar to <a href="https://cran.r-project.org/package=PLmixed" class="external-link">PLmixed</a>, which fits generalized linear mixed models with factor structures. However, galamm allows semiparametric estimations with <a href="https://cran.r-project.org/package=gamm4" class="external-link">gamm4</a>, and hence more flexibly allows estimation of nonlinear effects.</p>
-<p>The plan for the package is to provide tool for fast and scalable estimation of generalized linear latent and mixed models (GLLAMMs) (Rabe-Hesketh, Skrondal, and Pickles 2004) and their semiparametric extensions which we have termed generalized additive latent and mixed models (GALAMMs) (Sørensen, Fjell, and Walhovd 2023). This is already possible to some extent, using the function <code>marginal_likelihood</code>, as is documented in the vignette on maximum likelihood estimation. To obtain this, we combine sparse matrix computations with RcppEigen (Bates and Eddelbuettel 2013) and automatic differentiation using the C++ library <a href="https://autodiff.github.io/" class="external-link">autodiff</a> (Leal 2018).</p>
+<p>galamm is an R package for estimating generalized additive latent and mixed models (GALAMM). The model framework was introduced by Sørensen, Fjell, and Walhovd (2023), which is available with open access from the <a href="https://doi.org/10.1007/s11336-023-09910-z" class="external-link">publisher’s website</a>. It is an extension of the GLLAMM framework for multilevel latent variable modeling detailed in Rabe-Hesketh, Skrondal, and Pickles (2004), in particular by efficiently handling crossed random effects and semiparametric estimation.</p>
+<p>The package allows maximum likelihood estimation of complex multilevel models (aka mixed models). In particular, models with any combination of the following features are supported, with links to the corresponding vignettes:</p>
+<ul>
+<li>
+<a href="https://lcbc-uio.github.io/galamm/articles/lmm_factor.html">Linear mixed models with factor structures</a>.</li>
+<li>
+<a href="https://lcbc-uio.github.io/galamm/articles/glmm_factor.html">Generalized linear mixed models with factor structures</a>.</li>
+<li>
+<a href="https://lcbc-uio.github.io/galamm/articles/lmm_heteroscedastic.html">Linear mixed models with heteroscedastic residuals</a>.</li>
+<li>
+<a href="https://lcbc-uio.github.io/galamm/articles/mixed_response.html">Mixed models with mixed response types</a>.</li>
+<li>
+<a href="https://lcbc-uio.github.io/galamm/articles/semiparametric.html">Generalized additive mixed models with factor structures</a>.</li>
+</ul>
+<p>The package uses an interface similar to <a href="https://cran.r-project.org/package=PLmixed" class="external-link">PLmixed</a> (Rockwood and Jeon 2019), which fits generalized linear mixed models with factor structures. However, for the types of models supported by both PLmixed and galamm, galamm is usually considerably faster. The syntax for defining models is close to that of <a href="https://cran.r-project.org/package=lme4" class="external-link">lme4</a> (Bates et al. 2015). If your model can be estimated with lme4, then you should definitely prefer that package, as it’s very mature, and also likely to be faster. galamm should however give results very similar to lme4.</p>
+<p>The core computations in galamm are done using sparse matrix methods supported by <a href="https://cran.r-project.org/package=RcppEigen" class="external-link">RcppEigen</a> (Bates and Eddelbuettel 2013) and automatic differentiation using the C++ library <a href="https://autodiff.github.io/" class="external-link">autodiff</a> (Leal 2018). The <a href="https://lcbc-uio.github.io/galamm/articles/optimization.html">optimization vignette</a> provides more details.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -105,20 +120,119 @@
 <div class="section level2">
 <h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
 </h2>
-<p>For now, please refer to <a href="https://github.com/LCBC-UiO/galamm-scripts" class="external-link">this repository</a> for code that can be used to reproduce the results of Sørensen, Fjell, and Walhovd (2023).</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/LCBC-UiO/galamm" class="external-link">galamm</a></span><span class="op">)</span></span></code></pre></div>
+<p>The dataframe <code>mresp</code> contains simulated data with mixed response types.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">mresp</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   id         x          y itemgroup</span></span>
+<span><span class="co">#&gt; 1  1 0.8638214  0.2866329         a</span></span>
+<span><span class="co">#&gt; 2  1 0.7676133  2.5647490         a</span></span>
+<span><span class="co">#&gt; 3  1 0.8812059  1.0000000         b</span></span>
+<span><span class="co">#&gt; 4  1 0.2239725  1.0000000         b</span></span>
+<span><span class="co">#&gt; 5  2 0.7215696 -0.4721698         a</span></span>
+<span><span class="co">#&gt; 6  2 0.6924851  1.1750286         a</span></span></code></pre></div>
+<p>Responses in rows with <code>itemgroup = "a"</code> are normally distributed while those in rows with <code>itemgroup = "b"</code> are binomially distributed. For a given subject, identified by the <code>id</code> variable, both responses are associated with the same underlying latent variable. We hence need to model this process jointly, and the model is set up as follows:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">mixed_resp</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/galamm.html">galamm</a></span><span class="op">(</span></span>
+<span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">x</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">loading</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">mresp</span>,</span>
+<span>  family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">gaussian</span>, <span class="va">binomial</span><span class="op">)</span>,</span>
+<span>  family_mapping <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">mresp</span><span class="op">$</span><span class="va">itemgroup</span> <span class="op">==</span> <span class="st">"a"</span>, <span class="fl">1L</span>, <span class="fl">2L</span><span class="op">)</span>,</span>
+<span>  load.var <span class="op">=</span> <span class="st">"itemgroup"</span>,</span>
+<span>  lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="cn">NA</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"loading"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; N = 4, M = 20 machine precision = 2.22045e-16</span></span>
+<span><span class="co">#&gt; At X0, 0 variables are exactly at the bounds</span></span>
+<span><span class="co">#&gt; At iterate     0  f=       4764.7  |proj g|=       300.51</span></span>
+<span><span class="co">#&gt; At iterate    10  f =       4619.3  |proj g|=       0.01885</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; iterations 11</span></span>
+<span><span class="co">#&gt; function evaluations 12</span></span>
+<span><span class="co">#&gt; segments explored during Cauchy searches 11</span></span>
+<span><span class="co">#&gt; BFGS updates skipped 0</span></span>
+<span><span class="co">#&gt; active bounds at final generalized Cauchy point 0</span></span>
+<span><span class="co">#&gt; norm of the final projected gradient 0.00181656</span></span>
+<span><span class="co">#&gt; final function value 4619.34</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; F = 4619.34</span></span>
+<span><span class="co">#&gt; final  value 4619.341613 </span></span>
+<span><span class="co">#&gt; converged</span></span></code></pre></div>
+<p>The summary function gives some information about the model fit.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mixed_resp</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Generalized additive latent and mixed model fit by maximum marginal likelihood.</span></span>
+<span><span class="co">#&gt; Formula: y ~ x + (0 + loading | id)</span></span>
+<span><span class="co">#&gt;    Data: mresp</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;      AIC      BIC   logLik deviance df.resid </span></span>
+<span><span class="co">#&gt;   3643.1   3674.5  -4619.3   3633.1     3995 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Scaled residuals: </span></span>
+<span><span class="co">#&gt;     Min      1Q  Median      3Q     Max </span></span>
+<span><span class="co">#&gt; -3.5360 -0.7078  0.2156  0.6456  2.5978 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Lambda:</span></span>
+<span><span class="co">#&gt;   loading      SE</span></span>
+<span><span class="co">#&gt; 1   1.000       .</span></span>
+<span><span class="co">#&gt; 2   1.095 0.09982</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Random effects:</span></span>
+<span><span class="co">#&gt;  Groups   Name    Variance Std.Dev.</span></span>
+<span><span class="co">#&gt;  id       loading 1.05     1.025   </span></span>
+<span><span class="co">#&gt;  Residual         1.12     1.058   </span></span>
+<span><span class="co">#&gt; Number of obs: 4000, groups:  id, 1000</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Fixed effects:</span></span>
+<span><span class="co">#&gt;             Estimate Std. Error t value</span></span>
+<span><span class="co">#&gt; (Intercept)    0.041    0.05803  0.7065</span></span>
+<span><span class="co">#&gt; x              0.971    0.08594 11.2994</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="how-to-cite-this-package">How to cite this package<a class="anchor" aria-label="anchor" href="#how-to-cite-this-package"></a>
+</h2>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/citation.html" class="external-link">citation</a></span><span class="op">(</span><span class="st">"galamm"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; To cite package 'galamm' in publications use:</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;   Sørensen Ø, Walhovd K, Fjell A (2023). "Longitudinal Modeling of</span></span>
+<span><span class="co">#&gt;   Age-Dependent Latent Traits with Generalized Additive Latent and</span></span>
+<span><span class="co">#&gt;   Mixed Models." _Psychometrika_, *88*(2), 456-486.</span></span>
+<span><span class="co">#&gt;   doi:10.1007/s11336-023-09910-z</span></span>
+<span><span class="co">#&gt;   &lt;https://doi.org/10.1007/s11336-023-09910-z&gt;.</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; A BibTeX entry for LaTeX users is</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;   @Article{,</span></span>
+<span><span class="co">#&gt;     title = {Longitudinal Modeling of Age-Dependent Latent Traits with Generalized Additive Latent and Mixed Models},</span></span>
+<span><span class="co">#&gt;     author = {{\O}ystein S{\o}rensen and Kristine B. Walhovd and Anders M. Fjell},</span></span>
+<span><span class="co">#&gt;     journal = {Psychometrika},</span></span>
+<span><span class="co">#&gt;     year = {2023},</span></span>
+<span><span class="co">#&gt;     volume = {88},</span></span>
+<span><span class="co">#&gt;     number = {2},</span></span>
+<span><span class="co">#&gt;     pages = {456-486},</span></span>
+<span><span class="co">#&gt;     doi = {10.1007/s11336-023-09910-z},</span></span>
+<span><span class="co">#&gt;   }</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
 <div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-batesFastElegantNumerical2013" class="csl-entry">
-Bates, Douglas, and Dirk Eddelbuettel. 2013. “Fast and Elegant Numerical Linear Algebra Using the RcppEigen Package.” <em>Journal of Statistical Software</em> 52 (February): 1–24. <a href="https://doi.org/10.18637/jss.v052.i05" class="external-link uri">https://doi.org/10.18637/jss.v052.i05</a>.
+Bates, Douglas M, and Dirk Eddelbuettel. 2013. “Fast and Elegant Numerical Linear Algebra Using the RcppEigen Package.” <em>Journal of Statistical Software</em> 52 (February): 1–24. <a href="https://doi.org/10.18637/jss.v052.i05" class="external-link uri">https://doi.org/10.18637/jss.v052.i05</a>.
+</div>
+<div id="ref-batesFittingLinearMixedEffects2015" class="csl-entry">
+Bates, Douglas M, Martin Mächler, Ben Bolker, and Steve Walker. 2015. “Fitting Linear Mixed-Effects Models Using Lme4.” <em>Journal of Statistical Software</em> 67 (1): 1–48. <a href="https://doi.org/10.18637/jss.v067.i01" class="external-link uri">https://doi.org/10.18637/jss.v067.i01</a>.
 </div>
 <div id="ref-lealAutodiffModernFast2018" class="csl-entry">
 Leal, Allan M. M. 2018. “Autodiff, a Modern, Fast and Expressive C++ Library for Automatic Differentiation.”
 </div>
 <div id="ref-rabe-heskethGeneralizedMultilevelStructural2004" class="csl-entry">
 Rabe-Hesketh, Sophia, Anders Skrondal, and Andrew Pickles. 2004. “Generalized Multilevel Structural Equation Modeling.” <em>Psychometrika</em> 69 (2): 167–90. <a href="https://doi.org/10.1007/BF02295939" class="external-link uri">https://doi.org/10.1007/BF02295939</a>.
+</div>
+<div id="ref-rockwoodEstimatingComplexMeasurement2019" class="csl-entry">
+Rockwood, Nicholas J., and Minjeong Jeon. 2019. “Estimating Complex Measurement and Growth Models Using the R Package PLmixed.” <em>Multivariate Behavioral Research</em> 54 (2): 288–306. <a href="https://doi.org/10.1080/00273171.2018.1516541" class="external-link uri">https://doi.org/10.1080/00273171.2018.1516541</a>.
 </div>
 <div id="ref-sorensenLongitudinalModelingAgeDependent2023" class="csl-entry">
 Sørensen, Øystein, Anders M. Fjell, and Kristine B. Walhovd. 2023. “Longitudinal Modeling of Age-Dependent Latent Traits with Generalized Additive Latent and Mixed Models.” <em>Psychometrika</em> 88 (2): 456–86. <a href="https://doi.org/10.1007/s11336-023-09910-z" class="external-link uri">https://doi.org/10.1007/s11336-023-09910-z</a>.
@@ -161,6 +275,7 @@ Sørensen, Øystein, Anders M. Fjell, and Kristine B. Walhovd. 2023. “Longitud
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
 <li><a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" class="external-link"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></li>
+<li><a href="https://www.repostatus.org/#wip" class="external-link"><img src="https://www.repostatus.org/badges/latest/wip.svg" alt="Project status: active development but no stable release yet."></a></li>
 <li><a href="https://github.com/LCBC-UiO/galamm/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/LCBC-UiO/galamm/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
 <li><a href="https://app.codecov.io/gh/LCBC-UiO/galamm?branch=main" class="external-link"><img src="https://codecov.io/gh/LCBC-UiO/galamm/branch/main/graph/badge.svg" alt="Codecov test coverage"></a></li>
 </ul>
