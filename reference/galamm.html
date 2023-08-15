@@ -71,7 +71,8 @@
 <span>  load.var <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  lambda <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  factor <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  start <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  start <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  control <span class="op">=</span> <span class="fu"><a href="galamm_control.html">galamm_control</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -117,6 +118,11 @@ observations are distributed according to the first element of "family".</p></dd
 <dd><p>A named list of starting values for parameters. Possible names
 of list elements are "theta", "beta", and "lambda", all of which represent
 numerical vectors.</p></dd>
+
+
+<dt>control</dt>
+<dd><p>Control object. Result of calling
+<code><a href="galamm_control.html">galamm_control</a></code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
