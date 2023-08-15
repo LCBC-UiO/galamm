@@ -1,8 +1,8 @@
-new_galamm_control <- function(fnscale = -1, lmm = 20, trace = 3){
+new_galamm_control <- function(fnscale = -1, lmm = 20, trace = 3) {
   structure(trace, class = "galamm_control")
 }
 
-validate_galamm_control <- function(x){
+validate_galamm_control <- function(x) {
   x
 }
 
@@ -14,7 +14,7 @@ validate_galamm_control <- function(x){
 #' @return Object of class galamm_control
 #' @export
 #'
-galamm_control <- function(trace = 3L, lmm = 20){
+galamm_control <- function(trace = 3L, lmm = 20) {
   validate_galamm_control(
     new_galamm_control(trace = trace, lmm = lmm)
   )
