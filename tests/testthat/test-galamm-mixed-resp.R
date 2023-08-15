@@ -12,14 +12,18 @@ test_that("Mixed response works", {
   expect_equal(mod$loglik, -4619.34161314597)
   expect_equal(
     summary(mod)$AICtab,
-    c(AIC = 3643.06904319559, BIC = 3674.5392913961, logLik = -4619.34161314597,
-      deviance = 3633.06904319559, df.resid = 3995)
+    c(
+      AIC = 3643.06904319559, BIC = 3674.5392913961, logLik = -4619.34161314597,
+      deviance = 3633.06904319559, df.resid = 3995
+    )
   )
   expect_equal(
     summary(mod)$Lambda,
-    structure(c(1, 1.09504540466714, NA, 0.0998236819120686), dim = c(2L,
-                                                                      2L), dimnames = list(c("1", "2"), c("loading", "SE")))
-    )
+    structure(c(1, 1.09504540466714, NA, 0.0998236819120686), dim = c(
+      2L,
+      2L
+    ), dimnames = list(c("1", "2"), c("loading", "SE")))
+  )
 
   expect_equal(
     mod$pearson_residuals[c(4, 8, 11)],
