@@ -17,3 +17,6 @@ knitr::opts_chunk$set(
 ```{r setup}
 library(galamm)
 ```
+
+This vignette is aimed to give you a high-level overview of the types of models supported by the galamm package, and to point you to relevant vignettes where you can find more information.
+
