@@ -27,7 +27,10 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
                    family_mapping = rep(1L, nrow(data)),
                    load.var = NULL, lambda = NULL, factor = NULL,
                    start = NULL, control = galamm_control()) {
+
   stopifnot(length(family) == length(unique(family_mapping)))
+
+
   mc <- match.call()
   if (!is.list(family)) family <- list(family)
   family_list <- lapply(family, function(f) {
@@ -208,7 +211,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
       maxit_conditional_modes =
         ifelse(
           length(family_list) == 1 & family_list[[1]]$family == "gaussian",
-          1, 10
+          1, control$maxit_conditional_modes
         ),
       hessian = hessian
     )
@@ -247,7 +250,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   opt <- stats::optim(par_init,
     fn = fn, gr = gr,
     method = "L-BFGS-B", lower = bounds,
-    control = list(fnscale = -1, lmm = 20, trace = 3)
+    control = control[c("trace", "lmm", "fnscale")]
   )
 
 

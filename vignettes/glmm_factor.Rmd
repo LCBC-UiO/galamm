@@ -17,40 +17,84 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(galamm)
-library(PLmixed)
-library(lme4)
 ```
 
-This vignette describes how `galamm` can be used to estimate generalized linear mixed models with factor structures. Such models are an instance of the generalized linear latent and mixed models (GLLAMM) framework described by @rabe-heskethGeneralizedMultilevelStructural2004. The R package `PLmixed` [@rockwoodEstimatingComplexMeasurement2019] estimates such models using a profile likelihood algorithm initially proposed by @jeonProfileLikelihoodApproachEstimating2012. The models are also a special case of generalized additive latent and mixed models (GALAMM), and in `galamm` these models are estimated using a more direct algorithm described in @sorensenLongitudinalModelingAgeDependent2023.
+This vignette describes how `galamm` can be used to estimate generalized linear mixed models with factor structures. Such models are an instance of the generalized linear latent and mixed models (GLLAMM) framework described by @rabe-heskethGeneralizedMultilevelStructural2004. The R package PLmixed [@rockwoodEstimatingComplexMeasurement2019] estimates such models using a profile likelihood algorithm initially proposed by @jeonProfileLikelihoodApproachEstimating2012. The models are also a special case of generalized additive latent and mixed models (GALAMM), and in galamm these models are estimated using a more direct algorithm described in @sorensenLongitudinalModelingAgeDependent2023.
 
-As for the vignette on linear mixed models, we thank @rockwoodEstimatingComplexMeasurement2019 for creating the `PLmixed` package, from which we take example datasets, and on which we have based the formula syntax of `galamm`.
+As for the vignette on linear mixed models, we thank @rockwoodEstimatingComplexMeasurement2019 for creating the [PLmixed](https://cran.r-project.org/package=PLmixed) package, from which we take example datasets, and on which we have based the formula syntax of galamm.
 
 ## Model with Binomially Distributed Responses
 
-We use a simulated dataset from the `PLmixed` package for the example in this vignette. In the vignette on linear mixed models with factor structures, the response was treated as Gaussian. Here we use the more appropriate assumption that the response is binomially distributed.
+We use a simulated dataset from the PLmixed package for this example. The observations are binomial responses representing an ability measurement. The first few lines are shown below.
 
-First we set up the factor structures to be used:
+```{r}
+library(PLmixed)
+head(IRTsim)
+```
+
+Each student is identified by a student id `sid`, and each school with a school id given by the `school` variable. For each student, five item measurements have been made. We assume that the student's performance depends both on the students ability as well as on the school the student attends. Having the outline of GALAMMs from the [introductory vignette](https://lcbc-uio.github.io/galamm/articles/introduction.html) in mind, we assume a binomial response model with a logit link, yielding for the $i$th measurement of the $j$th student in the $k$th school,
+
+$$ 
+\text{P}(y_{ijk} = 1 | \mathbf{x}_{ijk}, \boldsymbol{\eta}_{jk}) = \frac{\exp(\nu_{ijk})}{1 + \exp(\nu_{ijk})}
+$$
+
+The latent variable vector is given by $\boldsymbol{\eta}_{jk} = (\eta_{j}, \eta_{jk})^{T}$, where the last element is the effect of the school which the $j$th student attends. The nonlinear predictor is given by
+
+$$
+\nu_{ijk} = \mathbf{x}_{ijk}^{T} \boldsymbol{\beta} + \mathbf{x}_{ijk}^{T}\boldsymbol{\lambda} (\eta_{j} + \eta_{jk})
+$$
+
+where $\mathbf{x}_{ij}$ is a vector containing dummy variables for items, $\eta_{j}$ is a latent variable describing the underlying ability of student $j$, and $\eta_{k}$ is a latent variable describing the effect of school $k$. The factor loading $\lambda$ describes how the sum of the two latent variables impacts the nonlinear predictor, and hence the probability of correct response. We note that using a common $\lambda$ for two latent variables like this is not necessarily a good model, but it makes this introductory example easier to follow. We will extend the model later.
+
+The structural model is simply
+
+$$
+\boldsymbol{\eta}_{jk} = \boldsymbol{\zeta}_{jk} \sim N_{2}(\mathbf{0}, \boldsymbol{\Psi}),
+$$
+
+where $N(\mathbf{0}, \boldsymbol{\Psi})$ denotes a bivariate normal distribution with mean zero covariance matrix $\boldsymbol{\Psi}$. The covariance matrix is assumed to be diagonal.
+
+To estimate this model using galamm, we must start by loading the dataset, and we convert the item variable to a factor.
 
 ```{r}
 data("IRTsim")
 IRTsim$item <- factor(IRTsim$item)
-irt.lam <- matrix(c(1, NA, NA, NA, NA), ncol = 1)
+```
+
+We confirm that `item` has five levels. This means that $\boldsymbol{\lambda}$ is a vector with five elements.
+
+```{r}
+table(IRTsim$item)
+```
+
+For identifiability, we fix the first element of $\boldsymbol{\lambda}$ to one. The rest will be freely estimated. We do this by defining the following matrix. Any numeric value implies that the element is fixed, whereas `NA` implies that the element is unknown, and will be estimated.
+
+```{r}
+(loading_matrix <- matrix(c(1, NA, NA, NA, NA), ncol = 1))
 ```
 
 We fit the model as follows:
 
 ```{r}
-galamm_mod <- galamm(
-  formula = y ~ item + (0 + abil.sid | sid) + (0 + abil.sid | school),
+mod <- galamm(
+  formula = y ~ item + (0 + ability | school / sid),
   data = IRTsim,
   family = binomial,
   load.var = "item",
-  factor = list("abil.sid"),
-  lambda = list(irt.lam)
+  factor = list("ability"),
+  lambda = list(loading_matrix)
 )
-
-summary(galamm_mod)
 ```
+
+A couple of things in the model formula are worth pointing out. First the part `(0 + ability | school / sid)` in the model formula specifies that student ability varies between students within schools. It corresponds to the term $\mathbf{x}_{ijk}^{T}\boldsymbol{\lambda} (\eta_{j} + \eta_{jk})$ in the mathematical specification of the model. The variable `ability` is not part of the `IRTsim` dataframe, but is instead specified in the argument `factor = list("ability")`. The argument `load.var = "item"` specifies that all rows in the dataframe with the same value of "item" should get the same element of $\boldsymbol{\lambda}$, and hence it defines the dummy variable $\mathbf{x}_{ijk}$. Finally, `lambda = list(loading_matrix)` provides the matrix of factor loadings. Note that we must explicitly add a zero in `(0 + ability | school / sid)` to avoid having a random intercept estimated in addition to the effect for each value of "item"; such a model would not be identified. The fixed effect part of the model formula, which is simply `item`, specifies the term $\mathbf{x}_{ijk}^{T} \boldsymbol{\beta}$.
+
+We can start by inspecting the fitted model:
+
+```{r}
+summary(mod)
+```
+
+
 
 ## Binomial Model with Multiple Trials
 
@@ -70,7 +114,7 @@ head(dat)
 
 For binomial models with more than one trial, the response should be specified `cbind(successes, failures)`.
 
-```{r}
+```{r, eval=FALSE}
 galamm_mod_trials <- galamm(
   formula = cbind(y, trials - y) ~ item + (0 + abil.sid | sid) + (0 + abil.sid | school),
   data = dat,

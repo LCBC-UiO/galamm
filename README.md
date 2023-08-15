@@ -78,8 +78,8 @@ C++ library [autodiff](https://autodiff.github.io/) (Leal 2018).
 
 ## Where Do I Start?
 
-To get started, take a look at the [Introduction
-vignette](https://lcbc-uio.github.io/galamm/articles/introduction.html)
+To get started, take a look at the [introductory
+vignette](https://lcbc-uio.github.io/galamm/articles/introduction.html).
 
 ## Installation
 
@@ -126,22 +126,6 @@ mixed_resp <- galamm(
   lambda = list(matrix(c(1, NA), ncol = 1)),
   factor = list("loading")
 )
-#> N = 4, M = 20 machine precision = 2.22045e-16
-#> At X0, 0 variables are exactly at the bounds
-#> At iterate     0  f=       4764.7  |proj g|=       300.51
-#> At iterate    10  f =       4619.3  |proj g|=       0.01885
-#> 
-#> iterations 11
-#> function evaluations 12
-#> segments explored during Cauchy searches 11
-#> BFGS updates skipped 0
-#> active bounds at final generalized Cauchy point 0
-#> norm of the final projected gradient 0.00181656
-#> final function value 4619.34
-#> 
-#> F = 4619.34
-#> final  value 4619.341613 
-#> converged
 ```
 
 The summary function gives some information about the model fit.

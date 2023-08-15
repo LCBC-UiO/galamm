@@ -36,12 +36,15 @@ summary.galamm <- function(object, ...) {
     rownames(ret$Lambda) <- seq_len(nrow(ret$Lambda))
   }
 
+  useSc <- Reduce(function(`&&`, x) x()$family == "gaussian",
+                  object$family, init = TRUE)
   ret$VarCorr <- structure(
     lme4::mkVarCorr(sqrt(ret$phi)[[1]], ret$cnms,
       nc = lengths(ret$cnms),
       theta = ret$par[ret$theta_inds], names(ret$cnms)
     ),
-    useSc = TRUE, class = "VarCorr.merMod"
+    useSc = useSc,
+    class = "VarCorr.merMod"
   )
 
   if (!is.null(object$weights_obj)) {
@@ -49,11 +52,16 @@ summary.galamm <- function(object, ...) {
     names(ret$weights) <- levels(object$weights_obj$flist[[1]])
   }
 
+  ret$fixef <- fixef(object)
   ret$fixef <- cbind(
-    Estimate = object$par[object$beta_inds],
+    Estimate = fixef(object),
     `Std. Error` = sqrt(diag(object$vcov[object$beta_inds, object$beta_inds]))
   )
-  ret$fixef <- cbind(ret$fixef, `t value` = ret$fixef[, 1] / ret$fixef[, 2])
+  ret$fixef <- cbind(ret$fixef, (cf3 <- ret$fixef[, 1] / ret$fixef[, 2]),
+                     deparse.level = 0)
+  colnames(ret$fixef)[3] <- paste(if (useSc) "t" else "z", "value")
+  ret$fixef <- cbind(ret$fixef, 2 * pnorm(abs(cf3), lower.tail = FALSE))
+  colnames(ret$fixef)[4] <- paste("Pr(>|", substr(colnames(ret$fixef)[3], 1, 1), "|)", sep = "")
   rownames(ret$fixef) <- object$fixef_names
 
   ret

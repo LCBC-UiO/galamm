@@ -2,18 +2,23 @@
 % Please edit documentation in R/galamm_control.R
 \name{galamm_control}
 \alias{galamm_control}
-\title{Create new galamm_control object}
+\title{Control Values for galamm Fit}
 \usage{
-galamm_control(trace = 3L, lmm = 20)
+galamm_control(trace = 0L, lmm = 20, maxit_conditional_modes = 10)
 }
 \arguments{
 \item{trace}{Verbosity. Passed onto \code{\link{stats::optim}}}
 
-\item{lmm}{Number of BFGS updates retained in the L-BFGS-B method.}
+\item{lmm}{Number of BFGS updates retained in the L-BFGS-B method. Passed
+onto \code{\link{stats::optim}}.}
+
+\item{maxit_conditional_modes}{Maximum number of iterations in penalized
+iteratively reweighted least squares algorithm. Ignored if \code{family =
+  "gaussian"} for all observations, since then a single step gives the exact answer.}
 }
 \value{
-Object of class galamm_control
+A list
 }
 \description{
-Create new galamm_control object
+Control Values for galamm Fit
 }
