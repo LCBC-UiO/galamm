@@ -12,7 +12,7 @@ Description: Estimates generalized additive latent and
     as defined in Sorensen et al. (2023) 
     <doi:10.1007/s11336-023-09910-z>, which is an extension of Rabe-Hesketh and
     Skrondal (2004)'s unifying framework for multilevel latent variable 
-    modeling <10.1007/BF02295939>. Efficient computation is done using sparse 
+    modeling <doi:10.1007/BF02295939>. Efficient computation is done using sparse 
     matrix methods, Laplace approximation, and automatic differentiation. The 
     framework includes generalized multilevel models with heteroscedastic 
     residuals, mixed response types, factor loadings, smoothing splines, 
