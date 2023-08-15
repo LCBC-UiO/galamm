@@ -10,7 +10,7 @@
     as defined in Sorensen et al. (2023) 
     &lt;doi:10.1007/s11336-023-09910-z&gt;, which is an extension of Rabe-Hesketh and
     Skrondal (2004)s unifying framework for multilevel latent variable 
-    modeling &lt;10.1007/BF02295939&gt;. Efficient computation is done using sparse 
+    modeling &lt;doi:10.1007/BF02295939&gt;. Efficient computation is done using sparse 
     matrix methods, Laplace approximation, and automatic differentiation. The 
     framework includes generalized multilevel models with heteroscedastic 
     residuals, mixed response types, factor loadings, smoothing splines, 
@@ -29,7 +29,7 @@
     as defined in Sorensen et al. (2023) 
     &lt;doi:10.1007/s11336-023-09910-z&gt;, which is an extension of Rabe-Hesketh and
     Skrondal (2004)s unifying framework for multilevel latent variable 
-    modeling &lt;10.1007/BF02295939&gt;. Efficient computation is done using sparse 
+    modeling &lt;doi:10.1007/BF02295939&gt;. Efficient computation is done using sparse 
     matrix methods, Laplace approximation, and automatic differentiation. The 
     framework includes generalized multilevel models with heteroscedastic 
     residuals, mixed response types, factor loadings, smoothing splines, 
@@ -66,6 +66,7 @@
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="articles/glmm_factor.html">Generalized Linear Mixed Models with Factor Structures</a>
+    <a class="dropdown-item" href="articles/introduction.html">Introduction</a>
     <a class="dropdown-item" href="articles/lmm_factor.html">Linear Mixed Models with Factor Structures</a>
     <a class="dropdown-item" href="articles/lmm_heteroscedastic.html">Heteroscedastic Linear Mixed Models</a>
     <a class="dropdown-item" href="articles/mixed_response.html">Models with Mixed Response Types</a>
@@ -93,13 +94,18 @@
 </nav><div class="container template-home">
 <div class="row">
   <main id="main" class="col-md-9"><div class="section level1">
-<div class="page-header"><h1 id="the-galamm-package-for-fitting-generalized-additive-latent-and-mixed-models">The galamm package for fitting generalized additive latent and mixed models<a class="anchor" aria-label="anchor" href="#the-galamm-package-for-fitting-generalized-additive-latent-and-mixed-models"></a>
+<div class="page-header"><h1 id="generalized-additive-latent-and-mixed-models">Generalized Additive Latent and Mixed Models<a class="anchor" aria-label="anchor" href="#generalized-additive-latent-and-mixed-models"></a>
 </h1></div>
 <!-- badges: start -->
 
-<p>galamm is an R package for estimating generalized additive latent and mixed models (GALAMM). The model framework was introduced by Sørensen, Fjell, and Walhovd (2023), which is available with open access from the <a href="https://doi.org/10.1007/s11336-023-09910-z" class="external-link">publisher’s website</a>. It is an extension of the GLLAMM framework for multilevel latent variable modeling detailed in Rabe-Hesketh, Skrondal, and Pickles (2004), in particular by efficiently handling crossed random effects and semiparametric estimation.</p>
-<p>The package allows maximum likelihood estimation of complex multilevel models (aka mixed models). In particular, models with any combination of the following features are supported, with links to the corresponding vignettes:</p>
+<p>galamm estimates generalized additive latent and mixed models (GALAMMs). The model framework and the computational algorithms were introduced in Sørensen, Fjell, and Walhovd (2023), which is <a href="https://doi.org/10.1007/s11336-023-09910-z" class="external-link">freely available from Psychometrika</a>. It is an extension of the GLLAMM framework for multilevel latent variable modeling detailed in Rabe-Hesketh, Skrondal, and Pickles (2004), in particular by efficiently handling crossed random effects and semiparametric estimation.</p>
+<div class="section level2">
+<h2 id="what-can-the-package-do">What Can the Package Do?<a class="anchor" aria-label="anchor" href="#what-can-the-package-do"></a>
+</h2>
+<p>Many applications, particularly in the social sciences, require modeling capabilities beyond what is easily supported and computationally feasible with popular R packages like <a href="https://cran.r-project.org/package=mgcv" class="external-link">mgcv</a> (Wood 2017), <a href="https://lavaan.ugent.be/" class="external-link">lavaan</a> (Rosseel 2012), <a href="https://cran.r-project.org/package=lme4" class="external-link">lme4</a> (Bates et al. 2015), and <a href="https://openmx.ssri.psu.edu/" class="external-link">OpenMx</a> (Neale et al. 2016), as well as the Stata based <a href="http://www.gllamm.org/" class="external-link">GLLAMM</a> software (Rabe-Hesketh, Skrondal, and Pickles 2004, 2005). In particular, to maximally utilize large datasets available today, it is typically necessary to combine tools from latent variable modeling, hierarchical modeling, and semiparametric estimation. While this is possible with Bayesian hierarchical models and tools like <a href="https://mc-stan.org/" class="external-link">Stan</a>, it requires considerable expertise and may be beyond scope for a single data analysis project.</p>
+<p>The goal of galamm is to enable estimation of models with any combination of the following features (click the links to go to the relevant vignette):</p>
 <ul>
+<li>Data with an arbitrary number of grouping levels, both crossed and hierarchical.</li>
 <li>
 <a href="https://lcbc-uio.github.io/galamm/articles/lmm_factor.html">Linear mixed models with factor structures</a>.</li>
 <li>
@@ -111,8 +117,14 @@
 <li>
 <a href="https://lcbc-uio.github.io/galamm/articles/semiparametric.html">Generalized additive mixed models with factor structures</a>.</li>
 </ul>
-<p>The package uses an interface similar to <a href="https://cran.r-project.org/package=PLmixed" class="external-link">PLmixed</a> (Rockwood and Jeon 2019), which fits generalized linear mixed models with factor structures. However, for the types of models supported by both PLmixed and galamm, galamm is usually considerably faster. The syntax for defining models is close to that of <a href="https://cran.r-project.org/package=lme4" class="external-link">lme4</a> (Bates et al. 2015). If your model can be estimated with lme4, then you should definitely prefer that package, as it’s very mature, and also likely to be faster. galamm should however give results very similar to lme4.</p>
-<p>The core computations in galamm are done using sparse matrix methods supported by <a href="https://cran.r-project.org/package=RcppEigen" class="external-link">RcppEigen</a> (Bates and Eddelbuettel 2013) and automatic differentiation using the C++ library <a href="https://autodiff.github.io/" class="external-link">autodiff</a> (Leal 2018). The <a href="https://lcbc-uio.github.io/galamm/articles/optimization.html">optimization vignette</a> provides more details.</p>
+<p>Random effects are defined using <a href="https://cran.r-project.org/package=lme4" class="external-link">lme4</a> syntax, and the syntax for factor structures are close to that of <a href="https://cran.r-project.org/package=PLmixed" class="external-link">PLmixed</a> (Rockwood and Jeon 2019). However, for the types of models supported by both PLmixed and galamm, galamm is usually considerably faster. Smooth terms, as in generalized additive mixed models, use the same syntax as <a href="https://cran.r-project.org/package=mgcv" class="external-link">mgcv</a>.</p>
+<p>For most users, it should not be necessary to think about how the actual computations are performed, although they are detailed in the <a href="https://lcbc-uio.github.io/galamm/articles/optimization.html">optimization vignette</a>. In short, the core computations are done using sparse matrix methods supported by <a href="https://cran.r-project.org/package=RcppEigen" class="external-link">RcppEigen</a> (Bates and Eddelbuettel 2013) and automatic differentiation using the C++ library <a href="https://autodiff.github.io/" class="external-link">autodiff</a> (Leal 2018).</p>
+</div>
+<div class="section level2">
+<h2 id="where-do-i-start">Where Do I Start?<a class="anchor" aria-label="anchor" href="#where-do-i-start"></a>
+</h2>
+<p>To get started, take a look at the <a href="https://lcbc-uio.github.io/galamm/articles/introduction.html">Introduction vignette</a></p>
+</div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -220,6 +232,11 @@
 <span><span class="co">#&gt;   }</span></span></code></pre></div>
 </div>
 <div class="section level2">
+<h2 id="code-of-conduct">Code of Conduct<a class="anchor" aria-label="anchor" href="#code-of-conduct"></a>
+</h2>
+<p>Please note that the galamm project is released with a <a href="https://lcbc-uio.github.io/galamm/CODE_OF_CONDUCT.html">Contributor Code of Conduct</a>. By contributing to this project, you agree to abide by its terms.</p>
+</div>
+<div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
 <div id="refs" class="references csl-bib-body hanging-indent">
@@ -232,14 +249,26 @@ Bates, Douglas M, Martin Mächler, Ben Bolker, and Steve Walker. 2015. “Fittin
 <div id="ref-lealAutodiffModernFast2018" class="csl-entry">
 Leal, Allan M. M. 2018. “Autodiff, a Modern, Fast and Expressive C++ Library for Automatic Differentiation.”
 </div>
+<div id="ref-nealeOpenMxExtendedStructural2016" class="csl-entry">
+Neale, Michael C., Michael D. Hunter, Joshua N. Pritikin, Mahsa Zahery, Timothy R. Brick, Robert M. Kirkpatrick, Ryne Estabrook, Timothy C. Bates, Hermine H. Maes, and Steven M. Boker. 2016. “OpenMx 2.0: Extended Structural Equation and Statistical Modeling.” <em>Psychometrika</em> 81 (2): 535–49. <a href="https://doi.org/10.1007/s11336-014-9435-8" class="external-link uri">https://doi.org/10.1007/s11336-014-9435-8</a>.
+</div>
 <div id="ref-rabe-heskethGeneralizedMultilevelStructural2004" class="csl-entry">
 Rabe-Hesketh, Sophia, Anders Skrondal, and Andrew Pickles. 2004. “Generalized Multilevel Structural Equation Modeling.” <em>Psychometrika</em> 69 (2): 167–90. <a href="https://doi.org/10.1007/BF02295939" class="external-link uri">https://doi.org/10.1007/BF02295939</a>.
+</div>
+<div id="ref-rabe-heskethMaximumLikelihoodEstimation2005" class="csl-entry">
+———. 2005. “Maximum Likelihood Estimation of Limited and Discrete Dependent Variable Models with Nested Random Effects.” <em>Journal of Econometrics</em> 128 (2): 301–23. <a href="https://doi.org/10.1016/j.jeconom.2004.08.017" class="external-link uri">https://doi.org/10.1016/j.jeconom.2004.08.017</a>.
 </div>
 <div id="ref-rockwoodEstimatingComplexMeasurement2019" class="csl-entry">
 Rockwood, Nicholas J., and Minjeong Jeon. 2019. “Estimating Complex Measurement and Growth Models Using the R Package PLmixed.” <em>Multivariate Behavioral Research</em> 54 (2): 288–306. <a href="https://doi.org/10.1080/00273171.2018.1516541" class="external-link uri">https://doi.org/10.1080/00273171.2018.1516541</a>.
 </div>
+<div id="ref-rosseelLavaanPackageStructural2012" class="csl-entry">
+Rosseel, Yves. 2012. “Lavaan: An R Package for Structural Equation Modeling.” <em>Journal of Statistical Software</em> 48 (May): 1–36. <a href="https://doi.org/10.18637/jss.v048.i02" class="external-link uri">https://doi.org/10.18637/jss.v048.i02</a>.
+</div>
 <div id="ref-sorensenLongitudinalModelingAgeDependent2023" class="csl-entry">
 Sørensen, Øystein, Anders M. Fjell, and Kristine B. Walhovd. 2023. “Longitudinal Modeling of Age-Dependent Latent Traits with Generalized Additive Latent and Mixed Models.” <em>Psychometrika</em> 88 (2): 456–86. <a href="https://doi.org/10.1007/s11336-023-09910-z" class="external-link uri">https://doi.org/10.1007/s11336-023-09910-z</a>.
+</div>
+<div id="ref-woodGeneralizedAdditiveModels2017a" class="csl-entry">
+Wood, Simon N. 2017. <em>Generalized Additive Models: An Introduction with R</em>. 2nd ed. Chapman and Hall/CRC.
 </div>
 </div>
 </div>
@@ -260,6 +289,13 @@ Sørensen, Øystein, Anders M. Fjell, and Kristine B. Walhovd. 2023. “Longitud
 </ul>
 </div>
 
+<div class="community">
+<h2 data-toc-skip>Community</h2>
+<ul class="list-unstyled">
+<li><a href="CONTRIBUTING.html">Contributing guide</a></li>
+<li><a href="CODE_OF_CONDUCT.html">Code of conduct</a></li>
+</ul>
+</div>
 
 <div class="citation">
 <h2 data-toc-skip>Citation</h2>

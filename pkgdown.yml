@@ -3,12 +3,13 @@ pkgdown: 2.0.7
 pkgdown_sha: ~
 articles:
   glmm_factor: glmm_factor.html
+  introduction: introduction.html
   lmm_factor: lmm_factor.html
   lmm_heteroscedastic: lmm_heteroscedastic.html
   mixed_response: mixed_response.html
   optimization: optimization.html
   semiparametric: semiparametric.html
-last_built: 2023-08-15T06:15Z
+last_built: 2023-08-15T08:27Z
 urls:
   reference: https://lcbc-uio.github.io/galamm/reference
   article: https://lcbc-uio.github.io/galamm/articles

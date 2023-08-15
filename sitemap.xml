@@ -4,6 +4,12 @@
     <loc>https://lcbc-uio.github.io/galamm/404.html</loc>
   </url>
   <url>
+    <loc>https://lcbc-uio.github.io/galamm/CODE_OF_CONDUCT.html</loc>
+  </url>
+  <url>
+    <loc>https://lcbc-uio.github.io/galamm/CONTRIBUTING.html</loc>
+  </url>
+  <url>
     <loc>https://lcbc-uio.github.io/galamm/LICENSE.html</loc>
   </url>
   <url>
@@ -11,6 +17,9 @@
   </url>
   <url>
     <loc>https://lcbc-uio.github.io/galamm/articles/index.html</loc>
+  </url>
+  <url>
+    <loc>https://lcbc-uio.github.io/galamm/articles/introduction.html</loc>
   </url>
   <url>
     <loc>https://lcbc-uio.github.io/galamm/articles/lmm_factor.html</loc>
