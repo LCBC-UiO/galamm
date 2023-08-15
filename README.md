@@ -19,9 +19,9 @@ The model framework and the computational algorithms were introduced in
 Sørensen, Fjell, and Walhovd (2023), which is [freely available from
 Psychometrika](https://doi.org/10.1007/s11336-023-09910-z). It is an
 extension of the GLLAMM framework for multilevel latent variable
-modeling detailed in Rabe-Hesketh, Skrondal, and Pickles (2004), in
-particular by efficiently handling crossed random effects and
-semiparametric estimation.
+modeling detailed in Rabe-Hesketh, Skrondal, and Pickles (2004) and
+Skrondal and Rabe-Hesketh (2004), in particular by efficiently handling
+crossed random effects and semiparametric estimation.
 
 ## What Can the Package Do?
 
@@ -281,6 +281,14 @@ Measurement and Growth Models Using the R Package PLmixed.”
 Rosseel, Yves. 2012. “Lavaan: An R Package for Structural Equation
 Modeling.” *Journal of Statistical Software* 48 (May): 1–36.
 <https://doi.org/10.18637/jss.v048.i02>.
+
+</div>
+
+<div id="ref-skrondalGeneralizedLatentVariable2004" class="csl-entry">
+
+Skrondal, Anders, and Sophia Rabe-Hesketh. 2004. *Generalized Latent
+Variable Modeling*. Interdisciplinary Statistics Series. Boca Raton,
+Florida: Chapman and Hall/CRC.
 
 </div>
 
