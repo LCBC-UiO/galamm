@@ -6,6 +6,6 @@
 #' @return An object
 #' @export
 #'
-coef.galamm <- function(object, ...){
+coef.galamm <- function(object, ...) {
   fixef(object)
 }

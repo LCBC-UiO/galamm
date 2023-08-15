@@ -10,15 +10,14 @@
 #' @return A list
 #' @export
 #'
-galamm_control <- function(trace = 0L, lmm = 20, maxit_conditional_modes = 10){
-
-  if(length(trace) != 1L && trace < 0){
+galamm_control <- function(trace = 0L, lmm = 20, maxit_conditional_modes = 10) {
+  if (length(trace) != 1L && trace < 0) {
     stop("trace should be a non-negative integer of length one")
   }
 
   stopifnot(length(lmm) == 1 && lmm > 0)
   stopifnot(length(maxit_conditional_modes) == 1 &&
-              maxit_conditional_modes > 0)
+    maxit_conditional_modes > 0)
   list(
     fnscale = -1,
     trace = trace,

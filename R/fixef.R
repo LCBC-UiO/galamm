@@ -11,7 +11,7 @@
 #' @export fixef
 #' @method fixef galamm
 #' @export
-fixef.galamm <- function(object, ...){
+fixef.galamm <- function(object, ...) {
   ret <- object$par[object$beta_inds]
   names(ret) <- object$fixef_names
   ret
