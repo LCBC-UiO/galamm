@@ -104,7 +104,9 @@ We obtain maximum marginal likelihood estimates by maximizing $L\left(\boldsymbo
 
 ## Example Models 
 
-This section describes some example models from the GALAMM framework, as well as code that can be used to estimate them.
+This section describes some example models from the GALAMM framework.
+
+### Covariate Measurement Error Model
 
 
 

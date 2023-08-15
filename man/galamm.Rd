@@ -13,7 +13,8 @@ galamm(
   load.var = NULL,
   lambda = NULL,
   factor = NULL,
-  start = NULL
+  start = NULL,
+  control = galamm_control()
 )
 }
 \arguments{
@@ -40,6 +41,9 @@ observations are distributed according to the first element of "family".}
 \item{start}{A named list of starting values for parameters. Possible names
 of list elements are "theta", "beta", and "lambda", all of which represent
 numerical vectors.}
+
+\item{control}{Control object. Result of calling
+\code{\link{galamm_control}}.}
 }
 \value{
 A model object

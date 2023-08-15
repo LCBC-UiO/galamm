@@ -15,6 +15,8 @@
 #' @param start A named list of starting values for parameters. Possible names
 #'   of list elements are "theta", "beta", and "lambda", all of which represent
 #'   numerical vectors.
+#' @param control Control object. Result of calling
+#'   \code{\link{galamm_control}}.
 #'
 #' @return A model object
 #' @export
@@ -24,7 +26,7 @@
 galamm <- function(formula, weights = NULL, data, family = gaussian,
                    family_mapping = rep(1L, nrow(data)),
                    load.var = NULL, lambda = NULL, factor = NULL,
-                   start = NULL) {
+                   start = NULL, control = galamm_control()) {
   stopifnot(length(family) == length(unique(family_mapping)))
   mc <- match.call()
   if (!is.list(family)) family <- list(family)
