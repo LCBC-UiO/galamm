@@ -90,7 +90,214 @@
 <p>This vignette is aimed to give you a high-level overview of the types
 of models supported by the galamm package, and to point you to relevant
 vignettes where you can find more information.</p>
-  </main>
+<div class="section level3">
+<h3 id="generalized-additive-latent-and-mixed-models">Generalized Additive Latent and Mixed Models<a class="anchor" aria-label="anchor" href="#generalized-additive-latent-and-mixed-models"></a>
+</h3>
+<p>Generalized additive latent and mixed models (GALAMMs) <span class="citation">(Sørensen, Fjell, and Walhovd 2023)</span> is an
+extension of generalized linear latent and mixed models (GLLAMMs) <span class="citation">(Rabe-Hesketh, Skrondal, and Pickles 2004; Skrondal and
+Rabe-Hesketh 2004)</span> which allows both observed responses and
+latent variables to depend smoothly on observed variables.
+<em>Smoothly</em> here means that the relationship is not assumed to
+follow a particular parametric form, e.g., as specified by a linear
+model. Instead, an <em>a priori</em> assumption is made that the
+relationship is smooth, and the model then attempts to learn the
+relationship from the data. GALAMM uses smoothing splines to obtain
+this, identically to how generalized additive models (GAMs) <span class="citation">(Wood 2017)</span> are estimated.</p>
+<p>The GLLAMM framework contains many elements which are currently not
+implemented in the galamm package. This includes both nonparametric
+random effects and a large number of model families, e.g., for censored
+responses. If you need any of this, but not semiparametric estimation,
+the Stata based <a href="http://www.gllamm.org/" class="external-link">GLLAMM package</a> is
+likely the place you should go. Conversely, galamm incorporates crossed
+random effects easily and efficiently, while these are hard to specify
+using GLLAMM.</p>
+<div class="section level4">
+<h4 id="response-model">Response Model<a class="anchor" aria-label="anchor" href="#response-model"></a>
+</h4>
+<p>GALAMMs are specified using three building blocks. First, <span class="math inline">\(n\)</span> resposes <span class="math inline">\(y_{1}, \dots, y_{n}\)</span> are assumed
+independently distributed according to an exponential family with
+density</p>
+<p><span class="math display">\[
+f\left(y | \theta, \phi\right) = \exp \left( \frac{y\theta -
+b\left(\theta(\mu)\right)}{\phi} + c\left(y, \phi\right) \right)
+\]</span></p>
+<p>here <span class="math inline">\(\mu = g^{-1}(\nu)\)</span> is the
+mean, <span class="math inline">\(g^{-1}(\cdot)\)</span> is the inverse
+of link function <span class="math inline">\(g(\cdot)\)</span>, <span class="math inline">\(\nu\)</span> is a “nonlinear predictor”, <span class="math inline">\(\phi\)</span> is a dispersion parameter, and <span class="math inline">\(b(\cdot)\)</span> and <span class="math inline">\(c(\cdot)\)</span> are known functions. In contrast
+to what is assumed, e.g., by <a href="https://cran.r-project.org/package=lme4" class="external-link">lme4</a> <span class="citation">(Bates et al. 2015)</span>, the functions <span class="math inline">\(b(\cdot)\)</span>, <span class="math inline">\(c(\cdot)\)</span>, and <span class="math inline">\(g(\cdot)\)</span> are allowed to vary between
+observations. That is, the observations can come from different members
+of the exponential family. The vignette on <a href="https://lcbc-uio.github.io/galamm/articles/mixed_response.html">models
+with mixed response types</a> describes this in detail.</p>
+</div>
+<div class="section level4">
+<h4 id="nonlinear-predictor">Nonlinear Predictor<a class="anchor" aria-label="anchor" href="#nonlinear-predictor"></a>
+</h4>
+<p>Next, the nonlinear predictor, which corresponds to the measurement
+model in a classical structural equation model, is defined by</p>
+<p><span class="math display">\[
+\nu = \sum_{s=1}^{S} f_{s}\left(\mathbf{x}\right) +
+\sum_{l=2}^{L}\sum_{m=1}^{M_{l}} \eta_{m}^{(l)}
+\mathbf{z}^{(l)}_{m}{}^{'}\boldsymbol{\lambda}_{m}^{(l)},
+\]</span></p>
+<p>where <span class="math inline">\(\mathbf{x}\)</span> are explanatory
+variables, <span class="math inline">\(f_{s}(\mathbf{x})\)</span>, <span class="math inline">\(s=1,\dots,S\)</span> are smooth functions, <span class="math inline">\(\eta_{m}^{(l)}\)</span> are latent variables
+varying at level <span class="math inline">\(l\)</span>, and <span class="math inline">\(\boldsymbol{\lambda}_{m}^{(l)}{}^{T}
+\mathbf{z}_{m}^{(l)}\)</span> is the weighted sum of a vector of
+explanatory variables <span class="math inline">\(\mathbf{z}_{m}^{(l)}\)</span> varying at level
+<span class="math inline">\(l\)</span> and parameters <span class="math inline">\(\boldsymbol{\lambda}_{m}^{(l)}\)</span>. Let</p>
+<p><span class="math display">\[\boldsymbol{\eta}^{(l)} =
+[\eta_{1}^{(l)}, \dots, \eta_{M_{l}}^{(l)}]^{T} \in
+\mathbb{R}^{M_{l}}\]</span></p>
+<p>be the vector of all latent variables at level <span class="math inline">\(l\)</span>, and</p>
+<p><span class="math display">\[\boldsymbol{\eta} =
+[\boldsymbol{\eta}^{(2)}, \dots, \boldsymbol{\eta}^{(L)}]^{T} \in
+\mathbb{R}^{M}\]</span></p>
+<p>the vector of all latent variables belonging to a given level-2 unit,
+where <span class="math inline">\(M = \sum_{l=2}^{L} M_{l}\)</span>. The
+word “level” is here used to denote a grouping level; they are not
+necessarily hierarchical.</p>
+</div>
+</div>
+<div class="section level3">
+<h3 id="structural-model">Structural Model<a class="anchor" aria-label="anchor" href="#structural-model"></a>
+</h3>
+<p>The structural model specifies how the latent variables are related
+to each other and to observed variables, and is given by</p>
+<p><span class="math display">\[
+\boldsymbol{\eta} = \mathbf{B}\boldsymbol{\eta} +
+\mathbf{h}\left(\mathbf{w}\right)
++ \boldsymbol{\zeta}
+\]</span></p>
+<p>where <span class="math inline">\(\mathbf{B}\)</span> is an <span class="math inline">\(M \times M\)</span> matrix of regression
+coefficients for regression among latent variables and <span class="math inline">\(\mathbf{w} \in \mathbb{R}^{Q}\)</span> is a vector
+of <span class="math inline">\(Q\)</span> predictors for the latent
+variables. <span class="math inline">\(\mathbf{h}(\mathbf{w}) =
+[\mathbf{h}_{2}(\mathbf{w}), \dots, \mathbf{h}_{L}(\mathbf{w})] \in
+\mathbb{R}^{M}\)</span> is a vector of smooth functions whose components
+<span class="math inline">\(\mathbf{h}_{l}(\mathbf{w}) \in
+\mathbb{R}^{M_{l}}\)</span> are vectors of functions predicting the
+latent variables varying at level <span class="math inline">\(l\)</span>, and depending on a subset of the
+elements <span class="math inline">\(\mathbf{w}\)</span>. <span class="math inline">\(\boldsymbol{\zeta}\)</span> is a vector of
+normally distributed random effects, <span class="math inline">\(\boldsymbol{\zeta}^{(l)} \sim N(\mathbf{0},
+\boldsymbol{\Psi}^{(l)})\)</span> for <span class="math inline">\(l=2,\dots,L\)</span>, where <span class="math inline">\(\boldsymbol{\Psi}^{(l)} \in \mathbb{R}^{M_{l}
+\times M_{l}}\)</span> is the covariance matrix of random effects at
+level <span class="math inline">\(l\)</span>. Defining the <span class="math inline">\(M \times M\)</span> covariance matrix <span class="math inline">\(\boldsymbol{\Psi} =
+\text{diag}(\boldsymbol{\Psi}^{(2)}, \dots,
+\boldsymbol{\Psi}^{(L)})\)</span>, we also have <span class="math inline">\(\boldsymbol{\zeta} \sim N(\mathbf{0},
+\boldsymbol{\Psi})\)</span>.</p>
+</div>
+<div class="section level3">
+<h3 id="mixed-model-representation">Mixed Model Representation<a class="anchor" aria-label="anchor" href="#mixed-model-representation"></a>
+</h3>
+<p>In <span class="citation">Sørensen, Fjell, and Walhovd (2023)</span>
+we show that any model specified as above can be transformed to a
+GLLAMM, which is essentially a generalized nonlinear mixed model. This
+transformation is rather complex, so we won’t spell it out here, but the
+key steps are:</p>
+<ol style="list-style-type: decimal">
+<li>Converting smooth terms to their mixed model form.</li>
+<li>Estimate the resulting GLLAMM.</li>
+<li>Convert back to the original parametrization.</li>
+</ol>
+<p>In galamm we use the same transformations as the <a href="https://CRAN.R-project.org/package=gamm4" class="external-link">gamm4</a> package
+does.</p>
+</div>
+<div class="section level3">
+<h3 id="maximum-marginal-likelihood-estimation">Maximum Marginal Likelihood Estimation<a class="anchor" aria-label="anchor" href="#maximum-marginal-likelihood-estimation"></a>
+</h3>
+<p>In mixed model representation, the nonlinear predictor can be written
+on the form</p>
+<p><span class="math display">\[
+\boldsymbol{\nu} = \mathbf{X}(\boldsymbol{\lambda}, \mathbf{B})
+\boldsymbol{\beta} +  \mathbf{Z}(\boldsymbol{\lambda}, \mathbf{B})
+\boldsymbol{\zeta}
+\]</span></p>
+<p>where <span class="math inline">\(\mathbf{X}(\boldsymbol{\lambda},
+\mathbf{B})\)</span> is the regression matrix for fixed effects <span class="math inline">\(\boldsymbol{\beta}\)</span> and <span class="math inline">\(\mathbf{Z}(\boldsymbol{\lambda},
+\mathbf{B})\)</span> is the regression matrix for random effects <span class="math inline">\(\boldsymbol{\zeta}\)</span>. In contrast to with
+generalized linear mixed models, however, both matrices will in general
+depend on factor loadings <span class="math inline">\(\boldsymbol{\lambda}\)</span> and regression
+coefficients between latent variables <span class="math inline">\(\mathbf{B}\)</span>. Both of these are parameters
+that need to be estimated, and hence <span class="math inline">\(\mathbf{X}(\boldsymbol{\lambda},
+\mathbf{B})\)</span> and <span class="math inline">\(\boldsymbol{\beta}\)</span> and <span class="math inline">\(\mathbf{Z}(\boldsymbol{\lambda},
+\mathbf{B})\)</span> need to be updated throughout the estimation
+process.</p>
+<div class="section level4">
+<h4 id="evaluating-the-marginal-likelihood">Evaluating the Marginal Likelihood<a class="anchor" aria-label="anchor" href="#evaluating-the-marginal-likelihood"></a>
+</h4>
+<p>Plugging the nonlinear predictor into the structural model, we obtain
+the joint likelihood for the model. We then obtain the marginal
+likelihood by integrating over the random effects, yielding a marginal
+likelihood function of the form</p>
+<p><span class="math display">\[
+L\left(\boldsymbol{\beta}, \boldsymbol{\Lambda}, \boldsymbol{\Gamma},
+\boldsymbol{\lambda}, \mathbf{B}, \boldsymbol{\phi}\right) =  \left(2
+\pi \phi_{1}\right)^{-r/2}  \int_{\mathbb{R}^{r}} \exp\left(
+g\left(\boldsymbol{\beta}, \boldsymbol{\Lambda}, \boldsymbol{\Gamma},
+\boldsymbol{\lambda}, \mathbf{B}, \boldsymbol{\phi}, \mathbf{u}\right)
+\right) \text{d} \mathbf{u}
+\]</span></p>
+<p>where <span class="math inline">\(\mathbf{u}\)</span> is a
+standardized version of <span class="math inline">\(\boldsymbol{\zeta}\)</span>. In order to evaluate
+the marginal likelihood at a given set of parameter values, we use the
+Laplace approximation combined with sparse matrix operations, extending
+<span class="citation">Bates et al. (2015)</span>’s algorithm for linear
+mixed models.</p>
+</div>
+<div class="section level4">
+<h4 id="maximizing-the-marginal-likelihood">Maximizing the Marginal Likelihood<a class="anchor" aria-label="anchor" href="#maximizing-the-marginal-likelihood"></a>
+</h4>
+<p>We obtain maximum marginal likelihood estimates by maximizing <span class="math inline">\(L\left(\boldsymbol{\beta}, \boldsymbol{\Lambda},
+\boldsymbol{\Gamma}, \boldsymbol{\lambda}, \mathbf{B},
+\boldsymbol{\phi}\right)\)</span>, subject to possible constraints,
+e.g., that variances are non-negative. For this, we use the L-BFGS-B
+algorithm implement in <code><a href="https://rdrr.io/r/stats/optim.html" class="external-link">stats::optim</a></code>. The predicted values
+of random effects, <span class="math inline">\(\widehat{\mathbf{u}}\)</span> are obtained as
+posterior modes at the final estimates.</p>
+</div>
+</div>
+<div class="section level3">
+<h3 id="example-models">Example Models<a class="anchor" aria-label="anchor" href="#example-models"></a>
+</h3>
+<p>This section describes some example models from the GALAMM framework,
+as well as code that can be used to estimate them.</p>
+</div>
+<div class="section level2">
+<h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+</h2>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-batesFittingLinearMixedEffects2015" class="csl-entry">
+Bates, Douglas M, Martin Mächler, Ben Bolker, and Steve Walker. 2015.
+<span>“Fitting <span>Linear Mixed-Effects Models Using</span>
+Lme4.”</span> <em>Journal of Statistical Software</em> 67 (1): 1–48. <a href="https://doi.org/10.18637/jss.v067.i01" class="external-link">https://doi.org/10.18637/jss.v067.i01</a>.
+</div>
+<div id="ref-rabe-heskethGeneralizedMultilevelStructural2004" class="csl-entry">
+Rabe-Hesketh, Sophia, Anders Skrondal, and Andrew Pickles. 2004.
+<span>“Generalized Multilevel Structural Equation Modeling.”</span>
+<em>Psychometrika</em> 69 (2): 167–90. <a href="https://doi.org/10.1007/BF02295939" class="external-link">https://doi.org/10.1007/BF02295939</a>.
+</div>
+<div id="ref-skrondalGeneralizedLatentVariable2004" class="csl-entry">
+Skrondal, Anders, and Sophia Rabe-Hesketh. 2004. <em>Generalized Latent
+Variable Modeling</em>. Interdisciplinary <span>Statistics
+Series</span>. <span>Boca Raton, Florida</span>: <span>Chapman and
+Hall/CRC</span>.
+</div>
+<div id="ref-sorensenLongitudinalModelingAgeDependent2023" class="csl-entry">
+Sørensen, Øystein, Anders M. Fjell, and Kristine B. Walhovd. 2023.
+<span>“Longitudinal <span>Modeling</span> of <span>Age-Dependent Latent
+Traits</span> with <span>Generalized Additive Latent</span> and
+<span>Mixed Models</span>.”</span> <em>Psychometrika</em> 88 (2):
+456–86. <a href="https://doi.org/10.1007/s11336-023-09910-z" class="external-link">https://doi.org/10.1007/s11336-023-09910-z</a>.
+</div>
+<div id="ref-woodGeneralizedAdditiveModels2017a" class="csl-entry">
+Wood, Simon N. 2017. <em>Generalized Additive Models: <span>An</span>
+Introduction with <span>R</span></em>. 2nd ed. <span>Chapman and
+Hall/CRC</span>.
+</div>
+</div>
+</div>
+  </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
+    </nav></aside>
 </div>
 
 
