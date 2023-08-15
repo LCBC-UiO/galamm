@@ -30,7 +30,6 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
 
   stopifnot(length(family) == length(unique(family_mapping)))
 
-
   mc <- match.call()
   if (!is.list(family)) family <- list(family)
   family_list <- lapply(family, function(f) {
@@ -253,18 +252,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
     control = control[c("trace", "lmm", "fnscale")]
   )
 
-
   final_model <- mlwrapper(opt$par, TRUE)
-  S <- tryCatch(
-    {
-      -solve(final_model$hessian)
-    },
-    error = function(e) {
-      message("Hessian rank deficient. Could not compute covariance matrix.")
-      NULL
-    }
-  )
-
 
   # Update Cholesky factor of covariance matrix
   Lambdat@x <- opt$par[theta_inds][lmod$reTrms$Lind]
@@ -289,7 +277,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   ret$lambda <- lambda
   ret$cnms <- lmod$reTrms$cnms
   ret$fixef_names <- colnames(X)
-  ret$vcov <- S
+  ret$hessian <- final_model$hessian
   ret$par <- opt$par
   ret$lambda_inds <- lambda_inds
   ret$beta_inds <- beta_inds

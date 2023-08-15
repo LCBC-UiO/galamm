@@ -94,6 +94,17 @@ We can start by inspecting the fitted model:
 summary(mod)
 ```
 
+The `fixef` method lets us consider the fixed effects:
+
+```{r}
+fixef(mod)
+```
+
+We can also get Wald type confidence intervals for the fixed effects.
+
+```{r}
+confint(mod, parm = "beta")
+```
 
 
 ## Binomial Model with Multiple Trials
