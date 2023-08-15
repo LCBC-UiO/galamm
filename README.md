@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# The galamm package for fitting generalized additive latent and mixed models
+# Generalized Additive Latent and Mixed Models
 
 <!-- badges: start -->
 
@@ -14,20 +14,39 @@ yet.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.
 coverage](https://codecov.io/gh/LCBC-UiO/galamm/branch/main/graph/badge.svg)](https://app.codecov.io/gh/LCBC-UiO/galamm?branch=main)
 <!-- badges: end -->
 
-galamm is an R package for estimating generalized additive latent and
-mixed models (GALAMM). The model framework was introduced by Sørensen,
-Fjell, and Walhovd (2023), which is available with open access from the
-[publisher’s website](https://doi.org/10.1007/s11336-023-09910-z). It is
-an extension of the GLLAMM framework for multilevel latent variable
+galamm estimates generalized additive latent and mixed models (GALAMMs).
+The model framework and the computational algorithms were introduced in
+Sørensen, Fjell, and Walhovd (2023), which is [freely available from
+Psychometrika](https://doi.org/10.1007/s11336-023-09910-z). It is an
+extension of the GLLAMM framework for multilevel latent variable
 modeling detailed in Rabe-Hesketh, Skrondal, and Pickles (2004), in
 particular by efficiently handling crossed random effects and
 semiparametric estimation.
 
-The package allows maximum likelihood estimation of complex multilevel
-models (aka mixed models). In particular, models with any combination of
-the following features are supported, with links to the corresponding
-vignettes:
+## What Can the Package Do?
 
+Many applications, particularly in the social sciences, require modeling
+capabilities beyond what is easily supported and computationally
+feasible with popular R packages like
+[mgcv](https://cran.r-project.org/package=mgcv) (Wood 2017),
+[lavaan](https://lavaan.ugent.be/) (Rosseel 2012),
+[lme4](https://cran.r-project.org/package=lme4) (Bates et al. 2015), and
+[OpenMx](https://openmx.ssri.psu.edu/) (Neale et al. 2016), as well as
+the Stata based [GLLAMM](http://www.gllamm.org/) software (Rabe-Hesketh,
+Skrondal, and Pickles 2004, 2005). In particular, to maximally utilize
+large datasets available today, it is typically necessary to combine
+tools from latent variable modeling, hierarchical modeling, and
+semiparametric estimation. While this is possible with Bayesian
+hierarchical models and tools like [Stan](https://mc-stan.org/), it
+requires considerable expertise and may be beyond scope for a single
+data analysis project.
+
+The goal of galamm is to enable estimation of models with any
+combination of the following features (click the links to go to the
+relevant vignette):
+
+- Data with an arbitrary number of grouping levels, both crossed and
+  hierarchical.
 - [Linear mixed models with factor
   structures](https://lcbc-uio.github.io/galamm/articles/lmm_factor.html).
 - [Generalized linear mixed models with factor
@@ -39,24 +58,28 @@ vignettes:
 - [Generalized additive mixed models with factor
   structures](https://lcbc-uio.github.io/galamm/articles/semiparametric.html).
 
-The package uses an interface similar to
+Random effects are defined using
+[lme4](https://cran.r-project.org/package=lme4) syntax, and the syntax
+for factor structures are close to that of
 [PLmixed](https://cran.r-project.org/package=PLmixed) (Rockwood and Jeon
-2019), which fits generalized linear mixed models with factor
-structures. However, for the types of models supported by both PLmixed
-and galamm, galamm is usually considerably faster. The syntax for
-defining models is close to that of
-[lme4](https://cran.r-project.org/package=lme4) (Bates et al. 2015). If
-your model can be estimated with lme4, then you should definitely prefer
-that package, as it’s very mature, and also likely to be faster. galamm
-should however give results very similar to lme4.
+2019). However, for the types of models supported by both PLmixed and
+galamm, galamm is usually considerably faster. Smooth terms, as in
+generalized additive mixed models, use the same syntax as
+[mgcv](https://cran.r-project.org/package=mgcv).
 
-The core computations in galamm are done using sparse matrix methods
+For most users, it should not be necessary to think about how the actual
+computations are performed, although they are detailed in the
+[optimization
+vignette](https://lcbc-uio.github.io/galamm/articles/optimization.html).
+In short, the core computations are done using sparse matrix methods
 supported by [RcppEigen](https://cran.r-project.org/package=RcppEigen)
 (Bates and Eddelbuettel 2013) and automatic differentiation using the
-C++ library [autodiff](https://autodiff.github.io/) (Leal 2018). The
-[optimization
-vignette](https://lcbc-uio.github.io/galamm/articles/optimization.html)
-provides more details.
+C++ library [autodiff](https://autodiff.github.io/) (Leal 2018).
+
+## Where Do I Start?
+
+To get started, take a look at the [Introduction
+vignette](https://lcbc-uio.github.io/galamm/articles/introduction.html)
 
 ## Installation
 
@@ -214,12 +237,32 @@ Library for Automatic Differentiation.”
 
 </div>
 
+<div id="ref-nealeOpenMxExtendedStructural2016" class="csl-entry">
+
+Neale, Michael C., Michael D. Hunter, Joshua N. Pritikin, Mahsa Zahery,
+Timothy R. Brick, Robert M. Kirkpatrick, Ryne Estabrook, Timothy C.
+Bates, Hermine H. Maes, and Steven M. Boker. 2016. “OpenMx 2.0: Extended
+Structural Equation and Statistical Modeling.” *Psychometrika* 81 (2):
+535–49. <https://doi.org/10.1007/s11336-014-9435-8>.
+
+</div>
+
 <div id="ref-rabe-heskethGeneralizedMultilevelStructural2004"
 class="csl-entry">
 
 Rabe-Hesketh, Sophia, Anders Skrondal, and Andrew Pickles. 2004.
 “Generalized Multilevel Structural Equation Modeling.” *Psychometrika*
 69 (2): 167–90. <https://doi.org/10.1007/BF02295939>.
+
+</div>
+
+<div id="ref-rabe-heskethMaximumLikelihoodEstimation2005"
+class="csl-entry">
+
+———. 2005. “Maximum Likelihood Estimation of Limited and Discrete
+Dependent Variable Models with Nested Random Effects.” *Journal of
+Econometrics* 128 (2): 301–23.
+<https://doi.org/10.1016/j.jeconom.2004.08.017>.
 
 </div>
 
@@ -233,6 +276,14 @@ Measurement and Growth Models Using the R Package PLmixed.”
 
 </div>
 
+<div id="ref-rosseelLavaanPackageStructural2012" class="csl-entry">
+
+Rosseel, Yves. 2012. “Lavaan: An R Package for Structural Equation
+Modeling.” *Journal of Statistical Software* 48 (May): 1–36.
+<https://doi.org/10.18637/jss.v048.i02>.
+
+</div>
+
 <div id="ref-sorensenLongitudinalModelingAgeDependent2023"
 class="csl-entry">
 
@@ -240,6 +291,13 @@ Sørensen, Øystein, Anders M. Fjell, and Kristine B. Walhovd. 2023.
 “Longitudinal Modeling of Age-Dependent Latent Traits with Generalized
 Additive Latent and Mixed Models.” *Psychometrika* 88 (2): 456–86.
 <https://doi.org/10.1007/s11336-023-09910-z>.
+
+</div>
+
+<div id="ref-woodGeneralizedAdditiveModels2017a" class="csl-entry">
+
+Wood, Simon N. 2017. *Generalized Additive Models: An Introduction with
+R*. 2nd ed. Chapman and Hall/CRC.
 
 </div>
 

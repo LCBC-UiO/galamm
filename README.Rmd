@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# The galamm package for fitting generalized additive latent and mixed models
+# Generalized Additive Latent and Mixed Models
 
 <!-- badges: start -->
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
@@ -23,19 +23,28 @@ knitr::opts_chunk$set(
 [![Codecov test coverage](https://codecov.io/gh/LCBC-UiO/galamm/branch/main/graph/badge.svg)](https://app.codecov.io/gh/LCBC-UiO/galamm?branch=main)
 <!-- badges: end -->
 
-galamm is an R package for estimating generalized additive latent and mixed models (GALAMM). The model framework was introduced by @sorensenLongitudinalModelingAgeDependent2023, which is available with open access from the [publisher's website](https://doi.org/10.1007/s11336-023-09910-z). It is an extension of the GLLAMM framework for multilevel latent variable modeling detailed in @rabe-heskethGeneralizedMultilevelStructural2004, in particular by efficiently handling crossed random effects and semiparametric estimation.
+galamm estimates generalized additive latent and mixed models (GALAMMs). The model framework and the computational algorithms were introduced in @sorensenLongitudinalModelingAgeDependent2023, which is  [freely available from Psychometrika](https://doi.org/10.1007/s11336-023-09910-z). It is an extension of the GLLAMM framework for multilevel latent variable modeling detailed in @rabe-heskethGeneralizedMultilevelStructural2004, in particular by efficiently handling crossed random effects and semiparametric estimation.
 
-The package allows maximum likelihood estimation of complex multilevel models (aka mixed models). In particular, models with any combination of the following features are supported, with links to the corresponding vignettes:
+## What Can the Package Do?
 
+Many applications, particularly in the social sciences, require modeling capabilities beyond what is easily supported and computationally feasible with popular R packages like [mgcv](https://cran.r-project.org/package=mgcv) [@woodGeneralizedAdditiveModels2017a], [lavaan](https://lavaan.ugent.be/) [@rosseelLavaanPackageStructural2012], [lme4](https://cran.r-project.org/package=lme4) [@batesFittingLinearMixedEffects2015], and [OpenMx](https://openmx.ssri.psu.edu/) [@nealeOpenMxExtendedStructural2016], as well as the Stata based [GLLAMM](http://www.gllamm.org/) software [@rabe-heskethGeneralizedMultilevelStructural2004;@rabe-heskethMaximumLikelihoodEstimation2005]. In particular, to maximally utilize large datasets available today, it is typically necessary to combine tools from latent variable modeling, hierarchical modeling, and semiparametric estimation. While this is possible with Bayesian hierarchical models and tools like [Stan](https://mc-stan.org/), it requires considerable expertise and may be beyond scope for a single data analysis project. 
+
+The goal of galamm is to enable estimation of models with any combination of the following features (click the links to go to the relevant vignette):
+
+- Data with an arbitrary number of grouping levels, both crossed and hierarchical.
 - [Linear mixed models with factor structures](https://lcbc-uio.github.io/galamm/articles/lmm_factor.html).
 - [Generalized linear mixed models with factor structures](https://lcbc-uio.github.io/galamm/articles/glmm_factor.html).
 - [Linear mixed models with heteroscedastic residuals](https://lcbc-uio.github.io/galamm/articles/lmm_heteroscedastic.html).
 - [Mixed models with mixed response types](https://lcbc-uio.github.io/galamm/articles/mixed_response.html).
 - [Generalized additive mixed models with factor structures](https://lcbc-uio.github.io/galamm/articles/semiparametric.html).
 
-The package uses an interface similar to [PLmixed](https://cran.r-project.org/package=PLmixed) [@rockwoodEstimatingComplexMeasurement2019], which fits generalized linear mixed models with factor structures. However, for the types of models supported by both PLmixed and galamm, galamm is usually considerably faster. The syntax for defining models is close to that of [lme4](https://cran.r-project.org/package=lme4) [@batesFittingLinearMixedEffects2015]. If your model can be estimated with lme4, then you should definitely prefer that package, as it's very mature, and also likely to be faster. galamm should however give results very similar to lme4.
+Random effects are defined using [lme4](https://cran.r-project.org/package=lme4) syntax, and the syntax for factor structures are close to that of [PLmixed](https://cran.r-project.org/package=PLmixed) [@rockwoodEstimatingComplexMeasurement2019]. However, for the types of models supported by both PLmixed and galamm, galamm is usually considerably faster. Smooth terms, as in generalized additive mixed models, use the same syntax as [mgcv](https://cran.r-project.org/package=mgcv).
 
-The core computations in galamm are done using sparse matrix methods supported by [RcppEigen](https://cran.r-project.org/package=RcppEigen) [@batesFastElegantNumerical2013] and automatic differentiation using the C++ library [autodiff](https://autodiff.github.io/) [@lealAutodiffModernFast2018]. The [optimization vignette](https://lcbc-uio.github.io/galamm/articles/optimization.html) provides more details.
+For most users, it should not be necessary to think about how the actual computations are performed, although they are detailed in the [optimization vignette](https://lcbc-uio.github.io/galamm/articles/optimization.html). In short, the core computations are done using sparse matrix methods supported by [RcppEigen](https://cran.r-project.org/package=RcppEigen) [@batesFastElegantNumerical2013] and automatic differentiation using the C++ library [autodiff](https://autodiff.github.io/) [@lealAutodiffModernFast2018]. 
+
+## Where Do I Start?
+
+To get started, take a look at the [Introduction vignette](https://lcbc-uio.github.io/galamm/articles/introduction.html)
 
 ## Installation
 
