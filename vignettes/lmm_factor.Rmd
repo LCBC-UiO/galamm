@@ -31,7 +31,6 @@ This vignette is completely based on the simulated datasets provided by `PLmixed
 This example comes from Section 3.1 in @jeonProfileLikelihoodApproachEstimating2012.
 
 ```{r}
-data("KYPSsim")
 KYPSsim$time <- factor(KYPSsim$time)
 kyps.lam <- rbind(
   c(1, 0),
@@ -70,7 +69,6 @@ summary(kyps_model)
 The next is Example 1 in @rockwoodEstimatingComplexMeasurement2019. 
 
 ```{r}
-data("JUDGEsim")
 JUDGEsim$item <- factor(JUDGEsim$item)
 judge.lam <- rbind(
   c(1, 0, 1, 0, 0, 0),
@@ -128,8 +126,6 @@ judge_galamm <- galamm(
 Finally, in their Example 2, @rockwoodEstimatingComplexMeasurement2019 consider a model which contains products of factor loadings. We start by preparing the data:
 
 ```{r, eval=FALSE}
-data("KYPSitemsim")
-
 time.lam <- rbind(
   c(1, 0), # Specify time lambda matrix
   c(NA, 0),

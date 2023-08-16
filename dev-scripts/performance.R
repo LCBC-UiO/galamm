@@ -1,6 +1,6 @@
 devtools::load_all()
 library(PLmixed)
-data("IRTsim")
+
 irt.lam <- c(1, NA, NA, NA, NA)
 system.time({
   plm <- PLmixed(

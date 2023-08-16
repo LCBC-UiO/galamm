@@ -54,10 +54,7 @@ $$
 
 where $N(\mathbf{0}, \boldsymbol{\Psi})$ denotes a bivariate normal distribution with mean zero covariance matrix $\boldsymbol{\Psi}$. The covariance matrix is assumed to be diagonal.
 
-To estimate this model using galamm, we must start by loading the dataset, and we convert the item variable to a factor.
-
 ```{r}
-data("IRTsim")
 IRTsim$item <- factor(IRTsim$item)
 ```
 

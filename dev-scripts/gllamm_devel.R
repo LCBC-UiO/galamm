@@ -73,8 +73,6 @@ fixef(fMod)
 
 library(PLmixed)
 
-data("IRTsim") # Load the IRTsim data
-
 IRTsub <- IRTsim[IRTsim$item < 4, ] # Select items 1-3
 set.seed(12345)
 IRTsub <- IRTsub[sample(nrow(IRTsub), 300), ] # Randomly sample 300 responses
