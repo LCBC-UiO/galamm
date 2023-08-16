@@ -13,8 +13,7 @@
 #' @export
 #'
 confint.galamm <- function(object, parm, level = 0.95,
-                           method = "Wald", ...){
-
+                           method = "Wald", ...) {
   method <- match.arg(method, "Wald")
   stopifnot(length(level) == 1 && level > 0 && level < 1)
 
@@ -23,15 +22,17 @@ confint.galamm <- function(object, parm, level = 0.95,
   cf <- object$par[inds]
   ses <- sqrt(diag(vcov(object, parm)))
 
-  a <- (1 - level)/2
+  a <- (1 - level) / 2
   a <- c(a, 1 - a)
   fac <- qnorm(a)
   pct <- paste(
-    format(100 * a, trim = TRUE, scientific = FALSE, digits = 3), "%")
-  ci <- array(NA_real_, dim = c(length(inds), 2L),
-              dimnames = list(inds, pct))
+    format(100 * a, trim = TRUE, scientific = FALSE, digits = 3), "%"
+  )
+  ci <- array(NA_real_,
+    dim = c(length(inds), 2L),
+    dimnames = list(inds, pct)
+  )
   ci[] <- cf + ses %o% fac
   rownames(ci) <- object$par_names[inds]
   ci
-
 }

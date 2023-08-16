@@ -9,19 +9,19 @@
 #' @return Variance-covariance matrix
 #' @export
 #'
-vcov.galamm <- function(object, parm = "beta", ...){
-
+vcov.galamm <- function(object, parm = "beta", ...) {
   inds <- find_parm_inds(object, parm)
+
   # Important: invert Hessian before subsetting. Otherwise uncertainty will
   # be too low.
   -solve(object$hessian)[inds, inds, drop = FALSE]
 }
 
 
-find_parm_inds <- function(object, parm){
-  if(is.integer(parm)){
+find_parm_inds <- function(object, parm) {
+  if (is.integer(parm)) {
     parm
-  } else if(is.character(parm)){
+  } else if (is.character(parm)) {
     Reduce(function(x, y) {
       c(x, eval(parse(text = paste0("object$", y, "_inds"))))
     }, parm, init = integer())

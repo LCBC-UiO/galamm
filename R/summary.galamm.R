@@ -25,7 +25,9 @@ summary.galamm <- function(object, ...) {
   ret$Lambda <- factor_loadings(object)
 
   useSc <- Reduce(function(`&&`, x) x()$family == "gaussian",
-                  object$family, init = TRUE)
+    object$family,
+    init = TRUE
+  )
   ret$VarCorr <- structure(
     lme4::mkVarCorr(sqrt(ret$phi)[[1]], ret$cnms,
       nc = lengths(ret$cnms),
@@ -46,7 +48,8 @@ summary.galamm <- function(object, ...) {
     `Std. Error` = sqrt(diag(vcov(object, "beta")))
   )
   ret$fixef <- cbind(ret$fixef, (cf3 <- ret$fixef[, 1] / ret$fixef[, 2]),
-                     deparse.level = 0)
+    deparse.level = 0
+  )
   colnames(ret$fixef)[3] <- paste(if (useSc) "t" else "z", "value")
   ret$fixef <- cbind(ret$fixef, 2 * pnorm(abs(cf3), lower.tail = FALSE))
   colnames(ret$fixef)[4] <- paste("Pr(>|", substr(colnames(ret$fixef)[3], 1, 1), "|)", sep = "")
