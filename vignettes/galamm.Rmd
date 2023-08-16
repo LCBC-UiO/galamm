@@ -33,10 +33,16 @@ The GLLAMM framework contains many elements which are currently not implemented 
 GALAMMs are specified using three building blocks. First, $n$ resposes $y_{1}, \dots, y_{n}$ are assumed independently distributed according to an exponential family with density
 
 $$
-f\left(y | \theta, \phi\right) = \exp \left( \frac{y\theta - b\left(\theta(\mu)\right)}{\phi} + c\left(y, \phi\right) \right)
+f\left(y | \theta, \phi\right) = \exp \left( \frac{y\theta(\mu) - b\left(\theta(\mu)\right)}{\phi} + c\left(y, \phi\right) \right)
 $$
 
 here $\mu = g^{-1}(\nu)$ is the mean, $g^{-1}(\cdot)$ is the inverse of link function $g(\cdot)$, $\nu$ is a "nonlinear predictor", $\phi$ is a dispersion parameter, and $b(\cdot)$ and $c(\cdot)$ are known functions. In contrast to what is assumed, e.g., by [lme4](https://cran.r-project.org/package=lme4) [@batesFittingLinearMixedEffects2015], the functions $b(\cdot)$, $c(\cdot)$, and $g(\cdot)$ are allowed to vary between observations. That is, the observations can come from different members of the exponential family. The vignette on [models with mixed response types](https://lcbc-uio.github.io/galamm/articles/mixed_response.html) describes this in detail.
+
+Using canonical link functions, the response model simplifies to
+
+$$
+f\left(y | \nu, \phi\right) = \exp \left( \frac{y\nu - b\left(\nu\right)}{\phi} + c\left(y, \phi\right) \right)
+$$
 
 ### Nonlinear Predictor
 

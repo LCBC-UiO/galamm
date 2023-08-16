@@ -1,6 +1,9 @@
 ---
 title: "Models with Mixed Response Types"
-output: rmarkdown::html_vignette
+output:
+  rmarkdown::html_vignette:
+    fig_width: 6
+    fig_height: 4
 bibliography: ../inst/REFERENCES.bib
 vignette: >
   %\VignetteIndexEntry{Models with Mixed Response Types}
@@ -24,17 +27,54 @@ This vignette describes how `galamm` can be used to estimate models with mixed r
 
 ## Mixed Normal and Binomial Response
 
-We start with the `mresp` dataset, which comes with the package. The variable "itemgroup" defines the response type; it equals "a" for normally distributed responses and "b" for binomially distributed responses.
+We start with the `mresp` dataset, which comes with the package. The variable "itemgroup" defines the response type; it equals "a" for normally distributed responses and "b" for binomially distributed responses. They are link through a common random intercept.
+
+```{r}
+head(mresp)
+```
+
+
+In terms of the GALAMM defined in the [introductory vignette](https://lcbc-uio.github.io/galamm/articles/introduction.html), and for simplicity assuming we use canonincal link functions, we have the response model
+
+$$
+f\left(y_{ij} | \nu_{ij}, \phi\right) = \exp \left( \frac{y_{ij}\nu_{ij} - b\left(\nu_{ij}\right)}{\phi} + c\left(y_{ij}, \phi\right) \right)
+$$
+
+for the $i$th observation of the $j$ subject. Although we don't show this with a subscript, when the variable `itemgroup = "a"` we have a Gaussian response, so $b(\nu) = \nu^{2}/2$ and the support of the distribution is the entire real line $\mathbb{R}$. The mean in this case is given by $\mu_{ij} = \nu_{ij}$. When `itemgroup = "b"` we have a binomial response, so $b(\nu) = \log(1 + \exp(\nu))$ and the support is $\{0, 1\}$. In this binomial case we also have $\phi=1$. The mean in this case is given by $\mu_{ij} = \exp(\nu_{ij}) / (1 + \exp(\nu_{ij}))$. The function $c(y_{ij}, \phi)$ also differs between these cases, but is not of the same interest, since it does not depend on the linear predictor. It hence matters for the value of the log-likelihood, but not for its derivative with respect to the parameters of interest.
+
+Next, the nonlinear predictor is given by
+
+$$\nu_{ij} = \beta_{0} + x_{ij}\beta_{1} + \mathbf{z}_{ij}^{T}\boldsymbol{\lambda} \eta$$
+
+where $x_{ij}$ is an explanatory and $\mathbf{z}_{ij}$ is a dummy vector of length 2 with exactly one element equal to one and one element equal to zero. When `itemgroup = "a"`, $\mathbf{z} = (1, 0)^{T}$ and when `itemgroup = "b"`, $\mathbf{z} = (0, 1)^{T}$. The parameter $\boldsymbol{\lambda} = (1, \lambda)^{T}$ is a vector of factor loadings, whose first element equals zero for identifiability. $\eta$ is a latent variable, in this case representing an underlying trait "causing" the observed responses.
+
+The structural model is simply
+
+$$
+\eta = \zeta \sim N(0, \psi),
+$$
+
+where $N(0, \psi)$ denotes a normal distribution with mean 0 and variance $\psi$.
+
+We define the loading matrix as follows, where the value `1` indicates that the first element $\boldsymbol{\lambda}$ is fixed, and the value `NA` indicates that its second element is unknown, and to be estimated.
+
+```{r}
+(loading_matrix <- matrix(c(1, NA), ncol = 1))
+```
+
+We set `load.var = "itemgroup"` because all rows of the data with the same value of `itemgroup` will receive the same factor loading. In `formula`, we state `(0 + level | id)` to specify that each subject, identified by `id`, has a given level. `level` is not an element of the `mresp` data, but is instead the factor onto which the loading matrix loads. We identify this with the argument `factor = list("level")`. We could have chosen any other name for `"level"`, except for names that are already columns in `mresp`. 
+
+The argument `family = c(gaussian, binomial)` specifies that we have both Gaussian and binomially distributed responses. `family_mapping = ifelse(mresp$itemgroup == "a", 1L, 2L)` says that is `itemgroup` is `"a"` then take the first element of `family`, otherwise take the second element. In this way we specify which row of the response vector is distributed according to which distribution.
 
 ```{r}
 mixed_resp <- galamm(
-  formula = y ~ x + (0 + loading | id),
+  formula = y ~ x + (0 + level | id),
   data = mresp,
   family = c(gaussian, binomial),
   family_mapping = ifelse(mresp$itemgroup == "a", 1L, 2L),
   load.var = "itemgroup",
-  lambda = list(matrix(c(1, NA), ncol = 1)),
-  factor = list("loading")
+  lambda = list(loading_matrix),
+  factor = list("level")
 )
 
 summary(mixed_resp)
