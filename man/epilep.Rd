@@ -20,7 +20,7 @@ weeks preceeding entry into the trial.}
 }
 }
 \source{
-\url{http://www.gllamm.org/books/readme.html#11.3}
+\url{http://www.gllamm.org/books/readme.html}
 }
 \usage{
 epilep
