@@ -61,6 +61,9 @@
     <loc>https://lcbc-uio.github.io/galamm/reference/factor_loadings.galamm.html</loc>
   </url>
   <url>
+    <loc>https://lcbc-uio.github.io/galamm/reference/fitted.galamm.html</loc>
+  </url>
+  <url>
     <loc>https://lcbc-uio.github.io/galamm/reference/fixef.galamm.html</loc>
   </url>
   <url>
@@ -88,10 +91,16 @@
     <loc>https://lcbc-uio.github.io/galamm/reference/optim_control.galamm_control.html</loc>
   </url>
   <url>
+    <loc>https://lcbc-uio.github.io/galamm/reference/plot.galamm.html</loc>
+  </url>
+  <url>
     <loc>https://lcbc-uio.github.io/galamm/reference/predict.galamm.html</loc>
   </url>
   <url>
     <loc>https://lcbc-uio.github.io/galamm/reference/print.summary.galamm.html</loc>
+  </url>
+  <url>
+    <loc>https://lcbc-uio.github.io/galamm/reference/residuals.galamm.html</loc>
   </url>
   <url>
     <loc>https://lcbc-uio.github.io/galamm/reference/summary.galamm.html</loc>
