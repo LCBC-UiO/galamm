@@ -1,4 +1,4 @@
-factor_loadings <- function(object){
+factor_loadings <- function(object) {
   UseMethod("factor_loadings")
 }
 
@@ -16,8 +16,10 @@ factor_loadings <- function(object){
 #' \code{loadings} to avoid conflict with \code{stats::loadings}.
 #'
 #'
-factor_loadings.galamm <- function(object){
-  if(!exists("lambda", object)) return(NULL)
+factor_loadings.galamm <- function(object) {
+  if (!exists("lambda", object)) {
+    return(NULL)
+  }
 
   lambda_tmp_est <- lambda_tmp_se <- object$lambda[[1]]
   lambda_tmp_se[lambda_tmp_se %in% c(0, 1)] <- NA_real_
@@ -27,9 +29,10 @@ factor_loadings.galamm <- function(object){
     sqrt(diag(vcov(object, parm = object$lambda_inds)))
 
   matrix(rbind(lambda_tmp_est, lambda_tmp_se),
-         nrow = nrow(lambda_tmp_est),
-         dimnames = list(paste0("lambda", seq_len(nrow(object$lambda[[1]]))),
-                         as.character(rbind(colnames(lambda_tmp_est), "SE"))))
-
-
+    nrow = nrow(lambda_tmp_est),
+    dimnames = list(
+      paste0("lambda", seq_len(nrow(object$lambda[[1]]))),
+      as.character(rbind(colnames(lambda_tmp_est), "SE"))
+    )
+  )
 }

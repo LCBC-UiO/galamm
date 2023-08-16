@@ -16,4 +16,3 @@ fixef.galamm <- function(object, ...) {
   names(ret) <- object$par_names[object$beta_inds]
   ret
 }
-

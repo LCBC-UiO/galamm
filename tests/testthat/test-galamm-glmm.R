@@ -23,11 +23,14 @@ test_that("Logistic GLMM with simple factor works", {
   )
   expect_equal(
     factor_loadings(mod),
-    structure(c(1, 0.737025403666384, 0.935110508605618, 0.606906510198586,
-                0.585991366477788, NA, 0.145578181193442, 0.187204916856415,
-                0.126094293895771, 0.116297718127772), dim = c(5L, 2L), dimnames = list(
-                  c("lambda1", "lambda2", "lambda3", "lambda4", "lambda5"),
-                  c("abil.sid", "SE"))),
+    structure(c(
+      1, 0.737025403666384, 0.935110508605618, 0.606906510198586,
+      0.585991366477788, NA, 0.145578181193442, 0.187204916856415,
+      0.126094293895771, 0.116297718127772
+    ), dim = c(5L, 2L), dimnames = list(
+      c("lambda1", "lambda2", "lambda3", "lambda4", "lambda5"),
+      c("abil.sid", "SE")
+    )),
     tolerance = 1e-4
   )
 

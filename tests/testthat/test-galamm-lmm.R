@@ -28,8 +28,10 @@ test_that("LMM with simple factor works", {
     structure(c(
       1, 1.05448712819873, 1.02126746190855, NA, 0.217881890204074,
       0.236814881042725
-    ), dim = 3:2, dimnames = list(c("lambda1", "lambda2", "lambda3"),
-                                  c("abil.sid", "SE")))
+    ), dim = 3:2, dimnames = list(
+      c("lambda1", "lambda2", "lambda3"),
+      c("abil.sid", "SE")
+    ))
   )
 
   expect_equal(
@@ -157,12 +159,18 @@ test_that("LMM with two raters works", {
     )
   )
   expect_equal(factor_loadings(judge_galamm),
-               structure(c(1, 1.12776983377237, 1.0015500195413, 0, 0, 0, NA,
-                           0.0431811820908214, 0.0404030234731358, NA, NA, NA, 0, 0, 0,
-                           1, 0.964378138351261, 1.2086497148514, NA, NA, NA, NA, 0.0366770544567944,
-                           0.0414388405019454), dim = c(6L, 4L), dimnames = list(c("lambda1",
-                                                                                   "lambda2", "lambda3", "lambda4", "lambda5", "lambda6"), c("teacher1",
-                                                                                                                                             "SE", "teacher2", "SE"))),
+    structure(c(
+      1, 1.12776983377237, 1.0015500195413, 0, 0, 0, NA,
+      0.0431811820908214, 0.0404030234731358, NA, NA, NA, 0, 0, 0,
+      1, 0.964378138351261, 1.2086497148514, NA, NA, NA, NA, 0.0366770544567944,
+      0.0414388405019454
+    ), dim = c(6L, 4L), dimnames = list(c(
+      "lambda1",
+      "lambda2", "lambda3", "lambda4", "lambda5", "lambda6"
+    ), c(
+      "teacher1",
+      "SE", "teacher2", "SE"
+    ))),
     tolerance = 1e-4
   )
 
