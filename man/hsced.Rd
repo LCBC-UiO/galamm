@@ -5,7 +5,7 @@
 \alias{hsced}
 \title{Example Data with Heteroscedastic Residuals}
 \format{
-\subsection{\code{diet} A data frame with 1200 rows and 5 columns:}{
+\subsection{\code{hsced} A data frame with 1200 rows and 5 columns:}{
 
 \describe{
 \item{id}{Subject ID.}

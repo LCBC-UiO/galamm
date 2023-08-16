@@ -72,7 +72,7 @@
 #' Simulated dataset with residual standard deviation that varies between
 #' items.
 #'
-#' @format ## `diet` A data frame with 1200 rows and 5 columns:
+#' @format ## `hsced` A data frame with 1200 rows and 5 columns:
 #' \describe{
 #'   \item{id}{Subject ID.}
 #'   \item{age}{Timepoint.}

@@ -5,11 +5,14 @@
 #'   "NULL", which means that the predictions are evaluate at the data used to
 #'   fit the model.
 #' @param type Type of prediction object to be returned.
+#' @param ... Other arguments.
 #'
 #' @return A number vector of predicted values.
 #' @export
 #'
-predict.galamm <- function(object, newdata = NULL, type = c("link", "response")) {
+predict.galamm <- function(object, newdata = NULL,
+                           type = c("link", "response"),
+                           ...) {
   type <- match.arg(type)
   if (!is.null(newdata)) {
     stop("Not implemented yet")
