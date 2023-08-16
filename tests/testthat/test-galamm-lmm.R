@@ -10,7 +10,7 @@ test_that("LMM with simple factor works", {
   irt.lam <- matrix(c(1, NA, NA), ncol = 1) # Specify the lambda matrix
 
   mod <- galamm(
-    y ~ 0 + as.factor(item) + (0 + abil.sid | sid) + (0 + abil.sid | school),
+    y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
     data = IRTsub, load.var = c("item"),
     factor = list(c("abil.sid")), lambda = list(irt.lam)
   )
@@ -24,11 +24,12 @@ test_that("LMM with simple factor works", {
     )
   )
   expect_equal(
-    summary(mod)$Lambda,
+    factor_loadings(mod),
     structure(c(
       1, 1.05448712819873, 1.02126746190855, NA, 0.217881890204074,
       0.236814881042725
-    ), dim = 3:2, dimnames = list(c("1", "2", "3"), c("abil.sid", "SE")))
+    ), dim = 3:2, dimnames = list(c("lambda1", "lambda2", "lambda3"),
+                                  c("abil.sid", "SE")))
   )
 
   expect_equal(
@@ -71,7 +72,7 @@ test_that("LMM with two factors works", {
       deviance = 19363.9747769574, df.resid = 11482
     )
   )
-  expect_equal(summary(kyps_model)$vcov,
+  expect_equal(vcov(kyps_model, parm = c("theta", "beta", "lambda", "weights")),
     structure(c(
       0.000305408709469303, -1.43271137139117e-05, -5.94213241842901e-06,
       -1.72396477406193e-07, -4.35600822237377e-07, -5.43425750968512e-07,
@@ -155,16 +156,13 @@ test_that("LMM with two raters works", {
       deviance = 110094.998633538, df.resid = 46953
     )
   )
-  expect_equal(summary(judge_galamm)$Lambda,
-    structure(c(
-      1, 1.12776983377237, 1.0015500195413, 0, 0, 0, NA,
-      0.0431811820908214, 0.0404030234731358, NA, NA, NA, 0, 0, 0,
-      1, 0.964378138351261, 1.2086497148514, NA, NA, NA, NA, 0.0366770544567944,
-      0.0414388405019454
-    ), dim = c(6L, 4L), dimnames = list(c(
-      "1",
-      "2", "3", "4", "5", "6"
-    ), c("teacher1", "SE", "teacher2", "SE"))),
+  expect_equal(factor_loadings(judge_galamm),
+               structure(c(1, 1.12776983377237, 1.0015500195413, 0, 0, 0, NA,
+                           0.0431811820908214, 0.0404030234731358, NA, NA, NA, 0, 0, 0,
+                           1, 0.964378138351261, 1.2086497148514, NA, NA, NA, NA, 0.0366770544567944,
+                           0.0414388405019454), dim = c(6L, 4L), dimnames = list(c("lambda1",
+                                                                                   "lambda2", "lambda3", "lambda4", "lambda5", "lambda6"), c("teacher1",
+                                                                                                                                             "SE", "teacher2", "SE"))),
     tolerance = 1e-4
   )
 

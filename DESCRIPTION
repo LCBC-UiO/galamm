@@ -28,6 +28,7 @@ Imports:
     lme4,
     Matrix,
     memoise,
+    nlme,
     Rcpp,
     Rdpack
 Depends:

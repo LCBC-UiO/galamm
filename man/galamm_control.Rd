@@ -4,20 +4,19 @@
 \alias{galamm_control}
 \title{Control Values for galamm Fit}
 \usage{
-galamm_control(trace = 0L, lmm = 20, maxit_conditional_modes = 10)
+galamm_control(optim_control = list(), maxit_conditional_modes = 10)
 }
 \arguments{
-\item{trace}{Verbosity. Passed onto \code{\link{stats::optim}}}
-
-\item{lmm}{Number of BFGS updates retained in the L-BFGS-B method. Passed
-onto \code{\link{stats::optim}}.}
+\item{optim_control}{List passed on to \code{stats::optim}'s \code{control}
+argument. If not otherwise specified, the following arguments are set to
+non-default values: \code{fnscale = -1} and \code{lmm = 20}.}
 
 \item{maxit_conditional_modes}{Maximum number of iterations in penalized
 iteratively reweighted least squares algorithm. Ignored if \code{family =
   "gaussian"} for all observations, since then a single step gives the exact answer.}
 }
 \value{
-A list
+Object of class galamm_control
 }
 \description{
 Control Values for galamm Fit

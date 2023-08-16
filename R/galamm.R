@@ -21,7 +21,7 @@
 #' @return A model object
 #' @export
 #'
-#' @importFrom stats gaussian model.frame model.response
+#' @importFrom stats gaussian model.frame model.response pnorm qnorm vcov
 #' @importFrom Rdpack reprompt
 galamm <- function(formula, weights = NULL, data, family = gaussian,
                    family_mapping = rep(1L, nrow(data)),
@@ -47,6 +47,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
       lambda[[i]][is.na(lambda[[i]])] <-
         seq(from = parameter_index, length.out = sum(is.na(lambda[[i]])))
       colnames(lambda[[i]]) <- factor[[i]]
+
       if (any(factor[[i]] %in% colnames(data))) {
         stop("Factor already a column in data.")
       }
@@ -189,7 +190,6 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
     weights_inds <- integer()
   }
 
-
   mlwrapper <- function(par, hessian = FALSE) {
     marginal_likelihood(
       y = response_obj[, 1],
@@ -249,7 +249,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   opt <- stats::optim(par_init,
     fn = fn, gr = gr,
     method = "L-BFGS-B", lower = bounds,
-    control = control[c("trace", "lmm", "fnscale")]
+    control = optim_control(control)
   )
 
   final_model <- mlwrapper(opt$par, TRUE)
@@ -272,11 +272,14 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
     preds[i, j]
   }, i = seq_len(nrow(preds)), j = family_mapping))
 
-
   ret <- list()
   ret$lambda <- lambda
   ret$cnms <- lmod$reTrms$cnms
-  ret$fixef_names <- colnames(X)
+  ret$par_names <- c(paste0("theta", seq_along(theta_inds), recycle0 = TRUE),
+                     colnames(X),
+                     paste0("lambda", seq_along(lambda_inds), recycle0 = TRUE),
+                     paste0("weights", seq_along(weights_inds), recycle0 = TRUE)
+                     )
   ret$hessian <- final_model$hessian
   ret$par <- opt$par
   ret$lambda_inds <- lambda_inds

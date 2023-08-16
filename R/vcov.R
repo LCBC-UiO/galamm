@@ -12,11 +12,9 @@
 vcov.galamm <- function(object, parm = "beta", ...){
 
   inds <- find_parm_inds(object, parm)
-
-
-  -solve(object$hessian[inds, inds])
-
-
+  # Important: invert Hessian before subsetting. Otherwise uncertainty will
+  # be too low.
+  -solve(object$hessian)[inds, inds, drop = FALSE]
 }
 
 

@@ -106,6 +106,18 @@ We can also get Wald type confidence intervals for the fixed effects.
 confint(mod, parm = "beta")
 ```
 
+We can similarly extract the factor loadings.
+
+```{r}
+factor_loadings(mod)
+```
+
+And we can find confidence intervals for them. Currently, only Wald type confidence intervals are available. Be aware that such intervals may have poor coverage properties.
+
+```{r}
+confint(mod, parm = "lambda")
+```
+
 
 ## Binomial Model with Multiple Trials
 
@@ -118,7 +130,7 @@ dat <- IRTsim
 dat$trials <- sample(1:10, nrow(dat), replace = TRUE)
 dat$y <- rbinom(
   n = nrow(dat), size = dat$trials,
-  prob = predict(galamm_mod, type = "response")
+  prob = predict(mod, type = "response")
 )
 head(dat)
 ```
@@ -127,12 +139,12 @@ For binomial models with more than one trial, the response should be specified `
 
 ```{r, eval=FALSE}
 galamm_mod_trials <- galamm(
-  formula = cbind(y, trials - y) ~ item + (0 + abil.sid | sid) + (0 + abil.sid | school),
+  formula = cbind(y, trials - y) ~ item + (0 + ability | school / sid),
   data = dat,
   family = binomial,
   load.var = "item",
-  factor = list("abil.sid"),
-  lambda = list(irt.lam)
+  factor = list("ability"),
+  lambda = list(loading_matrix)
 )
 
 summary(galamm_mod_trials)

@@ -18,7 +18,7 @@ also be a vector of number.}
 
 \item{method}{Currently only "Wald" is available.}
 
-\item{...}{}
+\item{...}{Other arguments.}
 }
 \value{
 Confidence intervals.

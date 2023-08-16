@@ -13,6 +13,7 @@
 #' @export
 fixef.galamm <- function(object, ...){
   ret <- object$par[object$beta_inds]
-  names(ret) <- object$fixef_names
+  names(ret) <- object$par_names[object$beta_inds]
   ret
 }
+

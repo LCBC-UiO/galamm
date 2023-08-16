@@ -7,7 +7,7 @@
 #'   also be a vector of number.
 #' @param level Confidence level.
 #' @param method Currently only "Wald" is available.
-#' @param ...
+#' @param ... Other arguments.
 #'
 #' @return Confidence intervals.
 #' @export
@@ -31,6 +31,7 @@ confint.galamm <- function(object, parm, level = 0.95,
   ci <- array(NA_real_, dim = c(length(inds), 2L),
               dimnames = list(inds, pct))
   ci[] <- cf + ses %o% fac
+  rownames(ci) <- object$par_names[inds]
   ci
 
 }
