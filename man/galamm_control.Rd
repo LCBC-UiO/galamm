@@ -13,7 +13,8 @@ non-default values: \code{fnscale = -1} and \code{lmm = 20}.}
 
 \item{maxit_conditional_modes}{Maximum number of iterations in penalized
 iteratively reweighted least squares algorithm. Ignored if \code{family =
-  "gaussian"} for all observations, since then a single step gives the exact answer.}
+  "gaussian"} for all observations, since then a single step gives the exact
+answer.}
 }
 \value{
 Object of class galamm_control

@@ -274,11 +274,12 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   ret <- list()
   ret$lambda <- lambda
   ret$cnms <- lmod$reTrms$cnms
-  ret$par_names <- c(paste0("theta", seq_along(theta_inds), recycle0 = TRUE),
-                     colnames(X),
-                     paste0("lambda", seq_along(lambda_inds), recycle0 = TRUE),
-                     paste0("weights", seq_along(weights_inds), recycle0 = TRUE)
-                     )
+  ret$par_names <- c(
+    paste0("theta", seq_along(theta_inds), recycle0 = TRUE),
+    colnames(X),
+    paste0("lambda", seq_along(lambda_inds), recycle0 = TRUE),
+    paste0("weights", seq_along(weights_inds), recycle0 = TRUE)
+  )
   ret$hessian <- final_model$hessian
   ret$par <- opt$par
   ret$lambda_inds <- lambda_inds
