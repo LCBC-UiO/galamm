@@ -6,6 +6,6 @@
 #' @return Numerical vector
 #' @export
 #'
-fitted.galamm <- function(object, ...){
+fitted.galamm <- function(object, ...) {
   object$fit
 }

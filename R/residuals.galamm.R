@@ -9,7 +9,7 @@
 #'
 residuals.galamm <- function(object, type = c("pearson", "deviance"), ...) {
   type <- match.arg(type, c("pearson", "deviance"))
-  if (type == "pearson"){
+  if (type == "pearson") {
     object$pearson_residuals
   } else if (type == "deviance") {
     object$deviance_residuals
