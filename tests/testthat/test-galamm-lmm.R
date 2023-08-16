@@ -1,6 +1,5 @@
 library(PLmixed)
 test_that("LMM with simple factor works", {
-
   IRTsub <- IRTsim[IRTsim$item < 4, ] # Select items 1-3
   set.seed(12345)
   IRTsub <- IRTsub[sample(nrow(IRTsub), 300), ] # Randomly sample 300 responses
@@ -40,7 +39,6 @@ test_that("LMM with simple factor works", {
 })
 
 test_that("LMM with two factors works", {
-
   KYPSsim$time <- factor(KYPSsim$time)
   kyps.lam <- rbind(
     c(1, 0),
@@ -128,7 +126,6 @@ test_that("LMM with two factors works", {
 })
 
 test_that("LMM with two raters works", {
-
   JUDGEsim <- JUDGEsim[order(JUDGEsim$item), ] # Order by item
   JUDGEsim$item <- factor(JUDGEsim$item)
 

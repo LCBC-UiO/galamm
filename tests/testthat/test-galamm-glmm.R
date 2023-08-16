@@ -1,6 +1,5 @@
 library(PLmixed)
 test_that("Logistic GLMM with simple factor works", {
-
   IRTsim$item <- factor(IRTsim$item)
   irt.lam <- matrix(c(1, NA, NA, NA, NA), ncol = 1)
 
