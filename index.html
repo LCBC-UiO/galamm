@@ -125,7 +125,7 @@
 <div class="section level2">
 <h2 id="where-do-i-start">Where Do I Start?<a class="anchor" aria-label="anchor" href="#where-do-i-start"></a>
 </h2>
-<p>To get started, take a look at the <a href="https://lcbc-uio.github.io/galamm/articles/introduction.html">Introduction vignette</a></p>
+<p>To get started, take a look at the <a href="https://lcbc-uio.github.io/galamm/articles/introduction.html">introductory vignette</a>.</p>
 </div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -160,23 +160,7 @@
 <span>  load.var <span class="op">=</span> <span class="st">"itemgroup"</span>,</span>
 <span>  lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="cn">NA</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"loading"</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span><span class="co">#&gt; N = 4, M = 20 machine precision = 2.22045e-16</span></span>
-<span><span class="co">#&gt; At X0, 0 variables are exactly at the bounds</span></span>
-<span><span class="co">#&gt; At iterate     0  f=       4764.7  |proj g|=       300.51</span></span>
-<span><span class="co">#&gt; At iterate    10  f =       4619.3  |proj g|=       0.01885</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; iterations 11</span></span>
-<span><span class="co">#&gt; function evaluations 12</span></span>
-<span><span class="co">#&gt; segments explored during Cauchy searches 11</span></span>
-<span><span class="co">#&gt; BFGS updates skipped 0</span></span>
-<span><span class="co">#&gt; active bounds at final generalized Cauchy point 0</span></span>
-<span><span class="co">#&gt; norm of the final projected gradient 0.00181656</span></span>
-<span><span class="co">#&gt; final function value 4619.34</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; F = 4619.34</span></span>
-<span><span class="co">#&gt; final  value 4619.341613 </span></span>
-<span><span class="co">#&gt; converged</span></span></code></pre></div>
+<span><span class="op">)</span></span></code></pre></div>
 <p>The summary function gives some information about the model fit.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mixed_resp</span><span class="op">)</span></span>
@@ -192,20 +176,19 @@
 <span><span class="co">#&gt; -3.5360 -0.7078  0.2156  0.6456  2.5978 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Lambda:</span></span>
-<span><span class="co">#&gt;   loading      SE</span></span>
-<span><span class="co">#&gt; 1   1.000       .</span></span>
-<span><span class="co">#&gt; 2   1.095 0.09982</span></span>
+<span><span class="co">#&gt;         loading      SE</span></span>
+<span><span class="co">#&gt; lambda1   1.000       .</span></span>
+<span><span class="co">#&gt; lambda2   1.095 0.09982</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Random effects:</span></span>
-<span><span class="co">#&gt;  Groups   Name    Variance Std.Dev.</span></span>
-<span><span class="co">#&gt;  id       loading 1.05     1.025   </span></span>
-<span><span class="co">#&gt;  Residual         1.12     1.058   </span></span>
+<span><span class="co">#&gt;  Groups Name    Variance Std.Dev.</span></span>
+<span><span class="co">#&gt;  id     loading 1.05     1.025   </span></span>
 <span><span class="co">#&gt; Number of obs: 4000, groups:  id, 1000</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Fixed effects:</span></span>
-<span><span class="co">#&gt;             Estimate Std. Error t value</span></span>
-<span><span class="co">#&gt; (Intercept)    0.041    0.05803  0.7065</span></span>
-<span><span class="co">#&gt; x              0.971    0.08594 11.2994</span></span></code></pre></div>
+<span><span class="co">#&gt;             Estimate Std. Error z value  Pr(&gt;|z|)</span></span>
+<span><span class="co">#&gt; (Intercept)    0.041    0.05803  0.7065 4.799e-01</span></span>
+<span><span class="co">#&gt; x              0.971    0.08594 11.2994 1.321e-29</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="how-to-cite-this-package">How to cite this package<a class="anchor" aria-label="anchor" href="#how-to-cite-this-package"></a>

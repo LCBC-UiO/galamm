@@ -46,10 +46,22 @@
     <loc>https://lcbc-uio.github.io/galamm/news.html</loc>
   </url>
   <url>
+    <loc>https://lcbc-uio.github.io/galamm/reference/coef.galamm.html</loc>
+  </url>
+  <url>
+    <loc>https://lcbc-uio.github.io/galamm/reference/confint.galamm.html</loc>
+  </url>
+  <url>
     <loc>https://lcbc-uio.github.io/galamm/reference/diet.html</loc>
   </url>
   <url>
     <loc>https://lcbc-uio.github.io/galamm/reference/epilep.html</loc>
+  </url>
+  <url>
+    <loc>https://lcbc-uio.github.io/galamm/reference/factor_loadings.galamm.html</loc>
+  </url>
+  <url>
+    <loc>https://lcbc-uio.github.io/galamm/reference/fixef.galamm.html</loc>
   </url>
   <url>
     <loc>https://lcbc-uio.github.io/galamm/reference/galamm-package.html</loc>
@@ -73,6 +85,9 @@
     <loc>https://lcbc-uio.github.io/galamm/reference/mresp.html</loc>
   </url>
   <url>
+    <loc>https://lcbc-uio.github.io/galamm/reference/optim_control.galamm_control.html</loc>
+  </url>
+  <url>
     <loc>https://lcbc-uio.github.io/galamm/reference/predict.galamm.html</loc>
   </url>
   <url>
@@ -80,5 +95,8 @@
   </url>
   <url>
     <loc>https://lcbc-uio.github.io/galamm/reference/summary.galamm.html</loc>
+  </url>
+  <url>
+    <loc>https://lcbc-uio.github.io/galamm/reference/vcov.galamm.html</loc>
   </url>
 </urlset>

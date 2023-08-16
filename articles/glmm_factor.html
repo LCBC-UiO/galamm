@@ -86,67 +86,134 @@
     
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/LCBC-UiO/galamm" class="external-link">galamm</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">PLmixed</span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/lme4/lme4/" class="external-link">lme4</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; Loading required package: Matrix</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/LCBC-UiO/galamm" class="external-link">galamm</a></span><span class="op">)</span></span></code></pre></div>
 <p>This vignette describes how <code>galamm</code> can be used to
 estimate generalized linear mixed models with factor structures. Such
 models are an instance of the generalized linear latent and mixed models
 (GLLAMM) framework described by <span class="citation">Rabe-Hesketh,
-Skrondal, and Pickles (2004)</span>. The R package <code>PLmixed</code>
-<span class="citation">(Rockwood and Jeon 2019)</span> estimates such
-models using a profile likelihood algorithm initially proposed by <span class="citation">Jeon and Rabe-Hesketh (2012)</span>. The models are
+Skrondal, and Pickles (2004)</span>. The R package PLmixed <span class="citation">(Rockwood and Jeon 2019)</span> estimates such models
+using a profile likelihood algorithm initially proposed by <span class="citation">Jeon and Rabe-Hesketh (2012)</span>. The models are
 also a special case of generalized additive latent and mixed models
-(GALAMM), and in <code>galamm</code> these models are estimated using a
-more direct algorithm described in <span class="citation">Sørensen,
-Fjell, and Walhovd (2023)</span>.</p>
-<p>As for the vignette on linear mixed models, we thank <span class="citation">Rockwood and Jeon (2019)</span> for creating the
-<code>PLmixed</code> package, from which we take example datasets, and
-on which we have based the formula syntax of <code>galamm</code>.</p>
+(GALAMM), and in galamm these models are estimated using a more direct
+algorithm described in <span class="citation">Sørensen, Fjell, and
+Walhovd (2023)</span>.</p>
+<p>As for the vignette on linear mixed models, we thank <span class="citation">Rockwood and Jeon (2019)</span> for creating the <a href="https://cran.r-project.org/package=PLmixed" class="external-link">PLmixed</a> package,
+from which we take example datasets, and on which we have based the
+formula syntax of galamm.</p>
 <div class="section level3">
 <h3 id="model-with-binomially-distributed-responses">Model with Binomially Distributed Responses<a class="anchor" aria-label="anchor" href="#model-with-binomially-distributed-responses"></a>
 </h3>
-<p>We use a simulated dataset from the <code>PLmixed</code> package for
-the example in this vignette. In the vignette on linear mixed models
-with factor structures, the response was treated as Gaussian. Here we
-use the more appropriate assumption that the response is binomially
-distributed.</p>
-<p>First we set up the factor structures to be used:</p>
+<p>We use a simulated dataset from the PLmixed package for this example.
+The observations are binomial responses representing an ability
+measurement. The first few lines are shown below.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"IRTsim"</span><span class="op">)</span></span>
-<span><span class="va">IRTsim</span><span class="op">$</span><span class="va">item</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">IRTsim</span><span class="op">$</span><span class="va">item</span><span class="op">)</span></span>
-<span><span class="va">irt.lam</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
-<p>We fit the model as follows:</p>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">PLmixed</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">IRTsim</span><span class="op">)</span></span>
+<span><span class="co">#&gt;     sid school item y</span></span>
+<span><span class="co">#&gt; 1.1   1      1    1 1</span></span>
+<span><span class="co">#&gt; 1.2   1      1    2 1</span></span>
+<span><span class="co">#&gt; 1.3   1      1    3 1</span></span>
+<span><span class="co">#&gt; 1.4   1      1    4 0</span></span>
+<span><span class="co">#&gt; 1.5   1      1    5 1</span></span>
+<span><span class="co">#&gt; 2.1   2      1    1 1</span></span></code></pre></div>
+<p>Each student is identified by a student id <code>sid</code>, and each
+school with a school id given by the <code>school</code> variable. For
+each student, five item measurements have been made. We assume that the
+student’s performance depends both on the students ability as well as on
+the school the student attends. Having the outline of GALAMMs from the
+<a href="https://lcbc-uio.github.io/galamm/articles/introduction.html">introductory
+vignette</a> in mind, we assume a binomial response model with a logit
+link, yielding for the <span class="math inline">\(i\)</span>th
+measurement of the <span class="math inline">\(j\)</span>th student in
+the <span class="math inline">\(k\)</span>th school,</p>
+<p><span class="math display">\[
+\text{P}(y_{ijk} = 1 | \mathbf{x}_{ijk}, \boldsymbol{\eta}_{jk}) =
+\frac{\exp(\nu_{ijk})}{1 + \exp(\nu_{ijk})}
+\]</span></p>
+<p>The latent variable vector is given by <span class="math inline">\(\boldsymbol{\eta}_{jk} = (\eta_{j},
+\eta_{jk})^{T}\)</span>, where the last element is the effect of the
+school which the <span class="math inline">\(j\)</span>th student
+attends. The nonlinear predictor is given by</p>
+<p><span class="math display">\[
+\nu_{ijk} = \mathbf{x}_{ijk}^{T} \boldsymbol{\beta} +
+\mathbf{x}_{ijk}^{T}\boldsymbol{\lambda} (\eta_{j} + \eta_{jk})
+\]</span></p>
+<p>where <span class="math inline">\(\mathbf{x}_{ij}\)</span> is a
+vector containing dummy variables for items, <span class="math inline">\(\eta_{j}\)</span> is a latent variable describing
+the underlying ability of student <span class="math inline">\(j\)</span>, and <span class="math inline">\(\eta_{k}\)</span> is a latent variable describing
+the effect of school <span class="math inline">\(k\)</span>. The factor
+loading <span class="math inline">\(\lambda\)</span> describes how the
+sum of the two latent variables impacts the nonlinear predictor, and
+hence the probability of correct response. We note that using a common
+<span class="math inline">\(\lambda\)</span> for two latent variables
+like this is not necessarily a good model, but it makes this
+introductory example easier to follow. We will extend the model
+later.</p>
+<p>The structural model is simply</p>
+<p><span class="math display">\[
+\boldsymbol{\eta}_{jk} = \boldsymbol{\zeta}_{jk} \sim N_{2}(\mathbf{0},
+\boldsymbol{\Psi}),
+\]</span></p>
+<p>where <span class="math inline">\(N(\mathbf{0},
+\boldsymbol{\Psi})\)</span> denotes a bivariate normal distribution with
+mean zero covariance matrix <span class="math inline">\(\boldsymbol{\Psi}\)</span>. The covariance matrix
+is assumed to be diagonal.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">galamm_mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
-<span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">item</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">abil.sid</span> <span class="op">|</span> <span class="va">sid</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">abil.sid</span> <span class="op">|</span> <span class="va">school</span><span class="op">)</span>,</span>
+<code class="sourceCode R"><span><span class="va">IRTsim</span><span class="op">$</span><span class="va">item</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">IRTsim</span><span class="op">$</span><span class="va">item</span><span class="op">)</span></span></code></pre></div>
+<p>We confirm that <code>item</code> has five levels. This means that
+<span class="math inline">\(\boldsymbol{\lambda}\)</span> is a vector
+with five elements.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">IRTsim</span><span class="op">$</span><span class="va">item</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;   1   2   3   4   5 </span></span>
+<span><span class="co">#&gt; 500 500 500 500 500</span></span></code></pre></div>
+<p>For identifiability, we fix the first element of <span class="math inline">\(\boldsymbol{\lambda}\)</span> to one. The rest
+will be freely estimated. We do this by defining the following matrix.
+Any numeric value implies that the element is fixed, whereas
+<code>NA</code> implies that the element is unknown, and will be
+estimated.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="op">(</span><span class="va">loading_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;      [,1]</span></span>
+<span><span class="co">#&gt; [1,]    1</span></span>
+<span><span class="co">#&gt; [2,]   NA</span></span>
+<span><span class="co">#&gt; [3,]   NA</span></span>
+<span><span class="co">#&gt; [4,]   NA</span></span>
+<span><span class="co">#&gt; [5,]   NA</span></span></code></pre></div>
+<p>We fit the model as follows:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
+<span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">item</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">ability</span> <span class="op">|</span> <span class="va">school</span> <span class="op">/</span> <span class="va">sid</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">IRTsim</span>,</span>
 <span>  family <span class="op">=</span> <span class="va">binomial</span>,</span>
 <span>  load.var <span class="op">=</span> <span class="st">"item"</span>,</span>
-<span>  factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"abil.sid"</span><span class="op">)</span>,</span>
-<span>  lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">irt.lam</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span><span class="co">#&gt; N = 11, M = 20 machine precision = 2.22045e-16</span></span>
-<span><span class="co">#&gt; At X0, 0 variables are exactly at the bounds</span></span>
-<span><span class="co">#&gt; At iterate     0  f=       1521.3  |proj g|=       55.181</span></span>
-<span><span class="co">#&gt; At iterate    10  f =       1472.2  |proj g|=       0.19866</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; iterations 16</span></span>
-<span><span class="co">#&gt; function evaluations 17</span></span>
-<span><span class="co">#&gt; segments explored during Cauchy searches 17</span></span>
-<span><span class="co">#&gt; BFGS updates skipped 0</span></span>
-<span><span class="co">#&gt; active bounds at final generalized Cauchy point 0</span></span>
-<span><span class="co">#&gt; norm of the final projected gradient 0.000864991</span></span>
-<span><span class="co">#&gt; final function value 1472.2</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; F = 1472.2</span></span>
-<span><span class="co">#&gt; final  value 1472.199908 </span></span>
-<span><span class="co">#&gt; converged</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">galamm_mod</span><span class="op">)</span></span>
+<span>  factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"ability"</span><span class="op">)</span>,</span>
+<span>  lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">loading_matrix</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>A couple of things in the model formula are worth pointing out. First
+the part <code>(0 + ability | school / sid)</code> in the model formula
+specifies that student ability varies between students within schools.
+It corresponds to the term <span class="math inline">\(\mathbf{x}_{ijk}^{T}\boldsymbol{\lambda} (\eta_{j}
++ \eta_{jk})\)</span> in the mathematical specification of the model.
+The variable <code>ability</code> is not part of the <code>IRTsim</code>
+dataframe, but is instead specified in the argument
+<code>factor = list("ability")</code>. The argument
+<code>load.var = "item"</code> specifies that all rows in the dataframe
+with the same value of “item” should get the same element of <span class="math inline">\(\boldsymbol{\lambda}\)</span>, and hence it
+defines the dummy variable <span class="math inline">\(\mathbf{x}_{ijk}\)</span>. Finally,
+<code>lambda = list(loading_matrix)</code> provides the matrix of factor
+loadings. Note that we must explicitly add a zero in
+<code>(0 + ability | school / sid)</code> to avoid having a random
+intercept estimated in addition to the effect for each value of “item”;
+such a model would not be identified. The fixed effect part of the model
+formula, which is simply <code>item</code>, specifies the term <span class="math inline">\(\mathbf{x}_{ijk}^{T}
+\boldsymbol{\beta}\)</span>.</p>
+<p>We can start by inspecting the fitted model:</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Generalized additive latent and mixed model fit by maximum marginal likelihood.</span></span>
-<span><span class="co">#&gt; Formula: y ~ item + (0 + abil.sid | sid) + (0 + abil.sid | school)</span></span>
+<span><span class="co">#&gt; Formula: y ~ item + (0 + ability | school/sid)</span></span>
 <span><span class="co">#&gt;    Data: IRTsim</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;      AIC      BIC   logLik deviance df.resid </span></span>
@@ -157,40 +224,73 @@ distributed.</p>
 <span><span class="co">#&gt; -2.8884 -0.7335  0.4266  0.6235  3.0410 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Lambda:</span></span>
-<span><span class="co">#&gt;   abil.sid     SE</span></span>
-<span><span class="co">#&gt; 1   1.0000      .</span></span>
-<span><span class="co">#&gt; 2   0.7370 0.1456</span></span>
-<span><span class="co">#&gt; 3   0.9351 0.1872</span></span>
-<span><span class="co">#&gt; 4   0.6069 0.1261</span></span>
-<span><span class="co">#&gt; 5   0.5860 0.1163</span></span>
+<span><span class="co">#&gt;         ability     SE</span></span>
+<span><span class="co">#&gt; lambda1  1.0000      .</span></span>
+<span><span class="co">#&gt; lambda2  0.7370 0.1456</span></span>
+<span><span class="co">#&gt; lambda3  0.9351 0.1872</span></span>
+<span><span class="co">#&gt; lambda4  0.6069 0.1261</span></span>
+<span><span class="co">#&gt; lambda5  0.5860 0.1163</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Random effects:</span></span>
-<span><span class="co">#&gt;  Groups   Name     Variance Std.Dev.</span></span>
-<span><span class="co">#&gt;  sid      abil.sid 1.466    1.211   </span></span>
-<span><span class="co">#&gt;  school   abil.sid 1.300    1.140   </span></span>
-<span><span class="co">#&gt;  Residual          1.000    1.000   </span></span>
-<span><span class="co">#&gt; Number of obs: 2500, groups:  sid, 500; school, 26</span></span>
+<span><span class="co">#&gt;  Groups     Name    Variance Std.Dev.</span></span>
+<span><span class="co">#&gt;  sid:school ability 1.466    1.211   </span></span>
+<span><span class="co">#&gt;  school     ability 1.300    1.140   </span></span>
+<span><span class="co">#&gt; Number of obs: 2500, groups:  sid:school, 500; school, 26</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Fixed effects:</span></span>
-<span><span class="co">#&gt;             Estimate Std. Error t value</span></span>
-<span><span class="co">#&gt; (Intercept)   0.5112     0.2617   1.953</span></span>
-<span><span class="co">#&gt; item2         0.3256     0.1791   1.818</span></span>
-<span><span class="co">#&gt; item3        -0.4491     0.1623  -2.768</span></span>
-<span><span class="co">#&gt; item4         0.4930     0.1924   2.562</span></span>
-<span><span class="co">#&gt; item5         0.4585     0.1922   2.385</span></span></code></pre></div>
+<span><span class="co">#&gt;             Estimate Std. Error z value Pr(&gt;|z|)</span></span>
+<span><span class="co">#&gt; (Intercept)   0.5112     0.2617   1.953 0.050777</span></span>
+<span><span class="co">#&gt; item2         0.3256     0.1791   1.818 0.069068</span></span>
+<span><span class="co">#&gt; item3        -0.4491     0.1623  -2.768 0.005644</span></span>
+<span><span class="co">#&gt; item4         0.4930     0.1924   2.562 0.010402</span></span>
+<span><span class="co">#&gt; item5         0.4585     0.1922   2.385 0.017067</span></span></code></pre></div>
+<p>The <code>fixef</code> method lets us consider the fixed effects:</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/fixef.galamm.html">fixef</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span>
+<span><span class="co">#&gt; (Intercept)       item2       item3       item4       item5 </span></span>
+<span><span class="co">#&gt;   0.5112006   0.3255941  -0.4491070   0.4929827   0.4584897</span></span></code></pre></div>
+<p>We can also get Wald type confidence intervals for the fixed
+effects.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint</a></span><span class="op">(</span><span class="va">mod</span>, parm <span class="op">=</span> <span class="st">"beta"</span><span class="op">)</span></span>
+<span><span class="co">#&gt;                    2.5 %     97.5 %</span></span>
+<span><span class="co">#&gt; (Intercept) -0.001727334  1.0241286</span></span>
+<span><span class="co">#&gt; item2       -0.025430062  0.6766183</span></span>
+<span><span class="co">#&gt; item3       -0.767138526 -0.1310755</span></span>
+<span><span class="co">#&gt; item4        0.115869898  0.8700955</span></span>
+<span><span class="co">#&gt; item5        0.081749228  0.8352303</span></span></code></pre></div>
+<p>We can similarly extract the factor loadings.</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/factor_loadings.galamm.html">factor_loadings</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span>
+<span><span class="co">#&gt;           ability        SE</span></span>
+<span><span class="co">#&gt; lambda1 1.0000000        NA</span></span>
+<span><span class="co">#&gt; lambda2 0.7370254 0.1455782</span></span>
+<span><span class="co">#&gt; lambda3 0.9351105 0.1872049</span></span>
+<span><span class="co">#&gt; lambda4 0.6069065 0.1260943</span></span>
+<span><span class="co">#&gt; lambda5 0.5859914 0.1162977</span></span></code></pre></div>
+<p>And we can find confidence intervals for them. Currently, only Wald
+type confidence intervals are available. Be aware that such intervals
+may have poor coverage properties.</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint</a></span><span class="op">(</span><span class="va">mod</span>, parm <span class="op">=</span> <span class="st">"lambda"</span><span class="op">)</span></span>
+<span><span class="co">#&gt;             2.5 %    97.5 %</span></span>
+<span><span class="co">#&gt; lambda1 0.4516974 1.0223534</span></span>
+<span><span class="co">#&gt; lambda2 0.5681956 1.3020254</span></span>
+<span><span class="co">#&gt; lambda3 0.3597662 0.8540468</span></span>
+<span><span class="co">#&gt; lambda4 0.3580520 0.8139307</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="binomial-model-with-multiple-trials">Binomial Model with Multiple Trials<a class="anchor" aria-label="anchor" href="#binomial-model-with-multiple-trials"></a>
 </h3>
 <p>We simulate such data by computing predictions from the model fitted
 above, and drawing binomial samples with multiple trials.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1234</span><span class="op">)</span></span>
 <span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="va">IRTsim</span></span>
 <span><span class="va">dat</span><span class="op">$</span><span class="va">trials</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="va">dat</span><span class="op">$</span><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html" class="external-link">rbinom</a></span><span class="op">(</span></span>
 <span>  n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span>, size <span class="op">=</span> <span class="va">dat</span><span class="op">$</span><span class="va">trials</span>,</span>
-<span>  prob <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">galamm_mod</span>, type <span class="op">=</span> <span class="st">"response"</span><span class="op">)</span></span>
+<span>  prob <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">mod</span>, type <span class="op">=</span> <span class="st">"response"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span></span>
 <span><span class="co">#&gt;     sid school item y trials</span></span>
@@ -202,68 +302,17 @@ above, and drawing binomial samples with multiple trials.</p>
 <span><span class="co">#&gt; 2.1   2      1    1 0      6</span></span></code></pre></div>
 <p>For binomial models with more than one trial, the response should be
 specified <code>cbind(successes, failures)</code>.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">galamm_mod_trials</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
-<span>  formula <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">y</span>, <span class="va">trials</span> <span class="op">-</span> <span class="va">y</span><span class="op">)</span> <span class="op">~</span> <span class="va">item</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">abil.sid</span> <span class="op">|</span> <span class="va">sid</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">abil.sid</span> <span class="op">|</span> <span class="va">school</span><span class="op">)</span>,</span>
+<span>  formula <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">y</span>, <span class="va">trials</span> <span class="op">-</span> <span class="va">y</span><span class="op">)</span> <span class="op">~</span> <span class="va">item</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">ability</span> <span class="op">|</span> <span class="va">school</span> <span class="op">/</span> <span class="va">sid</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">dat</span>,</span>
 <span>  family <span class="op">=</span> <span class="va">binomial</span>,</span>
 <span>  load.var <span class="op">=</span> <span class="st">"item"</span>,</span>
-<span>  factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"abil.sid"</span><span class="op">)</span>,</span>
-<span>  lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">irt.lam</span><span class="op">)</span></span>
+<span>  factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"ability"</span><span class="op">)</span>,</span>
+<span>  lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">loading_matrix</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; N = 11, M = 20 machine precision = 2.22045e-16</span></span>
-<span><span class="co">#&gt; At X0, 0 variables are exactly at the bounds</span></span>
-<span><span class="co">#&gt; At iterate     0  f=       3783.2  |proj g|=       342.25</span></span>
-<span><span class="co">#&gt; At iterate    10  f =       3498.5  |proj g|=        2.9971</span></span>
-<span><span class="co">#&gt; At iterate    20  f =       3498.3  |proj g|=     0.0067479</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; iterations 21</span></span>
-<span><span class="co">#&gt; function evaluations 22</span></span>
-<span><span class="co">#&gt; segments explored during Cauchy searches 22</span></span>
-<span><span class="co">#&gt; BFGS updates skipped 0</span></span>
-<span><span class="co">#&gt; active bounds at final generalized Cauchy point 0</span></span>
-<span><span class="co">#&gt; norm of the final projected gradient 0.000337171</span></span>
-<span><span class="co">#&gt; final function value 3498.29</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; F = 3498.29</span></span>
-<span><span class="co">#&gt; final  value 3498.289133 </span></span>
-<span><span class="co">#&gt; converged</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">galamm_mod_trials</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Generalized additive latent and mixed model fit by maximum marginal likelihood.</span></span>
-<span><span class="co">#&gt; Formula: cbind(y, trials - y) ~ item + (0 + abil.sid | sid) + (0 + abil.sid |  </span></span>
-<span><span class="co">#&gt;     school)</span></span>
-<span><span class="co">#&gt;    Data: dat</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;      AIC      BIC   logLik deviance df.resid </span></span>
-<span><span class="co">#&gt;   2559.4   2623.5  -3498.3   2537.4     2489 </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Scaled residuals: </span></span>
-<span><span class="co">#&gt;    Min     1Q Median     3Q    Max </span></span>
-<span><span class="co">#&gt; -2.387  1.811  5.116 10.124 42.919 </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Lambda:</span></span>
-<span><span class="co">#&gt;   abil.sid      SE</span></span>
-<span><span class="co">#&gt; 1   1.0000       .</span></span>
-<span><span class="co">#&gt; 2   0.7040 0.05234</span></span>
-<span><span class="co">#&gt; 3   0.8750 0.06257</span></span>
-<span><span class="co">#&gt; 4   0.5744 0.04613</span></span>
-<span><span class="co">#&gt; 5   0.6076 0.04829</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Random effects:</span></span>
-<span><span class="co">#&gt;  Groups   Name     Variance Std.Dev.</span></span>
-<span><span class="co">#&gt;  sid      abil.sid 0.6848   0.8275  </span></span>
-<span><span class="co">#&gt;  school   abil.sid 1.1671   1.0803  </span></span>
-<span><span class="co">#&gt;  Residual          1.0000   1.0000  </span></span>
-<span><span class="co">#&gt; Number of obs: 2500, groups:  sid, 500; school, 26</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Fixed effects:</span></span>
-<span><span class="co">#&gt;             Estimate Std. Error t value</span></span>
-<span><span class="co">#&gt; (Intercept)   0.4768    0.22158   2.152</span></span>
-<span><span class="co">#&gt; item2         0.3009    0.09257   3.251</span></span>
-<span><span class="co">#&gt; item3        -0.5032    0.07100  -7.087</span></span>
-<span><span class="co">#&gt; item4         0.3965    0.11423   3.471</span></span>
-<span><span class="co">#&gt; item5         0.4823    0.10859   4.442</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">galamm_mod_trials</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="model-with-poisson-distributed-responses">Model with Poisson Distributed Responses<a class="anchor" aria-label="anchor" href="#model-with-poisson-distributed-responses"></a>
@@ -272,29 +321,12 @@ specified <code>cbind(successes, failures)</code>.</p>
 Chapter 11.3 in <span class="citation">Skrondal and Rabe-Hesketh
 (2004)</span>. The model does not contain factor loadings, but we use it
 to demonstrate how to fit GLMMs with Poisson distributed responses.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">count_mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">lbas</span> <span class="op">*</span> <span class="va">treat</span> <span class="op">+</span> <span class="va">lage</span> <span class="op">+</span> <span class="va">v4</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">subj</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">epilep</span>,</span>
 <span>  family <span class="op">=</span> <span class="va">poisson</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; N = 7, M = 20 machine precision = 2.22045e-16</span></span>
-<span><span class="co">#&gt; At X0, 0 variables are exactly at the bounds</span></span>
-<span><span class="co">#&gt; At iterate     0  f=       773.26  |proj g|=       138.53</span></span>
-<span><span class="co">#&gt; At iterate    10  f =       665.95  |proj g|=         9.128</span></span>
-<span><span class="co">#&gt; At iterate    20  f =       665.36  |proj g|=       0.01895</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; iterations 22</span></span>
-<span><span class="co">#&gt; function evaluations 28</span></span>
-<span><span class="co">#&gt; segments explored during Cauchy searches 22</span></span>
-<span><span class="co">#&gt; BFGS updates skipped 0</span></span>
-<span><span class="co">#&gt; active bounds at final generalized Cauchy point 0</span></span>
-<span><span class="co">#&gt; norm of the final projected gradient 0.000368678</span></span>
-<span><span class="co">#&gt; final function value 665.359</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; F = 665.359</span></span>
-<span><span class="co">#&gt; final  value 665.358735 </span></span>
-<span><span class="co">#&gt; converged</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">count_mod</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Generalized additive latent and mixed model fit by maximum marginal likelihood.</span></span>
 <span><span class="co">#&gt; Formula: y ~ lbas * treat + lage + v4 + (1 | subj)</span></span>
@@ -308,27 +340,27 @@ to demonstrate how to fit GLMMs with Poisson distributed responses.</p>
 <span><span class="co">#&gt; -3.1918 -0.8456 -0.0917  0.5839  6.6303 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Random effects:</span></span>
-<span><span class="co">#&gt;  Groups   Name        Variance Std.Dev.</span></span>
-<span><span class="co">#&gt;  subj     (Intercept) 0.2516   0.5016  </span></span>
-<span><span class="co">#&gt;  Residual             1.0000   1.0000  </span></span>
+<span><span class="co">#&gt;  Groups Name        Variance Std.Dev.</span></span>
+<span><span class="co">#&gt;  subj   (Intercept) 0.2516   0.5016  </span></span>
 <span><span class="co">#&gt; Number of obs: 236, groups:  subj, 59</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Fixed effects:</span></span>
-<span><span class="co">#&gt;             Estimate Std. Error t value</span></span>
-<span><span class="co">#&gt; (Intercept)   1.7936    0.10468  17.134</span></span>
-<span><span class="co">#&gt; lbas          0.8845    0.13096   6.754</span></span>
-<span><span class="co">#&gt; treat        -0.3350    0.14775  -2.267</span></span>
-<span><span class="co">#&gt; lage          0.4846    0.34658   1.398</span></span>
-<span><span class="co">#&gt; v4           -0.1611    0.05458  -2.952</span></span>
-<span><span class="co">#&gt; lbas:treat    0.3384    0.20293   1.668</span></span></code></pre></div>
+<span><span class="co">#&gt;             Estimate Std. Error z value  Pr(&gt;|z|)</span></span>
+<span><span class="co">#&gt; (Intercept)   1.7936    0.10468  17.134 8.230e-66</span></span>
+<span><span class="co">#&gt; lbas          0.8845    0.13096   6.754 1.436e-11</span></span>
+<span><span class="co">#&gt; treat        -0.3350    0.14775  -2.267 2.339e-02</span></span>
+<span><span class="co">#&gt; lage          0.4846    0.34658   1.398 1.621e-01</span></span>
+<span><span class="co">#&gt; v4           -0.1611    0.05458  -2.952 3.161e-03</span></span>
+<span><span class="co">#&gt; lbas:treat    0.3384    0.20293   1.668 9.541e-02</span></span></code></pre></div>
 <p>In this case we can confirm that the <code>galamm</code> function is
 correctly implemented by comparing it to the output of
 <code><a href="https://rdrr.io/pkg/lme4/man/glmer.html" class="external-link">lme4::glmer</a></code>. For a model like this, it would also be best
 to use <code>lme4</code>, but with factor structures or other
 nonlinearities, <code>lme4</code> no longer provides the flexibility we
 need.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/lme4/lme4/" class="external-link">lme4</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Loading required package: Matrix</span></span>
 <span><span class="va">count_mod_lme4</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/lme4/man/glmer.html" class="external-link">glmer</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">lbas</span> <span class="op">*</span> <span class="va">treat</span> <span class="op">+</span> <span class="va">lage</span> <span class="op">+</span> <span class="va">v4</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">subj</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">epilep</span>,</span>
@@ -377,7 +409,7 @@ galamm. This is because in the summary output, lme4 shows the deviance
 as minus two times the log likelihood. In contrast, calling the deviance
 function on a model object fitted by glmer gives the same output as
 galamm.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/deviance.html" class="external-link">deviance</a></span><span class="op">(</span><span class="va">count_mod_lme4</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 407.0092</span></span></code></pre></div>
 <p>For details on deviance calculation in lme4, see

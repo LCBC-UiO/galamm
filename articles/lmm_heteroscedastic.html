@@ -109,23 +109,7 @@ should be included per item.</p>
 <span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">x</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span>,</span>
 <span>  weights <span class="op">=</span> <span class="op">~</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">item</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">hsced</span></span>
-<span><span class="op">)</span></span>
-<span><span class="co">#&gt; N = 4, M = 20 machine precision = 2.22045e-16</span></span>
-<span><span class="co">#&gt; At X0, 0 variables are exactly at the bounds</span></span>
-<span><span class="co">#&gt; At iterate     0  f=       2117.4  |proj g|=        74.56</span></span>
-<span><span class="co">#&gt; At iterate    10  f =       2058.1  |proj g|=    9.0535e-05</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; iterations 10</span></span>
-<span><span class="co">#&gt; function evaluations 12</span></span>
-<span><span class="co">#&gt; segments explored during Cauchy searches 12</span></span>
-<span><span class="co">#&gt; BFGS updates skipped 0</span></span>
-<span><span class="co">#&gt; active bounds at final generalized Cauchy point 0</span></span>
-<span><span class="co">#&gt; norm of the final projected gradient 9.05346e-05</span></span>
-<span><span class="co">#&gt; final function value 2058.14</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; F = 2058.14</span></span>
-<span><span class="co">#&gt; final  value 2058.140213 </span></span>
-<span><span class="co">#&gt; converged</span></span></code></pre></div>
+<span><span class="op">)</span></span></code></pre></div>
 <p>The output shows that for item 2, the residual variance is half that
 of item 1.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
@@ -153,9 +137,9 @@ of item 1.</p>
 <span><span class="co">#&gt; 1.0000 0.5013 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Fixed effects:</span></span>
-<span><span class="co">#&gt;             Estimate Std. Error t value</span></span>
-<span><span class="co">#&gt; (Intercept)   0.1289     0.0992   1.299</span></span>
-<span><span class="co">#&gt; x             0.7062     0.1212   5.826</span></span></code></pre></div>
+<span><span class="co">#&gt;             Estimate Std. Error t value  Pr(&gt;|t|)</span></span>
+<span><span class="co">#&gt; (Intercept)   0.1289     0.0992   1.299 1.938e-01</span></span>
+<span><span class="co">#&gt; x             0.7062     0.1212   5.826 5.681e-09</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>

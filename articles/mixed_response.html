@@ -108,22 +108,6 @@ distributed responses.</p>
 <span>  lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="cn">NA</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"loading"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; N = 4, M = 20 machine precision = 2.22045e-16</span></span>
-<span><span class="co">#&gt; At X0, 0 variables are exactly at the bounds</span></span>
-<span><span class="co">#&gt; At iterate     0  f=       4764.7  |proj g|=       300.51</span></span>
-<span><span class="co">#&gt; At iterate    10  f =       4619.3  |proj g|=       0.01885</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; iterations 11</span></span>
-<span><span class="co">#&gt; function evaluations 12</span></span>
-<span><span class="co">#&gt; segments explored during Cauchy searches 11</span></span>
-<span><span class="co">#&gt; BFGS updates skipped 0</span></span>
-<span><span class="co">#&gt; active bounds at final generalized Cauchy point 0</span></span>
-<span><span class="co">#&gt; norm of the final projected gradient 0.00181656</span></span>
-<span><span class="co">#&gt; final function value 4619.34</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; F = 4619.34</span></span>
-<span><span class="co">#&gt; final  value 4619.341613 </span></span>
-<span><span class="co">#&gt; converged</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mixed_resp</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Generalized additive latent and mixed model fit by maximum marginal likelihood.</span></span>
@@ -138,20 +122,19 @@ distributed responses.</p>
 <span><span class="co">#&gt; -3.5360 -0.7078  0.2156  0.6456  2.5978 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Lambda:</span></span>
-<span><span class="co">#&gt;   loading      SE</span></span>
-<span><span class="co">#&gt; 1   1.000       .</span></span>
-<span><span class="co">#&gt; 2   1.095 0.09982</span></span>
+<span><span class="co">#&gt;         loading      SE</span></span>
+<span><span class="co">#&gt; lambda1   1.000       .</span></span>
+<span><span class="co">#&gt; lambda2   1.095 0.09982</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Random effects:</span></span>
-<span><span class="co">#&gt;  Groups   Name    Variance Std.Dev.</span></span>
-<span><span class="co">#&gt;  id       loading 1.05     1.025   </span></span>
-<span><span class="co">#&gt;  Residual         1.12     1.058   </span></span>
+<span><span class="co">#&gt;  Groups Name    Variance Std.Dev.</span></span>
+<span><span class="co">#&gt;  id     loading 1.05     1.025   </span></span>
 <span><span class="co">#&gt; Number of obs: 4000, groups:  id, 1000</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Fixed effects:</span></span>
-<span><span class="co">#&gt;             Estimate Std. Error t value</span></span>
-<span><span class="co">#&gt; (Intercept)    0.041    0.05803  0.7065</span></span>
-<span><span class="co">#&gt; x              0.971    0.08594 11.2994</span></span></code></pre></div>
+<span><span class="co">#&gt;             Estimate Std. Error z value  Pr(&gt;|z|)</span></span>
+<span><span class="co">#&gt; (Intercept)    0.041    0.05803  0.7065 4.799e-01</span></span>
+<span><span class="co">#&gt; x              0.971    0.08594 11.2994 1.321e-29</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="covariate-measurement-error-model">Covariate Measurement Error Model<a class="anchor" aria-label="anchor" href="#covariate-measurement-error-model"></a>
@@ -215,27 +198,7 @@ deficient.</p>
 <span>  factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"loading"</span><span class="op">)</span>,</span>
 <span>  load.var <span class="op">=</span> <span class="st">"item"</span>,</span>
 <span>  lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">lam</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span><span class="co">#&gt; N = 11, M = 20 machine precision = 2.22045e-16</span></span>
-<span><span class="co">#&gt; At X0, 0 variables are exactly at the bounds</span></span>
-<span><span class="co">#&gt; At iterate     0  f=         2148  |proj g|=       122.68</span></span>
-<span><span class="co">#&gt; At iterate    10  f =       1857.3  |proj g|=        54.132</span></span>
-<span><span class="co">#&gt; At iterate    20  f =       1533.2  |proj g|=        11.521</span></span>
-<span><span class="co">#&gt; At iterate    30  f =       1443.7  |proj g|=        74.915</span></span>
-<span><span class="co">#&gt; At iterate    40  f =       1407.1  |proj g|=        5.5352</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; iterations 46</span></span>
-<span><span class="co">#&gt; function evaluations 51</span></span>
-<span><span class="co">#&gt; segments explored during Cauchy searches 47</span></span>
-<span><span class="co">#&gt; BFGS updates skipped 0</span></span>
-<span><span class="co">#&gt; active bounds at final generalized Cauchy point 1</span></span>
-<span><span class="co">#&gt; norm of the final projected gradient 0.00371649</span></span>
-<span><span class="co">#&gt; final function value 1406.8</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; F = 1406.8</span></span>
-<span><span class="co">#&gt; final  value 1406.801104 </span></span>
-<span><span class="co">#&gt; converged</span></span>
-<span><span class="co">#&gt; Hessian rank deficient. Could not compute covariance matrix.</span></span></code></pre></div>
+<span><span class="op">)</span></span></code></pre></div>
 <p>Inspecting the parameters shows that the latent variable is estimated
 to have zero variance. We try to increase the initial value, and see
 what happens.</p>
@@ -249,29 +212,7 @@ what happens.</p>
 <span>  load.var <span class="op">=</span> <span class="st">"item"</span>,</span>
 <span>  lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">lam</span><span class="op">)</span>,</span>
 <span>  start <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>theta <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span><span class="co">#&gt; N = 11, M = 20 machine precision = 2.22045e-16</span></span>
-<span><span class="co">#&gt; At X0, 0 variables are exactly at the bounds</span></span>
-<span><span class="co">#&gt; At iterate     0  f=       2827.6  |proj g|=       123.31</span></span>
-<span><span class="co">#&gt; At iterate    10  f =       1793.3  |proj g|=        20.885</span></span>
-<span><span class="co">#&gt; At iterate    20  f =         1749  |proj g|=        29.645</span></span>
-<span><span class="co">#&gt; At iterate    30  f =         1617  |proj g|=        123.76</span></span>
-<span><span class="co">#&gt; At iterate    40  f =         1503  |proj g|=        11.186</span></span>
-<span><span class="co">#&gt; At iterate    50  f =       1438.2  |proj g|=        37.775</span></span>
-<span><span class="co">#&gt; At iterate    60  f =         1377  |proj g|=        10.015</span></span>
-<span><span class="co">#&gt; At iterate    70  f =       1372.2  |proj g|=       0.49059</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; iterations 74</span></span>
-<span><span class="co">#&gt; function evaluations 91</span></span>
-<span><span class="co">#&gt; segments explored during Cauchy searches 75</span></span>
-<span><span class="co">#&gt; BFGS updates skipped 0</span></span>
-<span><span class="co">#&gt; active bounds at final generalized Cauchy point 0</span></span>
-<span><span class="co">#&gt; norm of the final projected gradient 0.00274664</span></span>
-<span><span class="co">#&gt; final function value 1372.16</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; F = 1372.16</span></span>
-<span><span class="co">#&gt; final  value 1372.160386 </span></span>
-<span><span class="co">#&gt; converged</span></span></code></pre></div>
+<span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Generalized additive latent and mixed model fit by maximum marginal likelihood.</span></span>
@@ -287,28 +228,27 @@ what happens.</p>
 <span><span class="co">#&gt; -258553      -1       0       0      66 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Lambda:</span></span>
-<span><span class="co">#&gt;   loading      SE</span></span>
-<span><span class="co">#&gt; 1  1.0000       .</span></span>
-<span><span class="co">#&gt; 2  1.0000       .</span></span>
-<span><span class="co">#&gt; 3 -0.1339 0.05121</span></span>
+<span><span class="co">#&gt;         loading      SE</span></span>
+<span><span class="co">#&gt; lambda1  1.0000       .</span></span>
+<span><span class="co">#&gt; lambda2  1.0000       .</span></span>
+<span><span class="co">#&gt; lambda3 -0.1339 0.05121</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Random effects:</span></span>
-<span><span class="co">#&gt;  Groups   Name    Variance Std.Dev.</span></span>
-<span><span class="co">#&gt;  id       loading 23.635   4.862   </span></span>
-<span><span class="co">#&gt;  Residual          6.962   2.639   </span></span>
+<span><span class="co">#&gt;  Groups Name    Variance Std.Dev.</span></span>
+<span><span class="co">#&gt;  id     loading 23.64    4.862   </span></span>
 <span><span class="co">#&gt; Number of obs: 742, groups:  id, 333</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Fixed effects:</span></span>
-<span><span class="co">#&gt;                        Estimate Std. Error   t value</span></span>
-<span><span class="co">#&gt; (Intercept)            17.94854    0.48686  36.86603</span></span>
-<span><span class="co">#&gt; itemfiber2              0.22407    0.41783   0.53627</span></span>
-<span><span class="co">#&gt; itemchd               -19.86377    0.60069 -33.06838</span></span>
-<span><span class="co">#&gt; age:chd                 0.06614    0.05931   1.11515</span></span>
-<span><span class="co">#&gt; bus:chd                -0.02896    0.34355  -0.08431</span></span>
-<span><span class="co">#&gt; age:bus:chd            -0.04997    0.06507  -0.76800</span></span>
-<span><span class="co">#&gt; age:loading:fiber      -0.21201    0.10090  -2.10110</span></span>
-<span><span class="co">#&gt; bus:loading:fiber      -1.68309    0.63721  -2.64132</span></span>
-<span><span class="co">#&gt; age:bus:loading:fiber   0.16815    0.11223   1.49825</span></span></code></pre></div>
+<span><span class="co">#&gt;                        Estimate Std. Error   z value   Pr(&gt;|z|)</span></span>
+<span><span class="co">#&gt; (Intercept)            17.94854    0.48686  36.86603 1.619e-297</span></span>
+<span><span class="co">#&gt; itemfiber2              0.22407    0.41783   0.53627  5.918e-01</span></span>
+<span><span class="co">#&gt; itemchd               -19.86377    0.60069 -33.06838 8.467e-240</span></span>
+<span><span class="co">#&gt; age:chd                 0.06614    0.05931   1.11515  2.648e-01</span></span>
+<span><span class="co">#&gt; bus:chd                -0.02896    0.34355  -0.08431  9.328e-01</span></span>
+<span><span class="co">#&gt; age:bus:chd            -0.04997    0.06507  -0.76800  4.425e-01</span></span>
+<span><span class="co">#&gt; age:loading:fiber      -0.21201    0.10090  -2.10110  3.563e-02</span></span>
+<span><span class="co">#&gt; bus:loading:fiber      -1.68309    0.63721  -2.64132  8.258e-03</span></span>
+<span><span class="co">#&gt; age:bus:loading:fiber   0.16815    0.11223   1.49825  1.341e-01</span></span></code></pre></div>
 <p>Now we were able to reproduce results very close to those in Table
 14.1 on page 420 of <span class="citation">Skrondal and Rabe-Hesketh
 (2004)</span>.</p>

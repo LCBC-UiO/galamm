@@ -105,109 +105,19 @@ vignette is to confirm that <code>galamm</code> gives the same results
 for these models, and to introduce the syntax. As will be clear if you
 run the code, <code>galamm</code> can often be considerably faster.</p>
 <div class="section level3">
-<h3 id="model-with-a-single-factor">Model with a Single Factor<a class="anchor" aria-label="anchor" href="#model-with-a-single-factor"></a>
-</h3>
-<p>We use a simulated dataset from the <code>PLmixed</code> package for
-the example in this vignette. Note that the response should ideally be
-treated as binomial; we will come back in the vignette on generalized
-linear mixed models with factor structures.</p>
-<p>First we set up the factor structures to be used:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"IRTsim"</span><span class="op">)</span></span>
-<span><span class="va">IRTsim</span><span class="op">$</span><span class="va">item</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">IRTsim</span><span class="op">$</span><span class="va">item</span><span class="op">)</span></span>
-<span><span class="va">irt.lam</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
-<p>We could use the following code to fit the model with
-<code>PLmixed</code>.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">pl_mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/PLmixed/man/PLmixed.html" class="external-link">PLmixed</a></span><span class="op">(</span></span>
-<span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">item</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">abil.sid</span> <span class="op">|</span> <span class="va">sid</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">abil.sid</span> <span class="op">|</span> <span class="va">school</span><span class="op">)</span>,</span>
-<span>  data <span class="op">=</span> <span class="va">IRTsim</span>,</span>
-<span>  load.var <span class="op">=</span> <span class="st">"item"</span>,</span>
-<span>  factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"abil.sid"</span><span class="op">)</span>,</span>
-<span>  lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">irt.lam</span><span class="op">)</span>,</span>
-<span>  iter.count <span class="op">=</span> <span class="cn">FALSE</span></span>
-<span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">pl_mod</span><span class="op">)</span></span></code></pre></div>
-<p>Next we fit the model using <code>galamm</code>. This is typically
-6-7 times faster than the corresponding call using <code>PLmixed</code>,
-and gives results that are identical up to some deviations due to
-numerics.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">galamm_mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
-<span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">item</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">abil.sid</span> <span class="op">|</span> <span class="va">sid</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">abil.sid</span> <span class="op">|</span> <span class="va">school</span><span class="op">)</span>,</span>
-<span>  data <span class="op">=</span> <span class="va">IRTsim</span>,</span>
-<span>  load.var <span class="op">=</span> <span class="st">"item"</span>,</span>
-<span>  factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"abil.sid"</span><span class="op">)</span>,</span>
-<span>  lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">irt.lam</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span><span class="co">#&gt; N = 11, M = 20 machine precision = 2.22045e-16</span></span>
-<span><span class="co">#&gt; At X0, 0 variables are exactly at the bounds</span></span>
-<span><span class="co">#&gt; At iterate     0  f=       1729.4  |proj g|=       348.93</span></span>
-<span><span class="co">#&gt; At iterate    10  f =       1544.5  |proj g|=        28.081</span></span>
-<span><span class="co">#&gt; At iterate    20  f =       1538.6  |proj g|=        2.9025</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; iterations 27</span></span>
-<span><span class="co">#&gt; function evaluations 32</span></span>
-<span><span class="co">#&gt; segments explored during Cauchy searches 28</span></span>
-<span><span class="co">#&gt; BFGS updates skipped 0</span></span>
-<span><span class="co">#&gt; active bounds at final generalized Cauchy point 0</span></span>
-<span><span class="co">#&gt; norm of the final projected gradient 0.0276741</span></span>
-<span><span class="co">#&gt; final function value 1538.54</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; F = 1538.54</span></span>
-<span><span class="co">#&gt; final  value 1538.543237 </span></span>
-<span><span class="co">#&gt; converged</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">galamm_mod</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Generalized additive latent and mixed model fit by maximum marginal likelihood.</span></span>
-<span><span class="co">#&gt; Formula: y ~ item + (0 + abil.sid | sid) + (0 + abil.sid | school)</span></span>
-<span><span class="co">#&gt;    Data: IRTsim</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;      AIC      BIC   logLik deviance df.resid </span></span>
-<span><span class="co">#&gt;   3101.1   3171.0  -1538.5   3077.1     2488 </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Scaled residuals: </span></span>
-<span><span class="co">#&gt;     Min      1Q  Median      3Q     Max </span></span>
-<span><span class="co">#&gt; -2.1515 -0.8921  0.3510  0.7147  2.2193 </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Lambda:</span></span>
-<span><span class="co">#&gt;   abil.sid      SE</span></span>
-<span><span class="co">#&gt; 1   1.0000       .</span></span>
-<span><span class="co">#&gt; 2   0.8415 0.09986</span></span>
-<span><span class="co">#&gt; 3   0.9862 0.10730</span></span>
-<span><span class="co">#&gt; 4   0.7093 0.09476</span></span>
-<span><span class="co">#&gt; 5   0.6924 0.09246</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Random effects:</span></span>
-<span><span class="co">#&gt;  Groups   Name     Variance Std.Dev.</span></span>
-<span><span class="co">#&gt;  sid      abil.sid 0.04419  0.2102  </span></span>
-<span><span class="co">#&gt;  school   abil.sid 0.03304  0.1818  </span></span>
-<span><span class="co">#&gt;  Residual          0.17194  0.4147  </span></span>
-<span><span class="co">#&gt; Number of obs: 2500, groups:  sid, 500; school, 26</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Fixed effects:</span></span>
-<span><span class="co">#&gt;             Estimate Std. Error t value</span></span>
-<span><span class="co">#&gt; (Intercept)   0.5893    0.04167  14.141</span></span>
-<span><span class="co">#&gt; item2         0.0686    0.02698   2.543</span></span>
-<span><span class="co">#&gt; item3        -0.0723    0.02633  -2.746</span></span>
-<span><span class="co">#&gt; item4         0.1078    0.02847   3.786</span></span>
-<span><span class="co">#&gt; item5         0.1034    0.02872   3.602</span></span></code></pre></div>
-</div>
-<div class="section level3">
 <h3 id="models-with-multiple-factors">Models with Multiple Factors<a class="anchor" aria-label="anchor" href="#models-with-multiple-factors"></a>
 </h3>
 <p>This example comes from Section 3.1 in <span class="citation">Jeon
 and Rabe-Hesketh (2012)</span>.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"KYPSsim"</span><span class="op">)</span></span>
-<span><span class="va">KYPSsim</span><span class="op">$</span><span class="va">time</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">KYPSsim</span><span class="op">$</span><span class="va">time</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">KYPSsim</span><span class="op">$</span><span class="va">time</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">KYPSsim</span><span class="op">$</span><span class="va">time</span><span class="op">)</span></span>
 <span><span class="va">kyps.lam</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="fl">0</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="fl">1</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">kyps_plmixed</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/PLmixed/man/PLmixed.html" class="external-link">PLmixed</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">esteem</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">time</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">hs</span> <span class="op">|</span> <span class="va">hid</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">ms</span> <span class="op">|</span> <span class="va">mid</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">sid</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">KYPSsim</span>,</span>
@@ -217,7 +127,7 @@ and Rabe-Hesketh (2012)</span>.</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">kyps_plmixed</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">kyps_model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">esteem</span> <span class="op">~</span> <span class="va">time</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">hs</span> <span class="op">|</span> <span class="va">hid</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">ms</span> <span class="op">|</span> <span class="va">mid</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">sid</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">KYPSsim</span>,</span>
@@ -225,28 +135,6 @@ and Rabe-Hesketh (2012)</span>.</p>
 <span>  load.var <span class="op">=</span> <span class="st">"time"</span>,</span>
 <span>  lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">kyps.lam</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; N = 11, M = 20 machine precision = 2.22045e-16</span></span>
-<span><span class="co">#&gt; At X0, 0 variables are exactly at the bounds</span></span>
-<span><span class="co">#&gt; At iterate     0  f=        12247  |proj g|=       3272.3</span></span>
-<span><span class="co">#&gt; At iterate    10  f =        10005  |proj g|=         187.1</span></span>
-<span><span class="co">#&gt; At iterate    20  f =       9947.3  |proj g|=        83.309</span></span>
-<span><span class="co">#&gt; At iterate    30  f =       9819.1  |proj g|=        123.42</span></span>
-<span><span class="co">#&gt; At iterate    40  f =       9688.2  |proj g|=          26.3</span></span>
-<span><span class="co">#&gt; At iterate    50  f =       9682.5  |proj g|=        13.684</span></span>
-<span><span class="co">#&gt; At iterate    60  f =       9682.1  |proj g|=        16.198</span></span>
-<span><span class="co">#&gt; At iterate    70  f =         9682  |proj g|=       0.25487</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; iterations 76</span></span>
-<span><span class="co">#&gt; function evaluations 95</span></span>
-<span><span class="co">#&gt; segments explored during Cauchy searches 78</span></span>
-<span><span class="co">#&gt; BFGS updates skipped 0</span></span>
-<span><span class="co">#&gt; active bounds at final generalized Cauchy point 0</span></span>
-<span><span class="co">#&gt; norm of the final projected gradient 0.023069</span></span>
-<span><span class="co">#&gt; final function value 9681.99</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; F = 9681.99</span></span>
-<span><span class="co">#&gt; final  value 9681.987388 </span></span>
-<span><span class="co">#&gt; converged</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">kyps_model</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Generalized additive latent and mixed model fit by maximum marginal likelihood.</span></span>
@@ -261,11 +149,11 @@ and Rabe-Hesketh (2012)</span>.</p>
 <span><span class="co">#&gt; -3.7952 -0.5945  0.0028  0.6049  3.5753 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Lambda:</span></span>
-<span><span class="co">#&gt;        ms     SE    hs    SE</span></span>
-<span><span class="co">#&gt; 1 1.00000      .     .     .</span></span>
-<span><span class="co">#&gt; 2 0.87509 0.1421     .     .</span></span>
-<span><span class="co">#&gt; 3 0.04432 0.1496 1.000     .</span></span>
-<span><span class="co">#&gt; 4 0.02094 0.1543 1.502 0.504</span></span>
+<span><span class="co">#&gt;              ms     SE    hs    SE</span></span>
+<span><span class="co">#&gt; lambda1 1.00000      .     .     .</span></span>
+<span><span class="co">#&gt; lambda2 0.87509 0.1421     .     .</span></span>
+<span><span class="co">#&gt; lambda3 0.04432 0.1496 1.000     .</span></span>
+<span><span class="co">#&gt; lambda4 0.02094 0.1543 1.502 0.504</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Random effects:</span></span>
 <span><span class="co">#&gt;  Groups   Name        Variance Std.Dev.</span></span>
@@ -276,16 +164,15 @@ and Rabe-Hesketh (2012)</span>.</p>
 <span><span class="co">#&gt; Number of obs: 11494, groups:  sid, 2924; hid, 860; mid, 104</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Fixed effects:</span></span>
-<span><span class="co">#&gt;             Estimate Std. Error t value</span></span>
-<span><span class="co">#&gt; (Intercept)   3.1479    0.01524 206.619</span></span>
-<span><span class="co">#&gt; time2         0.1184    0.01253   9.451</span></span>
-<span><span class="co">#&gt; time3         0.1534    0.01607   9.547</span></span>
-<span><span class="co">#&gt; time4         0.1924    0.01675  11.489</span></span></code></pre></div>
+<span><span class="co">#&gt;             Estimate Std. Error t value  Pr(&gt;|t|)</span></span>
+<span><span class="co">#&gt; (Intercept)   3.1479    0.01524 206.619 0.000e+00</span></span>
+<span><span class="co">#&gt; time2         0.1184    0.01253   9.451 3.361e-21</span></span>
+<span><span class="co">#&gt; time3         0.1534    0.01607   9.547 1.339e-21</span></span>
+<span><span class="co">#&gt; time4         0.1924    0.01675  11.489 1.496e-30</span></span></code></pre></div>
 <p>The next is Example 1 in <span class="citation">Rockwood and Jeon
 (2019)</span>.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"JUDGEsim"</span><span class="op">)</span></span>
-<span><span class="va">JUDGEsim</span><span class="op">$</span><span class="va">item</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">JUDGEsim</span><span class="op">$</span><span class="va">item</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">JUDGEsim</span><span class="op">$</span><span class="va">item</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">JUDGEsim</span><span class="op">$</span><span class="va">item</span><span class="op">)</span></span>
 <span><span class="va">judge.lam</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="fl">0</span>, <span class="cn">NA</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span>,</span>
@@ -302,7 +189,7 @@ and Rabe-Hesketh (2012)</span>.</p>
 <span><span class="op">)</span></span></code></pre></div>
 <p>We could run it using <code>PLmixed</code> with the following syntax,
 but it takes hours.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">judge_plmixed</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/PLmixed/man/PLmixed.html" class="external-link">PLmixed</a></span><span class="op">(</span></span>
 <span>  <span class="va">response</span> <span class="op">~</span> <span class="fl">0</span> <span class="op">+</span> <span class="va">item</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">class</span><span class="op">)</span></span>
 <span>    <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">trait1.t</span> <span class="op">+</span> <span class="va">trait2.t</span> <span class="op">+</span> <span class="va">trait1.s</span> <span class="op">+</span> <span class="va">trait2.s</span> <span class="op">|</span> <span class="va">stu</span><span class="op">)</span></span>
@@ -319,7 +206,7 @@ but it takes hours.</p>
 <p>We get identical results using <code>galamm</code> in less than five
 minutes. However, since five minutes is a bit too much for a vignette,
 we don’t show the output here.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">judge_galamm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">response</span> <span class="op">~</span> <span class="fl">0</span> <span class="op">+</span> <span class="va">item</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">class</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">trait1.t</span> <span class="op">+</span> <span class="va">trait2.t</span> <span class="op">+</span> <span class="va">trait1.s</span> <span class="op">+</span> <span class="va">trait2.s</span> <span class="op">|</span> <span class="va">stu</span><span class="op">)</span> <span class="op">+</span></span>
@@ -339,10 +226,8 @@ we don’t show the output here.</p>
 <p>Finally, in their Example 2, <span class="citation">Rockwood and Jeon
 (2019)</span> consider a model which contains products of factor
 loadings. We start by preparing the data:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"KYPSitemsim"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">time.lam</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span></span>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">time.lam</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span>, <span class="co"># Specify time lambda matrix</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="fl">0</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="fl">1</span><span class="op">)</span>,</span>
@@ -358,7 +243,7 @@ loadings. We start by preparing the data:</p>
 <p>The model can be fitted using <code>PLmixed</code> as follows. Note
 that “ms”, “hs” and “lat.var” are factor, and that the formula contains
 products <code>hs:lat.var</code> and <code>ms:lat.var</code>.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">kyps.item.model</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/PLmixed/man/PLmixed.html" class="external-link">PLmixed</a></span><span class="op">(</span></span>
 <span>  <span class="va">response</span> <span class="op">~</span> <span class="fl">0</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">item</span><span class="op">)</span> <span class="op">+</span> <span class="va">lat.var</span><span class="op">:</span><span class="va">time2</span></span>
 <span>    <span class="op">+</span> <span class="va">lat.var</span><span class="op">:</span><span class="va">time3</span> <span class="op">+</span> <span class="va">lat.var</span><span class="op">:</span><span class="va">time4</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">hs</span><span class="op">:</span><span class="va">lat.var</span> <span class="op">|</span> <span class="va">hid</span><span class="op">)</span></span>
