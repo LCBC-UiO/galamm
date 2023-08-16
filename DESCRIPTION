@@ -29,6 +29,7 @@ Imports:
     Matrix,
     memoise,
     nlme,
+    PLmixed,
     Rcpp,
     Rdpack
 Depends:
@@ -41,7 +42,6 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 Suggests:
     covr,
-    PLmixed,
     knitr,
     rmarkdown,
     testthat (>= 3.0.0)
