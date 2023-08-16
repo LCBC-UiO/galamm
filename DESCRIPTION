@@ -43,9 +43,9 @@ Suggests:
     covr,
     PLmixed,
     knitr,
-    formatR,
     rmarkdown,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
-VignetteBuilder: knitr, rmarkdown, formatR
+VignetteBuilder: knitr, rmarkdown
 RdMacros: Rdpack
+NeedsCompilation: yes
