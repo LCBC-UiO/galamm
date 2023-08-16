@@ -1,7 +1,7 @@
 ---
 title: "Heteroscedastic Linear Mixed Models"
 output: rmarkdown::html_vignette
-bibliography: ../inst/references.bib
+bibliography: ../inst/REFERENCES.bib
 vignette: >
   %\VignetteIndexEntry{Heteroscedastic Linear Mixed Models}
   %\VignetteEngine{knitr::rmarkdown}

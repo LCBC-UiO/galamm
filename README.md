@@ -144,20 +144,19 @@ summary(mixed_resp)
 #> -3.5360 -0.7078  0.2156  0.6456  2.5978 
 #> 
 #> Lambda:
-#>   loading      SE
-#> 1   1.000       .
-#> 2   1.095 0.09982
+#>         loading      SE
+#> lambda1   1.000       .
+#> lambda2   1.095 0.09982
 #> 
 #> Random effects:
-#>  Groups   Name    Variance Std.Dev.
-#>  id       loading 1.05     1.025   
-#>  Residual         1.12     1.058   
+#>  Groups Name    Variance Std.Dev.
+#>  id     loading 1.05     1.025   
 #> Number of obs: 4000, groups:  id, 1000
 #> 
 #> Fixed effects:
-#>             Estimate Std. Error t value
-#> (Intercept)    0.041    0.05803  0.7065
-#> x              0.971    0.08594 11.2994
+#>             Estimate Std. Error z value  Pr(>|z|)
+#> (Intercept)    0.041    0.05803  0.7065 4.799e-01
+#> x              0.971    0.08594 11.2994 1.321e-29
 ```
 
 ## How to cite this package
