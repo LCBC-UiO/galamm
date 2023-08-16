@@ -49,3 +49,4 @@ Config/testthat/edition: 3
 VignetteBuilder: knitr, rmarkdown
 RdMacros: Rdpack
 NeedsCompilation: yes
+SystemRequirements: C++17
