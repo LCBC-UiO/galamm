@@ -1,11 +1,10 @@
 library(PLmixed)
 test_that("Logistic GLMM with simple factor works", {
-  data("IRTsim")
   IRTsim$item <- factor(IRTsim$item)
   irt.lam <- matrix(c(1, NA, NA, NA, NA), ncol = 1)
 
   mod <- galamm(
-    formula = y ~ item + (0 + abil.sid | sid) + (0 + abil.sid | school),
+    formula = y ~ item + (0 + abil.sid | school / sid),
     data = IRTsim,
     family = binomial,
     load.var = "item",
@@ -22,14 +21,16 @@ test_that("Logistic GLMM with simple factor works", {
     )
   )
   expect_equal(
-    summary(mod)$Lambda,
+    factor_loadings(mod),
     structure(c(
       1, 0.737025403666384, 0.935110508605618, 0.606906510198586,
       0.585991366477788, NA, 0.145578181193442, 0.187204916856415,
       0.126094293895771, 0.116297718127772
     ), dim = c(5L, 2L), dimnames = list(
-      c("1", "2", "3", "4", "5"), c("abil.sid", "SE")
-    ))
+      c("lambda1", "lambda2", "lambda3", "lambda4", "lambda5"),
+      c("abil.sid", "SE")
+    )),
+    tolerance = 1e-4
   )
 
   expect_equal(
@@ -51,7 +52,7 @@ test_that("Logistic GLMM with simple factor works", {
   )
 
   galamm_mod_trials <- galamm(
-    formula = cbind(y, trials - y) ~ item + (1 | sid) + (1 | school),
+    formula = cbind(y, trials - y) ~ item + (1 | school / sid),
     data = dat,
     family = binomial
   )
@@ -68,11 +69,15 @@ test_that("Logistic GLMM with simple factor works", {
       0.434857938909014, 0.355598397922802, -0.457362207203679,
       0.513797577453551, 0.581753809430895, 0.165404285537448, 0.0630256521208169,
       0.0618539379075891, 0.064439591822642, 0.0641691651190108, 2.6290608946197,
-      5.64212167517345, -7.39422941651648, 7.97332141500342, 9.06594013420543
-    ), dim = c(5L, 3L), dimnames = list(c(
-      "(Intercept)", "item2",
-      "item3", "item4", "item5"
-    ), c("Estimate", "Std. Error", "t value")))
+      5.64212167517345, -7.39422941651648, 7.97332141500342, 9.06594013420543,
+      0.00856210274564496, 1.67967324312876e-08, 1.422306646428e-13,
+      1.54465758795066e-15, 1.23534275695958e-19
+    ), dim = 5:4, dimnames = list(
+      c("(Intercept)", "item2", "item3", "item4", "item5"), c(
+        "Estimate",
+        "Std. Error", "z value", "Pr(>|z|)"
+      )
+    ))
   )
 
   expect_equal(

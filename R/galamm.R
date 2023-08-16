@@ -21,13 +21,14 @@
 #' @return A model object
 #' @export
 #'
-#' @importFrom stats gaussian model.frame model.response
+#' @importFrom stats gaussian model.frame model.response pnorm qnorm vcov
 #' @importFrom Rdpack reprompt
 galamm <- function(formula, weights = NULL, data, family = gaussian,
                    family_mapping = rep(1L, nrow(data)),
                    load.var = NULL, lambda = NULL, factor = NULL,
                    start = NULL, control = galamm_control()) {
   stopifnot(length(family) == length(unique(family_mapping)))
+
   mc <- match.call()
   if (!is.list(family)) family <- list(family)
   family_list <- lapply(family, function(f) {
@@ -45,6 +46,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
       lambda[[i]][is.na(lambda[[i]])] <-
         seq(from = parameter_index, length.out = sum(is.na(lambda[[i]])))
       colnames(lambda[[i]]) <- factor[[i]]
+
       if (any(factor[[i]] %in% colnames(data))) {
         stop("Factor already a column in data.")
       }
@@ -187,7 +189,6 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
     weights_inds <- integer()
   }
 
-
   mlwrapper <- function(par, hessian = FALSE) {
     marginal_likelihood(
       y = response_obj[, 1],
@@ -208,7 +209,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
       maxit_conditional_modes =
         ifelse(
           length(family_list) == 1 & family_list[[1]]$family == "gaussian",
-          1, 10
+          1, control$maxit_conditional_modes
         ),
       hessian = hessian
     )
@@ -247,21 +248,10 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   opt <- stats::optim(par_init,
     fn = fn, gr = gr,
     method = "L-BFGS-B", lower = bounds,
-    control = list(fnscale = -1, lmm = 20, trace = 3)
+    control = optim_control(control)
   )
-
 
   final_model <- mlwrapper(opt$par, TRUE)
-  S <- tryCatch(
-    {
-      -solve(final_model$hessian)
-    },
-    error = function(e) {
-      message("Hessian rank deficient. Could not compute covariance matrix.")
-      NULL
-    }
-  )
-
 
   # Update Cholesky factor of covariance matrix
   Lambdat@x <- opt$par[theta_inds][lmod$reTrms$Lind]
@@ -281,12 +271,16 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
     preds[i, j]
   }, i = seq_len(nrow(preds)), j = family_mapping))
 
-
   ret <- list()
   ret$lambda <- lambda
   ret$cnms <- lmod$reTrms$cnms
-  ret$fixef_names <- colnames(X)
-  ret$vcov <- S
+  ret$par_names <- c(
+    paste0("theta", seq_along(theta_inds), recycle0 = TRUE),
+    colnames(X),
+    paste0("lambda", seq_along(lambda_inds), recycle0 = TRUE),
+    paste0("weights", seq_along(weights_inds), recycle0 = TRUE)
+  )
+  ret$hessian <- final_model$hessian
   ret$par <- opt$par
   ret$lambda_inds <- lambda_inds
   ret$beta_inds <- beta_inds

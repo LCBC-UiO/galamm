@@ -2,7 +2,7 @@ devtools::load_all()
 library(PLmixed)
 library(lme4)
 
-data("IRTsim")
+
 irt.lam <- c(1, NA, NA, NA, NA)
 plm <- PLmixed(
   y ~ 0 + as.factor(item) + (0 + abil.sid | sid) + (0 + abil.sid | school),

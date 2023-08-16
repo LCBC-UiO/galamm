@@ -28,6 +28,7 @@ Imports:
     lme4,
     Matrix,
     memoise,
+    nlme,
     Rcpp,
     Rdpack
 Depends:
@@ -40,10 +41,12 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 Suggests:
     covr,
-    PLmixed,
     knitr,
+    PLmixed,
     rmarkdown,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
-VignetteBuilder: knitr
+VignetteBuilder: knitr, rmarkdown
 RdMacros: Rdpack
+NeedsCompilation: yes
+SystemRequirements: C++17

@@ -1,6 +1,5 @@
 library(PLmixed)
 library(tidyverse)
-data("JUDGEsim")
 
 data0 <- JUDGEsim[JUDGEsim$item %in% c(1:2, 4:5), ]
 data0$item <- factor(data0$item)

@@ -1,7 +1,7 @@
 ---
 title: "Linear Mixed Models with Factor Structures"
 output: rmarkdown::html_vignette
-bibliography: ../inst/references.bib
+bibliography: ../inst/REFERENCES.bib
 vignette: >
   %\VignetteIndexEntry{Linear Mixed Models with Factor Structures}
   %\VignetteEngine{knitr::rmarkdown}
@@ -24,52 +24,13 @@ This vignette describes how `galamm` can be used to estimate linear mixed models
 
 This vignette is completely based on the simulated datasets provided by `PLmixed` [@rockwoodEstimatingComplexMeasurement2019], which we refer to for all the details. The purpose of this vignette is to confirm that `galamm` gives the same results for these models, and to introduce the syntax. As will be clear if you run the code, `galamm` can often be considerably faster.
 
-## Model with a Single Factor
 
-We use a simulated dataset from the `PLmixed` package for the example in this vignette. Note that the response should ideally be treated as binomial; we will come back in the vignette on generalized linear mixed models with factor structures.
-
-First we set up the factor structures to be used:
-
-```{r}
-data("IRTsim")
-IRTsim$item <- factor(IRTsim$item)
-irt.lam <- matrix(c(1, NA, NA, NA, NA), ncol = 1)
-```
-
-We could use the following code to fit the model with `PLmixed`.
-
-```{r, eval=FALSE}
-pl_mod <- PLmixed(
-  formula = y ~ item + (0 + abil.sid | sid) + (0 + abil.sid | school),
-  data = IRTsim,
-  load.var = "item",
-  factor = list("abil.sid"),
-  lambda = list(irt.lam),
-  iter.count = FALSE
-)
-summary(pl_mod)
-```
-
-Next we fit the model using `galamm`. This is typically 6-7 times faster than the corresponding call using `PLmixed`, and gives results that are identical up to some deviations due to numerics.
-
-```{r}
-galamm_mod <- galamm(
-  formula = y ~ item + (0 + abil.sid | sid) + (0 + abil.sid | school),
-  data = IRTsim,
-  load.var = "item",
-  factor = list("abil.sid"),
-  lambda = list(irt.lam)
-)
-
-summary(galamm_mod)
-```
 
 ## Models with Multiple Factors
 
 This example comes from Section 3.1 in @jeonProfileLikelihoodApproachEstimating2012.
 
 ```{r}
-data("KYPSsim")
 KYPSsim$time <- factor(KYPSsim$time)
 kyps.lam <- rbind(
   c(1, 0),
@@ -108,7 +69,6 @@ summary(kyps_model)
 The next is Example 1 in @rockwoodEstimatingComplexMeasurement2019. 
 
 ```{r}
-data("JUDGEsim")
 JUDGEsim$item <- factor(JUDGEsim$item)
 judge.lam <- rbind(
   c(1, 0, 1, 0, 0, 0),
@@ -166,8 +126,6 @@ judge_galamm <- galamm(
 Finally, in their Example 2, @rockwoodEstimatingComplexMeasurement2019 consider a model which contains products of factor loadings. We start by preparing the data:
 
 ```{r, eval=FALSE}
-data("KYPSitemsim")
-
 time.lam <- rbind(
   c(1, 0), # Specify time lambda matrix
   c(NA, 0),

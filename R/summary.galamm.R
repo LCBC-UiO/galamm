@@ -21,27 +21,20 @@ summary.galamm <- function(object, ...) {
     df.resid = object$n - object$df
   )
 
-  if (exists("lambda", object)) {
-    lambda_tmp_est <- lambda_tmp_se <- object$lambda[[1]]
-    lambda_tmp_se[lambda_tmp_se %in% c(0, 1)] <- NA_real_
 
-    lambda_tmp_est[lambda_tmp_est > 1] <- object$par[object$lambda_inds]
-    lambda_tmp_se[!is.na(lambda_tmp_se)] <- sqrt(diag(object$vcov[object$lambda_inds, object$lambda_inds, drop = FALSE]))
+  ret$Lambda <- factor_loadings(object)
 
-    ret$Lambda <- matrix(rbind(lambda_tmp_est, lambda_tmp_se),
-      nrow = nrow(lambda_tmp_est),
-      dimnames = list(NULL, as.character(rbind(colnames(lambda_tmp_est), "SE")))
-    )
-
-    rownames(ret$Lambda) <- seq_len(nrow(ret$Lambda))
-  }
-
+  useSc <- Reduce(function(`&&`, x) x()$family == "gaussian",
+    object$family,
+    init = TRUE
+  )
   ret$VarCorr <- structure(
     lme4::mkVarCorr(sqrt(ret$phi)[[1]], ret$cnms,
       nc = lengths(ret$cnms),
       theta = ret$par[ret$theta_inds], names(ret$cnms)
     ),
-    useSc = TRUE, class = "VarCorr.merMod"
+    useSc = useSc,
+    class = "VarCorr.merMod"
   )
 
   if (!is.null(object$weights_obj)) {
@@ -49,12 +42,18 @@ summary.galamm <- function(object, ...) {
     names(ret$weights) <- levels(object$weights_obj$flist[[1]])
   }
 
+  ret$fixef <- fixef(object)
   ret$fixef <- cbind(
-    Estimate = object$par[object$beta_inds],
-    `Std. Error` = sqrt(diag(object$vcov[object$beta_inds, object$beta_inds]))
+    Estimate = fixef(object),
+    `Std. Error` = sqrt(diag(vcov(object, "beta")))
   )
-  ret$fixef <- cbind(ret$fixef, `t value` = ret$fixef[, 1] / ret$fixef[, 2])
-  rownames(ret$fixef) <- object$fixef_names
+  ret$fixef <- cbind(ret$fixef, (cf3 <- ret$fixef[, 1] / ret$fixef[, 2]),
+    deparse.level = 0
+  )
+  colnames(ret$fixef)[3] <- paste(if (useSc) "t" else "z", "value")
+  ret$fixef <- cbind(ret$fixef, 2 * pnorm(abs(cf3), lower.tail = FALSE))
+  colnames(ret$fixef)[4] <- paste("Pr(>|", substr(colnames(ret$fixef)[3], 1, 1), "|)", sep = "")
+  rownames(ret$fixef) <- object$par_names[object$beta_inds]
 
   ret
 }
