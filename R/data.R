@@ -17,7 +17,7 @@
 #'   \item{lbas}{Logarithm of a quarter of the number of seizures in the eight
 #'   weeks preceeding entry into the trial.}
 #' }
-#' @source <http://www.gllamm.org/books/readme.html>
+#' @source <http://www.gllamm.org/books/readme.html#11.3>
 #' @references \insertAllCited{}
 "epilep"
 
@@ -58,12 +58,12 @@
 #'   \item{y}{Outcome.}
 #'   \item{chd}{Dummy variable indicating whether y is an indicator for
 #'   coronary heart disease, coded as 0/1.}
-#'   \item{fiber}{Dummary variable indicating whether y is a fiber measurement
+#'   \item{fiber}{Dummy variable indicating whether y is a fiber measurement
 #'   at either timepoint 1 or 2.}
-#'   \item{fiber2}{Dummary variable indicating whether y is a fiber measurement
+#'   \item{fiber2}{Dummy variable indicating whether y is a fiber measurement
 #'   at timepoint 2.}
 #' }
-#' @source <http://www.gllamm.org/books/readme.html>
+#' @source <http://www.gllamm.org/books/readme.html#14.2>
 #' @references \insertAllCited{}
 "diet"
 

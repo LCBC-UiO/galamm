@@ -33,6 +33,17 @@
   file = {/Users/oyss/Zotero/storage/9WJRVLK3/Bates et al. - 2015 - Fitting Linear Mixed-Effects Models Using lme4.pdf;/Users/oyss/Zotero/storage/FAV723AQ/v067i01.html}
 }
 
+@book{carrollMeasurementErrorNonlinear2006,
+  title = {Measurement {{Error}} in {{Nonlinear Models}}: {{A Modern Perspective}}},
+  author = {Carroll, Raymond J. and Ruppert, David and Stefanski, Leonard A. and Crainiceanu, Ciprian M.},
+  year = {2006},
+  series = {Monographs on {{Statistics}} and {{Applied Probability}}},
+  edition = {2nd},
+  publisher = {{John Wiley \& Sons}},
+  address = {{Boca Raton, Florida}},
+  isbn = {1-58488-633-1}
+}
+
 @article{gongPseudoMaximumLikelihood1981,
   title = {Pseudo {{Maximum Likelihood Estimation}}: {{Theory}} and {{Applications}}},
   shorttitle = {Pseudo {{Maximum Likelihood Estimation}}},
@@ -49,6 +60,16 @@
   urldate = {2021-03-18},
   abstract = {Let X\textsubscript{1}, {$\cdots$}, X\textsubscript{n} be i.i.d. random variables with probability distribution F\textsubscript{\texttheta, p} indexed by two real parameters. Let {\^p} = {\^p}(X\textsubscript{1}, {$\cdots$}, X\textsubscript{n}) be an estimate of p other than the maximum likelihood estimate, and let {\^\texttheta} be the solution of the likelihood equation {$\partial$}/{$\partial$} \texttheta{} ln L(x, \texttheta, {\^p}) = 0 which maximizes the likelihood. We call {\^\texttheta} a pseudo maximum likelihood estimate of \texttheta, and give conditions under which {\^\texttheta} is consistent and asymptotically normal. Pseudo maximum likelihood estimation easily extends to k-parameter models, and is of interest in problems in which the likelihood surface is ill-behaved in higher dimensions but well-behaved in lower dimensions. We examine several signal-plus-noise, or convolution, models which exhibit such behavior and satisfy the regularity conditions of the asymptotic theory. For specific models, a numerical comparison of asymptotic variances suggests that a pseudo maximum likelihood estimate of the signal parameter is uniformly more efficient than estimators proposed previously.},
   file = {/Users/oyss/Zotero/storage/GQWKTTPF/Gong and Samaniego - 1981 - Pseudo Maximum Likelihood Estimation Theory and A.pdf}
+}
+
+@book{hodgesRichlyParameterizedLinear2013,
+  title = {Richly {{Parameterized Linear Models Additive}}, {{Time Series}}, and {{Spatial Models Using Random Effects}}},
+  author = {Hodges, James S.},
+  year = {2013},
+  series = {Chapman \& {{Hall}}/{{CRC Texts}} in {{Statistical Science}}},
+  edition = {1st},
+  publisher = {{Chapman \& Hall}},
+  isbn = {978-1-4398-6683-2}
 }
 
 @article{jeonProfileLikelihoodApproachEstimating2012,
@@ -156,7 +177,7 @@
 }
 
 @article{rabe-heskethCorrectingCovariateMeasurement2003,
-  title = {Correcting for Covariate Measurement Error in Logistic Regression Using                 Nonparametric Maximum Likelihood Estimation},
+  title = {Correcting for Covariate Measurement Error in Logistic Regression Using Nonparametric Maximum Likelihood Estimation},
   author = {{Rabe-Hesketh}, Sophia and Pickles, Andrew and Skrondal, Anders},
   year = {2003},
   month = oct,
@@ -187,6 +208,24 @@
   abstract = {A unifying framework for generalized multilevel structural equation modeling is introduced. The models in the framework, called generalized linear latent and mixed models (GLLAMM), combine features of generalized linear mixed models (GLMM) and structural equation models (SEM) and consist of a response model and a structural model for the latent variables. The response model generalizes GLMMs to incorporate factor structures in addition to random intercepts and coefficients. As in GLMMs, the data can have an arbitrary number of levels and can be highly unbalanced with different numbers of lower-level units in the higher-level units and missing data. A wide range of response processes can be modeled including ordered and unordered categorical responses, counts, and responses of mixed types. The structural model is similar to the structural part of a SEM except that it may include latent and observed variables varying at different levels. For example, unit-level latent variables (factors or random coefficients) can be regressed on cluster-level latent variables. Special cases of this framework are explored and data from the British Social Attitudes Survey are used for illustration. Maximum likelihood estimation and empirical Bayes latent score prediction within the GLLAMM framework can be performed using adaptive quadrature in gllamm, a freely available program running in Stata.},
   langid = {english},
   file = {/Users/oyss/Zotero/storage/75KIMKIT/Rabe-Hesketh et al. - 2004 - Generalized multilevel structural equation modelin.pdf}
+}
+
+@article{rabe-heskethMaximumLikelihoodEstimation2003,
+  title = {Maximum {{Likelihood Estimation}} of {{Generalized Linear Models}} with                     {{Covariate Measurement Error}}},
+  author = {{Rabe-Hesketh}, Sophia and Skrondal, Anders and Pickles, Andrew},
+  year = {2003},
+  month = dec,
+  journal = {The Stata Journal},
+  volume = {3},
+  number = {4},
+  pages = {386--411},
+  publisher = {{SAGE Publications}},
+  issn = {1536-867X},
+  doi = {10.1177/1536867X0400300408},
+  urldate = {2023-08-17},
+  abstract = {Generalized linear models with covariate measurement error can be estimated by maximum likelihood using gllamm, a program that fits a large class of multilevel latent variable models (Rabe-Hesketh, Skrondal, and Pickles 2004). The program uses adaptive quadrature to evaluate the log likelihood, producing more reliable results than many other methods (Rabe-Hesketh, Skrondal, and Pickles 2002). For a single covariate measured with error (assuming a classical measurement model), we describe a ``wrapper'' command, cme, that calls gllamm to estimate the model. The wrapper makes life easy for the user by accepting a simple syntax and data structure and producing extended and easily interpretable output. The commands for preparing the data and running gllamm can also be obtained from cme. We first discuss the case where several measurements are available and subsequently consider estimation when the measurement error variance is instead assumed known. The latter approach is useful for sensitivity analysis assessing the impact of assuming perfectly measured covariates in generalized linear models. An advantage of using gllamm directly is that the classical covariate measurement error model can be extended in various ways. For instance, we can use nonparametric maximum likelihood estimation (NPMLE) to relax the normality assumption for the true covariate. We can also specify a congeneric measurement model which relaxes the assumption that the measurements for a unit are exchangeable replicates by allowing for different measurement scales and error variances.},
+  langid = {english},
+  file = {/Users/oyss/Zotero/storage/Y3Z3Y5PF/Rabe-Hesketh et al. - 2003 - Maximum Likelihood Estimation of Generalized Linea.pdf}
 }
 
 @article{rabe-heskethMaximumLikelihoodEstimation2005,

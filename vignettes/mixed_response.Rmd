@@ -64,90 +64,237 @@ We define the loading matrix as follows, where the value `1` indicates that the 
 
 We set `load.var = "itemgroup"` because all rows of the data with the same value of `itemgroup` will receive the same factor loading. In `formula`, we state `(0 + level | id)` to specify that each subject, identified by `id`, has a given level. `level` is not an element of the `mresp` data, but is instead the factor onto which the loading matrix loads. We identify this with the argument `factor = list("level")`. We could have chosen any other name for `"level"`, except for names that are already columns in `mresp`. 
 
-The argument `family = c(gaussian, binomial)` specifies that we have both Gaussian and binomially distributed responses. `family_mapping = ifelse(mresp$itemgroup == "a", 1L, 2L)` says that is `itemgroup` is `"a"` then take the first element of `family`, otherwise take the second element. In this way we specify which row of the response vector is distributed according to which distribution.
+We also need to define the response families, with the vector
+
+```{r}
+families <- c(gaussian, binomial)
+```
+
+We also need a way of telling galamm which row belongs to which family, which we do with a family mapping. The values in `family_mapping` refer to the elements of `families`.
+
+```{r}
+family_mapping <- ifelse(mresp$itemgroup == "a", 1, 2)
+```
+
+We are now ready to estimate the mixed response model.
 
 ```{r}
 mixed_resp <- galamm(
   formula = y ~ x + (0 + level | id),
   data = mresp,
-  family = c(gaussian, binomial),
-  family_mapping = ifelse(mresp$itemgroup == "a", 1L, 2L),
+  family = families,
+  family_mapping = family_mapping,
   load.var = "itemgroup",
   lambda = list(loading_matrix),
   factor = list("level")
 )
+```
 
+
+We can also look at its summary output.
+
+```{r}
 summary(mixed_resp)
 ```
 
 
 ## Covariate Measurement Error Model
 
-This example is taken from Chapter 14.2 in @skrondalGeneralizedLatentVariable2004, which I refer to for further interpretation and discussion. The main purpose here is to confirm that we reproduce their results, and to show the syntax.
+This example is taken from Chapter 14.2 in @skrondalGeneralizedLatentVariable2004, and follows the analyses in [@rabe-heskethCorrectingCovariateMeasurement2003;@rabe-heskethMaximumLikelihoodEstimation2003]. No originality is claimed with respect to the analyses; but for the sake of understanding the galamm code, we explain it in quite some detail. The original dataset comes from @morrisDietHeartPostscript1977.
 
-The model is defined as follows. First, true fiber intake for subject $j$ is assumed to depend on age and on whether the person is a bus driver or banking staff, and their interaction.
+The scientific question concerns the impact of fiber intake on risk of coronary heat disease. 337 middle aged men were followed, all of whom either worked as bank staff or as London Transport staff (indicated by dummy variable `bus`). All men had a first measurement of fiber intake, and some had an additional measurement six months later. In addition, all had a binary variable indicating whether or not they had developed coronary heart disease.
 
-$$\eta_{j} = \mathbf{x}_{j}'\boldsymbol{\gamma} + \zeta_{j}.$$
-
-For a part of the sample, there are two measurements of fiber intake, and we can hence estimate a measurement model, as follows:
-
-$$y_{ij} = \eta_{j} + \epsilon_{ij}, \qquad \epsilon_{ij} = N(0, \theta)$$
-
-Finally we define a disease model for the probability of coronary heart disease, as
-
-$$\text{logit}[P(D_{j}=1 | \eta_{j})] = \mathbf{x}_{j}'\boldsymbol{\beta} + \lambda \eta_{j}.$$
-
-Stacking the three responses, which are fiber intake at times 1 and 2, and coronary heart disease, we can define the joint model as a GLLAMM with linear predictor
-
-$$\nu_{ij} = d_{3i} \mathbf{x}_{j}'\boldsymbol{\beta} + \mathbf{x}_{j}'\boldsymbol{\gamma}\left[(d_{1i} + d_{2i}) + \lambda d_{3i}\right] + \zeta_{j} \left[(d_{1i} + d_{2i}) + \lambda d_{3i}\right],$$
-
-where $d_{1i}$ and $d_{2i}$ are indicators for fiber measurements at timepoints 1 and 2, and $d_{3i}$ is an indicator for coronary heart disease.
-
-At this point it may help to look at the first few rows of the dataset.
+The first few rows of the dataset are printed below. All of these had only a single measurement of fiber intake.
 
 ```{r}
-head(diet, 10)
+head(diet)
 ```
 
-With this dataset, the response $y$ is normally distributed when $d_{1i}=1$ or $d_{2i}=1$, but binomially distributed when $d_{3i}=1$. These two response processes are connected through the latent variable $\eta_{j}$.
-
-We compute estimates, but note that the Hessian is rank deficient.
+It is instructive to also look at some men who had two measurements of fiber intake. Here are three of them.
 
 ```{r}
-lam <- matrix(c(1, 1, NA), ncol = 1)
+diet[diet$id %in% c(219, 220, 221), ]
+```
+
+### Structural Model
+
+Our first goal is to model the effect of fiber intake on risk of heart disease. Since this variable is very likely to be subject to measurement error, it is well known that simply averaging the two measurements, where available, and using the single measurement otherwise, will lead to bias and lack of power [@carrollMeasurementErrorNonlinear2006]. Instead, we let $\eta_{j}$ denote the true (latent) fiber intake of person $j$, and define the structural model
+
+$$\eta_{j} = \mathbf{x}_{ij}'\boldsymbol{\gamma} + \zeta_{j}.$$
+
+where $\mathbf{x}_{ij}$ is a vector of covariates age, bus, and their interaction, as well as a constant term for defining the intercept. The R formula for setting up the model matrix would be `model.matrix(~ age * bus, data = diet)`. The term $\zeta_{j}$ is a normally distributed disturbance, $\zeta_{j} \sim N(0, \psi)$.
+
+### Measurement Model
+
+It is assumed that the fiber measurements are normally distributed around the true value $\eta_{j}$, and allow for a drift term $d_{ij}\beta_{0}$, where $d_{2ij}$ is a dummy variable whose value equals one if the $i$th row of the $j$th person is a replicate fiber measurement, and zero otherwise. This allows for a drift in the measurements.
+
+$$y_{ij} = d_{2ij} \beta_{0} + \eta_{j} + \epsilon_{ij}, \qquad \epsilon_{ij} = N(0, \theta)$$
+
+### Disease Model
+
+Next, for the rows corresponding to coronary heart disease measurement, we assume a binomial model with a logit link function, i.e., logistic regression. This model is given by
+
+$$\text{logit}[P(y_{ij}=1 | \eta_{j})] = \mathbf{x}_{ij}'\boldsymbol{\beta} + \lambda \eta_{j},$$
+
+where $\mathbf{x}_{ij}$ is the same as before, but where $\boldsymbol{\beta}$ now represents the direct effect of age and bus on the probability of coronary heart disease. The factor loading $\lambda$ is the regression coefficient for latent fiber intake on the risk of coronary heart disease.
+
+
+### Nonlinear Predictor
+
+Stacking the three responses, which are fiber intake at times 1 and 2, and coronary heart disease, we can define the joint model as a GLLAMM with nonlinear predictor
+
+$$\nu_{ij} = d_{2ij} \beta_{0} + d_{3ij} \mathbf{x}_{j}'\boldsymbol{\beta} + \mathbf{x}_{j}'\boldsymbol{\gamma}\left[(d_{1i} + d_{2i}) + \lambda d_{3i}\right] + \zeta_{j} \left[(d_{1i} + d_{2i}) + \lambda d_{3i}\right],$$
+
+where $d_{1i}$ is a dummy variable for fiber measurements at timepoint 1 and $d_{3i}$ is an indicator for coronary heart disease.
+
+### Estimating the Model with galamm
+
+In the measurement model for fiber above, note that we implicitly have factor loadings equal to one. Letting the `item` variable define which rows should receive which loading, we note that the factor levels are as follows:
+
+```{r}
+levels(diet$item)
+```
+
+We could of course have changed this, but given these levels, we define the following loading matrix:
+
+```{r}
+(loading_matrix <- matrix(c(1, 1, NA), ncol = 1))
+```
+
+That is, "fiber1" and "fiber2" receive a loading fixed to one, whereas the loading for "chd" remains to be estimated.
+
+We also need to define the families, making sure it is binomial for "chd" and Gaussian for "fiber1" and "fiber2".
+
+```{r}
+families <- c(gaussian, binomial)
+family_mapping <- ifelse(diet$item == "chd", 2, 1)
+```
+
+The model formula also needs some care in this case. We define it as follows, and note that the whole part `0 + chd + fiber + fiber2` could have been replaced by `item`. We use the former for ease of explanation.
+
+```{r}
+formula <- y ~ 0 + chd + (age * bus) : chd + fiber + 
+  (age * bus) : fiber + fiber2 + (0 + loading | id)
+```
+
+The initial zero specifies that we don't want R to insert an intercept term. Next, `chd + (age * bus) : chd` applies to "chd" rows only, and corresponds to $\mathbf{x}_{ij}^{T} \boldsymbol{\beta}$ in the disease model. The part `fiber + (age * bus) : fiber` corresponds to the term $\mathbf{x}_{ij}^{T}\boldsymbol{\gamma}$ in the disease model, and `fiber2` corresponds to the drift term $d_{2ij}\beta_{0}$.
+
+We can inspect the model implied by the formula by using the `nobars` function from [lme4](https://cran.r-project.org/package=lme4) [@batesFittingLinearMixedEffects2015] to remove the random effects, and then `model.matrix`. It looks correctly set up.
+
+```{r}
+head(model.matrix(nobars(formula), data = diet))
+```
+
+Finally, the random effects part `(0 + loading | id)` specifies that for each `id` there should be a single random intercept, which corresponds to latent fiber intake $\eta_{j}$. Write `0 + loading` means that $\eta_{j}$ should be multiplied by the factor loadings defined in the loading matrix.
+
+We are now ready to fit the model.
+
+```{r}
 mod <- galamm(
-  formula = y ~ item + (age * bus):chd
-    + (age * bus):loading:fiber + (0 + loading | id),
+  formula = formula,
   data = diet,
-  family = c(gaussian, binomial),
-  family_mapping = ifelse(diet$item == "chd", 2L, 1L),
+  family = families,
+  family_mapping = family_mapping,
   factor = list("loading"),
   load.var = "item",
-  lambda = list(lam)
+  lambda = list(loading_matrix)
 )
 ```
 
-Inspecting the parameters shows that the latent variable is estimated to have zero variance. We try to increase the initial value, and see what happens.
+
+Looking at the summary output, however, reveals that there is an issue here:
+
+```{r, error=TRUE, warning=TRUE}
+summary(mod)
+```
+
+
+The Hessian matrix is not invertible, which means that we cannot compute the variance-covariance matrix. We note that the variance of the latent variable is estimated to be exactly zero, and although zero variance estimates is a well known phenomenon in these types of models (see @hodgesRichlyParameterizedLinear2013 for a book-length treatment), it does not seem reasonable in this case that there is no variation in the true fiber intake in this population of bankers and transport workers. 
+
+We suspect that this is a convergence issue of the algorithm, and start by simply turning a lever to make the algorithm more verbose. The argument `trace = 3` is passed onto `optim`.
 
 
 ```{r}
 mod <- galamm(
-  formula = y ~ item + (age * bus):chd + (age * bus):loading:fiber + (0 + loading | id),
+  formula = formula,
   data = diet,
-  family = c(gaussian, binomial),
-  family_mapping = ifelse(diet$item == "chd", 2L, 1L),
+  family = families,
+  family_mapping = family_mapping,
   factor = list("loading"),
   load.var = "item",
-  lambda = list(lam),
-  start = list(theta = 10)
+  lambda = list(loading_matrix),
+  control = galamm_control(optim_control = list(trace = 3))
 )
 ```
+
+Now we got some information, but the final estimate is the same, since we otherwise used the same parameters. We now instead try to increase the intial estimate of the random effect parameter $\theta$. In general $\theta$ is a vector containing elements of the Cholesky factor of the covariance matrix (see, @batesFittingLinearMixedEffects2015), but in this case it is just the standard deviation of the latent variable. By default, its initial value is 1, but we now try to increase it to 10, with the `start` argument.
+
+
+```{r}
+mod <- galamm(
+  formula = formula,
+  data = diet,
+  family = families,
+  family_mapping = family_mapping,
+  factor = list("loading"),
+  load.var = "item",
+  lambda = list(loading_matrix),
+  start = list(theta = 10),
+  control = galamm_control(optim_control = list(trace = 3))
+)
+```
+
+The output printed is the negative log-likelihood, and since 1372.16 is less than 1406.8, increase the initial value to 10 led us to a local optimum with higher likelihood value. Ideally we should have tried other initial values as well, but since @skrondalGeneralizedLatentVariable2004 obtained a negative log-likelihood value of 1372.35 while using adaptive quadrature estimation, we are pretty happy about finding a value close to theirs.
+
+We can now use the summary method, where we find that our estimates are very close to the corresponding model in Table 14.1 of @skrondalGeneralizedLatentVariable2004.
+
 
 ```{r}
 summary(mod)
 ```
 
+Now we were able to reproduce results very close to those in Table 14.1 on page 420 of @skrondalGeneralizedLatentVariable2004. This is a useful assurance that the algorithm used by galamm is correctly implemented.
 
-Now we were able to reproduce results very close to those in Table 14.1 on page 420 of @skrondalGeneralizedLatentVariable2004.
+### Comparison to a Model with Indirect Effect Only
+
+The model above assumed that the age and bus variables had both an indirect effect on the risk of coronary heart disease through its impact on fiber intake, as well as a direct effect. Still following @skrondalGeneralizedLatentVariable2004, we now estimate an alternative model which only has indirect effects. The disease model is now
+
+$$
+\text{logit}[P(y_{ij}=1 | \eta_{j})] = d_{ij3}\beta_{03} + \lambda \eta_{j},
+$$
+
+The formula becomes
+
+```{r}
+formula0 <- y ~ 0 + chd + fiber + (age * bus) : fiber + fiber2 + 
+  (0 + loading | id)
+```
+
+Everything else is the same as before, so we fit the new model with
+
+
+```{r}
+mod0 <- galamm(
+  formula = formula0,
+  data = diet,
+  family = families,
+  family_mapping = family_mapping,
+  factor = list("loading"),
+  load.var = "item",
+  lambda = list(loading_matrix),
+  start = list(theta = 10),
+  control = galamm_control(optim_control = list(trace = 3))
+)
+```
+
+Looking at the summary ouptput, the estimates are now close to the first column in Table 14.1 of @skrondalGeneralizedLatentVariable2004.
+
+```{r}
+summary(mod0)
+```
+
+
+We can use `anova` method for galamm objects to compare the models.
+
 
 # References
