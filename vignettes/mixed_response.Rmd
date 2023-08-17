@@ -294,7 +294,12 @@ summary(mod0)
 ```
 
 
-We can use `anova` method for galamm objects to compare the models.
+We can use `anova` method for galamm objects to compare the models. AIC and BIC favor the simpler model with only indirect effects.
+
+```{r}
+anova(mod, mod0)
+```
+
 
 
 # References

@@ -18,7 +18,6 @@ factor_loadings <- function(object) {
 #'
 factor_loadings.galamm <- function(object) {
   if (!exists("lambda", object)) {
-    message("No factor loadings.")
     return(invisible(NULL))
   }
 
