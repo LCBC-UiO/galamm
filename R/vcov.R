@@ -12,9 +12,12 @@
 vcov.galamm <- function(object, parm = "beta", ...) {
   inds <- find_parm_inds(object, parm)
 
-  # Important: invert Hessian before subsetting. Otherwise uncertainty will
-  # be too low.
-  -solve(object$hessian)[inds, inds, drop = FALSE]
+  if (qr(object$hessian)$rank < ncol(object$hessian)) {
+    warning("Rank deficient Hessian matrix. Could not compute covariance matrix.")
+    (NA * object$hessian)[inds, inds, drop = FALSE]
+  } else {
+    -solve(object$hessian)[inds, inds, drop = FALSE]
+  }
 }
 
 

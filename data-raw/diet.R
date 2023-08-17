@@ -11,7 +11,7 @@ diet <- diet0 %>%
   mutate(
     chd = as.integer(item == "chd"),
     fiber = 1L - chd,
-    fiber2 = item == "fiber2",
+    fiber2 = as.integer(item == "fiber2"),
     item = factor(item, levels = c("fiber1", "fiber2", "chd"))
   ) %>%
   as.data.frame()

@@ -21,7 +21,6 @@ summary.galamm <- function(object, ...) {
     df.resid = object$n - object$df
   )
 
-
   ret$Lambda <- factor_loadings(object)
 
   useSc <- Reduce(function(`&&`, x) x()$family == "gaussian",

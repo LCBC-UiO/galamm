@@ -18,15 +18,15 @@ disease (item = 3).}
 \item{y}{Outcome.}
 \item{chd}{Dummy variable indicating whether y is an indicator for
 coronary heart disease, coded as 0/1.}
-\item{fiber}{Dummary variable indicating whether y is a fiber measurement
+\item{fiber}{Dummy variable indicating whether y is a fiber measurement
 at either timepoint 1 or 2.}
-\item{fiber2}{Dummary variable indicating whether y is a fiber measurement
+\item{fiber2}{Dummy variable indicating whether y is a fiber measurement
 at timepoint 2.}
 }
 }
 }
 \source{
-\url{http://www.gllamm.org/books/readme.html}
+\url{http://www.gllamm.org/books/readme.html#14.2}
 }
 \usage{
 diet
