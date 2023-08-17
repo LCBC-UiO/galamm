@@ -173,8 +173,8 @@ family_mapping <- ifelse(diet$item == "chd", 2, 1)
 The model formula also needs some care in this case. We define it as follows, and note that the whole part `0 + chd + fiber + fiber2` could have been replaced by `item`. We use the former for ease of explanation.
 
 ```{r}
-formula <- y ~ 0 + chd + (age * bus) : chd + fiber + 
-  (age * bus) : fiber + fiber2 + (0 + loading | id)
+formula <- y ~ 0 + chd + (age * bus):chd + fiber +
+  (age * bus):fiber + fiber2 + (0 + loading | id)
 ```
 
 The initial zero specifies that we don't want R to insert an intercept term. Next, `chd + (age * bus) : chd` applies to "chd" rows only, and corresponds to $\mathbf{x}_{ij}^{T} \boldsymbol{\beta}$ in the disease model. The part `fiber + (age * bus) : fiber` corresponds to the term $\mathbf{x}_{ij}^{T}\boldsymbol{\gamma}$ in the disease model, and `fiber2` corresponds to the drift term $d_{2ij}\beta_{0}$.
@@ -266,7 +266,7 @@ $$
 The formula becomes
 
 ```{r}
-formula0 <- y ~ 0 + chd + fiber + (age * bus) : fiber + fiber2 + 
+formula0 <- y ~ 0 + chd + fiber + (age * bus):fiber + fiber2 +
   (0 + loading | id)
 ```
 

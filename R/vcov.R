@@ -12,13 +12,12 @@
 vcov.galamm <- function(object, parm = "beta", ...) {
   inds <- find_parm_inds(object, parm)
 
-  if(qr(object$hessian)$rank < ncol(object$hessian)){
+  if (qr(object$hessian)$rank < ncol(object$hessian)) {
     warning("Rank deficient Hessian matrix. Could not compute covariance matrix.")
     (NA * object$hessian)[inds, inds, drop = FALSE]
   } else {
     -solve(object$hessian)[inds, inds, drop = FALSE]
   }
-
 }
 
 
