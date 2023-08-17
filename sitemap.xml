@@ -55,6 +55,9 @@
     <loc>https://lcbc-uio.github.io/galamm/reference/confint.galamm.html</loc>
   </url>
   <url>
+    <loc>https://lcbc-uio.github.io/galamm/reference/deviance.galamm.html</loc>
+  </url>
+  <url>
     <loc>https://lcbc-uio.github.io/galamm/reference/diet.html</loc>
   </url>
   <url>
@@ -83,6 +86,9 @@
   </url>
   <url>
     <loc>https://lcbc-uio.github.io/galamm/reference/index.html</loc>
+  </url>
+  <url>
+    <loc>https://lcbc-uio.github.io/galamm/reference/logLik.galamm.html</loc>
   </url>
   <url>
     <loc>https://lcbc-uio.github.io/galamm/reference/marginal_likelihood.html</loc>
