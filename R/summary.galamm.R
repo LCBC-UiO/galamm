@@ -96,5 +96,4 @@ llikAIC <- function(object) {
     deviance = deviance(object),
     df.resid = object$n - object$df
   )
-
 }

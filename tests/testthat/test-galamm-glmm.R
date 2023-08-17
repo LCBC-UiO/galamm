@@ -15,8 +15,10 @@ test_that("Logistic GLMM with simple factor works", {
   expect_equal(mod$loglik, -1472.19990830883)
   expect_equal(
     summary(mod)$AICtab,
-    c(AIC = 2966.39981661765, BIC = 3030.46432273707, logLik = -1472.19990830883,
-      deviance = 2372.27287296977, df.resid = 2489)
+    c(
+      AIC = 2966.39981661765, BIC = 3030.46432273707, logLik = -1472.19990830883,
+      deviance = 2372.27287296977, df.resid = 2489
+    )
   )
   expect_equal(
     factor_loadings(mod),
@@ -80,8 +82,10 @@ test_that("Logistic GLMM with simple factor works", {
 
   expect_equal(
     summary(galamm_mod_trials)$AICtab,
-    c(AIC = 7083.03890862583, BIC = 7123.80723070182, logLik = -3534.51945431292,
-      deviance = 2628.69306896257, df.resid = 2493)
+    c(
+      AIC = 7083.03890862583, BIC = 7123.80723070182, logLik = -3534.51945431292,
+      deviance = 2628.69306896257, df.resid = 2493
+    )
   )
 })
 

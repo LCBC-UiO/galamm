@@ -12,7 +12,7 @@ anova.galamm <- function(object, ...) {
 
   tab <- make_anova(object)
 
-  for(mm in dots){
+  for (mm in dots) {
     tab <- rbind(tab, make_anova(mm))
   }
   tab
@@ -20,7 +20,7 @@ anova.galamm <- function(object, ...) {
 
 
 
-make_anova <- function(object){
+make_anova <- function(object) {
   cbind(
     npar = object$df,
     AIC = AIC(object),

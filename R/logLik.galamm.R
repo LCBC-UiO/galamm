@@ -6,12 +6,13 @@
 #' @return Object of class \code{logLik}
 #' @export
 #'
-logLik.galamm <- function(object, ...){
+logLik.galamm <- function(object, ...) {
   structure(
     object$loglik,
     nobs = object$n,
     df = object$df,
-    class = "logLik")
+    class = "logLik"
+  )
 }
 
 
@@ -23,6 +24,6 @@ logLik.galamm <- function(object, ...){
 #' @return Deviance
 #' @export
 #'
-deviance.galamm <- function(object, ...){
+deviance.galamm <- function(object, ...) {
   object$deviance
 }
