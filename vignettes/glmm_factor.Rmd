@@ -172,6 +172,13 @@ count_mod <- galamm(
 )
 ```
 
+We can look at the summary output.
+
+```{r}
+summary(count_mod)
+```
+
+
 In this case there are no factor loadings to return:
 
 ```{r}
