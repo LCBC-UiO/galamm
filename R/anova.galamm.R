@@ -6,6 +6,7 @@
 #' @return A table
 #' @export
 #'
+#' @importFrom stats AIC BIC deviance logLik
 anova.galamm <- function(object, ...) {
   dots <- list(...)
 
