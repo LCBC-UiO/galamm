@@ -12,10 +12,8 @@ test_that("Mixed response works", {
   expect_equal(mod$loglik, -4619.34161314597)
   expect_equal(
     summary(mod)$AICtab,
-    c(
-      AIC = 3643.06904319559, BIC = 3674.5392913961, logLik = -4619.34161314597,
-      deviance = 3633.06904319559, df.resid = 3995
-    )
+    c(AIC = 9248.68322629193, BIC = 9280.15347449244, logLik = -4619.34161314597,
+      deviance = 3633.06904319559, df.resid = 3995)
   )
   expect_equal(
     factor_loadings(mod),
