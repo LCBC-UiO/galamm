@@ -6,6 +6,6 @@
 #' @return A table
 #' @export
 #'
-anova.galamm <- function(object, ...){
+anova.galamm <- function(object, ...) {
 
 }
