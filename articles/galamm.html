@@ -118,7 +118,7 @@ using GLLAMM.</p>
 independently distributed according to an exponential family with
 density</p>
 <p><span class="math display">\[
-f\left(y | \theta, \phi\right) = \exp \left( \frac{y\theta -
+f\left(y | \theta, \phi\right) = \exp \left( \frac{y\theta(\mu) -
 b\left(\theta(\mu)\right)}{\phi} + c\left(y, \phi\right) \right)
 \]</span></p>
 <p>here <span class="math inline">\(\mu = g^{-1}(\nu)\)</span> is the
@@ -128,6 +128,11 @@ to what is assumed, e.g., by <a href="https://cran.r-project.org/package=lme4" c
 observations. That is, the observations can come from different members
 of the exponential family. The vignette on <a href="https://lcbc-uio.github.io/galamm/articles/mixed_response.html">models
 with mixed response types</a> describes this in detail.</p>
+<p>Using canonical link functions, the response model simplifies to</p>
+<p><span class="math display">\[
+f\left(y | \nu, \phi\right) = \exp \left( \frac{y\nu -
+b\left(\nu\right)}{\phi} + c\left(y, \phi\right) \right)
+\]</span></p>
 </div>
 <div class="section level4">
 <h4 id="nonlinear-predictor">Nonlinear Predictor<a class="anchor" aria-label="anchor" href="#nonlinear-predictor"></a>
