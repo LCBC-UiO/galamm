@@ -7,5 +7,24 @@
 #' @export
 #'
 anova.galamm <- function(object, ...) {
+  dots <- list(...)
 
+  tab <- make_anova(object)
+
+  for(mm in dots){
+    tab <- rbind(tab, make_anova(mm))
+  }
+  tab
+}
+
+
+
+make_anova <- function(object){
+  cbind(
+    npar = object$df,
+    AIC = AIC(object),
+    BIC = BIC(object),
+    logLik = as.numeric(logLik(object)),
+    deviance = deviance(object)
+  )
 }
