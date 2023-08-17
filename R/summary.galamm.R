@@ -13,14 +13,7 @@ summary.galamm <- function(object, ...) {
   ret <- object
   class(ret) <- append("summary.galamm", class(object))
 
-  ret$AICtab <- c(
-    AIC = object$deviance + 2 * object$df,
-    BIC = object$deviance + object$df * log(object$n),
-    logLik = object$loglik,
-    deviance = object$deviance,
-    df.resid = object$n - object$df
-  )
-
+  ret$AICtab <- llikAIC(object)
   ret$Lambda <- factor_loadings(object)
 
   useSc <- Reduce(function(`&&`, x) x()$family == "gaussian",
@@ -91,4 +84,17 @@ print.summary.galamm <- function(x, digits = max(3, getOption("digits") - 3), ..
   cat("Fixed effects:\n")
   print(x$fixef, digits = digits)
   invisible(x)
+}
+
+
+llikAIC <- function(object) {
+  llik <- logLik(object)
+  c(
+    AIC = AIC(llik),
+    BIC = BIC(llik),
+    logLik = llik,
+    deviance = deviance(object),
+    df.resid = object$n - object$df
+  )
+
 }

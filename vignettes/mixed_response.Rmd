@@ -296,5 +296,10 @@ summary(mod0)
 
 We can use `anova` method for galamm objects to compare the models.
 
+```{r}
+anova(mod, mod0)
+```
+
+
 
 # References
