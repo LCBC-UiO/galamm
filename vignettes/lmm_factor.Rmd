@@ -228,8 +228,10 @@ mod_constr2b <- galamm(
 We can compare all four models using the `anova` member function. Reassuringly, the two ways of formulating the last model give identical results. Furthermore, this simplest model seems to be preferred over the two more complex models on this simulated dataset.
 
 ```{r}
-anova(mod, mod_constr1, mod_constr2,
-      mod_constr2b)
+anova(
+  mod, mod_constr1, mod_constr2,
+  mod_constr2b
+)
 ```
 
 
