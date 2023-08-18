@@ -420,11 +420,152 @@ dataset.</p>
 <div class="section level3">
 <h3 id="multi-trait-multi-rater-model">Multi-Trait Multi-Rater Model<a class="anchor" aria-label="anchor" href="#multi-trait-multi-rater-model"></a>
 </h3>
-<p>The next is Example 1 in <span class="citation">Rockwood and Jeon
-(2019)</span>.</p>
+<p>We next consider a model based on example 1 in <span class="citation">Rockwood and Jeon (2019)</span>, which uses the dataset
+<code>JUDGEsim</code> in <a href="https://cran.r-project.org/package=PLmixed" class="external-link">PLmixed</a>, which is
+simulated to mimic the data used by <span class="citation">Koch et al.
+(2016)</span>. We refer to <span class="citation">Rockwood and Jeon
+(2019)</span> for all the details, and merely present the model and how
+to estimate it using galamm.</p>
+<p>The data contains ratings of two traits in students, and the traits
+are rated by both students and teachers.</p>
+<p>Initially, we need to convert the item variable to a factor.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">JUDGEsim</span><span class="op">$</span><span class="va">item</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">JUDGEsim</span><span class="op">$</span><span class="va">item</span><span class="op">)</span></span>
-<span><span class="va">judge.lam</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">JUDGEsim</span><span class="op">$</span><span class="va">item</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">JUDGEsim</span><span class="op">$</span><span class="va">item</span><span class="op">)</span></span></code></pre></div>
+<p>The first ten rows of the dataset are as follows:</p>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">JUDGEsim</span>, <span class="fl">10</span><span class="op">)</span></span>
+<span><span class="co">#&gt;    item method trait stu class tch response</span></span>
+<span><span class="co">#&gt; 1     1      1     1   1     1   1 2.509475</span></span>
+<span><span class="co">#&gt; 2     1      1     1   1     1   2 3.246730</span></span>
+<span><span class="co">#&gt; 3     1      1     1   1     1   3 2.846695</span></span>
+<span><span class="co">#&gt; 4     1      1     1   1     1   4 2.290954</span></span>
+<span><span class="co">#&gt; 5     1      1     1   1     1   5 2.794368</span></span>
+<span><span class="co">#&gt; 6     1      1     1   1     1   6 2.849511</span></span>
+<span><span class="co">#&gt; 7     1      1     1   1     1   7 2.255039</span></span>
+<span><span class="co">#&gt; 8     1      1     1   2     1   1 2.676437</span></span>
+<span><span class="co">#&gt; 9     1      1     1   2     1   2 2.923184</span></span>
+<span><span class="co">#&gt; 10    1      1     1   2     1   3 2.778979</span></span></code></pre></div>
+<p>The grouping factors in the data are class (variable
+<code>class</code>), student (variable <code>stu</code>) and teacher
+(variable <code>tch</code>). The teachers’ ratings of the first trait is
+given by items 1-3, and the students’ rating of the same trait is given
+by items 7-9. For the second trait, the items are 4-6 and 10-12,
+respectively. Looking at the frequency table, we see that there are more
+observations of items 1-6. This happens because a single teacher would
+in general rate more than one student, whereas a single student would
+only rate themselves.</p>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">JUDGEsim</span><span class="op">$</span><span class="va">item</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;    1    2    3    4    5    6    7    8    9   10   11   12 </span></span>
+<span><span class="co">#&gt; 7828 7828 7828 7828 7828 7828 1249 1249 1249 1249 1249 1249</span></span></code></pre></div>
+<p>In matrix-vector format, the measurement model is (equation 16 in
+<span class="citation">Rockwood and Jeon (2019)</span>)</p>
+<p><span class="math display">\[
+\begin{pmatrix}
+y_{1tsc} \\
+\vdots \\
+y_{12tsc} \\
+\end{pmatrix}
+=
+\begin{pmatrix}
+\beta_{1} \\
+\vdots \\
+\beta_{12}
+\end{pmatrix}
++
+\begin{pmatrix}
+1 &amp; 0 &amp; 1 &amp; 0 &amp; 0 &amp; 0 &amp; 1\\
+\lambda_{21} &amp; 0 &amp; \lambda_{23} &amp; 0 &amp; 0 &amp; 0 &amp; 1
+\\
+\lambda_{31} &amp; 0 &amp; \lambda_{33} &amp; 0 &amp; 0 &amp; 0 &amp;
+1\\
+0 &amp; 1 &amp; 0 &amp; 1 &amp; 0 &amp; 0 &amp; 1 \\
+0 &amp; \lambda_{52} &amp; 0 &amp; \lambda_{54} &amp; 0 &amp; 0 &amp; 1
+\\
+0 &amp; \lambda_{62} &amp; 0 &amp; \lambda_{64} &amp; 0 &amp; 0 &amp; 1
+\\
+0 &amp; 0 &amp; 0 &amp; 0 &amp; 1 &amp; 0 &amp; 1 \\
+0 &amp; 0 &amp; 0 &amp; 0 &amp; \lambda_{85} &amp; 0 &amp; 1 \\
+0 &amp; 0 &amp; 0 &amp; 0 &amp; \lambda_{95} &amp; 0 &amp; 1 \\
+0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 1 &amp; 1 \\
+0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; \lambda_{11,6} &amp; 1 \\
+0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; \lambda_{12,6} &amp; 1 \\
+\end{pmatrix}
+\begin{pmatrix}
+\eta_{1t}^{(t)} \\
+\eta_{2t}^{(t)} \\
+\eta_{3s}^{(s)} \\
+\eta_{4s}^{(s)} \\
+\eta_{5s}^{(s)} \\
+\eta_{6s}^{(s)} \\
+\eta_{7c}^{(c)} \\
+\end{pmatrix} +
+\boldsymbol{\epsilon}_{tsc}
+\]</span></p>
+<p>In brief, <span class="math inline">\(\eta_{1t}^{(t)}\)</span> and
+<span class="math inline">\(\eta_{2t}^{(t)}\)</span> are the teacher
+effects, <span class="math inline">\(\eta_{3s}^{(s)}\)</span> and <span class="math inline">\(\eta_{4s}^{(s)}\)</span> are teacher’s perception
+of the students on the trait, <span class="math inline">\(\eta_{5s}^{(s)}\)</span> and <span class="math inline">\(\eta_{6s}^{(s)}\)</span> are the students’
+perception of themselves on the trait, and <span class="math inline">\(\eta_{7c}^{(c)}\)</span> is the classroom effect.
+The factor loadings are the “regression coefficients” for regressing the
+observed items onto these latent traits. The subscripts <span class="math inline">\(t\)</span>, <span class="math inline">\(s\)</span>, and <span class="math inline">\(c\)</span> indicate teacher, student, and class,
+respectively.</p>
+<p>The structural model is simply</p>
+<p><span class="math display">\[
+\begin{pmatrix}
+\eta_{1t}^{(t)} \\
+\eta_{2t}^{(t)} \\
+\eta_{3s}^{(s)} \\
+\eta_{4s}^{(s)} \\
+\eta_{5s}^{(s)} \\
+\eta_{6s}^{(s)} \\
+\eta_{7c}^{(c)} \\
+\end{pmatrix}
+=
+\begin{pmatrix}
+\zeta_{1t}^{(t)} \\
+\zeta_{2t}^{(t)} \\
+\zeta_{3s}^{(s)} \\
+\zeta_{4s}^{(s)} \\
+\zeta_{5s}^{(s)} \\
+\zeta_{6s}^{(s)} \\
+\zeta_{7c}^{(c)} \\
+\end{pmatrix}
+\]</span></p>
+<p>where</p>
+<p><span class="math display">\[
+\begin{pmatrix}
+\zeta_{1t}^{(t)} \\
+\zeta_{2t}^{(t)} \\
+\end{pmatrix}
+\sim N_{2}(\mathbf{0}, \boldsymbol{\Psi}^{(t)}),
+\]</span></p>
+<p><span class="math display">\[
+\begin{pmatrix}
+\zeta_{3s}^{(s)} \\
+\zeta_{4s}^{(s)} \\
+\zeta_{5s}^{(s)} \\
+\zeta_{6s}^{(s)} \\
+\end{pmatrix}
+\sim N_{4}(\mathbf{0}, \boldsymbol{\Psi}^{(s)}),
+\]</span></p>
+<p><span class="math display">\[
+\begin{pmatrix}
+\zeta_{7c}^{(c)} \\
+\end{pmatrix}
+\sim N_{1}(0, \psi^{(c)}),
+\]</span></p>
+<p>and</p>
+<p><span class="math display">\[
+\epsilon_{tsc} \sim N_{1}(0, \phi).
+\]</span></p>
+<p>We specify the loading matrix as follows. In comparison with the
+mathematical model formulation just above, note that we don’t need to
+add the last column of only ones, since this column contains no
+parameters to be estimated.</p>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="op">(</span><span class="va">loading_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="fl">0</span>, <span class="cn">NA</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="fl">0</span>, <span class="cn">NA</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span>,</span>
@@ -437,38 +578,58 @@ dataset.</p>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="cn">NA</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="cn">NA</span><span class="op">)</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-<p>We could run it using <code>PLmixed</code> with the following syntax,
-but it takes hours.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [[1]]</span></span>
+<span><span class="co">#&gt;       [,1] [,2] [,3] [,4] [,5] [,6]</span></span>
+<span><span class="co">#&gt;  [1,]    1    0    1    0    0    0</span></span>
+<span><span class="co">#&gt;  [2,]   NA    0   NA    0    0    0</span></span>
+<span><span class="co">#&gt;  [3,]   NA    0   NA    0    0    0</span></span>
+<span><span class="co">#&gt;  [4,]    0    1    0    1    0    0</span></span>
+<span><span class="co">#&gt;  [5,]    0   NA    0   NA    0    0</span></span>
+<span><span class="co">#&gt;  [6,]    0   NA    0   NA    0    0</span></span>
+<span><span class="co">#&gt;  [7,]    0    0    0    0    1    0</span></span>
+<span><span class="co">#&gt;  [8,]    0    0    0    0   NA    0</span></span>
+<span><span class="co">#&gt;  [9,]    0    0    0    0   NA    0</span></span>
+<span><span class="co">#&gt; [10,]    0    0    0    0    0    1</span></span>
+<span><span class="co">#&gt; [11,]    0    0    0    0    0   NA</span></span>
+<span><span class="co">#&gt; [12,]    0    0    0    0    0   NA</span></span></code></pre></div>
+<p>Next, we specify the factors in the order they appear in the columns
+of the loading matrix. We can choose whichever names we like for the
+factors, except for names of existing variables in the dataset, but we
+must make sure they match the names used in the formula.</p>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">factors</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>  <span class="st">"teacher1"</span>, <span class="st">"teacher2"</span>, <span class="st">"trait1.t"</span>,</span>
+<span>  <span class="st">"trait2.t"</span>, <span class="st">"trait1.s"</span>, <span class="st">"trait2.s"</span></span>
+<span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>The formula is defined as follows, where have have placed the terms
+in the same order as they appear in the mathematical model in
+matrix-vector form specified above.</p>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">form</span> <span class="op">&lt;-</span> <span class="va">response</span> <span class="op">~</span> <span class="fl">0</span> <span class="op">+</span> <span class="va">item</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">teacher1</span> <span class="op">+</span> <span class="va">teacher2</span> <span class="op">|</span> <span class="va">tch</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">trait1.t</span> <span class="op">+</span> <span class="va">trait2.t</span> <span class="op">+</span> <span class="va">trait1.s</span> <span class="op">+</span> <span class="va">trait2.s</span> <span class="op">|</span> <span class="va">stu</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">class</span><span class="op">)</span></span></code></pre></div>
+<p>Using <code>PLmixed</code>, we could have estimated the model as
+follows, and doing it would confirm that the results are the same as
+with galamm.</p>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">judge_plmixed</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/PLmixed/man/PLmixed.html" class="external-link">PLmixed</a></span><span class="op">(</span></span>
-<span>  <span class="va">response</span> <span class="op">~</span> <span class="fl">0</span> <span class="op">+</span> <span class="va">item</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">class</span><span class="op">)</span></span>
-<span>    <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">trait1.t</span> <span class="op">+</span> <span class="va">trait2.t</span> <span class="op">+</span> <span class="va">trait1.s</span> <span class="op">+</span> <span class="va">trait2.s</span> <span class="op">|</span> <span class="va">stu</span><span class="op">)</span></span>
-<span>    <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">teacher1</span> <span class="op">+</span> <span class="va">teacher2</span> <span class="op">|</span> <span class="va">tch</span><span class="op">)</span>,</span>
+<span>  formula <span class="op">=</span> <span class="va">form</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">JUDGEsim</span>,</span>
-<span>  lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">judge.lam</span><span class="op">)</span>, load.var <span class="op">=</span> <span class="st">"item"</span>,</span>
-<span>  factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span>    <span class="st">"teacher1"</span>, <span class="st">"teacher2"</span>, <span class="st">"trait1.t"</span>,</span>
-<span>    <span class="st">"trait2.t"</span>, <span class="st">"trait1.s"</span>, <span class="st">"trait2.s"</span></span>
-<span>  <span class="op">)</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">judge_plmixed</span><span class="op">)</span></span></code></pre></div>
+<span>  lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">loading_matrix</span><span class="op">)</span>,</span>
+<span>  load.var <span class="op">=</span> <span class="st">"item"</span>,</span>
+<span>  factor <span class="op">=</span> <span class="va">factors</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <p>We get identical results using <code>galamm</code> in less than five
 minutes. However, since five minutes is a bit too much for a vignette,
-we don’t show the output here.</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+we won’t run it.</p>
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">judge_galamm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
-<span>  formula <span class="op">=</span> <span class="va">response</span> <span class="op">~</span> <span class="fl">0</span> <span class="op">+</span> <span class="va">item</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">class</span><span class="op">)</span> <span class="op">+</span></span>
-<span>    <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">trait1.t</span> <span class="op">+</span> <span class="va">trait2.t</span> <span class="op">+</span> <span class="va">trait1.s</span> <span class="op">+</span> <span class="va">trait2.s</span> <span class="op">|</span> <span class="va">stu</span><span class="op">)</span> <span class="op">+</span></span>
-<span>    <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">teacher1</span> <span class="op">+</span> <span class="va">teacher2</span> <span class="op">|</span> <span class="va">tch</span><span class="op">)</span>,</span>
+<span>  formula <span class="op">=</span> <span class="va">form</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">JUDGEsim</span>,</span>
-<span>  lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">judge.lam</span><span class="op">)</span>,</span>
+<span>  lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">loading_matrix</span><span class="op">)</span>,</span>
 <span>  load.var <span class="op">=</span> <span class="st">"item"</span>,</span>
-<span>  factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span>    <span class="st">"teacher1"</span>, <span class="st">"teacher2"</span>, <span class="st">"trait1.t"</span>,</span>
-<span>    <span class="st">"trait2.t"</span>, <span class="st">"trait1.s"</span>, <span class="st">"trait2.s"</span></span>
-<span>  <span class="op">)</span><span class="op">)</span></span>
+<span>  factor <span class="op">=</span> <span class="va">factors</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -476,38 +637,8 @@ we don’t show the output here.</p>
 </h3>
 <p>Finally, in their Example 2, <span class="citation">Rockwood and Jeon
 (2019)</span> consider a model which contains products of factor
-loadings. We start by preparing the data:</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">time.lam</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span>, <span class="co"># Specify time lambda matrix</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="fl">0</span><span class="op">)</span>,</span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="fl">1</span><span class="op">)</span>,</span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">item.lam</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="co"># Specify item lambda matrix</span></span>
-<span></span>
-<span><span class="va">KYPSitemsim</span><span class="op">$</span><span class="va">time2</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="va">KYPSitemsim</span><span class="op">$</span><span class="va">time</span> <span class="op">==</span> <span class="fl">2</span><span class="op">)</span> <span class="op">*</span> <span class="fl">1</span></span>
-<span><span class="va">KYPSitemsim</span><span class="op">$</span><span class="va">time3</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="va">KYPSitemsim</span><span class="op">$</span><span class="va">time</span> <span class="op">==</span> <span class="fl">3</span><span class="op">)</span> <span class="op">*</span> <span class="fl">1</span></span>
-<span><span class="va">KYPSitemsim</span><span class="op">$</span><span class="va">time4</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="va">KYPSitemsim</span><span class="op">$</span><span class="va">time</span> <span class="op">==</span> <span class="fl">4</span><span class="op">)</span> <span class="op">*</span> <span class="fl">1</span></span>
-<span><span class="va">KYPSitemsim</span><span class="op">$</span><span class="va">item</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">KYPSitemsim</span><span class="op">$</span><span class="va">item</span><span class="op">)</span></span></code></pre></div>
-<p>The model can be fitted using <code>PLmixed</code> as follows. Note
-that “ms”, “hs” and “lat.var” are factor, and that the formula contains
-products <code>hs:lat.var</code> and <code>ms:lat.var</code>.</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">kyps.item.model</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/PLmixed/man/PLmixed.html" class="external-link">PLmixed</a></span><span class="op">(</span></span>
-<span>  <span class="va">response</span> <span class="op">~</span> <span class="fl">0</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">item</span><span class="op">)</span> <span class="op">+</span> <span class="va">lat.var</span><span class="op">:</span><span class="va">time2</span></span>
-<span>    <span class="op">+</span> <span class="va">lat.var</span><span class="op">:</span><span class="va">time3</span> <span class="op">+</span> <span class="va">lat.var</span><span class="op">:</span><span class="va">time4</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">hs</span><span class="op">:</span><span class="va">lat.var</span> <span class="op">|</span> <span class="va">hid</span><span class="op">)</span></span>
-<span>    <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">ms</span><span class="op">:</span><span class="va">lat.var</span> <span class="op">|</span> <span class="va">mid</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">lat.var</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">time</span><span class="op">)</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span>,</span>
-<span>  data <span class="op">=</span> <span class="va">KYPSitemsim</span>, lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">time.lam</span>, <span class="va">item.lam</span><span class="op">)</span>,</span>
-<span>  factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ms"</span>, <span class="st">"hs"</span><span class="op">)</span>, <span class="st">"lat.var"</span><span class="op">)</span>,</span>
-<span>  load.var <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"time"</span>, <span class="st">"item"</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">kyps.item.model</span><span class="op">)</span></span></code></pre></div>
-<p>A the moment, this model cannot be directly fitted with
-<code>galamm</code>, although a reformulation is likely possible. We
-will work on adding this functionality.</p>
+loadings. At the moment, such a model cannot be estimated using galamm,
+although we will work on adding it in the future.</p>
 </div>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
@@ -519,6 +650,14 @@ Jeon, Minjeong, and Sophia Rabe-Hesketh. 2012.
 Generalized Linear Mixed Models With Factor Structures</span>.”</span>
 <em>Journal of Educational and Behavioral Statistics</em> 37 (4):
 518–42. <a href="https://doi.org/10.3102/1076998611417628" class="external-link">https://doi.org/10.3102/1076998611417628</a>.
+</div>
+<div id="ref-kochCrossClassifiedCFAMTMMModel2016" class="csl-entry">
+Koch, Tobias, Martin Schultze, Minjeong Jeon, Fridtjof W. Nussbeck,
+Anna-Katharina Praetorius, and Michael Eid. 2016. <span>“A
+<span>Cross-Classified CFA-MTMM Model</span> for <span>Structurally
+Different</span> and <span>Nonindependent Interchangeable
+Methods</span>.”</span> <em>Multivariate Behavioral Research</em> 51
+(1): 67–85. <a href="https://doi.org/10.1080/00273171.2015.1101367" class="external-link">https://doi.org/10.1080/00273171.2015.1101367</a>.
 </div>
 <div id="ref-mccaffreyModelsValueAddedModeling2004" class="csl-entry">
 McCaffrey, Daniel F., J. R. Lockwood, Daniel Koretz, Thomas A. Louis,
