@@ -382,15 +382,15 @@ Next, we specify the factors in the order they appear in the columns of the load
 
 ```{r}
 factors <- list(c(
-    "teacher1", "teacher2", "trait1.t",
-    "trait2.t", "trait1.s", "trait2.s"
-  ))
+  "teacher1", "teacher2", "trait1.t",
+  "trait2.t", "trait1.s", "trait2.s"
+))
 ```
 
 The formula is defined as follows, where have have placed the terms in the same order as they appear in the mathematical model in matrix-vector form specified above.
 
 ```{r}
-form <- response ~ 0 + item + (0 + teacher1 + teacher2 | tch) + 
+form <- response ~ 0 + item + (0 + teacher1 + teacher2 | tch) +
   (0 + trait1.t + trait2.t + trait1.s + trait2.s | stu) +
   (1 | class)
 ```
@@ -401,7 +401,7 @@ Using `PLmixed`, we could have estimated the model as follows, and doing it woul
 judge_plmixed <- PLmixed(
   formula = form,
   data = JUDGEsim,
-  lambda = list(loading_matrix), 
+  lambda = list(loading_matrix),
   load.var = "item",
   factor = factors
 )
@@ -413,7 +413,7 @@ We get identical results using `galamm` in less than five minutes. However, sinc
 judge_galamm <- galamm(
   formula = form,
   data = JUDGEsim,
-  lambda = list(loading_matrix), 
+  lambda = list(loading_matrix),
   load.var = "item",
   factor = factors
 )
