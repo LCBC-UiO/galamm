@@ -1,5 +1,3 @@
-library(Matrix)
-library(lme4)
 library(memoise)
 
 dat <- hsced
@@ -72,3 +70,4 @@ logLik(comp)
 expect_equal(as.numeric(logLik(comp)), opt$value)
 expect_equal(as.numeric(getME(comp, "theta")), opt$par[theta_inds], tolerance = 1e-4)
 expect_equal(as.numeric(fixef(comp)), opt$par[beta_inds], tolerance = 1e-4)
+

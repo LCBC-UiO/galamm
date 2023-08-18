@@ -1,8 +1,6 @@
-library(Matrix)
-library(lme4)
 library(memoise)
 
-lmod <- lFormula(y ~ x + (0 + itemgroup | id), data = mresp)
+lmod <- lme4::lFormula(y ~ x + (0 + itemgroup | id), data = mresp)
 
 theta_inds <- seq_along(lmod$reTrms$theta)
 beta_inds <- seq(from = max(theta_inds) + 1, length.out = ncol(lmod$X))
