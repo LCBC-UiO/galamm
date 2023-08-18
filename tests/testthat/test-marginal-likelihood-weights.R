@@ -1,5 +1,3 @@
-library(Matrix)
-library(lme4)
 library(memoise)
 
 dat <- hsced

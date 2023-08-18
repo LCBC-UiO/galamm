@@ -1,6 +1,4 @@
-library(PLmixed)
-library(Matrix)
-
+data(IRTsim, package = "PLmixed")
 IRTsub <- IRTsim[IRTsim$item < 4, ]
 set.seed(12345)
 IRTsub <- IRTsub[sample(nrow(IRTsub), 300), ]
@@ -12,7 +10,7 @@ dat$abil.sid <- 1
 lmod <- lFormula(form, data = dat, REML = FALSE)
 X <- lmod$X
 Zt <- lmod$reTrms$Zt
-table(diff(Zt@p))
+
 lambda_mapping_Zt <- rep(dat$item, each = 2) - 2L
 Lambdat <- lmod$reTrms$Lambdat
 theta_mapping <- lmod$reTrms$Lind - 1L

@@ -13,6 +13,12 @@ test_that("LMM with simple factor works", {
     factor = list(c("abil.sid")), lambda = list(irt.lam)
   )
 
+  expect_output(
+    lme4::.prt.call(mod$mc),
+    "Formula: y ~ 0 + as.factor(item) + (0 + abil.sid | school/sid)",
+    fixed = TRUE
+  )
+
   expect_equal(mod$loglik, -193.563337783604)
   expect_equal(
     summary(mod)$AICtab,
@@ -47,8 +53,9 @@ test_that("LMM with two factors works", {
     c(NA, NA)
   )
 
+  form <- esteem ~ time + (0 + hs | hid) + (0 + ms | mid) + (1 | sid)
   kyps_model <- galamm(
-    formula = esteem ~ time + (0 + hs | hid) + (0 + ms | mid) + (1 | sid),
+    formula = form,
     data = KYPSsim,
     factor = list(c("ms", "hs")),
     load.var = "time",

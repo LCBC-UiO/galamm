@@ -66,6 +66,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   }
 
   lmod <- lme4::lFormula(formula = formula, data = data, REML = FALSE)
+  mc$formula <- lmod$formula
 
   response_obj <- matrix(nrow = nrow(lmod$X), ncol = 2)
   for (i in seq_along(family_list)) {

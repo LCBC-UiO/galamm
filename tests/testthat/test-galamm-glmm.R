@@ -3,14 +3,17 @@ test_that("Logistic GLMM with simple factor works", {
   IRTsim$item <- factor(IRTsim$item)
   irt.lam <- matrix(c(1, NA, NA, NA, NA), ncol = 1)
 
+  form <- y ~ item + (0 + abil.sid | school / sid)
   mod <- galamm(
-    formula = y ~ item + (0 + abil.sid | school / sid),
+    formula = form,
     data = IRTsim,
     family = binomial,
     load.var = "item",
     factor = list("abil.sid"),
     lambda = list(irt.lam)
   )
+
+  expect_snapshot(summary(mod))
 
   expect_equal(mod$loglik, -1472.19990830883)
   expect_equal(
