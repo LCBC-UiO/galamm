@@ -292,7 +292,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
 
   ret$lmod <- lmod
   ret$weights_obj <- weights_obj
-  ret$mc <- mc
+  ret$call <- mc
   ret$family <- family
   ret$df <- length(opt$par) +
     sum(vapply(family_list, function(x) is.na(x$dispersion), logical(1)))
