@@ -408,7 +408,8 @@ issue here:</p>
 <span><span class="co">#&gt; Warning in vcov.galamm(object, "beta"): Rank deficient Hessian matrix. Could</span></span>
 <span><span class="co">#&gt; not compute covariance matrix.</span></span>
 <span><span class="co">#&gt; Generalized additive latent and mixed model fit by maximum marginal likelihood.</span></span>
-<span><span class="co">#&gt; Formula: formula</span></span>
+<span><span class="co">#&gt; Formula: y ~ 0 + chd + (age * bus):chd + fiber + (age * bus):fiber + fiber2 +  </span></span>
+<span><span class="co">#&gt;     (0 + loading | id)</span></span>
 <span><span class="co">#&gt;    Data: diet</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;      AIC      BIC   logLik deviance df.resid </span></span>
@@ -532,7 +533,8 @@ are very close to the corresponding model in Table 14.1 of <span class="citation
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Generalized additive latent and mixed model fit by maximum marginal likelihood.</span></span>
-<span><span class="co">#&gt; Formula: formula</span></span>
+<span><span class="co">#&gt; Formula: y ~ 0 + chd + (age * bus):chd + fiber + (age * bus):fiber + fiber2 +  </span></span>
+<span><span class="co">#&gt;     (0 + loading | id)</span></span>
 <span><span class="co">#&gt;    Data: diet</span></span>
 <span><span class="co">#&gt; Control: galamm_control(optim_control = list(trace = 3))</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -624,7 +626,8 @@ Rabe-Hesketh (2004)</span>.</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod0</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Generalized additive latent and mixed model fit by maximum marginal likelihood.</span></span>
-<span><span class="co">#&gt; Formula: formula0</span></span>
+<span><span class="co">#&gt; Formula: y ~ 0 + chd + fiber + (age * bus):fiber + fiber2 + (0 + loading |  </span></span>
+<span><span class="co">#&gt;     id)</span></span>
 <span><span class="co">#&gt;    Data: diet</span></span>
 <span><span class="co">#&gt; Control: galamm_control(optim_control = list(trace = 3))</span></span>
 <span><span class="co">#&gt; </span></span>
