@@ -11,23 +11,24 @@
 #' @return A table
 #' @export
 #'
-#' @importFrom stats AIC BIC deviance logLik
+#' @importFrom stats AIC BIC deviance logLik getCall pchisq var
 anova.galamm <- function(object, ...) {
   mCall <- match.call(expand.dots = TRUE)
   dots <- list(...)
-  tab <- make_anova(object)
-
-  modp <- vapply(dots, is, TRUE, "galamm")
+  modp <- vapply(dots, inherits, TRUE, "galamm")
 
 
-  mNms <- vapply(as.list(mCall)[c(FALSE, TRUE, modp)],
-                 deparse1, "")
+  mNms <- vapply(
+    as.list(mCall)[c(FALSE, TRUE, modp)],
+    deparse1, ""
+  )
 
-  if(any(modp)){
+  if (any(modp)) {
     mods <- c(list(object), dots[modp])
     nobs.vec <- vapply(mods, nobs, 1L)
-    if (var(nobs.vec) > 0)
+    if (var(nobs.vec) > 0) {
       stop("models were not all fitted to the same size of dataset")
+    }
     mNms <- vapply(as.list(mCall)[c(FALSE, TRUE, modp)], deparse1, "")
     names(mods) <- mNms
     llks <- lapply(mods, logLik)
@@ -38,8 +39,9 @@ anova.galamm <- function(object, ...) {
 
     calls <- lapply(mods, getCall)
     data <- lapply(calls, `[[`, "data")
-    if (!all(vapply(data, identical, NA, data[[1]])))
+    if (!all(vapply(data, identical, NA, data[[1]]))) {
       stop("all models must be fit to the same data object")
+    }
     header <- paste("Data:", abbrDeparse(data[[1]]))
 
     llk <- unlist(llks)
@@ -54,35 +56,28 @@ anova.galamm <- function(object, ...) {
       deviance = -2 * llk, Chisq = chisq,
       Df = dfChisq,
       `Pr(>Chisq)` = ifelse(dfChisq == 0, NA,
-                            pchisq(chisq, dfChisq, lower.tail = FALSE)),
-      row.names = names(mods), check.names = FALSE)
+        pchisq(chisq, dfChisq, lower.tail = FALSE)
+      ),
+      row.names = names(mods), check.names = FALSE
+    )
     class(val) <- c("anova", class(val))
     forms <- lapply(lapply(calls, `[[`, "formula"), deparse1)
 
     structure(
       val,
-      heading = c(header, "Models:",
-                  paste(rep.int(names(mods), lengths(forms)), unlist(forms),
-                        sep = ": ")))
+      heading = c(
+        header, "Models:",
+        paste(rep.int(names(mods), lengths(forms)), unlist(forms),
+          sep = ": "
+        )
+      )
+    )
   } else {
-    tab
+    message("Analysis of variance table for galamm objects not implemented yet.")
   }
-
-
-
 }
 
 
-
-make_anova <- function(object) {
-  data.frame(
-    npar = object$df,
-    AIC = AIC(object),
-    BIC = BIC(object),
-    logLik = as.numeric(logLik(object)),
-    deviance = deviance(object)
-  )
-}
 
 
 #' Abbreviated deparse function taken from lme4
@@ -92,12 +87,13 @@ make_anova <- function(object) {
 #'
 #' @return String
 #'
-abbrDeparse <- function (x, width = 60)
-{
+abbrDeparse <- function(x, width = 60) {
   r <- deparse(x, width)
-  if (length(r) > 1)
+  if (length(r) > 1) {
     paste(r[1], "...")
-  else r
+  } else {
+    r
+  }
 }
 
 #' Extract the Number of Observations from a galamm Fit
@@ -108,6 +104,7 @@ abbrDeparse <- function (x, width = 60)
 #' @return A number
 #' @export
 #'
-nobs.galamm <- function(object, ...){
+#' @importFrom stats nobs
+nobs.galamm <- function(object, ...) {
   object$n
 }

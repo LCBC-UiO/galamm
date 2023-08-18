@@ -30,7 +30,8 @@ Imports:
     memoise,
     nlme,
     Rcpp,
-    Rdpack
+    Rdpack,
+    stats
 Depends:
     R (>= 3.5.0)
 LinkingTo:
