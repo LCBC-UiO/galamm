@@ -17,3 +17,7 @@ A table
 \description{
 Compare Likelihoods of galamm Objects
 }
+\details{
+Some of the source code for this function is adapted from
+\code{lme4:::anova.merMod}.
+}

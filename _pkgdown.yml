@@ -2,3 +2,18 @@ url: https://lcbc-uio.github.io/galamm/
 template:
   bootstrap: 5
 
+articles:
+- title: Get started
+  navbar: ~
+  contents:
+  - galamm
+  - lmm_factor
+  - glmm_factor
+  - lmm_heteroscedastic
+  - mixed_response
+  - semiparametric
+
+- title: Advanced topics
+  navbar: Advanced topics
+  contents:
+  - optimization

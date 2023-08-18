@@ -61,7 +61,7 @@ summary.galamm <- function(object, ...) {
 #' @export
 print.summary.galamm <- function(x, digits = max(3, getOption("digits") - 3), ...) {
   cat("Generalized additive latent and mixed model fit by maximum marginal likelihood.\n")
-  lme4::.prt.call(x$mc)
+  lme4::.prt.call(x$call)
   lme4::.prt.family(x$family)
   cat("\n")
   lme4::.prt.aictab(x$AICtab)

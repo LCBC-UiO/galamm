@@ -14,7 +14,7 @@ test_that("LMM with simple factor works", {
   )
 
   expect_output(
-    lme4::.prt.call(mod$mc),
+    lme4::.prt.call(mod$call),
     "Formula: y ~ 0 + as.factor(item) + (0 + abil.sid | school/sid)",
     fixed = TRUE
   )
