@@ -52,9 +52,7 @@ test_that("Covariate measurement error model works", {
 
   expect_equal(
     factor_loadings(mod),
-    structure(c(1, 1, -0.13392200444942, NA, NA, 0.0512082698234306
-    ), dim = 3:2, dimnames = list(c("lambda1", "lambda2", "lambda3"
-    ), c("loading", "SE")))
+    structure(c(1, 1, -0.13392200444942, NA, NA, 0.0512082698234306), dim = 3:2, dimnames = list(c("lambda1", "lambda2", "lambda3"), c("loading", "SE")))
   )
 
   formula0 <- y ~ 0 + chd + fiber + (age * bus):fiber + fiber2 +
