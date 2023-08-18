@@ -237,12 +237,132 @@ anova(
 
 ## Multi-Trait Multi-Rater Model
 
+We next consider a model based on example 1 in @rockwoodEstimatingComplexMeasurement2019, which uses the dataset `JUDGEsim` in [PLmixed](https://cran.r-project.org/package=PLmixed), which is simulated to mimic the data used by @kochCrossClassifiedCFAMTMMModel2016. We refer to @rockwoodEstimatingComplexMeasurement2019 for all the details, and merely present the model and how to estimate it using galamm.
 
-The next is Example 1 in @rockwoodEstimatingComplexMeasurement2019. 
+The data contains ratings of two traits in students, and the traits are rated by both students and teachers. 
+
+Initially, we need to convert the item variable to a factor.
 
 ```{r}
 JUDGEsim$item <- factor(JUDGEsim$item)
-judge.lam <- rbind(
+```
+
+The first ten rows of the dataset are as follows:
+
+```{r}
+head(JUDGEsim, 10)
+```
+
+The grouping factors in the data are class (variable `class`), student (variable `stu`) and teacher (variable `tch`). The teachers' ratings of the first trait is given by items 1-3, and the students' rating of the same trait is given by items 7-9. For the second trait, the items are 4-6 and 10-12, respectively. Looking at the frequency table, we see that there are more observations of items 1-6. This happens because a single teacher would in general rate more than one student, whereas a single student would only rate themselves.
+
+```{r}
+table(JUDGEsim$item)
+```
+
+In matrix-vector format, the measurement model is (equation 16 in @rockwoodEstimatingComplexMeasurement2019)
+
+$$
+\begin{pmatrix}
+y_{1tsc} \\
+\vdots \\
+y_{12tsc} \\
+\end{pmatrix}
+=
+\begin{pmatrix}
+\beta_{1} \\
+\vdots \\
+\beta_{12}
+\end{pmatrix}
++
+\begin{pmatrix}
+1 & 0 & 1 & 0 & 0 & 0 & 1\\
+\lambda_{21} & 0 & \lambda_{23} & 0 & 0 & 0 & 1 \\
+\lambda_{31} & 0 & \lambda_{33} & 0 & 0 & 0 & 1\\
+0 & 1 & 0 & 1 & 0 & 0 & 1 \\
+0 & \lambda_{52} & 0 & \lambda_{54} & 0 & 0 & 1 \\
+0 & \lambda_{62} & 0 & \lambda_{64} & 0 & 0 & 1 \\
+0 & 0 & 0 & 0 & 1 & 0 & 1 \\
+0 & 0 & 0 & 0 & \lambda_{85} & 0 & 1 \\
+0 & 0 & 0 & 0 & \lambda_{95} & 0 & 1 \\
+0 & 0 & 0 & 0 & 0 & 1 & 1 \\
+0 & 0 & 0 & 0 & 0 & \lambda_{11,6} & 1 \\
+0 & 0 & 0 & 0 & 0 & \lambda_{12,6} & 1 \\
+\end{pmatrix}
+\begin{pmatrix}
+\eta_{1t}^{(t)} \\
+\eta_{2t}^{(t)} \\
+\eta_{3s}^{(s)} \\
+\eta_{4s}^{(s)} \\
+\eta_{5s}^{(s)} \\
+\eta_{6s}^{(s)} \\
+\eta_{7c}^{(c)} \\
+\end{pmatrix} +
+\boldsymbol{\epsilon}_{tsc}
+$$
+
+In brief, $\eta_{1t}^{(t)}$ and $\eta_{2t}^{(t)}$ are the teacher effects, $\eta_{3s}^{(s)}$ and $\eta_{4s}^{(s)}$ are teacher's perception of the students on the trait, $\eta_{5s}^{(s)}$ and $\eta_{6s}^{(s)}$ are the students' perception of themselves on the trait, and $\eta_{7c}^{(c)}$ is the classroom effect. The factor loadings are the "regression coefficients" for regressing the observed items onto these latent traits. The subscripts $t$, $s$, and $c$ indicate teacher, student, and class, respectively. 
+
+The structural model is simply
+
+$$
+\begin{pmatrix}
+\eta_{1t}^{(t)} \\
+\eta_{2t}^{(t)} \\
+\eta_{3s}^{(s)} \\
+\eta_{4s}^{(s)} \\
+\eta_{5s}^{(s)} \\
+\eta_{6s}^{(s)} \\
+\eta_{7c}^{(c)} \\
+\end{pmatrix}
+=
+\begin{pmatrix}
+\zeta_{1t}^{(t)} \\
+\zeta_{2t}^{(t)} \\
+\zeta_{3s}^{(s)} \\
+\zeta_{4s}^{(s)} \\
+\zeta_{5s}^{(s)} \\
+\zeta_{6s}^{(s)} \\
+\zeta_{7c}^{(c)} \\
+\end{pmatrix}
+$$
+
+where
+
+$$
+\begin{pmatrix}
+\zeta_{1t}^{(t)} \\
+\zeta_{2t}^{(t)} \\
+\end{pmatrix}
+\sim N_{2}(\mathbf{0}, \boldsymbol{\Psi}^{(t)}),
+$$
+
+$$
+\begin{pmatrix}
+\zeta_{3s}^{(s)} \\
+\zeta_{4s}^{(s)} \\
+\zeta_{5s}^{(s)} \\
+\zeta_{6s}^{(s)} \\
+\end{pmatrix}
+\sim N_{4}(\mathbf{0}, \boldsymbol{\Psi}^{(s)}),
+$$
+
+$$
+\begin{pmatrix}
+\zeta_{7c}^{(c)} \\
+\end{pmatrix}
+\sim N_{1}(0, \psi^{(c)}),
+$$
+
+and
+
+$$
+\epsilon_{tsc} \sim N_{1}(0, \phi).
+$$
+
+We specify the loading matrix as follows. In comparison with the mathematical model formulation just above, note that we don't need to add the last column of only ones, since this column contains no parameters to be estimated.
+
+```{r}
+(loading_matrix <- list(rbind(
   c(1, 0, 1, 0, 0, 0),
   c(NA, 0, NA, 0, 0, 0),
   c(NA, 0, NA, 0, 0, 0),
@@ -255,80 +375,54 @@ judge.lam <- rbind(
   c(0, 0, 0, 0, 0, 1),
   c(0, 0, 0, 0, 0, NA),
   c(0, 0, 0, 0, 0, NA)
-)
+)))
 ```
 
-We could run it using `PLmixed` with the following syntax, but it takes hours.
+Next, we specify the factors in the order they appear in the columns of the loading matrix. We can choose whichever names we like for the factors, except for names of existing variables in the dataset, but we must make sure they match the names used in the formula.
+
+```{r}
+factors <- list(c(
+  "teacher1", "teacher2", "trait1.t",
+  "trait2.t", "trait1.s", "trait2.s"
+))
+```
+
+The formula is defined as follows, where have have placed the terms in the same order as they appear in the mathematical model in matrix-vector form specified above.
+
+```{r}
+form <- response ~ 0 + item + (0 + teacher1 + teacher2 | tch) +
+  (0 + trait1.t + trait2.t + trait1.s + trait2.s | stu) +
+  (1 | class)
+```
+
+Using `PLmixed`, we could have estimated the model as follows, and doing it would confirm that the results are the same as with galamm.
 
 ```{r, eval=FALSE}
 judge_plmixed <- PLmixed(
-  response ~ 0 + item + (1 | class)
-    + (0 + trait1.t + trait2.t + trait1.s + trait2.s | stu)
-    + (0 + teacher1 + teacher2 | tch),
+  formula = form,
   data = JUDGEsim,
-  lambda = list(judge.lam), load.var = "item",
-  factor = list(c(
-    "teacher1", "teacher2", "trait1.t",
-    "trait2.t", "trait1.s", "trait2.s"
-  ))
+  lambda = list(loading_matrix),
+  load.var = "item",
+  factor = factors
 )
-
-summary(judge_plmixed)
 ```
 
-We get identical results using `galamm` in less than five minutes. However, since five minutes is a bit too much for a vignette, we don't show the output here.
+We get identical results using `galamm` in less than five minutes. However, since five minutes is a bit too much for a vignette, we won't run it.
 
 ```{r, eval=FALSE}
 judge_galamm <- galamm(
-  formula = response ~ 0 + item + (1 | class) +
-    (0 + trait1.t + trait2.t + trait1.s + trait2.s | stu) +
-    (0 + teacher1 + teacher2 | tch),
+  formula = form,
   data = JUDGEsim,
-  lambda = list(judge.lam),
+  lambda = list(loading_matrix),
   load.var = "item",
-  factor = list(c(
-    "teacher1", "teacher2", "trait1.t",
-    "trait2.t", "trait1.s", "trait2.s"
-  ))
+  factor = factors
 )
 ```
+
+
 
 ## Model with a Product of Factor Loadings
 
-Finally, in their Example 2, @rockwoodEstimatingComplexMeasurement2019 consider a model which contains products of factor loadings. We start by preparing the data:
-
-```{r, eval=FALSE}
-time.lam <- rbind(
-  c(1, 0), # Specify time lambda matrix
-  c(NA, 0),
-  c(NA, 1),
-  c(NA, NA)
-)
-
-item.lam <- matrix(c(1, NA, NA, NA, NA, NA), ncol = 1) # Specify item lambda matrix
-
-KYPSitemsim$time2 <- (KYPSitemsim$time == 2) * 1
-KYPSitemsim$time3 <- (KYPSitemsim$time == 3) * 1
-KYPSitemsim$time4 <- (KYPSitemsim$time == 4) * 1
-KYPSitemsim$item <- factor(KYPSitemsim$item)
-```
-
-The model can be fitted using `PLmixed` as follows. Note that "ms", "hs" and "lat.var" are factor, and that the formula contains products `hs:lat.var` and `ms:lat.var`.
-
-```{r, eval=FALSE}
-kyps.item.model <- PLmixed(
-  response ~ 0 + as.factor(item) + lat.var:time2
-    + lat.var:time3 + lat.var:time4 + (0 + hs:lat.var | hid)
-    + (0 + ms:lat.var | mid) + (0 + lat.var:as.factor(time) | id),
-  data = KYPSitemsim, lambda = list(time.lam, item.lam),
-  factor = list(c("ms", "hs"), "lat.var"),
-  load.var = c("time", "item")
-)
-
-summary(kyps.item.model)
-```
-
-A the moment, this model cannot be directly fitted with `galamm`, although a reformulation is likely possible. We will work on adding this functionality.
-
+Finally, in their Example 2, @rockwoodEstimatingComplexMeasurement2019 consider a model which contains products of factor loadings. At the moment, such a model cannot be estimated using galamm, although we will work on adding it in the future.
 
 # References
