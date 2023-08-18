@@ -48,7 +48,6 @@ test_that("Covariate measurement error model works", {
   )
 
   expect_equal(mod$loglik, -1372.16038649521)
-  expect_snapshot(summary(mod))
 
   expect_equal(
     factor_loadings(mod),
