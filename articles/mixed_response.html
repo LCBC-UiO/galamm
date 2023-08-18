@@ -44,12 +44,14 @@
 <li class="active nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/glmm_factor.html">Generalized Linear Mixed Models with Factor Structures</a>
     <a class="dropdown-item" href="../articles/lmm_factor.html">Linear Mixed Models with Factor Structures</a>
+    <a class="dropdown-item" href="../articles/glmm_factor.html">Generalized Linear Mixed Models with Factor Structures</a>
     <a class="dropdown-item" href="../articles/lmm_heteroscedastic.html">Heteroscedastic Linear Mixed Models</a>
     <a class="dropdown-item" href="../articles/mixed_response.html">Models with Mixed Response Types</a>
-    <a class="dropdown-item" href="../articles/optimization.html">Optimization</a>
     <a class="dropdown-item" href="../articles/semiparametric.html">Semiparametric Latent Variable Modeling</a>
+    <div class="dropdown-divider"></div>
+    <h6 class="dropdown-header" data-toc-skip>Advanced topics</h6>
+    <a class="dropdown-item" href="../articles/optimization.html">Optimization</a>
   </div>
 </li>
       </ul>
@@ -662,9 +664,13 @@ the models. AIC and BIC favor the simpler model with only indirect
 effects.</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/anova.html" class="external-link">anova</a></span><span class="op">(</span><span class="va">mod</span>, <span class="va">mod0</span><span class="op">)</span></span>
-<span><span class="co">#&gt;      npar      AIC      BIC    logLik deviance</span></span>
-<span><span class="co">#&gt; [1,]   12 2768.321 2823.633 -1372.160 2002.878</span></span>
-<span><span class="co">#&gt; [2,]    9 2764.027 2805.511 -1373.013 2007.902</span></span></code></pre></div>
+<span><span class="co">#&gt; Data: diet</span></span>
+<span><span class="co">#&gt; Models:</span></span>
+<span><span class="co">#&gt; mod0: y ~ 0 + chd + fiber + (age * bus):fiber + fiber2 + (0 + loading | id)</span></span>
+<span><span class="co">#&gt; mod: y ~ 0 + chd + (age * bus):chd + fiber + (age * bus):fiber + fiber2 + (0 + loading | id)</span></span>
+<span><span class="co">#&gt;      npar    AIC    BIC  logLik deviance  Chisq Df Pr(&gt;Chisq)</span></span>
+<span><span class="co">#&gt; mod0    9 2764.0 2805.5 -1373.0   2746.0                     </span></span>
+<span><span class="co">#&gt; mod    12 2768.3 2823.6 -1372.2   2744.3 1.7058  3     0.6357</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">

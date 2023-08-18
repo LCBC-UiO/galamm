@@ -44,12 +44,14 @@
 <li class="active nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/glmm_factor.html">Generalized Linear Mixed Models with Factor Structures</a>
     <a class="dropdown-item" href="../articles/lmm_factor.html">Linear Mixed Models with Factor Structures</a>
+    <a class="dropdown-item" href="../articles/glmm_factor.html">Generalized Linear Mixed Models with Factor Structures</a>
     <a class="dropdown-item" href="../articles/lmm_heteroscedastic.html">Heteroscedastic Linear Mixed Models</a>
     <a class="dropdown-item" href="../articles/mixed_response.html">Models with Mixed Response Types</a>
-    <a class="dropdown-item" href="../articles/optimization.html">Optimization</a>
     <a class="dropdown-item" href="../articles/semiparametric.html">Semiparametric Latent Variable Modeling</a>
+    <div class="dropdown-divider"></div>
+    <h6 class="dropdown-header" data-toc-skip>Advanced topics</h6>
+    <a class="dropdown-item" href="../articles/optimization.html">Optimization</a>
   </div>
 </li>
       </ul>
@@ -92,53 +94,186 @@
 estimate linear mixed models with factor structures. Such models are an
 instance of the generalized linear latent and mixed models (GLLAMM)
 framework described by <span class="citation">Rabe-Hesketh, Skrondal,
-and Pickles (2004)</span>. The R package <code>PLmixed</code> <span class="citation">(Rockwood and Jeon 2019)</span> estimates such models
+and Pickles (2004)</span> and <span class="citation">Skrondal and
+Rabe-Hesketh (2004)</span>. The R package <a href="https://cran.r-project.org/package=PLmixed" class="external-link">PLmixed</a> <span class="citation">(Rockwood and Jeon 2019)</span> estimates such models
 using a profile likelihood algorithm initially proposed by <span class="citation">Jeon and Rabe-Hesketh (2012)</span>. The models are
 also a special case of generalized additive latent and mixed models
-(GALAMM), and in <code>galamm</code> these models are estimated using a
-more direct algorithm described in <span class="citation">Sørensen,
-Fjell, and Walhovd (2023)</span>.</p>
-<p>This vignette is completely based on the simulated datasets provided
-by <code>PLmixed</code> <span class="citation">(Rockwood and Jeon
-2019)</span>, which we refer to for all the details. The purpose of this
-vignette is to confirm that <code>galamm</code> gives the same results
-for these models, and to introduce the syntax. As will be clear if you
-run the code, <code>galamm</code> can often be considerably faster.</p>
+(GALAMM), and in galamm these models are estimated using a more direct
+algorithm described in <span class="citation">Sørensen, Fjell, and
+Walhovd (2023)</span>.</p>
+<p>The examples used in this vignette come from the simulated datasets
+provided by <a href="https://cran.r-project.org/package=PLmixed" class="external-link">PLmixed</a> <span class="citation">(Rockwood and Jeon 2019)</span>. The purpose of this
+vignette is to confirm that galamm gives the same results for these
+models, and to introduce the syntax. As will be clear if you run the
+code, galamm can often be considerably faster.</p>
 <div class="section level3">
-<h3 id="models-with-multiple-factors">Models with Multiple Factors<a class="anchor" aria-label="anchor" href="#models-with-multiple-factors"></a>
+<h3 id="crossed-random-effects-model-with-persistence-parameters">Crossed Random Effects Model with Persistence Parameters<a class="anchor" aria-label="anchor" href="#crossed-random-effects-model-with-persistence-parameters"></a>
 </h3>
 <p>This example comes from Section 3.1 in <span class="citation">Jeon
-and Rabe-Hesketh (2012)</span>.</p>
+and Rabe-Hesketh (2012)</span>, whose model was again based on <span class="citation">McCaffrey et al. (2004)</span>. The dataset
+<code>KYPSsim</code> comes from <a href="https://cran.r-project.org/package=PLmixed" class="external-link">PLmixed</a> and is a
+simulated version of the Korea Youth Panel Survey (KYPS) data.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">KYPSsim</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   mid hid sid time   esteem</span></span>
+<span><span class="co">#&gt; 1   1   1   1    1 2.759234</span></span>
+<span><span class="co">#&gt; 2   1   1   1    2 2.980368</span></span>
+<span><span class="co">#&gt; 3   1   1   1    3 3.130784</span></span>
+<span><span class="co">#&gt; 4   1   1   1    4 3.310306</span></span>
+<span><span class="co">#&gt; 5   2   1   2    1 2.924520</span></span>
+<span><span class="co">#&gt; 6   2   1   2    2 2.997440</span></span></code></pre></div>
+<p>Student self esteem (variable <code>esteem</code>) was assessed at
+four timepoints, the first two while the student attended middle school,
+and the second two while the student attended high school. The variables
+<code>mid</code> and <code>hid</code> represent the middle school and
+high school which a given student attended, and <code>sid</code> is the
+student identifier. The variable <code>time</code> indicates the given
+timepoint.</p>
+<p>We will use a discrete time model, and hence convert the time
+variable to a factor.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">KYPSsim</span><span class="op">$</span><span class="va">time</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">KYPSsim</span><span class="op">$</span><span class="va">time</span><span class="op">)</span></span>
-<span><span class="va">kyps.lam</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/levels.html" class="external-link">levels</a></span><span class="op">(</span><span class="va">KYPSsim</span><span class="op">$</span><span class="va">time</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "1" "2" "3" "4"</span></span></code></pre></div>
+<p>Since students attending a given middle school not necessarily attend
+the same high school, we have a model with crossed random effects. We
+use the model of <span class="citation">Jeon and Rabe-Hesketh
+(2012)</span>, whose measurement part can be formulated as</p>
+<p><span class="math display">\[
+y_{tsmh} = \beta_{0} + \sum_{t'=2}^{4} d_{tt'}\beta_{t'} +
+\mathbf{d}_{t}^{T} \left(\boldsymbol{\lambda}_{m}  \eta_{m} +
+\boldsymbol{\lambda}_{h}  \eta_{h}\right) + \eta_{s} + \epsilon_{tsmh},
+\]</span></p>
+<p>where <span class="math inline">\(\mathbf{d}_{t} =
+(d_{t1},d_{t2},d_{t3},d_{t4})^{T}\)</span> is a vector whose <span class="math inline">\(t\)</span>th element equals one and all other
+elements equal zero. <span class="math inline">\(\beta_{0}\)</span> is
+an intercept, and <span class="math inline">\(\beta_{2}\)</span>, <span class="math inline">\(\beta_{3}\)</span>, and <span class="math inline">\(\beta_{4}\)</span> are the effects of timepoints
+2, 3, and 4. <span class="math inline">\(\eta_{m}\)</span> and <span class="math inline">\(\eta_{h}\)</span> are the “teacher effects” of
+middle school <span class="math inline">\(m\)</span> and high school
+<span class="math inline">\(s\)</span>, respectively, <span class="math inline">\(\eta_{s}\)</span> is the latent level for student
+<span class="math inline">\(s\)</span>, and <span class="math inline">\(\epsilon_{tsmh}\)</span> is a residual term. <span class="math inline">\(\boldsymbol{\lambda}_{m}\)</span> and <span class="math inline">\(\boldsymbol{\lambda}_{h}\)</span> are factor
+loadings (called “persistence parameters” by <span class="citation">McCaffrey et al. (2004)</span> and <span class="citation">Jeon and Rabe-Hesketh (2012)</span>) specifying how the
+teacher effects for middle school and high school impact the self esteem
+measurement. Since students attend high school after middle school, the
+measurements of self esteem in middle school are assumed not to be
+affected by high school, and hence the first two elements of <span class="math inline">\(\boldsymbol{\lambda}_{h}\)</span> are set to zero.
+The first nonzero element is set to zero for identifiability, so we have
+<span class="math inline">\(\boldsymbol{\lambda}_{h} = (0, 0, 1,
+\lambda_{h4})^{T}\)</span>. Conversely, we allow for middle school to
+have an effect of measurements in high school, so <span class="math inline">\(\boldsymbol{\lambda}_{m} = (1, \lambda_{m2},
+\lambda_{m3}, \lambda_{m4})^{T}\)</span>, with the first element set to
+zero for identifiability. The residuals are assumed normally
+distributed, <span class="math inline">\(\epsilon_{tsmh} \sim N(0,
+\phi)\)</span>.</p>
+<p>Written out for each of the four timepoints, the model becomes</p>
+<p><span class="math display">\[
+\begin{aligned}
+y_{1smh} &amp;= \beta_{0} +  \eta_{m} + \eta_{s} + \epsilon_{1smh} \\
+y_{2smh} &amp;= \beta_{0} + \beta_{2} + \lambda_{m2}  \eta_{m} +
+\eta_{s} + \epsilon_{2smh} \\
+y_{3smh} &amp;= \beta_{0} + \beta_{3} + \lambda_{m3}  \eta_{m}
++  \eta_{h} + \eta_{s} + \epsilon_{3smh} \\
+y_{4smh} &amp;= \beta_{0} + \beta_{4} + \lambda_{m4}  \eta_{m} +
+\lambda_{h4}  \eta_{h} + \eta_{s} + \epsilon_{4smh}
+\end{aligned}
+\]</span></p>
+<p>The structural model is simply</p>
+<p><span class="math display">\[
+\begin{pmatrix}
+\eta_{m} \\
+\eta_{h} \\
+\eta_{s}
+\end{pmatrix}
+=
+\begin{pmatrix}
+\zeta_{m} \\
+\zeta_{h} \\
+\zeta_{s}
+\end{pmatrix}
+\sim
+N_{3}\left(\mathbf{0},
+\begin{bmatrix}
+\psi_{m} &amp; 0 &amp; 0 \\
+0 &amp; \psi_{h} &amp; 0 \\
+0 &amp; 0 &amp; \psi_{s}
+\end{bmatrix}
+\right),
+\]</span></p>
+<p>where <span class="math inline">\(N_{3}(a, b)\)</span> denotes a
+trivariate normal distribution with mean <span class="math inline">\(a\)</span> and covariance <span class="math inline">\(b\)</span>.</p>
+<p>In order to fit the model with galamm, we use the same syntax as
+PLmixed, and start by defining the loading matrix. The first column
+contains <span class="math inline">\(\boldsymbol{\lambda}_{m}\)</span>
+and the second column contains <span class="math inline">\(\boldsymbol{\lambda}_{h}\)</span>. Numerical
+values in this matrix means that the entry is fixed to the given value,
+whereas <code>NA</code> means that the value is unknown, and should be
+estimated. We enclose the matrix in a list, because potentially there
+can be multiple matrices, and then each should be a list element.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="op">(</span><span class="va">loading_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="fl">0</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="fl">1</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span></span>
+<span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [[1]]</span></span>
+<span><span class="co">#&gt;      [,1] [,2]</span></span>
+<span><span class="co">#&gt; [1,]    1    0</span></span>
+<span><span class="co">#&gt; [2,]   NA    0</span></span>
+<span><span class="co">#&gt; [3,]   NA    1</span></span>
+<span><span class="co">#&gt; [4,]   NA   NA</span></span></code></pre></div>
+<p>We connect the loading matrix to variables in the dataframe with the
+following list of factors. Since the list of loading matrices has only a
+single element, also the list of factors has only a single element,
+which is one character vector for each column in the loading matrix.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">factors</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ms"</span>, <span class="st">"hs"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>Finally, we define the loading variable. This is a variable
+connecting rows of the dataframe to rows of the loading matrices. In
+this case, for each value of <code>time</code>, the corresponding row of
+the loading matrix should be multiplied by the latent variables <span class="math inline">\(\eta_{m}\)</span> and <span class="math inline">\(\eta_{h}\)</span>, so we set it as follows:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">load.var</span> <span class="op">&lt;-</span> <span class="st">"time"</span></span></code></pre></div>
+<p>The model formula is specified as</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">form</span> <span class="op">&lt;-</span> <span class="va">esteem</span> <span class="op">~</span> <span class="va">time</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">ms</span> <span class="op">|</span> <span class="va">mid</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">hs</span> <span class="op">|</span> <span class="va">hid</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">sid</span><span class="op">)</span></span></code></pre></div>
+<p>We use lme4 syntax for random effects. For example, the term
+<code>(0 + ms | mid)</code> corresponds to <span class="math inline">\(\lambda_{mt}\eta_{m}\)</span>, where
+<code>| mid</code> specifies that <span class="math inline">\(\eta_{m}\)</span> should have a unique value for
+each unique <code>mid</code>. Since <code>"ms"</code> can be found in
+the <code>factors</code> defined above, this term should be treated
+specially, by making sure that the latent variable is multiplied by the
+factor loading corresponding to <code>"ms"</code> for each particular
+row. In contrast, the latent variable for students <span class="math inline">\(\eta_{s}\)</span> is a simple random intercept,
+and hence the term <code>(1 | sid)</code> suffices.</p>
+<p>We fit the model using <code>galamm</code> with the following
+call.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
+<span>  formula <span class="op">=</span> <span class="va">form</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">KYPSsim</span>,</span>
+<span>  factor <span class="op">=</span> <span class="va">factors</span>,</span>
+<span>  load.var <span class="op">=</span> <span class="va">load.var</span>,</span>
+<span>  lambda <span class="op">=</span> <span class="va">loading_matrix</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<p>The model could be fit with <code>PLmixed</code> using the following
+call with exactly the same arguments as to <code>galamm</code>. The
+reader is encouraged to try, and confirm that the results are
+essentially equivalent, but we won’t run it in this vignette as it takes
+5-10 minutes.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">kyps_plmixed</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/PLmixed/man/PLmixed.html" class="external-link">PLmixed</a></span><span class="op">(</span></span>
-<span>  formula <span class="op">=</span> <span class="va">esteem</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">time</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">hs</span> <span class="op">|</span> <span class="va">hid</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">ms</span> <span class="op">|</span> <span class="va">mid</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">sid</span><span class="op">)</span>,</span>
+<span>  formula <span class="op">=</span> <span class="va">form</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">KYPSsim</span>,</span>
-<span>  factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ms"</span>, <span class="st">"hs"</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  load.var <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"time"</span><span class="op">)</span>,</span>
-<span>  lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">kyps.lam</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">kyps_plmixed</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">kyps_model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
-<span>  formula <span class="op">=</span> <span class="va">esteem</span> <span class="op">~</span> <span class="va">time</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">hs</span> <span class="op">|</span> <span class="va">hid</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">ms</span> <span class="op">|</span> <span class="va">mid</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">sid</span><span class="op">)</span>,</span>
-<span>  data <span class="op">=</span> <span class="va">KYPSsim</span>,</span>
-<span>  factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ms"</span>, <span class="st">"hs"</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  load.var <span class="op">=</span> <span class="st">"time"</span>,</span>
-<span>  lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">kyps.lam</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">kyps_model</span><span class="op">)</span></span>
+<span>  factor <span class="op">=</span> <span class="va">factors</span>,</span>
+<span>  load.var <span class="op">=</span> <span class="va">load.var</span>,</span>
+<span>  lambda <span class="op">=</span> <span class="va">loading_matrix</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>Using galamm’s summary method, we can study the model output.</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Generalized additive latent and mixed model fit by maximum marginal likelihood.</span></span>
-<span><span class="co">#&gt; Formula: esteem ~ time + (0 + hs | hid) + (0 + ms | mid) + (1 | sid)</span></span>
+<span><span class="co">#&gt; Formula: esteem ~ time + (0 + ms | mid) + (0 + hs | hid) + (1 | sid)</span></span>
 <span><span class="co">#&gt;    Data: KYPSsim</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;      AIC      BIC   logLik deviance df.resid </span></span>
@@ -169,9 +304,125 @@ and Rabe-Hesketh (2012)</span>.</p>
 <span><span class="co">#&gt; time2         0.1184    0.01253   9.451 3.361e-21</span></span>
 <span><span class="co">#&gt; time3         0.1534    0.01607   9.547 1.339e-21</span></span>
 <span><span class="co">#&gt; time4         0.1924    0.01675  11.489 1.496e-30</span></span></code></pre></div>
+<p>We can look at the factor loadings specifically using the
+<code>factor_loadings</code> function. Perhaps not surprisingly, middle
+school teacher effects have a low impact on self esteem while the
+student attends high school, as can be seen by the last two rows of the
+“ms” column being very close to zero.</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/factor_loadings.galamm.html">factor_loadings</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span>
+<span><span class="co">#&gt;                 ms        SE       hs        SE</span></span>
+<span><span class="co">#&gt; lambda1 1.00000000        NA 0.000000        NA</span></span>
+<span><span class="co">#&gt; lambda2 0.87509297 0.1421073 0.000000        NA</span></span>
+<span><span class="co">#&gt; lambda3 0.04431734 0.1495679 1.000000        NA</span></span>
+<span><span class="co">#&gt; lambda4 0.02093658 0.1542824 1.501574 0.5040218</span></span></code></pre></div>
+<p>A diagnostic plot of residuals versus predicted values also looks
+acceptable, although there seems to be a slight upward trend.</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span></code></pre></div>
+<p><img src="lmm_factor_files/figure-html/unnamed-chunk-12-1.png" width="700"></p>
+<p>We can also compare the estimated model to a model with constrained
+factor loadings. In particular, we could assume that the teacher effect
+in middle school has no effect on self esteem measured during high
+school, by setting the last two elements of <span class="math inline">\(\boldsymbol{\lambda}_{m}\)</span> to zero. We
+would then have the following loading matrix.</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="op">(</span><span class="va">loading_matrix_constr1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="fl">0</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="cn">NA</span><span class="op">)</span></span>
+<span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [[1]]</span></span>
+<span><span class="co">#&gt;      [,1] [,2]</span></span>
+<span><span class="co">#&gt; [1,]    1    0</span></span>
+<span><span class="co">#&gt; [2,]   NA    0</span></span>
+<span><span class="co">#&gt; [3,]    0    1</span></span>
+<span><span class="co">#&gt; [4,]    0   NA</span></span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">mod_constr1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
+<span>  formula <span class="op">=</span> <span class="va">form</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">KYPSsim</span>,</span>
+<span>  factor <span class="op">=</span> <span class="va">factors</span>,</span>
+<span>  load.var <span class="op">=</span> <span class="va">load.var</span>,</span>
+<span>  lambda <span class="op">=</span> <span class="va">loading_matrix_constr1</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>We could further assume that the factor loadings at timepoints 1 and
+2 for middle school and at timepoints 3 and 4 for high schools are
+identical, which in practice would lead to a linear mixed model with no
+factors. One way of estimating this model is to define a new loading
+matrix:</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="op">(</span><span class="va">loading_matrix_constr2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [[1]]</span></span>
+<span><span class="co">#&gt;      [,1] [,2]</span></span>
+<span><span class="co">#&gt; [1,]    1    0</span></span>
+<span><span class="co">#&gt; [2,]    1    0</span></span>
+<span><span class="co">#&gt; [3,]    0    1</span></span>
+<span><span class="co">#&gt; [4,]    0    1</span></span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">mod_constr2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
+<span>  formula <span class="op">=</span> <span class="va">form</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">KYPSsim</span>,</span>
+<span>  factor <span class="op">=</span> <span class="va">factors</span>,</span>
+<span>  load.var <span class="op">=</span> <span class="va">load.var</span>,</span>
+<span>  lambda <span class="op">=</span> <span class="va">loading_matrix_constr2</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>Equivalently, we could create dummy variables for the timepoints:</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">KYPSsim</span><span class="op">$</span><span class="va">time12</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="va">KYPSsim</span><span class="op">$</span><span class="va">time</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span></span>
+<span><span class="va">KYPSsim</span><span class="op">$</span><span class="va">time34</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="va">KYPSsim</span><span class="op">$</span><span class="va">time</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fl">3</span><span class="op">:</span><span class="fl">4</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">KYPSsim</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   mid hid sid time   esteem time12 time34</span></span>
+<span><span class="co">#&gt; 1   1   1   1    1 2.759234      1      0</span></span>
+<span><span class="co">#&gt; 2   1   1   1    2 2.980368      1      0</span></span>
+<span><span class="co">#&gt; 3   1   1   1    3 3.130784      0      1</span></span>
+<span><span class="co">#&gt; 4   1   1   1    4 3.310306      0      1</span></span>
+<span><span class="co">#&gt; 5   2   1   2    1 2.924520      1      0</span></span>
+<span><span class="co">#&gt; 6   2   1   2    2 2.997440      1      0</span></span></code></pre></div>
+<p>We this formulation, we don’t need to specify the
+<code>factor</code>, <code>load.var</code>, and <code>lambda</code>
+arguments.</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">mod_constr2b</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
+<span>  formula <span class="op">=</span> <span class="va">esteem</span> <span class="op">~</span> <span class="va">time</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">time12</span> <span class="op">|</span> <span class="va">mid</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">time34</span> <span class="op">|</span> <span class="va">hid</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">sid</span><span class="op">)</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">KYPSsim</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>We can compare all four models using the <code>anova</code> member
+function. Reassuringly, the two ways of formulating the last model give
+identical results. Furthermore, this simplest model seems to be
+preferred over the two more complex models on this simulated
+dataset.</p>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/anova.html" class="external-link">anova</a></span><span class="op">(</span></span>
+<span>  <span class="va">mod</span>, <span class="va">mod_constr1</span>, <span class="va">mod_constr2</span>,</span>
+<span>  <span class="va">mod_constr2b</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; Data: KYPSsim</span></span>
+<span><span class="co">#&gt; Models:</span></span>
+<span><span class="co">#&gt; mod_constr2: esteem ~ time + (0 + ms | mid) + (0 + hs | hid) + (1 | sid)</span></span>
+<span><span class="co">#&gt; mod_constr2b: esteem ~ time + (0 + time12 | mid) + (0 + time34 | hid) + (1 | sid)</span></span>
+<span><span class="co">#&gt; mod_constr1: esteem ~ time + (0 + ms | mid) + (0 + hs | hid) + (1 | sid)</span></span>
+<span><span class="co">#&gt; mod: esteem ~ time + (0 + ms | mid) + (0 + hs | hid) + (1 | sid)</span></span>
+<span><span class="co">#&gt;              npar   AIC   BIC  logLik deviance   Chisq Df Pr(&gt;Chisq)   </span></span>
+<span><span class="co">#&gt; mod_constr2     8 19394 19452 -9688.9    19378                         </span></span>
+<span><span class="co">#&gt; mod_constr2b    8 19394 19452 -9688.9    19378  0.0000  0              </span></span>
+<span><span class="co">#&gt; mod_constr1    10 19397 19471 -9688.5    19377  0.6661  2   0.716735   </span></span>
+<span><span class="co">#&gt; mod            12 19388 19476 -9682.0    19364 13.1070  2   0.001425 **</span></span>
+<span><span class="co">#&gt; ---</span></span>
+<span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="multi-trait-multi-rater-model">Multi-Trait Multi-Rater Model<a class="anchor" aria-label="anchor" href="#multi-trait-multi-rater-model"></a>
+</h3>
 <p>The next is Example 1 in <span class="citation">Rockwood and Jeon
 (2019)</span>.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">JUDGEsim</span><span class="op">$</span><span class="va">item</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">JUDGEsim</span><span class="op">$</span><span class="va">item</span><span class="op">)</span></span>
 <span><span class="va">judge.lam</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span>,</span>
@@ -189,7 +440,7 @@ and Rabe-Hesketh (2012)</span>.</p>
 <span><span class="op">)</span></span></code></pre></div>
 <p>We could run it using <code>PLmixed</code> with the following syntax,
 but it takes hours.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">judge_plmixed</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/PLmixed/man/PLmixed.html" class="external-link">PLmixed</a></span><span class="op">(</span></span>
 <span>  <span class="va">response</span> <span class="op">~</span> <span class="fl">0</span> <span class="op">+</span> <span class="va">item</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">class</span><span class="op">)</span></span>
 <span>    <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">trait1.t</span> <span class="op">+</span> <span class="va">trait2.t</span> <span class="op">+</span> <span class="va">trait1.s</span> <span class="op">+</span> <span class="va">trait2.s</span> <span class="op">|</span> <span class="va">stu</span><span class="op">)</span></span>
@@ -206,7 +457,7 @@ but it takes hours.</p>
 <p>We get identical results using <code>galamm</code> in less than five
 minutes. However, since five minutes is a bit too much for a vignette,
 we don’t show the output here.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">judge_galamm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">response</span> <span class="op">~</span> <span class="fl">0</span> <span class="op">+</span> <span class="va">item</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">class</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">trait1.t</span> <span class="op">+</span> <span class="va">trait2.t</span> <span class="op">+</span> <span class="va">trait1.s</span> <span class="op">+</span> <span class="va">trait2.s</span> <span class="op">|</span> <span class="va">stu</span><span class="op">)</span> <span class="op">+</span></span>
@@ -226,7 +477,7 @@ we don’t show the output here.</p>
 <p>Finally, in their Example 2, <span class="citation">Rockwood and Jeon
 (2019)</span> consider a model which contains products of factor
 loadings. We start by preparing the data:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">time.lam</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span>, <span class="co"># Specify time lambda matrix</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="fl">0</span><span class="op">)</span>,</span>
@@ -243,7 +494,7 @@ loadings. We start by preparing the data:</p>
 <p>The model can be fitted using <code>PLmixed</code> as follows. Note
 that “ms”, “hs” and “lat.var” are factor, and that the formula contains
 products <code>hs:lat.var</code> and <code>ms:lat.var</code>.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">kyps.item.model</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/PLmixed/man/PLmixed.html" class="external-link">PLmixed</a></span><span class="op">(</span></span>
 <span>  <span class="va">response</span> <span class="op">~</span> <span class="fl">0</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">item</span><span class="op">)</span> <span class="op">+</span> <span class="va">lat.var</span><span class="op">:</span><span class="va">time2</span></span>
 <span>    <span class="op">+</span> <span class="va">lat.var</span><span class="op">:</span><span class="va">time3</span> <span class="op">+</span> <span class="va">lat.var</span><span class="op">:</span><span class="va">time4</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">hs</span><span class="op">:</span><span class="va">lat.var</span> <span class="op">|</span> <span class="va">hid</span><span class="op">)</span></span>
@@ -269,6 +520,12 @@ Generalized Linear Mixed Models With Factor Structures</span>.”</span>
 <em>Journal of Educational and Behavioral Statistics</em> 37 (4):
 518–42. <a href="https://doi.org/10.3102/1076998611417628" class="external-link">https://doi.org/10.3102/1076998611417628</a>.
 </div>
+<div id="ref-mccaffreyModelsValueAddedModeling2004" class="csl-entry">
+McCaffrey, Daniel F., J. R. Lockwood, Daniel Koretz, Thomas A. Louis,
+and Laura Hamilton. 2004. <span>“Models for <span>Value-Added
+Modeling</span> of <span>Teacher Effects</span>.”</span> <em>Journal of
+Educational and Behavioral Statistics</em> 29 (1): 67–101. <a href="https://doi.org/10.3102/10769986029001067" class="external-link">https://doi.org/10.3102/10769986029001067</a>.
+</div>
 <div id="ref-rabe-heskethGeneralizedMultilevelStructural2004" class="csl-entry">
 Rabe-Hesketh, Sophia, Anders Skrondal, and Andrew Pickles. 2004.
 <span>“Generalized Multilevel Structural Equation Modeling.”</span>
@@ -279,6 +536,12 @@ Rockwood, Nicholas J., and Minjeong Jeon. 2019. <span>“Estimating
 <span>Complex Measurement</span> and <span>Growth Models Using</span>
 the <span>R Package PLmixed</span>.”</span> <em>Multivariate Behavioral
 Research</em> 54 (2): 288–306. <a href="https://doi.org/10.1080/00273171.2018.1516541" class="external-link">https://doi.org/10.1080/00273171.2018.1516541</a>.
+</div>
+<div id="ref-skrondalGeneralizedLatentVariable2004" class="csl-entry">
+Skrondal, Anders, and Sophia Rabe-Hesketh. 2004. <em>Generalized Latent
+Variable Modeling</em>. Interdisciplinary <span>Statistics
+Series</span>. <span>Boca Raton, Florida</span>: <span>Chapman and
+Hall/CRC</span>.
 </div>
 <div id="ref-sorensenLongitudinalModelingAgeDependent2023" class="csl-entry">
 Sørensen, Øystein, Anders M. Fjell, and Kristine B. Walhovd. 2023.
