@@ -234,4 +234,3 @@ opt <- optim(par_init,
 expect_equal(
   opt$value, double_model$logLik
 )
-
