@@ -60,8 +60,10 @@ We can confirm that the lme function from the nlme package gives the same result
 
 ```{r}
 library(nlme)
-mod_nlme <- lme(y ~ x, data = hsced, random = list(id =~ 1),
-                weights = varIdent(form =~ 1 | item), method = "ML")
+mod_nlme <- lme(y ~ x,
+  data = hsced, random = list(id = ~1),
+  weights = varIdent(form = ~ 1 | item), method = "ML"
+)
 summary(mod_nlme)
 ```
 
