@@ -17,3 +17,10 @@ hsced <- tibble(
   as.data.frame()
 
 usethis::use_data(hsced, overwrite = TRUE)
+
+
+m1 <- lm(y ~ x, data = hsced, subset = hsced$item == 1)
+sigma(m1)
+
+m2 <- lm(y ~ x, data = hsced, subset = hsced$item == 2)
+sigma(m2)
