@@ -30,7 +30,7 @@ summary.galamm <- function(object, ...) {
   )
 
   if (!is.null(object$weights_obj)) {
-    ret$weights <- c(1, object$par[object$weights_inds])
+    ret$weights <- c(1, 1 / object$par[object$weights_inds])
     names(ret$weights) <- levels(object$weights_obj$flist[[1]])
   }
 

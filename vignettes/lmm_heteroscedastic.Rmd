@@ -1,6 +1,9 @@
 ---
 title: "Heteroscedastic Linear Mixed Models"
-output: rmarkdown::html_vignette
+output:
+  rmarkdown::html_vignette:
+    fig_width: 6
+    fig_height: 4
 bibliography: ../inst/REFERENCES.bib
 vignette: >
   %\VignetteIndexEntry{Heteroscedastic Linear Mixed Models}
@@ -18,6 +21,16 @@ knitr::opts_chunk$set(
 ```{r setup}
 library(galamm)
 ```
+
+At the moment, galamm supports group-wise heteroscedasticity in Gaussian response models. Referring to the model formulation outlined in the [introductory vignette](https://lcbc-uio.github.io/galamm/articles/introduction.html), the response model and nonlinear predictor can be easily combined in this particular case, to give
+
+$$
+y_{i} = \sum_{s=1}^{S} f_{s}\left(\mathbf{x}_{i}\right) + \sum_{l=2}^{L}\sum_{m=1}^{M_{l}} \eta_{m}^{(l)} \mathbf{z}^{(l)}_{im}{}^{'}\boldsymbol{\lambda}_{m}^{(l)} + \epsilon_{g(i)},
+$$
+
+where subscript $i$ refers to the $i$th elementary unit of observation, i.e., the $i$th row in the dataframe. $g(i)$ refers to the group to which the $i$th observation belongs, with each grouping having a separately estimated residual variance, $\epsilon_{g} \sim N(0, \sigma_{g}^{2})$.
+
+In the future, we plan to also support other types of residual terms, including autocorrelation and residuals that depend on continuous variables. Such features are currently supported by the R packages [nlme](https://cran.r-project.org/package=nlme) [@pinheiroMixedEffectsModelsSPLUS2000], [mgcv](https://cran.r-project.org/package=mgcv) [@woodGeneralizedAdditiveModels2017a], and [gamlss](https://cran.r-project.org/package=gamlss) [@rigbyGeneralizedAdditiveModels2005], however, of these only nlme provides computationally efficient estimation of mixed effects models with a large number of grouping levels, and only with strictly nested groups. If you are aware of other packages implementing such functionality, please [let us know](https://github.com/LCBC-UiO/galamm/issues).
 
 ## Group-Wise Heteroscedasticity
 
@@ -37,12 +50,45 @@ mod <- galamm(
 )
 ```
 
-The output shows that for item 2, the residual variance is half that of item 1.
+The output shows that for item 2, the residual variance is twice that of item 1.
 
 ```{r}
 summary(mod)
 ```
 
+We can confirm that the lme function from the nlme package gives the same result. It reports the multiplies on the standard deviation scale, so since $1.412369^2 = 1.995$, the results are identical.
+
+```{r}
+library(nlme)
+mod_nlme <- lme(y ~ x,
+  data = hsced, random = list(id = ~1),
+  weights = varIdent(form = ~ 1 | item), method = "ML"
+)
+summary(mod_nlme)
+```
+
+
+The diagnostic plot also looks good.
+
+```{r}
+plot(mod)
+```
+
+We can compare the model to one with homoscedastic residuals.
+
+```{r}
+mod0 <- galamm(
+  formula = y ~ x + (1 | id),
+  data = hsced
+)
+```
+
+
+Reassuringly, the correct model is chosen in this simple simulated case.
+
+```{r}
+anova(mod, mod0)
+```
 
 
 
