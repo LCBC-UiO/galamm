@@ -89,6 +89,31 @@
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/LCBC-UiO/galamm" class="external-link">galamm</a></span><span class="op">)</span></span></code></pre></div>
+<p>At the moment, galamm supports group-wise heteroscedasticity in
+Gaussian response models. Referring to the model formulation outlined in
+the <a href="https://lcbc-uio.github.io/galamm/articles/introduction.html">introductory
+vignette</a>, the response model and nonlinear predictor can be easily
+combined in this particular case, to give</p>
+<p><span class="math display">\[
+y_{i} = \sum_{s=1}^{S} f_{s}\left(\mathbf{x}_{i}\right) +
+\sum_{l=2}^{L}\sum_{m=1}^{M_{l}} \eta_{m}^{(l)}
+\mathbf{z}^{(l)}_{im}{}^{'}\boldsymbol{\lambda}_{m}^{(l)} +
+\epsilon_{g(i)},
+\]</span></p>
+<p>where subscript <span class="math inline">\(i\)</span> refers to the
+<span class="math inline">\(i\)</span>th elementary unit of observation,
+i.e., the <span class="math inline">\(i\)</span>th row in the dataframe.
+<span class="math inline">\(g(i)\)</span> refers to the group to which
+the <span class="math inline">\(i\)</span>th observation belongs, with
+each grouping having a separately estimated residual variance, <span class="math inline">\(\epsilon_{g} \sim N(0,
+\sigma_{g}^{2})\)</span>.</p>
+<p>In the future, we plan to also support other types of residual terms,
+including autocorrelation and residuals that depend on continuous
+variables. Such features are currently supported by the R packages <a href="https://cran.r-project.org/package=nlme" class="external-link">nlme</a> <span class="citation">(Pinheiro and Bates 2000)</span>, <a href="https://cran.r-project.org/package=mgcv" class="external-link">mgcv</a> <span class="citation">(Wood 2017)</span>, and <a href="https://cran.r-project.org/package=gamlss" class="external-link">gamlss</a> <span class="citation">(Rigby and Stasinopoulos 2005)</span>, however, of
+these only nlme provides computationally efficient estimation of mixed
+effects models with a large number of grouping levels, and only with
+strictly nested groups. If you are aware of other packages implementing
+such functionality, please <a href="https://github.com/LCBC-UiO/galamm/issues" class="external-link">let us know</a>.</p>
 <div class="section level3">
 <h3 id="group-wise-heteroscedasticity">Group-Wise Heteroscedasticity<a class="anchor" aria-label="anchor" href="#group-wise-heteroscedasticity"></a>
 </h3>
@@ -112,7 +137,7 @@ should be included per item.</p>
 <span>  weights <span class="op">=</span> <span class="op">~</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">item</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">hsced</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p>The output shows that for item 2, the residual variance is half that
+<p>The output shows that for item 2, the residual variance is twice that
 of item 1.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span>
@@ -135,17 +160,99 @@ of item 1.</p>
 <span><span class="co">#&gt; Number of obs: 1200, groups:  id, 200</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Variance function:</span></span>
-<span><span class="co">#&gt;      1      2 </span></span>
-<span><span class="co">#&gt; 1.0000 0.5013 </span></span>
+<span><span class="co">#&gt;     1     2 </span></span>
+<span><span class="co">#&gt; 1.000 1.995 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Fixed effects:</span></span>
 <span><span class="co">#&gt;             Estimate Std. Error t value  Pr(&gt;|t|)</span></span>
 <span><span class="co">#&gt; (Intercept)   0.1289     0.0992   1.299 1.938e-01</span></span>
 <span><span class="co">#&gt; x             0.7062     0.1212   5.826 5.681e-09</span></span></code></pre></div>
+<p>We can confirm that the lme function from the nlme package gives the
+same result. It reports the multiplies on the standard deviation scale,
+so since <span class="math inline">\(1.412369^2 = 1.995\)</span>, the
+results are identical.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://svn.r-project.org/R-packages/trunk/nlme/" class="external-link">nlme</a></span><span class="op">)</span></span>
+<span><span class="va">mod_nlme</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/nlme/man/lme.html" class="external-link">lme</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="va">x</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">hsced</span>, random <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>id <span class="op">=</span> <span class="op">~</span><span class="fl">1</span><span class="op">)</span>,</span>
+<span>  weights <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/nlme/man/varIdent.html" class="external-link">varIdent</a></span><span class="op">(</span>form <span class="op">=</span> <span class="op">~</span> <span class="fl">1</span> <span class="op">|</span> <span class="va">item</span><span class="op">)</span>, method <span class="op">=</span> <span class="st">"ML"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod_nlme</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Linear mixed-effects model fit by maximum likelihood</span></span>
+<span><span class="co">#&gt;   Data: hsced </span></span>
+<span><span class="co">#&gt;       AIC      BIC   logLik</span></span>
+<span><span class="co">#&gt;   4126.28 4151.731 -2058.14</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Random effects:</span></span>
+<span><span class="co">#&gt;  Formula: ~1 | id</span></span>
+<span><span class="co">#&gt;         (Intercept)  Residual</span></span>
+<span><span class="co">#&gt; StdDev:   0.9940033 0.9796423</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Variance function:</span></span>
+<span><span class="co">#&gt;  Structure: Different standard deviations per stratum</span></span>
+<span><span class="co">#&gt;  Formula: ~1 | item </span></span>
+<span><span class="co">#&gt;  Parameter estimates:</span></span>
+<span><span class="co">#&gt;        1        2 </span></span>
+<span><span class="co">#&gt; 1.000000 1.412369 </span></span>
+<span><span class="co">#&gt; Fixed effects:  y ~ x </span></span>
+<span><span class="co">#&gt;                 Value  Std.Error  DF  t-value p-value</span></span>
+<span><span class="co">#&gt; (Intercept) 0.1288960 0.09927455 999 1.298379  0.1945</span></span>
+<span><span class="co">#&gt; x           0.7062301 0.12130578 999 5.821899  0.0000</span></span>
+<span><span class="co">#&gt;  Correlation: </span></span>
+<span><span class="co">#&gt;   (Intr)</span></span>
+<span><span class="co">#&gt; x -0.624</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Standardized Within-Group Residuals:</span></span>
+<span><span class="co">#&gt;         Min          Q1         Med          Q3         Max </span></span>
+<span><span class="co">#&gt; -4.00355402 -0.60661607  0.02357892  0.60903083  3.06299731 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Number of Observations: 1200</span></span>
+<span><span class="co">#&gt; Number of Groups: 200</span></span></code></pre></div>
+<p>The diagnostic plot also looks good.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span></code></pre></div>
+<p><img src="lmm_heteroscedastic_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
+<p>We can compare the model to one with homoscedastic residuals.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">mod0</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
+<span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">x</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">hsced</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>Reassuringly, the correct model is chosen in this simple simulated
+case.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/anova.html" class="external-link">anova</a></span><span class="op">(</span><span class="va">mod</span>, <span class="va">mod0</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Data: hsced</span></span>
+<span><span class="co">#&gt; Models:</span></span>
+<span><span class="co">#&gt; mod0: y ~ x + (1 | id)</span></span>
+<span><span class="co">#&gt; mod: y ~ x + (1 | id)</span></span>
+<span><span class="co">#&gt;      npar    AIC    BIC  logLik deviance  Chisq Df Pr(&gt;Chisq)    </span></span>
+<span><span class="co">#&gt; mod0    4 4171.6 4191.9 -2081.8   4163.6                         </span></span>
+<span><span class="co">#&gt; mod     5 4126.3 4151.7 -2058.1   4116.3 47.281  1   6.15e-12 ***</span></span>
+<span><span class="co">#&gt; ---</span></span>
+<span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+<h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-pinheiroMixedEffectsModelsSPLUS2000" class="csl-entry">
+Pinheiro, Jose, and Douglas M Bates. 2000. <em>Mixed-<span>Effects
+Models</span> in <span>S</span> and <span>S-PLUS</span></em>. Statistics
+and <span>Computing</span>. <span>Springer</span>.
+</div>
+<div id="ref-rigbyGeneralizedAdditiveModels2005" class="csl-entry">
+Rigby, R. A., and D. M. Stasinopoulos. 2005. <span>“Generalized Additive
+Models for Location, Scale and Shape.”</span> <em>Journal of the Royal
+Statistical Society: Series C (Applied Statistics)</em> 54 (3): 507–54.
+<a href="https://doi.org/10.1111/j.1467-9876.2005.00510.x" class="external-link">https://doi.org/10.1111/j.1467-9876.2005.00510.x</a>.
+</div>
+<div id="ref-woodGeneralizedAdditiveModels2017a" class="csl-entry">
+Wood, Simon N. 2017. <em>Generalized Additive Models: <span>An</span>
+Introduction with <span>R</span></em>. 2nd ed. <span>Chapman and
+Hall/CRC</span>.
+</div>
+</div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>
