@@ -7,24 +7,30 @@ tests <- c(3, 2, 4)
 family <- c("gaussian", "binomial", "binomial")
 trials <- c(1, 1, 10)
 n <- 200
-lambda <- list(c(1, 1.4, .3),
-               c(1, 2),
-               c(1, 1, 1, 2))
+lambda <- list(
+  c(1, 1.4, .3),
+  c(1, 2),
+  c(1, 1, 1, 2)
+)
 
 # Residual standard deviation for Gaussian model
 sdeps1 <- .1
 
 f0 <- function(x) 2 * sin(pi * x)
 f1 <- function(x) exp(2 * x)
-f2 <- function(x) 0.2 * x^11 * (10 * (1 - x))^6 + 10 *
-  (10 * x)^3 * (1 - x)^10
+f2 <- function(x) {
+  0.2 * x^11 * (10 * (1 - x))^6 + 10 *
+    (10 * x)^3 * (1 - x)^10
+}
 
 funs <- list(f0, f1, f2)
 
 # Random intercept at the between-timepoint level
-covmat3 <- matrix(c(1, .3, .4,
-                    .3, 1, .5,
-                    .4, .5, 1), ncol = 3)
+covmat3 <- matrix(c(
+  1, .3, .4,
+  .3, 1, .5,
+  .4, .5, 1
+), ncol = 3)
 
 zeta3 <- rmvnorm(n, sigma = covmat3)
 colnames(zeta3) <- 1:3
@@ -41,7 +47,7 @@ cognition <- crossing(
     zeta2 = rnorm(nrow(.), sd = .5)
   ) %>%
   nest_by(domain, .keep = TRUE) %>%
-  pmap_dfr(function(domain, data){
+  pmap_dfr(function(domain, data) {
     data %>%
       mutate(linpred = funs[[!!as.integer(domain)]](x) + zeta2 + zeta3)
   }) %>%
@@ -55,9 +61,11 @@ cognition <- crossing(
     y = case_when(
       domain == 1 ~ rnorm(nrow(.), mean = loading * linpred, sd = sdeps1),
       domain == 2 ~ as.numeric(
-        rbinom(nrow(.), trials, prob = plogis(loading * linpred))),
+        rbinom(nrow(.), trials, prob = plogis(loading * linpred))
+      ),
       domain == 3 ~ as.numeric(
-        rbinom(nrow(.), trials, prob = plogis(loading * linpred))),
+        rbinom(nrow(.), trials, prob = plogis(loading * linpred))
+      ),
       TRUE ~ NA_real_
     )
   ) %>%
