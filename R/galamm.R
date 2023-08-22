@@ -29,6 +29,8 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
                    start = NULL, control = galamm_control()) {
   stopifnot(length(family) == length(unique(family_mapping)))
 
+  data <- as.data.frame(data)
+
   mc <- match.call()
   if (!is.list(family)) family <- list(family)
   family_list <- lapply(family, function(f) {

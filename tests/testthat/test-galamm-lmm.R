@@ -13,6 +13,24 @@ test_that("LMM with simple factor works", {
     factor = list(c("abil.sid")), lambda = list(irt.lam)
   )
 
+  # Must test that it works also with tibbles
+  class(IRTsub) <- c("tbl_df", "tbl", "data.frame")
+  mod1 <- galamm(
+    y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
+    data = IRTsub, load.var = c("item"),
+    factor = list(c("abil.sid")), lambda = list(irt.lam)
+  )
+
+  class(IRTsub) <- c("data.table", "data.frame")
+  mod2 <- galamm(
+    y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
+    data = IRTsub, load.var = c("item"),
+    factor = list(c("abil.sid")), lambda = list(irt.lam)
+  )
+
+  expect_equal(mod$hessian, mod1$hessian)
+  expect_equal(mod$hessian, mod2$hessian)
+
   expect_output(
     lme4::.prt.call(mod$call),
     "Formula: y ~ 0 + as.factor(item) + (0 + abil.sid | school/sid)",

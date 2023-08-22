@@ -82,3 +82,22 @@
 #' }
 #' @references \insertAllCited{}
 "hsced"
+
+#' Simulated Data with Measurements of Cognitive Abilities
+#'
+#' Simulated dataset mimicking the measurement of abilities in three cognitive
+#' domains.
+#'
+#' @format ## `cognition` A data frame with 14400 rows and 6 columns:
+#' \describe{
+#'   \item{id}{Subject ID.}
+#'   \item{domain}{Factor variable denoting the cognitive domain.}
+#'   \item{x}{Explanatory variable.}
+#'   \item{item}{Factor variable denoting the item within the tests of each
+#'   cognitive domain.}
+#'   \item{trials}{Number of trials, if applicable.}
+#'   \item{y}{Response variable. For domain 1 a real number, for domain 2 a
+#'   binomially distributed variable based on a single trial, for domain 3 the
+#'   number of successes in 10 binomial trials.}
+#' }
+"cognition"
