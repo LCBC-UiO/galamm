@@ -1,6 +1,10 @@
 ---
 title: "Semiparametric Latent Variable Modeling"
-output: rmarkdown::html_vignette
+output:
+  rmarkdown::html_vignette:
+    fig_width: 6
+    fig_height: 4
+bibliography: ../inst/REFERENCES.bib
 vignette: >
   %\VignetteIndexEntry{Semiparametric Latent Variable Modeling}
   %\VignetteEngine{knitr::rmarkdown}
@@ -18,4 +22,10 @@ knitr::opts_chunk$set(
 library(galamm)
 ```
 
-This vignette has not been written yet.
+## Latent Response Model
+
+
+## Latent Covariates Model
+
+
+# References

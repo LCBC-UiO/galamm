@@ -3,51 +3,28 @@
 \docType{data}
 \name{cognition}
 \alias{cognition}
-\title{Simulated Dataset on Lifespan Trajectories of Three Cognitive Domains}
+\title{Simulated Data with Measurements of Cognitive Abilities}
 \format{
-\subsection{\code{cognition} A data frame with 40834 rows and 13 columns:}{
+\subsection{\code{cognition} A data frame with 14400 rows and 6 columns:}{
 
 \describe{
 \item{id}{Subject ID.}
-\item{y}{Response value. For the Stroop tests, a standardized decimal number,
-for the CVLT and digit span tests, a whole number representing the number of successes.}
-\item{trials}{An integer representing the number of trials for each of the CVLT and digit
-span tests. For Stroop tests it has the number 16, but this is completely arbitrary, since
-it is not used with Gaussian response.}
-\item{itemgroup}{One of "cvlt", "digitspan", and "stroop", representing the
-group of items to which the current row belongs.}
-\item{test}{Name of the test, which belongs to the itemgroup.}
-\item{age}{Age at the time of the test.}
-\item{age_z}{Standardized age at the time of the test.}
-\item{itemgroup_retest}{Grouping variable for specifying retest effects.}
-\item{retest}{Dummy variable indicating whether this is a retest or not.}
-\item{timepoint}{Integer value representing the timepoint, starting at 1.}
+\item{domain}{Factor variable denoting the cognitive domain.}
+\item{x}{Explanatory variable.}
+\item{item}{Factor variable denoting the item within the tests of each
+cognitive domain.}
+\item{trials}{Number of trials, if applicable.}
+\item{y}{Response variable. For domain 1 a real number, for domain 2 a
+binomially distributed variable based on a single trial, for domain 3 the
+number of successes in 10 binomial trials.}
 }
 }
-}
-\source{
-\url{https://github.com/LCBC-UiO/galamm-scripts/}
 }
 \usage{
 cognition
 }
 \description{
-This is a simulated dataset based on the example in Section 4 of
-\insertCite{sorensenLongitudinalModelingAgeDependent2023;textual}{galamm}. It
-consists of data on three cognitive domains, episodic memory, working memory,
-and executive function, measured by three different tests. Each test consists
-of multiple measurements. Episodic memory is measured by the California
-Verbal Learning Test (CVLT)
-\insertCite{delisCVLTCaliforniaVerbal1987,delisCVLTCaliforniaVerbal2000}{galamm}
-with responses representing the number of successes in each trial, and
-integer between 0 and 16. Working memory is measured by digit span backward and
-forward tests \insertCite{blackburnRevisedAdministrationScoring1959,ostrosky-solisDigitSpanEffect2006}{galamm},
-also here with the responses being an integer between 0 and 16 representing
-the number of successes. Finally, executive function was measured by the Stroop
-test \insertCite{stroopStudiesInterferenceSerial1935}{galamm}, with the response
-being the time taken to complete the test.
-}
-\references{
-\insertAllCited{}
+Simulated dataset mimicking the measurement of abilities in three cognitive
+domains.
 }
 \keyword{datasets}
