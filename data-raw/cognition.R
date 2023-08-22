@@ -6,7 +6,8 @@ cognition$zeta_3 <- cognition$zeta_2 <- cognition$linpred <-
 
 cognition$y <- cognition$value_z
 cognition$value_z <- NULL
-cognition <- cognition[, c("id", "y", "trials", "itemgroup", "test", "age", "age_z",
-                           "itemgroup_retest", "retest", "timepoint")]
+cognition <- cognition[, c(
+  "id", "y", "trials", "itemgroup", "test", "age", "age_z",
+  "itemgroup_retest", "retest", "timepoint"
+)]
 usethis::use_data(cognition, overwrite = TRUE)
-
