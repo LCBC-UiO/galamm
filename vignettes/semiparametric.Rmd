@@ -20,12 +20,58 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(galamm)
+library(gamm4)
+library(ggplot2)
+theme_set(theme_bw())
 ```
 
-## Latent Response Model
+This vignette describes how to use galamm to estimate latent variable models with smooth terms. The examples are based on Section 4 and 5 in @sorensenLongitudinalModelingAgeDependent2023, but as we cannot share the data, we have instead simulated somewhat simpler datasets that will be used. We will gradually add complexity, starting with a simple generalized additive mixed.
+
+## Generalized Additive Models with Gaussian Responses
+
+The `cognition` dataset contains simulated data with measurements of abilities in three cognitive domains.
+
+```{r}
+head(cognition)
+```
+
+For this first example, we focus only on the first item measured for the first domain.
+
+```{r}
+dat <- subset(cognition, domain == 1 & item == 1)
+```
+
+Each subject in this dataset has been measured eight times, and we can plot the measurements as follows:
+
+```{r}
+ggplot(dat, aes(x = x, y = y, group = id)) + 
+  geom_point(size = .1) + 
+  geom_line(alpha = .3)
+```
+
+We use a generalized additive mixed model with random intercepts per subject to estimate the function relating $x$ to $y$. In terms of the model framework outlined in the [introductory vignette](https://lcbc-uio.github.io/galamm/articles/introduction.html), we model the $i$th response from the $j$th subject with
+
+$$
+y_{ij} = f(x_{ij}) + \eta_{j} + \epsilon_{ij}
+$$
+
+where $f(x_{ij})$ is a smooth function to be estimated, $\eta_{j} \sim N(0, \psi)$ is a random intercept, and $\epsilon_{ij} \sim N(0, \phi)$ is a residual term.
+
+This model can be estimated using gamm4 as follows:
+
+```{r}
+mod_gamm4 <- gamm4(y ~ s(x), random = ~(1 | id), data = dat)
+```
+
+The resulting estimated smooth term looks sensible.
+
+```{r}
+plot(mod_gamm4$gam)
+```
+
+With galamm we use similar argument, but the `random` specification is now part of the model formula.
 
 
-## Latent Covariates Model
 
 
 # References

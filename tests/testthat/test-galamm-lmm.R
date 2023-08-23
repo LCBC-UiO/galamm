@@ -8,7 +8,7 @@ test_that("LMM with simple factor works", {
   irt.lam <- matrix(c(1, NA, NA), ncol = 1) # Specify the lambda matrix
 
   mod <- galamm(
-    y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
+    formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
     data = IRTsub, load.var = c("item"),
     factor = list(c("abil.sid")), lambda = list(irt.lam)
   )

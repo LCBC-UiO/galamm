@@ -28,13 +28,13 @@ Imports:
     gamm4,
     lme4,
     Matrix,
-    mgcv,
     memoise,
     nlme,
     Rcpp,
     Rdpack,
     stats
 Depends:
+    mgcv,
     R (>= 3.5.0)
 LinkingTo:
     Rcpp,
@@ -44,6 +44,7 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 Suggests:
     covr,
+    ggplot2,
     knitr,
     PLmixed,
     rmarkdown,
