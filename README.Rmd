@@ -95,7 +95,7 @@ citation("galamm")
 
 ## Acknoweledgement
 
-Some parts of the code base for galamm has been derived from internal functions of [gamm4](https://cran.r-project.org/package=gamm4) (author: Simon Wood) and [lme4](https://cran.r-project.org/package=lme4) (authors: Douglas M. Bates, Martin Maechler, Ben Bolker, and Steve Walker). Places where this occurs have been marked with comments in the source code.
+Some parts of the code base for galamm has been derived from internal functions of [gamm4](https://cran.r-project.org/package=gamm4) (author: Simon Wood and Fabian Scheipl) and [lme4](https://cran.r-project.org/package=lme4) (authors: Douglas M. Bates, Martin Maechler, Ben Bolker, and Steve Walker). Places where this occurs have been marked with comments in the source code.
 
 ## Code of Conduct
 
