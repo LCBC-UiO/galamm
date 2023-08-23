@@ -33,6 +33,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   data <- as.data.frame(data)
 
   mc <- match.call()
+
   if (!is.list(family)) family <- list(family)
   family_list <- lapply(family, function(f) {
     if (is.character(f)) {
@@ -73,7 +74,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
     random = as.formula(paste("~", paste("(", lme4::findbars(formula), ")", collapse = "+"))),
     data = data)
   colnames(lmod$X) <- gsub("^X", "", colnames(lmod$X))
-  #lmod <- lme4::lFormula(formula = formula, data = data, REML = FALSE)
+
 
   response_obj <- matrix(nrow = nrow(lmod$X), ncol = 2)
   for (i in seq_along(family_list)) {

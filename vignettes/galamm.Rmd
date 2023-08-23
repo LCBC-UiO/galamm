@@ -110,11 +110,13 @@ We obtain maximum marginal likelihood estimates by maximizing $L\left(\boldsymbo
 
 ## Example Models 
 
-This section describes some example models from the GALAMM framework.
+To see how galamm is used in practice, take a look at the vignettes describing models with different components.
 
-### Covariate Measurement Error Model
-
-
+- [Linear mixed models with factor structures](https://lcbc-uio.github.io/galamm/articles/lmm_factor.html).
+- [Generalized linear mixed models with factor structures](https://lcbc-uio.github.io/galamm/articles/glmm_factor.html).
+- [Linear mixed models with heteroscedastic residuals](https://lcbc-uio.github.io/galamm/articles/lmm_heteroscedastic.html).
+- [Mixed models with mixed response types](https://lcbc-uio.github.io/galamm/articles/mixed_response.html).
+- [Generalized additive mixed models with factor structures](https://lcbc-uio.github.io/galamm/articles/semiparametric.html).
 
 
 # References
