@@ -44,8 +44,8 @@ dat <- subset(cognition, domain == 1 & item == 1)
 Each subject in this dataset has been measured eight times, and we can plot the measurements as follows:
 
 ```{r}
-ggplot(dat, aes(x = x, y = y, group = id)) + 
-  geom_point(size = .1) + 
+ggplot(dat, aes(x = x, y = y, group = id)) +
+  geom_point(size = .1) +
   geom_line(alpha = .3)
 ```
 
@@ -60,7 +60,7 @@ where $f(x_{ij})$ is a smooth function to be estimated, $\eta_{j} \sim N(0, \psi
 This model can be estimated using gamm4 as follows:
 
 ```{r}
-mod_gamm4 <- gamm4(y ~ s(x), random = ~(1 | id), data = dat)
+mod_gamm4 <- gamm4(y ~ s(x), random = ~ (1 | id), data = dat)
 ```
 
 The resulting estimated smooth term looks sensible.

@@ -27,7 +27,6 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
                    family_mapping = rep(1L, nrow(data)),
                    load.var = NULL, lambda = NULL, factor = NULL,
                    start = NULL, control = galamm_control()) {
-
   stopifnot(length(family) == length(unique(family_mapping)))
 
   data <- as.data.frame(data)
@@ -72,7 +71,8 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   lmod <- gamm4(
     lme4::nobars(formula),
     random = as.formula(paste("~", paste("(", lme4::findbars(formula), ")", collapse = "+"))),
-    data = data)
+    data = data
+  )
   colnames(lmod$X) <- gsub("^X", "", colnames(lmod$X))
 
 
