@@ -798,67 +798,77 @@ parametricPenalty <- function(pterms, assign, paraPen, sp0) {
 #' @return a value
 #' @author Simon Wood
 #'
-gam.side <- function(sm,Xp,tol=.Machine$double.eps^.5,with.pen=FALSE)
-  # works through a list of smooths, sm, aiming to identify nested or partially
-  # nested terms, and impose identifiability constraints on them.
-  # Xp is the parametric model matrix. It is needed in order to check whether
-  # there is a constant (or equivalent) in the model. If there is, then this needs
-  # to be included when working out side constraints, otherwise dependencies can be
-  # missed.
-  # Note that with.pen is quite extreme, since you then pretty much only pick
-  # up dependencies in the null spaces
-{ if (!with.pen) { ## check that's possible and reset if not!
-  with.pen <- nrow(Xp) < ncol(Xp) + sum(unlist(lapply(sm,function(x) ncol(x$X))))
-}
+gam.side <- function(sm, Xp, tol=.Machine$double.eps^.5, with.pen=FALSE)
+                     # works through a list of smooths, sm, aiming to identify nested or partially
+                     # nested terms, and impose identifiability constraints on them.
+                     # Xp is the parametric model matrix. It is needed in order to check whether
+                     # there is a constant (or equivalent) in the model. If there is, then this needs
+                     # to be included when working out side constraints, otherwise dependencies can be
+                     # missed.
+                     # Note that with.pen is quite extreme, since you then pretty much only pick
+# up dependencies in the null spaces
+{
+  if (!with.pen) { ## check that's possible and reset if not!
+    with.pen <- nrow(Xp) < ncol(Xp) + sum(unlist(lapply(sm, function(x) ncol(x$X))))
+  }
   m <- length(sm)
-  if (m==0) return(sm)
-  v.names<-array("",0);maxDim<-1
+  if (m == 0) {
+    return(sm)
+  }
+  v.names <- array("", 0)
+  maxDim <- 1
   for (i in 1:m) { ## collect all term names and max smooth `dim'
     vn <- sm[[i]]$term
     ## need to include by variables in names
-    if (sm[[i]]$by!="NA") vn <- paste(vn,sm[[i]]$by,sep="")
+    if (sm[[i]]$by != "NA") vn <- paste(vn, sm[[i]]$by, sep = "")
     ## need to distinguish levels of factor by variables...
-    if (!is.null(sm[[i]]$by.level))  vn <- paste(vn,sm[[i]]$by.level,sep="")
+    if (!is.null(sm[[i]]$by.level)) vn <- paste(vn, sm[[i]]$by.level, sep = "")
     sm[[i]]$vn <- vn ## use this record to identify variables from now
-    v.names <- c(v.names,vn)
+    v.names <- c(v.names, vn)
     if (sm[[i]]$dim > maxDim) maxDim <- sm[[i]]$dim
   }
   lv <- length(v.names)
   v.names <- unique(v.names)
-  if (lv == length(v.names)) return(sm) ## no repeats => no nesting
+  if (lv == length(v.names)) {
+    return(sm)
+  } ## no repeats => no nesting
 
   ## Only get this far if there is nesting.
   ## Need to test for intercept or equivalent in Xp
   intercept <- FALSE
   if (ncol(Xp)) {
     ## first check columns directly...
-    if (sum(apply(Xp,2,sd)<.Machine$double.eps^.75)>0) intercept <- TRUE else {
+    if (sum(apply(Xp, 2, sd) < .Machine$double.eps^.75) > 0) {
+      intercept <- TRUE
+    } else {
       ## no constant column, so need to check span of Xp...
-      f <- rep(1,nrow(Xp))
-      ff <- qr.fitted(qr(Xp),f)
-      if (max(abs(ff-f))<.Machine$double.eps^.75) intercept <- TRUE
+      f <- rep(1, nrow(Xp))
+      ff <- qr.fitted(qr(Xp), f)
+      if (max(abs(ff - f)) < .Machine$double.eps^.75) intercept <- TRUE
     }
   }
 
   sm.id <- as.list(v.names)
   names(sm.id) <- v.names
-  for (i in 1:length(sm.id)) sm.id[[i]]<-array(0,0)
+  for (i in 1:length(sm.id)) sm.id[[i]] <- array(0, 0)
   sm.dim <- sm.id
   for (d in 1:maxDim) {
     for (i in 1:m) {
-      if (sm[[i]]$dim==d&&sm[[i]]$side.constrain) for (j in 1:d) { ## work through terms
-        term<-sm[[i]]$vn[j]
-        a <- sm.id[[term]]
-        la <- length(a)+1
-        sm.id[[term]][la] <- i   ## record smooth i.d. for this variable
-        sm.dim[[term]][la] <- d  ## ... and smooth dim.
+      if (sm[[i]]$dim == d && sm[[i]]$side.constrain) {
+        for (j in 1:d) { ## work through terms
+          term <- sm[[i]]$vn[j]
+          a <- sm.id[[term]]
+          la <- length(a) + 1
+          sm.id[[term]][la] <- i ## record smooth i.d. for this variable
+          sm.dim[[term]][la] <- d ## ... and smooth dim.
+        }
       }
     }
   }
   ## so now each unique variable name has an associated array of
   ## the smooths of which it is an argument, arranged in ascending
   ## order of dimension. Smooths for which side.constrain==FALSE are excluded.
-  if (maxDim==1) warning("model has repeated 1-d smooths of same variable.")
+  if (maxDim == 1) warning("model has repeated 1-d smooths of same variable.")
 
   ## Now set things up to enable term specific model matrices to be
   ## augmented with square root penalties, on the fly...
@@ -869,89 +879,115 @@ gam.side <- function(sm,Xp,tol=.Machine$double.eps^.5,with.pen=FALSE)
       sm[[i]]$p.ind <- k:k1
       k <- k1 + 1
     }
-    np <- k-1 ## number of penalized parameters
+    np <- k - 1 ## number of penalized parameters
   }
   nobs <- nrow(sm[[1]]$X) ## number of observations
 
   for (d in 1:maxDim) { ## work up through dimensions
     for (i in 1:m) { ## work through smooths
-      if (sm[[i]]$dim == d&&sm[[i]]$side.constrain) { ## check for nesting
-        if (with.pen) X1 <- matrix(c(rep(1,nobs),rep(0,np)),nobs+np,as.integer(intercept)) else
-          X1 <- matrix(1,nobs,as.integer(intercept))
-        X1comp <- rep(0,0) ## list of components of X1 to avoid duplication
+      if (sm[[i]]$dim == d && sm[[i]]$side.constrain) { ## check for nesting
+        if (with.pen) {
+          X1 <- matrix(c(rep(1, nobs), rep(0, np)), nobs + np, as.integer(intercept))
+        } else {
+          X1 <- matrix(1, nobs, as.integer(intercept))
+        }
+        X1comp <- rep(0, 0) ## list of components of X1 to avoid duplication
         for (j in 1:d) { ## work through variables
           b <- sm.id[[sm[[i]]$vn[j]]] # list of smooths dependent on this variable
-          k <- (1:length(b))[b==i] ## locate current smooth in list
-          if (k>1) for (l in 1:(k-1)) if (!b[l] %in% X1comp) { ## collect X columns
-            X1comp <- c(X1comp,b[l]) ## keep track of components to avoid adding same one twice
-            if (with.pen) { ## need to use augmented model matrix in testing
-              if (is.null(sm[[b[l]]]$Xa)) sm[[b[l]]]$Xa <- augment.smX(sm[[b[l]]],nobs,np)
-              X1 <- cbind(X1,sm[[b[l]]]$Xa)
-            } else X1 <- cbind(X1,sm[[b[l]]]$X) ## penalties not considered
+          k <- (1:length(b))[b == i] ## locate current smooth in list
+          if (k > 1) {
+            for (l in 1:(k - 1)) {
+              if (!b[l] %in% X1comp) { ## collect X columns
+                X1comp <- c(X1comp, b[l]) ## keep track of components to avoid adding same one twice
+                if (with.pen) { ## need to use augmented model matrix in testing
+                  if (is.null(sm[[b[l]]]$Xa)) sm[[b[l]]]$Xa <- augment.smX(sm[[b[l]]], nobs, np)
+                  X1 <- cbind(X1, sm[[b[l]]]$Xa)
+                } else {
+                  X1 <- cbind(X1, sm[[b[l]]]$X)
+                } ## penalties not considered
+              }
+            }
           }
         } ## Now X1 contains columns for all lower dimensional terms
-        if (ncol(X1)==as.integer(intercept)) ind <- NULL else {
+        if (ncol(X1) == as.integer(intercept)) {
+          ind <- NULL
+        } else {
           if (with.pen) {
-            if (is.null(sm[[i]]$Xa)) sm[[i]]$Xa <- augment.smX(sm[[i]],nobs,np)
-            ind <- mgcv::fixDependence(X1,sm[[i]]$Xa,tol=tol)
-          } else ind <- mgcv::fixDependence(X1,sm[[i]]$X,tol=tol)
+            if (is.null(sm[[i]]$Xa)) sm[[i]]$Xa <- augment.smX(sm[[i]], nobs, np)
+            ind <- mgcv::fixDependence(X1, sm[[i]]$Xa, tol = tol)
+          } else {
+            ind <- mgcv::fixDependence(X1, sm[[i]]$X, tol = tol)
+          }
         }
         ## ... the columns to zero to ensure independence
         if (!is.null(ind)) {
-          sm[[i]]$X <- sm[[i]]$X[,-ind]
+          sm[[i]]$X <- sm[[i]]$X[, -ind]
           ## work through list of penalty matrices, applying constraints...
           nsmS <- length(sm[[i]]$S)
-          if (nsmS>0) for (j in nsmS:1) { ## working down so that dropping is painless
-            sm[[i]]$S[[j]] <- sm[[i]]$S[[j]][-ind,-ind]
-            if (sum(sm[[i]]$S[[j]]!=0)==0) rank <- 0 else
-              rank <- qr(sm[[i]]$S[[j]],tol=tol,LAPACK=FALSE)$rank
-            sm[[i]]$rank[j] <- rank ## replace previous rank with new rank
-            if (rank == 0) { ## drop the penalty
-              sm[[i]]$rank <- sm[[i]]$rank[-j]
-              sm[[i]]$S[[j]] <- NULL
-              sm[[i]]$S.scale <- sm[[i]]$S.scale[-j]
-              if (!is.null(sm[[i]]$L)) sm[[i]]$L <- sm[[i]]$L[-j,,drop=FALSE]
+          if (nsmS > 0) {
+            for (j in nsmS:1) { ## working down so that dropping is painless
+              sm[[i]]$S[[j]] <- sm[[i]]$S[[j]][-ind, -ind]
+              if (sum(sm[[i]]$S[[j]] != 0) == 0) {
+                rank <- 0
+              } else {
+                rank <- qr(sm[[i]]$S[[j]], tol = tol, LAPACK = FALSE)$rank
+              }
+              sm[[i]]$rank[j] <- rank ## replace previous rank with new rank
+              if (rank == 0) { ## drop the penalty
+                sm[[i]]$rank <- sm[[i]]$rank[-j]
+                sm[[i]]$S[[j]] <- NULL
+                sm[[i]]$S.scale <- sm[[i]]$S.scale[-j]
+                if (!is.null(sm[[i]]$L)) sm[[i]]$L <- sm[[i]]$L[-j, , drop = FALSE]
+              }
             }
           } ## penalty matrices finished
           ## Now we need to establish null space rank for the term
           mi <- length(sm[[i]]$S)
-          if (mi>0) {
-            St <- sm[[i]]$S[[1]]/norm(sm[[i]]$S[[1]],type="F")
-            if (mi>1) for (j in 1:mi) St <- St +
-                sm[[i]]$S[[j]]/norm(sm[[i]]$S[[j]],type="F")
-            es <- eigen(St,symmetric=TRUE,only.values=TRUE)
-            sm[[i]]$null.space.dim <- sum(es$values<max(es$values)*.Machine$double.eps^.75)
+          if (mi > 0) {
+            St <- sm[[i]]$S[[1]] / norm(sm[[i]]$S[[1]], type = "F")
+            if (mi > 1) {
+              for (j in 1:mi) {
+                St <- St +
+                  sm[[i]]$S[[j]] / norm(sm[[i]]$S[[j]], type = "F")
+              }
+            }
+            es <- eigen(St, symmetric = TRUE, only.values = TRUE)
+            sm[[i]]$null.space.dim <- sum(es$values < max(es$values) * .Machine$double.eps^.75)
           } ## rank found
 
           if (!is.null(sm[[i]]$L)) {
-            ind <- as.numeric(colSums(sm[[i]]$L!=0))!=0
-            sm[[i]]$L <- sm[[i]]$L[,ind,drop=FALSE] ## retain only those sps that influence something!
+            ind <- as.numeric(colSums(sm[[i]]$L != 0)) != 0
+            sm[[i]]$L <- sm[[i]]$L[, ind, drop = FALSE] ## retain only those sps that influence something!
           }
 
           sm[[i]]$df <- ncol(sm[[i]]$X)
-          attr(sm[[i]],"del.index") <- ind
+          attr(sm[[i]], "del.index") <- ind
           ## Now deal with case in which prediction constraints differ from fit constraints
           if (!is.null(sm[[i]]$Xp)) { ## need to get deletion indices under prediction parameterization
             ## Note that: i) it doesn't matter what the identifiability con on X1 is
             ##            ii) the degree of rank deficiency can't be changed by an identifiability con
             if (with.pen) {
-              smi <- sm[[i]]  ## clone smooth
+              smi <- sm[[i]] ## clone smooth
               smi$X <- smi$Xp ## copy prediction Xp to X slot.
               smi$S <- smi$Sp ## and make sure penalty parameterization matches.
-              Xpa <- augment.smX(smi,nobs,np)
-              ind <- mgcv::fixDependence(X1,Xpa,rank.def=length(ind))
-            } else ind <- mgcv::fixDependence(X1,sm[[i]]$Xp,rank.def=length(ind))
-            sm[[i]]$Xp <- sm[[i]]$Xp[,-ind,drop=FALSE]
-            attr(sm[[i]],"del.index") <- ind ## over-writes original
+              Xpa <- augment.smX(smi, nobs, np)
+              ind <- mgcv::fixDependence(X1, Xpa, rank.def = length(ind))
+            } else {
+              ind <- mgcv::fixDependence(X1, sm[[i]]$Xp, rank.def = length(ind))
+            }
+            sm[[i]]$Xp <- sm[[i]]$Xp[, -ind, drop = FALSE]
+            attr(sm[[i]], "del.index") <- ind ## over-writes original
           }
         }
         sm[[i]]$vn <- NULL
       } ## end if (sm[[i]]$dim == d)
     } ## end i in 1:m loop
   }
-  if (with.pen) for (i in 1:m) { ## remove working variables that were added
-    sm[[i]]$p.ind <- NULL
-    if (!is.null(sm[[i]]$Xa)) sm[[i]]$Xa <- NULL
+  if (with.pen) {
+    for (i in 1:m) { ## remove working variables that were added
+      sm[[i]]$p.ind <- NULL
+      if (!is.null(sm[[i]]$Xa)) sm[[i]]$Xa <- NULL
+    }
   }
   sm
 } ## gam.side
@@ -964,14 +1000,14 @@ gam.side <- function(sm,Xp,tol=.Machine$double.eps^.5,with.pen=FALSE)
 #' @return value
 #' @author Simon Wood
 #'
-clone.smooth.spec <- function(specb,spec) {
+clone.smooth.spec <- function(specb, spec) {
   ## produces a version of base smooth.spec, `specb', but with
   ## the variables relating to `spec'. Used by `gam.setup' in handling
   ## of linked smooths.
   ## check dimensions same...
-  if (specb$dim!=spec$dim) stop("`id' linked smooths must have same number of arguments")
+  if (specb$dim != spec$dim) stop("`id' linked smooths must have same number of arguments")
   ## Now start cloning...
-  if (inherits(specb,c("tensor.smooth.spec","t2.smooth.spec"))) { ##`te' or `t2' generated base smooth.spec
+  if (inherits(specb, c("tensor.smooth.spec", "t2.smooth.spec"))) { ## `te' or `t2' generated base smooth.spec
     specb$term <- spec$term
     specb$label <- spec$label
     specb$by <- spec$by
@@ -983,14 +1019,12 @@ clone.smooth.spec <- function(specb,spec) {
           k <- k + 1
         }
         specb$margin[[i]]$label <- ""
-
       } else { ## second term was at least `te'/`t2', so margin cloning is easy
         specb$margin[[i]]$term <- spec$margin[[i]]$term
         specb$margin[[i]]$label <- spec$margin[[i]]$label
         specb$margin[[i]]$xt <- spec$margin[[i]]$xt
       }
     }
-
   } else { ## `s' generated case
     specb$term <- spec$term
     specb$label <- spec$label
@@ -1010,24 +1044,26 @@ clone.smooth.spec <- function(specb,spec) {
 #' @return value
 #' @author Simon Wood
 #'
-augment.smX <- function(sm,nobs,np) {
+augment.smX <- function(sm, nobs, np) {
   ## augments a smooth model matrix with a square root penalty matrix for
   ## identifiability constraint purposes.
   ns <- length(sm$S) ## number of penalty matrices
-  if (ns==0) { ## nothing to do
-    return(rbind(sm$X,matrix(0,np,ncol(sm$X))))
+  if (ns == 0) { ## nothing to do
+    return(rbind(sm$X, matrix(0, np, ncol(sm$X))))
   }
-  ind <- colMeans(abs(sm$S[[1]]))!=0
-  sqrmaX  <- mean(abs(sm$X[,ind]))^2
-  alpha <- sqrmaX/mean(abs(sm$S[[1]][ind,ind]))
-  St <- sm$S[[1]]*alpha
-  if (ns>1) for (i in 2:ns) {
-    ind <- colMeans(abs(sm$S[[i]]))!=0
-    alpha <- sqrmaX/mean(abs(sm$S[[i]][ind,ind]))
-    St <- St +  sm$S[[i]]*alpha
+  ind <- colMeans(abs(sm$S[[1]])) != 0
+  sqrmaX <- mean(abs(sm$X[, ind]))^2
+  alpha <- sqrmaX / mean(abs(sm$S[[1]][ind, ind]))
+  St <- sm$S[[1]] * alpha
+  if (ns > 1) {
+    for (i in 2:ns) {
+      ind <- colMeans(abs(sm$S[[i]])) != 0
+      alpha <- sqrmaX / mean(abs(sm$S[[i]][ind, ind]))
+      St <- St + sm$S[[i]] * alpha
+    }
   }
-  rS <- mgcv::mroot(St,rank=ncol(St)) ## get sqrt of penalty
-  X <- rbind(sm$X,matrix(0,np,ncol(sm$X))) ## create augmented model matrix
-  X[nobs+sm$p.ind,] <- t(rS) ## add in
+  rS <- mgcv::mroot(St, rank = ncol(St)) ## get sqrt of penalty
+  X <- rbind(sm$X, matrix(0, np, ncol(sm$X))) ## create augmented model matrix
+  X[nobs + sm$p.ind, ] <- t(rS) ## add in
   X ## scaled augmented model matrix
 } ## augment.smX
