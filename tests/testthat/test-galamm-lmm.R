@@ -33,8 +33,10 @@ test_that("LMM with simple factor works", {
   expect_equal(mod$hessian, mod1$hessian)
   expect_equal(mod$hessian, mod2$hessian)
 
-  expect_equal(sd(ranef(mod)$school$abil.sid),
-               0.180652430814172)
+  expect_equal(
+    sd(ranef(mod)$school$abil.sid),
+    0.180652430814172
+  )
 
   expect_output(
     lme4::.prt.call(mod$call),
@@ -207,8 +209,6 @@ test_that("LMM with two raters works", {
     ),
     tolerance = 1e-4
   )
-
-
 })
 
 ## Commented out because it takes 5-10 minutes to run.

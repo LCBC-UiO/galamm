@@ -23,28 +23,35 @@ ranef.galamm <- function(object, ...) {
     cnms <- object$lmod$reTrms$cnms
     nc <- lengths(cnms) ## number of terms
     ## nb <- nc * lengths(levs)[asgn] ## number of cond modes per term
-    nb <- diff(object$lmod$reTrms$Gp)  ## differencing group index is more robust
+    nb <- diff(object$lmod$reTrms$Gp) ## differencing group index is more robust
     nbseq <- rep.int(seq_along(nb), nb)
     ml <- split(ans, nbseq)
-    for (i in seq_along(ml))
-      ml[[i]] <- matrix(ml[[i]], ncol = nc[i], byrow = TRUE,
-                        dimnames = list(NULL, cnms[[i]]))
+    for (i in seq_along(ml)) {
+      ml[[i]] <- matrix(ml[[i]],
+        ncol = nc[i], byrow = TRUE,
+        dimnames = list(NULL, cnms[[i]])
+      )
+    }
     ## create a list of data frames corresponding to factors
-    ans <- lapply(seq_along(fl),
-                  function(i) {
-                    m <- ml[asgn == i]
-                    b2 <- vapply(m,nrow,numeric(1))
-                    ub2 <- unique(b2)
-                    if (length(ub2)>1)
-                      stop("differing numbers of b per group")
-                    ## if number of sets of modes != number of levels (e.g. Gaussian process/phyloglmm),
-                    ##   generate numeric sequence for names
+    ans <- lapply(
+      seq_along(fl),
+      function(i) {
+        m <- ml[asgn == i]
+        b2 <- vapply(m, nrow, numeric(1))
+        ub2 <- unique(b2)
+        if (length(ub2) > 1) {
+          stop("differing numbers of b per group")
+        }
+        ## if number of sets of modes != number of levels (e.g. Gaussian process/phyloglmm),
+        ##   generate numeric sequence for names
 
-                    rnms <- if (ub2==length(levs[[i]])) levs[[i]] else seq(ub2)
-                    data.frame(do.call(cbind, m),
-                               row.names = rnms,
-                               check.names = FALSE)
-                  })
+        rnms <- if (ub2 == length(levs[[i]])) levs[[i]] else seq(ub2)
+        data.frame(do.call(cbind, m),
+          row.names = rnms,
+          check.names = FALSE
+        )
+      }
+    )
     names(ans) <- names(fl)
 
     # Have to implement covariance matrix for random effects later
