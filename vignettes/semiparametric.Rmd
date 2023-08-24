@@ -20,7 +20,6 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(galamm)
-library(gamm4)
 library(ggplot2)
 theme_set(theme_bw())
 ```
@@ -59,19 +58,35 @@ where $f(x_{ij})$ is a smooth function to be estimated, $\eta_{j} \sim N(0, \psi
 
 This model can be estimated using gamm4 as follows:
 
-```{r}
-mod_gamm4 <- gamm4(y ~ s(x), random = ~ (1 | id), data = dat)
+```{r, eval=FALSE}
+mod_gamm4 <- gamm4::gamm4(y ~ s(x), random = ~ (1 | id), data = dat, REML = FALSE)
 ```
 
 The resulting estimated smooth term looks sensible.
 
-```{r}
-plot(mod_gamm4$gam)
+```{r, eval=FALSE}
+summary(mod_gamm4$mer)
 ```
 
 With galamm we use similar argument, but the `random` specification is now part of the model formula.
 
+```{r}
+mod <- galamm(y ~ s(x) + (1 | id), data = dat)
+```
 
+
+```{r}
+formula <- y ~ s(x) + (1 | id)
+weights <- NULL
+data <- dat
+family <- gaussian
+family_mapping <- rep(1L, nrow(data))
+load.var <- NULL
+lambda <- NULL
+factor <- NULL
+start <- NULL
+control <- galamm_control()
+```
 
 
 # References

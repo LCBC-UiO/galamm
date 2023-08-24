@@ -21,8 +21,6 @@
 #' @return A model object
 #' @export
 #'
-#' @importFrom stats gaussian model.frame model.response pnorm qnorm vcov
-#' @importFrom Rdpack reprompt
 galamm <- function(formula, weights = NULL, data, family = gaussian,
                    family_mapping = rep(1L, nrow(data)),
                    load.var = NULL, lambda = NULL, factor = NULL,
@@ -68,18 +66,18 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
     }
   }
 
-  lmod <- gamm4(
+  gobj <- gamm4(
     lme4::nobars(formula),
     random = as.formula(paste("~", paste("(", lme4::findbars(formula), ")", collapse = "+"))),
     data = data
   )
+  lmod <- gobj$lmod
   colnames(lmod$X) <- gsub("^X", "", colnames(lmod$X))
-
 
   response_obj <- matrix(nrow = nrow(lmod$X), ncol = 2)
   for (i in seq_along(family_list)) {
     f <- family_list[[i]]
-    mf <- model.frame(nobars(formula), data = data[family_mapping == i, ])
+    mf <- model.frame(lme4::nobars(gobj$fake.formula), data = data[family_mapping == i, ])
     mr <- model.response(mf)
 
     if (f$family == "binomial" && !is.null(dim(mr))) {
@@ -94,7 +92,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   }
   rm(trials, response)
 
-  vars_in_fixed <- all.vars(lme4::nobars(formula)[-2])
+  vars_in_fixed <- all.vars(gobj$fake.formula[-2])
   factor_in_fixed <-
     vapply(factor, function(x) any(x %in% vars_in_fixed), TRUE)
   vars_in_random <-

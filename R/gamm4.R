@@ -1,7 +1,15 @@
-## Version of gamm using lme4 as fit engine. (c) Simon N. Wood 2009-20
-## Reparameterization trick as Wood (2004,2006).
-## fooling lmer using Fabian Scheipl's trick (now adapted for lme4 >1.0).
-
+#' Function to set up gamm4 model
+#'
+#' This function is derived from an internal function in the gamm4 package.
+#'
+#' @param formula formula
+#' @param pterms parametric terms
+#' @param data data
+#' @param knots knots
+#'
+#' @return model
+#' @author Simon N Wood
+#' @keywords internal
 gamm4.setup <- function(formula, pterms,
                         data = stop("No data supplied to gamm.setup"), knots = NULL)
                         ## set up the model matrix, penalty matrices and auxilliary information about the smoothing bases
@@ -18,7 +26,7 @@ gamm4.setup <- function(formula, pterms,
 {
   ## first simply call `gam.setup'....
 
-  G <- mgcv:::gam.setup(formula, pterms,
+  G <- gam.setup(formula, pterms,
     data = data, knots = knots, sp = NULL,
     min.sp = NULL, H = NULL, absorb.cons = TRUE, sparse.cons = 0, gamm.call = TRUE
   )
@@ -85,7 +93,7 @@ gamm4.setup <- function(formula, pterms,
         k <- length(xlab) + 1
         for (j in 1:ncol(rasm$Xf)) {
           xlab[k] <- Xfnames[j] <-
-            new.name(paste(sm$label, "Fx", j, sep = ""), xlab)
+            mgcv::new.name(paste(sm$label, "Fx", j, sep = ""), xlab)
           k <- k + 1
         }
         colnames(rasm$Xf) <- Xfnames
@@ -118,6 +126,27 @@ gamm4.setup <- function(formula, pterms,
 } ## end of gamm4.setup
 
 
+#' Internal function for setting up model
+#'
+#' @param formula formula
+#' @param random random part
+#' @param family model family
+#' @param data data
+#' @param weights weights
+#' @param subset subset
+#' @param na.action what to do
+#' @param knots know
+#' @param drop.unused.levels logical
+#' @param REML for Gaussian model
+#' @param control control
+#' @param start starting point
+#' @param verbose whether to blabla
+#' @param ... other arguments
+#'
+#' @return lmod object
+#'
+#' @author Simon Wood and Fabian Scheipl
+#'
 gamm4 <- function(formula, random = NULL, family = gaussian(), data = list(), weights = NULL,
                   subset = NULL, na.action, knots = NULL, drop.unused.levels = TRUE, REML = FALSE,
                   control = NULL, start = NULL, verbose = 0L, ...) {
@@ -134,7 +163,7 @@ gamm4 <- function(formula, random = NULL, family = gaussian(), data = list(), we
   }
 
   # create model frame.....
-  gp <- interpret.gam(formula) # interpret the formula
+  gp <- mgcv::interpret.gam(formula) # interpret the formula
 
   mf <- match.call(expand.dots = FALSE)
 
@@ -167,7 +196,7 @@ gamm4 <- function(formula, random = NULL, family = gaussian(), data = list(), we
   inp <- parse(text = paste("list(", paste(vars, collapse = ","), ")"))
   dl <- eval(inp, data, parent.frame())
   names(dl) <- vars ## list of all variables needed
-  var.summary <- mgcv:::variable.summary(gp$pf, dl, nrow(mf)) ## summarize the input data
+  var.summary <- variable.summary(gp$pf, dl, nrow(mf)) ## summarize the input data
 
   ## lmer offset handling work around...
   mvars <- vars[!vars %in% names(mf)] ## variables not in mf raw -- can cause lmer problem
@@ -197,9 +226,9 @@ gamm4 <- function(formula, random = NULL, family = gaussian(), data = list(), we
 
   offset.name <- attr(mf, "names")[attr(attr(mf, "terms"), "offset")]
 
-  yname <- new.name("y", names(mf))
+  yname <- mgcv::new.name("y", names(mf))
   eval(parse(text = paste("mf$", yname, "<-G$y", sep = "")))
-  Xname <- new.name("X", names(mf))
+  Xname <- mgcv::new.name("X", names(mf))
   eval(parse(text = paste("mf$", Xname, "<-G$X", sep = "")))
 
   lme4.formula <- paste(yname, "~", Xname, "-1")
@@ -251,5 +280,8 @@ gamm4 <- function(formula, random = NULL, family = gaussian(), data = list(), we
       b$reTrms$cnms[[k]] <- attr(G$random[[i]], "s.label")
     }
   }
-  b
+  list(
+    lmod = b,
+    fake.formula = gp$fake.formula
+  )
 } ## end of gamm4
