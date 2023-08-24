@@ -128,32 +128,18 @@ gamm4.setup <- function(formula, pterms,
 
 #' Internal function for setting up model
 #'
-#' @param formula formula
+#' @param fixed formula excluding lme4 style random effects but including smooths
 #' @param random random part
-#' @param family model family
 #' @param data data
-#' @param weights weights
-#' @param subset subset
-#' @param na.action what to do
-#' @param knots know
-#' @param drop.unused.levels logical
-#' @param REML for Gaussian model
-#' @param control control
-#' @param start starting point
-#' @param verbose whether to blabla
-#' @param ... other arguments
 #'
 #' @return lmod object
 #'
 #' @author Simon Wood and Fabian Scheipl
 #'
-gamm4 <- function(formula, random = NULL, family = gaussian(), data = list(), weights = NULL,
-                  subset = NULL, na.action, knots = NULL, drop.unused.levels = TRUE, REML = FALSE,
-                  control = NULL, start = NULL, verbose = 0L, ...) {
+gamm4 <- function(fixed, random = NULL, data = list()) {
   # Routine to fit a GAMM to some data. Fixed and smooth terms are defined in the formula, but the wiggly
   # parts of the smooth terms are treated as random effects. The onesided formula random defines additional
   # random terms.
-
 
   if (!is.null(random)) {
     if (!inherits(random, "formula")) stop("gamm4 requires `random' to be a formula")
@@ -163,14 +149,14 @@ gamm4 <- function(formula, random = NULL, family = gaussian(), data = list(), we
   }
 
   # create model frame.....
-  gp <- mgcv::interpret.gam(formula) # interpret the formula
+  gp <- mgcv::interpret.gam(fixed) # interpret the formula
 
   mf <- match.call(expand.dots = FALSE)
 
   mf$formula <- gp$fake.formula
-  mf$REML <- mf$verbose <- mf$control <- mf$start <- mf$family <- mf$scale <-
-    mf$knots <- mf$random <- mf$... <- NULL ## mf$weights?
-  mf$drop.unused.levels <- drop.unused.levels
+  mf$fixed <- NULL
+  mf$control <- mf$random <- NULL
+
   mf[[1]] <- as.name("model.frame")
   pmf <- mf
   gmf <- eval(mf, parent.frame()) # the model frame now contains all the data, for the gam part only
@@ -208,13 +194,7 @@ gamm4 <- function(formula, random = NULL, family = gaussian(), data = list(), we
   pmf <- eval(pmf, parent.frame()) # pmf contains all data for non-smooth part
   pTerms <- attr(pmf, "terms")
 
-  if (is.character(family)) family <- eval(parse(text = family))
-  if (is.function(family)) family <- family()
-  if (is.null(family$family)) stop("family not recognized")
-  if (family$family == "gaussian" && family$link == "identity") linear <- TRUE else linear <- FALSE
-  # now call gamm4.setup
-
-  G <- gamm4.setup(gp, pterms = pTerms, data = mf, knots = knots)
+  G <- gamm4.setup(gp, pterms = pTerms, data = mf)
 
   G$var.summary <- var.summary
 
@@ -259,15 +239,8 @@ gamm4 <- function(formula, random = NULL, family = gaussian(), data = list(), we
 
   lme4.formula <- as.formula(lme4.formula)
 
-  if (is.null(control)) control <- if (linear) lmerControl() else glmerControl()
-
   ## NOTE: further arguments should be passed here...
-  b <- if (linear) {
-    lFormula(lme4.formula, data = mf, weights = G$w, REML = REML, control = control, ...)
-  } else {
-    glFormula(lme4.formula, data = mf, family = family, weights = G$w, control = control, ...)
-  }
-
+  b <- lFormula(lme4.formula, data = mf, REML = FALSE)
 
   if (n.sr) { ## Fabian Scheipl's trick of overwriting dummy slots revised for new structure
     tn <- names(b$reTrms$cnms) ## names associated with columns of Z (same order as Gp)
@@ -282,6 +255,8 @@ gamm4 <- function(formula, random = NULL, family = gaussian(), data = list(), we
   }
   list(
     lmod = b,
+    G = G,
+    gam.terms = gam.terms,
     fake.formula = gp$fake.formula
   )
 } ## end of gamm4

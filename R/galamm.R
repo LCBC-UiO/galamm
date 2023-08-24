@@ -67,7 +67,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   }
 
   gobj <- gamm4(
-    lme4::nobars(formula),
+    fixed = lme4::nobars(formula),
     random = as.formula(paste("~", paste("(", lme4::findbars(formula), ")", collapse = "+"))),
     data = data
   )
@@ -266,11 +266,15 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   if (length(lambda_inds) > 1) {
     Zt@x <- c(1, opt$par[lambda_inds])[lambda_mapping_Zt + 2L]
   }
+
+  # Random effects in original parametrization
+  b <- Matrix::t(Lambdat) %*% final_model$u
+
   # Compute prediction
   preds <- vapply(family_list, function(fam) {
     fam$linkinv(
       as.numeric(X %*% opt$par[beta_inds] +
-        Matrix::t(Zt) %*% Matrix::t(Lambdat) %*% final_model$u)
+        Matrix::t(Zt) %*% b)
     )
   }, numeric(nrow(X)))
 
@@ -279,6 +283,8 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   }, i = seq_len(nrow(preds)), j = family_mapping))
 
   ret <- list()
+  ret$b <- b
+  ret$u <- final_model$u
   ret$lambda <- lambda
   ret$cnms <- lmod$reTrms$cnms
   ret$par_names <- c(
@@ -337,6 +343,60 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   ret$response <- response_obj[, 1]
 
   class(ret) <- "galamm"
+
+  ## Deal with smooth terms ----
+  # If there are smooth terms in the model, postprocess them
+  # This should eventually be a function, and it should be specified that this
+  # code is derived from gamm4, with author Simon Wood
+  # if(length(gobj$G$smooth) > 0){
+  #   object <- list(
+  #     smooth = gobj$G$smooth,
+  #     nsdf = gobj$G$nsdf,
+  #     df.null = nrow(gobj$G$X),
+  #     terms = gobj$gam.terms,
+  #     pterms = gobj$G$pterms,
+  #     xlevels = gobj$G$xlevels,
+  #     contrasts = gobj$G$contrasts,
+  #     assign = gobj$G$assign,
+  #     cmX = gobj$G$cmX,
+  #     var.summary = gobj$G$var.summary
+  #   )
+  #
+  #   pvars <- all.vars(delete.response(object$terms))
+  #   object$pred.formula <- if(length(pvars) > 0){
+  #     reformulate(pvars)
+  #   } else {
+  #     NULL
+  #   }
+  #
+  #   B <- Matrix::Matrix(0, ncol(gobj$G$Xf), ncol(gobj$G$Xf))
+  #   diag(B) <- 1
+  #   Xfp <- gobj$G$Xf
+  #
+  #   ## Transform  parameters back to the original space....
+  #   bf <- as.numeric(fixef(ret)) ## the fixed effects
+  #   br <- lme4::ranef(ret$mer) ## a named list
+  #   if (G$nsdf) p <- bf[1:G$nsdf] else p <- array(0,0) ## fixed parametric componet
+  #   if (G$m>0) for (i in 1:G$m) {
+  #     fx <- G$smooth[[i]]$fixed
+  #     first <- G$smooth[[i]]$first.f.para; last <- G$smooth[[i]]$last.f.para
+  #     if (first <=last) beta <- bf[first:last] else beta <- array(0,0)
+  #     if (fx) b <- beta else { ## not fixed so need to undo transform of random effects etc.
+  #       b <- rep(0,0)
+  #       for (k in 1:length(G$smooth[[i]]$lmer.name)) ## collect all coefs associated with this smooth
+  #         b <- c(b,as.numeric(br[[G$smooth[[i]]$lmer.name[k]]][[1]]))
+  #       b <- b[G$smooth[[i]]$rind] ## make sure coefs are in order expected by smooth
+  #       b <- c(b,beta)
+  #       b <- G$smooth[[i]]$trans.D*b
+  #       if (!is.null(G$smooth[[i]]$trans.U)) b <- G$smooth[[i]]$trans.U%*%b ## transform back to original
+  #     }
+  #     p <- c(p,b)
+  #
+  #   }
+
+
+
+
 
   ret
 }

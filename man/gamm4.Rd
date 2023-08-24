@@ -4,51 +4,14 @@
 \alias{gamm4}
 \title{Internal function for setting up model}
 \usage{
-gamm4(
-  formula,
-  random = NULL,
-  family = gaussian(),
-  data = list(),
-  weights = NULL,
-  subset = NULL,
-  na.action,
-  knots = NULL,
-  drop.unused.levels = TRUE,
-  REML = FALSE,
-  control = NULL,
-  start = NULL,
-  verbose = 0L,
-  ...
-)
+gamm4(fixed, random = NULL, data = list())
 }
 \arguments{
-\item{formula}{formula}
+\item{fixed}{formula excluding lme4 style random effects but including smooths}
 
 \item{random}{random part}
 
-\item{family}{model family}
-
 \item{data}{data}
-
-\item{weights}{weights}
-
-\item{subset}{subset}
-
-\item{na.action}{what to do}
-
-\item{knots}{know}
-
-\item{drop.unused.levels}{logical}
-
-\item{REML}{for Gaussian model}
-
-\item{control}{control}
-
-\item{start}{starting point}
-
-\item{verbose}{whether to blabla}
-
-\item{...}{other arguments}
 }
 \value{
 lmod object
