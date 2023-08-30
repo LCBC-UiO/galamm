@@ -52,6 +52,12 @@
     <loc>https://lcbc-uio.github.io/galamm/reference/anova.galamm.html</loc>
   </url>
   <url>
+    <loc>https://lcbc-uio.github.io/galamm/reference/augment.smX.html</loc>
+  </url>
+  <url>
+    <loc>https://lcbc-uio.github.io/galamm/reference/clone.smooth.spec.html</loc>
+  </url>
+  <url>
     <loc>https://lcbc-uio.github.io/galamm/reference/coef.galamm.html</loc>
   </url>
   <url>
@@ -88,6 +94,18 @@
     <loc>https://lcbc-uio.github.io/galamm/reference/galamm_control.html</loc>
   </url>
   <url>
+    <loc>https://lcbc-uio.github.io/galamm/reference/gam.setup.html</loc>
+  </url>
+  <url>
+    <loc>https://lcbc-uio.github.io/galamm/reference/gam.side.html</loc>
+  </url>
+  <url>
+    <loc>https://lcbc-uio.github.io/galamm/reference/gamm4.html</loc>
+  </url>
+  <url>
+    <loc>https://lcbc-uio.github.io/galamm/reference/gamm4.setup.html</loc>
+  </url>
+  <url>
     <loc>https://lcbc-uio.github.io/galamm/reference/hsced.html</loc>
   </url>
   <url>
@@ -109,6 +127,9 @@
     <loc>https://lcbc-uio.github.io/galamm/reference/optim_control.galamm_control.html</loc>
   </url>
   <url>
+    <loc>https://lcbc-uio.github.io/galamm/reference/parametricPenalty.html</loc>
+  </url>
+  <url>
     <loc>https://lcbc-uio.github.io/galamm/reference/plot.galamm.html</loc>
   </url>
   <url>
@@ -118,10 +139,16 @@
     <loc>https://lcbc-uio.github.io/galamm/reference/print.summary.galamm.html</loc>
   </url>
   <url>
+    <loc>https://lcbc-uio.github.io/galamm/reference/ranef.galamm.html</loc>
+  </url>
+  <url>
     <loc>https://lcbc-uio.github.io/galamm/reference/residuals.galamm.html</loc>
   </url>
   <url>
     <loc>https://lcbc-uio.github.io/galamm/reference/summary.galamm.html</loc>
+  </url>
+  <url>
+    <loc>https://lcbc-uio.github.io/galamm/reference/variable.summary.html</loc>
   </url>
   <url>
     <loc>https://lcbc-uio.github.io/galamm/reference/vcov.galamm.html</loc>

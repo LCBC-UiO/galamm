@@ -273,7 +273,7 @@ essentially equivalent, but we won’t run it in this vignette as it takes
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Generalized additive latent and mixed model fit by maximum marginal likelihood.</span></span>
-<span><span class="co">#&gt; Formula: esteem ~ time + (0 + ms | mid) + (0 + hs | hid) + (1 | sid)</span></span>
+<span><span class="co">#&gt; Formula: form</span></span>
 <span><span class="co">#&gt;    Data: KYPSsim</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;      AIC      BIC   logLik deviance df.resid </span></span>
@@ -405,10 +405,10 @@ dataset.</p>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; Data: KYPSsim</span></span>
 <span><span class="co">#&gt; Models:</span></span>
-<span><span class="co">#&gt; mod_constr2: esteem ~ time + (0 + ms | mid) + (0 + hs | hid) + (1 | sid)</span></span>
+<span><span class="co">#&gt; mod_constr2: form</span></span>
 <span><span class="co">#&gt; mod_constr2b: esteem ~ time + (0 + time12 | mid) + (0 + time34 | hid) + (1 | sid)</span></span>
-<span><span class="co">#&gt; mod_constr1: esteem ~ time + (0 + ms | mid) + (0 + hs | hid) + (1 | sid)</span></span>
-<span><span class="co">#&gt; mod: esteem ~ time + (0 + ms | mid) + (0 + hs | hid) + (1 | sid)</span></span>
+<span><span class="co">#&gt; mod_constr1: form</span></span>
+<span><span class="co">#&gt; mod: form</span></span>
 <span><span class="co">#&gt;              npar   AIC   BIC  logLik deviance   Chisq Df Pr(&gt;Chisq)   </span></span>
 <span><span class="co">#&gt; mod_constr2     8 19394 19452 -9688.9    19378                         </span></span>
 <span><span class="co">#&gt; mod_constr2b    8 19394 19452 -9688.9    19378  0.0000  0              </span></span>
