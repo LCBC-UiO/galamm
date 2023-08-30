@@ -11,20 +11,7 @@
 #' @author Simon N Wood
 #' @keywords internal
 gamm4.setup <- function(formula, pterms,
-                        data = stop("No data supplied to gamm.setup"), knots = NULL)
-                        ## set up the model matrix, penalty matrices and auxilliary information about the smoothing bases
-                        ## needed for a gamm4 fit.
-                        ## There is an implicit assumption that any rank deficient penalty does not penalize
-                        ## the constant term in a basis.
-                        ## 1. Calls gam.setup, as for a gam to produce object G suitable for estimating a gam.
-                        ## 2. Works through smooth list, G$smooth, modifying so that...
-                        ##    i) Smooths are reparameterized to have a sequence of (portion of) identity matrix
-                        ##       penalties.
-                        ##    ii) 'random' list is accumulated containing random effect model matrices for terms.
-                        ##    iii) Sparse version of full model matrix in original parameterization is also accumulated
-##    iv) Various indices are created for moving between the parameterizations.
-{
-  ## first simply call `gam.setup'....
+                        data = stop("No data supplied to gamm.setup"), knots = NULL) {
 
   G <- gam.setup(formula, pterms,
     data = data, knots = knots, sp = NULL,
@@ -73,9 +60,9 @@ gamm4.setup <- function(formula, pterms,
 
       ## now append random effects to main list
       n.para <- 0 ## count random coefficients
-      # rinc <- rind <- rep(0,0)
+
       if (!sm$fixed) {
-        for (k in 1:length(rasm$rand)) n.para <- n.para + ncol(rasm$rand[[k]])
+        for (k in seq_along(rasm$rand)) n.para <- n.para + ncol(rasm$rand[[k]])
         sm$lmer.name <- names(rasm$rand)
         random <- c(random, rasm$rand)
         sm$trans.D <- rasm$trans.D
@@ -91,7 +78,7 @@ gamm4.setup <- function(formula, pterms,
       if (ncol(rasm$Xf)) {
         Xfnames <- rep("", ncol(rasm$Xf))
         k <- length(xlab) + 1
-        for (j in 1:ncol(rasm$Xf)) {
+        for (j in seq_len(ncol(rasm$Xf))) {
           xlab[k] <- Xfnames[j] <-
             mgcv::new.name(paste(sm$label, "Fx", j, sep = ""), xlab)
           k <- k + 1
@@ -186,7 +173,7 @@ gamm4 <- function(fixed, random = NULL, data = list()) {
 
   ## lmer offset handling work around...
   mvars <- vars[!vars %in% names(mf)] ## variables not in mf raw -- can cause lmer problem
-  if (length(mvars) > 0) for (i in 1:length(mvars)) mf[[mvars[i]]] <- dl[[mvars[i]]] ## append raw versions to mf
+  if (length(mvars) > 0) for (i in seq_along(mvars)) mf[[mvars[i]]] <- dl[[mvars[i]]] ## append raw versions to mf
 
   rm(dl) ## save space
 
@@ -223,9 +210,8 @@ gamm4 <- function(fixed, random = NULL, data = list()) {
   ## Add the random effect dummy variables for the smooth
   r.name <- names(G$random)
   if (n.sr) {
-    for (i in 1:n.sr) # adding the constructed variables to the model frame avoiding name duplication
-    {
-      mf[[r.name[i]]] <- factor(rep(1:ncol(G$random[[i]]), length = nrow(G$random[[i]])))
+    for (i in 1:n.sr) {
+      mf[[r.name[i]]] <- factor(rep(seq_len(ncol(G$random[[i]])), length = nrow(G$random[[i]])))
       lme4.formula <- paste(lme4.formula, "+ (1|", r.name[i], ")")
     }
   }
@@ -244,7 +230,7 @@ gamm4 <- function(fixed, random = NULL, data = list()) {
 
   if (n.sr) { ## Fabian Scheipl's trick of overwriting dummy slots revised for new structure
     tn <- names(b$reTrms$cnms) ## names associated with columns of Z (same order as Gp)
-    ind <- 1:length(tn)
+    ind <- seq_along(tn)
     sn <- names(G$random) ## names of smooth random components
     for (i in 1:n.sr) { ## loop through random effect smooths
       k <- ind[sn[i] == tn] ## which term should contain G$random[[i]]

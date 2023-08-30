@@ -387,7 +387,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
           b <- beta
         } else { ## not fixed so need to undo transform of random effects etc.
           b <- rep(0, 0)
-          for (k in 1:length(gobj$G$smooth[[i]]$lmer.name)) { ## collect all coefs associated with this smooth
+          for (k in seq_along(gobj$G$smooth[[i]]$lmer.name)) { ## collect all coefs associated with this smooth
             b <- c(b, as.numeric(br[[gobj$G$smooth[[i]]$lmer.name[k]]][[1]]))
           }
           b <- b[gobj$G$smooth[[i]]$rind] ## make sure coefs are in order expected by smooth

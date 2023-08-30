@@ -22,7 +22,7 @@ ranef.galamm <- function(object, ...) {
     asgn <- attr(fl, "assign")
     cnms <- object$lmod$reTrms$cnms
     nc <- lengths(cnms) ## number of terms
-    ## nb <- nc * lengths(levs)[asgn] ## number of cond modes per term
+
     nb <- diff(object$lmod$reTrms$Gp) ## differencing group index is more robust
     nbseq <- rep.int(seq_along(nb), nb)
     ml <- split(ans, nbseq)

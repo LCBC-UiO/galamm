@@ -29,39 +29,7 @@ gam.setup <- function(formula, pterms,
                       data = stop("No data supplied to gam.setup"), knots = NULL, sp = NULL,
                       min.sp = NULL, H = NULL, absorb.cons = TRUE, sparse.cons = 0, select = FALSE, idLinksBases = TRUE,
                       scale.penalty = TRUE, paraPen = NULL, gamm.call = FALSE, drop.intercept = FALSE,
-                      diagonal.penalty = FALSE, apply.by = TRUE, list.call = FALSE, modCon = 0)
-                      ## set up the model matrix, penalty matrices and auxilliary information about the smoothing bases
-                      ## needed for a gam fit.
-                      ## elements of returned object:
-                      ## * m - number of smooths
-                      ## * min.sp - minimum smoothing parameters
-                      ## * H supplied H matrix
-                      ## * pearson.extra, dev.extra, n.true --- entries to hold these quantities
-                      ## * pterms - terms object for parametric terms
-                      ## * intercept TRUE if intercept present
-                      ## * offset - the model offset
-                      ## * nsdf - number of strictly parameteric coefs
-                      ## * contrasts
-                      ## * xlevels - records levels of factors
-                      ## * assign - indexes which parametric model matrix columns map to which term in pterms
-                      ## * smooth - list of smooths
-                      ## * S - penalties (non-zero block only)
-                      ## * off - first coef penalized by each element of S
-                      ## * cmX - col mean of X
-                      ## * P - maps parameters in fit constraint parameterization to those in prediction parameterization
-                      ## * X - model matrix
-                      ## * sp
-                      ## * rank
-                      ## * n.paraPen
-                      ## * L
-                      ## * lsp0
-                      ## * y - response
-                      ## * C - constraint matrix - only if absorb.cons==FALSE
-                      ## * n - dim(y)
-                      ## * w - weights
-                      ## * term.names
-## * nP
-{ # split the formula if the object being passed is a formula, otherwise it's already split
+                      diagonal.penalty = FALSE, apply.by = TRUE, list.call = FALSE, modCon = 0) {
 
   if (inherits(formula, "split.gam.formula")) {
     split <- formula
@@ -85,8 +53,7 @@ gam.setup <- function(formula, pterms,
 
   if (is.null(attr(data, "terms"))) { # then data is not a model frame
     mf <- model.frame(split$pf, data, drop.unused.levels = FALSE)
-  } # must be false or can end up with wrong prediction matrix!
-  else {
+  } else {
     mf <- data
   } # data is already a model frame
 
@@ -127,7 +94,7 @@ gam.setup <- function(formula, pterms,
   ## now deal with any user supplied penalties on the parametric part of the model...
   PP <- parametricPenalty(pterms, G$assign, paraPen, sp)
   if (!is.null(PP)) { ## strip out supplied sps already used
-    ind <- 1:length(PP$sp)
+    ind <- seq_along(PP$sp)
     if (!is.null(sp)) sp <- sp[-ind]
     if (!is.null(min.sp)) {
       PP$min.sp <- min.sp[ind]
@@ -165,7 +132,7 @@ gam.setup <- function(formula, pterms,
 
           ## note cbind deliberate in next line, as construction will handle matrix argument
           ## correctly...
-          for (j in 1:length(temp.term)) {
+          for (j in seq_along(temp.term)) {
             id.list[[id]]$data[[j]] <- cbind(
               id.list[[id]]$data[[j]],
               mgcv::get.var(temp.term[j], data, vecMat = FALSE)
@@ -177,7 +144,7 @@ gam.setup <- function(formula, pterms,
           ## need to collect together all data for which this basis will be used,
           ## for basis setup...
           term <- split$smooth.spec[[i]]$term
-          for (j in 1:length(term)) id.list[[id]]$data[[j]] <- mgcv::get.var(term[j], data, vecMat = FALSE)
+          for (j in seq_along(term)) id.list[[id]]$data[[j]] <- mgcv::get.var(term[j], data, vecMat = FALSE)
         } ## new id finished
       }
     }
@@ -209,11 +176,8 @@ gam.setup <- function(formula, pterms,
           diagonal.penalty = diagonal.penalty, apply.by = apply.by, modCon = modCon
         )
       }
-      # for (j in 1:length(sml)) {
-      #  newm <- newm + 1
-      #  sm[[newm]] <- sml[[j]]
-      # }
-      ind <- 1:length(sml)
+
+      ind <- seq_along(sml)
       sm[ind + newm] <- sml[ind]
       newm <- newm + length(sml)
     }
@@ -226,7 +190,7 @@ gam.setup <- function(formula, pterms,
   if (m > 0) {
     sm <- gam.side(sm, X, tol = .Machine$double.eps^.5)
     if (!apply.by) {
-      for (i in 1:length(sm)) { ## restore any by-free model matrices
+      for (i in seq_along(sm)) { ## restore any by-free model matrices
         if (!is.null(sm[[i]]$X0)) { ## there is a by-free matrix to restore
           ind <- attr(sm[[i]], "del.index") ## columns, if any to delete
           sm[[i]]$X <- if (is.null(ind)) sm[[i]]$X0 else sm[[i]]$X0[, -ind, drop = FALSE]
@@ -254,12 +218,12 @@ gam.setup <- function(formula, pterms,
         } else {
           Sname <- names(sm[[i]]$S)
           lspn <- if (is.null(Sname)) {
-            paste(sm[[i]]$label, 1:length.S, sep = "")
+            paste(sm[[i]]$label, seq_along.S, sep = "")
           } else {
             paste(sm[[i]]$label, Sname, sep = "")
           } ## names for all sp's
         }
-        spn <- lspn[1:ncol(Li)] ## names for actual working sps
+        spn <- lspn[seq_len(ncol(Li))] ## names for actual working sps
       }
 
       ## extend the global L matrix...
@@ -332,7 +296,7 @@ gam.setup <- function(formula, pterms,
   } else {
     G$cmX <- colMeans(Xp)
     ## transform from fit params to prediction params...
-    ## G$P <- qr.coef(qr(Xp),X) ## old code assumes always full rank!!
+
 
     qrx <- qr(Xp, LAPACK = TRUE)
     R <- qr.R(qrx)
@@ -357,8 +321,6 @@ gam.setup <- function(formula, pterms,
   ## rather than just the uncertainty in the fixed effects mean. This means
   ## incorporating the mean of random effects and unconstrained smooths. Hence
   ## comment out the following.
-  # if (G$nsdf>0) G$cmX[-(1:G$nsdf)] <- 0 ## zero the smooth parts here
-  # else G$cmX <- G$cmX * 0
   G$X <- X
   rm(X)
   n.p <- ncol(G$X)
@@ -388,7 +350,7 @@ gam.setup <- function(formula, pterms,
   } else {
     ok <- FALSE
   }
-  G$sp <- if (ok) sp[1:ncol(L)] else rep(-1, ncol(L))
+  G$sp <- if (ok) sp[seq_len(ncol(L))] else rep(-1, ncol(L))
 
   names(G$sp) <- sp.names
 
@@ -425,7 +387,7 @@ gam.setup <- function(formula, pterms,
   ## copy initial sp's back into smooth objects, so there is a record of
   ## fixed and free...
   k <- 1
-  if (length(idx)) for (i in 1:length(idx)) idx[[i]]$sp.done <- FALSE
+  if (length(idx)) for (i in seq_along(idx)) idx[[i]]$sp.done <- FALSE
   if (m > 0) {
     for (i in 1:m) { ## work through all smooths
       id <- sm[[i]]$id
@@ -448,7 +410,7 @@ gam.setup <- function(formula, pterms,
 
   if (!is.null(min.sp)) { # then minimum s.p.'s supplied
     if (length(min.sp) < nrow(L)) stop("length of min.sp is wrong.")
-    if (nrow(L) > 0) min.sp <- min.sp[1:nrow(L)]
+    if (nrow(L) > 0) min.sp <- min.sp[seq_len(nrow(L))]
     if (sum(is.na(min.sp))) stop("NA's in min.sp.")
     if (sum(min.sp < 0)) stop("elements of min.sp must be non negative.")
   }
@@ -459,7 +421,7 @@ gam.setup <- function(formula, pterms,
     for (i in 1:m) {
       sm <- G$smooth[[i]]
       if (length(sm$S) > 0) {
-        for (j in 1:length(sm$S)) { # work through penalty matrices
+        for (j in seq_along(sm$S)) { # work through penalty matrices
           k.sp <- k.sp + 1
           G$off[k.sp] <- sm$first.para
           G$S[[k.sp]] <- sm$S[[j]]
@@ -489,7 +451,7 @@ gam.setup <- function(formula, pterms,
     G$n.paraPen <- length(PP$off)
     if (!is.null(PP$min.sp)) { ## deal with minimum sps
       if (is.null(H)) H <- matrix(0, n.p, n.p)
-      for (i in 1:length(PP$S)) {
+      for (i in seq_along(PP$S)) {
         ind <- PP$off[i]:(PP$off[i] + ncol(PP$S[[i]]) - 1)
         H[ind, ind] <- H[ind, ind] + PP$min.sp[i] * PP$S[[i]]
       }
@@ -507,16 +469,16 @@ gam.setup <- function(formula, pterms,
   if (sum(fix.ind)) {
     lsp0 <- G$sp[fix.ind]
     ind <- lsp0 == 0 ## find the zero s.p.s
-    ef0 <- indi <- (1:length(ind))[ind]
+    ef0 <- indi <- (seq_along(ind))[ind]
     if (length(indi) > 0) {
-      for (i in 1:length(indi)) {
+      for (i in seq_along(indi)) {
         ## find "effective zero" to replace each zero s.p. with
         ii <- G$off[i]:(G$off[i] + ncol(G$S[[i]]) - 1)
         ef0[i] <- norm(G$X[, ii], type = "F")^2 / norm(G$S[[i]], type = "F") * .Machine$double.eps * .1
       }
     }
     lsp0[!ind] <- log(lsp0[!ind])
-    lsp0[ind] <- log(ef0) ## log(.Machine$double.xmin)*1000 ## zero fudge
+    lsp0[ind] <- log(ef0)
     lsp0 <- as.numeric(L[, fix.ind, drop = FALSE] %*% lsp0)
 
     L <- L[, !fix.ind, drop = FALSE]
@@ -549,13 +511,11 @@ gam.setup <- function(formula, pterms,
       }
       rm(C)
     }
-  } ## absorb.cons == FALSE
+  }
 
   G$y <- drop(data[[split$response]])
   ydim <- dim(G$y)
   if (!is.null(ydim) && length(ydim) < 2) dim(G$y) <- NULL
-
-  ## data[[deparse(split$full.formula[[2]],backtick=TRUE)]]
 
   G$n <- nrow(data)
 
@@ -616,29 +576,10 @@ gam.setup <- function(formula, pterms,
 #' @author Simon Wood
 #'
 variable.summary <- function(pf, dl, n) {
-  ## routine to summarize all the variables in dl, which is a list
-  ## containing raw input variables to a model (i.e. no functions applied)
-  ## pf is a formula containing the strictly parametric part of the
-  ## model for the variables in dl. A list is returned, with names given by
-  ## the variables. For variables in the parametric part, then the list elements
-  ## may be:
-  ## * a 1 column matrix with elements set to the column medians, if variable
-  ##   is a matrix.
-  ## * a 3 figure summary (min,median,max) for a numeric variable.
-  ## * a factor variable, with the most commonly occuring factor (all levels)
-  ## --- classes are as original data type, but anything not numeric, factor or matrix
-  ## is coerced to numeric.
-  ## For non-parametric variables, any matrices are coerced to numeric, otherwise as
-  ## parametric.
-  ## medians in the above are always observed values (to deal with variables coerced to
-  ## factors in the model formulae in a nice way).
-  ## variables with less than `n' entries are discarded
   v.n <- length(dl)
-  ## if (v.n) for (i in 1:v.n) if (length(dl[[i]])<n) dl[[i]] <- NULL
 
   v.name <- v.name1 <- names(dl)
-  if (v.n) ## need to strip out names of any variables that are too short.
-    {
+  if (v.n) {
       k <- 0 ## counter for retained variables
       for (i in 1:v.n) {
         if (length(dl[[i]]) >= n) {
@@ -649,7 +590,7 @@ variable.summary <- function(pf, dl, n) {
       if (k > 0) v.name <- v.name[1:k] else v.name <- rep("", k)
     }
 
-  ## v.name <- names(dl)    ## the variable names
+
   p.name <- all.vars(pf[-2]) ## variables in parametric part (not response)
   vs <- list()
   v.n <- length(v.name)
@@ -666,7 +607,7 @@ variable.summary <- function(pf, dl, n) {
           x <- x[!is.na(x)]
           lx <- levels(x)
           freq <- tabulate(x)
-          ii <- min((1:length(lx))[freq == max(freq)])
+          ii <- min((seq_along(lx))[freq == max(freq)])
           x <- factor(lx[ii], levels = lx)
         } else {
           x <- as.numeric(x)
@@ -693,10 +634,6 @@ variable.summary <- function(pf, dl, n) {
 #' @author Simon Wood
 #'
 parametricPenalty <- function(pterms, assign, paraPen, sp0) {
-  ## routine to process any penalties on the parametric part of the model.
-  ## paraPen is a list whose items have names corresponding to the
-  ## term.labels in pterms. Each list item may have named elements
-  ## L, rank and sp. All other elements should be penalty coefficient matrices.
   S <- list() ## penalty matrix list
   off <- rep(0, 0) ## offset array
   rank <- rep(0, 0) ## rank array
@@ -712,7 +649,7 @@ parametricPenalty <- function(pterms, assign, paraPen, sp0) {
         term.label <- attr(pterms[tind[j]], "term.label")
         P <- paraPen[[term.label]] ## get any penalty information for this term
         if (!is.null(P)) { ## then there is information
-          ind <- (1:length(assign))[assign == tind[j]] ## index of coefs involved here
+          ind <- (seq_along(assign))[assign == tind[j]] ## index of coefs involved here
           Li <- P$L
           P$L <- NULL
           spi <- P$sp
@@ -775,12 +712,10 @@ parametricPenalty <- function(pterms, assign, paraPen, sp0) {
   }
   if (!is.null(sp0)) {
     if (length(sp0) < length(sp)) stop("`sp' too short")
-    sp0 <- sp0[1:length(sp)]
+    sp0 <- sp0[seq_along(sp)]
     sp[sp < 0] <- sp0[sp < 0]
   }
-  ## S is list of penalty matrices, off[i] is index of first coefficient penalized by each S[[i]]
-  ## sp is array of underlying smoothing parameter (-ve to estimate), L is matrix mapping log
-  ## underlying smoothing parameters to log smoothing parameters, rank[i] is the rank of S[[i]].
+
   list(S = S, off = off, sp = sp, L = L, rank = rank, full.sp.names = full.sp.names)
 } ## parametricPenalty
 
@@ -798,16 +733,7 @@ parametricPenalty <- function(pterms, assign, paraPen, sp0) {
 #' @return a value
 #' @author Simon Wood
 #'
-gam.side <- function(sm, Xp, tol = .Machine$double.eps^.5, with.pen = FALSE)
-                     # works through a list of smooths, sm, aiming to identify nested or partially
-                     # nested terms, and impose identifiability constraints on them.
-                     # Xp is the parametric model matrix. It is needed in order to check whether
-                     # there is a constant (or equivalent) in the model. If there is, then this needs
-                     # to be included when working out side constraints, otherwise dependencies can be
-                     # missed.
-                     # Note that with.pen is quite extreme, since you then pretty much only pick
-# up dependencies in the null spaces
-{
+gam.side <- function(sm, Xp, tol = .Machine$double.eps^.5, with.pen = FALSE) {
   if (!with.pen) { ## check that's possible and reset if not!
     with.pen <- nrow(Xp) < ncol(Xp) + sum(unlist(lapply(sm, function(x) ncol(x$X))))
   }
@@ -850,7 +776,7 @@ gam.side <- function(sm, Xp, tol = .Machine$double.eps^.5, with.pen = FALSE)
 
   sm.id <- as.list(v.names)
   names(sm.id) <- v.names
-  for (i in 1:length(sm.id)) sm.id[[i]] <- array(0, 0)
+  for (i in seq_along(sm.id)) sm.id[[i]] <- array(0, 0)
   sm.dim <- sm.id
   for (d in 1:maxDim) {
     for (i in 1:m) {
@@ -894,7 +820,7 @@ gam.side <- function(sm, Xp, tol = .Machine$double.eps^.5, with.pen = FALSE)
         X1comp <- rep(0, 0) ## list of components of X1 to avoid duplication
         for (j in 1:d) { ## work through variables
           b <- sm.id[[sm[[i]]$vn[j]]] # list of smooths dependent on this variable
-          k <- (1:length(b))[b == i] ## locate current smooth in list
+          k <- (seq_along(b))[b == i] ## locate current smooth in list
           if (k > 1) {
             for (l in 1:(k - 1)) {
               if (!b[l] %in% X1comp) { ## collect X columns
@@ -1001,10 +927,6 @@ gam.side <- function(sm, Xp, tol = .Machine$double.eps^.5, with.pen = FALSE)
 #' @author Simon Wood
 #'
 clone.smooth.spec <- function(specb, spec) {
-  ## produces a version of base smooth.spec, `specb', but with
-  ## the variables relating to `spec'. Used by `gam.setup' in handling
-  ## of linked smooths.
-  ## check dimensions same...
   if (specb$dim != spec$dim) stop("`id' linked smooths must have same number of arguments")
   ## Now start cloning...
   if (inherits(specb, c("tensor.smooth.spec", "t2.smooth.spec"))) { ## `te' or `t2' generated base smooth.spec
@@ -1012,9 +934,9 @@ clone.smooth.spec <- function(specb, spec) {
     specb$label <- spec$label
     specb$by <- spec$by
     k <- 1
-    for (i in 1:length(specb$margin)) {
+    for (i in seq_along(specb$margin)) {
       if (is.null(spec$margin)) { ## sloppy user -- have to construct margin info...
-        for (j in 1:length(specb$margin[[i]]$term)) {
+        for (j in seq_along(specb$margin[[i]]$term)) {
           specb$margin[[i]]$term[j] <- spec$term[k]
           k <- k + 1
         }
@@ -1031,8 +953,8 @@ clone.smooth.spec <- function(specb, spec) {
     specb$by <- spec$by
     specb$xt <- spec$xt ## don't generally know what's in here => don't clone
   }
-  specb ## return clone
-} ## clone.smooth.spec
+  specb
+}
 
 
 #' Internal function from mgcv
@@ -1045,8 +967,6 @@ clone.smooth.spec <- function(specb, spec) {
 #' @author Simon Wood
 #'
 augment.smX <- function(sm, nobs, np) {
-  ## augments a smooth model matrix with a square root penalty matrix for
-  ## identifiability constraint purposes.
   ns <- length(sm$S) ## number of penalty matrices
   if (ns == 0) { ## nothing to do
     return(rbind(sm$X, matrix(0, np, ncol(sm$X))))
