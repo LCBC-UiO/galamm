@@ -798,7 +798,7 @@ parametricPenalty <- function(pterms, assign, paraPen, sp0) {
 #' @return a value
 #' @author Simon Wood
 #'
-gam.side <- function(sm, Xp, tol=.Machine$double.eps^.5, with.pen=FALSE)
+gam.side <- function(sm, Xp, tol = .Machine$double.eps^.5, with.pen = FALSE)
                      # works through a list of smooths, sm, aiming to identify nested or partially
                      # nested terms, and impose identifiability constraints on them.
                      # Xp is the parametric model matrix. It is needed in order to check whether

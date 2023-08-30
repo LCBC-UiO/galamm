@@ -348,51 +348,74 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   # If there are smooth terms in the model, postprocess them
   # This should eventually be a function, and it should be specified that this
   # code is derived from gamm4, with author Simon Wood
-  # if(length(gobj$G$smooth) > 0){
-  #   object <- list(
-  #     smooth = gobj$G$smooth,
-  #     nsdf = gobj$G$nsdf,
-  #     df.null = nrow(gobj$G$X),
-  #     terms = gobj$gam.terms,
-  #     pterms = gobj$G$pterms,
-  #     xlevels = gobj$G$xlevels,
-  #     contrasts = gobj$G$contrasts,
-  #     assign = gobj$G$assign,
-  #     cmX = gobj$G$cmX,
-  #     var.summary = gobj$G$var.summary
-  #   )
-  #
-  #   pvars <- all.vars(delete.response(object$terms))
-  #   object$pred.formula <- if(length(pvars) > 0){
-  #     reformulate(pvars)
-  #   } else {
-  #     NULL
-  #   }
-  #
-  #   B <- Matrix::Matrix(0, ncol(gobj$G$Xf), ncol(gobj$G$Xf))
-  #   diag(B) <- 1
-  #   Xfp <- gobj$G$Xf
-  #
-  #   ## Transform  parameters back to the original space....
-  #   bf <- as.numeric(fixef(ret)) ## the fixed effects
-  #   br <- lme4::ranef(ret$mer) ## a named list
-  #   if (G$nsdf) p <- bf[1:G$nsdf] else p <- array(0,0) ## fixed parametric componet
-  #   if (G$m>0) for (i in 1:G$m) {
-  #     fx <- G$smooth[[i]]$fixed
-  #     first <- G$smooth[[i]]$first.f.para; last <- G$smooth[[i]]$last.f.para
-  #     if (first <=last) beta <- bf[first:last] else beta <- array(0,0)
-  #     if (fx) b <- beta else { ## not fixed so need to undo transform of random effects etc.
-  #       b <- rep(0,0)
-  #       for (k in 1:length(G$smooth[[i]]$lmer.name)) ## collect all coefs associated with this smooth
-  #         b <- c(b,as.numeric(br[[G$smooth[[i]]$lmer.name[k]]][[1]]))
-  #       b <- b[G$smooth[[i]]$rind] ## make sure coefs are in order expected by smooth
-  #       b <- c(b,beta)
-  #       b <- G$smooth[[i]]$trans.D*b
-  #       if (!is.null(G$smooth[[i]]$trans.U)) b <- G$smooth[[i]]$trans.U%*%b ## transform back to original
-  #     }
-  #     p <- c(p,b)
-  #
-  #   }
+  if (length(gobj$G$smooth) > 0) {
+    object <- list(
+      smooth = gobj$G$smooth,
+      nsdf = gobj$G$nsdf,
+      df.null = nrow(gobj$G$X),
+      terms = gobj$gam.terms,
+      pterms = gobj$G$pterms,
+      xlevels = gobj$G$xlevels,
+      contrasts = gobj$G$contrasts,
+      assign = gobj$G$assign,
+      cmX = gobj$G$cmX,
+      var.summary = gobj$G$var.summary
+    )
+
+    pvars <- all.vars(delete.response(object$terms))
+    object$pred.formula <- if (length(pvars) > 0) {
+      reformulate(pvars)
+    } else {
+      NULL
+    }
+
+    B <- Matrix::Matrix(0, ncol(gobj$G$Xf), ncol(gobj$G$Xf))
+    diag(B) <- 1
+    Xfp <- gobj$G$Xf
+
+    ## Transform  parameters back to the original space....
+    bf <- as.numeric(fixef(ret)) ## the fixed effects
+    br <- ranef(ret) ## a named list
+    if (gobj$G$nsdf) p <- bf[1:gobj$G$nsdf] else p <- array(0, 0) ## fixed parametric componet
+    if (gobj$G$m > 0) {
+      for (i in 1:gobj$G$m) {
+        fx <- gobj$G$smooth[[i]]$fixed
+        first <- gobj$G$smooth[[i]]$first.f.para
+        last <- gobj$G$smooth[[i]]$last.f.para
+        if (first <= last) beta <- bf[first:last] else beta <- array(0, 0)
+        if (fx) {
+          b <- beta
+        } else { ## not fixed so need to undo transform of random effects etc.
+          b <- rep(0, 0)
+          for (k in 1:length(gobj$G$smooth[[i]]$lmer.name)) { ## collect all coefs associated with this smooth
+            b <- c(b, as.numeric(br[[gobj$G$smooth[[i]]$lmer.name[k]]][[1]]))
+          }
+          b <- b[gobj$G$smooth[[i]]$rind] ## make sure coefs are in order expected by smooth
+          b <- c(b, beta)
+          b <- gobj$G$smooth[[i]]$trans.D * b
+          if (!is.null(gobj$G$smooth[[i]]$trans.U)) b <- gobj$G$smooth[[i]]$trans.U %*% b ## transform back to original
+        }
+        p <- c(p, b)
+
+        ## now fill in B...
+        ind <- gobj$G$smooth[[i]]$first.para:gobj$G$smooth[[i]]$last.para
+        if (!fx) {
+          D <- gobj$G$smooth[[i]]$trans.D
+          if (is.null(gobj$G$smooth[[i]]$trans.U)) {
+            B[ind, ind] <- Diagonal(length(D), D)
+          } else {
+            B[ind, ind] <- t(D * t(gobj$G$smooth[[i]]$trans.U))
+          }
+        }
+        ## and finally transform G$Xf into fitting parameterization...
+        Xfp[, ind] <- gobj$G$Xf[, ind, drop = FALSE] %*% B[ind, ind, drop = FALSE]
+      }
+    }
+
+    object$coefficients <- p
+
+    # At this point I have to implement a VarCorr.galamm method
+  }
 
 
 
