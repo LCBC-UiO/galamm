@@ -30,7 +30,6 @@ gam.setup <- function(formula, pterms,
                       min.sp = NULL, H = NULL, absorb.cons = TRUE, sparse.cons = 0, select = FALSE, idLinksBases = TRUE,
                       scale.penalty = TRUE, paraPen = NULL, gamm.call = FALSE, drop.intercept = FALSE,
                       diagonal.penalty = FALSE, apply.by = TRUE, list.call = FALSE, modCon = 0) {
-
   if (inherits(formula, "split.gam.formula")) {
     split <- formula
   } else if (inherits(formula, "formula")) {
@@ -580,15 +579,15 @@ variable.summary <- function(pf, dl, n) {
 
   v.name <- v.name1 <- names(dl)
   if (v.n) {
-      k <- 0 ## counter for retained variables
-      for (i in 1:v.n) {
-        if (length(dl[[i]]) >= n) {
-          k <- k + 1
-          v.name[k] <- v.name1[i] ## save names of variables of correct length
-        }
+    k <- 0 ## counter for retained variables
+    for (i in 1:v.n) {
+      if (length(dl[[i]]) >= n) {
+        k <- k + 1
+        v.name[k] <- v.name1[i] ## save names of variables of correct length
       }
-      if (k > 0) v.name <- v.name[1:k] else v.name <- rep("", k)
     }
+    if (k > 0) v.name <- v.name[1:k] else v.name <- rep("", k)
+  }
 
 
   p.name <- all.vars(pf[-2]) ## variables in parametric part (not response)

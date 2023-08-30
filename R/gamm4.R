@@ -12,7 +12,6 @@
 #' @keywords internal
 gamm4.setup <- function(formula, pterms,
                         data = stop("No data supplied to gamm.setup"), knots = NULL) {
-
   G <- gam.setup(formula, pterms,
     data = data, knots = knots, sp = NULL,
     min.sp = NULL, H = NULL, absorb.cons = TRUE, sparse.cons = 0, gamm.call = TRUE
