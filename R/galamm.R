@@ -21,8 +21,6 @@
 #' @return A model object
 #' @export
 #'
-#' @importFrom stats gaussian model.frame model.response pnorm qnorm vcov
-#' @importFrom Rdpack reprompt
 galamm <- function(formula, weights = NULL, data, family = gaussian,
                    family_mapping = rep(1L, nrow(data)),
                    load.var = NULL, lambda = NULL, factor = NULL,
@@ -32,6 +30,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   data <- as.data.frame(data)
 
   mc <- match.call()
+
   if (!is.list(family)) family <- list(family)
   family_list <- lapply(family, function(f) {
     if (is.character(f)) {
@@ -67,13 +66,18 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
     }
   }
 
-  lmod <- lme4::lFormula(formula = formula, data = data, REML = FALSE)
-  mc$formula <- lmod$formula
+  gobj <- gamm4(
+    fixed = lme4::nobars(formula),
+    random = as.formula(paste("~", paste("(", lme4::findbars(formula), ")", collapse = "+"))),
+    data = data
+  )
+  lmod <- gobj$lmod
+  colnames(lmod$X) <- gsub("^X", "", colnames(lmod$X))
 
   response_obj <- matrix(nrow = nrow(lmod$X), ncol = 2)
   for (i in seq_along(family_list)) {
     f <- family_list[[i]]
-    mf <- model.frame(nobars(formula), data = data[family_mapping == i, ])
+    mf <- model.frame(lme4::nobars(gobj$fake.formula), data = data[family_mapping == i, ])
     mr <- model.response(mf)
 
     if (f$family == "binomial" && !is.null(dim(mr))) {
@@ -88,7 +92,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   }
   rm(trials, response)
 
-  vars_in_fixed <- all.vars(lme4::nobars(formula)[-2])
+  vars_in_fixed <- all.vars(gobj$fake.formula[-2])
   factor_in_fixed <-
     vapply(factor, function(x) any(x %in% vars_in_fixed), TRUE)
   vars_in_random <-
@@ -262,11 +266,15 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   if (length(lambda_inds) > 1) {
     Zt@x <- c(1, opt$par[lambda_inds])[lambda_mapping_Zt + 2L]
   }
+
+  # Random effects in original parametrization
+  b <- Matrix::t(Lambdat) %*% final_model$u
+
   # Compute prediction
   preds <- vapply(family_list, function(fam) {
     fam$linkinv(
       as.numeric(X %*% opt$par[beta_inds] +
-        Matrix::t(Zt) %*% Matrix::t(Lambdat) %*% final_model$u)
+        Matrix::t(Zt) %*% b)
     )
   }, numeric(nrow(X)))
 
@@ -275,6 +283,8 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   }, i = seq_len(nrow(preds)), j = family_mapping))
 
   ret <- list()
+  ret$b <- b
+  ret$u <- final_model$u
   ret$lambda <- lambda
   ret$cnms <- lmod$reTrms$cnms
   ret$par_names <- c(
@@ -333,6 +343,83 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   ret$response <- response_obj[, 1]
 
   class(ret) <- "galamm"
+
+  ## Deal with smooth terms ----
+  # If there are smooth terms in the model, postprocess them
+  # This should eventually be a function, and it should be specified that this
+  # code is derived from gamm4, with author Simon Wood
+  if (length(gobj$G$smooth) > 0) {
+    object <- list(
+      smooth = gobj$G$smooth,
+      nsdf = gobj$G$nsdf,
+      df.null = nrow(gobj$G$X),
+      terms = gobj$gam.terms,
+      pterms = gobj$G$pterms,
+      xlevels = gobj$G$xlevels,
+      contrasts = gobj$G$contrasts,
+      assign = gobj$G$assign,
+      cmX = gobj$G$cmX,
+      var.summary = gobj$G$var.summary
+    )
+
+    pvars <- all.vars(delete.response(object$terms))
+    object$pred.formula <- if (length(pvars) > 0) {
+      reformulate(pvars)
+    } else {
+      NULL
+    }
+
+    B <- Matrix::Matrix(0, ncol(gobj$G$Xf), ncol(gobj$G$Xf))
+    diag(B) <- 1
+    Xfp <- gobj$G$Xf
+
+    ## Transform  parameters back to the original space....
+    bf <- as.numeric(fixef(ret)) ## the fixed effects
+    br <- ranef(ret) ## a named list
+    if (gobj$G$nsdf) p <- bf[1:gobj$G$nsdf] else p <- array(0, 0) ## fixed parametric componet
+    if (gobj$G$m > 0) {
+      for (i in 1:gobj$G$m) {
+        fx <- gobj$G$smooth[[i]]$fixed
+        first <- gobj$G$smooth[[i]]$first.f.para
+        last <- gobj$G$smooth[[i]]$last.f.para
+        if (first <= last) beta <- bf[first:last] else beta <- array(0, 0)
+        if (fx) {
+          b <- beta
+        } else { ## not fixed so need to undo transform of random effects etc.
+          b <- rep(0, 0)
+          for (k in seq_along(gobj$G$smooth[[i]]$lmer.name)) { ## collect all coefs associated with this smooth
+            b <- c(b, as.numeric(br[[gobj$G$smooth[[i]]$lmer.name[k]]][[1]]))
+          }
+          b <- b[gobj$G$smooth[[i]]$rind] ## make sure coefs are in order expected by smooth
+          b <- c(b, beta)
+          b <- gobj$G$smooth[[i]]$trans.D * b
+          if (!is.null(gobj$G$smooth[[i]]$trans.U)) b <- gobj$G$smooth[[i]]$trans.U %*% b ## transform back to original
+        }
+        p <- c(p, b)
+
+        ## now fill in B...
+        ind <- gobj$G$smooth[[i]]$first.para:gobj$G$smooth[[i]]$last.para
+        if (!fx) {
+          D <- gobj$G$smooth[[i]]$trans.D
+          if (is.null(gobj$G$smooth[[i]]$trans.U)) {
+            B[ind, ind] <- Diagonal(length(D), D)
+          } else {
+            B[ind, ind] <- t(D * t(gobj$G$smooth[[i]]$trans.U))
+          }
+        }
+        ## and finally transform G$Xf into fitting parameterization...
+        Xfp[, ind] <- gobj$G$Xf[, ind, drop = FALSE] %*% B[ind, ind, drop = FALSE]
+      }
+    }
+
+    object$coefficients <- p
+
+    # At this point I have to implement a VarCorr.galamm method
+  }
+
+
+
+
 
   ret
 }

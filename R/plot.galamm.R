@@ -6,8 +6,6 @@
 #' @return A plot is displayed
 #' @export
 #'
-#' @importFrom graphics abline
-#' @importFrom stats fitted residuals
 plot.galamm <- function(x, ...) {
   plot(fitted(x), residuals(x, type = "pearson"),
     xlab = "Predicted values",

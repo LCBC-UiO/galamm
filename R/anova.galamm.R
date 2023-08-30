@@ -11,7 +11,6 @@
 #' @return A table
 #' @export
 #'
-#' @importFrom stats AIC BIC deviance logLik getCall pchisq var
 anova.galamm <- function(object, ...) {
   mCall <- match.call(expand.dots = TRUE)
   dots <- list(...)
@@ -104,7 +103,6 @@ abbrDeparse <- function(x, width = 60) {
 #' @return A number
 #' @export
 #'
-#' @importFrom stats nobs
 nobs.galamm <- function(object, ...) {
   object$n
 }

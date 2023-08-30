@@ -4,7 +4,7 @@
       summary(mod)
     Output
       Generalized additive latent and mixed model fit by maximum marginal likelihood.
-      Formula: y ~ item + (0 + abil.sid | school/sid)
+      Formula: form
          Data: IRTsim
       
            AIC      BIC   logLik deviance df.resid 

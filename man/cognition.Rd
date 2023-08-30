@@ -25,6 +25,8 @@ cognition
 }
 \description{
 Simulated dataset mimicking the measurement of abilities in three cognitive
-domains.
+domains. The latent traits (cognitive ability in a given domain) are based
+on the functions in \code{mgcv::gamSim}, and depend on the explanatory
+variable x.
 }
 \keyword{datasets}

@@ -95,6 +95,9 @@ remotes::install_github("LCBC-UiO/galamm")
 
 ``` r
 library(galamm)
+#> Loading required package: mgcv
+#> Loading required package: nlme
+#> This is mgcv 1.9-0. For overview type 'help("mgcv-package")'.
 ```
 
 The dataframe `mresp` contains simulated data with mixed response types.
@@ -137,7 +140,7 @@ summary(mixed_resp)
 #>    Data: mresp
 #> 
 #>      AIC      BIC   logLik deviance df.resid 
-#>   3643.1   3674.5  -4619.3   3633.1     3995 
+#>   9248.7   9280.2  -4619.3   3633.1     3995 
 #> 
 #> Scaled residuals: 
 #>     Min      1Q  Median      3Q     Max 
@@ -184,6 +187,15 @@ citation("galamm")
 #>     doi = {10.1007/s11336-023-09910-z},
 #>   }
 ```
+
+## Acknoweledgement
+
+Some parts of the code base for galamm has been derived from internal
+functions of [gamm4](https://cran.r-project.org/package=gamm4) (author:
+Simon Wood and Fabian Scheipl) and
+[lme4](https://cran.r-project.org/package=lme4) (authors: Douglas M.
+Bates, Martin Maechler, Ben Bolker, and Steve Walker). Places where this
+occurs have been marked with comments in the source code.
 
 ## Code of Conduct
 

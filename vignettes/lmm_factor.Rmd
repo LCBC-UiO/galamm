@@ -235,6 +235,7 @@ anova(
 ```
 
 
+
 ## Multi-Trait Multi-Rater Model
 
 We next consider a model based on example 1 in @rockwoodEstimatingComplexMeasurement2019, which uses the dataset `JUDGEsim` in [PLmixed](https://cran.r-project.org/package=PLmixed), which is simulated to mimic the data used by @kochCrossClassifiedCFAMTMMModel2016. We refer to @rockwoodEstimatingComplexMeasurement2019 for all the details, and merely present the model and how to estimate it using galamm.

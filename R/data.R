@@ -86,7 +86,9 @@
 #' Simulated Data with Measurements of Cognitive Abilities
 #'
 #' Simulated dataset mimicking the measurement of abilities in three cognitive
-#' domains.
+#' domains. The latent traits (cognitive ability in a given domain) are based
+#' on the functions in \code{mgcv::gamSim}, and depend on the explanatory
+#' variable x.
 #'
 #' @format ## `cognition` A data frame with 14400 rows and 6 columns:
 #' \describe{

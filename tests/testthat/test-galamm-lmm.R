@@ -8,9 +8,11 @@ test_that("LMM with simple factor works", {
   irt.lam <- matrix(c(1, NA, NA), ncol = 1) # Specify the lambda matrix
 
   mod <- galamm(
-    y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
-    data = IRTsub, load.var = c("item"),
-    factor = list(c("abil.sid")), lambda = list(irt.lam)
+    formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
+    data = IRTsub,
+    load.var = c("item"),
+    factor = list(c("abil.sid")),
+    lambda = list(irt.lam)
   )
 
   # Must test that it works also with tibbles
@@ -30,6 +32,11 @@ test_that("LMM with simple factor works", {
 
   expect_equal(mod$hessian, mod1$hessian)
   expect_equal(mod$hessian, mod2$hessian)
+
+  expect_equal(
+    sd(ranef(mod)$school$abil.sid),
+    0.180652430814172
+  )
 
   expect_output(
     lme4::.prt.call(mod$call),
@@ -151,7 +158,7 @@ test_that("LMM with two factors works", {
 })
 
 test_that("LMM with two raters works", {
-  JUDGEsim <- JUDGEsim[order(JUDGEsim$item), ] # Order by item
+  JUDGEsim <- JUDGEsim[JUDGEsim$item %in% 1:6, ]
   JUDGEsim$item <- factor(JUDGEsim$item)
 
   judge.lam <- rbind(
@@ -165,7 +172,7 @@ test_that("LMM with two raters works", {
 
   judge_galamm <- galamm(
     formula = response ~ 0 + item + (1 | class) + (0 + teacher1 + teacher2 | tch),
-    data = JUDGEsim[JUDGEsim$item %in% 1:6, ],
+    data = JUDGEsim,
     lambda = list(judge.lam),
     load.var = "item",
     factor = list(c("teacher1", "teacher2"))
