@@ -98,7 +98,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
     vapply(factor, function(x) any(x %in% vars_in_fixed), TRUE)
   vars_in_random <- unique(unlist(lmod$reTrms$cnms))
   factor_in_random <-
-    vapply(factor, function(x) any(x %in% vars_in_random), TRUE)
+    vapply(factor, function(x) any(vapply(vars_in_random, function(y) any(vapply(x, function(z) grepl(z, y), TRUE)), TRUE)), TRUE)
 
   X <- lmod$X
   if (any(factor_in_fixed)) {
