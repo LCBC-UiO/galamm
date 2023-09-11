@@ -69,7 +69,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   rf <- lme4::findbars(formula)
   gobj <- gamm4(
     fixed = lme4::nobars(formula),
-    random = if(!is.null(rf)) as.formula(paste("~", paste("(", rf, ")", collapse = "+"))),
+    random = if (!is.null(rf)) as.formula(paste("~", paste("(", rf, ")", collapse = "+"))),
     data = data
   )
   lmod <- gobj$lmod
