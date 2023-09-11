@@ -35,7 +35,7 @@ library(PLmixed)
 head(IRTsim)
 ```
 
-Each student is identified by a student id `sid`, and each school with a school id given by the `school` variable. For each student, five item measurements have been made. We assume that the student's performance depends both on the students ability as well as on the school the student attends. Having the outline of GALAMMs from the [introductory vignette](https://lcbc-uio.github.io/galamm/articles/introduction.html) in mind, we assume a binomial response model with a logit link, yielding for the $i$th measurement of the $j$th student in the $k$th school,
+Each student is identified by a student id `sid`, and each school with a school id given by the `school` variable. For each student, five item measurements have been made. We assume that the student's performance depends both on the students ability as well as on the school the student attends. Having the outline of GALAMMs from the [introductory vignette](https://lcbc-uio.github.io/galamm/articles/galamm.html) in mind, we assume a binomial response model with a logit link, yielding for the $i$th measurement of the $j$th student in the $k$th school,
 
 $$ 
 \text{P}(y_{ijk} = 1 | \mathbf{x}_{ijk}, \boldsymbol{\eta}_{jk}) = \frac{\exp(\nu_{ijk})}{1 + \exp(\nu_{ijk})}

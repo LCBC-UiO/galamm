@@ -48,7 +48,7 @@ ggplot(dat, aes(x = x, y = y, group = id)) +
   geom_line(alpha = .3)
 ```
 
-We use a generalized additive mixed model with random intercepts per subject to estimate the function relating $x$ to $y$. In terms of the model framework outlined in the [introductory vignette](https://lcbc-uio.github.io/galamm/articles/introduction.html), we model the $i$th response from the $j$th subject with
+We use a generalized additive mixed model with random intercepts per subject to estimate the function relating $x$ to $y$. In terms of the model framework outlined in the [introductory vignette](https://lcbc-uio.github.io/galamm/articles/galamm.html), we model the $i$th response from the $j$th subject with
 
 $$
 y_{ij} = f(x_{ij}) + \eta_{j} + \epsilon_{ij}

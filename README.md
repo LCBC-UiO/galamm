@@ -79,7 +79,7 @@ C++ library [autodiff](https://autodiff.github.io/) (Leal 2018).
 ## Where Do I Start?
 
 To get started, take a look at the [introductory
-vignette](https://lcbc-uio.github.io/galamm/articles/introduction.html).
+vignette](https://lcbc-uio.github.io/galamm/articles/galamm.html).
 
 ## Installation
 
@@ -95,9 +95,6 @@ remotes::install_github("LCBC-UiO/galamm")
 
 ``` r
 library(galamm)
-#> Loading required package: mgcv
-#> Loading required package: nlme
-#> This is mgcv 1.9-0. For overview type 'help("mgcv-package")'.
 ```
 
 The dataframe `mresp` contains simulated data with mixed response types.

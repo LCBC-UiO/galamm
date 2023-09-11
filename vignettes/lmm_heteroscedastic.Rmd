@@ -22,7 +22,7 @@ knitr::opts_chunk$set(
 library(galamm)
 ```
 
-At the moment, galamm supports group-wise heteroscedasticity in Gaussian response models. Referring to the model formulation outlined in the [introductory vignette](https://lcbc-uio.github.io/galamm/articles/introduction.html), the response model and nonlinear predictor can be easily combined in this particular case, to give
+At the moment, galamm supports group-wise heteroscedasticity in Gaussian response models. Referring to the model formulation outlined in the [introductory vignette](https://lcbc-uio.github.io/galamm/articles/galamm.html), the response model and nonlinear predictor can be easily combined in this particular case, to give
 
 $$
 y_{i} = \sum_{s=1}^{S} f_{s}\left(\mathbf{x}_{i}\right) + \sum_{l=2}^{L}\sum_{m=1}^{M_{l}} \eta_{m}^{(l)} \mathbf{z}^{(l)}_{im}{}^{'}\boldsymbol{\lambda}_{m}^{(l)} + \epsilon_{g(i)},
