@@ -108,8 +108,10 @@ plot(dat$x, dat$y, xlab = "x", ylab = "Correct responses")
 Again we can fit this model using gamm4.
 
 ```{r}
-mod_gamm4 <- gamm4(cbind(y, trials - y) ~ s(x), random = ~(1 | id), 
-                   data = dat, family = binomial)
+mod_gamm4 <- gamm4(cbind(y, trials - y) ~ s(x),
+  random = ~ (1 | id),
+  data = dat, family = binomial
+)
 ```
 
 
@@ -124,8 +126,9 @@ plot(mod_gamm4$gam)
 Using galamm instead we do.
 
 ```{r}
-mod <- galamm(cbind(y, trials - y) ~ s(x) + (1 | id), 
-              data = dat, family = binomial)
+mod <- galamm(cbind(y, trials - y) ~ s(x) + (1 | id),
+  data = dat, family = binomial
+)
 ```
 
 The estimates are very similar, although not identical. The difference in deviance is due to differences in the way deviance is defined. The call `deviance(mod_gamm4$mer)` gives the same value as in the summary for the model fitted with galamm.
@@ -140,10 +143,12 @@ summary(mod)
 To motivate the semiparametric estimation to follow, we start by looking at the items corresponding to domain 1 in the cognition data.
 
 ```{r}
-ggplot(subset(cognition, domain == 1), 
-       aes(x = x, y = y)) + 
-  geom_point(size = .5, alpha = .3) + 
-  geom_line(aes(group = id), size = .4, alpha = .3) + 
+ggplot(
+  subset(cognition, domain == 1),
+  aes(x = x, y = y)
+) +
+  geom_point(size = .5, alpha = .3) +
+  geom_line(aes(group = id), size = .4, alpha = .3) +
   facet_wrap(vars(item), labeller = as_labeller(function(x) paste("Item", x)))
 ```
 
@@ -172,7 +177,7 @@ We can fit this model using galamm as follows.
 dat <- subset(cognition, domain == 1)
 
 mod <- galamm(
-  formula = y ~ loading : (x + I(x^2)) + (0 + loading | id),
+  formula = y ~ loading:(x + I(x^2)) + (0 + loading | id),
   data = dat,
   load.var = "item",
   lambda = list(matrix(c(1, NA, NA), ncol = 1)),
