@@ -145,7 +145,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
 
         mapping_component <- rep(NA_integer_, sum(delta))
         for (j in seq_along(cnms)) {
-          cn <- unlist(lapply(factor[[f]], function(x){
+          cn <- unlist(lapply(factor[[f]], function(x) {
             m <- regexpr(x, cnms[[j]], fixed = TRUE)
             regmatches(cnms[[j]], m)
           }))

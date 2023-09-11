@@ -236,7 +236,6 @@ gamm4 <- function(fixed, random = NULL, data = list()) {
       ii <- (b$reTrms$Gp[k] + 1):b$reTrms$Gp[k + 1]
       b$reTrms$Ztlist[[k]] <- b$reTrms$Zt[ii, ] <- as(t(G$random[[i]]), "dgCMatrix")
       b$reTrms$cnms[[k]] <- attr(G$random[[i]], "s.label")
-
     }
   }
   list(
