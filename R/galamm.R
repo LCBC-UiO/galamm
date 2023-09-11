@@ -145,9 +145,14 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
 
         mapping_component <- rep(NA_integer_, sum(delta))
         for (j in seq_along(cnms)) {
-          cn <- cnms[[j]]
+          cn <- unlist(lapply(factor[[f]], function(x){
+            m <- regexpr(x, cnms[[j]], fixed = TRUE)
+            regmatches(cnms[[j]], m)
+          }))
+
           inds <- which(data[, cn] != 0)
-          mapping_component[inds] <-
+          inds_expanded <- unlist(Map(function(x, y) rep(x, each = y), x = inds, y = delta[inds]))
+          mapping_component[inds_expanded] <-
             unlist(Map(function(x, y) rep(ll[x, cn], each = y),
               x = data[inds, load.var], y = delta[inds]
             ))
@@ -402,7 +407,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
         if (!fx) {
           D <- gobj$G$smooth[[i]]$trans.D
           if (is.null(gobj$G$smooth[[i]]$trans.U)) {
-            B[ind, ind] <- Diagonal(length(D), D)
+            B[ind, ind] <- Matrix::Diagonal(length(D), D)
           } else {
             B[ind, ind] <- t(D * t(gobj$G$smooth[[i]]$trans.U))
           }

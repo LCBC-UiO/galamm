@@ -217,7 +217,7 @@ gam.setup <- function(formula, pterms,
         } else {
           Sname <- names(sm[[i]]$S)
           lspn <- if (is.null(Sname)) {
-            paste(sm[[i]]$label, seq_along.S, sep = "")
+            paste(sm[[i]]$label, seq(length.S), sep = "")
           } else {
             paste(sm[[i]]$label, Sname, sep = "")
           } ## names for all sp's

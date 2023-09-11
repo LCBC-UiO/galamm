@@ -1,6 +1,6 @@
 devtools::load_all()
 
-formula = y ~ loading : (x + I(x^2)) + (0 + loading | id)
+formula = y ~ 0 + loading + s(x, by = loading) + (0 + loading | id)
 weights = NULL
 data = subset(cognition, domain == 1)
 family = gaussian
