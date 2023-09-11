@@ -66,9 +66,10 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
     }
   }
 
+  rf <- lme4::findbars(formula)
   gobj <- gamm4(
     fixed = lme4::nobars(formula),
-    random = as.formula(paste("~", paste("(", lme4::findbars(formula), ")", collapse = "+"))),
+    random = if(!is.null(rf)) as.formula(paste("~", paste("(", rf, ")", collapse = "+"))),
     data = data
   )
   lmod <- gobj$lmod
@@ -95,8 +96,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   vars_in_fixed <- all.vars(gobj$fake.formula[-2])
   factor_in_fixed <-
     vapply(factor, function(x) any(x %in% vars_in_fixed), TRUE)
-  vars_in_random <-
-    do.call(c, lapply(lme4::findbars(formula), all.vars))
+  vars_in_random <- unique(unlist(lmod$reTrms$cnms))
   factor_in_random <-
     vapply(factor, function(x) any(x %in% vars_in_random), TRUE)
 
