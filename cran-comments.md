@@ -34,6 +34,6 @@ Possibly mis-spelled words in DESCRIPTION:
 
 Found the following (possibly) invalid URLs:
   URL: https://doi.org/10.3102/1076998611417628
-    From: inst/doc/Introduction.html
+    From: inst/doc/galamm.html
     Status: 503
     Message: Service Unavailable

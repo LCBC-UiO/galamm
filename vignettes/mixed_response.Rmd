@@ -34,7 +34,7 @@ head(mresp)
 ```
 
 
-In terms of the GALAMM defined in the [introductory vignette](https://lcbc-uio.github.io/galamm/articles/introduction.html), and for simplicity assuming we use canonincal link functions, we have the response model
+In terms of the GALAMM defined in the [introductory vignette](https://lcbc-uio.github.io/galamm/articles/galamm.html), and for simplicity assuming we use canonincal link functions, we have the response model
 
 $$
 f\left(y_{ij} | \nu_{ij}, \phi\right) = \exp \left( \frac{y_{ij}\nu_{ij} - b\left(\nu_{ij}\right)}{\phi} + c\left(y_{ij}, \phi\right) \right)

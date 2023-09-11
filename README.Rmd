@@ -44,7 +44,7 @@ For most users, it should not be necessary to think about how the actual computa
 
 ## Where Do I Start?
 
-To get started, take a look at the [introductory vignette](https://lcbc-uio.github.io/galamm/articles/introduction.html).
+To get started, take a look at the [introductory vignette](https://lcbc-uio.github.io/galamm/articles/galamm.html).
 
 ## Installation
 
