@@ -161,14 +161,6 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
         mapping_component
       })
 
-      max_map <- max(vapply(mappings, length, 1))
-      mappings <- lapply(mappings, function(x) {
-        if (length(x) < max_map) {
-          x <- c(x, rep(NA_real_, max_map - length(x)))
-        } else {
-          x
-        }
-      })
       lambda_mapping_Zt <- as.numeric(do.call(rbind, mappings))
       lambda_mapping_Zt <- lambda_mapping_Zt[!is.na(lambda_mapping_Zt)]
 
