@@ -25,7 +25,6 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
                    family_mapping = rep(1L, nrow(data)),
                    load.var = NULL, lambda = NULL, factor = NULL,
                    start = NULL, control = galamm_control()) {
-
   stopifnot(length(family) == length(unique(family_mapping)))
 
   data <- as.data.frame(data)
