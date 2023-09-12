@@ -1,4 +1,5 @@
 library(memoise)
+library(lme4)
 
 dat <- hsced
 

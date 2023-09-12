@@ -1,4 +1,5 @@
 library(nlme)
+library(lme4)
 library(galamm)
 library(tidyverse)
 library(memoise)
