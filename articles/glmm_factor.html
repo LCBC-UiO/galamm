@@ -93,13 +93,12 @@
 estimate generalized linear mixed models with factor structures. Such
 models are an instance of the generalized linear latent and mixed models
 (GLLAMM) framework described by <span class="citation">Rabe-Hesketh,
-Skrondal, and Pickles (2004)</span>. The R package PLmixed <span class="citation">(Rockwood and Jeon 2019)</span> estimates such models
-using a profile likelihood algorithm initially proposed by <span class="citation">Jeon and Rabe-Hesketh (2012)</span>. The models are
-also a special case of generalized additive latent and mixed models
-(GALAMM), and in galamm these models are estimated using a more direct
-algorithm described in <span class="citation">Sørensen, Fjell, and
-Walhovd (2023)</span>.</p>
-<p>As for the vignette on linear mixed models, we thank <span class="citation">Rockwood and Jeon (2019)</span> for creating the <a href="https://cran.r-project.org/package=PLmixed" class="external-link">PLmixed</a> package,
+Skrondal, and Pickles (<a href="#ref-rabe-heskethGeneralizedMultilevelStructural2004" role="doc-biblioref">2004</a>)</span>. The R package PLmixed <span class="citation">(<a href="#ref-rockwoodEstimatingComplexMeasurement2019" role="doc-biblioref">Rockwood and Jeon 2019</a>)</span> estimates such
+models using a profile likelihood algorithm initially proposed by <span class="citation">Jeon and Rabe-Hesketh (<a href="#ref-jeonProfileLikelihoodApproachEstimating2012" role="doc-biblioref">2012</a>)</span>. The models are also a special
+case of generalized additive latent and mixed models (GALAMM), and in
+galamm these models are estimated using a more direct algorithm
+described in <span class="citation">Sørensen, Fjell, and Walhovd (<a href="#ref-sorensenLongitudinalModelingAgeDependent2023" role="doc-biblioref">2023</a>)</span>.</p>
+<p>As for the vignette on linear mixed models, we thank <span class="citation">Rockwood and Jeon (<a href="#ref-rockwoodEstimatingComplexMeasurement2019" role="doc-biblioref">2019</a>)</span> for creating the <a href="https://cran.r-project.org/package=PLmixed" class="external-link">PLmixed</a> package,
 from which we take example datasets, and on which we have based the
 formula syntax of galamm.</p>
 <div class="section level3">
@@ -361,9 +360,9 @@ its summary output here.</p>
 <h3 id="model-with-poisson-distributed-responses">Model with Poisson Distributed Responses<a class="anchor" aria-label="anchor" href="#model-with-poisson-distributed-responses"></a>
 </h3>
 <p>To illustrate the model for counts, we consider an example from
-Chapter 11.3 in <span class="citation">Skrondal and Rabe-Hesketh
-(2004)</span>. The model does not contain factor loadings, but we use it
-to demonstrate how to fit GLMMs with Poisson distributed responses.</p>
+Chapter 11.3 in <span class="citation">Skrondal and Rabe-Hesketh (<a href="#ref-skrondalGeneralizedLatentVariable2004" role="doc-biblioref">2004</a>)</span>. The model does not contain factor
+loadings, but we use it to demonstrate how to fit GLMMs with Poisson
+distributed responses.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">count_mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">lbas</span> <span class="op">*</span> <span class="va">treat</span> <span class="op">+</span> <span class="va">lage</span> <span class="op">+</span> <span class="va">v4</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">subj</span><span class="op">)</span>,</span>

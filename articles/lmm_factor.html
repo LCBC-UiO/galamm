@@ -94,24 +94,23 @@
 estimate linear mixed models with factor structures. Such models are an
 instance of the generalized linear latent and mixed models (GLLAMM)
 framework described by <span class="citation">Rabe-Hesketh, Skrondal,
-and Pickles (2004)</span> and <span class="citation">Skrondal and
-Rabe-Hesketh (2004)</span>. The R package <a href="https://cran.r-project.org/package=PLmixed" class="external-link">PLmixed</a> <span class="citation">(Rockwood and Jeon 2019)</span> estimates such models
-using a profile likelihood algorithm initially proposed by <span class="citation">Jeon and Rabe-Hesketh (2012)</span>. The models are
-also a special case of generalized additive latent and mixed models
-(GALAMM), and in galamm these models are estimated using a more direct
-algorithm described in <span class="citation">Sørensen, Fjell, and
-Walhovd (2023)</span>.</p>
+and Pickles (<a href="#ref-rabe-heskethGeneralizedMultilevelStructural2004" role="doc-biblioref">2004</a>)</span> and <span class="citation">Skrondal and Rabe-Hesketh (<a href="#ref-skrondalGeneralizedLatentVariable2004" role="doc-biblioref">2004</a>)</span>. The R package <a href="https://cran.r-project.org/package=PLmixed" class="external-link">PLmixed</a> <span class="citation">(<a href="#ref-rockwoodEstimatingComplexMeasurement2019" role="doc-biblioref">Rockwood and Jeon 2019</a>)</span> estimates such
+models using a profile likelihood algorithm initially proposed by <span class="citation">Jeon and Rabe-Hesketh (<a href="#ref-jeonProfileLikelihoodApproachEstimating2012" role="doc-biblioref">2012</a>)</span>. The models are also a special
+case of generalized additive latent and mixed models (GALAMM), and in
+galamm these models are estimated using a more direct algorithm
+described in <span class="citation">Sørensen, Fjell, and Walhovd (<a href="#ref-sorensenLongitudinalModelingAgeDependent2023" role="doc-biblioref">2023</a>)</span>.</p>
 <p>The examples used in this vignette come from the simulated datasets
-provided by <a href="https://cran.r-project.org/package=PLmixed" class="external-link">PLmixed</a> <span class="citation">(Rockwood and Jeon 2019)</span>. The purpose of this
-vignette is to confirm that galamm gives the same results for these
+provided by <a href="https://cran.r-project.org/package=PLmixed" class="external-link">PLmixed</a> <span class="citation">(<a href="#ref-rockwoodEstimatingComplexMeasurement2019" role="doc-biblioref">Rockwood and Jeon 2019</a>)</span>. The purpose of
+this vignette is to confirm that galamm gives the same results for these
 models, and to introduce the syntax. As will be clear if you run the
 code, galamm can often be considerably faster.</p>
 <div class="section level3">
 <h3 id="crossed-random-effects-model-with-persistence-parameters">Crossed Random Effects Model with Persistence Parameters<a class="anchor" aria-label="anchor" href="#crossed-random-effects-model-with-persistence-parameters"></a>
 </h3>
 <p>This example comes from Section 3.1 in <span class="citation">Jeon
-and Rabe-Hesketh (2012)</span>, whose model was again based on <span class="citation">McCaffrey et al. (2004)</span>. The dataset
-<code>KYPSsim</code> comes from <a href="https://cran.r-project.org/package=PLmixed" class="external-link">PLmixed</a> and is a
+and Rabe-Hesketh (<a href="#ref-jeonProfileLikelihoodApproachEstimating2012" role="doc-biblioref">2012</a>)</span>, whose model was again based on
+<span class="citation">McCaffrey et al. (<a href="#ref-mccaffreyModelsValueAddedModeling2004" role="doc-biblioref">2004</a>)</span>. The dataset <code>KYPSsim</code>
+comes from <a href="https://cran.r-project.org/package=PLmixed" class="external-link">PLmixed</a> and is a
 simulated version of the Korea Youth Panel Survey (KYPS) data.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">KYPSsim</span><span class="op">)</span></span>
@@ -137,8 +136,8 @@ variable to a factor.</p>
 <span><span class="co">#&gt; [1] "1" "2" "3" "4"</span></span></code></pre></div>
 <p>Since students attending a given middle school not necessarily attend
 the same high school, we have a model with crossed random effects. We
-use the model of <span class="citation">Jeon and Rabe-Hesketh
-(2012)</span>, whose measurement part can be formulated as</p>
+use the model of <span class="citation">Jeon and Rabe-Hesketh (<a href="#ref-jeonProfileLikelihoodApproachEstimating2012" role="doc-biblioref">2012</a>)</span>, whose measurement part can be
+formulated as</p>
 <p><span class="math display">\[
 y_{tsmh} = \beta_{0} + \sum_{t'=2}^{4} d_{tt'}\beta_{t'} +
 \mathbf{d}_{t}^{T} \left(\boldsymbol{\lambda}_{m}  \eta_{m} +
@@ -152,8 +151,9 @@ an intercept, and <span class="math inline">\(\beta_{2}\)</span>, <span class="m
 middle school <span class="math inline">\(m\)</span> and high school
 <span class="math inline">\(s\)</span>, respectively, <span class="math inline">\(\eta_{s}\)</span> is the latent level for student
 <span class="math inline">\(s\)</span>, and <span class="math inline">\(\epsilon_{tsmh}\)</span> is a residual term. <span class="math inline">\(\boldsymbol{\lambda}_{m}\)</span> and <span class="math inline">\(\boldsymbol{\lambda}_{h}\)</span> are factor
-loadings (called “persistence parameters” by <span class="citation">McCaffrey et al. (2004)</span> and <span class="citation">Jeon and Rabe-Hesketh (2012)</span>) specifying how the
-teacher effects for middle school and high school impact the self esteem
+loadings (called “persistence parameters” by <span class="citation">McCaffrey et al. (<a href="#ref-mccaffreyModelsValueAddedModeling2004" role="doc-biblioref">2004</a>)</span> and <span class="citation">Jeon
+and Rabe-Hesketh (<a href="#ref-jeonProfileLikelihoodApproachEstimating2012" role="doc-biblioref">2012</a>)</span>) specifying how the teacher
+effects for middle school and high school impact the self esteem
 measurement. Since students attend high school after middle school, the
 measurements of self esteem in middle school are assumed not to be
 affected by high school, and hence the first two elements of <span class="math inline">\(\boldsymbol{\lambda}_{h}\)</span> are set to zero.
@@ -420,12 +420,11 @@ dataset.</p>
 <div class="section level3">
 <h3 id="multi-trait-multi-rater-model">Multi-Trait Multi-Rater Model<a class="anchor" aria-label="anchor" href="#multi-trait-multi-rater-model"></a>
 </h3>
-<p>We next consider a model based on example 1 in <span class="citation">Rockwood and Jeon (2019)</span>, which uses the dataset
+<p>We next consider a model based on example 1 in <span class="citation">Rockwood and Jeon (<a href="#ref-rockwoodEstimatingComplexMeasurement2019" role="doc-biblioref">2019</a>)</span>, which uses the dataset
 <code>JUDGEsim</code> in <a href="https://cran.r-project.org/package=PLmixed" class="external-link">PLmixed</a>, which is
 simulated to mimic the data used by <span class="citation">Koch et al.
-(2016)</span>. We refer to <span class="citation">Rockwood and Jeon
-(2019)</span> for all the details, and merely present the model and how
-to estimate it using galamm.</p>
+(<a href="#ref-kochCrossClassifiedCFAMTMMModel2016" role="doc-biblioref">2016</a>)</span>. We refer to <span class="citation">Rockwood and Jeon (<a href="#ref-rockwoodEstimatingComplexMeasurement2019" role="doc-biblioref">2019</a>)</span> for all the details, and merely
+present the model and how to estimate it using galamm.</p>
 <p>The data contains ratings of two traits in students, and the traits
 are rated by both students and teachers.</p>
 <p>Initially, we need to convert the item variable to a factor.</p>
@@ -460,7 +459,7 @@ only rate themselves.</p>
 <span><span class="co">#&gt;    1    2    3    4    5    6    7    8    9   10   11   12 </span></span>
 <span><span class="co">#&gt; 7828 7828 7828 7828 7828 7828 1249 1249 1249 1249 1249 1249</span></span></code></pre></div>
 <p>In matrix-vector format, the measurement model is (equation 16 in
-<span class="citation">Rockwood and Jeon (2019)</span>)</p>
+<span class="citation">Rockwood and Jeon (<a href="#ref-rockwoodEstimatingComplexMeasurement2019" role="doc-biblioref">2019</a>)</span>)</p>
 <p><span class="math display">\[
 \begin{pmatrix}
 y_{1tsc} \\
@@ -636,9 +635,10 @@ we won’t run it.</p>
 <h3 id="model-with-a-product-of-factor-loadings">Model with a Product of Factor Loadings<a class="anchor" aria-label="anchor" href="#model-with-a-product-of-factor-loadings"></a>
 </h3>
 <p>Finally, in their Example 2, <span class="citation">Rockwood and Jeon
-(2019)</span> consider a model which contains products of factor
-loadings. At the moment, such a model cannot be estimated using galamm,
-although we will work on adding it in the future.</p>
+(<a href="#ref-rockwoodEstimatingComplexMeasurement2019" role="doc-biblioref">2019</a>)</span> consider a model which contains
+products of factor loadings. At the moment, such a model cannot be
+estimated using galamm, although we will work on adding it in the
+future.</p>
 </div>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
