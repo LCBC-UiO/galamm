@@ -155,7 +155,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
 
           inds <- which(data[, cn] != 0)
           inds_expanded <- unlist(Map(function(x, y) rep(x, each = y), x = inds, y = pmin(1, delta[inds])))
-          # if (any(delta[inds] > 1) && !any(delta[inds] == 0)) inds_expanded <- order(inds_expanded)
+
           mapping_component[inds_expanded] <-
             Map(function(x, y) rep(ll[x, cn], each = y),
               x = data[inds, load.var], y = delta[inds]
