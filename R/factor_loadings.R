@@ -4,12 +4,15 @@ factor_loadings <- function(object) {
 
 #' Extract factor loadings from galamm object
 #'
+#' @aliases factor_loadings factor_loadings.galamm
+#' @export factor_loadings
+#' @export
+#'
 #' @param object Object of class \code{galamm} returned from
 #'   \code{\link{galamm}}.
 #'
 #' @return A matrix containing the estimated factor loadings with corresponding
 #'   standard deviations.
-#' @export
 #'
 #' @details This function has been named \code{factor_loadings} rather than just
 #'   \code{loadings} to avoid conflict with \code{stats::loadings}.

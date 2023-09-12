@@ -251,33 +251,6 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
     )
   }
 
-  mlwrapper_old <- function(par, hessian = FALSE) {
-    marginal_likelihood(
-      y = y,
-      trials = trials,
-      X = X,
-      Zt = Zt,
-      Lambdat = Lambdat,
-      beta = par[beta_inds],
-      theta = par[theta_inds],
-      theta_mapping = theta_mapping,
-      u_init = u_init,
-      lambda = par[lambda_inds],
-      lambda_mapping_X = lambda_mapping_X,
-      lambda_mapping_X_covs = integer(),
-      lambda_mapping_Zt = lambda_mapping_Zt,
-      lambda_mapping_Zt_covs = integer(),
-      weights = par[weights_inds],
-      weights_mapping = weights_mapping,
-      family = family_txt,
-      family_mapping = as.integer(family_mapping) - 1L,
-      maxit_conditional_modes = maxit_conditional_modes,
-      gradient = TRUE,
-      hessian = hessian,
-      epsilon_u = 1e-10
-    )
-  }
-
   mlmem <- memoise::memoise(mlwrapper)
   fn <- function(par) {
     mlmem(par)$logLik

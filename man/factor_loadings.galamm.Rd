@@ -2,6 +2,7 @@
 % Please edit documentation in R/factor_loadings.R
 \name{factor_loadings.galamm}
 \alias{factor_loadings.galamm}
+\alias{factor_loadings}
 \title{Extract factor loadings from galamm object}
 \usage{
 \method{factor_loadings}{galamm}(object)
