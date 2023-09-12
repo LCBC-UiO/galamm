@@ -22,7 +22,7 @@ glmod <- glFormula(
 )
 
 glmod$reTrms$Ztlist$`1 | pseudoGroups` <-
-  as(t(as.matrix(ldat$Xr)), class(glmod$reTrms$Zt))
+  methods::as((t(as.matrix(ldat$Xr)), class(glmod$reTrms$Zt))
 
 glmod$reTrms$Zt <- rbind(glmod$reTrms$Ztlist$`0 + weight | timepoint:id`,
                          glmod$reTrms$Ztlist$`0 + weight | id`,

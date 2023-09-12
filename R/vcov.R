@@ -1,14 +1,17 @@
-#' Calculate Variance-Covariance Matrix for galamm Model Object
+#' Calculate variance-covariance matrix for GALAMM fit
 #'
-#' @param object Fitted model
-#' @param parm The parameters for which the variance-covariance matrix should
-#' be calculated. Character vector with one or more of the elements "theta",
-#' "beta", "lambda", and "weights". Can also be an integer vector.
-#' @param ... Further arguments
+#' @param object Object of class \code{galamm} returned from
+#'   \code{\link{galamm}}.
+#' @param parm The parameters for which the variance-covariance matrix should be
+#'   calculated. Character vector with one or more of the elements "theta",
+#'   "beta", "lambda", and "weights". Can also be an integer vector.
+#' @param ... Further arguments passed on to other methods. Currently not used.
 #'
-#' @return Variance-covariance matrix
+#' @return A variance-covariance matrix.
 #' @export
 #'
+#' @seealso [confint.galamm()] for the method computing confidence intervals.
+#'   See [vcov()] for the generic function.
 vcov.galamm <- function(object, parm = "beta", ...) {
   inds <- find_parm_inds(object, parm)
 

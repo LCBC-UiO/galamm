@@ -2,23 +2,28 @@
 % Please edit documentation in R/mgcv-functions.R
 \name{augment.smX}
 \alias{augment.smX}
-\title{Internal function from mgcv}
+\title{Function for creating augmented model matrix.}
 \usage{
 augment.smX(sm, nobs, np)
 }
 \arguments{
-\item{sm}{smooth}
+\item{sm}{List of smooth objects, each of which returned from
+\code{mgcv::smoothCon}.}
 
-\item{nobs}{observations}
+\item{nobs}{Number of observations.}
 
-\item{np}{number}
+\item{np}{Number of penalized parameters.}
 }
 \value{
-value
+A scaled and augmented model matrix.
 }
 \description{
-Internal function from mgcv
+This is an internal function taken from \code{mgcv}.
+}
+\references{
+\insertRef{woodGeneralizedAdditiveModels2017a}{galamm}
 }
 \author{
 Simon Wood
 }
+\keyword{internal}

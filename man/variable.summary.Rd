@@ -2,23 +2,27 @@
 % Please edit documentation in R/mgcv-functions.R
 \name{variable.summary}
 \alias{variable.summary}
-\title{Internal function from mgcv}
+\title{Create variable summary}
 \usage{
 variable.summary(pf, dl, n)
 }
 \arguments{
-\item{pf}{pd}
+\item{pf}{Formula for the parametric part of the model.}
 
-\item{dl}{dl}
+\item{dl}{List containing all the explanatory variables in the model.}
 
-\item{n}{n}
+\item{n}{Integer specifying the number of observations.}
 }
 \value{
-summary
+A list containing summary statistics for each variable in the model.
 }
 \description{
-This function is derived from an internal mgcv function, written by Simon Wood.
+This function is derived from \code{mgcv:::variable.summary}.
+}
+\references{
+\insertRef{woodGeneralizedAdditiveModels2017a}{galamm}
 }
 \author{
 Simon Wood
 }
+\keyword{internal}

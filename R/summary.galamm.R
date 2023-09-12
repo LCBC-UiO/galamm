@@ -1,13 +1,17 @@
-#' Summarizing GALAMM Fits
+#' Summarizing GALAMM fits
 #'
 #' Summary method for class "galamm".
 #'
-#' @param object An object of class "galamm", usually the result of calling
-#' \code{\link{galamm}}.
-#' @param ... Further arguments.
+#' @param object An object of class \code{galamm} returned from
+#'   \code{\link{galamm}}.
+#' @param ... Further arguments passed on to other methods. Currently not used.
 #'
-#' @return A list of summary statistics of the fitted model.
+#' @return A list of summary statistics of the fitted model, of class
+#'   \code{summary.galamm}.
 #' @export
+#'
+#' @seealso [print.summary.galamm()] for the print method and [summary()] for
+#'   the generic.
 #'
 summary.galamm <- function(object, ...) {
   ret <- object
@@ -51,14 +55,20 @@ summary.galamm <- function(object, ...) {
 }
 
 
-#' Print method for GALAMM fits
+#' Print method for summary GALAMM fits
 #'
-#' @param x An object of class "summary.galamm".
-#' @param digits Number of digits.
-#' @param ... Further arguments.
+#'
+#' @param x An object of class \code{summary.galamm} returned from
+#'   \code{\link{summary.galamm}}.
+#' @param digits Number of digits to present in outputs.
+#' @param ... Further arguments passed on to other methods. Currently not used.
 #'
 #' @return Summary printed to screen. Invisible returns the argument \code{x}.
 #' @export
+#'
+#' @seealso [summary.galamm()] for the summary function and [print()] for the
+#'   generic function.
+#'
 print.summary.galamm <- function(x, digits = max(3, getOption("digits") - 3), ...) {
   cat("Generalized additive latent and mixed model fit by maximum marginal likelihood.\n")
   lme4::.prt.call(x$call)
@@ -88,6 +98,23 @@ print.summary.galamm <- function(x, digits = max(3, getOption("digits") - 3), ..
 
 
 llikAIC <- function(object) {
+  UseMethod("llikAIC")
+}
+
+
+#' Extract log likelihood, AIC, and related statistics from a GALAMM
+#'
+#' This function is assembles the values used by \code{\link{summary.galamm}}.
+#'
+#' @param object Object of class \code{galamm} returned from
+#'   \code{\link{galamm}}.
+#'
+#' @return A list containing AIC, BIC, log likelihood, deviance and residual
+#'   degrees of freedom.
+#'
+#' @keywords internal
+#'
+llikAIC.galamm <- function(object) {
   llik <- logLik(object)
   c(
     AIC = AIC(llik),

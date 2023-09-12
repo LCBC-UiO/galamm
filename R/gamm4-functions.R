@@ -1,21 +1,27 @@
-#' Function to set up gamm4 model
+#' Internal function for fitting GAMMs using lme4
 #'
-#' This function is derived from an internal function in the gamm4 package.
+#' This function is derived from an internal function in the \code{gamm4} package.
 #'
-#' @param formula formula
-#' @param pterms parametric terms
-#' @param data data
-#' @param knots knots
+#' @param fixed A formula excluding lme4 style random effects but including
+#'   smooths.
+#' @param pterms Parametric terms in the model.
+#' @param data Model frame.
 #'
 #' @return model
-#' @author Simon N Wood
+#' @author Simon N Wood, with some modifications by Oystein Sorensen.
 #' @keywords internal
+#'
+#' @seealso [gamm4()] and [gam.setup()].
+#'
+#' @references
+#' \insertRef{woodStraightforwardIntermediateRank2013}{galamm}
+#'
+#' \insertRef{woodGeneralizedAdditiveModels2017a}{galamm}
+#'
+#'
 gamm4.setup <- function(formula, pterms,
-                        data = stop("No data supplied to gamm.setup"), knots = NULL) {
-  G <- gam.setup(formula, pterms,
-    data = data, knots = knots, sp = NULL,
-    min.sp = NULL, H = NULL, absorb.cons = TRUE, sparse.cons = 0, gamm.call = TRUE
-  )
+                        data = stop("No data supplied to gamm.setup")) {
+  G <- gam.setup(formula, pterms, data = data)
 
   if (!is.null(G$L)) stop("gamm can not handle linked smoothing parameters (probably from use of `id' or adaptive smooths)")
   # now perform re-parameterization...
@@ -29,7 +35,7 @@ gamm4.setup <- function(formula, pterms,
 
   xlab <- rep("", 0)
 
-  G$Xf <- as(X, "dgCMatrix") ## sparse version of full matrix, treating smooths as fixed
+  G$Xf <- methods::as(X, "dgCMatrix") ## sparse version of full matrix, treating smooths as fixed
 
   first.para <- G$nsdf + 1
 
@@ -50,11 +56,11 @@ gamm4.setup <- function(formula, pterms,
         flev <- levels(sm$fac) ## grouping factor for smooth
         n.lev <- length(flev)
         for (k in 1:n.lev) {
-          G$Xf <- cbind2(G$Xf, as(sm$X * as.numeric(sm$fac == flev[k]), "dgCMatrix"))
+          G$Xf <- methods::cbind2(G$Xf, methods::as(sm$X * as.numeric(sm$fac == flev[k]), "dgCMatrix"))
         }
       } else {
         n.lev <- 1
-        G$Xf <- cbind2(G$Xf, as(sm$X, "dgCMatrix"))
+        G$Xf <- methods::cbind2(G$Xf, methods::as(sm$X, "dgCMatrix"))
       }
 
       ## now append random effects to main list
@@ -112,21 +118,30 @@ gamm4.setup <- function(formula, pterms,
 } ## end of gamm4.setup
 
 
-#' Internal function for setting up model
+#' Convert a GAMM to its mixed model representation
 #'
-#' @param fixed formula excluding lme4 style random effects but including smooths
-#' @param random random part
-#' @param data data
+#' This function is derived from \code{gamm4::gamm4}.
 #'
-#' @return lmod object
+#' @param fixed A formula excluding lme4 style random effects but including
+#'   smooths.
+#' @param random A formula containing an optional random effect part in
+#'   \code{lme4} style. See the documentation of the \code{random} argument to
+#'   \code{gamm4::gamm4}.
+#' @param data Data frame.
 #'
-#' @author Simon Wood and Fabian Scheipl
+#' @return An object of class \code{lmod}, returned from \code{lme4::lFormula}.
+#'
+#' @author Simon Wood and Fabian Scheipl.
+#' @keywords internal
+#'
+#' @seealso [gamm4.setup()] and [gam.setup()].
+#'
+#' @references
+#' \insertRef{woodStraightforwardIntermediateRank2013}{galamm}
+#'
+#' \insertRef{woodGeneralizedAdditiveModels2017a}{galamm}
 #'
 gamm4 <- function(fixed, random = NULL, data = list()) {
-  # Routine to fit a GAMM to some data. Fixed and smooth terms are defined in the formula, but the wiggly
-  # parts of the smooth terms are treated as random effects. The onesided formula random defines additional
-  # random terms.
-
   if (!is.null(random)) {
     if (!inherits(random, "formula")) stop("gamm4 requires `random' to be a formula")
     random.vars <- all.vars(random)
@@ -179,6 +194,7 @@ gamm4 <- function(fixed, random = NULL, data = list()) {
   pmf$formula <- gp$pf
   pmf <- eval(pmf, parent.frame()) # pmf contains all data for non-smooth part
   pTerms <- attr(pmf, "terms")
+
 
   G <- gamm4.setup(gp, pterms = pTerms, data = mf)
 
@@ -234,7 +250,7 @@ gamm4 <- function(fixed, random = NULL, data = list()) {
     for (i in 1:n.sr) { ## loop through random effect smooths
       k <- ind[sn[i] == tn] ## which term should contain G$random[[i]]
       ii <- (b$reTrms$Gp[k] + 1):b$reTrms$Gp[k + 1]
-      b$reTrms$Ztlist[[k]] <- b$reTrms$Zt[ii, ] <- as(t(G$random[[i]]), "dgCMatrix")
+      b$reTrms$Ztlist[[k]] <- b$reTrms$Zt[ii, ] <- methods::as(t(G$random[[i]]), "dgCMatrix")
       b$reTrms$cnms[[k]] <- attr(G$random[[i]], "s.label")
     }
   }

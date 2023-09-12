@@ -3,20 +3,27 @@
 \name{factor_loadings.galamm}
 \alias{factor_loadings.galamm}
 \alias{factor_loadings}
-\title{Extract Factor Loadings from galamm Object}
+\title{Extract factor loadings from galamm object}
 \usage{
 \method{factor_loadings}{galamm}(object)
 }
 \arguments{
-\item{object}{An object}
+\item{object}{Object of class \code{galamm} returned from
+\code{\link{galamm}}.}
 }
 \value{
-Vector
+A matrix containing the estimated factor loadings with corresponding
+standard deviations.
 }
 \description{
-Extract Factor Loadings from galamm Object
+Extract factor loadings from galamm object
 }
 \details{
 This function has been named \code{factor_loadings} rather than just
 \code{loadings} to avoid conflict with \code{stats::loadings}.
+}
+\seealso{
+\code{\link[=fixef.galamm]{fixef.galamm()}} for fixed regression coefficients,
+\code{\link[=confint.galamm]{confint.galamm()}} for confidence intervals, and \code{\link[=coef.galamm]{coef.galamm()}} for
+coefficients more generally.
 }

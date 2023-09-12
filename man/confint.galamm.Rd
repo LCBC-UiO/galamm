@@ -7,22 +7,29 @@
 \method{confint}{galamm}(object, parm, level = 0.95, method = "Wald", ...)
 }
 \arguments{
-\item{object}{Model object}
+\item{object}{An object of class \code{galamm} returned from
+\code{\link{galamm}}.}
 
-\item{parm}{Parameters for which to compute intervals. Use "theta" to get all
-variance parameters, "beta" to get all fixed regression coefficients,
-"lambda" to get all factor loadings, and "weights" to get all weights. Can
-also be a vector of number.}
+\item{parm}{Parameters for which to compute intervals. Use \code{"theta"} to
+get all variance parameters, \code{"beta"} to get all fixed regression
+coefficients, \code{"lambda"} to get all factor loadings, and
+\code{"weights"} to get all weights. The parameter can also be given as a
+numeric vector with indices specifying the parameters.}
 
-\item{level}{Confidence level.}
+\item{level}{Confidence level. Defaults to 0.95.}
 
 \item{method}{Currently only "Wald" is available.}
 
-\item{...}{Other arguments.}
+\item{...}{Other arguments passed on to other methods. Currently not used.}
 }
 \value{
-Confidence intervals.
+A matrix with the requested confidence intervals.
 }
 \description{
 Confidence intervals for model parameters
+}
+\seealso{
+\code{\link[=fixef.galamm]{fixef.galamm()}} for fixed effects, \code{\link[=coef.galamm]{coef.galamm()}} for
+coefficients more generally, and \code{\link[=vcov.galamm]{vcov.galamm()}} for the variance-covariance
+matrix. \code{\link[=confint]{confint()}} is the generic function.
 }

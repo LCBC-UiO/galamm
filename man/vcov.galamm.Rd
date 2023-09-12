@@ -2,22 +2,27 @@
 % Please edit documentation in R/vcov.R
 \name{vcov.galamm}
 \alias{vcov.galamm}
-\title{Calculate Variance-Covariance Matrix for galamm Model Object}
+\title{Calculate variance-covariance matrix for GALAMM fit}
 \usage{
 \method{vcov}{galamm}(object, parm = "beta", ...)
 }
 \arguments{
-\item{object}{Fitted model}
+\item{object}{Object of class \code{galamm} returned from
+\code{\link{galamm}}.}
 
-\item{parm}{The parameters for which the variance-covariance matrix should
-be calculated. Character vector with one or more of the elements "theta",
+\item{parm}{The parameters for which the variance-covariance matrix should be
+calculated. Character vector with one or more of the elements "theta",
 "beta", "lambda", and "weights". Can also be an integer vector.}
 
-\item{...}{Further arguments}
+\item{...}{Further arguments passed on to other methods. Currently not used.}
 }
 \value{
-Variance-covariance matrix
+A variance-covariance matrix.
 }
 \description{
-Calculate Variance-Covariance Matrix for galamm Model Object
+Calculate variance-covariance matrix for GALAMM fit
+}
+\seealso{
+\code{\link[=confint.galamm]{confint.galamm()}} for the method computing confidence intervals.
+See \code{\link[=vcov]{vcov()}} for the generic function.
 }

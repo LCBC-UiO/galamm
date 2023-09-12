@@ -2,21 +2,26 @@
 % Please edit documentation in R/mgcv-functions.R
 \name{clone.smooth.spec}
 \alias{clone.smooth.spec}
-\title{Internal function from mgcv}
+\title{Clone smooth specification for ID-linked bases}
 \usage{
 clone.smooth.spec(specb, spec)
 }
 \arguments{
-\item{specb}{spec}
+\item{specb}{Specification to be cloned.}
 
-\item{spec}{spec}
+\item{spec}{Original specification which will be modified.}
 }
 \value{
-value
+A cloned smooth specification.
 }
 \description{
-Internal function from mgcv
+This is an internal function from \code{mgcv} which clones the specifications
+for bases linked with an \code{id} argument.
+}
+\references{
+\insertRef{woodGeneralizedAdditiveModels2017a}{galamm}
 }
 \author{
 Simon Wood
 }
+\keyword{internal}

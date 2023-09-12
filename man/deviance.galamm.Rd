@@ -2,18 +2,23 @@
 % Please edit documentation in R/logLik.galamm.R
 \name{deviance.galamm}
 \alias{deviance.galamm}
-\title{Extract Deviance of galamm Object}
+\title{Extract deviance of galamm object}
 \usage{
 \method{deviance}{galamm}(object, ...)
 }
 \arguments{
-\item{object}{Object}
+\item{object}{Object of class \code{galamm}, returned from
+\code{\link{galamm}}.}
 
-\item{...}{Other arguments}
+\item{...}{Other arguments passed on to other methods. Currently not used.}
 }
 \value{
-Deviance
+A numeric value giving the deviance of the model fit.
 }
 \description{
-Extract Deviance of galamm Object
+Extract deviance of galamm object
+}
+\seealso{
+\code{\link[=logLik.galamm]{logLik.galamm()}} for a function returning the log likelihood and
+\code{\link[=deviance]{deviance()}} for the generic function.
 }

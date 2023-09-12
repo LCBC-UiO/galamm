@@ -2,18 +2,22 @@
 % Please edit documentation in R/plot.galamm.R
 \name{plot.galamm}
 \alias{plot.galamm}
-\title{Diagnostic Plots for galamm Objects}
+\title{Diagnostic plots for galamm objects}
 \usage{
 \method{plot}{galamm}(x, ...)
 }
 \arguments{
-\item{x}{A galamm object}
+\item{x}{An object of class \code{galamm} returned from \code{\link{galamm}}.}
 
-\item{...}{Other arguments}
+\item{...}{Optional arguments passed on to the \code{plot} function.}
 }
 \value{
-A plot is displayed
+A plot is displayed.
 }
 \description{
-Diagnostic Plots for galamm Objects
+Diagnostic plots for galamm objects
+}
+\seealso{
+\code{\link[=residuals.galamm]{residuals.galamm()}} for extracting residuals and \code{\link[=plot]{plot()}} for the
+generic function.
 }

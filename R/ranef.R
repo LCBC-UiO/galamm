@@ -1,19 +1,29 @@
-#' Extract Random Effects from galamm Object
+##' @importFrom nlme ranef
+##' @export ranef
+NULL
+
+#' Extract random effects from galamm object.
 #'
-#' @param object An object
-#' @param ... Other parameters
+#' @param object An object of class \code{galamm}, returned from
+#'   \code{\link{galamm}}.
+#' @param ... Optional parameters passed on to other methods. Currently not
+#'   used.
 #'
-#' @return Random effects
+#' @return An object of class \code{ranef.galamm}, containing the requested
+#'   random effects.
 #'
 #' @aliases ranef ranef.galamm
 #'
-#' @importFrom nlme ranef
-#' @export ranef
 #' @method ranef galamm
 #' @export
 #'
 #' @author This function is derived from \code{lme4::ranef.merMod}, written by
-#' Douglas Bates, Martin Maechler, Ben Bolker, Steve Walker.
+#'   Douglas Bates, Martin Maechler, Ben Bolker, Steve Walker.
+#'
+#' @references \insertRef{batesFittingLinearMixedEffects2015}{galamm}
+#'
+#' @seealso [fixef.galamm()] for fixed effects and [coef.galamm()] for
+#'   coefficients more generally.
 ranef.galamm <- function(object, ...) {
   ans <- object$b ## not always == c(matrix(unlist(getME(object,"b"))))
   if (!is.null(fl <- object$lmod$reTrms$flist)) {

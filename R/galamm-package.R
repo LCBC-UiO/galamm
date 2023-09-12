@@ -19,8 +19,6 @@ NULL
 #' @importFrom Rcpp sourceCpp
 #'
 #' @import stats
-#' @importFrom methods as cbind2
-#' @importFrom graphics abline
 #' @importFrom Rdpack reprompt
 ## usethis namespace: end
 NULL

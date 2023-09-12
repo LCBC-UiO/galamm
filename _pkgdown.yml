@@ -17,3 +17,40 @@ articles:
   navbar: Advanced topics
   contents:
   - optimization
+
+reference:
+- title: Modeling
+  desc: Fit a generalized additive latent and mixed model.
+  contents:
+  - galamm
+  - galamm_control
+
+- title: High-level model output
+  desc: Functions for summarising the result of model fits.
+  contents:
+  - anova.galamm
+  - plot.galamm
+  - print.summary.galamm
+  - summary.galamm
+
+- title: Model details
+  desc: Detailed information on specific parts of model fits.
+  - coef.galamm
+  - confint.galamm
+  - deviance.galamm
+  - factor_loadings.galamm
+  - fitted.galamm
+  - fixef.galamm
+  - logLik.galamm
+  - predict.galamm
+  - ranef.galamm
+  - residuals.galamm
+
+- title: Datasets
+  desc: Simulated and real example datasets.
+  contents:
+  - cognition
+  - diet
+  - epilep
+  - hsced
+  - mresp

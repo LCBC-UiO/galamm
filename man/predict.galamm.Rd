@@ -7,7 +7,8 @@
 \method{predict}{galamm}(object, newdata = NULL, type = c("link", "response"), ...)
 }
 \arguments{
-\item{object}{A fitted model object}
+\item{object}{An object of class \code{galamm} returned from
+\code{\link{galamm}}.}
 
 \item{newdata}{Data from for which to evaluate predictions. Defaults to
 "NULL", which means that the predictions are evaluate at the data used to
@@ -15,11 +16,18 @@ fit the model.}
 
 \item{type}{Type of prediction object to be returned.}
 
-\item{...}{Other arguments.}
+\item{...}{Optional arguments passed on to other methods. Currently not used.}
 }
 \value{
-A number vector of predicted values.
+A numeric vector of predicted values.
 }
 \description{
-Predictions from a model at new data values
+Currently, predictions are given with all random effects set to zero. We will
+add the opportunity to specify the level of prediction in the future. This is
+particularly important for models containing smooth terms, for which the
+predictions currently don't make much sense.
+}
+\seealso{
+\code{\link[=fitted.galamm]{fitted.galamm()}} for model fits, \code{\link[=residuals.galamm]{residuals.galamm()}} for residuals,
+and \code{\link[=predict]{predict()}} for the generic function.
 }
