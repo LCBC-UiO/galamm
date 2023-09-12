@@ -1,4 +1,3 @@
-
 test_that("wrong input is handled properly", {
   dat <- subset(cognition, domain == 2)
   dat$item <- factor(dat$item)
@@ -14,4 +13,3 @@ test_that("wrong input is handled properly", {
     )
   )
 })
-
