@@ -25,6 +25,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
                    family_mapping = rep(1L, nrow(data)),
                    load.var = NULL, lambda = NULL, factor = NULL,
                    start = NULL, control = galamm_control()) {
+
   stopifnot(length(family) == length(unique(family_mapping)))
 
   data <- as.data.frame(data)
@@ -152,7 +153,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
 
           inds <- which(data[, cn] != 0)
           inds_expanded <- unlist(Map(function(x, y) rep(x, each = y), x = inds, y = delta[inds]))
-          if (any(delta[inds] > 1) && !any(delta[inds] == 0)) inds_expanded <- sort(inds_expanded)
+          if (any(delta[inds] > 1) && !any(delta[inds] == 0)) inds_expanded <- order(inds_expanded)
           mapping_component[inds_expanded] <-
             unlist(Map(function(x, y) rep(ll[x, cn], each = y),
               x = data[inds, load.var], y = delta[inds]

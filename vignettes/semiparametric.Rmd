@@ -219,5 +219,31 @@ $$
 y_{i} = \beta_{i} + \lambda_{i} h(x) + \lambda_{i} \zeta + \epsilon_{i}
 $$
 
+We fit the model as follows.
+
+```{r}
+dat <- subset(cognition, domain == 1)
+dat$item <- factor(dat$item)
+
+mod <- galamm(
+  formula = y ~ 0 + item + s(x, by = loading),
+  data = dat,
+  load.var = "item",
+  lambda = list(matrix(c(1, NA, NA), ncol = 1)),
+  factor = list("loading")
+)
+```
+
+The factor loadings are very well recovered.
+
+```{r}
+summary(mod)
+```
+
+
+
+
+
+
 
 # References
