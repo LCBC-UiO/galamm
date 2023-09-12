@@ -148,7 +148,7 @@ ggplot(
   aes(x = x, y = y)
 ) +
   geom_point(size = .5, alpha = .3) +
-  geom_line(aes(group = id), size = .4, alpha = .3) +
+  geom_line(aes(group = id), linewidth = .4, alpha = .3) +
   facet_wrap(vars(item), labeller = as_labeller(function(x) paste("Item", x)))
 ```
 
@@ -162,13 +162,15 @@ $$
 and the structural model
 
 $$
-\eta = \gamma_{1} x + \gamma_{2}x^{2} + \zeta.
+\eta = \gamma_{1} x + \gamma_{2}x^{2} + \zeta^{(2)} + \zeta^{(3)}.
 $$
+
+where $\zeta^{(2)}$ is the random intercept within timepoint for a given subject, and $\zeta^{(3)}$ is the random intercept between timepoints within subject.
 
 The reduced form of the model is
 
 $$
-y_{i} = \beta_{i} + \lambda_{i} \gamma_{1}x + \lambda_{i} \gamma_{2} x^{2} + \lambda_{i} \zeta + \epsilon_{i}
+y_{i} = \beta_{i} + \lambda_{i} \left\{\gamma_{1}x + \gamma_{2} x^{2} +  \zeta^{(2)} + \zeta^{(3)} \right\} + \epsilon_{i}
 $$
 
 We can fit this model using galamm as follows.
@@ -177,7 +179,7 @@ We can fit this model using galamm as follows.
 dat <- subset(cognition, domain == 1)
 
 mod <- galamm(
-  formula = y ~ loading:(x + I(x^2)) + (0 + loading | id),
+  formula = y ~ loading:(x + I(x^2)) + (0 + loading | id / timepoint),
   data = dat,
   load.var = "item",
   lambda = list(matrix(c(1, NA, NA), ncol = 1)),
@@ -191,15 +193,10 @@ The factor loadings are very close to the values used in when simulating the dat
 summary(mod)
 ```
 
-The diagnostic plot is not perfect, but perhaps acceptable.
-
-```{r}
-plot(mod)
-```
-
-
 
 ## Generalized Additive Models with Factor Structures
+
+### Gaussian Responses
 
 We now move on to semiparametric estimation. The measurement model is
 
@@ -210,14 +207,57 @@ $$
 and the structural model
 
 $$
-\eta = h(x) + \zeta.
+\eta = h(x) + \zeta^{(2)} + \zeta^{(3)}.
 $$
 
 The reduced form of the model is
 
 $$
-y_{i} = \beta_{i} + \lambda_{i} h(x) + \lambda_{i} \zeta + \epsilon_{i}
+y_{i} = \beta_{i} + \lambda_{i} \left\{ h(x) + \zeta^{(2)} + \zeta^{(3)} \right\} + \epsilon_{i}
 $$
+
+We fit the model as follows.
+
+```{r}
+dat <- subset(cognition, domain == 1)
+dat$item <- factor(dat$item)
+
+mod <- galamm(
+  formula = y ~ 0 + item + s(x, by = loading) + (0 + loading | id / timepoint),
+  data = dat,
+  load.var = "item",
+  lambda = list(matrix(c(1, NA, NA), ncol = 1)),
+  factor = list("loading")
+)
+```
+
+The factor loadings are very well recovered. When simulating the data, the standard deviation at the `id` level was 1, at the `timepoint` level it was 0.5, and the residual standard deviation was 0.1. The estimates are close to these values.
+
+```{r}
+summary(mod)
+```
+
+### Binomial Responses
+
+We can now move on to the part of the cognition data that is binomially distributed. We begin with domain 2, for which there is a single trial. In this case there are only two items, so we must change the lambda matrix accordingly.
+
+
+```{r}
+dat <- subset(cognition, domain == 2)
+dat$item <- factor(dat$item)
+
+mod <- galamm(
+  formula = y ~ 0 + item + s(x, by = loading) + (0 + loading | id / timepoint),
+  data = dat,
+  family = binomial,
+  load.var = "item",
+  lambda = list(matrix(c(1, NA), ncol = 1)),
+  factor = list("loading")
+)
+
+summary(mod)
+```
+
 
 
 # References

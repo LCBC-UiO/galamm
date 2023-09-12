@@ -1,9 +1,9 @@
 rm(list=ls())
 devtools::load_all()
 
-formula = y ~ 0 + item + s(x, by = loading, k = 4)
+formula = y ~ 0 + item + s(x, by = loading, k = 4) + (0 + loading | id)
 weights = NULL
-data = head(subset(cognition, domain == 1), 12)
+data = subset(cognition, domain == 1)
 data$item <- factor(data$item)
 family = gaussian
 family_mapping = rep(1L, nrow(data))

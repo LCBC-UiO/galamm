@@ -52,6 +52,9 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
         stop("Factor already a column in data.")
       }
       for (j in seq_along(factor[[i]])) {
+        if (length(unique(data[, load.var])) != length(lambda[[i]][, j])) {
+          stop("lambda matrix must contain one row for each element in load.var")
+        }
         eval(parse(text = paste("data$", factor[[i]][[j]], "<-1")))
         rows_to_zero <-
           data[, load.var] %in% levels(data[, load.var])[lambda[[i]][, j] == 0]
@@ -143,7 +146,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
           return(rep(-1L, sum(delta)))
         }
 
-        mapping_component <- rep(NA_integer_, sum(delta))
+        mapping_component <- rep(NA_integer_, length(delta))
         for (j in seq_along(cnms)) {
           cn <- unlist(lapply(factor[[f]], function(x) {
             m <- regexpr(x, cnms[[j]], fixed = TRUE)
@@ -151,18 +154,18 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
           }))
 
           inds <- which(data[, cn] != 0)
-          inds_expanded <- unlist(Map(function(x, y) rep(x, each = y), x = inds, y = delta[inds]))
-          if (any(delta[inds] > 1) && !any(delta[inds] == 0)) inds_expanded <- sort(inds_expanded)
+          inds_expanded <- unlist(Map(function(x, y) rep(x, each = y), x = inds, y = pmin(1, delta[inds])))
+          # if (any(delta[inds] > 1) && !any(delta[inds] == 0)) inds_expanded <- order(inds_expanded)
           mapping_component[inds_expanded] <-
-            unlist(Map(function(x, y) rep(ll[x, cn], each = y),
+            Map(function(x, y) rep(ll[x, cn], each = y),
               x = data[inds, load.var], y = delta[inds]
-            ))
+            )
         }
 
         mapping_component
       })
 
-      lambda_mapping_Zt <- as.numeric(do.call(rbind, mappings))
+      lambda_mapping_Zt <- unlist(do.call(function(...) mapply(c, ..., SIMPLIFY = FALSE), mappings))
       lambda_mapping_Zt <- lambda_mapping_Zt[!is.na(lambda_mapping_Zt)]
 
       stopifnot(length(lambda_mapping_Zt) == sum(diff(Zt@p)))

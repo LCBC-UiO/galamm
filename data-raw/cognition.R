@@ -41,8 +41,8 @@ cognition <- crossing(
   bind_cols(zeta3) %>%
   pivot_longer(cols = -id, names_to = "domain", values_to = "zeta3") %>%
   rowwise() %>%
-  mutate(x = map(8, ~ sort(runif(.x)))) %>%
-  unnest(cols = x) %>%
+  mutate(x = map(8, ~ sort(runif(.x))), timepoint = list(1:8)) %>%
+  unnest(cols = c(x, timepoint)) %>%
   mutate(
     zeta2 = rnorm(nrow(.), sd = .5)
   ) %>%
@@ -72,7 +72,8 @@ cognition <- crossing(
   select(-zeta3, -zeta2, -linpred, -loading) %>%
   mutate(
     domain = factor(as.integer(domain)),
-    item = factor(as.integer(item))
+    item = factor(as.integer(item)),
+    timepoint = factor(timepoint)
   ) %>%
   as.data.frame()
 
