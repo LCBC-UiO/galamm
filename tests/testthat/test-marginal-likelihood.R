@@ -1,3 +1,4 @@
+library(lme4)
 data(IRTsim, package = "PLmixed")
 IRTsub <- IRTsim[IRTsim$item < 4, ]
 set.seed(12345)

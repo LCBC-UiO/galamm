@@ -1,6 +1,7 @@
 library(memoise)
-data(cbpp, package = "lme4")
-glmod <- lme4::glFormula(cbind(incidence, size - incidence) ~ period + (1 | herd),
+library(lme4)
+data(cbpp)
+glmod <- glFormula(cbind(incidence, size - incidence) ~ period + (1 | herd),
   data = cbpp, family = binomial
 )
 

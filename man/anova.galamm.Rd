@@ -19,5 +19,6 @@ Compare Likelihoods of galamm Objects
 }
 \details{
 Some of the source code for this function is adapted from
-\code{lme4:::anova.merMod}.
+\code{lme4:::anova.merMod}, with authors Douglas M. Bates, Martin Maechler,
+Ben Bolker, and Steve Walker.
 }

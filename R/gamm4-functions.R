@@ -225,7 +225,7 @@ gamm4 <- function(fixed, random = NULL, data = list()) {
   lme4.formula <- as.formula(lme4.formula)
 
   ## NOTE: further arguments should be passed here...
-  b <- lFormula(lme4.formula, data = mf, REML = FALSE)
+  b <- lme4::lFormula(lme4.formula, data = mf, REML = FALSE)
 
   if (n.sr) { ## Fabian Scheipl's trick of overwriting dummy slots revised for new structure
     tn <- names(b$reTrms$cnms) ## names associated with columns of Z (same order as Gp)
