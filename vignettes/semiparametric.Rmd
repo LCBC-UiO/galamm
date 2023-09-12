@@ -239,20 +239,23 @@ summary(mod)
 
 ### Binomial Responses
 
-We can now move on to the part of the cognition data that is binomially distributed. We begin with domain 2, for which there is a single trial.
+We can now move on to the part of the cognition data that is binomially distributed. We begin with domain 2, for which there is a single trial. In this case there are only two items, so we must change the lambda matrix accordingly.
 
 
 ```{r}
-dat <- subset(cognition, domain == 1)
+dat <- subset(cognition, domain == 2)
 dat$item <- factor(dat$item)
 
 mod <- galamm(
   formula = y ~ 0 + item + s(x, by = loading) + (0 + loading | id / timepoint),
   data = dat,
+  family = binomial,
   load.var = "item",
-  lambda = list(matrix(c(1, NA, NA), ncol = 1)),
+  lambda = list(matrix(c(1, NA), ncol = 1)),
   factor = list("loading")
 )
+
+summary(mod)
 ```
 
 
