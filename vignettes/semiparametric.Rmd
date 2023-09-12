@@ -156,19 +156,19 @@ ggplot(
 It seem reasonable to assume that the underlying latent trait for domain 1 has a quadratic form. We hence estimate define the following measurement model
 
 $$
-\mathbf{y} = \boldsymbol{\beta}_{0} + \boldsymbol{\Lambda} \boldsymbol{\eta} + \boldsymbol{\epsilon}
+y_{i} = \beta_{i} + \lambda_{i} \eta + \epsilon_{i}
 $$
 
 and the structural model
 
 $$
-\boldsymbol{\eta} = \gamma_{1} \mathbf{x} + \gamma_{2}\mathbf{x}^{2} + \boldsymbol{\zeta}.
+\eta = \gamma_{1} x + \gamma_{2}x^{2} + \zeta.
 $$
 
 The reduced form of the model is
 
 $$
-\mathbf{y} = \boldsymbol{\beta}_{0} + \boldsymbol{\Lambda} \gamma_{1} \mathbf{x} + \boldsymbol{\Lambda} \gamma_{2} x^{2} + \boldsymbol{\Lambda} \boldsymbol{\zeta}.
+y_{i} = \beta_{i} + \lambda_{i} \gamma_{1}x + \lambda_{i} \gamma_{2} x^{2} + \lambda_{i} \zeta + \epsilon_{i}
 $$
 
 We can fit this model using galamm as follows.
@@ -200,6 +200,24 @@ plot(mod)
 
 
 ## Generalized Additive Models with Factor Structures
+
+We now move on to semiparametric estimation. The measurement model is
+
+$$
+y_{i} = \beta_{i} + \lambda_{i} \eta + \epsilon_{i}
+$$
+
+and the structural model
+
+$$
+\eta = h(x) + \zeta.
+$$
+
+The reduced form of the model is
+
+$$
+y_{i} = \beta_{i} + \lambda_{i} h(x) + \lambda_{i} \zeta + \epsilon_{i}
+$$
 
 
 # References
