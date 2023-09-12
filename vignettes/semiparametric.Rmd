@@ -123,7 +123,7 @@ summary(mod_gamm4$mer)
 plot(mod_gamm4$gam)
 ```
 
-Using galamm instead we do.
+The following code estimates the modeling using galamm instead.
 
 ```{r}
 mod <- galamm(cbind(y, trials - y) ~ s(x) + (1 | id),
@@ -137,74 +137,27 @@ The estimates are very similar, although not identical. The difference in devian
 summary(mod)
 ```
 
-
-## Nonlinear Mixed Models with Factor Structures
-
-To motivate the semiparametric estimation to follow, we start by looking at the items corresponding to domain 1 in the cognition data.
-
-```{r}
-ggplot(
-  subset(cognition, domain == 1),
-  aes(x = x, y = y)
-) +
-  geom_point(size = .5, alpha = .3) +
-  geom_line(aes(group = id), linewidth = .4, alpha = .3) +
-  facet_wrap(vars(item), labeller = as_labeller(function(x) paste("Item", x)))
-```
-
-
-It seem reasonable to assume that the underlying latent trait for domain 1 has a quadratic form. We hence estimate define the following measurement model
-
-$$
-y_{i} = \beta_{i} + \lambda_{i} \eta + \epsilon_{i}
-$$
-
-and the structural model
-
-$$
-\eta = \gamma_{1} x + \gamma_{2}x^{2} + \zeta^{(2)} + \zeta^{(3)}.
-$$
-
-where $\zeta^{(2)}$ is the random intercept within timepoint for a given subject, and $\zeta^{(3)}$ is the random intercept between timepoints within subject.
-
-The reduced form of the model is
-
-$$
-y_{i} = \beta_{i} + \lambda_{i} \left\{\gamma_{1}x + \gamma_{2} x^{2} +  \zeta^{(2)} + \zeta^{(3)} \right\} + \epsilon_{i}
-$$
-
-We can fit this model using galamm as follows.
-
-```{r}
-dat <- subset(cognition, domain == 1)
-
-mod <- galamm(
-  formula = y ~ loading:(x + I(x^2)) + (0 + loading | id / timepoint),
-  data = dat,
-  load.var = "item",
-  lambda = list(matrix(c(1, NA, NA), ncol = 1)),
-  factor = list("loading")
-)
-```
-
-The factor loadings are very close to the values used in when simulating the data, and both the linear and quadratic terms are clearly significant.
-
-```{r}
-summary(mod)
-```
-
-
 ## Generalized Additive Models with Factor Structures
+
+We now add factor structures to the GAMMs. These are types of models that neither gamm4 nor mgcv are able to estimate, and where galamm provides new functionality.
 
 ### Gaussian Responses
 
-We now move on to semiparametric estimation. The measurement model is
+We continue with the cognition data, but now use all items of cognitive domain 1. These are all conditionally normal distributed.
+
+```{r}
+dat <- subset(cognition, domain == 1)
+dat$item <- factor(dat$item)
+head(dat)
+```
+
+We now need a factor model to associate the underlying latent trait $\eta$ with the measurements $y_{i}$:
 
 $$
 y_{i} = \beta_{i} + \lambda_{i} \eta + \epsilon_{i}
 $$
 
-and the structural model
+In the structural model, we have a smooth term for the relationship between the latent trait and x, and we have random intercepts for a given timepoint within subject $\zeta^{(2)}$, and for a given subject across timepoints $\zeta^{(3)}$.
 
 $$
 \eta = h(x) + \zeta^{(2)} + \zeta^{(3)}.
@@ -219,9 +172,6 @@ $$
 We fit the model as follows.
 
 ```{r}
-dat <- subset(cognition, domain == 1)
-dat$item <- factor(dat$item)
-
 mod <- galamm(
   formula = y ~ 0 + item + s(x, by = loading) + (0 + loading | id / timepoint),
   data = dat,
@@ -239,7 +189,7 @@ summary(mod)
 
 ### Binomial Responses
 
-We can now move on to the part of the cognition data that is binomially distributed. We begin with domain 2, for which there is a single trial. In this case there are only two items, so we must change the lambda matrix accordingly.
+We can now move on to the part of the cognition data that is conditionally binomially distributed. We begin with domain 2, for which each response measures success or not in is a single trial. In this case there are only two items, so we must change the lambda matrix accordingly.
 
 
 ```{r}
@@ -254,8 +204,13 @@ mod <- galamm(
   lambda = list(matrix(c(1, NA), ncol = 1)),
   factor = list("loading")
 )
+```
 
-summary(mod)
+The factor loading $\lambda_{2} = 2$ was used when simulating the data, and including the uncertainty, our estimate covers the true value well.
+
+```{r}
+factor_loadings(mod)
+confint(mod, "lambda")
 ```
 
 
