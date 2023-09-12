@@ -2,23 +2,35 @@
 % Please edit documentation in R/gamm4-functions.R
 \name{gamm4}
 \alias{gamm4}
-\title{Internal function for setting up model}
+\title{Convert a GAMM to its mixed model representation}
 \usage{
 gamm4(fixed, random = NULL, data = list())
 }
 \arguments{
-\item{fixed}{formula excluding lme4 style random effects but including smooths}
+\item{fixed}{A formula excluding lme4 style random effects but including
+smooths.}
 
-\item{random}{random part}
+\item{random}{A formula containing an optional random effect part in
+\code{lme4} style. See the documentation of the \code{random} argument to
+\code{gamm4::gamm4}.}
 
-\item{data}{data}
+\item{data}{Data frame.}
 }
 \value{
-lmod object
+An object of class \code{lmod}, returned from \code{lme4::lFormula}.
 }
 \description{
-Internal function for setting up model
+This function is derived from \code{gamm4::gamm4}.
+}
+\references{
+\insertRef{woodStraightforwardIntermediateRank2013}{galamm}
+
+\insertRef{woodGeneralizedAdditiveModels2017a}{galamm}
+}
+\seealso{
+\code{\link[=gamm4.setup]{gamm4.setup()}} and \code{\link[=gam.setup]{gam.setup()}}.
 }
 \author{
-Simon Wood and Fabian Scheipl
+Simon Wood and Fabian Scheipl.
 }
+\keyword{internal}

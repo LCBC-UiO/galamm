@@ -1,4 +1,7 @@
-#' Control Values for galamm Fit
+#' Control values for galamm fit
+#'
+#' This function can be called for controling the optimization procedure used
+#' when fitting GALAMMs using \code{\link{galamm}}.
 #'
 #' @param optim_control List passed on to \code{stats::optim}'s \code{control}
 #'   argument. If not otherwise specified, the following arguments are set to
@@ -9,9 +12,11 @@
 #'   "gaussian"} for all observations, since then a single step gives the exact
 #'   answer.
 #'
-#' @return Object of class galamm_control
+#' @return Object of class \code{galamm_control}, which typically will be
+#' provided as an argument to \code{\link{galamm}}.
 #' @export
 #'
+#' @seealso [galamm()]
 galamm_control <- function(optim_control = list(),
                            maxit_conditional_modes = 10) {
   if (length(trace) != 1L && trace < 0) {
@@ -46,6 +51,12 @@ galamm_control <- function(optim_control = list(),
   )
 }
 
+
+#' Constructor method for galamm_control objects
+#'
+#' @inherit galamm_control
+#' @keywords internal
+#' @seealso [galamm_control()]
 new_galamm_control <- function(optim_control, maxit_conditional_modes) {
   if (is.null(optim_control$fnscale)) {
     optim_control$fnscale <- -1
@@ -73,12 +84,11 @@ optim_control <- function(x) {
 
 #' Extract optim control parameters
 #'
-#' @param x Object of class galamm_control
+#' @param x Object of class \code{galamm_control} returned from
+#'   \code{\link{galamm_control}}.
 #'
-#' @return List
-#' @aliases optim_control optim_control.galamm_control
-#' @export optim_control
-#' @export
+#' @return A list with control parameters.
+#' @keywords internal
 #'
 optim_control.galamm_control <- function(x) {
   x$optim_control

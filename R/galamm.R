@@ -25,6 +25,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
                    family_mapping = rep(1L, nrow(data)),
                    load.var = NULL, lambda = NULL, factor = NULL,
                    start = NULL, control = galamm_control()) {
+
   stopifnot(length(family) == length(unique(family_mapping)))
 
   data <- as.data.frame(data)
@@ -197,29 +198,84 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
     weights_inds <- integer()
   }
 
+  y <- response_obj[, 1]
+  trials <- response_obj[, 2]
+  u_init <- rep(0, nrow(Zt))
+
+  family_txt <- vapply(family_list, function(f) f$family, "a")
+
+  k <- numeric(length(family_txt))
+  for (i in seq_along(k)) {
+    if (family_txt[[i]] == "gaussian") {
+      k[[i]] <- 0
+    } else if (family_txt[[i]] == "binomial") {
+      trials0 <- trials[family_mapping == i]
+      y0 <- y[family_mapping == i]
+      k[[i]] <- sum(lgamma(trials0 + 1) - lgamma(y0 + 1) - lgamma(trials0 - y0 + 1))
+    } else if (family_txt[[i]] == "poisson") {
+      trials0 <- trials[family_mapping == i]
+      y0 <- y[family_mapping == i]
+      k[[i]] <- -sum(lgamma(y0 + 1))
+    }
+  }
+
+  maxit_conditional_modes <- ifelse(
+    length(family_list) == 1 & family_list[[1]]$family == "gaussian",
+    1, control$maxit_conditional_modes
+  )
+
   mlwrapper <- function(par, hessian = FALSE) {
-    marginal_likelihood(
-      y = response_obj[, 1],
-      trials = response_obj[, 2],
+    marginal_likelihood_cpp(
+      y = y,
+      trials = trials,
       X = X,
       Zt = Zt,
       Lambdat = Lambdat,
       beta = par[beta_inds],
       theta = par[theta_inds],
       theta_mapping = theta_mapping,
+      u_init = u_init,
       lambda = par[lambda_inds],
       lambda_mapping_X = lambda_mapping_X,
+      lambda_mapping_X_covs = integer(),
       lambda_mapping_Zt = lambda_mapping_Zt,
+      lambda_mapping_Zt_covs = integer(),
       weights = par[weights_inds],
       weights_mapping = weights_mapping,
-      family = vapply(family_list, function(f) f$family, "a"),
+      family = family_txt,
       family_mapping = as.integer(family_mapping) - 1L,
-      maxit_conditional_modes =
-        ifelse(
-          length(family_list) == 1 & family_list[[1]]$family == "gaussian",
-          1, control$maxit_conditional_modes
-        ),
-      hessian = hessian
+      k = k,
+      maxit_conditional_modes = maxit_conditional_modes,
+      gradient = TRUE,
+      hessian = hessian,
+      epsilon_u = 1e-10
+    )
+  }
+
+  mlwrapper_old <- function(par, hessian = FALSE) {
+    marginal_likelihood(
+      y = y,
+      trials = trials,
+      X = X,
+      Zt = Zt,
+      Lambdat = Lambdat,
+      beta = par[beta_inds],
+      theta = par[theta_inds],
+      theta_mapping = theta_mapping,
+      u_init = u_init,
+      lambda = par[lambda_inds],
+      lambda_mapping_X = lambda_mapping_X,
+      lambda_mapping_X_covs = integer(),
+      lambda_mapping_Zt = lambda_mapping_Zt,
+      lambda_mapping_Zt_covs = integer(),
+      weights = par[weights_inds],
+      weights_mapping = weights_mapping,
+      family = family_txt,
+      family_mapping = as.integer(family_mapping) - 1L,
+      maxit_conditional_modes = maxit_conditional_modes,
+      gradient = TRUE,
+      hessian = hessian,
+      epsilon_u = 1e-10
     )
   }
 

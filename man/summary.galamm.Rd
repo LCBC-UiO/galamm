@@ -2,19 +2,24 @@
 % Please edit documentation in R/summary.galamm.R
 \name{summary.galamm}
 \alias{summary.galamm}
-\title{Summarizing GALAMM Fits}
+\title{Summarizing GALAMM fits}
 \usage{
 \method{summary}{galamm}(object, ...)
 }
 \arguments{
-\item{object}{An object of class "galamm", usually the result of calling
+\item{object}{An object of class \code{galamm} returned from
 \code{\link{galamm}}.}
 
-\item{...}{Further arguments.}
+\item{...}{Further arguments passed on to other methods. Currently not used.}
 }
 \value{
-A list of summary statistics of the fitted model.
+A list of summary statistics of the fitted model, of class
+\code{summary.galamm}.
 }
 \description{
 Summary method for class "galamm".
+}
+\seealso{
+\code{\link[=print.summary.galamm]{print.summary.galamm()}} for the print method and \code{\link[=summary]{summary()}} for
+the generic.
 }

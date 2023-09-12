@@ -3,20 +3,30 @@
 \name{ranef.galamm}
 \alias{ranef.galamm}
 \alias{ranef}
-\title{Extract Random Effects from galamm Object}
+\title{Extract random effects from galamm object.}
 \usage{
 \method{ranef}{galamm}(object, ...)
 }
 \arguments{
-\item{object}{An object}
+\item{object}{An object of class \code{galamm}, returned from
+\code{\link{galamm}}.}
 
-\item{...}{Other parameters}
+\item{...}{Optional parameters passed on to other methods. Currently not
+used.}
 }
 \value{
-Random effects
+An object of class \code{ranef.galamm}, containing the requested
+random effects.
 }
 \description{
-Extract Random Effects from galamm Object
+Extract random effects from galamm object.
+}
+\references{
+\insertRef{batesFittingLinearMixedEffects2015}{galamm}
+}
+\seealso{
+\code{\link[=fixef.galamm]{fixef.galamm()}} for fixed effects and \code{\link[=coef.galamm]{coef.galamm()}} for
+coefficients more generally.
 }
 \author{
 This function is derived from \code{lme4::ranef.merMod}, written by

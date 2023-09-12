@@ -1,11 +1,18 @@
-#' Extract galamm Coefficients
+#' Extract galamm coefficients
 #'
-#' @param object An object of class \code{\link{galamm}}
-#' @param ... Additional parameters
+#' Currently, this function only returns the fixed effects.
 #'
-#' @return An object
+#' @param object An object of class \code{galamm}, from \code{\link{galamm}}.
+#' @param ... Additional parameters passed on to other methods. Currently not
+#'   used.
+#'
+#' @return A matrix with the requested coefficients.
 #' @export
 #'
+#' @method coef galamm
+#'
+#' @seealso [fixef.galamm()] for fixed effects, [ranef.galamm()] for random
+#'   effects, and [coef()] for the generic function.
 coef.galamm <- function(object, ...) {
   fixef(object)
 }

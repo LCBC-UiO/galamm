@@ -2,20 +2,25 @@
 % Please edit documentation in R/summary.galamm.R
 \name{print.summary.galamm}
 \alias{print.summary.galamm}
-\title{Print method for GALAMM fits}
+\title{Print method for summary GALAMM fits}
 \usage{
 \method{print}{summary.galamm}(x, digits = max(3, getOption("digits") - 3), ...)
 }
 \arguments{
-\item{x}{An object of class "summary.galamm".}
+\item{x}{An object of class \code{summary.galamm} returned from
+\code{\link{summary.galamm}}.}
 
-\item{digits}{Number of digits.}
+\item{digits}{Number of digits to present in outputs.}
 
-\item{...}{Further arguments.}
+\item{...}{Further arguments passed on to other methods. Currently not used.}
 }
 \value{
 Summary printed to screen. Invisible returns the argument \code{x}.
 }
 \description{
-Print method for GALAMM fits
+Print method for summary GALAMM fits
+}
+\seealso{
+\code{\link[=summary.galamm]{summary.galamm()}} for the summary function and \code{\link[=print]{print()}} for the
+generic function.
 }

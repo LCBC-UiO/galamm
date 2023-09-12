@@ -4,12 +4,7 @@
 \alias{gam.setup}
 \title{Function for setting up GAM terms}
 \usage{
-gam.setup(
-  formula,
-  pterms,
-  data = stop("No data supplied to gam.setup"),
-  knots = NULL
-)
+gam.setup(formula, pterms, data = stop("No data supplied to gam.setup"))
 }
 \arguments{
 \item{formula}{Formula including smooth terms, but not \code{lme4} style
@@ -18,8 +13,6 @@ random effect terms.}
 \item{pterms}{Parametric terms.}
 
 \item{data}{Model data.}
-
-\item{knots}{Knots specification.}
 }
 \value{
 A list containing all the data necessary to fit a GAMM.
@@ -29,6 +22,9 @@ This function is derived from \code{mgcv:::gam.setup}.
 }
 \references{
 \insertRef{woodGeneralizedAdditiveModels2017a}{galamm}
+}
+\seealso{
+\code{\link[=gamm4.setup]{gamm4.setup()}} and \code{\link[=gamm4]{gamm4()}}.
 }
 \author{
 Simon N Wood and Oystein Sorensen.

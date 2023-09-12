@@ -2,17 +2,18 @@
 % Please edit documentation in R/galamm_control.R
 \name{optim_control.galamm_control}
 \alias{optim_control.galamm_control}
-\alias{optim_control}
 \title{Extract optim control parameters}
 \usage{
 \method{optim_control}{galamm_control}(x)
 }
 \arguments{
-\item{x}{Object of class galamm_control}
+\item{x}{Object of class \code{galamm_control} returned from
+\code{\link{galamm_control}}.}
 }
 \value{
-List
+A list with control parameters.
 }
 \description{
 Extract optim control parameters
 }
+\keyword{internal}

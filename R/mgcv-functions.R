@@ -6,18 +6,19 @@
 #' random effect terms.
 #' @param pterms Parametric terms.
 #' @param data Model data.
-#' @param knots Knots specification.
 #'
 #' @return A list containing all the data necessary to fit a GAMM.
 #' @author Simon N Wood and Oystein Sorensen.
 #'
 #' @keywords internal
 #'
+#' @seealso [gamm4.setup()] and [gamm4()].
+#'
 #' @references
 #' \insertRef{woodGeneralizedAdditiveModels2017a}{galamm}
 #'
 gam.setup <- function(formula, pterms,
-                      data = stop("No data supplied to gam.setup"), knots = NULL) {
+                      data = stop("No data supplied to gam.setup")) {
   H <- NULL
   if (inherits(formula, "split.gam.formula")) {
     split <- formula
@@ -125,12 +126,12 @@ gam.setup <- function(formula, pterms,
 
       id <- split$smooth.spec[[i]]$id
       if (is.null(id)) { ## regular evaluation
-        sml <- mgcv::smoothCon(split$smooth.spec[[i]], data, knots, TRUE
+        sml <- mgcv::smoothCon(split$smooth.spec[[i]], data, absorb.cons = TRUE
         )
       } else { ## it's a smooth with an id, so basis setup data differs from model matrix data
         names(id.list[[id]]$data) <- split$smooth.spec[[i]]$term ## give basis data suitable names
-        sml <- mgcv::smoothCon(split$smooth.spec[[i]], id.list[[id]]$data, knots,
-          TRUE, n = nrow(data), dataX = data
+        sml <- mgcv::smoothCon(split$smooth.spec[[i]], id.list[[id]]$data,
+          absorb.cons = TRUE, dataX = data
         )
       }
 
@@ -226,14 +227,14 @@ gam.setup <- function(formula, pterms,
 
       ## alternative version under alternative constraint first (prediction only)
       if (is.null(sm[[i]]$Xp)) {
-        if (!is.null(Xp)) Xp <- cbind2(Xp, sm[[i]]$X)
+        if (!is.null(Xp)) Xp <- methods::cbind2(Xp, sm[[i]]$X)
       } else {
         if (is.null(Xp)) Xp <- X
-        Xp <- cbind2(Xp, sm[[i]]$Xp)
+        Xp <- methods::cbind2(Xp, sm[[i]]$Xp)
         sm[[i]]$Xp <- NULL
       }
       ## now version to use for fitting ...
-      X <- cbind2(X, sm[[i]]$X)
+      X <- methods::cbind2(X, sm[[i]]$X)
       sm[[i]]$X <- NULL
 
       G$smooth[[i]] <- sm[[i]]

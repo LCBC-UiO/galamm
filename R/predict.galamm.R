@@ -1,14 +1,25 @@
 #' Predictions from a model at new data values
 #'
-#' @param object A fitted model object
+#' Currently, predictions are given with all random effects set to zero. We will
+#' add the opportunity to specify the level of prediction in the future. This is
+#' particularly important for models containing smooth terms, for which the
+#' predictions currently don't make much sense.
+#'
+#' @param object An object of class \code{galamm} returned from
+#'   \code{\link{galamm}}.
 #' @param newdata Data from for which to evaluate predictions. Defaults to
 #'   "NULL", which means that the predictions are evaluate at the data used to
 #'   fit the model.
 #' @param type Type of prediction object to be returned.
-#' @param ... Other arguments.
+#' @param ... Optional arguments passed on to other methods. Currently not used.
 #'
-#' @return A number vector of predicted values.
+#' @return A numeric vector of predicted values.
 #' @export
+#'
+#' @seealso [fitted.galamm()] for model fits, [residuals.galamm()] for residuals,
+#' and [predict()] for the generic function.
+#'
+#' @method predict galamm
 #'
 predict.galamm <- function(object, newdata = NULL,
                            type = c("link", "response"),

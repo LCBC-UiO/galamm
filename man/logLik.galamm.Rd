@@ -17,3 +17,7 @@ Object of class \code{logLik}
 \description{
 Extract Log-Likelihood of galamm Object
 }
+\seealso{
+\code{\link[=deviance.galamm]{deviance.galamm()}} for a function returning deviance and
+\code{\link[=logLik]{logLik()}} for the generic function.
+}

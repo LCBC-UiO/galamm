@@ -2,18 +2,19 @@
 % Please edit documentation in R/fitted.galamm.R
 \name{fitted.galamm}
 \alias{fitted.galamm}
-\title{Extract Model Fitted Values}
+\title{Extract model fitted values}
 \usage{
 \method{fitted}{galamm}(object, ...)
 }
 \arguments{
-\item{object}{galamm object}
+\item{object}{An object of class \code{galamm} returned from
+\code{\link{galamm}}.}
 
-\item{...}{other arguments}
+\item{...}{Optional arguments passed on to other methods. Currently not used.}
 }
 \value{
-Numerical vector
+A numerical vector with fit values for each row in the input data.
 }
 \description{
-Extract Model Fitted Values
+Extract model fitted values
 }

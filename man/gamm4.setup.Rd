@@ -2,31 +2,33 @@
 % Please edit documentation in R/gamm4-functions.R
 \name{gamm4.setup}
 \alias{gamm4.setup}
-\title{Function to set up gamm4 model}
+\title{Internal function for fitting GAMMs using lme4}
 \usage{
-gamm4.setup(
-  formula,
-  pterms,
-  data = stop("No data supplied to gamm.setup"),
-  knots = NULL
-)
+gamm4.setup(formula, pterms, data = stop("No data supplied to gamm.setup"))
 }
 \arguments{
-\item{formula}{formula}
+\item{pterms}{Parametric terms in the model.}
 
-\item{pterms}{parametric terms}
+\item{data}{Model frame.}
 
-\item{data}{data}
-
-\item{knots}{knots}
+\item{fixed}{A formula excluding lme4 style random effects but including
+smooths.}
 }
 \value{
 model
 }
 \description{
-This function is derived from an internal function in the gamm4 package.
+This function is derived from an internal function in the \code{gamm4} package.
+}
+\references{
+\insertRef{woodStraightforwardIntermediateRank2013}{galamm}
+
+\insertRef{woodGeneralizedAdditiveModels2017a}{galamm}
+}
+\seealso{
+\code{\link[=gamm4]{gamm4()}} and \code{\link[=gam.setup]{gam.setup()}}.
 }
 \author{
-Simon N Wood
+Simon N Wood, with some modifications by Oystein Sorensen.
 }
 \keyword{internal}

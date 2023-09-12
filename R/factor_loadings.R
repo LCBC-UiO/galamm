@@ -2,19 +2,21 @@ factor_loadings <- function(object) {
   UseMethod("factor_loadings")
 }
 
-#' Extract Factor Loadings from galamm Object
+#' Extract factor loadings from galamm object
 #'
-#' @param object An object
+#' @param object Object of class \code{galamm} returned from
+#'   \code{\link{galamm}}.
 #'
-#' @return Vector
-#' @aliases factor_loadings factor_loadings.galamm
-#' @export factor_loadings
+#' @return A matrix containing the estimated factor loadings with corresponding
+#'   standard deviations.
 #' @export
 #'
-#' @details
-#' This function has been named \code{factor_loadings} rather than just
-#' \code{loadings} to avoid conflict with \code{stats::loadings}.
+#' @details This function has been named \code{factor_loadings} rather than just
+#'   \code{loadings} to avoid conflict with \code{stats::loadings}.
 #'
+#' @seealso [fixef.galamm()] for fixed regression coefficients,
+#'   [confint.galamm()] for confidence intervals, and [coef.galamm()] for
+#'   coefficients more generally.
 #'
 factor_loadings.galamm <- function(object) {
   if (!exists("lambda", object)) {

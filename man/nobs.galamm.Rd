@@ -17,3 +17,4 @@ A number
 \description{
 Extract the Number of Observations from a galamm Fit
 }
+\keyword{internal}

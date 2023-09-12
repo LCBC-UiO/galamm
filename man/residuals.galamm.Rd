@@ -2,20 +2,27 @@
 % Please edit documentation in R/residuals.galamm.R
 \name{residuals.galamm}
 \alias{residuals.galamm}
-\title{Residuals of galamm Objects}
+\title{Residuals of galamm objects}
 \usage{
 \method{residuals}{galamm}(object, type = c("pearson", "deviance"), ...)
 }
 \arguments{
-\item{object}{A galamm object}
+\item{object}{An object of class \code{galamm} returned from
+\code{\link{galamm}}.}
 
-\item{type}{Type}
+\item{type}{Type of residuals to be returned. One of \code{"pearson"} and
+\code{"deviance"}.}
 
-\item{...}{Other arguments}
+\item{...}{Optional arguments passed on to other methods. Currently not used.}
 }
 \value{
-Vector
+Numeric vector of residual values.
 }
 \description{
-Residuals of galamm Objects
+Residuals of galamm objects
+}
+\seealso{
+\code{\link[=fitted.galamm]{fitted.galamm()}} for model fitted values, \code{\link[=predict.galamm]{predict.galamm()}} for
+model predictions, and \code{\link[=plot.galamm]{plot.galamm()}} for diagnostic plots. The generic
+function is \code{\link[=residuals]{residuals()}}.
 }

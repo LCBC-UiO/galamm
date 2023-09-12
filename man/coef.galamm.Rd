@@ -2,18 +2,23 @@
 % Please edit documentation in R/coef.R
 \name{coef.galamm}
 \alias{coef.galamm}
-\title{Extract galamm Coefficients}
+\title{Extract galamm coefficients}
 \usage{
 \method{coef}{galamm}(object, ...)
 }
 \arguments{
-\item{object}{An object of class \code{\link{galamm}}}
+\item{object}{An object of class \code{galamm}, from \code{\link{galamm}}.}
 
-\item{...}{Additional parameters}
+\item{...}{Additional parameters passed on to other methods. Currently not
+used.}
 }
 \value{
-An object
+A matrix with the requested coefficients.
 }
 \description{
-Extract galamm Coefficients
+Currently, this function only returns the fixed effects.
+}
+\seealso{
+\code{\link[=fixef.galamm]{fixef.galamm()}} for fixed effects, \code{\link[=ranef.galamm]{ranef.galamm()}} for random
+effects, and \code{\link[=coef]{coef()}} for the generic function.
 }

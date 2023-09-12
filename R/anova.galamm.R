@@ -1,16 +1,24 @@
-#' Compare Likelihoods of galamm Objects
+#' Compare likelihoods of galamm objects
 #'
-#' @param object A model fitted by \code{\link{galamm}}
-#' @param ... Other optional fitted models of class \code{galamm}.
+#' Anova function for comparing different GALAMMs fitted on the same data.
 #'
-#' @details
-#' Some of the source code for this function is adapted from
-#' \code{lme4:::anova.merMod}, with authors Douglas M. Bates, Martin Maechler,
-#' Ben Bolker, and Steve Walker.
+#' @param object An object of class \code{galamm} returned from
+#'   \code{\link{galamm}}.
+#' @param ... Other fitted models of class \code{galamm}. Currently, if no
+#'   models are provided in this argument, no table will be returned.
+#'
+#' @author Some of the source code for this function is adapted from
+#'   \code{lme4:::anova.merMod}, with authors Douglas M. Bates, Martin Maechler,
+#'   Ben Bolker, and Steve Walker.
 #'
 #'
-#' @return A table
+#' @return A table with model comparison metric.
 #' @export
+#'
+#' @references \insertRef{batesFittingLinearMixedEffects2015}{galamm}
+#'
+#' @seealso [summary.galamm()] for the summary method and [anova()] for the
+#'   generic function.
 #'
 anova.galamm <- function(object, ...) {
   mCall <- match.call(expand.dots = TRUE)
@@ -111,6 +119,7 @@ abbrDeparse <- function(x, width = 60) {
 #' @return A number
 #' @export
 #'
+#' @keywords internal
 nobs.galamm <- function(object, ...) {
   object$n
 }
