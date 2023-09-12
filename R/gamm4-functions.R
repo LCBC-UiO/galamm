@@ -12,10 +12,7 @@
 #' @keywords internal
 gamm4.setup <- function(formula, pterms,
                         data = stop("No data supplied to gamm.setup"), knots = NULL) {
-  G <- gam.setup(formula, pterms,
-    data = data, knots = knots, sp = NULL,
-    min.sp = NULL, H = NULL, absorb.cons = TRUE, sparse.cons = 0, gamm.call = TRUE
-  )
+  G <- gam.setup(formula, pterms, data = data, knots = knots)
 
   if (!is.null(G$L)) stop("gamm can not handle linked smoothing parameters (probably from use of `id' or adaptive smooths)")
   # now perform re-parameterization...
@@ -179,6 +176,7 @@ gamm4 <- function(fixed, random = NULL, data = list()) {
   pmf$formula <- gp$pf
   pmf <- eval(pmf, parent.frame()) # pmf contains all data for non-smooth part
   pTerms <- attr(pmf, "terms")
+
 
   G <- gamm4.setup(gp, pterms = pTerms, data = mf)
 

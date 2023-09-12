@@ -2,18 +2,26 @@
 % Please edit documentation in R/anova.galamm.R
 \name{abbrDeparse}
 \alias{abbrDeparse}
-\title{Abbreviated deparse function taken from lme4}
+\title{Abbreviated deparse function}
 \usage{
 abbrDeparse(x, width = 60)
 }
 \arguments{
-\item{x}{Name to deparse}
+\item{x}{Name to deparse, a character string.}
 
-\item{width}{Field width}
+\item{width}{Field width, an integer.}
 }
 \value{
-String
+A character string.
 }
 \description{
-Abbreviated deparse function taken from lme4
+Function used to abbreviate name of dataset in \code{\link{anova}} function.
+Taken from \code{lme4}.
 }
+\references{
+\insertRef{batesFittingLinearMixedEffects2015}{galamm}
+}
+\author{
+Douglas M. Bates, Martin Maechler, Ben Bolker, and Steve Walker
+}
+\keyword{internal}

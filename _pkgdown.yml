@@ -17,3 +17,13 @@ articles:
   navbar: Advanced topics
   contents:
   - optimization
+
+reference:
+- title: Modeling
+  desc: Fit a generalized additive latent and mixed model.
+  contents:
+  - galamm
+
+- title: Output
+  desc: Study model output.
+  contents:

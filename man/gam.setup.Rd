@@ -2,24 +2,15 @@
 % Please edit documentation in R/mgcv-functions.R
 \name{gam.setup}
 \alias{gam.setup}
-\title{GAM setup function from mgcv}
+\title{Function for setting up GAM terms}
 \usage{
 gam.setup(
   formula,
   pterms,
   data = stop("No data supplied to gam.setup"),
   knots = NULL,
-  sp = NULL,
-  min.sp = NULL,
-  H = NULL,
-  absorb.cons = TRUE,
-  sparse.cons = 0,
   select = FALSE,
-  idLinksBases = TRUE,
   scale.penalty = TRUE,
-  paraPen = NULL,
-  gamm.call = FALSE,
-  drop.intercept = FALSE,
   diagonal.penalty = FALSE,
   apply.by = TRUE,
   list.call = FALSE,
@@ -27,35 +18,18 @@ gam.setup(
 )
 }
 \arguments{
-\item{formula}{formula}
+\item{formula}{Formula including smooth terms, but not \code{lme4} style
+random effect terms.}
 
-\item{pterms}{parametric terms}
+\item{pterms}{Parametric terms.}
 
-\item{data}{data}
+\item{data}{Model data.}
 
-\item{knots}{knots}
+\item{knots}{Knots specification.}
 
-\item{sp}{smoothing parameter}
+\item{select}{Passed on to the argument \code{null.space.penalty} of \code{mgcv::smoothCon}.}
 
-\item{min.sp}{min}
-
-\item{H}{hessian}
-
-\item{absorb.cons}{logical}
-
-\item{sparse.cons}{logical}
-
-\item{select}{variable selection}
-
-\item{idLinksBases}{ID}
-
-\item{scale.penalty}{not documented yet}
-
-\item{paraPen}{not documented yet}
-
-\item{gamm.call}{not documented yet}
-
-\item{drop.intercept}{not documented yet}
+\item{scale.penalty}{Boolean value passed on to \code{mgcv::smoothCon}.}
 
 \item{diagonal.penalty}{not documented yet}
 
@@ -69,8 +43,12 @@ gam.setup(
 an object
 }
 \description{
-This function is derived from mgcv's internal function with the same name.
+This function is derived from \code{mgcv:::gam.setup}.
+}
+\references{
+\insertRef{woodGeneralizedAdditiveModels2017a}{galamm}
 }
 \author{
 Simon N Wood
 }
+\keyword{internal}

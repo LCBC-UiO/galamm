@@ -80,13 +80,20 @@ anova.galamm <- function(object, ...) {
 
 
 
-#' Abbreviated deparse function taken from lme4
+#' Abbreviated deparse function
 #'
-#' @param x Name to deparse
-#' @param width Field width
+#' Function used to abbreviate name of dataset in \code{\link{anova}} function.
+#' Taken from \code{lme4}.
 #'
-#' @return String
+#' @param x Name to deparse, a character string.
+#' @param width Field width, an integer.
 #'
+#' @author Douglas M. Bates, Martin Maechler, Ben Bolker, and Steve Walker
+#'
+#' @return A character string.
+#' @keywords internal
+#' @references
+#' \insertRef{batesFittingLinearMixedEffects2015}{galamm}
 abbrDeparse <- function(x, width = 60) {
   r <- deparse(x, width)
   if (length(r) > 1) {
