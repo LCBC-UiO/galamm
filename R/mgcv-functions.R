@@ -126,8 +126,7 @@ gam.setup <- function(formula, pterms,
 
       id <- split$smooth.spec[[i]]$id
       if (is.null(id)) { ## regular evaluation
-        sml <- mgcv::smoothCon(split$smooth.spec[[i]], data, absorb.cons = TRUE
-        )
+        sml <- mgcv::smoothCon(split$smooth.spec[[i]], data, absorb.cons = TRUE)
       } else { ## it's a smooth with an id, so basis setup data differs from model matrix data
         names(id.list[[id]]$data) <- split$smooth.spec[[i]]$term ## give basis data suitable names
         sml <- mgcv::smoothCon(split$smooth.spec[[i]], id.list[[id]]$data,
@@ -337,7 +336,6 @@ gam.setup <- function(formula, pterms,
           G$off[k.sp] <- sm$first.para
           G$S[[k.sp]] <- sm$S[[j]]
           G$rank[k.sp] <- sm$rank[j]
-
         }
       }
     }
@@ -530,7 +528,6 @@ variable.summary <- function(pf, dl, n) {
 #' \insertRef{woodGeneralizedAdditiveModels2017a}{galamm}
 #'
 gam.side <- function(sm, Xp, tol = .Machine$double.eps^.5) {
-
   with.pen <- nrow(Xp) < ncol(Xp) + sum(unlist(lapply(sm, function(x) ncol(x$X))))
 
   m <- length(sm)

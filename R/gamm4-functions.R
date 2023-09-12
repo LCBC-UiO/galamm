@@ -142,7 +142,6 @@ gamm4.setup <- function(formula, pterms,
 #' \insertRef{woodGeneralizedAdditiveModels2017a}{galamm}
 #'
 gamm4 <- function(fixed, random = NULL, data = list()) {
-
   if (!is.null(random)) {
     if (!inherits(random, "formula")) stop("gamm4 requires `random' to be a formula")
     random.vars <- all.vars(random)
