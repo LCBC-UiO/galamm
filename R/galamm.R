@@ -66,9 +66,10 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
     }
   }
 
+  rf <- lme4::findbars(formula)
   gobj <- gamm4(
     fixed = lme4::nobars(formula),
-    random = as.formula(paste("~", paste("(", lme4::findbars(formula), ")", collapse = "+"))),
+    random = if (!is.null(rf)) as.formula(paste("~", paste("(", rf, ")", collapse = "+"))),
     data = data
   )
   lmod <- gobj$lmod
@@ -95,10 +96,9 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   vars_in_fixed <- all.vars(gobj$fake.formula[-2])
   factor_in_fixed <-
     vapply(factor, function(x) any(x %in% vars_in_fixed), TRUE)
-  vars_in_random <-
-    do.call(c, lapply(lme4::findbars(formula), all.vars))
+  vars_in_random <- unique(unlist(lmod$reTrms$cnms))
   factor_in_random <-
-    vapply(factor, function(x) any(x %in% vars_in_random), TRUE)
+    vapply(factor, function(x) any(vapply(vars_in_random, function(y) any(vapply(x, function(z) grepl(z, y), TRUE)), TRUE)), TRUE)
 
   X <- lmod$X
   if (any(factor_in_fixed)) {
@@ -145,9 +145,14 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
 
         mapping_component <- rep(NA_integer_, sum(delta))
         for (j in seq_along(cnms)) {
-          cn <- cnms[[j]]
+          cn <- unlist(lapply(factor[[f]], function(x) {
+            m <- regexpr(x, cnms[[j]], fixed = TRUE)
+            regmatches(cnms[[j]], m)
+          }))
+
           inds <- which(data[, cn] != 0)
-          mapping_component[inds] <-
+          inds_expanded <- unlist(Map(function(x, y) rep(x, each = y), x = inds, y = delta[inds]))
+          mapping_component[inds_expanded] <-
             unlist(Map(function(x, y) rep(ll[x, cn], each = y),
               x = data[inds, load.var], y = delta[inds]
             ))
@@ -156,14 +161,6 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
         mapping_component
       })
 
-      max_map <- max(vapply(mappings, length, 1))
-      mappings <- lapply(mappings, function(x) {
-        if (length(x) < max_map) {
-          x <- c(x, rep(NA_real_, max_map - length(x)))
-        } else {
-          x
-        }
-      })
       lambda_mapping_Zt <- as.numeric(do.call(rbind, mappings))
       lambda_mapping_Zt <- lambda_mapping_Zt[!is.na(lambda_mapping_Zt)]
 
@@ -402,7 +399,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
         if (!fx) {
           D <- gobj$G$smooth[[i]]$trans.D
           if (is.null(gobj$G$smooth[[i]]$trans.U)) {
-            B[ind, ind] <- Diagonal(length(D), D)
+            B[ind, ind] <- Matrix::Diagonal(length(D), D)
           } else {
             B[ind, ind] <- t(D * t(gobj$G$smooth[[i]]$trans.U))
           }

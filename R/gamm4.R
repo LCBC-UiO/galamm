@@ -234,7 +234,7 @@ gamm4 <- function(fixed, random = NULL, data = list()) {
     for (i in 1:n.sr) { ## loop through random effect smooths
       k <- ind[sn[i] == tn] ## which term should contain G$random[[i]]
       ii <- (b$reTrms$Gp[k] + 1):b$reTrms$Gp[k + 1]
-      b$reTrms$Zt[ii, ] <- as(t(G$random[[i]]), "dgCMatrix")
+      b$reTrms$Ztlist[[k]] <- b$reTrms$Zt[ii, ] <- as(t(G$random[[i]]), "dgCMatrix")
       b$reTrms$cnms[[k]] <- attr(G$random[[i]], "s.label")
     }
   }

@@ -5,6 +5,7 @@ output:
     fig_width: 6
     fig_height: 4
 bibliography: ../inst/REFERENCES.bib
+link-citations: yes
 vignette: >
   %\VignetteIndexEntry{Semiparametric Latent Variable Modeling}
   %\VignetteEngine{knitr::rmarkdown}
@@ -18,15 +19,18 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
+```{r setup, message=FALSE}
 library(galamm)
+library(gamm4)
 library(ggplot2)
 theme_set(theme_bw())
 ```
 
 This vignette describes how to use galamm to estimate latent variable models with smooth terms. The examples are based on Section 4 and 5 in @sorensenLongitudinalModelingAgeDependent2023, but as we cannot share the data, we have instead simulated somewhat simpler datasets that will be used. We will gradually add complexity, starting with a simple generalized additive mixed.
 
-## Generalized Additive Models with Gaussian Responses
+## Generalized Additive Mixed Models
+
+### Gaussian Responses
 
 The `cognition` dataset contains simulated data with measurements of abilities in three cognitive domains.
 
@@ -58,35 +62,144 @@ where $f(x_{ij})$ is a smooth function to be estimated, $\eta_{j} \sim N(0, \psi
 
 This model can be estimated using gamm4 as follows:
 
-```{r, eval=FALSE}
-mod_gamm4 <- gamm4::gamm4(y ~ s(x), random = ~ (1 | id), data = dat, REML = FALSE)
+```{r}
+mod_gamm4 <- gamm4(y ~ s(x), random = ~ (1 | id), data = dat, REML = FALSE)
 ```
 
 The resulting estimated smooth term looks sensible.
 
-```{r, eval=FALSE}
+```{r}
 summary(mod_gamm4$mer)
+plot(mod_gamm4$gam)
 ```
 
 With galamm we use similar argument, but the `random` specification is now part of the model formula.
 
-```{r, eval=FALSE}
+```{r}
 mod <- galamm(y ~ s(x) + (1 | id), data = dat)
+```
+
+And the summary is very similar.
+
+```{r}
+summary(mod)
+```
+
+However, the `plot` function now gives us a diagnostic plot, which looks very good. 
+
+```{r}
+plot(mod)
+```
+
+### Binomial Responses
+
+In the cognition dataset, the responses relating to domain 2 and 3 are binomially distributed. We will use the first trial of the third domain to illustrate how such data can be modeled.
+
+```{r}
+dat <- subset(cognition, domain == 3 & item == 1)
+```
+
+Each observation counts the number of successes in ten trials.
+
+```{r}
+plot(dat$x, dat$y, xlab = "x", ylab = "Correct responses")
+```
+
+Again we can fit this model using gamm4.
+
+```{r}
+mod_gamm4 <- gamm4(cbind(y, trials - y) ~ s(x),
+  random = ~ (1 | id),
+  data = dat, family = binomial
+)
 ```
 
 
 ```{r}
-formula <- y ~ s(x) + (1 | id)
-weights <- NULL
-data <- dat
-family <- gaussian
-family_mapping <- rep(1L, nrow(data))
-load.var <- NULL
-lambda <- NULL
-factor <- NULL
-start <- NULL
-control <- galamm_control()
+summary(mod_gamm4$mer)
 ```
+
+```{r}
+plot(mod_gamm4$gam)
+```
+
+Using galamm instead we do.
+
+```{r}
+mod <- galamm(cbind(y, trials - y) ~ s(x) + (1 | id),
+  data = dat, family = binomial
+)
+```
+
+The estimates are very similar, although not identical. The difference in deviance is due to differences in the way deviance is defined. The call `deviance(mod_gamm4$mer)` gives the same value as in the summary for the model fitted with galamm.
+
+```{r}
+summary(mod)
+```
+
+
+## Nonlinear Mixed Models with Factor Structures
+
+To motivate the semiparametric estimation to follow, we start by looking at the items corresponding to domain 1 in the cognition data.
+
+```{r}
+ggplot(
+  subset(cognition, domain == 1),
+  aes(x = x, y = y)
+) +
+  geom_point(size = .5, alpha = .3) +
+  geom_line(aes(group = id), size = .4, alpha = .3) +
+  facet_wrap(vars(item), labeller = as_labeller(function(x) paste("Item", x)))
+```
+
+
+It seem reasonable to assume that the underlying latent trait for domain 1 has a quadratic form. We hence estimate define the following measurement model
+
+$$
+\mathbf{y} = \boldsymbol{\beta}_{0} + \boldsymbol{\Lambda} \boldsymbol{\eta} + \boldsymbol{\epsilon}
+$$
+
+and the structural model
+
+$$
+\boldsymbol{\eta} = \gamma_{1} \mathbf{x} + \gamma_{2}\mathbf{x}^{2} + \boldsymbol{\zeta}.
+$$
+
+The reduced form of the model is
+
+$$
+\mathbf{y} = \boldsymbol{\beta}_{0} + \boldsymbol{\Lambda} \gamma_{1} \mathbf{x} + \boldsymbol{\Lambda} \gamma_{2} x^{2} + \boldsymbol{\Lambda} \boldsymbol{\zeta}.
+$$
+
+We can fit this model using galamm as follows.
+
+```{r}
+dat <- subset(cognition, domain == 1)
+
+mod <- galamm(
+  formula = y ~ loading:(x + I(x^2)) + (0 + loading | id),
+  data = dat,
+  load.var = "item",
+  lambda = list(matrix(c(1, NA, NA), ncol = 1)),
+  factor = list("loading")
+)
+```
+
+The factor loadings are very close to the values used in when simulating the data, and both the linear and quadratic terms are clearly significant.
+
+```{r}
+summary(mod)
+```
+
+The diagnostic plot is not perfect, but perhaps acceptable.
+
+```{r}
+plot(mod)
+```
+
+
+
+## Generalized Additive Models with Factor Structures
 
 
 # References

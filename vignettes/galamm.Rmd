@@ -2,6 +2,7 @@
 title: "Introduction"
 output: rmarkdown::html_vignette
 bibliography: ../inst/REFERENCES.bib
+link-citations: yes
 vignette: >
   %\VignetteIndexEntry{Introduction}
   %\VignetteEngine{knitr::rmarkdown}

@@ -5,6 +5,7 @@ output:
     fig_width: 6
     fig_height: 4
 bibliography: ../inst/REFERENCES.bib
+link-citations: yes
 vignette: >
   %\VignetteIndexEntry{Models with Mixed Response Types}
   %\VignetteEngine{knitr::rmarkdown}

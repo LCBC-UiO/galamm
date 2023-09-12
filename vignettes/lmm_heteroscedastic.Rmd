@@ -5,6 +5,7 @@ output:
     fig_width: 6
     fig_height: 4
 bibliography: ../inst/REFERENCES.bib
+link-citations: yes
 vignette: >
   %\VignetteIndexEntry{Heteroscedastic Linear Mixed Models}
   %\VignetteEngine{knitr::rmarkdown}

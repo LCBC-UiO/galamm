@@ -5,6 +5,7 @@ output:
     fig_width: 6
     fig_height: 4
 bibliography: ../inst/REFERENCES.bib
+link-citations: yes
 vignette: >
   %\VignetteIndexEntry{Linear Mixed Models with Factor Structures}
   %\VignetteEngine{knitr::rmarkdown}
