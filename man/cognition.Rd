@@ -11,7 +11,7 @@
 \item{id}{Subject ID.}
 \item{domain}{Factor variable denoting the cognitive domain.}
 \item{x}{Explanatory variable.}
-\item{x}{Factor variable denoting the timepoint.}
+\item{timepoint}{Factor variable denoting the timepoint.}
 \item{item}{Factor variable denoting the item within the tests of each
 cognitive domain.}
 \item{trials}{Number of trials, if applicable.}
