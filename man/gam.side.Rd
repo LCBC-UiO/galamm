@@ -4,24 +4,25 @@
 \alias{gam.side}
 \title{Internal function from mgcv}
 \usage{
-gam.side(sm, Xp, tol = .Machine$double.eps^0.5, with.pen = FALSE)
+gam.side(sm, Xp, tol = .Machine$double.eps^0.5)
 }
 \arguments{
-\item{sm}{list of smooth}
+\item{sm}{List of smooth terms.}
 
-\item{Xp}{parametric model matrix}
+\item{Xp}{Parametric model matrix.}
 
-\item{tol}{tolerance}
-
-\item{with.pen}{logical}
+\item{tol}{Numerical tolerance.}
 }
 \value{
-a value
+A list of smooth terms, with identifiability constraints imposed.
 }
 \description{
-This function is derived from a function with the same name in mgcv, and is
-written by Simon Wood.
+This function is derived \code{mgcv:::gam.side}.
+}
+\references{
+\insertRef{woodGeneralizedAdditiveModels2017a}{galamm}
 }
 \author{
 Simon Wood
 }
+\keyword{internal}

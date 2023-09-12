@@ -514,15 +514,19 @@ variable.summary <- function(pf, dl, n) {
 
 #' Internal function from mgcv
 #'
-#' This function is derived from a function with the same name in mgcv, and is
-#' written by Simon Wood.
+#' This function is derived \code{mgcv:::gam.side}.
 #'
-#' @param sm list of smooth
-#' @param Xp parametric model matrix
-#' @param tol tolerance
+#' @param sm List of smooth terms.
+#' @param Xp Parametric model matrix.
+#' @param tol Numerical tolerance.
 #'
-#' @return a value
+#' @return A list of smooth terms, with identifiability constraints imposed.
 #' @author Simon Wood
+#'
+#' @keywords internal
+#'
+#' @references
+#' \insertRef{woodGeneralizedAdditiveModels2017a}{galamm}
 #'
 gam.side <- function(sm, Xp, tol = .Machine$double.eps^.5) {
 
