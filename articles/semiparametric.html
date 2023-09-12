@@ -158,7 +158,7 @@ residual term.</p>
 <span><span class="co">#&gt;  Groups   Name        Variance Std.Dev.</span></span>
 <span><span class="co">#&gt;  id       (Intercept) 0.8744   0.9351  </span></span>
 <span><span class="co">#&gt;  Xr       s(x)        2.1441   1.4643  </span></span>
-<span><span class="co">#&gt;  Residual             0.2756   0.5250  </span></span>
+<span><span class="co">#&gt;  Residual             0.2757   0.5250  </span></span>
 <span><span class="co">#&gt; Number of obs: 1600, groups:  id, 200; Xr, 8</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Fixed effects:</span></span>
@@ -240,23 +240,23 @@ domain to illustrate how such data can be modeled.</p>
 <span><span class="co">#&gt; Random effects:</span></span>
 <span><span class="co">#&gt;  Groups Name        Variance Std.Dev.</span></span>
 <span><span class="co">#&gt;  id     (Intercept)    1.142  1.068  </span></span>
-<span><span class="co">#&gt;  Xr     s(x)        1008.046 31.750  </span></span>
+<span><span class="co">#&gt;  Xr     s(x)        1008.049 31.750  </span></span>
 <span><span class="co">#&gt; Number of obs: 1600, groups:  id, 200; Xr, 8</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Fixed effects:</span></span>
 <span><span class="co">#&gt;              Estimate Std. Error z value Pr(&gt;|z|)    </span></span>
-<span><span class="co">#&gt; X(Intercept)   3.8851     0.2265   17.15  &lt; 2e-16 ***</span></span>
-<span><span class="co">#&gt; Xs(x)Fx1       4.5510     0.7328    6.21 5.28e-10 ***</span></span>
+<span><span class="co">#&gt; X(Intercept)   3.8851     0.2280  17.041  &lt; 2e-16 ***</span></span>
+<span><span class="co">#&gt; Xs(x)Fx1       4.5510     0.7362   6.182 6.33e-10 ***</span></span>
 <span><span class="co">#&gt; ---</span></span>
 <span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Correlation of Fixed Effects:</span></span>
 <span><span class="co">#&gt;          X(Int)</span></span>
-<span><span class="co">#&gt; Xs(x)Fx1 -0.456</span></span></code></pre></div>
+<span><span class="co">#&gt; Xs(x)Fx1 -0.461</span></span></code></pre></div>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mod_gamm4</span><span class="op">$</span><span class="va">gam</span><span class="op">)</span></span></code></pre></div>
 <p><img src="semiparametric_files/figure-html/unnamed-chunk-14-1.png" width="700"></p>
-<p>Using galamm instead we do.</p>
+<p>The following code estimates the modeling using galamm instead.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">y</span>, <span class="va">trials</span> <span class="op">-</span> <span class="va">y</span><span class="op">)</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/pkg/mgcv/man/s.html" class="external-link">s</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">dat</span>, family <span class="op">=</span> <span class="va">binomial</span></span>
@@ -276,111 +276,51 @@ value as in the summary for the model fitted with galamm.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Scaled residuals: </span></span>
 <span><span class="co">#&gt;    Min     1Q Median     3Q    Max </span></span>
-<span><span class="co">#&gt;   -0.8   17.6   39.4  157.7 5409.6 </span></span>
+<span><span class="co">#&gt;   -0.8   17.6   39.4  157.7 5409.7 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Random effects:</span></span>
 <span><span class="co">#&gt;  Groups Name        Variance Std.Dev.</span></span>
 <span><span class="co">#&gt;  id     (Intercept)    1.142  1.069  </span></span>
-<span><span class="co">#&gt;  Xr     s(x)        1003.317 31.675  </span></span>
+<span><span class="co">#&gt;  Xr     s(x)        1003.318 31.675  </span></span>
 <span><span class="co">#&gt; Number of obs: 1600, groups:  id, 200; Xr, 8</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Fixed effects:</span></span>
 <span><span class="co">#&gt;             Estimate Std. Error z value  Pr(&gt;|z|)</span></span>
-<span><span class="co">#&gt; (Intercept)    3.883     0.2300  16.881 6.174e-64</span></span>
+<span><span class="co">#&gt; (Intercept)    3.883     0.2300  16.881 6.175e-64</span></span>
 <span><span class="co">#&gt; s(x)Fx1        4.559     0.7481   6.094 1.102e-09</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level3">
-<h3 id="nonlinear-mixed-models-with-factor-structures">Nonlinear Mixed Models with Factor Structures<a class="anchor" aria-label="anchor" href="#nonlinear-mixed-models-with-factor-structures"></a>
-</h3>
-<p>To motivate the semiparametric estimation to follow, we start by
-looking at the items corresponding to domain 1 in the cognition
-data.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">cognition</span>, <span class="va">domain</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span>,</span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span>, y <span class="op">=</span> <span class="va">y</span><span class="op">)</span></span>
-<span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">.5</span>, alpha <span class="op">=</span> <span class="fl">.3</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>group <span class="op">=</span> <span class="va">id</span><span class="op">)</span>, linewidth <span class="op">=</span> <span class="fl">.4</span>, alpha <span class="op">=</span> <span class="fl">.3</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/vars.html" class="external-link">vars</a></span><span class="op">(</span><span class="va">item</span><span class="op">)</span>, labeller <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/as_labeller.html" class="external-link">as_labeller</a></span><span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Item"</span>, <span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="semiparametric_files/figure-html/unnamed-chunk-17-1.png" width="700"></p>
-<p>It seem reasonable to assume that the underlying latent trait for
-domain 1 has a quadratic form. We hence estimate define the following
-measurement model</p>
-<p><span class="math display">\[
-y_{i} = \beta_{i} + \lambda_{i} \eta + \epsilon_{i}
-\]</span></p>
-<p>and the structural model</p>
-<p><span class="math display">\[
-\eta = \gamma_{1} x + \gamma_{2}x^{2} + \zeta^{(2)} + \zeta^{(3)}.
-\]</span></p>
-<p>where <span class="math inline">\(\zeta^{(2)}\)</span> is the random
-intercept within timepoint for a given subject, and <span class="math inline">\(\zeta^{(3)}\)</span> is the random intercept
-between timepoints within subject.</p>
-<p>The reduced form of the model is</p>
-<p><span class="math display">\[
-y_{i} = \beta_{i} + \lambda_{i} \left\{\gamma_{1}x + \gamma_{2} x^{2}
-+  \zeta^{(2)} + \zeta^{(3)} \right\} + \epsilon_{i}
-\]</span></p>
-<p>We can fit this model using galamm as follows.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">cognition</span>, <span class="va">domain</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
-<span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">loading</span><span class="op">:</span><span class="op">(</span><span class="va">x</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">x</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">loading</span> <span class="op">|</span> <span class="va">id</span> <span class="op">/</span> <span class="va">timepoint</span><span class="op">)</span>,</span>
-<span>  data <span class="op">=</span> <span class="va">dat</span>,</span>
-<span>  load.var <span class="op">=</span> <span class="st">"item"</span>,</span>
-<span>  lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"loading"</span><span class="op">)</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-<p>The factor loadings are very close to the values used in when
-simulating the data, and both the linear and quadratic terms are clearly
-significant.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Generalized additive latent and mixed model fit by maximum marginal likelihood.</span></span>
-<span><span class="co">#&gt; Formula: y ~ loading:(x + I(x^2)) + (0 + loading | id/timepoint)</span></span>
-<span><span class="co">#&gt;    Data: dat</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;      AIC      BIC   logLik deviance df.resid </span></span>
-<span><span class="co">#&gt;   -802.4   -750.6    409.2   -818.4     4792 </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Scaled residuals: </span></span>
-<span><span class="co">#&gt;      Min       1Q   Median       3Q      Max </span></span>
-<span><span class="co">#&gt; -17.3034  -5.8046  -0.0016   3.4189   9.6472 </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Lambda:</span></span>
-<span><span class="co">#&gt;         loading       SE</span></span>
-<span><span class="co">#&gt; lambda1   1.000        .</span></span>
-<span><span class="co">#&gt; lambda2   1.402 0.002535</span></span>
-<span><span class="co">#&gt; lambda3   0.301 0.001946</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Random effects:</span></span>
-<span><span class="co">#&gt;  Groups       Name    Variance Std.Dev.</span></span>
-<span><span class="co">#&gt;  timepoint:id loading 0.265420 0.51519 </span></span>
-<span><span class="co">#&gt;  id           loading 0.881171 0.93871 </span></span>
-<span><span class="co">#&gt;  Residual             0.009847 0.09923 </span></span>
-<span><span class="co">#&gt; Number of obs: 4800, groups:  timepoint:id, 1600; id, 200</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Fixed effects:</span></span>
-<span><span class="co">#&gt;                 Estimate Std. Error  t value Pr(&gt;|t|)</span></span>
-<span><span class="co">#&gt; (Intercept)     0.002553   0.004507   0.5664   0.5711</span></span>
-<span><span class="co">#&gt; loading:x       8.114138   0.167690  48.3877   0.0000</span></span>
-<span><span class="co">#&gt; loading:I(x^2) -8.088909   0.166405 -48.6097   0.0000</span></span></code></pre></div>
-</div>
-<div class="section level3">
 <h3 id="generalized-additive-models-with-factor-structures">Generalized Additive Models with Factor Structures<a class="anchor" aria-label="anchor" href="#generalized-additive-models-with-factor-structures"></a>
 </h3>
+<p>We now add factor structures to the GAMMs. These are types of models
+that neither gamm4 nor mgcv are able to estimate, and where galamm
+provides new functionality.</p>
 <div class="section level4">
 <h4 id="gaussian-responses-1">Gaussian Responses<a class="anchor" aria-label="anchor" href="#gaussian-responses-1"></a>
 </h4>
-<p>We now move on to semiparametric estimation. The measurement model
-is</p>
+<p>We continue with the cognition data, but now use all items of
+cognitive domain 1. These are all conditionally normal distributed.</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">cognition</span>, <span class="va">domain</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="va">dat</span><span class="op">$</span><span class="va">item</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">dat</span><span class="op">$</span><span class="va">item</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   id domain         x timepoint item trials           y</span></span>
+<span><span class="co">#&gt; 1  1      1 0.1457912         1    1      1  0.49132612</span></span>
+<span><span class="co">#&gt; 2  1      1 0.1457912         1    2      1  0.67917855</span></span>
+<span><span class="co">#&gt; 3  1      1 0.1457912         1    3      1 -0.01864935</span></span>
+<span><span class="co">#&gt; 4  1      1 0.1953280         2    1      1  0.86089677</span></span>
+<span><span class="co">#&gt; 5  1      1 0.1953280         2    2      1  1.48573231</span></span>
+<span><span class="co">#&gt; 6  1      1 0.1953280         2    3      1  0.46781198</span></span></code></pre></div>
+<p>We now need a factor model to associate the underlying latent trait
+<span class="math inline">\(\eta\)</span> with the measurements <span class="math inline">\(y_{i}\)</span>:</p>
 <p><span class="math display">\[
 y_{i} = \beta_{i} + \lambda_{i} \eta + \epsilon_{i}
 \]</span></p>
-<p>and the structural model</p>
+<p>In the structural model, we have a smooth term for the relationship
+between the latent trait and x, and we have random intercepts for a
+given timepoint within subject <span class="math inline">\(\zeta^{(2)}\)</span>, and for a given subject
+across timepoints <span class="math inline">\(\zeta^{(3)}\)</span>.</p>
 <p><span class="math display">\[
 \eta = h(x) + \zeta^{(2)} + \zeta^{(3)}.
 \]</span></p>
@@ -390,11 +330,8 @@ y_{i} = \beta_{i} + \lambda_{i} \left\{ h(x) + \zeta^{(2)} + \zeta^{(3)}
 \right\} + \epsilon_{i}
 \]</span></p>
 <p>We fit the model as follows.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">cognition</span>, <span class="va">domain</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span></span>
-<span><span class="va">dat</span><span class="op">$</span><span class="va">item</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">dat</span><span class="op">$</span><span class="va">item</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="fl">0</span> <span class="op">+</span> <span class="va">item</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/pkg/mgcv/man/s.html" class="external-link">s</a></span><span class="op">(</span><span class="va">x</span>, by <span class="op">=</span> <span class="va">loading</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">loading</span> <span class="op">|</span> <span class="va">id</span> <span class="op">/</span> <span class="va">timepoint</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">dat</span>,</span>
 <span>  load.var <span class="op">=</span> <span class="st">"item"</span>,</span>
@@ -405,7 +342,7 @@ y_{i} = \beta_{i} + \lambda_{i} \left\{ h(x) + \zeta^{(2)} + \zeta^{(3)}
 data, the standard deviation at the <code>id</code> level was 1, at the
 <code>timepoint</code> level it was 0.5, and the residual standard
 deviation was 0.1. The estimates are close to these values.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Generalized additive latent and mixed model fit by maximum marginal likelihood.</span></span>
 <span><span class="co">#&gt; Formula: y ~ 0 + item + s(x, by = loading) + (0 + loading | id/timepoint)</span></span>
@@ -443,10 +380,11 @@ deviation was 0.1. The estimates are close to these values.</p>
 <h4 id="binomial-responses-1">Binomial Responses<a class="anchor" aria-label="anchor" href="#binomial-responses-1"></a>
 </h4>
 <p>We can now move on to the part of the cognition data that is
-binomially distributed. We begin with domain 2, for which there is a
-single trial. In this case there are only two items, so we must change
-the lambda matrix accordingly.</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+conditionally binomially distributed. We begin with domain 2, for which
+each response measures success or not in is a single trial. In this case
+there are only two items, so we must change the lambda matrix
+accordingly.</p>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">cognition</span>, <span class="va">domain</span> <span class="op">==</span> <span class="fl">2</span><span class="op">)</span></span>
 <span><span class="va">dat</span><span class="op">$</span><span class="va">item</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">dat</span><span class="op">$</span><span class="va">item</span><span class="op">)</span></span>
 <span></span>
@@ -457,37 +395,18 @@ the lambda matrix accordingly.</p>
 <span>  load.var <span class="op">=</span> <span class="st">"item"</span>,</span>
 <span>  lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="cn">NA</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"loading"</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Generalized additive latent and mixed model fit by maximum marginal likelihood.</span></span>
-<span><span class="co">#&gt; Formula: y ~ 0 + item + s(x, by = loading) + (0 + loading | id/timepoint)</span></span>
-<span><span class="co">#&gt;    Data: dat</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;      AIC      BIC   logLik deviance df.resid </span></span>
-<span><span class="co">#&gt;   1548.1   1590.6   -767.1   1507.0     3193 </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Scaled residuals: </span></span>
-<span><span class="co">#&gt;      Min       1Q   Median       3Q      Max </span></span>
-<span><span class="co">#&gt; -10.5627   0.0475   0.1171   0.2322   1.2218 </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Lambda:</span></span>
-<span><span class="co">#&gt;         loading     SE</span></span>
-<span><span class="co">#&gt; lambda1   1.000      .</span></span>
-<span><span class="co">#&gt; lambda2   1.794 0.2698</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Random effects:</span></span>
-<span><span class="co">#&gt;  Groups       Name         Variance Std.Dev.</span></span>
-<span><span class="co">#&gt;  timepoint:id loading      0.0000   0.0000  </span></span>
-<span><span class="co">#&gt;  id           loading      0.5600   0.7483  </span></span>
-<span><span class="co">#&gt;  Xr           s(x):loading 0.7599   0.8717  </span></span>
-<span><span class="co">#&gt; Number of obs: 3200, groups:  timepoint:id, 1600; id, 200; Xr, 8</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Fixed effects:</span></span>
-<span><span class="co">#&gt;                 Estimate Std. Error z value  Pr(&gt;|z|)</span></span>
-<span><span class="co">#&gt; item1              2.879     0.1818  15.840 1.651e-56</span></span>
-<span><span class="co">#&gt; item2              5.029     0.5047   9.963 2.207e-23</span></span>
-<span><span class="co">#&gt; s(x):loadingFx1    1.469     0.4090   3.590 3.303e-04</span></span></code></pre></div>
+<span><span class="op">)</span></span></code></pre></div>
+<p>The factor loading <span class="math inline">\(\lambda_{2} =
+2\)</span> was used when simulating the data, and including the
+uncertainty, our estimate covers the true value well.</p>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/factor_loadings.galamm.html">factor_loadings</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span>
+<span><span class="co">#&gt;          loading        SE</span></span>
+<span><span class="co">#&gt; lambda1 1.000000        NA</span></span>
+<span><span class="co">#&gt; lambda2 1.794194 0.2698327</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint</a></span><span class="op">(</span><span class="va">mod</span>, <span class="st">"lambda"</span><span class="op">)</span></span>
+<span><span class="co">#&gt;            2.5 %   97.5 %</span></span>
+<span><span class="co">#&gt; lambda1 1.265332 2.323057</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
