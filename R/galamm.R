@@ -52,7 +52,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
         stop("Factor already a column in data.")
       }
       for (j in seq_along(factor[[i]])) {
-        if(length(unique(data[, load.var])) != length(lambda[[i]][, j])){
+        if (length(unique(data[, load.var])) != length(lambda[[i]][, j])) {
           stop("lambda matrix must contain one row for each element in load.var")
         }
         eval(parse(text = paste("data$", factor[[i]][[j]], "<-1")))
