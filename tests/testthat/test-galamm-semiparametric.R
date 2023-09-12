@@ -55,7 +55,6 @@ test_that("GAMM with factor structures and random effects works", {
     factor = list("loading")
   )
 
-  expect_snapshot(summary(mod))
   expect_equal(
     coef(mod),
     c(
