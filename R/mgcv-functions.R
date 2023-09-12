@@ -7,15 +7,9 @@
 #' @param pterms Parametric terms.
 #' @param data Model data.
 #' @param knots Knots specification.
-#' @param select Passed on to the argument \code{null.space.penalty} of \code{mgcv::smoothCon}.
-#' @param scale.penalty Boolean value passed on to \code{mgcv::smoothCon}.
-#' @param diagonal.penalty not documented yet
-#' @param apply.by not documented yet
-#' @param list.call not documented yet
-#' @param modCon not documented yet
 #'
-#' @return an object
-#' @author Simon N Wood
+#' @return A list containing all the data necessary to fit a GAMM.
+#' @author Simon N Wood and Oystein Sorensen.
 #'
 #' @keywords internal
 #'
@@ -23,10 +17,7 @@
 #' \insertRef{woodGeneralizedAdditiveModels2017a}{galamm}
 #'
 gam.setup <- function(formula, pterms,
-                      data = stop("No data supplied to gam.setup"), knots = NULL,
-                      select = FALSE,
-                      scale.penalty = TRUE,
-                      diagonal.penalty = FALSE, apply.by = TRUE, list.call = FALSE, modCon = 0) {
+                      data = stop("No data supplied to gam.setup"), knots = NULL) {
   H <- NULL
   if (inherits(formula, "split.gam.formula")) {
     split <- formula
@@ -55,16 +46,8 @@ gam.setup <- function(formula, pterms,
   } # data is already a model frame
 
   G$intercept <- attr(attr(mf, "terms"), "intercept") > 0
+  G$offset <- model.offset(mf)
 
-  ## get any model offset. Complicated by possibility of offsets in multiple formulae...
-  if (list.call) {
-    offi <- attr(pterms, "offset")
-    if (!is.null(offi)) {
-      G$offset <- mf[[names(attr(pterms, "dataClasses"))[offi]]]
-    }
-  } else {
-    G$offset <- model.offset(mf)
-  } # get any model offset including from offset argument
 
   if (!is.null(G$offset)) G$offset <- as.numeric(G$offset)
 
@@ -142,18 +125,12 @@ gam.setup <- function(formula, pterms,
 
       id <- split$smooth.spec[[i]]$id
       if (is.null(id)) { ## regular evaluation
-        sml <- mgcv::smoothCon(split$smooth.spec[[i]], data, knots, TRUE,
-          scale.penalty = scale.penalty,
-          null.space.penalty = select,
-          diagonal.penalty = diagonal.penalty, apply.by = apply.by, modCon = modCon
+        sml <- mgcv::smoothCon(split$smooth.spec[[i]], data, knots, TRUE
         )
       } else { ## it's a smooth with an id, so basis setup data differs from model matrix data
         names(id.list[[id]]$data) <- split$smooth.spec[[i]]$term ## give basis data suitable names
         sml <- mgcv::smoothCon(split$smooth.spec[[i]], id.list[[id]]$data, knots,
-          TRUE,
-          n = nrow(data), dataX = data, scale.penalty = scale.penalty,
-          null.space.penalty = select,
-          diagonal.penalty = diagonal.penalty, apply.by = apply.by, modCon = modCon
+          TRUE, n = nrow(data), dataX = data
         )
       }
 
@@ -169,14 +146,6 @@ gam.setup <- function(formula, pterms,
   ## for identifiability
   if (m > 0) {
     sm <- gam.side(sm, X, tol = .Machine$double.eps^.5)
-    if (!apply.by) {
-      for (i in seq_along(sm)) { ## restore any by-free model matrices
-        if (!is.null(sm[[i]]$X0)) { ## there is a by-free matrix to restore
-          ind <- attr(sm[[i]], "del.index") ## columns, if any to delete
-          sm[[i]]$X <- if (is.null(ind)) sm[[i]]$X0 else sm[[i]]$X0[, -ind, drop = FALSE]
-        }
-      }
-    }
   }
 
   ## The matrix, L, mapping the underlying log smoothing parameters to the
@@ -483,17 +452,21 @@ gam.setup <- function(formula, pterms,
 } ## gam.setup
 
 
-#' Internal function from mgcv
+#' Create variable summary
 #'
-#' This function is derived from an internal mgcv function, written by Simon Wood.
+#' This function is derived from \code{mgcv:::variable.summary}.
 #'
-#' @param pf  pd
-#' @param dl dl
-#' @param n n
+#' @param pf Formula for the parametric part of the model.
+#' @param dl List containing all the explanatory variables in the model.
+#' @param n Integer specifying the number of observations.
 #'
-#' @return summary
+#' @return A list containing summary statistics for each variable in the model.
 #' @author Simon Wood
+#' @keywords internal
 #'
+#' @references
+#' \insertRef{woodGeneralizedAdditiveModels2017a}{galamm}
+
 variable.summary <- function(pf, dl, n) {
   v.n <- length(dl)
 
@@ -537,7 +510,7 @@ variable.summary <- function(pf, dl, n) {
     }
   }
   vs
-} ## end variable.summary
+}
 
 #' Internal function from mgcv
 #'
@@ -547,15 +520,14 @@ variable.summary <- function(pf, dl, n) {
 #' @param sm list of smooth
 #' @param Xp parametric model matrix
 #' @param tol tolerance
-#' @param with.pen logical
 #'
 #' @return a value
 #' @author Simon Wood
 #'
-gam.side <- function(sm, Xp, tol = .Machine$double.eps^.5, with.pen = FALSE) {
-  if (!with.pen) { ## check that's possible and reset if not!
-    with.pen <- nrow(Xp) < ncol(Xp) + sum(unlist(lapply(sm, function(x) ncol(x$X))))
-  }
+gam.side <- function(sm, Xp, tol = .Machine$double.eps^.5) {
+
+  with.pen <- nrow(Xp) < ncol(Xp) + sum(unlist(lapply(sm, function(x) ncol(x$X))))
+
   m <- length(sm)
   if (m == 0) {
     return(sm)

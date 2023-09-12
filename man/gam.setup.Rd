@@ -8,13 +8,7 @@ gam.setup(
   formula,
   pterms,
   data = stop("No data supplied to gam.setup"),
-  knots = NULL,
-  select = FALSE,
-  scale.penalty = TRUE,
-  diagonal.penalty = FALSE,
-  apply.by = TRUE,
-  list.call = FALSE,
-  modCon = 0
+  knots = NULL
 )
 }
 \arguments{
@@ -26,21 +20,9 @@ random effect terms.}
 \item{data}{Model data.}
 
 \item{knots}{Knots specification.}
-
-\item{select}{Passed on to the argument \code{null.space.penalty} of \code{mgcv::smoothCon}.}
-
-\item{scale.penalty}{Boolean value passed on to \code{mgcv::smoothCon}.}
-
-\item{diagonal.penalty}{not documented yet}
-
-\item{apply.by}{not documented yet}
-
-\item{list.call}{not documented yet}
-
-\item{modCon}{not documented yet}
 }
 \value{
-an object
+A list containing all the data necessary to fit a GAMM.
 }
 \description{
 This function is derived from \code{mgcv:::gam.setup}.
@@ -49,6 +31,6 @@ This function is derived from \code{mgcv:::gam.setup}.
 \insertRef{woodGeneralizedAdditiveModels2017a}{galamm}
 }
 \author{
-Simon N Wood
+Simon N Wood and Oystein Sorensen.
 }
 \keyword{internal}
