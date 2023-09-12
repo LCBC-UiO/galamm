@@ -1,8 +1,10 @@
+rm(list=ls())
 devtools::load_all()
 
-formula = y ~ 0 + loading + s(x, by = loading) + (0 + loading | id)
+formula = y ~ 0 + item + s(x, by = loading, k = 4)
 weights = NULL
-data = subset(cognition, domain == 1)
+data = head(subset(cognition, domain == 1), 12)
+data$item <- factor(data$item)
 family = gaussian
 family_mapping = rep(1L, nrow(data))
 load.var = "item"
@@ -12,7 +14,3 @@ start = NULL
 control = galamm_control()
 
 
-mod <- galamm(formula = formula, data = data, load.var = load.var,
-              lambda = lambda, factor = factor)
-
-summary(mod)
