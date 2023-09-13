@@ -19,7 +19,6 @@
 #' @seealso [fitted.galamm()] for model fits, [residuals.galamm()] for residuals,
 #' and [predict()] for the generic function.
 #'
-#' @method predict galamm
 #'
 predict.galamm <- function(object, newdata = NULL,
                            type = c("link", "response"),

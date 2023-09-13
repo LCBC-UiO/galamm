@@ -1,5 +1,27 @@
 #' Fit a generalized additive latent and mixed model
 #'
+#' This function fits a generalized additive latent and mixed model (GALAMMs),
+#' as described in
+#' \insertCite{sorensenLongitudinalModelingAgeDependent2023;textual}{galamm}.
+#' The building blocks of these models are generalized additive mixed models
+#' (GAMMs) \insertCite{woodGeneralizedAdditiveModels2017a;textual}{galamm}, of
+#' which generalized linear mixed models
+#' \insertCite{lairdRandomEffectsModelsLongitudinal1982,hendersonBestLinearUnbiased1975}{galamm}
+#' are special cases. GALAMMs extend upon GAMMs by allowing factor structures,
+#' as commonly used to model hypothesized latent traits underlying observed
+#' measurements. In this sense, GALAMMs are an extension of generalized linear
+#' latent and mixed models (GLLAMMs)
+#' \insertCite{skrondalGeneralizedLatentVariable2004,rabe-heskethGeneralizedMultilevelStructural2004}{galamm}
+#' which allows semiparametric estimation. The implemented algorithm used to
+#' compute model estimates is described in
+#' \insertCite{sorensenLongitudinalModelingAgeDependent2023;textual}{galamm},
+#' and is an extension of the algorithm used for fitting generalized linear
+#' mixed models by the \code{lme4} package
+#' \insertCite{batesFittingLinearMixedEffects2015}{galamm}. The syntax used to
+#' define factor structures is based on that used by the \code{PLmixed} package,
+#' which is detailed in
+#' \insertCite{rockwoodEstimatingComplexMeasurement2019;textual}{galamm}.
+#'
 #' @param formula A formula
 #' @param weights An optional formula object specifying an expression for the
 #'   residual variance. Defaults to \code{NULL}, corresponding to homoscedastic
@@ -20,6 +42,9 @@
 #'
 #' @return A model object
 #' @export
+#'
+#' @references \insertAllCited{}
+#'
 #'
 galamm <- function(formula, weights = NULL, data, family = gaussian,
                    family_mapping = rep(1L, nrow(data)),

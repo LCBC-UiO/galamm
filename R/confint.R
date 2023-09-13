@@ -14,7 +14,6 @@
 #' @return A matrix with the requested confidence intervals.
 #' @export
 #'
-#' @method confint galamm
 #'
 #' @seealso [fixef.galamm()] for fixed effects, [coef.galamm()] for
 #' coefficients more generally, and [vcov.galamm()] for the variance-covariance

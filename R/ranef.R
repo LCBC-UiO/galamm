@@ -14,7 +14,6 @@ NULL
 #'
 #' @aliases ranef ranef.galamm
 #'
-#' @method ranef galamm
 #' @export
 #'
 #' @author This function is derived from \code{lme4::ranef.merMod}, written by

@@ -1,5 +1,10 @@
 #' @keywords internal
 #' @aliases galamm-package NULL
+#'
+#' @references
+#'
+#' \insertRef{sorensenLongitudinalModelingAgeDependent2023}{galamm}
+#'
 "_PACKAGE"
 
 ## usethis namespace: start

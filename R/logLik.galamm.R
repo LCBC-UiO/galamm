@@ -6,7 +6,6 @@
 #' @return Object of class \code{logLik}
 #' @export
 #'
-#' @method logLik galamm
 #'
 #' @seealso [deviance.galamm()] for a function returning deviance and
 #' [logLik()] for the generic function.
@@ -29,7 +28,6 @@ logLik.galamm <- function(object, ...) {
 #' @return A numeric value giving the deviance of the model fit.
 #' @export
 #'
-#' @method deviance galamm
 #'
 #' @seealso [logLik.galamm()] for a function returning the log likelihood and
 #'   [deviance()] for the generic function.
