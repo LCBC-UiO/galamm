@@ -187,7 +187,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   opt <- stats::optim(par_init,
     fn = fn, gr = gr,
     method = "L-BFGS-B", lower = bounds,
-    control = optim_control(control)
+    control = control$optim_control
   )
 
   final_model <- mlwrapper(opt$par, TRUE)

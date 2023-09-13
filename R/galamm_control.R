@@ -75,21 +75,3 @@ new_galamm_control <- function(optim_control, maxit_conditional_modes) {
   class(ret) <- "galamm_control"
   ret
 }
-
-
-
-optim_control <- function(x) {
-  UseMethod("optim_control")
-}
-
-#' Extract optim control parameters
-#'
-#' @param x Object of class \code{galamm_control} returned from
-#'   \code{\link{galamm_control}}.
-#'
-#' @return A list with control parameters.
-#' @keywords internal
-#'
-optim_control.galamm_control <- function(x) {
-  x$optim_control
-}
