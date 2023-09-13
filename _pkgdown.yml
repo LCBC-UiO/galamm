@@ -24,6 +24,7 @@ reference:
   contents:
   - galamm
   - galamm_control
+  - galamm-package
 
 - title: High-level model output
   desc: Functions for summarising the result of model fits.
@@ -35,6 +36,7 @@ reference:
 
 - title: Model details
   desc: Detailed information on specific parts of model fits.
+  contents:
   - coef.galamm
   - confint.galamm
   - deviance.galamm
@@ -45,6 +47,7 @@ reference:
   - predict.galamm
   - ranef.galamm
   - residuals.galamm
+  - vcov.galamm
 
 - title: Datasets
   desc: Simulated and real example datasets.

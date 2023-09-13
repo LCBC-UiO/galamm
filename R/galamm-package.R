@@ -1,14 +1,5 @@
-#' galamm: Estimation of Generalized Additive Latent and
-#' Mixed Models.
-#'
-#' @description This package performs maximum marginal likelihood estimation of
-#' generalized additive latent and mixed models.
-#'
-#' @docType package
-#' @name galamm-package
-#'
-#'
-NULL
+#' @keywords internal
+"_PACKAGE"
 
 ## usethis namespace: start
 #' @useDynLib galamm, .registration = TRUE
