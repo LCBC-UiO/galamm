@@ -45,7 +45,7 @@ VarCorr.galamm <- function(x, sigma = 1, ...) {
 #'   components to print.
 #' @param corr Boolean indicating whether covariances or correlations should be
 #'   printed.
-#' @param ...
+#' @param ... Optional arguments passed on to other methods. Currently not used.
 #'
 #' @return The variance-covariance information is printed to the console and the
 #'   argument \code{x} is silently returned.

@@ -25,7 +25,7 @@ components to print.}
 \item{corr}{Boolean indicating whether covariances or correlations should be
 printed.}
 
-\item{...}{}
+\item{...}{Optional arguments passed on to other methods. Currently not used.}
 }
 \value{
 The variance-covariance information is printed to the console and the
