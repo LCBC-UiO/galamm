@@ -154,7 +154,7 @@
 <span><span class="co">#&gt; 6  2 0.6924851  1.1750286         a</span></span></code></pre></div>
 <p>Responses in rows with <code>itemgroup = "a"</code> are normally distributed while those in rows with <code>itemgroup = "b"</code> are binomially distributed. For a given subject, identified by the <code>id</code> variable, both responses are associated with the same underlying latent variable. We hence need to model this process jointly, and the model is set up as follows:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">mixed_resp</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/galamm.html">galamm</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">mixed_resp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lcbc-uio.github.io/galamm/reference/galamm-package.html">galamm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">x</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">loading</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">mresp</span>,</span>
 <span>  family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">gaussian</span>, <span class="va">binomial</span><span class="op">)</span>,</span>

@@ -82,7 +82,7 @@
     <loc>https://lcbc-uio.github.io/galamm/reference/fitted.galamm.html</loc>
   </url>
   <url>
-    <loc>https://lcbc-uio.github.io/galamm/reference/fixef.galamm.html</loc>
+    <loc>https://lcbc-uio.github.io/galamm/reference/fixef.html</loc>
   </url>
   <url>
     <loc>https://lcbc-uio.github.io/galamm/reference/galamm-package.html</loc>
@@ -112,22 +112,22 @@
     <loc>https://lcbc-uio.github.io/galamm/reference/index.html</loc>
   </url>
   <url>
+    <loc>https://lcbc-uio.github.io/galamm/reference/llikAIC.galamm.html</loc>
+  </url>
+  <url>
     <loc>https://lcbc-uio.github.io/galamm/reference/logLik.galamm.html</loc>
   </url>
   <url>
-    <loc>https://lcbc-uio.github.io/galamm/reference/marginal_likelihood.html</loc>
+    <loc>https://lcbc-uio.github.io/galamm/reference/mresp.html</loc>
   </url>
   <url>
-    <loc>https://lcbc-uio.github.io/galamm/reference/mresp.html</loc>
+    <loc>https://lcbc-uio.github.io/galamm/reference/new_galamm_control.html</loc>
   </url>
   <url>
     <loc>https://lcbc-uio.github.io/galamm/reference/nobs.galamm.html</loc>
   </url>
   <url>
     <loc>https://lcbc-uio.github.io/galamm/reference/optim_control.galamm_control.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/reference/parametricPenalty.html</loc>
   </url>
   <url>
     <loc>https://lcbc-uio.github.io/galamm/reference/plot.galamm.html</loc>

@@ -71,18 +71,20 @@
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>object</dt>
-<dd><p>Model object</p></dd>
+<dd><p>An object of class <code>galamm</code> returned from
+<code><a href="https://lcbc-uio.github.io/galamm/reference/galamm-package.html">galamm</a></code>.</p></dd>
 
 
 <dt>parm</dt>
-<dd><p>Parameters for which to compute intervals. Use "theta" to get all
-variance parameters, "beta" to get all fixed regression coefficients,
-"lambda" to get all factor loadings, and "weights" to get all weights. Can
-also be a vector of number.</p></dd>
+<dd><p>Parameters for which to compute intervals. Use <code>"theta"</code> to
+get all variance parameters, <code>"beta"</code> to get all fixed regression
+coefficients, <code>"lambda"</code> to get all factor loadings, and
+<code>"weights"</code> to get all weights. The parameter can also be given as a
+numeric vector with indices specifying the parameters.</p></dd>
 
 
 <dt>level</dt>
-<dd><p>Confidence level.</p></dd>
+<dd><p>Confidence level. Defaults to 0.95.</p></dd>
 
 
 <dt>method</dt>
@@ -90,14 +92,20 @@ also be a vector of number.</p></dd>
 
 
 <dt>...</dt>
-<dd><p>Other arguments.</p></dd>
+<dd><p>Other arguments passed on to other methods. Currently not used.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>Confidence intervals.</p>
+<p>A matrix with the requested confidence intervals.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
+    <div class="dont-index"><p><code><a href="fixef.html">fixef.galamm()</a></code> for fixed effects, <code><a href="coef.galamm.html">coef.galamm()</a></code> for
+coefficients more generally, and <code><a href="vcov.galamm.html">vcov.galamm()</a></code> for the variance-covariance
+matrix. <code><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint()</a></code> is the generic function.</p></div>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

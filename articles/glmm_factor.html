@@ -184,7 +184,7 @@ estimated.</p>
 <span><span class="co">#&gt; [5,]   NA</span></span></code></pre></div>
 <p>We fit the model as follows:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lcbc-uio.github.io/galamm/reference/galamm-package.html">galamm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">item</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">ability</span> <span class="op">|</span> <span class="va">school</span> <span class="op">/</span> <span class="va">sid</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">IRTsim</span>,</span>
 <span>  family <span class="op">=</span> <span class="va">binomial</span>,</span>
@@ -247,7 +247,7 @@ formula, which is simply <code>item</code>, specifies the term <span class="math
 <span><span class="co">#&gt; item5         0.4585     0.1922   2.385 0.017067</span></span></code></pre></div>
 <p>The <code>fixef</code> method lets us consider the fixed effects:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/fixef.galamm.html">fixef</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/fixef.html">fixef</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span>
 <span><span class="co">#&gt; (Intercept)       item2       item3       item4       item5 </span></span>
 <span><span class="co">#&gt;   0.5112006   0.3255941  -0.4491070   0.4929827   0.4584897</span></span></code></pre></div>
 <p>We can also get Wald type confidence intervals for the fixed
@@ -311,7 +311,7 @@ binomial samples with multiple trials.</p>
 <p>For binomial models with more than one trial, the response should be
 specified <code>cbind(successes, failures)</code>.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">galamm_mod_trials</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">galamm_mod_trials</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lcbc-uio.github.io/galamm/reference/galamm-package.html">galamm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">y</span>, <span class="va">trials</span> <span class="op">-</span> <span class="va">y</span><span class="op">)</span> <span class="op">~</span> <span class="va">item</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">ability</span> <span class="op">|</span> <span class="va">school</span> <span class="op">/</span> <span class="va">sid</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">dat</span>,</span>
 <span>  family <span class="op">=</span> <span class="va">binomial</span>,</span>
@@ -364,7 +364,7 @@ Chapter 11.3 in <span class="citation">Skrondal and Rabe-Hesketh (<a href="#ref-
 loadings, but we use it to demonstrate how to fit GLMMs with Poisson
 distributed responses.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">count_mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">count_mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lcbc-uio.github.io/galamm/reference/galamm-package.html">galamm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">lbas</span> <span class="op">*</span> <span class="va">treat</span> <span class="op">+</span> <span class="va">lage</span> <span class="op">+</span> <span class="va">v4</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">subj</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">epilep</span>,</span>
 <span>  family <span class="op">=</span> <span class="va">poisson</span></span>

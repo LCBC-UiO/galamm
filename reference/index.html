@@ -57,9 +57,9 @@
     </div>
 
     <div class="section level2">
-      <h2 id="all-functions">All functions<a class="anchor" aria-label="anchor" href="#all-functions"></a></h2>
+      <h2 id="modeling">Modeling<a class="anchor" aria-label="anchor" href="#modeling"></a></h2>
       
-      
+      <p class="section-desc"></p><p>Fit a generalized additive latent and mixed model.</p>
 
       
     </div><div id="" class="section level2">
@@ -69,34 +69,66 @@
 
       <dl><dt>
           
-          <code><a href="abbrDeparse.html">abbrDeparse()</a></code> 
+          <code><a href="galamm.html">galamm()</a></code> 
         </dt>
-        <dd>Abbreviated deparse function taken from lme4</dd>
+        <dd>Fit a generalized additive latent and mixed model</dd>
       </dl><dl><dt>
+          
+          <code><a href="galamm_control.html">galamm_control()</a></code> 
+        </dt>
+        <dd>Control values for galamm fit</dd>
+      </dl><dl><dt>
+          
+          <code><a href="galamm-package.html">galamm</a></code> <code><a href="galamm-package.html">galamm-package</a></code> 
+        </dt>
+        <dd>galamm: Generalized Additive Latent and Mixed Models</dd>
+      </dl></div><div class="section level2">
+      <h2 id="high-level-model-output">High-level model output<a class="anchor" aria-label="anchor" href="#high-level-model-output"></a></h2>
+      
+      <p class="section-desc"></p><p>Functions for summarising the result of model fits.</p>
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
           
           <code><a href="anova.galamm.html">anova(<i>&lt;galamm&gt;</i>)</a></code> 
         </dt>
-        <dd>Compare Likelihoods of galamm Objects</dd>
+        <dd>Compare likelihoods of galamm objects</dd>
       </dl><dl><dt>
           
-          <code><a href="augment.smX.html">augment.smX()</a></code> 
+          <code><a href="plot.galamm.html">plot(<i>&lt;galamm&gt;</i>)</a></code> 
         </dt>
-        <dd>Internal function from mgcv</dd>
+        <dd>Diagnostic plots for galamm objects</dd>
       </dl><dl><dt>
           
-          <code><a href="clone.smooth.spec.html">clone.smooth.spec()</a></code> 
+          <code><a href="print.summary.galamm.html">print(<i>&lt;summary.galamm&gt;</i>)</a></code> 
         </dt>
-        <dd>Internal function from mgcv</dd>
+        <dd>Print method for summary GALAMM fits</dd>
       </dl><dl><dt>
+          
+          <code><a href="summary.galamm.html">summary(<i>&lt;galamm&gt;</i>)</a></code> 
+        </dt>
+        <dd>Summarizing GALAMM fits</dd>
+      </dl></div><div class="section level2">
+      <h2 id="model-details">Model details<a class="anchor" aria-label="anchor" href="#model-details"></a></h2>
+      
+      <p class="section-desc"></p><p>Detailed information on specific parts of model fits.</p>
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
           
           <code><a href="coef.galamm.html">coef(<i>&lt;galamm&gt;</i>)</a></code> 
         </dt>
-        <dd>Extract galamm Coefficients</dd>
-      </dl><dl><dt>
-          
-          <code><a href="cognition.html">cognition</a></code> 
-        </dt>
-        <dd>Simulated Data with Measurements of Cognitive Abilities</dd>
+        <dd>Extract galamm coefficients</dd>
       </dl><dl><dt>
           
           <code><a href="confint.galamm.html">confint(<i>&lt;galamm&gt;</i>)</a></code> 
@@ -106,7 +138,63 @@
           
           <code><a href="deviance.galamm.html">deviance(<i>&lt;galamm&gt;</i>)</a></code> 
         </dt>
-        <dd>Extract Deviance of galamm Object</dd>
+        <dd>Extract deviance of galamm object</dd>
+      </dl><dl><dt>
+          
+          <code><a href="factor_loadings.galamm.html">factor_loadings(<i>&lt;galamm&gt;</i>)</a></code> 
+        </dt>
+        <dd>Extract factor loadings from galamm object</dd>
+      </dl><dl><dt>
+          
+          <code><a href="fitted.galamm.html">fitted(<i>&lt;galamm&gt;</i>)</a></code> 
+        </dt>
+        <dd>Extract model fitted values</dd>
+      </dl><dl><dt>
+          
+          <code><a href="fixef.html">fixef(<i>&lt;galamm&gt;</i>)</a></code> 
+        </dt>
+        <dd>Extract fixed effects from galamm objects</dd>
+      </dl><dl><dt>
+          
+          <code><a href="logLik.galamm.html">logLik(<i>&lt;galamm&gt;</i>)</a></code> 
+        </dt>
+        <dd>Extract Log-Likelihood of galamm Object</dd>
+      </dl><dl><dt>
+          
+          <code><a href="predict.galamm.html">predict(<i>&lt;galamm&gt;</i>)</a></code> 
+        </dt>
+        <dd>Predictions from a model at new data values</dd>
+      </dl><dl><dt>
+          
+          <code><a href="ranef.galamm.html">ranef(<i>&lt;galamm&gt;</i>)</a></code> 
+        </dt>
+        <dd>Extract random effects from galamm object.</dd>
+      </dl><dl><dt>
+          
+          <code><a href="residuals.galamm.html">residuals(<i>&lt;galamm&gt;</i>)</a></code> 
+        </dt>
+        <dd>Residuals of galamm objects</dd>
+      </dl><dl><dt>
+          
+          <code><a href="vcov.galamm.html">vcov(<i>&lt;galamm&gt;</i>)</a></code> 
+        </dt>
+        <dd>Calculate variance-covariance matrix for GALAMM fit</dd>
+      </dl></div><div class="section level2">
+      <h2 id="datasets">Datasets<a class="anchor" aria-label="anchor" href="#datasets"></a></h2>
+      
+      <p class="section-desc"></p><p>Simulated and real example datasets.</p>
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="cognition.html">cognition</a></code> 
+        </dt>
+        <dd>Simulated Data with Measurements of Cognitive Abilities</dd>
       </dl><dl><dt>
           
           <code><a href="diet.html">diet</a></code> 
@@ -119,127 +207,17 @@
         <dd>Epilepsy Data</dd>
       </dl><dl><dt>
           
-          <code><a href="factor_loadings.galamm.html">factor_loadings(<i>&lt;galamm&gt;</i>)</a></code> 
-        </dt>
-        <dd>Extract Factor Loadings from galamm Object</dd>
-      </dl><dl><dt>
-          
-          <code><a href="fitted.galamm.html">fitted(<i>&lt;galamm&gt;</i>)</a></code> 
-        </dt>
-        <dd>Extract Model Fitted Values</dd>
-      </dl><dl><dt>
-          
-          <code><a href="fixef.galamm.html">fixef(<i>&lt;galamm&gt;</i>)</a></code> 
-        </dt>
-        <dd>Extract Fixed Effects from galamm Object</dd>
-      </dl><dl><dt>
-          
-          <code><a href="galamm-package.html">galamm-package</a></code> 
-        </dt>
-        <dd>galamm: Estimation of Generalized Additive Latent and
-Mixed Models.</dd>
-      </dl><dl><dt>
-          
-          <code><a href="galamm.html">galamm()</a></code> 
-        </dt>
-        <dd>Fit a generalized additive latent and mixed model</dd>
-      </dl><dl><dt>
-          
-          <code><a href="galamm_control.html">galamm_control()</a></code> 
-        </dt>
-        <dd>Control Values for galamm Fit</dd>
-      </dl><dl><dt>
-          
-          <code><a href="gam.setup.html">gam.setup()</a></code> 
-        </dt>
-        <dd>GAM setup function from mgcv</dd>
-      </dl><dl><dt>
-          
-          <code><a href="gam.side.html">gam.side()</a></code> 
-        </dt>
-        <dd>Internal function from mgcv</dd>
-      </dl><dl><dt>
-          
-          <code><a href="gamm4.html">gamm4()</a></code> 
-        </dt>
-        <dd>Internal function for setting up model</dd>
-      </dl><dl><dt>
-          
           <code><a href="hsced.html">hsced</a></code> 
         </dt>
         <dd>Example Data with Heteroscedastic Residuals</dd>
       </dl><dl><dt>
           
-          <code><a href="logLik.galamm.html">logLik(<i>&lt;galamm&gt;</i>)</a></code> 
-        </dt>
-        <dd>Extract Log-Likelihood of galamm Object</dd>
-      </dl><dl><dt>
-          
-          <code><a href="marginal_likelihood.html">marginal_likelihood()</a></code> 
-        </dt>
-        <dd>Compute the marginal likelihood of a GLLAMM or GALAMM</dd>
-      </dl><dl><dt>
-          
           <code><a href="mresp.html">mresp</a></code> 
         </dt>
         <dd>Simulated Mixed Response Data</dd>
-      </dl><dl><dt>
-          
-          <code><a href="nobs.galamm.html">nobs(<i>&lt;galamm&gt;</i>)</a></code> 
-        </dt>
-        <dd>Extract the Number of Observations from a galamm Fit</dd>
-      </dl><dl><dt>
-          
-          <code><a href="optim_control.galamm_control.html">optim_control(<i>&lt;galamm_control&gt;</i>)</a></code> 
-        </dt>
-        <dd>Extract optim control parameters</dd>
-      </dl><dl><dt>
-          
-          <code><a href="parametricPenalty.html">parametricPenalty()</a></code> 
-        </dt>
-        <dd>Function from mgcv</dd>
-      </dl><dl><dt>
-          
-          <code><a href="plot.galamm.html">plot(<i>&lt;galamm&gt;</i>)</a></code> 
-        </dt>
-        <dd>Diagnostic Plots for galamm Objects</dd>
-      </dl><dl><dt>
-          
-          <code><a href="predict.galamm.html">predict(<i>&lt;galamm&gt;</i>)</a></code> 
-        </dt>
-        <dd>Predictions from a model at new data values</dd>
-      </dl><dl><dt>
-          
-          <code><a href="print.summary.galamm.html">print(<i>&lt;summary.galamm&gt;</i>)</a></code> 
-        </dt>
-        <dd>Print method for GALAMM fits</dd>
-      </dl><dl><dt>
-          
-          <code><a href="ranef.galamm.html">ranef(<i>&lt;galamm&gt;</i>)</a></code> 
-        </dt>
-        <dd>Extract Random Effects from galamm Object</dd>
-      </dl><dl><dt>
-          
-          <code><a href="residuals.galamm.html">residuals(<i>&lt;galamm&gt;</i>)</a></code> 
-        </dt>
-        <dd>Residuals of galamm Objects</dd>
-      </dl><dl><dt>
-          
-          <code><a href="summary.galamm.html">summary(<i>&lt;galamm&gt;</i>)</a></code> 
-        </dt>
-        <dd>Summarizing GALAMM Fits</dd>
-      </dl><dl><dt>
-          
-          <code><a href="variable.summary.html">variable.summary()</a></code> 
-        </dt>
-        <dd>Internal function from mgcv</dd>
-      </dl><dl><dt>
-          
-          <code><a href="vcov.galamm.html">vcov(<i>&lt;galamm&gt;</i>)</a></code> 
-        </dt>
-        <dd>Calculate Variance-Covariance Matrix for galamm Model Object</dd>
       </dl></div>
-  </main></div>
+  </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
+    </nav></aside></div>
 
 
     <footer><div class="pkgdown-footer-left">

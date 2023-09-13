@@ -183,7 +183,7 @@ family, which we do with a family mapping. The values in
 <code class="sourceCode R"><span><span class="va">family_mapping</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">mresp</span><span class="op">$</span><span class="va">itemgroup</span> <span class="op">==</span> <span class="st">"a"</span>, <span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <p>We are now ready to estimate the mixed response model.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">mixed_resp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">mixed_resp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lcbc-uio.github.io/galamm/reference/galamm-package.html">galamm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">x</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">level</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">mresp</span>,</span>
 <span>  family <span class="op">=</span> <span class="va">families</span>,</span>
@@ -390,7 +390,7 @@ means that <span class="math inline">\(\eta_{j}\)</span> should be
 multiplied by the factor loadings defined in the loading matrix.</p>
 <p>We are now ready to fit the model.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lcbc-uio.github.io/galamm/reference/galamm-package.html">galamm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">formula</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">diet</span>,</span>
 <span>  family <span class="op">=</span> <span class="va">families</span>,</span>
@@ -452,7 +452,7 @@ workers.</p>
 start by simply turning a lever to make the algorithm more verbose. The
 argument <code>trace = 3</code> is passed onto <code>optim</code>.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lcbc-uio.github.io/galamm/reference/galamm-package.html">galamm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">formula</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">diet</span>,</span>
 <span>  family <span class="op">=</span> <span class="va">families</span>,</span>
@@ -489,7 +489,7 @@ standard deviation of the latent variable. By default, its initial value
 is 1, but we now try to increase it to 10, with the <code>start</code>
 argument.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lcbc-uio.github.io/galamm/reference/galamm-package.html">galamm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">formula</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">diet</span>,</span>
 <span>  family <span class="op">=</span> <span class="va">families</span>,</span>
@@ -587,7 +587,7 @@ model which only has indirect effects. The disease model is now</p>
 <p>Everything else is the same as before, so we fit the new model
 with</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">mod0</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">mod0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lcbc-uio.github.io/galamm/reference/galamm-package.html">galamm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">formula0</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">diet</span>,</span>
 <span>  family <span class="op">=</span> <span class="va">families</span>,</span>
