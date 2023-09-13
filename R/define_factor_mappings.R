@@ -1,4 +1,4 @@
-define_factor_mappings <- function(gobj, load.var, lambda, factor, data){
+define_factor_mappings <- function(gobj, load.var, lambda, factor, data) {
   vars_in_fixed <- all.vars(gobj$fake.formula[-2])
   factor_in_fixed <-
     vapply(factor, function(x) any(x %in% vars_in_fixed), TRUE)
@@ -61,7 +61,7 @@ define_factor_mappings <- function(gobj, load.var, lambda, factor, data){
 
           mapping_component[inds_expanded] <-
             Map(function(x, y) rep(ll[x, cn], each = y),
-                x = data[inds, load.var], y = delta[inds]
+              x = data[inds, load.var], y = delta[inds]
             )
         }
 

@@ -1,4 +1,4 @@
-setup_factor <- function(load.var, lambda, factor, data){
+setup_factor <- function(load.var, lambda, factor, data) {
   parameter_index <- 2
   if (!is.null(factor)) {
     for (i in seq_along(factor)) {
@@ -29,7 +29,7 @@ setup_factor <- function(load.var, lambda, factor, data){
   list(data = data, lambda = lambda)
 }
 
-setup_family <- function(family){
+setup_family <- function(family) {
   if (length(family) == 1 || inherits(family, "family")) family <- list(family)
 
   lapply(family, function(f) {
@@ -43,7 +43,7 @@ setup_family <- function(family){
   })
 }
 
-setup_response_object <- function(family_list, family_mapping, data, gobj){
+setup_response_object <- function(family_list, family_mapping, data, gobj) {
   response_obj <- matrix(nrow = nrow(gobj$lmod$X), ncol = 2)
 
   for (i in seq_along(family_list)) {
@@ -64,7 +64,7 @@ setup_response_object <- function(family_list, family_mapping, data, gobj){
   response_obj
 }
 
-find_k <- function(family_txt, family_mapping, y, trials){
+find_k <- function(family_txt, family_mapping, y, trials) {
   k <- numeric(length(family_txt))
   for (i in seq_along(k)) {
     if (family_txt[[i]] == "gaussian") {
@@ -82,7 +82,7 @@ find_k <- function(family_txt, family_mapping, y, trials){
   k
 }
 
-set_initial_values <- function(gobj, start, beta_inds, lambda_inds, weights_inds){
+set_initial_values <- function(gobj, start, beta_inds, lambda_inds, weights_inds) {
   theta_init <- if (!is.null(start$theta)) {
     start$theta
   } else {
