@@ -20,7 +20,7 @@ summary.galamm <- function(object, ...) {
   ret$AICtab <- llikAIC(object)
   ret$Lambda <- factor_loadings(object)
 
-  useSc <- Reduce(function(`&&`, x) x()$family == "gaussian",
+  useSc <- Reduce(function(`&&`, x) x$family == "gaussian",
     object$family,
     init = TRUE
   )
