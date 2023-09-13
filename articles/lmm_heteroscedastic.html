@@ -132,7 +132,7 @@ the residual variance varies between items.</p>
 <code>~ (1 | item)</code>, specifying that a different constraint term
 should be included per item.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lcbc-uio.github.io/galamm/reference/galamm-package.html">galamm</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">x</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span>,</span>
 <span>  weights <span class="op">=</span> <span class="op">~</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">item</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">hsced</span></span>
@@ -214,7 +214,7 @@ results are identical.</p>
 <p><img src="lmm_heteroscedastic_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
 <p>We can compare the model to one with homoscedastic residuals.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">mod0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lcbc-uio.github.io/galamm/reference/galamm-package.html">galamm</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">mod0</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">x</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">hsced</span></span>
 <span><span class="op">)</span></span></code></pre></div>

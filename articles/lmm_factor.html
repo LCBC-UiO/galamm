@@ -249,7 +249,7 @@ and hence the term <code>(1 | sid)</code> suffices.</p>
 <p>We fit the model using <code>galamm</code> with the following
 call.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lcbc-uio.github.io/galamm/reference/galamm-package.html">galamm</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">form</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">KYPSsim</span>,</span>
 <span>  factor <span class="op">=</span> <span class="va">factors</span>,</span>
@@ -340,7 +340,7 @@ would then have the following loading matrix.</p>
 <span><span class="co">#&gt; [3,]    0    1</span></span>
 <span><span class="co">#&gt; [4,]    0   NA</span></span></code></pre></div>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">mod_constr1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lcbc-uio.github.io/galamm/reference/galamm-package.html">galamm</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">mod_constr1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">form</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">KYPSsim</span>,</span>
 <span>  factor <span class="op">=</span> <span class="va">factors</span>,</span>
@@ -366,7 +366,7 @@ matrix:</p>
 <span><span class="co">#&gt; [3,]    0    1</span></span>
 <span><span class="co">#&gt; [4,]    0    1</span></span></code></pre></div>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">mod_constr2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lcbc-uio.github.io/galamm/reference/galamm-package.html">galamm</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">mod_constr2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">form</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">KYPSsim</span>,</span>
 <span>  factor <span class="op">=</span> <span class="va">factors</span>,</span>
@@ -389,7 +389,7 @@ matrix:</p>
 <code>factor</code>, <code>load.var</code>, and <code>lambda</code>
 arguments.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">mod_constr2b</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lcbc-uio.github.io/galamm/reference/galamm-package.html">galamm</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">mod_constr2b</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">esteem</span> <span class="op">~</span> <span class="va">time</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">time12</span> <span class="op">|</span> <span class="va">mid</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">time34</span> <span class="op">|</span> <span class="va">hid</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">sid</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">KYPSsim</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -623,7 +623,7 @@ with galamm.</p>
 minutes. However, since five minutes is a bit too much for a vignette,
 we won’t run it.</p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">judge_galamm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lcbc-uio.github.io/galamm/reference/galamm-package.html">galamm</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">judge_galamm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">form</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">JUDGEsim</span>,</span>
 <span>  lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">loading_matrix</span><span class="op">)</span>,</span>
