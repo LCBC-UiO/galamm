@@ -2,7 +2,6 @@
 % Please edit documentation in R/galamm-package.R
 \docType{package}
 \name{galamm-package}
-\alias{galamm}
 \alias{galamm-package}
 \title{galamm: Generalized Additive Latent and Mixed Models}
 \description{

@@ -1,4 +1,5 @@
 #' @keywords internal
+#' @aliases galamm-package NULL
 "_PACKAGE"
 
 ## usethis namespace: start
