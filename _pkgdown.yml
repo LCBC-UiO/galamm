@@ -43,10 +43,12 @@ reference:
   - factor_loadings.galamm
   - fitted.galamm
   - fixef.galamm
+  - llikAIC.galamm
   - logLik.galamm
   - predict.galamm
   - ranef.galamm
   - residuals.galamm
+  - VarCorr.galamm
   - vcov.galamm
 
 - title: Datasets
