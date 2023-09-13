@@ -15,7 +15,6 @@ NULL
 #'
 #' @name fixef
 #' @aliases fixef fixef.galamm
-#' @method fixef galamm
 #' @export
 #'
 #' @seealso [ranef.galamm()] for random effects, [coef.galamm()] for

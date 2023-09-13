@@ -9,7 +9,6 @@
 #' @return A matrix with the requested coefficients.
 #' @export
 #'
-#' @method coef galamm
 #'
 #' @seealso [fixef.galamm()] for fixed effects, [ranef.galamm()] for random
 #'   effects, and [coef()] for the generic function.

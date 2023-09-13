@@ -8,7 +8,6 @@
 #'
 #' @return Numeric vector of residual values.
 #' @export
-#' @method residuals galamm
 #'
 #' @seealso [fitted.galamm()] for model fitted values, [predict.galamm()] for
 #' model predictions, and [plot.galamm()] for diagnostic plots. The generic

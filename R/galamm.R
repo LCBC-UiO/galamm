@@ -1,25 +1,85 @@
 #' Fit a generalized additive latent and mixed model
 #'
-#' @param formula A formula
+#' This function fits a generalized additive latent and mixed model (GALAMMs),
+#' as described in
+#' \insertCite{sorensenLongitudinalModelingAgeDependent2023;textual}{galamm}.
+#' The building blocks of these models are generalized additive mixed models
+#' (GAMMs) \insertCite{woodGeneralizedAdditiveModels2017a}{galamm}, of which
+#' generalized linear mixed models
+#' \insertCite{breslowApproximateInferenceGeneralized1993,hendersonBestLinearUnbiased1975,lairdRandomEffectsModelsLongitudinal1982}{galamm}
+#' are special cases. GALAMMs extend upon GAMMs by allowing factor structures,
+#' as commonly used to model hypothesized latent traits underlying observed
+#' measurements. In this sense, GALAMMs are an extension of generalized linear
+#' latent and mixed models (GLLAMMs)
+#' \insertCite{skrondalGeneralizedLatentVariable2004,rabe-heskethGeneralizedMultilevelStructural2004}{galamm}
+#' which allows semiparametric estimation. The implemented algorithm used to
+#' compute model estimates is described in
+#' \insertCite{sorensenLongitudinalModelingAgeDependent2023;textual}{galamm},
+#' and is an extension of the algorithm used for fitting generalized linear
+#' mixed models by the \code{lme4} package
+#' \insertCite{batesFittingLinearMixedEffects2015}{galamm}. The syntax used to
+#' define factor structures is based on that used by the \code{PLmixed} package,
+#' which is detailed in
+#' \insertCite{rockwoodEstimatingComplexMeasurement2019;textual}{galamm}.
+#'
+#' @param formula A formula specifying the model. Smooth terms are defined in
+#'   the style of the \code{mgcv} and \code{gamm4} packages, see
+#'   \insertCite{woodGeneralizedAdditiveModels2017a}{galamm} for an
+#'   introduction. Random effects are specifified using \code{lme4} syntax,
+#'   which is described in detail in
+#'   \insertCite{batesFittingLinearMixedEffects2015}{galamm}. Factor loadings
+#'   will also be part of the model formula, and is based on the syntax of the
+#'   \code{PLmixed} package
+#'   \insertCite{rockwoodEstimatingComplexMeasurement2019}{galamm}.
+#'
 #' @param weights An optional formula object specifying an expression for the
 #'   residual variance. Defaults to \code{NULL}, corresponding to homoscedastic
-#'   errors.
-#' @param data A dataset
-#' @param family A vector of families
-#' @param family_mapping A vector mapping from the elements of "family" to rows
-#'   of "data". Defaults to \code{rep(1L, nrow(data))}, which means that all
-#'   observations are distributed according to the first element of "family".
-#' @param load.var Variable the factors load onto
-#' @param lambda Loading
-#' @param factor list of factors
-#' @param start A named list of starting values for parameters. Possible names
-#'   of list elements are "theta", "beta", and "lambda", all of which represent
-#'   numerical vectors.
-#' @param control Control object. Result of calling
-#'   \code{\link{galamm_control}}.
+#'   errors. The formula is defined in \code{lme4} style; see vignettes and
+#'   examples for details.
 #'
-#' @return A model object
+#' @param data A dataset containing all the variables specified by the model
+#'   formula, with the exception of factor loadings.
+#'
+#' @param family A vector containing one or more model families. For each
+#'   element in \code{family} there should be a corresponding element in
+#'   \code{family_mapping} specifying which elements of the response are
+#'   conditionally distributed according to the given family. Currently family
+#'   can be one of \code{gaussian}, \code{binomial}, and \code{poisson}, and
+#'   only canonical link functions are supported.
+#'
+#' @param family_mapping A vector mapping from the elements of \code{family} to
+#'   rows of \code{data}. Defaults to \code{rep(1L, nrow(data))}, which means
+#'   that all observations are distributed according to the first element of
+#'   \code{family}.
+#'
+#' @param load.var Character specifying the name of the variable in \code{data}
+#'   identifying what the factors load onto. That is, each unique value of
+#'   \code{load.var} corresponds to a unique factor loading. Currently only a
+#'   single loading
+#'
+#' @param lambda List of factor loading matrices. Numerical values indicate that
+#'   the given value is fixed, while \code{NA} means that the entry is a
+#'   parameter to be estimated.
+#'
+#' @param factor List of character vectors identical to the factor loadings
+#'   specified in \code{formula}. For each list element, the \eqn{j}th entry in
+#'   the character vector corresponds to the \eqn{j}th column of the
+#'   corresponding matrix in \code{lambda}.
+#'
+#' @param start A named list of starting values for parameters. Possible names
+#'   of list elements are \code{"theta"}, \code{"beta"}, \code{"lambda"}, and
+#'   \code{"weights"}, all of should be numerical vectors with starting values.
+#'   Default to \code{NULL}, which means that some relatively sensible defaults
+#'   are used.
+#'
+#' @param control Control object for the optimization procedure of class
+#'   \code{galamm_control} resulting from calling \code{\link{galamm_control}}.
+#'
+#' @return A model object of class \code{galamm}.
 #' @export
+#'
+#' @references \insertAllCited{}
+#'
 #'
 galamm <- function(formula, weights = NULL, data, family = gaussian,
                    family_mapping = rep(1L, nrow(data)),
@@ -40,6 +100,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
       f()
     }
   })
+
 
   parameter_index <- 2
   if (!is.null(factor)) {
