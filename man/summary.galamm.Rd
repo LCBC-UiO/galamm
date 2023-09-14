@@ -23,3 +23,9 @@ Summary method for class "galamm".
 \code{\link[=print.summary.galamm]{print.summary.galamm()}} for the print method and \code{\link[=summary]{summary()}} for
 the generic.
 }
+\author{
+Some of the code for producing summary information has been derived
+from the summary methods of \code{mgcv} (author: Simon Wood) and
+\code{lme4} \insertCite{batesFittingLinearMixedEffects2015}{galamm}
+(authors: Douglas M. Bates, Martin Maechler, Ben Bolker, and Steve Walker).
+}

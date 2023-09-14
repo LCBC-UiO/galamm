@@ -12,15 +12,26 @@
 
 \item{digits}{Number of digits to present in outputs.}
 
-\item{...}{Further arguments passed on to other methods. Currently not used.}
+\item{...}{Further arguments passed on to other methods. Currently used by
+\code{stats::printCoefmat} for printing approximate significance of smooth
+terms.}
 }
 \value{
-Summary printed to screen. Invisible returns the argument \code{x}.
+Summary printed to screen. Invisibly returns the argument \code{x}.
 }
 \description{
 Print method for summary GALAMM fits
 }
+\references{
+\insertAllCited{}
+}
 \seealso{
 \code{\link[=summary.galamm]{summary.galamm()}} for the summary function and \code{\link[=print]{print()}} for the
 generic function.
+}
+\author{
+Some of the code for producing summary information has been derived
+from the summary methods of \code{mgcv} (author: Simon Wood) and
+\code{lme4} \insertCite{batesFittingLinearMixedEffects2015}{galamm}
+(authors: Douglas M. Bates, Martin Maechler, Ben Bolker, and Steve Walker).
 }
