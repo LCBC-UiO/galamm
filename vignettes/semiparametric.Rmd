@@ -26,9 +26,11 @@ library(ggplot2)
 theme_set(theme_bw())
 ```
 
-This vignette describes how to use galamm to estimate latent variable models with smooth terms. The examples are based on Section 4 and 5 in @sorensenLongitudinalModelingAgeDependent2023, but as we cannot share the data, we have instead simulated somewhat simpler datasets that will be used. We will gradually add complexity, starting with a simple generalized additive mixed.
+This vignette describes how to use `galamm` to estimate latent variable models with smooth terms, or equivalently, generalized additive mixed models with factor structures. The examples are based on Section 4 and 5 in @sorensenLongitudinalModelingAgeDependent2023, but as we cannot share the data, we have instead simulated somewhat simpler datasets that will be used. We will gradually add complexity, starting with a simple generalized additive mixed. Please refer to the [introductory vignette](https://lcbc-uio.github.io/galamm/articles/galamm.html) for an overview of the statistical models.
 
 ## Generalized Additive Mixed Models
+
+We start by showing how `galamm` can be used to estimated generalized additive mixed models.
 
 ### Gaussian Responses
 
@@ -60,37 +62,66 @@ $$
 
 where $f(x_{ij})$ is a smooth function to be estimated, $\eta_{j} \sim N(0, \psi)$ is a random intercept, and $\epsilon_{ij} \sim N(0, \phi)$ is a residual term.
 
-This model can be estimated using gamm4 as follows:
+This model can be estimated using `gamm4` as follows:
 
 ```{r}
 mod_gamm4 <- gamm4(y ~ s(x), random = ~ (1 | id), data = dat, REML = FALSE)
 ```
 
-The resulting estimated smooth term looks sensible.
+The package `gamm4` uses `lme4` to fit the underlying model, and the resulting model has two components. `mod_gamm4$mer` contains the mixed model representation, whereas in `mod_gamm4$gam` the fixed and random effects corresponding to spline coefficients have been converted into single smooth terms. We can look at the model summary for each:
 
 ```{r}
 summary(mod_gamm4$mer)
 summary(mod_gamm4$gam)
+```
+
+We can also plot the estimated smooth term:
+
+```{r, semiparametric-gaussian-gamm4-smooth}
 plot(mod_gamm4$gam)
 ```
 
-With galamm we use similar argument, but the `random` specification is now part of the model formula.
+In contrast, invoking the `plot` function on the mixed model part gives us a diagnostic plot.
+
+```{r, semiparametric-gaussian-gamm4-diagnostic}
+plot(mod_gamm4$mer)
+```
+
+
+With `galamm` we use similar argument, but the `random` specification is now part of the model formula.
 
 ```{r}
 mod <- galamm(y ~ s(x) + (1 | id), data = dat)
 ```
 
-As opposed to `gamm4`, `galamm` gives a single summary. As can be seen, smooth terms are both reported as random effects, and in a separate line under the header "Approximate significance of smooth terms:".
+As opposed to `gamm4`, `galamm` gives a single summary. As can be seen, smooth terms are both reported as random effects, and in a separate line under the header "Approximate significance of smooth terms:". Reassuringly, the results from fitting the model with `gamm4` and with `galamm` are essentially equally, even though they use somewhat different computational algorithms.
 
 ```{r}
 summary(mod)
 ```
 
-However, the `plot` function now gives us a diagnostic plot, which looks very good.
+The `plot` function now gives us a diagnostic plot, which by inspection can be seen to be almost identical to the plot produced from the mixed model part of the `gamm4` model.
 
-```{r}
+```{r, semiparametric-gaussian-gamm-diagnostic}
 plot(mod)
 ```
+
+In order to plot the smooth term, we use `plot_smooth`.
+
+```{r, semiparametric-gaussian-gamm-smooth1}
+plot_smooth(mod)
+```
+
+The `plot_smooth` function is a thin wrapper around the `plot.gam` function provided by the `mgcv` package [@woodGeneralizedAdditiveModels2017a]. This means that the arguments used by `plot.gam` can be used also here, as see with the examples below:
+
+```{r, semiparametric-gaussian-gamm-smooth2}
+plot_smooth(mod,
+  shade = TRUE, rug = FALSE, seWithMean = TRUE,
+  shift = +2
+)
+plot_smooth(mod, se = FALSE)
+```
+
 
 ### Binomial Responses
 
@@ -106,7 +137,7 @@ Each observation counts the number of successes in ten trials.
 plot(dat$x, dat$y, xlab = "x", ylab = "Correct responses")
 ```
 
-Again we can fit this model using gamm4.
+Again we can fit this model using `gamm4`.
 
 ```{r}
 mod_gamm4 <- gamm4(cbind(y, trials - y) ~ s(x),
@@ -115,15 +146,21 @@ mod_gamm4 <- gamm4(cbind(y, trials - y) ~ s(x),
 )
 ```
 
-```{r}
-summary(mod_gamm4$mer)
-```
+We can look at the summary output as before.
 
 ```{r}
+summary(mod_gamm4$mer)
+summary(mod_gamm4$gam)
+```
+
+And we can plot the smooth term. The diagnostic plot is not very useful in the binomial case, so we omit it.
+
+```{r, semiparametric-gamm4-binomial}
 plot(mod_gamm4$gam)
 ```
 
-The following code estimates the modeling using galamm instead.
+Again the `galamm` syntax is similar, but it puts the random effect specification into the model formula.
+
 
 ```{r}
 mod <- galamm(cbind(y, trials - y) ~ s(x) + (1 | id),
@@ -137,13 +174,18 @@ The estimates are very similar, although not identical. The difference in devian
 summary(mod)
 ```
 
+```{r, semiparametric-gamm-binomial}
+plot_smooth(mod)
+```
+
+
 ## Generalized Additive Models with Factor Structures
 
-We now add factor structures to the GAMMs. These are types of models that neither gamm4 nor mgcv are able to estimate, and where galamm provides new functionality.
+We now add factor structures to the GAMMs. These are types of models that neither `gamm4` nor `mgcv` are able to estimate, and where `galamm` provides new functionality.
 
 ### Gaussian Responses
 
-We continue with the cognition data, but now use all items of cognitive domain 1. These are all conditionally normal distributed.
+To illustrate basic usage, we continue with the cognition data, but now use all items of cognitive domain 1. These are all conditionally normal distributed.
 
 ```{r}
 dat <- subset(cognition, domain == 1)
@@ -169,34 +211,49 @@ $$
 y_{i} = \beta_{i} + \lambda_{i} \left\{ h(x) + \zeta^{(2)} + \zeta^{(3)} \right\} + \epsilon_{i}
 $$
 
-We fit the model as follows.
+To set up the smooth term, we need a `by`-variable. This is an example of a varying-coefficient term [@hastieVaryingCoefficientModels1993], where $h(x)$ is being interpreted as a regression coefficient for the effect of $\lambda_{i}$ on $y_{i}$, that varies with $x$. In contrast to @hastieVaryingCoefficientModels1993 and other uses of varying-coefficient terms, however, in this case the predictor $\lambda_{i}$ is a model parameter. We have three items loading in $\eta$ and fixed the first loading to 1 for identifiability, so the loading matrix is as follows:
+
+```{r}
+(loading_matrix <- matrix(c(1, NA, NA), ncol = 1))
+```
+
+We use the term "loading" to identify the factor loading, and set `load.var = "item"` to specify that the loadings to be applied are identified by the "item" variable.
 
 ```{r}
 mod <- galamm(
-  formula = y ~ 0 + item + s(x, by = loading) + (0 + loading | id / timepoint),
+  formula = y ~ 0 + item + s(x, by = loading) +
+    (0 + loading | id / timepoint),
   data = dat,
   load.var = "item",
-  lambda = list(matrix(c(1, NA, NA), ncol = 1)),
+  lambda = list(loading_matrix),
   factor = list("loading")
 )
 ```
 
-The factor loadings are very well recovered. When simulating the data, the standard deviation at the `id` level was 1, at the `timepoint` level it was 0.5, and the residual standard deviation was 0.1. The estimates are close to these values.
+We print the model summary below. In the data simulation, the factor loadings we set to 1, 1.4, and 0.3, respectively, and this is very well recovered. Furthermore, the ground truth standard deviation at the `id` level was 1, at the `timepoint` level it was 0.5, and the residual standard deviation was 0.1. The estimates are close to these values. Real data will typically not have this strong signal, but based on these results, there are no clear indications that the model is implemented incorrectly.
 
 ```{r}
 summary(mod)
 ```
 
+We also plot the smooth term. Since we had a very large amount of data, there is essentially no uncertainty about the estimate.
+
+```{r}
+plot_smooth(mod)
+```
+
+
 ### Binomial Responses
 
-We can now move on to the part of the cognition data that is conditionally binomially distributed. We begin with domain 2, for which each response measures success or not in is a single trial. In this case there are only two items, so we must change the lambda matrix accordingly.
+We can now move on to the part of the cognition data that is conditionally binomially distributed. We begin with domain 2, for which each response measures success or not in a single trial. In this case there are only two items, so we must change the lambda matrix accordingly. Other than that, and setting `family = binomial`, the model is the same as before.
 
 ```{r}
 dat <- subset(cognition, domain == 2)
 dat$item <- factor(dat$item)
 
 mod <- galamm(
-  formula = y ~ 0 + item + s(x, by = loading) + (0 + loading | id / timepoint),
+  formula = cbind(y, trials - y) ~ 0 + item + s(x, by = loading) +
+    (0 + loading | id / timepoint),
   data = dat,
   family = binomial,
   load.var = "item",
@@ -208,8 +265,28 @@ mod <- galamm(
 The factor loading $\lambda_{2} = 2$ was used when simulating the data, and including the uncertainty, our estimate covers the true value well.
 
 ```{r}
-factor_loadings(mod)
-confint(mod, "lambda")
+summary(mod)
 ```
+
+The true values are well within the confidence intervals.
+
+```{r}
+confint(mod, parm = "lambda")
+```
+
+We can also plot the estimated smooth term. We also include the data-generating function in red, for comparison. This function is borrowed from `mgcv::gamSim` [@woodGeneralizedAdditiveModels2017a]. We see that the two are very close.
+
+```{r}
+x <- seq(0, 1, length.out = 100)
+true_fun <- function(x) {
+  exp(2 * x)
+}
+y <- true_fun(x)
+y <- y - mean(y)
+
+plot_smooth(mod, shade = TRUE)
+lines(x, y, col = "red")
+```
+
 
 # References
