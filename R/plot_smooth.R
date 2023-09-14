@@ -1,4 +1,4 @@
-plot_smooth <- function(object, ...){
+plot_smooth <- function(object, ...) {
   UseMethod("plot_smooth")
 }
 
@@ -22,7 +22,7 @@ plot_smooth <- function(object, ...){
 #' @references \insertAllCited{}
 #'
 plot_smooth.galamm <- function(object, ...) {
-  if(!exists("gam", object)) stop("No terms to plot.")
+  if (!exists("gam", object)) stop("No terms to plot.")
 
   plot(object$gam, ...)
 }

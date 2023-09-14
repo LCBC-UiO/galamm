@@ -115,8 +115,10 @@ plot_smooth(mod)
 The `plot_smooth` function is a thin wrapper around the `plot.gam` function provided by the `mgcv` package [@woodGeneralizedAdditiveModels2017a]. This means that the arguments used by `plot.gam` can be used also here, as see with the examples below:
 
 ```{r, semiparametric-gaussian-gamm-smooth2}
-plot_smooth(mod, shade = TRUE, rug = FALSE, seWithMean = TRUE,
-            shift = +2)
+plot_smooth(mod,
+  shade = TRUE, rug = FALSE, seWithMean = TRUE,
+  shift = +2
+)
 plot_smooth(mod, se = FALSE)
 ```
 
@@ -138,7 +140,8 @@ plot(dat$x, dat$y, xlab = "x", ylab = "Correct responses")
 Again we can fit this model using `gamm4`.
 
 ```{r}
-mod_gamm4 <- gamm4(cbind(y, trials - y) ~ s(x), random = ~ (1 | id),
+mod_gamm4 <- gamm4(cbind(y, trials - y) ~ s(x),
+  random = ~ (1 | id),
   data = dat, family = binomial
 )
 ```
@@ -161,7 +164,8 @@ Again the `galamm` syntax is similar, but it puts the random effect specificatio
 
 ```{r}
 mod <- galamm(cbind(y, trials - y) ~ s(x) + (1 | id),
-  data = dat, family = binomial)
+  data = dat, family = binomial
+)
 ```
 
 The estimates are very similar, although not identical. The difference in deviance is due to differences in the way deviance is defined. The call `deviance(mod_gamm4$mer)` gives the same value as in the summary for the model fitted with galamm.
@@ -217,7 +221,7 @@ We use the term "loading" to identify the factor loading, and set `load.var = "i
 
 ```{r}
 mod <- galamm(
-  formula = y ~ 0 + item + s(x, by = loading) + 
+  formula = y ~ 0 + item + s(x, by = loading) +
     (0 + loading | id / timepoint),
   data = dat,
   load.var = "item",
@@ -248,7 +252,7 @@ dat <- subset(cognition, domain == 2)
 dat$item <- factor(dat$item)
 
 mod <- galamm(
-  formula = cbind(y, trials - y) ~ 0 + item + s(x, by = loading) + 
+  formula = cbind(y, trials - y) ~ 0 + item + s(x, by = loading) +
     (0 + loading | id / timepoint),
   data = dat,
   family = binomial,
@@ -274,7 +278,7 @@ We can also plot the estimated smooth term. We also include the data-generating 
 
 ```{r}
 x <- seq(0, 1, length.out = 100)
-true_fun <- function(x){
+true_fun <- function(x) {
   exp(2 * x)
 }
 y <- true_fun(x)
