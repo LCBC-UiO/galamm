@@ -363,7 +363,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
     ind <- rep(0, 0) ## index the non-smooth random effects among the random effects
     for (i in seq_along(vr)) {
       if (is.null(sn) || !rn[i] %in% sn) { ## append non smooth r.e.s to Zt
-        Gp <- getME(ret$mer, "Gp") ## group index ends
+        Gp <- gobj$lmod$reTrms$Gp ## group index ends
         ind <- c(ind, (Gp[i] + 1):Gp[i + 1])
       } else if (!is.null(sn)) { ## extract smoothing parameters for smooth r.e.s
         k <- (1:gobj$n.sr)[rn[i] == sn] ## where in original smooth ordering is current smoothing param
@@ -383,13 +383,13 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
     V <- Matrix::Diagonal(length(final_model$V), scale / final_model$V)
 
     # This one is invoked if there are classical random effect, not smooths.
-    if (nrow(Zt) > 0) V <- V + crossprod(root.phi %*% Zt) * scale
+    if (nrow(Zt) > 0) V <- V + Matrix::crossprod(root.phi %*% Zt) * scale
 
     R <- Matrix::chol(V, pivot = TRUE)
     piv <- attr(R, "pivot")
 
-    gobj$G$Xf <- as(gobj$G$Xf, "dgCMatrix")
-    Xfp <- as(Xfp, "dgCMatrix")
+    gobj$G$Xf <- methods::as(gobj$G$Xf, "dgCMatrix")
+    Xfp <- methods::as(Xfp, "dgCMatrix")
 
     if (is.null(piv)) {
       WX <- methods::as(Matrix::solve(Matrix::t(R), Xfp), "matrix") ## V^{-.5}Xp -- fit parameterization
@@ -440,9 +440,9 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
 
     object$sig2 <- scale
 
-    object$Vp <- as(Vb, "matrix")
+    object$Vp <- methods::as(Vb, "matrix")
 
-    object$Ve <- as(Vb %*% XVX %*% Vb, "matrix")
+    object$Ve <- methods::as(Vb %*% XVX %*% Vb, "matrix")
 
     class(object) <- "gam"
 
