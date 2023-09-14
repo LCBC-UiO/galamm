@@ -70,6 +70,7 @@ The resulting estimated smooth term looks sensible.
 
 ```{r}
 summary(mod_gamm4$mer)
+summary(mod_gamm4$gam)
 plot(mod_gamm4$gam)
 ```
 
