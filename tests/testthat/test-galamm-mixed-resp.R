@@ -13,14 +13,17 @@ test_that("Mixed response works", {
   expect_equal(logLik(mod), structure(-441.199885684125, nobs = 396L, df = 5L, class = "logLik"))
   expect_equal(
     llikAIC(mod),
-    c(AIC = 892.399771368249, BIC = 912.306842424522, logLik = -441.199885684125,
-      deviance = 322.712453540071, df.resid = 391)
+    c(
+      AIC = 892.399771368249, BIC = 912.306842424522, logLik = -441.199885684125,
+      deviance = 322.712453540071, df.resid = 391
+    )
   )
   expect_equal(
     factor_loadings(mod),
-    structure(c(1, 0.975278292857391, NA, 0.284026767903101), dim = c(2L,
-                                                                      2L), dimnames = list(c("lambda1", "lambda2"), c("loading", "SE"
-                                                                      )))
+    structure(c(1, 0.975278292857391, NA, 0.284026767903101), dim = c(
+      2L,
+      2L
+    ), dimnames = list(c("lambda1", "lambda2"), c("loading", "SE")))
   )
 
   expect_equal(

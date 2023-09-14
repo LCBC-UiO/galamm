@@ -19,19 +19,24 @@ test_that("Logistic GLMM with simple factor works", {
   expect_equal(
     logLik(mod),
     structure(-146.6622279195, nobs = 245L, df = 11L, class = "logLik")
-    )
+  )
   expect_equal(
     llikAIC(mod),
-    c(AIC = 315.324455839001, BIC = 353.838296154993, logLik = -146.6622279195,
-      deviance = 224.697617162178, df.resid = 234)
+    c(
+      AIC = 315.324455839001, BIC = 353.838296154993, logLik = -146.6622279195,
+      deviance = 224.697617162178, df.resid = 234
+    )
   )
   expect_equal(
     factor_loadings(mod),
-    structure(c(1, 1.07647038015976, 0.890409132940386, 0.735757163276656,
-                1.204041457035, NA, 1.00116115172062, 0.59772403000322, 0.58869976284929,
-                1.01429848408794), dim = c(5L, 2L), dimnames = list(c("lambda1",
-                                                                      "lambda2", "lambda3", "lambda4", "lambda5"), c("abil.sid", "SE"
-                                                                      ))),
+    structure(c(
+      1, 1.07647038015976, 0.890409132940386, 0.735757163276656,
+      1.204041457035, NA, 1.00116115172062, 0.59772403000322, 0.58869976284929,
+      1.01429848408794
+    ), dim = c(5L, 2L), dimnames = list(c(
+      "lambda1",
+      "lambda2", "lambda3", "lambda4", "lambda5"
+    ), c("abil.sid", "SE"))),
     tolerance = 1e-4
   )
 
@@ -68,16 +73,18 @@ test_that("Logistic GLMM with simple factor works", {
   expect_equal(
     logLik(galamm_mod_trials),
     structure(-412.338459662577, nobs = 245L, df = 4L, class = "logLik")
-    )
+  )
   expect_equal(
     fixef(galamm_mod_trials),
-    c(`(Intercept)` = 0.643260564607128, item = 0.0277064975048341
-    ))
+    c(`(Intercept)` = 0.643260564607128, item = 0.0277064975048341)
+  )
 
   expect_equal(
     llikAIC(galamm_mod_trials),
-    c(AIC = 832.676919325154, BIC = 846.681952167332, logLik = -412.338459662577,
-      deviance = 388.350924875839, df.resid = 241)
+    c(
+      AIC = 832.676919325154, BIC = 846.681952167332, logLik = -412.338459662577,
+      deviance = 388.350924875839, df.resid = 241
+    )
   )
 })
 

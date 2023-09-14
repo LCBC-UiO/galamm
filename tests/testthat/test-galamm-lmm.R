@@ -91,15 +91,19 @@ test_that("LMM with two factors works", {
 
   expect_equal(kyps_model$loglik, -33.7792632108483)
   expect_equal(kyps_model$par[kyps_model$lambda_inds],
-               c(0.631763067142624, -0.114603879076418, 0.0145214343084242,
-                 1.07489949334559),
+    c(
+      0.631763067142624, -0.114603879076418, 0.0145214343084242,
+      1.07489949334559
+    ),
     tolerance = 1e-4
   )
 
   expect_equal(
     llikAIC(kyps_model),
-    c(AIC = 91.5585264216966, BIC = 115.202029384322, logLik = -33.7792632108483,
-      deviance = 67.5585264216966, df.resid = 41)
+    c(
+      AIC = 91.5585264216966, BIC = 115.202029384322, logLik = -33.7792632108483,
+      deviance = 67.5585264216966, df.resid = 41
+    )
   )
 
   expect_equal(
@@ -139,26 +143,37 @@ test_that("LMM with two raters works", {
   expect_equal(deviance(judge_galamm), 2158.16155409666)
   expect_equal(
     logLik(judge_galamm),
-    structure(-1079.08077704833, nobs = 840L, df = 15L, class = "logLik"))
+    structure(-1079.08077704833, nobs = 840L, df = 15L, class = "logLik")
+  )
   expect_equal(
     llikAIC(judge_galamm),
-    c(AIC = 2188.16155409666, BIC = 2259.16258247423, logLik = -1079.08077704833,
-      deviance = 2158.16155409666, df.resid = 825)
+    c(
+      AIC = 2188.16155409666, BIC = 2259.16258247423, logLik = -1079.08077704833,
+      deviance = 2158.16155409666, df.resid = 825
+    )
   )
 
   expect_equal(factor_loadings(judge_galamm),
-               structure(c(1, 1.24788910616366, 0.947028051478771, 0, 0, 0,
-                           NA, 0.264534156451991, 0.228633827429379, NA, NA, NA, 0, 0, 0,
-                           1, 1.00426975887412, 1.10790222766263, NA, NA, NA, NA, 0.262801414362859,
-                           0.279745804150548), dim = c(6L, 4L), dimnames = list(c("lambda1",
-                                                                                  "lambda2", "lambda3", "lambda4", "lambda5", "lambda6"), c("teacher1",
-                                                                                                                                            "SE", "teacher2", "SE"))),
+    structure(c(
+      1, 1.24788910616366, 0.947028051478771, 0, 0, 0,
+      NA, 0.264534156451991, 0.228633827429379, NA, NA, NA, 0, 0, 0,
+      1, 1.00426975887412, 1.10790222766263, NA, NA, NA, NA, 0.262801414362859,
+      0.279745804150548
+    ), dim = c(6L, 4L), dimnames = list(c(
+      "lambda1",
+      "lambda2", "lambda3", "lambda4", "lambda5", "lambda6"
+    ), c(
+      "teacher1",
+      "SE", "teacher2", "SE"
+    ))),
     tolerance = 1e-4
   )
 
   expect_equal(quantile(residuals(judge_galamm)),
-               c(`0%` = -2.26827478113357, `25%` = -0.578443286096374, `50%` = -0.00403503141561323,
-                 `75%` = 0.55979417430233, `100%` = 2.22456795070249),
+    c(
+      `0%` = -2.26827478113357, `25%` = -0.578443286096374, `50%` = -0.00403503141561323,
+      `75%` = 0.55979417430233, `100%` = 2.22456795070249
+    ),
     tolerance = 1e-4
   )
 })
