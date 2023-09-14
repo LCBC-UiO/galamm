@@ -1,3 +1,16 @@
+test_that("galamm reproduces gamm4", {
+  dat <- subset(cognition, domain == 1 & item == 1)
+
+  mod <- galamm(formula = y ~ s(x), data = dat)
+  mod_comp <- gamm4::gamm4(formula = y ~ s(x), data = dat, REML = FALSE)
+
+  expect_equal(mod$gam$edf, mod_comp$gam$edf, tolerance = .001)
+  expect_equal(mod$gam$Ve, mod_comp$gam$Ve, tolerance = .001)
+  expect_equal(mod$gam$Vp, mod_comp$gam$Vp, tolerance = .001)
+
+  expect_snapshot(print(summary(mod), digits = 2))
+})
+
 test_that("Basic GAMM with factor structures works", {
   dat <- subset(cognition, domain == 1)
   dat$item <- factor(dat$item)
@@ -41,6 +54,7 @@ test_that("Basic GAMM with factor structures works", {
       "lambda3"
     ), c("loading", "SE")))
   )
+
 })
 
 test_that("GAMM with factor structures and random effects works", {
@@ -85,4 +99,6 @@ test_that("GAMM with factor structures and random effects works", {
       "lambda2", "lambda3"
     ), c("loading", "SE")))
   )
+
+  expect_snapshot(print(summary(mod), digits = 2))
 })
