@@ -258,6 +258,8 @@ gamm4 <- function(fixed, random = NULL, data = list()) {
     lmod = b,
     G = G,
     gam.terms = gam.terms,
-    fake.formula = gp$fake.formula
+    fake.formula = gp$fake.formula,
+    n.sr = n.sr,
+    mf = mf
   )
 } ## end of gamm4
