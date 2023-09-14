@@ -29,6 +29,7 @@ Imports:
     Matrix,
     memoise,
     methods,
+    mgcv,
     nlme,
     Rcpp,
     Rdpack,
@@ -46,7 +47,6 @@ Suggests:
     gamm4,
     ggplot2,
     knitr,
-    mgcv,
     PLmixed,
     rmarkdown,
     testthat (>= 3.0.0)
