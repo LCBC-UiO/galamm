@@ -39,6 +39,10 @@ summary.galamm <- function(object, ...) {
   colnames(ret$fixef)[4] <- paste("Pr(>|", substr(colnames(ret$fixef)[3], 1, 1), "|)", sep = "")
   rownames(ret$fixef) <- object$par_names[object$beta_inds]
 
+  if(!is.null(ret$gam)) {
+    ret$gam_summary <- summary(ret$gam)
+  }
+
   ret
 }
 
@@ -49,7 +53,9 @@ summary.galamm <- function(object, ...) {
 #' @param x An object of class \code{summary.galamm} returned from
 #'   \code{\link{summary.galamm}}.
 #' @param digits Number of digits to present in outputs.
-#' @param ... Further arguments passed on to other methods. Currently not used.
+#' @param ... Further arguments passed on to other methods. Currently used
+#'   by \code{stats::printCoefmat} for printing approximate significance of
+#'   smooth terms.
 #'
 #' @return Summary printed to screen. Invisible returns the argument \code{x}.
 #' @export
@@ -81,6 +87,15 @@ print.summary.galamm <- function(x, digits = max(3, getOption("digits") - 3), ..
   }
   cat("Fixed effects:\n")
   print(x$fixef, digits = digits)
+
+  cat("\n")
+  if(exists("gam_summary", x)) {
+    cat("Approximate significance of smooth terms:\n")
+    printCoefmat(x$gam_summary$s.table, digits = digits, signif.stars = FALSE,
+                 has.Pvalue = TRUE, na.print = "NA", cs.ind = 1, ...)
+  }
+  cat("\n")
+
   invisible(x)
 }
 
