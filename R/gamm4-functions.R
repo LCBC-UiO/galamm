@@ -265,7 +265,7 @@ gamm4 <- function(fixed, random = NULL, data = list()) {
 } ## end of gamm4
 
 
-gamm4.wrapup <- function(gobj, ret, final_model){
+gamm4.wrapup <- function(gobj, ret, final_model) {
   object <- list(
     model = gobj$mf,
     smooth = gobj$G$smooth,
