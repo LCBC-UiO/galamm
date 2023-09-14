@@ -461,7 +461,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
     }
 
     object$linear.predictors <- predict(object, type = "link")
-    object$fitted.values <- object$linear.predictors # object$family$linkinv(object$linear.predictors)
+    object$fitted.values <- object$linear.predictors # should eventually add family here
 
     object$residuals <- residuals(ret)
 
