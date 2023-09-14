@@ -17,4 +17,3 @@ degrees of freedom.
 \description{
 This function is assembles the values used by \code{\link{summary.galamm}}.
 }
-\keyword{internal}

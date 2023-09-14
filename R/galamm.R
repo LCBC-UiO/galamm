@@ -6,7 +6,7 @@
 #' The building blocks of these models are generalized additive mixed models
 #' (GAMMs) \insertCite{woodGeneralizedAdditiveModels2017a}{galamm}, of which
 #' generalized linear mixed models
-#' \insertCite{breslowApproximateInferenceGeneralized1993,hendersonBestLinearUnbiased1975,lairdRandomEffectsModelsLongitudinal1982}{galamm}
+#' \insertCite{breslowApproximateInferenceGeneralized1993,harvilleMaximumLikelihoodApproaches1977,hendersonBestLinearUnbiased1975,lairdRandomEffectsModelsLongitudinal1982}{galamm}
 #' are special cases. GALAMMs extend upon GAMMs by allowing factor structures,
 #' as commonly used to model hypothesized latent traits underlying observed
 #' measurements. In this sense, GALAMMs are an extension of generalized linear
@@ -85,162 +85,36 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
                    family_mapping = rep(1L, nrow(data)),
                    load.var = NULL, lambda = NULL, factor = NULL,
                    start = NULL, control = galamm_control()) {
-  stopifnot(length(family) == length(unique(family_mapping)))
-
   data <- as.data.frame(data)
 
   mc <- match.call()
 
-  if (!is.list(family)) family <- list(family)
-  family_list <- lapply(family, function(f) {
-    if (is.character(f)) {
-      get(f, mode = "function", envir = parent.frame(2))
-    }
-    if (is.function(f)) {
-      f()
-    }
-  })
+  family_list <- setup_family(family)
+  stopifnot(length(family_list) == length(unique(family_mapping)))
 
-
-  parameter_index <- 2
-  if (!is.null(factor)) {
-    for (i in seq_along(factor)) {
-      lambda[[i]][is.na(lambda[[i]])] <-
-        seq(from = parameter_index, length.out = sum(is.na(lambda[[i]])))
-      colnames(lambda[[i]]) <- factor[[i]]
-
-      if (any(factor[[i]] %in% colnames(data))) {
-        stop("Factor already a column in data.")
-      }
-      for (j in seq_along(factor[[i]])) {
-        if (length(unique(data[, load.var])) != length(lambda[[i]][, j])) {
-          stop("lambda matrix must contain one row for each element in load.var")
-        }
-        eval(parse(text = paste("data$", factor[[i]][[j]], "<-1")))
-        rows_to_zero <-
-          data[, load.var] %in% levels(data[, load.var])[lambda[[i]][, j] == 0]
-        eval(
-          parse(
-            text =
-              paste("data$", factor[[i]][[j]], "[rows_to_zero] <- 0")
-          )
-        )
-      }
-      parameter_index <- max(lambda[[i]]) + 1
-    }
-  }
+  tmp <- setup_factor(load.var, lambda, factor, data)
+  data <- tmp$data
+  lambda <- tmp$lambda
+  rm(tmp)
 
   rf <- lme4::findbars(formula)
-  gobj <- gamm4(
-    fixed = lme4::nobars(formula),
-    random = if (!is.null(rf)) as.formula(paste("~", paste("(", rf, ")", collapse = "+"))),
-    data = data
-  )
-  lmod <- gobj$lmod
-  colnames(lmod$X) <- gsub("^X", "", colnames(lmod$X))
+  rf <- if (!is.null(rf)) as.formula(paste("~", paste("(", rf, ")", collapse = "+")))
+  gobj <- gamm4(fixed = lme4::nobars(formula), random = rf, data = data)
 
-  response_obj <- matrix(nrow = nrow(lmod$X), ncol = 2)
-  for (i in seq_along(family_list)) {
-    f <- family_list[[i]]
-    mf <- model.frame(lme4::nobars(gobj$fake.formula), data = data[family_mapping == i, ])
-    mr <- model.response(mf)
+  colnames(gobj$lmod$X) <- gsub("^X", "", colnames(gobj$lmod$X))
 
-    if (f$family == "binomial" && !is.null(dim(mr))) {
-      trials <- rowSums(mr)
-      response <- mr[, 1, drop = TRUE]
-    } else {
-      trials <- rep(1, sum(family_mapping == i))
-      response <- mr
-    }
-    response_obj[family_mapping == i, ] <-
-      cbind(response = response, trials = trials)
-  }
-  rm(trials, response)
+  response_obj <- setup_response_object(family_list, family_mapping, data, gobj)
 
-  vars_in_fixed <- all.vars(gobj$fake.formula[-2])
-  factor_in_fixed <-
-    vapply(factor, function(x) any(x %in% vars_in_fixed), TRUE)
-  vars_in_random <- unique(unlist(lmod$reTrms$cnms))
-  factor_in_random <-
-    vapply(factor, function(x) any(vapply(vars_in_random, function(y) any(vapply(x, function(z) grepl(z, y), TRUE)), TRUE)), TRUE)
+  lambda_mappings <- define_factor_mappings(gobj, load.var, lambda, factor, data)
 
-  X <- lmod$X
-  if (any(factor_in_fixed)) {
-    lambda_mapping_X <- rep(-1L, length(X))
-  } else {
-    lambda_mapping_X <- integer()
-  }
+  Lambdat <- gobj$lmod$reTrms$Lambdat
+  theta_mapping <- gobj$lmod$reTrms$Lind - 1L
 
-  for (f in seq_along(factor_in_fixed)) {
-    if (factor_in_fixed[[f]]) {
-      cols <- grep(factor[[1]], colnames(X))
-      for (cc in cols) {
-        lambda_mapping_X[
-          seq(from = (cc - 1) * nrow(X) + 1, to = cc * nrow(X))
-        ] <-
-          lambda[[1]][data[, load.var]] - 2L
-      }
-    }
-  }
-
-  Zt <- lmod$reTrms$Zt
-
-  if (any(factor_in_random)) {
-    lambda_mapping_Zt <- rep(-1L, sum(diff(Zt@p)))
-  } else {
-    lambda_mapping_Zt <- integer()
-  }
-
-  for (f in seq_along(factor_in_random)) {
-    if (factor_in_random[[f]]) {
-      mappings <- lapply(seq_along(lmod$reTrms$cnms), function(i) {
-        delta <- diff(lmod$reTrms$Ztlist[[i]]@p)
-        cnms <- lmod$reTrms$cnms[[i]]
-
-        cnms_match <- vapply(
-          colnames(lambda[[f]]),
-          function(x) any(grepl(x, cnms)), TRUE
-        )
-        if (any(cnms_match)) {
-          ll <- lambda[[f]][, names(cnms_match[cnms_match]), drop = FALSE] - 2L
-        } else {
-          return(rep(-1L, sum(delta)))
-        }
-
-        mapping_component <- rep(NA_integer_, length(delta))
-        for (j in seq_along(cnms)) {
-          cn <- unlist(lapply(factor[[f]], function(x) {
-            m <- regexpr(x, cnms[[j]], fixed = TRUE)
-            regmatches(cnms[[j]], m)
-          }))
-
-          inds <- which(data[, cn] != 0)
-          inds_expanded <- unlist(Map(function(x, y) rep(x, each = y), x = inds, y = pmin(1, delta[inds])))
-
-          mapping_component[inds_expanded] <-
-            Map(function(x, y) rep(ll[x, cn], each = y),
-              x = data[inds, load.var], y = delta[inds]
-            )
-        }
-
-        mapping_component
-      })
-
-      lambda_mapping_Zt <- unlist(do.call(function(...) mapply(c, ..., SIMPLIFY = FALSE), mappings))
-      lambda_mapping_Zt <- lambda_mapping_Zt[!is.na(lambda_mapping_Zt)]
-
-      stopifnot(length(lambda_mapping_Zt) == sum(diff(Zt@p)))
-    }
-  }
-
-  Lambdat <- lmod$reTrms$Lambdat
-  theta_mapping <- lmod$reTrms$Lind - 1L
-
-  theta_inds <- seq_along(lmod$reTrms$theta)
-  beta_inds <- max(theta_inds) + seq_along(colnames(X))
+  theta_inds <- seq_along(gobj$lmod$reTrms$theta)
+  beta_inds <- max(theta_inds) + seq_along(colnames(gobj$lmod$X))
   lambda_inds <- max(beta_inds) + seq_along(lambda[[1]][lambda[[1]] >= 2])
   bounds <- c(
-    lmod$reTrms$lower,
+    gobj$lmod$reTrms$lower,
     rep(-Inf, length(beta_inds) + length(lambda_inds))
   )
 
@@ -260,24 +134,11 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
 
   y <- response_obj[, 1]
   trials <- response_obj[, 2]
-  u_init <- rep(0, nrow(Zt))
+  u_init <- rep(0, nrow(gobj$lmod$reTrms$Zt))
 
   family_txt <- vapply(family_list, function(f) f$family, "a")
 
-  k <- numeric(length(family_txt))
-  for (i in seq_along(k)) {
-    if (family_txt[[i]] == "gaussian") {
-      k[[i]] <- 0
-    } else if (family_txt[[i]] == "binomial") {
-      trials0 <- trials[family_mapping == i]
-      y0 <- y[family_mapping == i]
-      k[[i]] <- sum(lgamma(trials0 + 1) - lgamma(y0 + 1) - lgamma(trials0 - y0 + 1))
-    } else if (family_txt[[i]] == "poisson") {
-      trials0 <- trials[family_mapping == i]
-      y0 <- y[family_mapping == i]
-      k[[i]] <- -sum(lgamma(y0 + 1))
-    }
-  }
+  k <- find_k(family_txt, family_mapping, y, trials)
 
   maxit_conditional_modes <- ifelse(
     length(family_list) == 1 & family_list[[1]]$family == "gaussian",
@@ -288,17 +149,17 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
     marginal_likelihood_cpp(
       y = y,
       trials = trials,
-      X = X,
-      Zt = Zt,
+      X = gobj$lmod$X,
+      Zt = gobj$lmod$reTrms$Zt,
       Lambdat = Lambdat,
       beta = par[beta_inds],
       theta = par[theta_inds],
       theta_mapping = theta_mapping,
       u_init = u_init,
       lambda = par[lambda_inds],
-      lambda_mapping_X = lambda_mapping_X,
+      lambda_mapping_X = lambda_mappings$lambda_mapping_X,
       lambda_mapping_X_covs = integer(),
-      lambda_mapping_Zt = lambda_mapping_Zt,
+      lambda_mapping_Zt = lambda_mappings$lambda_mapping_Zt,
       lambda_mapping_Zt_covs = integer(),
       weights = par[weights_inds],
       weights_mapping = weights_mapping,
@@ -320,41 +181,21 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
     mlmem(par)$gradient
   }
 
-  theta_init <- if (!is.null(start$theta)) {
-    start$theta
-  } else {
-    lmod$reTrms$theta
-  }
-  beta_init <- if (!is.null(start$beta)) {
-    start$beta
-  } else {
-    rep(0, length(beta_inds))
-  }
-  lambda_init <- if (!is.null(start$lambda)) {
-    start$lambda
-  } else {
-    rep(1, length(lambda_inds))
-  }
-  weights_init <- if (!is.null(start$weights)) {
-    start$weights
-  } else {
-    rep(1, length(weights_inds))
-  }
-  par_init <- c(theta_init, beta_init, lambda_init, weights_init)
+  par_init <- set_initial_values(gobj, start, beta_inds, lambda_inds, weights_inds)
 
   opt <- stats::optim(par_init,
     fn = fn, gr = gr,
     method = "L-BFGS-B", lower = bounds,
-    control = optim_control(control)
+    control = control$optim_control
   )
 
   final_model <- mlwrapper(opt$par, TRUE)
 
   # Update Cholesky factor of covariance matrix
-  Lambdat@x <- opt$par[theta_inds][lmod$reTrms$Lind]
+  Lambdat@x <- opt$par[theta_inds][gobj$lmod$reTrms$Lind]
   # Update Zt to include factor loadings (if there are factor loadings)
   if (length(lambda_inds) > 1) {
-    Zt@x <- c(1, opt$par[lambda_inds])[lambda_mapping_Zt + 2L]
+    gobj$lmod$reTrms$Zt@x <- c(1, opt$par[lambda_inds])[lambda_mappings$lambda_mapping_Zt + 2L]
   }
 
   # Random effects in original parametrization
@@ -363,10 +204,10 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   # Compute prediction
   preds <- vapply(family_list, function(fam) {
     fam$linkinv(
-      as.numeric(X %*% opt$par[beta_inds] +
-        Matrix::t(Zt) %*% b)
+      as.numeric(gobj$lmod$X %*% opt$par[beta_inds] +
+        Matrix::t(gobj$lmod$reTrms$Zt) %*% b)
     )
-  }, numeric(nrow(X)))
+  }, numeric(nrow(gobj$lmod$X)))
 
   fit <- unlist(Map(function(i, j) {
     preds[i, j]
@@ -376,10 +217,10 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   ret$b <- b
   ret$u <- final_model$u
   ret$lambda <- lambda
-  ret$cnms <- lmod$reTrms$cnms
+  ret$cnms <- gobj$lmod$reTrms$cnms
   ret$par_names <- c(
     paste0("theta", seq_along(theta_inds), recycle0 = TRUE),
-    colnames(X),
+    colnames(gobj$lmod$X),
     paste0("lambda", seq_along(lambda_inds), recycle0 = TRUE),
     paste0("weights", seq_along(weights_inds), recycle0 = TRUE)
   )
@@ -392,14 +233,14 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   ret$phi <- final_model$phi
   ret$loglik <- opt$value
 
-  ret$lmod <- lmod
+  ret$lmod <- gobj$lmod
   ret$weights_obj <- weights_obj
   ret$call <- mc
-  ret$family <- family
+  ret$family <- family_list
   ret$df <- length(opt$par) +
     sum(vapply(family_list, function(x) is.na(x$dispersion), logical(1)))
 
-  ret$n <- nrow(X)
+  ret$n <- nrow(gobj$lmod$X)
 
   ret$pearson_residuals <- (response_obj[, 1] - fit) /
     unlist(Map(function(x, y) sqrt(family_list[[x]]$variance(y)),

@@ -19,19 +19,7 @@ summary.galamm <- function(object, ...) {
 
   ret$AICtab <- llikAIC(object)
   ret$Lambda <- factor_loadings(object)
-
-  useSc <- Reduce(function(`&&`, x) x()$family == "gaussian",
-    object$family,
-    init = TRUE
-  )
-  ret$VarCorr <- structure(
-    lme4::mkVarCorr(sqrt(ret$phi)[[1]], ret$cnms,
-      nc = lengths(ret$cnms),
-      theta = ret$par[ret$theta_inds], names(ret$cnms)
-    ),
-    useSc = useSc,
-    class = "VarCorr.merMod"
-  )
+  ret$VarCorr <- VarCorr(ret)
 
   if (!is.null(object$weights_obj)) {
     ret$weights <- c(1, 1 / object$par[object$weights_inds])
@@ -46,7 +34,7 @@ summary.galamm <- function(object, ...) {
   ret$fixef <- cbind(ret$fixef, (cf3 <- ret$fixef[, 1] / ret$fixef[, 2]),
     deparse.level = 0
   )
-  colnames(ret$fixef)[3] <- paste(if (useSc) "t" else "z", "value")
+  colnames(ret$fixef)[3] <- paste(if (attr(ret$VarCorr, "useSc")) "t" else "z", "value")
   ret$fixef <- cbind(ret$fixef, 2 * pnorm(abs(cf3), lower.tail = FALSE))
   colnames(ret$fixef)[4] <- paste("Pr(>|", substr(colnames(ret$fixef)[3], 1, 1), "|)", sep = "")
   rownames(ret$fixef) <- object$par_names[object$beta_inds]
@@ -111,8 +99,7 @@ llikAIC <- function(object) {
 #'
 #' @return A list containing AIC, BIC, log likelihood, deviance and residual
 #'   degrees of freedom.
-#'
-#' @keywords internal
+#' @export
 #'
 llikAIC.galamm <- function(object) {
   llik <- logLik(object)

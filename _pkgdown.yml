@@ -31,8 +31,8 @@ reference:
   contents:
   - anova.galamm
   - plot.galamm
-  - print.summary.galamm
   - summary.galamm
+  - print.summary.galamm
 
 - title: Model details
   desc: Detailed information on specific parts of model fits.
@@ -43,10 +43,13 @@ reference:
   - factor_loadings.galamm
   - fitted.galamm
   - fixef.galamm
+  - llikAIC.galamm
   - logLik.galamm
   - predict.galamm
   - ranef.galamm
   - residuals.galamm
+  - VarCorr.galamm
+  - print.VarCorr.galamm
   - vcov.galamm
 
 - title: Datasets

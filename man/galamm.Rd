@@ -81,7 +81,7 @@ as described in
 The building blocks of these models are generalized additive mixed models
 (GAMMs) \insertCite{woodGeneralizedAdditiveModels2017a}{galamm}, of which
 generalized linear mixed models
-\insertCite{breslowApproximateInferenceGeneralized1993,hendersonBestLinearUnbiased1975,lairdRandomEffectsModelsLongitudinal1982}{galamm}
+\insertCite{breslowApproximateInferenceGeneralized1993,harvilleMaximumLikelihoodApproaches1977,hendersonBestLinearUnbiased1975,lairdRandomEffectsModelsLongitudinal1982}{galamm}
 are special cases. GALAMMs extend upon GAMMs by allowing factor structures,
 as commonly used to model hypothesized latent traits underlying observed
 measurements. In this sense, GALAMMs are an extension of generalized linear
