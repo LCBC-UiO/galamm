@@ -31,6 +31,7 @@ reference:
   contents:
   - anova.galamm
   - plot.galamm
+  - plot_smooth.galamm
   - summary.galamm
   - print.summary.galamm
 
