@@ -158,7 +158,7 @@ residual term.</p>
 <span><span class="co">#&gt;  Groups   Name        Variance Std.Dev.</span></span>
 <span><span class="co">#&gt;  id       (Intercept) 0.8744   0.9351  </span></span>
 <span><span class="co">#&gt;  Xr       s(x)        2.1441   1.4643  </span></span>
-<span><span class="co">#&gt;  Residual             0.2757   0.5250  </span></span>
+<span><span class="co">#&gt;  Residual             0.2756   0.5250  </span></span>
 <span><span class="co">#&gt; Number of obs: 1600, groups:  id, 200; Xr, 8</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Fixed effects:</span></span>
@@ -269,19 +269,19 @@ domain to illustrate how such data can be modeled.</p>
 <span><span class="co">#&gt; Random effects:</span></span>
 <span><span class="co">#&gt;  Groups Name        Variance Std.Dev.</span></span>
 <span><span class="co">#&gt;  id     (Intercept)    1.142  1.068  </span></span>
-<span><span class="co">#&gt;  Xr     s(x)        1008.049 31.750  </span></span>
+<span><span class="co">#&gt;  Xr     s(x)        1008.046 31.750  </span></span>
 <span><span class="co">#&gt; Number of obs: 1600, groups:  id, 200; Xr, 8</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Fixed effects:</span></span>
 <span><span class="co">#&gt;              Estimate Std. Error z value Pr(&gt;|z|)    </span></span>
-<span><span class="co">#&gt; X(Intercept)   3.8851     0.2280  17.041  &lt; 2e-16 ***</span></span>
-<span><span class="co">#&gt; Xs(x)Fx1       4.5510     0.7362   6.182 6.33e-10 ***</span></span>
+<span><span class="co">#&gt; X(Intercept)   3.8851     0.2265   17.15  &lt; 2e-16 ***</span></span>
+<span><span class="co">#&gt; Xs(x)Fx1       4.5510     0.7328    6.21 5.28e-10 ***</span></span>
 <span><span class="co">#&gt; ---</span></span>
 <span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Correlation of Fixed Effects:</span></span>
 <span><span class="co">#&gt;          X(Int)</span></span>
-<span><span class="co">#&gt; Xs(x)Fx1 -0.461</span></span></code></pre></div>
+<span><span class="co">#&gt; Xs(x)Fx1 -0.456</span></span></code></pre></div>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mod_gamm4</span><span class="op">$</span><span class="va">gam</span><span class="op">)</span></span></code></pre></div>
 <p><img src="semiparametric_files/figure-html/unnamed-chunk-14-1.png" width="700"></p>
@@ -305,17 +305,17 @@ value as in the summary for the model fitted with galamm.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Scaled residuals: </span></span>
 <span><span class="co">#&gt;    Min     1Q Median     3Q    Max </span></span>
-<span><span class="co">#&gt;   -0.8   17.6   39.4  157.7 5409.7 </span></span>
+<span><span class="co">#&gt;   -0.8   17.6   39.4  157.7 5409.6 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Random effects:</span></span>
 <span><span class="co">#&gt;  Groups Name        Variance Std.Dev.</span></span>
 <span><span class="co">#&gt;  id     (Intercept)    1.142  1.069  </span></span>
-<span><span class="co">#&gt;  Xr     s(x)        1003.318 31.675  </span></span>
+<span><span class="co">#&gt;  Xr     s(x)        1003.317 31.675  </span></span>
 <span><span class="co">#&gt; Number of obs: 1600, groups:  id, 200; Xr, 8</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Fixed effects:</span></span>
 <span><span class="co">#&gt;             Estimate Std. Error z value  Pr(&gt;|z|)</span></span>
-<span><span class="co">#&gt; (Intercept)    3.883     0.2300  16.881 6.175e-64</span></span>
+<span><span class="co">#&gt; (Intercept)    3.883     0.2300  16.881 6.174e-64</span></span>
 <span><span class="co">#&gt; s(x)Fx1        4.559     0.7481   6.094 1.102e-09</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Approximate significance of smooth terms:</span></span>

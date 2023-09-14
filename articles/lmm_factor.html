@@ -320,7 +320,9 @@ student attends high school, as can be seen by the last two rows of the
 acceptable, although there seems to be a slight upward trend.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span></code></pre></div>
-<p><img src="lmm_factor_files/figure-html/unnamed-chunk-12-1.png" width="700"></p>
+<div class="figure">
+<img src="lmm_factor_diagnostic_plot-1.png" alt=""><p class="caption">plot of chunk lmm_factor_diagnostic_plot</p>
+</div>
 <p>We can also compare the estimated model to a model with constrained
 factor loadings. In particular, we could assume that the teacher effect
 in middle school has no effect on self esteem measured during high
@@ -615,21 +617,74 @@ with galamm.</p>
 <code class="sourceCode R"><span><span class="va">judge_plmixed</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/PLmixed/man/PLmixed.html" class="external-link">PLmixed</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">form</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">JUDGEsim</span>,</span>
-<span>  lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">loading_matrix</span><span class="op">)</span>,</span>
+<span>  lambda <span class="op">=</span> <span class="va">loading_matrix</span>,</span>
 <span>  load.var <span class="op">=</span> <span class="st">"item"</span>,</span>
 <span>  factor <span class="op">=</span> <span class="va">factors</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>We get identical results using <code>galamm</code> in less than five
-minutes. However, since five minutes is a bit too much for a vignette,
-we won’t run it.</p>
+minutes.</p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">judge_galamm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">form</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">JUDGEsim</span>,</span>
-<span>  lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">loading_matrix</span><span class="op">)</span>,</span>
+<span>  lambda <span class="op">=</span> <span class="va">loading_matrix</span>,</span>
 <span>  load.var <span class="op">=</span> <span class="st">"item"</span>,</span>
 <span>  factor <span class="op">=</span> <span class="va">factors</span></span>
 <span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">judge_galamm</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Generalized additive latent and mixed model fit by maximum marginal likelihood.</span></span>
+<span><span class="co">#&gt; Formula: form</span></span>
+<span><span class="co">#&gt;    Data: JUDGEsim</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;      AIC      BIC   logLik deviance df.resid </span></span>
+<span><span class="co">#&gt; 113184.6 113531.9 -56553.3 113106.6    54423 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Scaled residuals: </span></span>
+<span><span class="co">#&gt;     Min      1Q  Median      3Q     Max </span></span>
+<span><span class="co">#&gt; -3.8407 -0.6439  0.0017  0.6474  3.9799 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Lambda:</span></span>
+<span><span class="co">#&gt;          teacher1      SE teacher2      SE trait1.t      SE trait2.t      SE trait1.s      SE trait2.s      SE</span></span>
+<span><span class="co">#&gt; lambda1    1.0000       .        .       .    1.000       .        .       .        .       .        .       .</span></span>
+<span><span class="co">#&gt; lambda2    1.1278 0.03584        .       .    1.092 0.02172        .       .        .       .        .       .</span></span>
+<span><span class="co">#&gt; lambda3    0.9986 0.03345        .       .    1.066 0.02144        .       .        .       .        .       .</span></span>
+<span><span class="co">#&gt; lambda4         .       .   1.0000       .        .       .   1.0000       .        .       .        .       .</span></span>
+<span><span class="co">#&gt; lambda5         .       .   0.9725 0.03036        .       .   1.0536 0.02576        .       .        .       .</span></span>
+<span><span class="co">#&gt; lambda6         .       .   1.2191 0.03436        .       .   0.9581 0.02460        .       .        .       .</span></span>
+<span><span class="co">#&gt; lambda7         .       .        .       .        .       .        .       .    1.000       .        .       .</span></span>
+<span><span class="co">#&gt; lambda8         .       .        .       .        .       .        .       .    1.322 0.06109        .       .</span></span>
+<span><span class="co">#&gt; lambda9         .       .        .       .        .       .        .       .    1.145 0.05633        .       .</span></span>
+<span><span class="co">#&gt; lambda10        .       .        .       .        .       .        .       .        .       .    1.000       .</span></span>
+<span><span class="co">#&gt; lambda11        .       .        .       .        .       .        .       .        .       .    0.874 0.04417</span></span>
+<span><span class="co">#&gt; lambda12        .       .        .       .        .       .        .       .        .       .    1.096 0.04874</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Random effects:</span></span>
+<span><span class="co">#&gt;  Groups   Name        Variance Std.Dev. Corr          </span></span>
+<span><span class="co">#&gt;  stu      trait1.t    0.24025  0.4902                 </span></span>
+<span><span class="co">#&gt;           trait2.t    0.16872  0.4108   0.86          </span></span>
+<span><span class="co">#&gt;           trait1.s    0.29588  0.5439   0.46 0.40     </span></span>
+<span><span class="co">#&gt;           trait2.s    0.37690  0.6139   0.20 0.30 0.40</span></span>
+<span><span class="co">#&gt;  tch      teacher1    0.09704  0.3115                 </span></span>
+<span><span class="co">#&gt;           teacher2    0.11321  0.3365   0.44          </span></span>
+<span><span class="co">#&gt;  class    (Intercept) 0.00000  0.0000                 </span></span>
+<span><span class="co">#&gt;  Residual             0.39044  0.6249                 </span></span>
+<span><span class="co">#&gt; Number of obs: 54462, groups:  stu, 1249; tch, 390; class, 125</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Fixed effects:</span></span>
+<span><span class="co">#&gt;        Estimate Std. Error t value Pr(&gt;|t|)</span></span>
+<span><span class="co">#&gt; item1     3.399    0.02270  149.72        0</span></span>
+<span><span class="co">#&gt; item2     3.363    0.02502  134.42        0</span></span>
+<span><span class="co">#&gt; item3     3.362    0.02329  144.38        0</span></span>
+<span><span class="co">#&gt; item4     2.820    0.02226  126.65        0</span></span>
+<span><span class="co">#&gt; item5     2.939    0.02225  132.08        0</span></span>
+<span><span class="co">#&gt; item6     2.877    0.02512  114.53        0</span></span>
+<span><span class="co">#&gt; item7     3.426    0.02344  146.16        0</span></span>
+<span><span class="co">#&gt; item8     3.552    0.02696  131.77        0</span></span>
+<span><span class="co">#&gt; item9     3.597    0.02496  144.11        0</span></span>
+<span><span class="co">#&gt; item10    2.334    0.02479   94.17        0</span></span>
+<span><span class="co">#&gt; item11    2.909    0.02330  124.83        0</span></span>
+<span><span class="co">#&gt; item12    2.470    0.02599   95.07        0</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="model-with-a-product-of-factor-loadings">Model with a Product of Factor Loadings<a class="anchor" aria-label="anchor" href="#model-with-a-product-of-factor-loadings"></a>

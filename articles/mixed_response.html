@@ -89,8 +89,7 @@
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/LCBC-UiO/galamm" class="external-link">galamm</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/lme4/lme4/" class="external-link">lme4</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; Loading required package: Matrix</span></span></code></pre></div>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/lme4/lme4/" class="external-link">lme4</a></span><span class="op">)</span></span></code></pre></div>
 <p>This vignette describes how <code>galamm</code> can be used to
 estimate models with mixed response types.</p>
 <div class="section level3">
@@ -369,20 +368,13 @@ effects, and then <code>model.matrix</code>. It looks correctly set
 up.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html" class="external-link">model.matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/lme4/man/nobars.html" class="external-link">nobars</a></span><span class="op">(</span><span class="va">formula</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">diet</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   chd fiber fiber2 chd:age chd:bus age:fiber bus:fiber chd:age:bus</span></span>
-<span><span class="co">#&gt; 1   0     1      0    0.00       0     -0.38         1        0.00</span></span>
-<span><span class="co">#&gt; 2   1     0      0   -0.38       1      0.00         0       -0.38</span></span>
-<span><span class="co">#&gt; 3   0     1      0    0.00       0      0.54         1        0.00</span></span>
-<span><span class="co">#&gt; 4   1     0      0    0.54       1      0.00         0        0.54</span></span>
-<span><span class="co">#&gt; 5   0     1      0    0.00       0      8.78         1        0.00</span></span>
-<span><span class="co">#&gt; 6   1     0      0    8.78       1      0.00         0        8.78</span></span>
-<span><span class="co">#&gt;   age:bus:fiber</span></span>
-<span><span class="co">#&gt; 1         -0.38</span></span>
-<span><span class="co">#&gt; 2          0.00</span></span>
-<span><span class="co">#&gt; 3          0.54</span></span>
-<span><span class="co">#&gt; 4          0.00</span></span>
-<span><span class="co">#&gt; 5          8.78</span></span>
-<span><span class="co">#&gt; 6          0.00</span></span></code></pre></div>
+<span><span class="co">#&gt;   chd fiber fiber2 chd:age chd:bus age:fiber bus:fiber chd:age:bus age:bus:fiber</span></span>
+<span><span class="co">#&gt; 1   0     1      0    0.00       0     -0.38         1        0.00         -0.38</span></span>
+<span><span class="co">#&gt; 2   1     0      0   -0.38       1      0.00         0       -0.38          0.00</span></span>
+<span><span class="co">#&gt; 3   0     1      0    0.00       0      0.54         1        0.00          0.54</span></span>
+<span><span class="co">#&gt; 4   1     0      0    0.54       1      0.00         0        0.54          0.00</span></span>
+<span><span class="co">#&gt; 5   0     1      0    0.00       0      8.78         1        0.00          8.78</span></span>
+<span><span class="co">#&gt; 6   1     0      0    8.78       1      0.00         0        8.78          0.00</span></span></code></pre></div>
 <p>Finally, the random effects part <code>(0 + loading | id)</code>
 specifies that for each <code>id</code> there should be a single random
 intercept, which corresponds to latent fiber intake <span class="math inline">\(\eta_{j}\)</span>. Write <code>0 + loading</code>
@@ -403,10 +395,9 @@ multiplied by the factor loadings defined in the loading matrix.</p>
 issue here:</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in vcov.galamm(object, parm = object$lambda_inds): Rank deficient</span></span>
-<span><span class="co">#&gt; Hessian matrix. Could not compute covariance matrix.</span></span>
-<span><span class="co">#&gt; Warning in vcov.galamm(object, "beta"): Rank deficient Hessian matrix. Could</span></span>
-<span><span class="co">#&gt; not compute covariance matrix.</span></span>
+<span><span class="co">#&gt; Warning in vcov.galamm(object, parm = object$lambda_inds): Rank deficient Hessian matrix. Could not compute</span></span>
+<span><span class="co">#&gt; covariance matrix.</span></span>
+<span><span class="co">#&gt; Warning in vcov.galamm(object, "beta"): Rank deficient Hessian matrix. Could not compute covariance matrix.</span></span>
 <span><span class="co">#&gt; Generalized additive latent and mixed model fit by maximum marginal likelihood.</span></span>
 <span><span class="co">#&gt; Formula: formula</span></span>
 <span><span class="co">#&gt;    Data: diet</span></span>
@@ -514,7 +505,7 @@ argument.</p>
 <span><span class="co">#&gt; segments explored during Cauchy searches 58</span></span>
 <span><span class="co">#&gt; BFGS updates skipped 0</span></span>
 <span><span class="co">#&gt; active bounds at final generalized Cauchy point 0</span></span>
-<span><span class="co">#&gt; norm of the final projected gradient 0.0119097</span></span>
+<span><span class="co">#&gt; norm of the final projected gradient 0.0119052</span></span>
 <span><span class="co">#&gt; final function value 1372.16</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; F = 1372.16</span></span>
