@@ -107,7 +107,5 @@ set_initial_values <- function(gobj, start, beta_inds, lambda_inds, weights_inds
 }
 
 release_questions <- function() {
-  c(
-    "Did you re-build the hk_ext.Rmd using `rebuild-long-running-vignette.R`?"
-  )
+  "Did you re-build the vignettes using `rebuild-long-running-vignette.R`?"
 }

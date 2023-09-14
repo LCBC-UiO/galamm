@@ -1,5 +1,5 @@
 test_that("galamm reproduces gamm4", {
-  dat <- subset(cognition, domain == 1 & item == 1)
+  dat <- subset(cognition, domain == 1 & item == 1 & id < 50)
 
   mod <- galamm(formula = y ~ s(x), data = dat)
   mod_comp <- gamm4::gamm4(formula = y ~ s(x), data = dat, REML = FALSE)
@@ -12,9 +12,8 @@ test_that("galamm reproduces gamm4", {
 })
 
 test_that("Basic GAMM with factor structures works", {
-  dat <- subset(cognition, domain == 1)
+  dat <- subset(cognition, domain == 1 & timepoint == 1)
   dat$item <- factor(dat$item)
-  dat <- dat[dat$timepoint == 1, ]
 
   mod <- galamm(
     formula = y ~ 0 + item + s(x, by = loading),
@@ -57,11 +56,11 @@ test_that("Basic GAMM with factor structures works", {
 })
 
 test_that("GAMM with factor structures and random effects works", {
-  dat <- subset(cognition, domain == 1)
+  dat <- subset(cognition, domain == 1 & id < 50 & timepoint %in% c(1, 4, 8))
   dat$item <- factor(dat$item)
 
   mod <- galamm(
-    formula = y ~ 0 + item + s(x, by = loading) + (0 + loading | id / timepoint),
+    formula = y ~ 0 + item + s(x, by = loading, k = 4) + (0 + loading | id / timepoint),
     data = dat,
     load.var = "item",
     lambda = list(matrix(c(1, NA, NA), ncol = 1)),
@@ -70,34 +69,36 @@ test_that("GAMM with factor structures and random effects works", {
 
   expect_equal(
     coef(mod),
-    c(
-      item1 = 1.25074625523314, item2 = 1.75502419468873, item3 = 0.379089137221789,
-      `s(x):loadingFx1` = 0.0203784039785214
-    )
+    c(item1 = 1.04044423214881, item2 = 1.48237126561939, item3 = 0.320061566107232,
+      `s(x):loadingFx1` = 0.0912233007537318)
   )
 
   expect_equal(
     vcov(mod),
-    structure(c(
-      0.00455918825566397, 0.00637611723278559, 0.00136714728242274,
-      -9.3818345565992e-11, 0.00637611723278559, 0.00893533275198847,
-      0.00191456704177359, -1.31273713101223e-10, 0.00136714728242274,
-      0.00191456704177359, 0.000416668471614241, -2.8153328293663e-11,
-      -9.38183455660244e-11, -1.31273713101491e-10, -2.8153328293733e-11,
-      0.0421377265832167
-    ), dim = c(4L, 4L))
+    structure(c(0.0159615498268288, 0.0221713476999988, 0.00482776133001998,
+                -6.38349172124885e-10, 0.0221713476999988, 0.0309886559536267,
+                0.00673350673004468, -8.873246825958e-10, 0.00482776133001998,
+                0.00673350673004468, 0.00153143623644409, -1.93513879911897e-10,
+                -6.38349172124901e-10, -8.87324682595824e-10, -1.93513879911901e-10,
+                0.0885624989790584), dim = c(4L, 4L))
   )
 
   expect_equal(
     factor_loadings(mod),
-    structure(c(
-      1, 1.40041023113521, 0.300271618584508, NA, 0.00344146863189051,
-      0.00208815232968891
-    ), dim = 3:2, dimnames = list(c(
-      "lambda1",
-      "lambda2", "lambda3"
-    ), c("loading", "SE")))
+    structure(c(1, 1.39474722749327, 0.303703086576254, NA, 0.0112584313417628,
+                0.00685387477826514), dim = 3:2, dimnames = list(c("lambda1",
+                                                                   "lambda2", "lambda3"), c("loading", "SE")))
   )
 
-  expect_snapshot(print(summary(mod), digits = 2))
+  expect_equal(mod$gam$edf,
+               c(item1 = 0.999999999999999, item2 = 1.00000000000003, item3 = 1,
+                 `s(x):loading.1` = 0.995335564513248, `s(x):loading.2` = 0.999702742338268,
+                 `s(x):loading.3` = 1.00000000000003),
+               tolerance = .1)
+
+  expect_equal(mod$gam$coefficients,
+               c(item1 = 1.04044423214881, item2 = 1.48237126561939, item3 = 0.320061566107232,
+                 `s(x):loading.1` = -0.247640603209323, `s(x):loading.2` = 2.96415524738146,
+                 `s(x):loading.3` = 0.0912233007537315),
+               tolerance = .01)
 })

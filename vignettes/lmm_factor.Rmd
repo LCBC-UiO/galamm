@@ -32,13 +32,13 @@ This example comes from Section 3.1 in @jeonProfileLikelihoodApproachEstimating2
 
 ```r
 head(KYPSsim)
-#>   mid hid sid time   esteem time12 time34
-#> 1   1   1   1    1 2.759234      1      0
-#> 2   1   1   1    2 2.980368      1      0
-#> 3   1   1   1    3 3.130784      0      1
-#> 4   1   1   1    4 3.310306      0      1
-#> 5   2   1   2    1 2.924520      1      0
-#> 6   2   1   2    2 2.997440      1      0
+#>   mid hid sid time   esteem
+#> 1   1   1   1    1 2.759234
+#> 2   1   1   1    2 2.980368
+#> 3   1   1   1    3 3.130784
+#> 4   1   1   1    4 3.310306
+#> 5   2   1   2    1 2.924520
+#> 6   2   1   2    2 2.997440
 ```
 
 Student self esteem (variable `esteem`) was assessed at four timepoints, the first two while the student attended middle school, and the second two while the student attended high school. The variables `mid` and `hid` represent the middle school and high school which a given student attended, and `sid` is the student identifier. The variable `time` indicates the given timepoint.
@@ -537,26 +537,81 @@ Using `PLmixed`, we could have estimated the model as follows, and doing it woul
 judge_plmixed <- PLmixed(
   formula = form,
   data = JUDGEsim,
-  lambda = list(loading_matrix),
+  lambda = loading_matrix,
   load.var = "item",
   factor = factors
 )
 ```
 
-We get identical results using `galamm` in less than five minutes. However, since five minutes is a bit too much for a vignette, we won't run it.
+We get identical results using `galamm` in less than five minutes.
 
 
 ```r
 judge_galamm <- galamm(
   formula = form,
   data = JUDGEsim,
-  lambda = list(loading_matrix),
+  lambda = loading_matrix,
   load.var = "item",
   factor = factors
 )
 ```
 
 
+```r
+summary(judge_galamm)
+#> Generalized additive latent and mixed model fit by maximum marginal likelihood.
+#> Formula: form
+#>    Data: JUDGEsim
+#> 
+#>      AIC      BIC   logLik deviance df.resid 
+#> 113184.6 113531.9 -56553.3 113106.6    54423 
+#> 
+#> Scaled residuals: 
+#>     Min      1Q  Median      3Q     Max 
+#> -3.8407 -0.6439  0.0017  0.6474  3.9799 
+#> 
+#> Lambda:
+#>          teacher1      SE teacher2      SE trait1.t      SE trait2.t      SE trait1.s      SE trait2.s      SE
+#> lambda1    1.0000       .        .       .    1.000       .        .       .        .       .        .       .
+#> lambda2    1.1278 0.03584        .       .    1.092 0.02172        .       .        .       .        .       .
+#> lambda3    0.9986 0.03345        .       .    1.066 0.02144        .       .        .       .        .       .
+#> lambda4         .       .   1.0000       .        .       .   1.0000       .        .       .        .       .
+#> lambda5         .       .   0.9725 0.03036        .       .   1.0536 0.02576        .       .        .       .
+#> lambda6         .       .   1.2191 0.03436        .       .   0.9581 0.02460        .       .        .       .
+#> lambda7         .       .        .       .        .       .        .       .    1.000       .        .       .
+#> lambda8         .       .        .       .        .       .        .       .    1.322 0.06109        .       .
+#> lambda9         .       .        .       .        .       .        .       .    1.145 0.05633        .       .
+#> lambda10        .       .        .       .        .       .        .       .        .       .    1.000       .
+#> lambda11        .       .        .       .        .       .        .       .        .       .    0.874 0.04417
+#> lambda12        .       .        .       .        .       .        .       .        .       .    1.096 0.04874
+#> 
+#> Random effects:
+#>  Groups   Name        Variance Std.Dev. Corr          
+#>  stu      trait1.t    0.24025  0.4902                 
+#>           trait2.t    0.16872  0.4108   0.86          
+#>           trait1.s    0.29588  0.5439   0.46 0.40     
+#>           trait2.s    0.37690  0.6139   0.20 0.30 0.40
+#>  tch      teacher1    0.09704  0.3115                 
+#>           teacher2    0.11321  0.3365   0.44          
+#>  class    (Intercept) 0.00000  0.0000                 
+#>  Residual             0.39044  0.6249                 
+#> Number of obs: 54462, groups:  stu, 1249; tch, 390; class, 125
+#> 
+#> Fixed effects:
+#>        Estimate Std. Error t value Pr(>|t|)
+#> item1     3.399    0.02270  149.72        0
+#> item2     3.363    0.02502  134.42        0
+#> item3     3.362    0.02329  144.38        0
+#> item4     2.820    0.02226  126.65        0
+#> item5     2.939    0.02225  132.08        0
+#> item6     2.877    0.02512  114.53        0
+#> item7     3.426    0.02344  146.16        0
+#> item8     3.552    0.02696  131.77        0
+#> item9     3.597    0.02496  144.11        0
+#> item10    2.334    0.02479   94.17        0
+#> item11    2.909    0.02330  124.83        0
+#> item12    2.470    0.02599   95.07        0
+```
 
 ## Model with a Product of Factor Loadings
 
