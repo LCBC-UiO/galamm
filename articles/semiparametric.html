@@ -158,7 +158,7 @@ residual term.</p>
 <span><span class="co">#&gt;  Groups   Name        Variance Std.Dev.</span></span>
 <span><span class="co">#&gt;  id       (Intercept) 0.8744   0.9351  </span></span>
 <span><span class="co">#&gt;  Xr       s(x)        2.1441   1.4643  </span></span>
-<span><span class="co">#&gt;  Residual             0.2756   0.5250  </span></span>
+<span><span class="co">#&gt;  Residual             0.2757   0.5250  </span></span>
 <span><span class="co">#&gt; Number of obs: 1600, groups:  id, 200; Xr, 8</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Fixed effects:</span></span>
@@ -169,13 +169,38 @@ residual term.</p>
 <span><span class="co">#&gt; Correlation of Fixed Effects:</span></span>
 <span><span class="co">#&gt;          X(Int)</span></span>
 <span><span class="co">#&gt; Xs(x)Fx1 0.000</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod_gamm4</span><span class="op">$</span><span class="va">gam</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Family: gaussian </span></span>
+<span><span class="co">#&gt; Link function: identity </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Formula:</span></span>
+<span><span class="co">#&gt; y ~ s(x)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Parametric coefficients:</span></span>
+<span><span class="co">#&gt;             Estimate Std. Error t value Pr(&gt;|t|)    </span></span>
+<span><span class="co">#&gt; (Intercept)  1.25075    0.06741   18.55   &lt;2e-16 ***</span></span>
+<span><span class="co">#&gt; ---</span></span>
+<span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Approximate significance of smooth terms:</span></span>
+<span><span class="co">#&gt;        edf Ref.df     F p-value    </span></span>
+<span><span class="co">#&gt; s(x) 6.644  6.644 306.9  &lt;2e-16 ***</span></span>
+<span><span class="co">#&gt; ---</span></span>
+<span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; R-sq.(adj) =  0.256   </span></span>
+<span><span class="co">#&gt; lmer.REML =   3156  Scale est. = 0.27565   n = 1600</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mod_gamm4</span><span class="op">$</span><span class="va">gam</span><span class="op">)</span></span></code></pre></div>
 <p><img src="semiparametric_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
 <p>With galamm we use similar argument, but the <code>random</code>
 specification is now part of the model formula.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/pkg/mgcv/man/s.html" class="external-link">s</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">dat</span><span class="op">)</span></span></code></pre></div>
-<p>And the summary is very similar.</p>
+<p>As opposed to <code>gamm4</code>, <code>galamm</code> gives a single
+summary. As can be seen, smooth terms are both reported as random
+effects, and in a separate line under the header “Approximate
+significance of smooth terms:”.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Generalized additive latent and mixed model fit by maximum marginal likelihood.</span></span>
@@ -199,7 +224,11 @@ specification is now part of the model formula.</p>
 <span><span class="co">#&gt; Fixed effects:</span></span>
 <span><span class="co">#&gt;             Estimate Std. Error t value  Pr(&gt;|t|)</span></span>
 <span><span class="co">#&gt; (Intercept)  1.25074    0.06741 18.5543 7.527e-77</span></span>
-<span><span class="co">#&gt; s(x)Fx1      0.03339    0.20805  0.1605 8.725e-01</span></span></code></pre></div>
+<span><span class="co">#&gt; s(x)Fx1      0.03339    0.20805  0.1605 8.725e-01</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Approximate significance of smooth terms:</span></span>
+<span><span class="co">#&gt;        edf Ref.df     F p-value</span></span>
+<span><span class="co">#&gt; s(x) 6.644  6.644 306.9  &lt;2e-16</span></span></code></pre></div>
 <p>However, the <code>plot</code> function now gives us a diagnostic
 plot, which looks very good.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
@@ -240,19 +269,19 @@ domain to illustrate how such data can be modeled.</p>
 <span><span class="co">#&gt; Random effects:</span></span>
 <span><span class="co">#&gt;  Groups Name        Variance Std.Dev.</span></span>
 <span><span class="co">#&gt;  id     (Intercept)    1.142  1.068  </span></span>
-<span><span class="co">#&gt;  Xr     s(x)        1008.046 31.750  </span></span>
+<span><span class="co">#&gt;  Xr     s(x)        1008.049 31.750  </span></span>
 <span><span class="co">#&gt; Number of obs: 1600, groups:  id, 200; Xr, 8</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Fixed effects:</span></span>
 <span><span class="co">#&gt;              Estimate Std. Error z value Pr(&gt;|z|)    </span></span>
-<span><span class="co">#&gt; X(Intercept)   3.8851     0.2265   17.15  &lt; 2e-16 ***</span></span>
-<span><span class="co">#&gt; Xs(x)Fx1       4.5510     0.7328    6.21 5.28e-10 ***</span></span>
+<span><span class="co">#&gt; X(Intercept)   3.8851     0.2280  17.041  &lt; 2e-16 ***</span></span>
+<span><span class="co">#&gt; Xs(x)Fx1       4.5510     0.7362   6.182 6.33e-10 ***</span></span>
 <span><span class="co">#&gt; ---</span></span>
 <span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Correlation of Fixed Effects:</span></span>
 <span><span class="co">#&gt;          X(Int)</span></span>
-<span><span class="co">#&gt; Xs(x)Fx1 -0.456</span></span></code></pre></div>
+<span><span class="co">#&gt; Xs(x)Fx1 -0.461</span></span></code></pre></div>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mod_gamm4</span><span class="op">$</span><span class="va">gam</span><span class="op">)</span></span></code></pre></div>
 <p><img src="semiparametric_files/figure-html/unnamed-chunk-14-1.png" width="700"></p>
@@ -276,18 +305,22 @@ value as in the summary for the model fitted with galamm.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Scaled residuals: </span></span>
 <span><span class="co">#&gt;    Min     1Q Median     3Q    Max </span></span>
-<span><span class="co">#&gt;   -0.8   17.6   39.4  157.7 5409.6 </span></span>
+<span><span class="co">#&gt;   -0.8   17.6   39.4  157.7 5409.7 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Random effects:</span></span>
 <span><span class="co">#&gt;  Groups Name        Variance Std.Dev.</span></span>
 <span><span class="co">#&gt;  id     (Intercept)    1.142  1.069  </span></span>
-<span><span class="co">#&gt;  Xr     s(x)        1003.317 31.675  </span></span>
+<span><span class="co">#&gt;  Xr     s(x)        1003.318 31.675  </span></span>
 <span><span class="co">#&gt; Number of obs: 1600, groups:  id, 200; Xr, 8</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Fixed effects:</span></span>
 <span><span class="co">#&gt;             Estimate Std. Error z value  Pr(&gt;|z|)</span></span>
-<span><span class="co">#&gt; (Intercept)    3.883     0.2300  16.881 6.174e-64</span></span>
-<span><span class="co">#&gt; s(x)Fx1        4.559     0.7481   6.094 1.102e-09</span></span></code></pre></div>
+<span><span class="co">#&gt; (Intercept)    3.883     0.2300  16.881 6.175e-64</span></span>
+<span><span class="co">#&gt; s(x)Fx1        4.559     0.7481   6.094 1.102e-09</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Approximate significance of smooth terms:</span></span>
+<span><span class="co">#&gt;        edf Ref.df Chi.sq p-value</span></span>
+<span><span class="co">#&gt; s(x) 8.664  8.664   1685  &lt;2e-16</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level3">
@@ -374,7 +407,11 @@ deviation was 0.1. The estimates are close to these values.</p>
 <span><span class="co">#&gt; item1            1.25075    0.06752 18.52360 1.332e-76</span></span>
 <span><span class="co">#&gt; item2            1.75502    0.09453 18.56640 6.010e-77</span></span>
 <span><span class="co">#&gt; item3            0.37909    0.02041 18.57146 5.470e-77</span></span>
-<span><span class="co">#&gt; s(x):loadingFx1  0.02038    0.20527  0.09927 9.209e-01</span></span></code></pre></div>
+<span><span class="co">#&gt; s(x):loadingFx1  0.02038    0.20527  0.09927 9.209e-01</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Approximate significance of smooth terms:</span></span>
+<span><span class="co">#&gt;               edf Ref.df    F p-value</span></span>
+<span><span class="co">#&gt; s(x):loading 8.73   8.73 4647  &lt;2e-16</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="binomial-responses-1">Binomial Responses<a class="anchor" aria-label="anchor" href="#binomial-responses-1"></a>

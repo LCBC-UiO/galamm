@@ -80,19 +80,37 @@
 
 
 <dt>...</dt>
-<dd><p>Further arguments passed on to other methods. Currently not used.</p></dd>
+<dd><p>Further arguments passed on to other methods. Currently used by
+<code><a href="https://rdrr.io/r/stats/printCoefmat.html" class="external-link">stats::printCoefmat</a></code> for printing approximate significance of smooth
+terms.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>Summary printed to screen. Invisible returns the argument <code>x</code>.</p>
+<p>Summary printed to screen. Invisibly returns the argument <code>x</code>.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
+    <p>Bates DM, Mächler M, Bolker B, Walker S (2015).
+“Fitting Linear Mixed-Effects Models Using Lme4.”
+<em>Journal of Statistical Software</em>, <b>67</b>(1), 1--48.
+ISSN 1548-7660, <a href="https://doi.org/10.18637/jss.v067.i01" class="external-link">doi:10.18637/jss.v067.i01</a>
+, <a href="2020-11-25">2020-11-25</a>.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p><code><a href="summary.galamm.html">summary.galamm()</a></code> for the summary function and <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code> for the
 generic function.</p></div>
+    </div>
+    <div class="section level2">
+    <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
+    <p>Some of the code for producing summary information has been derived
+from the summary methods of <code>mgcv</code> (author: Simon Wood) and
+<code>lme4</code> (Bates et al. 2015)
+
+(authors: Douglas M. Bates, Martin Maechler, Ben Bolker, and Steve Walker).</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
