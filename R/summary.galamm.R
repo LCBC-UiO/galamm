@@ -10,8 +10,14 @@
 #'   \code{summary.galamm}.
 #' @export
 #'
+#' @author Some of the code for producing summary information has been derived
+#'   from the summary methods of \code{mgcv} (author: Simon Wood) and
+#'   \code{lme4} \insertCite{batesFittingLinearMixedEffects2015}{galamm}
+#'   (authors: Douglas M. Bates, Martin Maechler, Ben Bolker, and Steve Walker).
+#'
 #' @seealso [print.summary.galamm()] for the print method and [summary()] for
 #'   the generic.
+#'
 #'
 summary.galamm <- function(object, ...) {
   ret <- object
@@ -39,6 +45,10 @@ summary.galamm <- function(object, ...) {
   colnames(ret$fixef)[4] <- paste("Pr(>|", substr(colnames(ret$fixef)[3], 1, 1), "|)", sep = "")
   rownames(ret$fixef) <- object$par_names[object$beta_inds]
 
+  if (!is.null(ret$gam)) {
+    ret$gam_summary <- summary(ret$gam)
+  }
+
   ret
 }
 
@@ -49,13 +59,22 @@ summary.galamm <- function(object, ...) {
 #' @param x An object of class \code{summary.galamm} returned from
 #'   \code{\link{summary.galamm}}.
 #' @param digits Number of digits to present in outputs.
-#' @param ... Further arguments passed on to other methods. Currently not used.
+#' @param ... Further arguments passed on to other methods. Currently used by
+#'   \code{stats::printCoefmat} for printing approximate significance of smooth
+#'   terms.
 #'
-#' @return Summary printed to screen. Invisible returns the argument \code{x}.
+#' @return Summary printed to screen. Invisibly returns the argument \code{x}.
 #' @export
+#'
+#' @author Some of the code for producing summary information has been derived
+#'   from the summary methods of \code{mgcv} (author: Simon Wood) and
+#'   \code{lme4} \insertCite{batesFittingLinearMixedEffects2015}{galamm}
+#'   (authors: Douglas M. Bates, Martin Maechler, Ben Bolker, and Steve Walker).
 #'
 #' @seealso [summary.galamm()] for the summary function and [print()] for the
 #'   generic function.
+#'
+#' @references \insertAllCited{}
 #'
 print.summary.galamm <- function(x, digits = max(3, getOption("digits") - 3), ...) {
   cat("Generalized additive latent and mixed model fit by maximum marginal likelihood.\n")
@@ -81,6 +100,17 @@ print.summary.galamm <- function(x, digits = max(3, getOption("digits") - 3), ..
   }
   cat("Fixed effects:\n")
   print(x$fixef, digits = digits)
+
+  cat("\n")
+  if (exists("gam_summary", x)) {
+    cat("Approximate significance of smooth terms:\n")
+    printCoefmat(x$gam_summary$s.table,
+      digits = digits, signif.stars = FALSE,
+      has.Pvalue = TRUE, na.print = "NA", cs.ind = 1, ...
+    )
+  }
+  cat("\n")
+
   invisible(x)
 }
 
