@@ -70,6 +70,7 @@ The resulting estimated smooth term looks sensible.
 
 ```{r}
 summary(mod_gamm4$mer)
+summary(mod_gamm4$gam)
 plot(mod_gamm4$gam)
 ```
 
@@ -79,7 +80,7 @@ With galamm we use similar argument, but the `random` specification is now part 
 mod <- galamm(y ~ s(x) + (1 | id), data = dat)
 ```
 
-And the summary is very similar.
+As opposed to `gamm4`, `galamm` gives a single summary. As can be seen, smooth terms are both reported as random effects, and in a separate line under the header "Approximate significance of smooth terms:".
 
 ```{r}
 summary(mod)

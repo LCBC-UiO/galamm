@@ -1,7 +1,9 @@
+
 rm(list=ls())
 devtools::load_all()
 
-formula = y ~ 0 + s(x, k = 4)
+
+formula = y ~ s(x, k = 4)
 weights = NULL
 data = subset(cognition, domain == 1 & item == 1)
 data$item <- factor(data$item)

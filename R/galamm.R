@@ -289,7 +289,8 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
       contrasts = gobj$G$contrasts,
       assign = gobj$G$assign,
       cmX = gobj$G$cmX,
-      var.summary = gobj$G$var.summary
+      var.summary = gobj$G$var.summary,
+      method = "ML"
     )
 
     pvars <- all.vars(delete.response(object$terms))
@@ -306,13 +307,14 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
     ## Transform  parameters back to the original space....
     bf <- as.numeric(fixef(ret)) ## the fixed effects
     br <- ranef(ret) ## a named list
-    p <- if (gobj$G$nsdf) bf[1:gobj$G$nsdf] else array(0, 0) ## fixed parametric componet
+    p <- bf[seq_len(gobj$G$nsdf)]
 
-    for (i in seq_along(gobj$G$m)) {
+    for (i in seq_len(gobj$G$m)) {
       fx <- gobj$G$smooth[[i]]$fixed
       first <- gobj$G$smooth[[i]]$first.f.para
       last <- gobj$G$smooth[[i]]$last.f.para
-      beta <- if (first <= last) bf[first:last] else array(0, 0)
+      beta <- bf[seq(from = first, to = last, by = 1)]
+
       if (fx) {
         b <- beta
       } else { ## not fixed so need to undo transform of random effects etc.
@@ -328,7 +330,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
       p <- c(p, b)
 
       ## now fill in B...
-      ind <- with(gobj$G$smooth[[i]], seq(from = first.para, to = last.para))
+      ind <- with(gobj$G$smooth[[i]], seq(from = first.para, to = last.para, by = 1))
 
       if (!fx) {
         D <- gobj$G$smooth[[i]]$trans.D
@@ -362,11 +364,11 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
     rn <- names(vr)
     ind <- rep(0, 0) ## index the non-smooth random effects among the random effects
     for (i in seq_along(vr)) {
-      if (is.null(sn) || !rn[i] %in% sn) { ## append non smooth r.e.s to Zt
+      if (is.null(sn) || !rn[[i]] %in% sn) { ## append non smooth r.e.s to Zt
         Gp <- gobj$lmod$reTrms$Gp ## group index ends
-        ind <- c(ind, (Gp[i] + 1):Gp[i + 1])
+        ind <- c(ind, seq(from = (Gp[i] + 1), to = Gp[i + 1], by = 1))
       } else if (!is.null(sn)) { ## extract smoothing parameters for smooth r.e.s
-        k <- (1:gobj$n.sr)[rn[i] == sn] ## where in original smooth ordering is current smoothing param
+        k <- seq(gobj$n.sr)[rn[i] == sn] ## where in original smooth ordering is current smoothing param
         if (as.numeric(vr[[i]] > 0)) {
           sp[k] <- scale / as.numeric(vr[[i]])
         } else {
@@ -398,6 +400,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
       WX <- methods::as(Matrix::solve(Matrix::t(R), Xfp[piv, ]), "matrix") ## V^{-.5}Xp -- fit parameterization
       XVX <- methods::as(Matrix::solve(Matrix::t(R), gobj$G$Xf[piv, ]), "matrix") ## same in original parameterization
     }
+
     qrz <- qr(XVX, LAPACK = TRUE)
     object$R <- qr.R(qrz)
     object$R[, qrz$pivot] <- object$R
@@ -413,7 +416,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
     for (i in seq_along(gobj$G$m)) { # Accumulate the total penalty matrix
       if (!object$smooth[[i]]$fixed) {
         ii <- with(object$smooth[[i]], seq(from = first.para, to = last.para)) ## index this smooth's params
-        for (j in seq_along(length(object$smooth[[i]]$S))) { ## work through penalty list
+        for (j in seq_along(object$smooth[[i]]$S)) { ## work through penalty list
           ind <- ii[object$smooth[[i]]$pen.ind == j] ## index of currently penalized
           diag(Sp)[ind] <- sqrt(object$sp[k]) ## diagonal penalty
           k <- k + 1
@@ -429,19 +432,15 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
     qrx <- qr(rbind(WX, Sp / sqrt(scale)), LAPACK = TRUE)
     Ri <- backsolve(qr.R(qrx), diag(ncol(WX)))
     ind <- qrx$pivot
-    ind[ind] <- seq_along(length(ind)) ## qrx$pivot
+    ind[ind] <- seq_along(ind) ## qrx$pivot
     Ri <- Ri[ind, ] ## unpivoted square root of cov matrix in fitting parameterization Ri Ri' = cov
     Vb <- methods::as(B, "matrix") %*% Ri
     Vb <- Vb %*% t(Vb)
 
     object$edf <- rowSums(Vb * t(XVX))
-
     object$df.residual <- length(object$y) - sum(object$edf)
-
     object$sig2 <- scale
-
     object$Vp <- methods::as(Vb, "matrix")
-
     object$Ve <- methods::as(Vb %*% XVX %*% Vb, "matrix")
 
     class(object) <- "gam"
