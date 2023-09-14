@@ -54,7 +54,6 @@ test_that("Basic GAMM with factor structures works", {
       "lambda3"
     ), c("loading", "SE")))
   )
-
 })
 
 test_that("GAMM with factor structures and random effects works", {
