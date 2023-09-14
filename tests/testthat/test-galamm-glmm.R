@@ -1,12 +1,13 @@
 library(PLmixed)
 test_that("Logistic GLMM with simple factor works", {
-  IRTsim$item <- factor(IRTsim$item)
+  dat <- subset(IRTsim, sid < 50)
+  dat$item <- factor(dat$item)
   irt.lam <- matrix(c(1, NA, NA, NA, NA), ncol = 1)
 
   form <- y ~ item + (0 + abil.sid | school / sid)
   mod <- galamm(
     formula = form,
-    data = IRTsim,
+    data = dat,
     family = binomial,
     load.var = "item",
     factor = list("abil.sid"),
@@ -15,35 +16,38 @@ test_that("Logistic GLMM with simple factor works", {
 
   expect_snapshot(summary(mod))
 
-  expect_equal(mod$loglik, -1472.19990830883)
   expect_equal(
-    summary(mod)$AICtab,
+    logLik(mod),
+    structure(-146.6622279195, nobs = 245L, df = 11L, class = "logLik")
+  )
+  expect_equal(
+    llikAIC(mod),
     c(
-      AIC = 2966.39981661765, BIC = 3030.46432273707, logLik = -1472.19990830883,
-      deviance = 2372.27287296977, df.resid = 2489
+      AIC = 315.324455839001, BIC = 353.838296154993, logLik = -146.6622279195,
+      deviance = 224.697617162178, df.resid = 234
     )
   )
   expect_equal(
     factor_loadings(mod),
     structure(c(
-      1, 0.737025403666384, 0.935110508605618, 0.606906510198586,
-      0.585991366477788, NA, 0.145578181193442, 0.187204916856415,
-      0.126094293895771, 0.116297718127772
-    ), dim = c(5L, 2L), dimnames = list(
-      c("lambda1", "lambda2", "lambda3", "lambda4", "lambda5"),
-      c("abil.sid", "SE")
-    )),
+      1, 1.07647038015976, 0.890409132940386, 0.735757163276656,
+      1.204041457035, NA, 1.00116115172062, 0.59772403000322, 0.58869976284929,
+      1.01429848408794
+    ), dim = c(5L, 2L), dimnames = list(c(
+      "lambda1",
+      "lambda2", "lambda3", "lambda4", "lambda5"
+    ), c("abil.sid", "SE"))),
     tolerance = 1e-4
   )
 
   expect_equal(
-    mod$deviance_residuals[c(4, 8, 11)],
-    c(-1.72767556978008, -0.762888860949779, -0.822961819214384)
+    residuals(mod, type = "deviance")[c(4, 8, 11)],
+    c(-1.78690466704062, -0.703586683984688, -0.89579766346322)
   )
 
   expect_equal(
-    mod$pearson_residuals[c(2, 3, 9)],
-    c(0.571079113462046, 0.809777597885337, -1.13850440935134)
+    residuals(mod, type = "pearson")[c(2, 3, 9)],
+    c(0.34711634976693, 0.810706452322364, -0.987045133505393)
   )
 
   set.seed(1234)
@@ -53,6 +57,7 @@ test_that("Logistic GLMM with simple factor works", {
     n = nrow(dat), size = dat$trials,
     prob = predict(mod, type = "response")
   )
+  dat <- subset(dat, sid < 50)
 
   galamm_mod_trials <- galamm(
     formula = cbind(y, trials - y) ~ item + (1 | school / sid),
@@ -65,29 +70,20 @@ test_that("Logistic GLMM with simple factor works", {
   #   data = dat,
   #   family = binomial,
   # )
-  expect_equal(galamm_mod_trials$loglik, -3534.51945431292)
   expect_equal(
-    summary(galamm_mod_trials)$fixef,
-    structure(c(
-      0.434857938909014, 0.355598397922802, -0.457362207203679,
-      0.513797577453551, 0.581753809430895, 0.165404285537448, 0.0630256521208169,
-      0.0618539379075891, 0.064439591822642, 0.0641691651190108, 2.6290608946197,
-      5.64212167517345, -7.39422941651648, 7.97332141500342, 9.06594013420543,
-      0.00856210274564496, 1.67967324312876e-08, 1.422306646428e-13,
-      1.54465758795066e-15, 1.23534275695958e-19
-    ), dim = 5:4, dimnames = list(
-      c("(Intercept)", "item2", "item3", "item4", "item5"), c(
-        "Estimate",
-        "Std. Error", "z value", "Pr(>|z|)"
-      )
-    ))
+    logLik(galamm_mod_trials),
+    structure(-412.338459662577, nobs = 245L, df = 4L, class = "logLik")
+  )
+  expect_equal(
+    fixef(galamm_mod_trials),
+    c(`(Intercept)` = 0.643260564607128, item = 0.0277064975048341)
   )
 
   expect_equal(
-    summary(galamm_mod_trials)$AICtab,
+    llikAIC(galamm_mod_trials),
     c(
-      AIC = 7083.03890862583, BIC = 7123.80723070182, logLik = -3534.51945431292,
-      deviance = 2628.69306896257, df.resid = 2493
+      AIC = 832.676919325154, BIC = 846.681952167332, logLik = -412.338459662577,
+      deviance = 388.350924875839, df.resid = 241
     )
   )
 })

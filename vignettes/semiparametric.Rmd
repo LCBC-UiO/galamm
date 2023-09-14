@@ -86,7 +86,7 @@ As opposed to `gamm4`, `galamm` gives a single summary. As can be seen, smooth t
 summary(mod)
 ```
 
-However, the `plot` function now gives us a diagnostic plot, which looks very good. 
+However, the `plot` function now gives us a diagnostic plot, which looks very good.
 
 ```{r}
 plot(mod)
@@ -114,7 +114,6 @@ mod_gamm4 <- gamm4(cbind(y, trials - y) ~ s(x),
   data = dat, family = binomial
 )
 ```
-
 
 ```{r}
 summary(mod_gamm4$mer)
@@ -192,7 +191,6 @@ summary(mod)
 
 We can now move on to the part of the cognition data that is conditionally binomially distributed. We begin with domain 2, for which each response measures success or not in is a single trial. In this case there are only two items, so we must change the lambda matrix accordingly.
 
-
 ```{r}
 dat <- subset(cognition, domain == 2)
 dat$item <- factor(dat$item)
@@ -213,7 +211,5 @@ The factor loading $\lambda_{2} = 2$ was used when simulating the data, and incl
 factor_loadings(mod)
 confint(mod, "lambda")
 ```
-
-
 
 # References

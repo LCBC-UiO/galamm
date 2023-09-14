@@ -12,10 +12,15 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = ""
+)
+```
 
-
-
-```r
+```{r setup}
 library(galamm)
 ```
 
@@ -33,22 +38,13 @@ In the future, we plan to also support other types of residual terms, including 
 
 The package includes a simulated dataset `hsced`, in which the residual variance varies between items.
 
-
-```r
+```{r}
 head(hsced)
-#>   id tp item         x          y
-#> 1  1  1    1 0.7448212  0.1608286
-#> 2  1  1    2 0.7109629  2.2947255
-#> 3  1  2    1 0.9507326 -0.4731834
-#> 4  1  2    2 0.4205776  1.1280379
-#> 5  1  3    1 0.1045820 -0.5129498
-#> 6  1  3    2 0.3872984  1.0515916
 ```
 
 We specify the error structure using an additional formula object, `~ (1 | item)`, specifying that a different constraint term should be included per item.
 
-
-```r
+```{r}
 mod <- galamm(
   formula = y ~ x + (1 | id),
   weights = ~ (1 | item),
@@ -58,93 +54,31 @@ mod <- galamm(
 
 The output shows that for item 2, the residual variance is twice that of item 1.
 
-
-```r
+```{r}
 summary(mod)
-#> Generalized additive latent and mixed model fit by maximum marginal likelihood.
-#> Formula: y ~ x + (1 | id)
-#>    Data: hsced
-#> Weights: ~(1 | item)
-#> 
-#>      AIC      BIC   logLik deviance df.resid 
-#>   4126.3   4151.7  -2058.1   4116.3     1195 
-#> 
-#> Scaled residuals: 
-#>     Min      1Q  Median      3Q     Max 
-#> -5.6545 -0.7105  0.0286  0.6827  4.3261 
-#> 
-#> Random effects:
-#>  Groups   Name        Variance Std.Dev.
-#>  id       (Intercept) 0.9880   0.9940  
-#>  Residual             0.9597   0.9796  
-#> Number of obs: 1200, groups:  id, 200
-#> 
-#> Variance function:
-#>     1     2 
-#> 1.000 1.995 
-#> 
-#> Fixed effects:
-#>             Estimate Std. Error t value  Pr(>|t|)
-#> (Intercept)   0.1289     0.0992   1.299 1.938e-01
-#> x             0.7062     0.1212   5.826 5.681e-09
 ```
 
 We can confirm that the lme function from the nlme package gives the same result. It reports the multiplies on the standard deviation scale, so since $1.412369^2 = 1.995$, the results are identical.
 
-
-```r
+```{r}
 library(nlme)
 mod_nlme <- lme(y ~ x,
   data = hsced, random = list(id = ~1),
   weights = varIdent(form = ~ 1 | item), method = "ML"
 )
 summary(mod_nlme)
-#> Linear mixed-effects model fit by maximum likelihood
-#>   Data: hsced 
-#>       AIC      BIC   logLik
-#>   4126.28 4151.731 -2058.14
-#> 
-#> Random effects:
-#>  Formula: ~1 | id
-#>         (Intercept)  Residual
-#> StdDev:   0.9940033 0.9796423
-#> 
-#> Variance function:
-#>  Structure: Different standard deviations per stratum
-#>  Formula: ~1 | item 
-#>  Parameter estimates:
-#>        1        2 
-#> 1.000000 1.412369 
-#> Fixed effects:  y ~ x 
-#>                 Value  Std.Error  DF  t-value p-value
-#> (Intercept) 0.1288960 0.09927455 999 1.298379  0.1945
-#> x           0.7062301 0.12130578 999 5.821899  0.0000
-#>  Correlation: 
-#>   (Intr)
-#> x -0.624
-#> 
-#> Standardized Within-Group Residuals:
-#>         Min          Q1         Med          Q3         Max 
-#> -4.00355402 -0.60661607  0.02357892  0.60903083  3.06299731 
-#> 
-#> Number of Observations: 1200
-#> Number of Groups: 200
 ```
 
 
 The diagnostic plot also looks good.
 
-
-```r
+```{r, lmm_heteroscedastic_diagnostic}
 plot(mod)
 ```
 
-![plot of chunk lmm_heteroscedastic_diagnostic](lmm_heteroscedastic_diagnostic-1.png)
-
 We can compare the model to one with homoscedastic residuals.
 
-
-```r
+```{r}
 mod0 <- galamm(
   formula = y ~ x + (1 | id),
   data = hsced
@@ -154,18 +88,8 @@ mod0 <- galamm(
 
 Reassuringly, the correct model is chosen in this simple simulated case.
 
-
-```r
+```{r}
 anova(mod, mod0)
-#> Data: hsced
-#> Models:
-#> mod0: y ~ x + (1 | id)
-#> mod: y ~ x + (1 | id)
-#>      npar    AIC    BIC  logLik deviance  Chisq Df Pr(>Chisq)    
-#> mod0    4 4171.6 4191.9 -2081.8   4163.6                         
-#> mod     5 4126.3 4151.7 -2058.1   4116.3 47.281  1   6.15e-12 ***
-#> ---
-#> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ```
 
 

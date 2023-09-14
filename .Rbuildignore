@@ -15,3 +15,7 @@
 ^codemeta\.json$
 ^CODE_OF_CONDUCT\.md$
 ^CODE_OF_CONDUCT\.html$
+
+rebuild-long-running-vignettes.R
+update_autodiff.sh
+insert_sparse_autodiff.R

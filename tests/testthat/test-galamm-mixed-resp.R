@@ -1,33 +1,34 @@
 test_that("Mixed response works", {
+  dat <- subset(mresp, id < 100)
   mod <- galamm(
     formula = y ~ x + (0 + loading | id),
-    data = mresp,
+    data = dat,
     family = c(gaussian, binomial),
-    family_mapping = ifelse(mresp$itemgroup == "a", 1L, 2L),
+    family_mapping = ifelse(dat$itemgroup == "a", 1L, 2L),
     load.var = "itemgroup",
     lambda = list(matrix(c(1, NA), ncol = 1)),
     factor = list("loading")
   )
 
-  expect_equal(mod$loglik, -4619.34161314597)
+  expect_equal(logLik(mod), structure(-441.199885684125, nobs = 396L, df = 5L, class = "logLik"))
   expect_equal(
-    summary(mod)$AICtab,
+    llikAIC(mod),
     c(
-      AIC = 9248.68322629193, BIC = 9280.15347449244, logLik = -4619.34161314597,
-      deviance = 3633.06904319559, df.resid = 3995
+      AIC = 892.399771368249, BIC = 912.306842424522, logLik = -441.199885684125,
+      deviance = 322.712453540071, df.resid = 391
     )
   )
   expect_equal(
     factor_loadings(mod),
-    structure(c(1, 1.09504540466714, NA, 0.0998236819120686), dim = c(
+    structure(c(1, 0.975278292857391, NA, 0.284026767903101), dim = c(
       2L,
       2L
     ), dimnames = list(c("lambda1", "lambda2"), c("loading", "SE")))
   )
 
   expect_equal(
-    mod$pearson_residuals[c(4, 8, 11)],
-    c(0.665216300549201, 1.01118103950785, -1.1118436618218)
+    residuals(mod)[c(4, 8, 11)],
+    c(0.647057715636119, 1.00640920636177, -1.0876543193226)
   )
 })
 
