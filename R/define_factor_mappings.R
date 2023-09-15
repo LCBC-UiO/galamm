@@ -39,6 +39,9 @@ define_factor_mappings <- function(gobj, load.var, lambda, factor, data) {
         delta <- diff(gobj$lmod$reTrms$Ztlist[[i]]@p)
         cnms <- gobj$lmod$reTrms$cnms[[i]]
 
+        mapping_component <- rep(NA_integer_, length(delta))
+
+
         cnms_match <- vapply(
           colnames(lambda[[f]]),
           function(x) any(grepl(x, cnms)), TRUE
@@ -46,10 +49,11 @@ define_factor_mappings <- function(gobj, load.var, lambda, factor, data) {
         if (any(cnms_match)) {
           ll <- lambda[[f]][, names(cnms_match[cnms_match]), drop = FALSE] - 2L
         } else {
-          return(rep(-1L, sum(delta)))
+          mapping_component[delta != 0] <- -1L
+          return(lapply(mapping_component, function(x) rep(x, each = max(delta))))
         }
 
-        mapping_component <- rep(NA_integer_, length(delta))
+
         for (j in seq_along(cnms)) {
           cn <- unlist(lapply(factor[[f]], function(x) {
             m <- regexpr(x, cnms[[j]], fixed = TRUE)

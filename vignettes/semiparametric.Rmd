@@ -353,6 +353,9 @@ $$
 dat <- subset(cognition, domain %in% 1:2)
 dat$domain <- factor(dat$domain)
 dat$item <- factor(paste0(dat$domain, dat$item))
+dat$item12 <- as.integer(dat$item == "12")
+dat$item13 <- as.integer(dat$item == "13")
+dat$item22 <- as.integer(dat$item == "22")
 ```
 
 ```{r}
@@ -370,7 +373,9 @@ family_mapping <- ifelse(dat$domain == 1, 1L, 2L)
 
 ```{r, eval=FALSE}
 mod <- galamm(
-  formula = y ~ item + s(x, by = loading1) +
+  formula = y ~ 0 + item12 + item13 + item22 + 
+    s(x, by = loading1) +
+    s(x, by = loading2) + 
     (0 + loading1 + loading2 | id) +
     (0 + loading1 | id:timepoint) +
     (0 + loading2 | id:timepoint),
