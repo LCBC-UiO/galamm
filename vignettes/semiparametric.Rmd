@@ -281,13 +281,14 @@ While `gamm4` is not able to estimate the factor loadings, it is able to fit the
 ```{r}
 dat_gamm4 <- dat
 dat_gamm4$loading <- ifelse(
-  dat_gamm4$item == 1, 1, 
-  factor_loadings(mod)["lambda2", "loading"])
+  dat_gamm4$item == 1, 1,
+  factor_loadings(mod)["lambda2", "loading"]
+)
 dat_gamm4$item2 <- as.integer(dat$item == 2)
 
 mod_gamm4 <- gamm4(
   formula = cbind(y, trials - y) ~ 0 + item2 + s(x, by = loading),
-  random = ~(0 + loading | id / timepoint),
+  random = ~ (0 + loading | id / timepoint),
   data = dat_gamm4,
   family = binomial
 )
@@ -324,8 +325,10 @@ y <- y - mean(y)
 plot_smooth(mod, main = "Comparison of smooth terms", shade = TRUE)
 lines(nd$x, gamm4_fit, col = "red")
 lines(x, y, col = "blue")
-legend(x = 0, y = 4, legend = c("GALAMM", "GAMM4", "True"),
-       col = c("black", "red", "blue"), lty = 1)
+legend(
+  x = 0, y = 4, legend = c("GALAMM", "GAMM4", "True"),
+  col = c("black", "red", "blue"), lty = 1
+)
 ```
 
 
@@ -358,16 +361,18 @@ family_mapping <- ifelse(dat$domain == 1, 1L, 2L)
 ```
 
 ```{r}
-(lambda <- matrix(c(1, NA, NA, 0, 0,
-                   0, 0, 0, 1, NA), ncol = 2))
+(lambda <- matrix(c(
+  1, NA, NA, 0, 0,
+  0, 0, 0, 1, NA
+), ncol = 2))
 ```
 
 
 ```{r, eval=FALSE}
 mod <- galamm(
-  formula = y ~ item + s(x, by = loading1) + 
-    (0 + loading1 + loading2 | id) + 
-    (0 + loading1 | id:timepoint) + 
+  formula = y ~ item + s(x, by = loading1) +
+    (0 + loading1 + loading2 | id) +
+    (0 + loading1 | id:timepoint) +
     (0 + loading2 | id:timepoint),
   data = dat,
   family = family,
