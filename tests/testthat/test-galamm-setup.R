@@ -12,6 +12,10 @@ test_that("wrong input is handled properly", {
       factor = list("loading")
     )
   )
+
+  expect_error(
+    mod <- galamm(formula = y ~ (1 | id), data = subset(dat, FALSE))
+  )
 })
 
 test_that("family can be defined in three different ways", {

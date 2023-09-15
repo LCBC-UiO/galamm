@@ -4,8 +4,8 @@ library(mvtnorm)
 set.seed(123)
 tps <- 8
 tests <- c(3, 2, 4)
-family <- c("gaussian", "binomial", "binomial")
-trials <- c(1, 1, 10)
+family <- c("gaussian", "binomial", "gaussian")
+trials <- c(1, 1, 1)
 n <- 200
 lambda <- list(
   c(1, 1.4, .3),
@@ -63,16 +63,14 @@ cognition <- crossing(
       domain == 2 ~ as.numeric(
         rbinom(nrow(.), trials, prob = plogis(loading * linpred))
       ),
-      domain == 3 ~ as.numeric(
-        rbinom(nrow(.), trials, prob = plogis(loading * linpred))
-      ),
+      domain == 3 ~ rnorm(nrow(.), mean = loading * linpred, sd = sdeps1),
       TRUE ~ NA_real_
     )
   ) %>%
   select(-zeta3, -zeta2, -linpred, -loading) %>%
   mutate(
     domain = factor(as.integer(domain)),
-    item = factor(as.integer(item)),
+    item = factor(paste0(as.integer(domain), as.integer(item))),
     timepoint = factor(timepoint)
   ) %>%
   as.data.frame()

@@ -8,12 +8,12 @@ dat$item12 <- as.integer(dat$item == "12")
 dat$item13 <- as.integer(dat$item == "13")
 dat$item22 <- as.integer(dat$item == "22")
 
-formula = y ~ 0 + domain +
-  s(x, by = domain, k = 4) +
-  (0 + loading1 + loading2 | id)
+formula = y ~
+  s(x, by = loading1, k = 4) +
+  s(x, by = loading2, k = 4)
 weights <- NULL
 data <- dat
-family <- c(gaussian, binomial)
+family <- c(gaussian, gaussian)
 family_mapping <- ifelse(dat$domain == 1, 1L, 2L)
 lambda <- list(matrix(c(1, NA, NA, 0, 0,
                         0, 0, 0, 1, NA), ncol = 2))

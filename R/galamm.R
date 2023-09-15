@@ -85,6 +85,8 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
                    family_mapping = rep(1L, nrow(data)),
                    load.var = NULL, lambda = NULL, factor = NULL,
                    start = NULL, control = galamm_control()) {
+  data <- na.omit(data)
+  if(nrow(data) == 0) stop("No data, nothing to do.")
   data <- as.data.frame(data)
   mc <- match.call()
 
