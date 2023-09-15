@@ -32,3 +32,24 @@ test_that("family can be defined in three different ways", {
   expect_equal(logLik(mod1), logLik(mod2))
   expect_equal(logLik(mod2), logLik(mod3))
 })
+
+test_that("multiple factors and factors in fixed effects are allowed", {
+  library(PLmixed)
+  data("KYPSsim")
+
+  kyps.lam <- rbind(
+    c(1, 0),
+    c(NA, 0),
+    c(NA, 1),
+    c(NA, NA)
+  )
+
+  test <- galamm(esteem ~ 0 + hs + ms:time + (1 | sid),
+    data = KYPSsim,
+    factor = list(c("ms", "hs")), load.var = c("time"),
+    lambda = list(kyps.lam),
+    control = galamm_control(optim_control = list(maxit = 1))
+  )
+
+  expect_s3_class(test, "galamm")
+})
