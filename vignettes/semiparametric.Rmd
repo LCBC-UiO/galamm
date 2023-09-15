@@ -181,9 +181,9 @@ plot_smooth(mod)
 
 ## Generalized Additive Models with Factor Structures
 
-We now add factor structures to the GAMMs. These are types of models that neither `gamm4` nor `mgcv` are able to estimate, and where `galamm` provides new functionality.
+We now add factor structures to the GAMMs. These are the types of models that neither `gamm4` nor `mgcv` are able to estimate (at least without lots of manual hacking), and where `galamm` provides new functionality.
 
-### Gaussian Responses
+### Conditionally Gaussian Responses
 
 To illustrate basic usage, we continue with the cognition data, but now use all items of cognitive domain 1. These are all conditionally normal distributed.
 
@@ -211,7 +211,7 @@ $$
 y_{i} = \beta_{i} + \lambda_{i} \left\{ h(x) + \zeta^{(2)} + \zeta^{(3)} \right\} + \epsilon_{i}
 $$
 
-To set up the smooth term, we need a `by`-variable. This is an example of a varying-coefficient term [@hastieVaryingCoefficientModels1993], where $h(x)$ is being interpreted as a regression coefficient for the effect of $\lambda_{i}$ on $y_{i}$, that varies with $x$. In contrast to @hastieVaryingCoefficientModels1993 and other uses of varying-coefficient terms, however, in this case the predictor $\lambda_{i}$ is a model parameter. We have three items loading in $\eta$ and fixed the first loading to 1 for identifiability, so the loading matrix is as follows:
+To set up the smooth term, we need a `by`-variable. This is an example of a varying-coefficient term [@hastieVaryingCoefficientModels1993], where $h(x)$ is being interpreted as a regression coefficient for the effect of $\lambda_{i}$ on $y_{i}$, and the regression term varies with $x$. In contrast to @hastieVaryingCoefficientModels1993 and other uses of varying-coefficient terms, however, in this case the predictor $\lambda_{i}$ is a model parameter. We have three items loading in $\eta$ and fix the first loading to 1 for identifiability, so the loading matrix is as follows:
 
 ```{r}
 (loading_matrix <- matrix(c(1, NA, NA), ncol = 1))
@@ -243,7 +243,7 @@ plot_smooth(mod)
 ```
 
 
-### Binomial Responses
+### Conditionally Binomial Responses
 
 We can now move on to the part of the cognition data that is conditionally binomially distributed. We begin with domain 2, for which each response measures success or not in a single trial. In this case there are only two items, so we must change the lambda matrix accordingly. Other than that, and setting `family = binomial`, the model is the same as before.
 
@@ -262,21 +262,58 @@ mod <- galamm(
 )
 ```
 
-The factor loading $\lambda_{2} = 2$ was used when simulating the data, and including the uncertainty, our estimate covers the true value well.
+The summary is shown below. The factor loading $\lambda_{2} = 2$ was used when simulating the data, and including the uncertainty, our estimate covers the true value well. Also note that the variation between individuals (group `id`) and the variation between timepoints within individuals (group `timepoint:id`) gets lumped together at the `id` level. The estimated variation at the `timepoint:id` level is zero. This is a well-known phenomenon when fitting mixed models, given book-length treatment in @hodgesRichlyParameterizedLinear2013. In this case, it is likely due to the fact that we only have two measurements at each timepoint, and also the fact that we use the Laplace approximation to integrate over the random effects, and this approximation may be inaccurate for binomial data with a low number of repeated observations [@joeAccuracyLaplaceApproximation2008].
+
 
 ```{r}
 summary(mod)
 ```
 
-The true values are well within the confidence intervals.
+The true value 2 for the factor loading is well within the 95 % confidence limits.
 
 ```{r}
 confint(mod, parm = "lambda")
 ```
 
-We can also plot the estimated smooth term. We also include the data-generating function in red, for comparison. This function is borrowed from `mgcv::gamSim` [@woodGeneralizedAdditiveModels2017a]. We see that the two are very close.
+
+While `gamm4` is not able to estimate the factor loadings, it is able to fit the model if we treat the estimated factor loadings as data. We confirm this below, where we add the estimated loadings as data. Some changes also have to be done to the formula, due to how smooths are set up by `mgcv` and `gamm4`. Explaining this is beyond the scope of this vignette, but set `?mgcv::gam.models` for details.
 
 ```{r}
+dat_gamm4 <- dat
+dat_gamm4$loading <- ifelse(
+  dat_gamm4$item == 1, 1,
+  factor_loadings(mod)["lambda2", "loading"]
+)
+dat_gamm4$item2 <- as.integer(dat$item == 2)
+
+mod_gamm4 <- gamm4(
+  formula = cbind(y, trials - y) ~ 0 + item2 + s(x, by = loading),
+  random = ~ (0 + loading | id / timepoint),
+  data = dat_gamm4,
+  family = binomial
+)
+```
+
+We see that the log-likelihood are very similar, but that the GALAMM uses one more degree of freedom than the GAMM, due to the factor loading that is being estimated.
+
+```{r}
+# galamm model with estimated factor loadings
+logLik(mod)
+# gamm4 model with fixed factor loadings
+logLik(mod_gamm4$mer)
+```
+
+We can also compare the smooth terms visually. In order to do this, we must impose sum-to-zero constraints on the GAMM fit. We also include the data-generating function with a blue curve. For the GALAMM, this has been done automatically. Although not identical, it is clear that the two terms are very close.
+
+```{r}
+# gamm4 fit
+nd <- dat_gamm4
+nd$loading <- 1
+nd <- nd[order(nd$x), ]
+gamm4_fit <- predict(mod_gamm4$gam, newdata = nd)
+gamm4_fit <- gamm4_fit - mean(gamm4_fit)
+
+# true function
 x <- seq(0, 1, length.out = 100)
 true_fun <- function(x) {
   exp(2 * x)
@@ -284,8 +321,66 @@ true_fun <- function(x) {
 y <- true_fun(x)
 y <- y - mean(y)
 
-plot_smooth(mod, shade = TRUE)
-lines(x, y, col = "red")
+# plot them
+plot_smooth(mod, main = "Comparison of smooth terms", shade = TRUE)
+lines(nd$x, gamm4_fit, col = "red")
+lines(x, y, col = "blue")
+legend(
+  x = 0, y = 4, legend = c("GALAMM", "GAMM4", "True"),
+  col = c("black", "red", "blue"), lty = 1
+)
+```
+
+
+### Mixed Response Models
+
+We can now do a joint analysis of domain 1 and domain 2, using a mixed response model, where the items measuring domain 1 are conditionally normally distributed and the items measuring domain 2 are conditionally binomial distributed. The vignette on [models with mixed response types](https://lcbc-uio.github.io/galamm/articles/mixed_response.html) gives you an introduction to mixed response models.
+
+Letting $\eta_{1}$ denote latent ability in domain 1 and $\eta_{2}$ denote latent ability in domain 2, and $\lambda_{i1}$ and $\lambda_{i2}$ be corresponding factor loadings for the $i$th item measuring each domain, the linear predictor is now
+
+$$
+\nu_{i} = \beta_{ij} + \lambda_{ij} \eta_{j} + \epsilon_{ij} ~ j=1,2
+$$
+
+In the structural model, we have a smooth term for the relationship between the latent trait and x, and we have random intercepts for a given timepoint within subject $\zeta^{(2)}$, and for a given subject across timepoints $\zeta^{(3)}$.
+
+$$
+\eta_{j} = h_{j}(x) + \zeta_{j}^{(2)} + \zeta_{j}^{(3)} ~j=1,2.
+$$
+
+
+```{r}
+dat <- subset(cognition, domain %in% 1:2)
+dat$domain <- factor(dat$domain)
+dat$item <- factor(paste0(dat$domain, dat$item))
+```
+
+```{r}
+family <- c(gaussian, binomial)
+family_mapping <- ifelse(dat$domain == 1, 1L, 2L)
+```
+
+```{r}
+(lambda <- matrix(c(
+  1, NA, NA, 0, 0,
+  0, 0, 0, 1, NA
+), ncol = 2))
+```
+
+
+```{r, eval=FALSE}
+mod <- galamm(
+  formula = y ~ item + s(x, by = loading1) +
+    (0 + loading1 + loading2 | id) +
+    (0 + loading1 | id:timepoint) +
+    (0 + loading2 | id:timepoint),
+  data = dat,
+  family = family,
+  family_mapping = family_mapping,
+  load.var = "item",
+  lambda = list(lambda),
+  factor = list(c("loading1", "loading2"))
+)
 ```
 
 
