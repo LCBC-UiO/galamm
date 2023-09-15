@@ -15,7 +15,7 @@ define_factor_mappings <- function(gobj, load.var, lambda, factor, data) {
 
   for (f in seq_along(factor_in_fixed)) {
     if (factor_in_fixed[[f]]) {
-      cols <- grep(factor[[1]], colnames(X))
+      cols <- unlist(lapply(factor[[1]], function(fact) grep(fact, colnames(X))))
       for (cc in cols) {
         lambda_mapping_X[
           seq(from = (cc - 1) * nrow(X) + 1, to = cc * nrow(X))
