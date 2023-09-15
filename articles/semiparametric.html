@@ -396,11 +396,12 @@ value as in the summary for the model fitted with galamm.</p>
 <div class="section level3">
 <h3 id="generalized-additive-models-with-factor-structures">Generalized Additive Models with Factor Structures<a class="anchor" aria-label="anchor" href="#generalized-additive-models-with-factor-structures"></a>
 </h3>
-<p>We now add factor structures to the GAMMs. These are types of models
-that neither <code>gamm4</code> nor <code>mgcv</code> are able to
-estimate, and where <code>galamm</code> provides new functionality.</p>
+<p>We now add factor structures to the GAMMs. These are the types of
+models that neither <code>gamm4</code> nor <code>mgcv</code> are able to
+estimate (at least without lots of manual hacking), and where
+<code>galamm</code> provides new functionality.</p>
 <div class="section level4">
-<h4 id="gaussian-responses-1">Gaussian Responses<a class="anchor" aria-label="anchor" href="#gaussian-responses-1"></a>
+<h4 id="conditionally-gaussian-responses">Conditionally Gaussian Responses<a class="anchor" aria-label="anchor" href="#conditionally-gaussian-responses"></a>
 </h4>
 <p>To illustrate basic usage, we continue with the cognition data, but
 now use all items of cognitive domain 1. These are all conditionally
@@ -435,11 +436,12 @@ y_{i} = \beta_{i} + \lambda_{i} \left\{ h(x) + \zeta^{(2)} + \zeta^{(3)}
 \]</span></p>
 <p>To set up the smooth term, we need a <code>by</code>-variable. This
 is an example of a varying-coefficient term <span class="citation">(<a href="#ref-hastieVaryingCoefficientModels1993" role="doc-biblioref">Hastie and Tibshirani 1993</a>)</span>, where <span class="math inline">\(h(x)\)</span> is being interpreted as a regression
-coefficient for the effect of <span class="math inline">\(\lambda_{i}\)</span> on <span class="math inline">\(y_{i}\)</span>, that varies with <span class="math inline">\(x\)</span>. In contrast to <span class="citation">Hastie and Tibshirani (<a href="#ref-hastieVaryingCoefficientModels1993" role="doc-biblioref">1993</a>)</span> and other uses of
+coefficient for the effect of <span class="math inline">\(\lambda_{i}\)</span> on <span class="math inline">\(y_{i}\)</span>, and the regression term varies
+with <span class="math inline">\(x\)</span>. In contrast to <span class="citation">Hastie and Tibshirani (<a href="#ref-hastieVaryingCoefficientModels1993" role="doc-biblioref">1993</a>)</span> and other uses of
 varying-coefficient terms, however, in this case the predictor <span class="math inline">\(\lambda_{i}\)</span> is a model parameter. We have
-three items loading in <span class="math inline">\(\eta\)</span> and
-fixed the first loading to 1 for identifiability, so the loading matrix
-is as follows:</p>
+three items loading in <span class="math inline">\(\eta\)</span> and fix
+the first loading to 1 for identifiability, so the loading matrix is as
+follows:</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="op">(</span><span class="va">loading_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;      [,1]</span></span>
@@ -510,7 +512,7 @@ data, there is essentially no uncertainty about the estimate.</p>
 <p><img src="semiparametric_files/figure-html/unnamed-chunk-19-1.png" width="700"></p>
 </div>
 <div class="section level4">
-<h4 id="binomial-responses-1">Binomial Responses<a class="anchor" aria-label="anchor" href="#binomial-responses-1"></a>
+<h4 id="conditionally-binomial-responses">Conditionally Binomial Responses<a class="anchor" aria-label="anchor" href="#conditionally-binomial-responses"></a>
 </h4>
 <p>We can now move on to the part of the cognition data that is
 conditionally binomially distributed. We begin with domain 2, for which
@@ -531,9 +533,18 @@ accordingly. Other than that, and setting
 <span>  lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="cn">NA</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"loading"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p>The factor loading <span class="math inline">\(\lambda_{2} =
-2\)</span> was used when simulating the data, and including the
-uncertainty, our estimate covers the true value well.</p>
+<p>The summary is shown below. The factor loading <span class="math inline">\(\lambda_{2} = 2\)</span> was used when simulating
+the data, and including the uncertainty, our estimate covers the true
+value well. Also note that the variation between individuals (group
+<code>id</code>) and the variation between timepoints within individuals
+(group <code>timepoint:id</code>) gets lumped together at the
+<code>id</code> level. The estimated variation at the
+<code>timepoint:id</code> level is zero. This is a well-known phenomenon
+when fitting mixed models, given book-length treatment in <span class="citation">Hodges (<a href="#ref-hodgesRichlyParameterizedLinear2013" role="doc-biblioref">2013</a>)</span>. In this case, it is likely due to
+the fact that we only have two measurements at each timepoint, and also
+the fact that we use the Laplace approximation to integrate over the
+random effects, and this approximation may be inaccurate for binomial
+data with a low number of repeated observations <span class="citation">(<a href="#ref-joeAccuracyLaplaceApproximation2008" role="doc-biblioref">Joe 2008</a>)</span>.</p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Generalized additive latent and mixed model fit by maximum marginal likelihood.</span></span>
@@ -569,26 +580,129 @@ uncertainty, our estimate covers the true value well.</p>
 <span><span class="co">#&gt; Approximate significance of smooth terms:</span></span>
 <span><span class="co">#&gt;               edf Ref.df Chi.sq p-value</span></span>
 <span><span class="co">#&gt; s(x):loading 2.16   2.16  117.3  &lt;2e-16</span></span></code></pre></div>
-<p>The true values are well within the confidence intervals.</p>
+<p>The true value 2 for the factor loading is well within the 95 %
+confidence limits.</p>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint</a></span><span class="op">(</span><span class="va">mod</span>, parm <span class="op">=</span> <span class="st">"lambda"</span><span class="op">)</span></span>
 <span><span class="co">#&gt;            2.5 %   97.5 %</span></span>
 <span><span class="co">#&gt; lambda1 1.265332 2.323057</span></span></code></pre></div>
-<p>We can also plot the estimated smooth term. We also include the
-data-generating function in red, for comparison. This function is
-borrowed from <code><a href="https://rdrr.io/pkg/mgcv/man/gamSim.html" class="external-link">mgcv::gamSim</a></code> <span class="citation">(<a href="#ref-woodGeneralizedAdditiveModels2017a" role="doc-biblioref">Wood
-2017</a>)</span>. We see that the two are very close.</p>
+<p>While <code>gamm4</code> is not able to estimate the factor loadings,
+it is able to fit the model if we treat the estimated factor loadings as
+data. We confirm this below, where we add the estimated loadings as
+data. Some changes also have to be done to the formula, due to how
+smooths are set up by <code>mgcv</code> and <code>gamm4</code>.
+Explaining this is beyond the scope of this vignette, but set
+<code><a href="https://rdrr.io/pkg/mgcv/man/gam.models.html" class="external-link">?mgcv::gam.models</a></code> for details.</p>
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span>, length.out <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">dat_gamm4</span> <span class="op">&lt;-</span> <span class="va">dat</span></span>
+<span><span class="va">dat_gamm4</span><span class="op">$</span><span class="va">loading</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span></span>
+<span>  <span class="va">dat_gamm4</span><span class="op">$</span><span class="va">item</span> <span class="op">==</span> <span class="fl">1</span>, <span class="fl">1</span>,</span>
+<span>  <span class="fu"><a href="../reference/factor_loadings.galamm.html">factor_loadings</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span><span class="op">[</span><span class="st">"lambda2"</span>, <span class="st">"loading"</span><span class="op">]</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">dat_gamm4</span><span class="op">$</span><span class="va">item2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="va">dat</span><span class="op">$</span><span class="va">item</span> <span class="op">==</span> <span class="fl">2</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">mod_gamm4</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gamm4.html">gamm4</a></span><span class="op">(</span></span>
+<span>  formula <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">y</span>, <span class="va">trials</span> <span class="op">-</span> <span class="va">y</span><span class="op">)</span> <span class="op">~</span> <span class="fl">0</span> <span class="op">+</span> <span class="va">item2</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/pkg/mgcv/man/s.html" class="external-link">s</a></span><span class="op">(</span><span class="va">x</span>, by <span class="op">=</span> <span class="va">loading</span><span class="op">)</span>,</span>
+<span>  random <span class="op">=</span> <span class="op">~</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">loading</span> <span class="op">|</span> <span class="va">id</span> <span class="op">/</span> <span class="va">timepoint</span><span class="op">)</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">dat_gamm4</span>,</span>
+<span>  family <span class="op">=</span> <span class="va">binomial</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>We see that the log-likelihood are very similar, but that the GALAMM
+uses one more degree of freedom than the GAMM, due to the factor loading
+that is being estimated.</p>
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># galamm model with estimated factor loadings</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/logLik.html" class="external-link">logLik</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span>
+<span><span class="co">#&gt; 'log Lik.' -767.0741 (df=7)</span></span>
+<span><span class="co"># gamm4 model with fixed factor loadings</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/logLik.html" class="external-link">logLik</a></span><span class="op">(</span><span class="va">mod_gamm4</span><span class="op">$</span><span class="va">mer</span><span class="op">)</span></span>
+<span><span class="co">#&gt; 'log Lik.' -768.314 (df=6)</span></span></code></pre></div>
+<p>We can also compare the smooth terms visually. In order to do this,
+we must impose sum-to-zero constraints on the GAMM fit. We also include
+the data-generating function with a blue curve. For the GALAMM, this has
+been done automatically. Although not identical, it is clear that the
+two terms are very close.</p>
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># gamm4 fit</span></span>
+<span><span class="va">nd</span> <span class="op">&lt;-</span> <span class="va">dat_gamm4</span></span>
+<span><span class="va">nd</span><span class="op">$</span><span class="va">loading</span> <span class="op">&lt;-</span> <span class="fl">1</span></span>
+<span><span class="va">nd</span> <span class="op">&lt;-</span> <span class="va">nd</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">nd</span><span class="op">$</span><span class="va">x</span><span class="op">)</span>, <span class="op">]</span></span>
+<span><span class="va">gamm4_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">mod_gamm4</span><span class="op">$</span><span class="va">gam</span>, newdata <span class="op">=</span> <span class="va">nd</span><span class="op">)</span></span>
+<span><span class="va">gamm4_fit</span> <span class="op">&lt;-</span> <span class="va">gamm4_fit</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">gamm4_fit</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># true function</span></span>
+<span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span>, length.out <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span>
 <span><span class="va">true_fun</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="fl">2</span> <span class="op">*</span> <span class="va">x</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu">true_fun</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
 <span><span class="va">y</span> <span class="op">&lt;-</span> <span class="va">y</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="../reference/plot_smooth.galamm.html">plot_smooth</a></span><span class="op">(</span><span class="va">mod</span>, shade <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, col <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="semiparametric_files/figure-html/unnamed-chunk-23-1.png" width="700"></p>
+<span><span class="co"># plot them</span></span>
+<span><span class="fu"><a href="../reference/plot_smooth.galamm.html">plot_smooth</a></span><span class="op">(</span><span class="va">mod</span>, main <span class="op">=</span> <span class="st">"Comparison of smooth terms"</span>, shade <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="va">nd</span><span class="op">$</span><span class="va">x</span>, <span class="va">gamm4_fit</span>, col <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, col <span class="op">=</span> <span class="st">"blue"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span></span>
+<span>  x <span class="op">=</span> <span class="fl">0</span>, y <span class="op">=</span> <span class="fl">4</span>, legend <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"GALAMM"</span>, <span class="st">"GAMM4"</span>, <span class="st">"True"</span><span class="op">)</span>,</span>
+<span>  col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"black"</span>, <span class="st">"red"</span>, <span class="st">"blue"</span><span class="op">)</span>, lty <span class="op">=</span> <span class="fl">1</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p><img src="semiparametric_files/figure-html/unnamed-chunk-25-1.png" width="700"></p>
+</div>
+<div class="section level4">
+<h4 id="mixed-response-models">Mixed Response Models<a class="anchor" aria-label="anchor" href="#mixed-response-models"></a>
+</h4>
+<p>We can now do a joint analysis of domain 1 and domain 2, using a
+mixed response model, where the items measuring domain 1 are
+conditionally normally distributed and the items measuring domain 2 are
+conditionally binomial distributed. The vignette on <a href="https://lcbc-uio.github.io/galamm/articles/mixed_response.html">models
+with mixed response types</a> gives you an introduction to mixed
+response models.</p>
+<p>Letting <span class="math inline">\(\eta_{1}\)</span> denote latent
+ability in domain 1 and <span class="math inline">\(\eta_{2}\)</span>
+denote latent ability in domain 2, and <span class="math inline">\(\lambda_{i1}\)</span> and <span class="math inline">\(\lambda_{i2}\)</span> be corresponding factor
+loadings for the <span class="math inline">\(i\)</span>th item measuring
+each domain, the linear predictor is now</p>
+<p><span class="math display">\[
+\nu_{i} = \beta_{ij} + \lambda_{ij} \eta_{j} + \epsilon_{ij} ~ j=1,2
+\]</span></p>
+<p>In the structural model, we have a smooth term for the relationship
+between the latent trait and x, and we have random intercepts for a
+given timepoint within subject <span class="math inline">\(\zeta^{(2)}\)</span>, and for a given subject
+across timepoints <span class="math inline">\(\zeta^{(3)}\)</span>.</p>
+<p><span class="math display">\[
+\eta_{j} = h_{j}(x) + \zeta_{j}^{(2)} + \zeta_{j}^{(3)} ~j=1,2.
+\]</span></p>
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">cognition</span>, <span class="va">domain</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span></span>
+<span><span class="va">dat</span><span class="op">$</span><span class="va">domain</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">dat</span><span class="op">$</span><span class="va">domain</span><span class="op">)</span></span>
+<span><span class="va">dat</span><span class="op">$</span><span class="va">item</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">dat</span><span class="op">$</span><span class="va">domain</span>, <span class="va">dat</span><span class="op">$</span><span class="va">item</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">family</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">gaussian</span>, <span class="va">binomial</span><span class="op">)</span></span>
+<span><span class="va">family_mapping</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">dat</span><span class="op">$</span><span class="va">domain</span> <span class="op">==</span> <span class="fl">1</span>, <span class="fl">1L</span>, <span class="fl">2L</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="op">(</span><span class="va">lambda</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>  <span class="fl">1</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="fl">0</span>, <span class="fl">0</span>,</span>
+<span>  <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span>, <span class="cn">NA</span></span>
+<span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;      [,1] [,2]</span></span>
+<span><span class="co">#&gt; [1,]    1    0</span></span>
+<span><span class="co">#&gt; [2,]   NA    0</span></span>
+<span><span class="co">#&gt; [3,]   NA    0</span></span>
+<span><span class="co">#&gt; [4,]    0    1</span></span>
+<span><span class="co">#&gt; [5,]    0   NA</span></span></code></pre></div>
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
+<span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">item</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/pkg/mgcv/man/s.html" class="external-link">s</a></span><span class="op">(</span><span class="va">x</span>, by <span class="op">=</span> <span class="va">loading1</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">loading1</span> <span class="op">+</span> <span class="va">loading2</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">loading1</span> <span class="op">|</span> <span class="va">id</span><span class="op">:</span><span class="va">timepoint</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">loading2</span> <span class="op">|</span> <span class="va">id</span><span class="op">:</span><span class="va">timepoint</span><span class="op">)</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">dat</span>,</span>
+<span>  family <span class="op">=</span> <span class="va">family</span>,</span>
+<span>  family_mapping <span class="op">=</span> <span class="va">family_mapping</span>,</span>
+<span>  load.var <span class="op">=</span> <span class="st">"item"</span>,</span>
+<span>  lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">lambda</span><span class="op">)</span>,</span>
+<span>  factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"loading1"</span>, <span class="st">"loading2"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -600,6 +714,18 @@ Hastie, Trevor, and Robert Tibshirani. 1993.
 <span>“Varying-<span>Coefficient Models</span>.”</span> <em>Journal of
 the Royal Statistical Society: Series B (Methodological)</em> 55 (4):
 757–79. <a href="https://doi.org/10.1111/j.2517-6161.1993.tb01939.x" class="external-link">https://doi.org/10.1111/j.2517-6161.1993.tb01939.x</a>.
+</div>
+<div id="ref-hodgesRichlyParameterizedLinear2013" class="csl-entry">
+Hodges, James S. 2013. <em>Richly <span>Parameterized Linear Models
+Additive</span>, <span>Time Series</span>, and <span>Spatial Models
+Using Random Effects</span></em>. 1st ed. Chapman &amp;
+<span>Hall</span>/<span>CRC Texts</span> in <span>Statistical
+Science</span>. <span>Chapman &amp; Hall</span>.
+</div>
+<div id="ref-joeAccuracyLaplaceApproximation2008" class="csl-entry">
+Joe, Harry. 2008. <span>“Accuracy of <span>Laplace</span> Approximation
+for Discrete Response Mixed Models.”</span> <em>Computational Statistics
+&amp; Data Analysis</em> 52 (12): 5066–74. <a href="https://doi.org/10.1016/j.csda.2008.05.002" class="external-link">https://doi.org/10.1016/j.csda.2008.05.002</a>.
 </div>
 <div id="ref-sorensenLongitudinalModelingAgeDependent2023" class="csl-entry">
 Sørensen, Øystein, Anders M. Fjell, and Kristine B. Walhovd. 2023.
