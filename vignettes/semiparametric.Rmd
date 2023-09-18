@@ -221,7 +221,7 @@ mod <- galamm(
 )
 ```
 
-We print the model summary below. In the data simulation, the factor loadings we set to 1, 1.4, and 0.3, respectively, and this is very well recovered. Furthermore, the ground truth standard deviation at the `id` level was 1, at the `timepoint` level it was 0.5, and the residual standard deviation was 0.1. The estimates are close to these values. Real data will typically not have this strong signal, but based on these results, there are no clear indications that the model is implemented incorrectly.
+We print the model summary below. In the data simulation, the factor loadings were set to 1, 1.4, and 0.3, respectively, and this is very well recovered. Furthermore, the ground truth standard deviation at the `id` level was 1, at the `timepoint` level it was 0.5, and the residual standard deviation was 0.1. The estimates are close to these values. Real data will typically not have this strong signal, but based on these results, there are no clear indications that the model is implemented incorrectly.
 
 ```{r}
 summary(mod)
@@ -267,61 +267,6 @@ confint(mod, parm = "lambda")
 ```
 
 
-While `gamm4` is not able to estimate the factor loadings, it is able to fit the model if we treat the estimated factor loadings as data. We confirm this below, where we add the estimated loadings as data. Some changes also have to be done to the formula, due to how smooths are set up by `mgcv` and `gamm4`. Explaining this is beyond the scope of this vignette, but set `?mgcv::gam.models` for details.
-
-```{r}
-dat_gamm4 <- dat
-dat_gamm4$loading <- ifelse(
-  dat_gamm4$item == "21", 1,
-  factor_loadings(mod)["lambda2", "loading"]
-)
-dat_gamm4$item2 <- as.integer(dat$item == "22")
-head(dat_gamm4)
-
-mod_gamm4 <- gamm4(
-  formula = y ~ 0 + item2 + s(x, by = loading),
-  random = ~ (0 + loading | id / timepoint),
-  data = dat_gamm4,
-  family = binomial
-)
-```
-
-We see that the log-likelihood are very similar, but that the GALAMM uses one more degree of freedom than the GAMM, due to the factor loading that is being estimated.
-
-```{r}
-# galamm model with estimated factor loadings
-logLik(mod)
-# gamm4 model with fixed factor loadings
-logLik(mod_gamm4$mer)
-```
-
-We can also compare the smooth terms visually. In order to do this, we must impose sum-to-zero constraints on the GAMM fit. We also include the data-generating function with a blue curve. For the GALAMM, this has been done automatically. Although not identical, it is clear that the two terms are very close.
-
-```{r}
-# gamm4 fit
-nd <- dat_gamm4
-nd$loading <- 1
-nd <- nd[order(nd$x), ]
-gamm4_fit <- predict(mod_gamm4$gam, newdata = nd)
-gamm4_fit <- gamm4_fit - mean(gamm4_fit)
-
-# true function
-x <- seq(0, 1, length.out = 100)
-true_fun <- function(x) {
-  exp(2 * x)
-}
-y <- true_fun(x)
-y <- y - mean(y)
-
-# plot them
-plot_smooth(mod, main = "Comparison of smooth terms", shade = TRUE)
-lines(nd$x, gamm4_fit, col = "red")
-lines(x, y, col = "blue")
-legend(
-  x = 0, y = 4, legend = c("GALAMM", "GAMM4", "True"),
-  col = c("black", "red", "blue"), lty = 1
-)
-```
 
 
 ### Multivariate Gaussian Model
