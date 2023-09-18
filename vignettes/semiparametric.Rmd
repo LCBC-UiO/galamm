@@ -43,7 +43,7 @@ head(cognition)
 For this first example, we focus only on the first item measured for the first domain.
 
 ```{r}
-dat <- subset(cognition, domain == 1 & item == 1)
+dat <- subset(cognition, domain == 1 & item == "11")
 ```
 
 Each subject in this dataset has been measured eight times, and we can plot the measurements as follows:
@@ -125,22 +125,16 @@ plot_smooth(mod, se = FALSE)
 
 ### Binomial Responses
 
-In the cognition dataset, the responses relating to domain 2 and 3 are binomially distributed. We will use the first trial of the third domain to illustrate how such data can be modeled.
+In the cognition dataset, the responses relating to domain 2 are binomially distributed. We will use the first trial to illustrate how such data can be modeled.
 
 ```{r}
-dat <- subset(cognition, domain == 3 & item == 1)
-```
-
-Each observation counts the number of successes in ten trials.
-
-```{r}
-plot(dat$x, dat$y, xlab = "x", ylab = "Correct responses")
+dat <- subset(cognition, domain == 2 & item == "21")
 ```
 
 Again we can fit this model using `gamm4`.
 
 ```{r}
-mod_gamm4 <- gamm4(cbind(y, trials - y) ~ s(x),
+mod_gamm4 <- gamm4(y ~ s(x),
   random = ~ (1 | id),
   data = dat, family = binomial
 )
@@ -163,9 +157,7 @@ Again the `galamm` syntax is similar, but it puts the random effect specificatio
 
 
 ```{r}
-mod <- galamm(cbind(y, trials - y) ~ s(x) + (1 | id),
-  data = dat, family = binomial
-)
+mod <- galamm(y ~ s(x) + (1 | id), data = dat, family = binomial)
 ```
 
 The estimates are very similar, although not identical. The difference in deviance is due to differences in the way deviance is defined. The call `deviance(mod_gamm4$mer)` gives the same value as in the summary for the model fitted with galamm.
@@ -245,14 +237,14 @@ plot_smooth(mod)
 
 ### Conditionally Binomial Responses
 
-We can now move on to the part of the cognition data that is conditionally binomially distributed. We begin with domain 2, for which each response measures success or not in a single trial. In this case there are only two items, so we must change the lambda matrix accordingly. Other than that, and setting `family = binomial`, the model is the same as before.
+We can now move on to the part of the cognition data that is conditionally binomially distributed. We consider domain 2, where each response measures success or not in a single trial. In this case there are only two items, so we must change the lambda matrix accordingly. Other than that, and setting `family = binomial`, the model is the same as before.
 
 ```{r}
 dat <- subset(cognition, domain == 2)
 dat$item <- factor(dat$item)
 
 mod <- galamm(
-  formula = cbind(y, trials - y) ~ 0 + item + s(x, by = loading) +
+  formula = y ~ 0 + item + s(x, by = loading) +
     (0 + loading | id / timepoint),
   data = dat,
   family = binomial,
@@ -281,13 +273,14 @@ While `gamm4` is not able to estimate the factor loadings, it is able to fit the
 ```{r}
 dat_gamm4 <- dat
 dat_gamm4$loading <- ifelse(
-  dat_gamm4$item == 1, 1,
+  dat_gamm4$item == "21", 1,
   factor_loadings(mod)["lambda2", "loading"]
 )
-dat_gamm4$item2 <- as.integer(dat$item == 2)
+dat_gamm4$item2 <- as.integer(dat$item == "22")
+head(dat_gamm4)
 
 mod_gamm4 <- gamm4(
-  formula = cbind(y, trials - y) ~ 0 + item2 + s(x, by = loading),
+  formula = y ~ 0 + item2 + s(x, by = loading),
   random = ~ (0 + loading | id / timepoint),
   data = dat_gamm4,
   family = binomial
@@ -332,54 +325,121 @@ legend(
 ```
 
 
-### Mixed Response Models
+### Multivariate Gaussian Model
 
-We can now do a joint analysis of domain 1 and domain 2, using a mixed response model, where the items measuring domain 1 are conditionally normally distributed and the items measuring domain 2 are conditionally binomial distributed. The vignette on [models with mixed response types](https://lcbc-uio.github.io/galamm/articles/mixed_response.html) gives you an introduction to mixed response models.
+We now do a joint analysis of domain 1 and domain 3, for which all item responses are conditionally normally distributed.
 
-Letting $\eta_{1}$ denote latent ability in domain 1 and $\eta_{2}$ denote latent ability in domain 2, and $\lambda_{i1}$ and $\lambda_{i2}$ be corresponding factor loadings for the $i$th item measuring each domain, the linear predictor is now
+Letting $\eta_{1}$ denote latent ability in domain 1 and $\eta_{3}$ denote latent ability in domain 3, and $\lambda_{i1}$ and $\lambda_{i3}$ be corresponding factor loadings for the $i$th item measuring each domain, the measurement model is now
 
 $$
-\nu_{i} = \beta_{ij} + \lambda_{ij} \eta_{j} + \epsilon_{ij} ~ j=1,2
+y_{i} = \beta_{ij} + \lambda_{ij} \eta_{j} + \epsilon_{ij} ~ j=1,3
 $$
+
+To avoid unnecessary complexity, we assume the residual standard deviation is the same for all responses. The [vignette on linear mixed models with heteroscedastic residuals](https://lcbc-uio.github.io/galamm/articles/lmm_heteroscedastic.html) shows how this assumption can be relaxed. The data were also simulated with all residual standard deviations equal, so in this case the homoscedasticity assumption is satisfied.
 
 In the structural model, we have a smooth term for the relationship between the latent trait and x, and we have random intercepts for a given timepoint within subject $\zeta^{(2)}$, and for a given subject across timepoints $\zeta^{(3)}$.
 
 $$
-\eta_{j} = h_{j}(x) + \zeta_{j}^{(2)} + \zeta_{j}^{(3)} ~j=1,2.
+\eta_{j} = h_{j}(x) + \zeta_{j}^{(2)} + \zeta_{j}^{(3)} ~j=1,3.
 $$
 
+We first subset the cognition dataset to get the observations we want.
 
 ```{r}
-dat <- subset(cognition, domain %in% 1:2)
+dat <- subset(cognition, domain %in% c(1, 3))
 dat$domain <- factor(dat$domain)
-dat$item <- factor(paste0(dat$domain, dat$item))
+dat$item <- factor(dat$item)
+```
+
+
+It also makes life easier when setting up the model below, if we have have dummy variables for the items ready in our dataframe. We create this below. We drop the first items in each domain, since these will be captured by the overall intercept of the smooth terms.
+
+```{r}
+mm <- model.matrix(~ 0 + item, data = dat)
+dat <- cbind(dat, mm[, c("item12", "item13", "item32", "item33", "item34")])
+```
+
+To build up the complexity step-by-step, and also make sure that the model is correctly set up, we start by fixing the factor loadings to their true values.
+
+
+```{r}
+dat$loading1 <- c(1, 1.4, 3, 0, 0, 0, 0)[dat$item]
+dat$loading3 <- c(0, 0, 0, 1, 1, 1, 2)[dat$item]
+```
+
+We then fit the same model using `gamm4` and `galamm`. Some comments to the formula are useful here.
+
+First, the varying-coefficient terms `s(x, by = loading1, k = 10)` and `s(x, by = loading3, k = 10)` each contain an intercept, and since `loading1` is zero for all items in domain 3 and `loading3` is zero for all terms in domain 1, these functions contribute one intercept to each domain. Thus, we need to remove the overall intercept by starting the formula with `0 + `. We use the first item in each domain as a reference level, so the effects of `item12` and `item13` are the difference between these items and `item11`, with the latter intercept being captured by the intercept of `s(x, by = loading1, k = 10)`. The same applies to the items in domain 3. 
+
+Considering the random effect specification, `(0 + loading1 + loading3 | id)` specifies that there are two latent variables at the subject level ($\eta_{1}$ and $\eta_{3}$), their factor loadings are given by `loading1` and `loading3`, and they are allowed to be correlated. Next, `(0 + loading1 | id : timepoint) + (0 + loading3 | id : timepoint)` specifies that there are latent variables also varying between timepoints of the same individual, but by splitting the terms, we specify that these latent variables are not correlated. We do this for two reasons: first, including correlations between latent variables at multiple levels typically leads to identifiability issues. Secondly, when simulating the data, the level-2 latent variables were set to be uncorrelated, and hence in this case the assumption is satisfied.
+
+```{r}
+mod_gamm4 <- gamm4(
+  formula = y ~ 0 + item12 + item13 + item32 + item33 + item34 +
+    s(x, by = loading1, k = 10) +
+    s(x, by = loading3, k = 10),
+  random = ~ (0 + loading1 + loading3 | id) +
+    (0 + loading1 | id:timepoint) +
+    (0 + loading3 | id:timepoint),
+  data = dat,
+  REML = FALSE
+)
+
+mod <- galamm(
+  formula = y ~ 0 + item12 + item13 + item32 + item33 + item34 +
+    s(x, by = loading1, k = 10) +
+    s(x, by = loading3, k = 10) +
+    (0 + loading1 + loading3 | id) +
+    (0 + loading1 | id:timepoint) +
+    (0 + loading3 | id:timepoint),
+  data = dat
+)
+```
+
+We confirm that the model summary outputs are practically identical.
+
+```{r}
+summary(mod_gamm4$mer)
+summary(mod_gamm4$gam)
+summary(mod)
+```
+
+
+We also plot the two smooth terms, and confirm that they are indentical.
+
+```{r}
+plot_smooth(mod, pages = 1, scale = 0, shade = TRUE)
+plot(mod_gamm4$gam, pages = 1, scale = 0, shade = TRUE)
 ```
 
 ```{r}
-family <- c(gaussian, binomial)
-family_mapping <- ifelse(dat$domain == 1, 1L, 2L)
+dat$loading1 <- dat$loading3 <- NULL
 ```
+
+We define the loading matrix, with one column for each domain.
 
 ```{r}
 (lambda <- matrix(c(
-  1, NA, NA, 0, 0,
-  0, 0, 0, 1, NA
+  1, NA, .3, 0, 0, 0, 0,
+  0, 0, 0, 1, 1, 1, NA
 ), ncol = 2))
 ```
 
+At this point we enter a part of the package which is under active development.
 
 ```{r, eval=FALSE}
 mod <- galamm(
-  formula = y ~ item + s(x, by = loading1) +
-    (0 + loading1 + loading2 | id) +
+  formula = y ~ 0 + item12 + item13 + item32 + item33 + item34 +
+    s(x, by = loading1, k = 4) +
+    s(x, by = loading3, k = 4) +
+    (0 + loading1 + loading3 | id) +
     (0 + loading1 | id:timepoint) +
-    (0 + loading2 | id:timepoint),
+    (0 + loading3 | id:timepoint),
   data = dat,
-  family = family,
-  family_mapping = family_mapping,
   load.var = "item",
   lambda = list(lambda),
-  factor = list(c("loading1", "loading2"))
+  factor = list(c("loading1", "loading3")),
+  control = galamm_control(optim_control = list(maxit = 3, trace = 3))
 )
 ```
 
