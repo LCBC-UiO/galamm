@@ -114,8 +114,6 @@ gam.setup <- function(formula, pterms,
       }
       spn <- lspn[seq_len(ncol(Li))] ## names for actual working sps
     }
-
-
   }
 
 
@@ -204,7 +202,6 @@ gam.setup <- function(formula, pterms,
     if (is.null(sm[[i]]$L)) nc <- length(sm[[i]]$S) else nc <- ncol(sm[[i]]$L)
     if (nc > 0) G$smooth[[i]]$sp <- G$sp[seq(from = k, to = (k + nc - 1), by = 1)]
     k <- k + nc
-
   }
 
 
@@ -221,7 +218,6 @@ gam.setup <- function(formula, pterms,
       G$S[[k.sp]] <- sm$S[[j]]
       G$rank[k.sp] <- sm$rank[j]
     }
-
   }
 
   G$n.paraPen <- 0
@@ -235,7 +231,7 @@ gam.setup <- function(formula, pterms,
     if (length(indi) > 0) {
       for (i in seq_along(indi)) {
         ## find "effective zero" to replace each zero s.p. with
-        ii <- seq(from = G$off[i], to  = (G$off[i] + ncol(G$S[[i]]) - 1), by = 1)
+        ii <- seq(from = G$off[i], to = (G$off[i] + ncol(G$S[[i]]) - 1), by = 1)
         ef0[i] <- norm(G$X[, ii], type = "F")^2 / norm(G$S[[i]], type = "F") * .Machine$double.eps * .1
       }
     }
@@ -477,7 +473,6 @@ gam.side <- function(sm, Xp, tol = .Machine$double.eps^.5) {
               } ## penalties not considered
             }
           }
-
         } ## Now X1 contains columns for all lower dimensional terms
         if (ncol(X1) == as.integer(intercept)) {
           ind <- NULL
@@ -706,7 +701,7 @@ interpret.gam0 <- function(gf) {
     if (k <= ns && ((ks <= len.sp && sp[ks] == i) ||
       (kt2 <= len.t2p && t2p[kt2] == i))) { # it's a smooth
       smooth.spec[[k]] <- eval(parse(text = terms[i]), envir = p.env)
-      if(!is.null(a <- attr(smooth.spec[[k]], "load.var"))) {
+      if (!is.null(a <- attr(smooth.spec[[k]], "load.var"))) {
         smooth.spec[[k]]$label <- paste(smooth.spec[[k]]$label, a, sep = ":")
       }
 

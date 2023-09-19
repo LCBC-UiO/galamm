@@ -1,14 +1,13 @@
-factor_finder <- function(factor, vars){
+factor_finder <- function(factor, vars) {
   vapply(factor, function(x) any(vapply(vars, function(y) any(vapply(x, function(z) grepl(z, y), TRUE)), TRUE)), TRUE)
 }
 
 define_factor_mappings <- function(gobj, load.var, lambda, factor, data) {
-
   vars_in_fixed <- all.vars(gobj$fake.formula[-2])
 
   # Add fixed part of smooth terms
-  vars_in_fixed <- c(vars_in_fixed, unlist(lapply(gobj$G$smooth, function(x){
-    if(x$null.space.dim > 0){
+  vars_in_fixed <- c(vars_in_fixed, unlist(lapply(gobj$G$smooth, function(x) {
+    if (x$null.space.dim > 0) {
       x$label
     }
   })))
