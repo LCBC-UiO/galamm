@@ -14,7 +14,7 @@ test_that("Basic GAMM with factor structures works", {
   dat$item <- factor(dat$item)
 
   mod <- galamm(
-    formula = y ~ 0 + item + s(x, by = loading),
+    formula = y ~ 0 + item + s(x, load.var = "loading"),
     data = dat,
     load.var = "item",
     lambda = list(matrix(c(1, NA, NA), ncol = 1)),
@@ -58,7 +58,7 @@ test_that("GAMM with factor structures and random effects works", {
   dat$item <- factor(dat$item)
 
   mod <- galamm(
-    formula = y ~ 0 + item + s(x, by = loading, k = 4) + (0 + loading | id / timepoint),
+    formula = y ~ 0 + item + s(x, load.var = "loading", k = 4) + (0 + loading | id / timepoint),
     data = dat,
     load.var = "item",
     lambda = list(matrix(c(1, NA, NA), ncol = 1)),
