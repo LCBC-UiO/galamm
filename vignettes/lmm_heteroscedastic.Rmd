@@ -139,7 +139,7 @@ The diagnostic plot also looks good.
 plot(mod)
 ```
 
-![plot of chunk lmm_heteroscedastic_diagnostic](lmm_heteroscedastic_diagnostic-1.png)
+![Diagnostic plot for heteroscedastic model.](lmm_heteroscedastic_diagnostic-1.png)
 
 We can compare the model to one with homoscedastic residuals.
 

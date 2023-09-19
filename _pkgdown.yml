@@ -25,6 +25,7 @@ reference:
   - galamm
   - galamm_control
   - galamm-package
+  - s
 
 - title: High-level model output
   desc: Functions for summarising the result of model fits.

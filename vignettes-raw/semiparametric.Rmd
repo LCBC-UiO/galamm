@@ -49,7 +49,7 @@ dat <- subset(cognition, domain == 1 & item == "11")
 
 Each subject in this dataset has been measured eight times, and we can plot the measurements as follows:
 
-```{r, semiparametric-spaghetti-plot}
+```{r, semiparametric-spaghetti-plot, fig.cap="Plot of data for domain 1 and item 11."}
 ggplot(dat, aes(x = x, y = y, group = id)) +
   geom_point(size = .1) +
   geom_line(alpha = .3)
@@ -78,13 +78,13 @@ summary(mod_gamm4$gam)
 
 We can also plot the estimated smooth term:
 
-```{r, semiparametric-gaussian-gamm4-smooth}
+```{r, semiparametric-gaussian-gamm4-smooth, fig.cap="Smooth term estimated by gamm4."}
 plot(mod_gamm4$gam)
 ```
 
 In contrast, invoking the `plot` function on the mixed model part gives us a diagnostic plot.
 
-```{r, semiparametric-gaussian-gamm4-diagnostic}
+```{r, semiparametric-gaussian-gamm4-diagnostic, fig.cap="Diagnostic plot for gamm4 model."}
 plot(mod_gamm4$mer)
 ```
 
@@ -103,19 +103,19 @@ summary(mod)
 
 The `plot` function now gives us a diagnostic plot, which by inspection can be seen to be almost identical to the plot produced from the mixed model part of the `gamm4` model.
 
-```{r, semiparametric-gaussian-gamm-diagnostic}
+```{r, semiparametric-gaussian-gamm-diagnostic, fig.cap="Diagnostic plot for model fitted with galamm."}
 plot(mod)
 ```
 
 In order to plot the smooth term, we use `plot_smooth`.
 
-```{r, semiparametric-gaussian-gamm-smooth1}
+```{r, semiparametric-gaussian-gamm-smooth1, fig.cap="Smooth term estimated with galamm."}
 plot_smooth(mod)
 ```
 
 The `plot_smooth` function is a thin wrapper around the `plot.gam` function provided by the `mgcv` package [@woodGeneralizedAdditiveModels2017a]. This means that the arguments used by `plot.gam` can be used also here, as see with the examples below:
 
-```{r, semiparametric-gaussian-gamm-smooth2}
+```{r, semiparametric-gaussian-gamm-smooth2, fig.cap="Alternative ways of visualizing the smooth term."}
 plot_smooth(mod,
   shade = TRUE, rug = FALSE, seWithMean = TRUE,
   shift = +2
@@ -150,7 +150,7 @@ summary(mod_gamm4$gam)
 
 And we can plot the smooth term. The diagnostic plot is not very useful in the binomial case, so we omit it.
 
-```{r, semiparametric-gamm4-binomial}
+```{r, semiparametric-gamm4-binomial, fig.cap="Smooth term estimated by gamm4."}
 plot(mod_gamm4$gam)
 ```
 
@@ -167,7 +167,7 @@ The estimates are very similar, although not identical. The difference in devian
 summary(mod)
 ```
 
-```{r, semiparametric-gamm-binomial}
+```{r, semiparametric-gamm-binomial, fig.cap="Smooth term estimated with galamm."}
 plot_smooth(mod)
 ```
 
@@ -231,7 +231,7 @@ summary(mod)
 
 We also plot the smooth term. Since we had a very large amount of data, there is essentially no uncertainty about the estimate.
 
-```{r, semiparametric-gaussian-factor}
+```{r, semiparametric-gaussian-factor, fig.cap="Smooth term for GAMM with factor structure."}
 plot_smooth(mod)
 ```
 

@@ -60,7 +60,7 @@ ggplot(dat, aes(x = x, y = y, group = id)) +
   geom_line(alpha = .3)
 ```
 
-![plot of chunk semiparametric-spaghetti-plot](semiparametric-spaghetti-plot-1.png)
+![Plot of data for domain 1 and item 11.](semiparametric-spaghetti-plot-1.png)
 
 We use a generalized additive mixed model with random intercepts per subject to estimate the function relating $x$ to $y$. In terms of the model framework outlined in the [introductory vignette](https://lcbc-uio.github.io/galamm/articles/galamm.html), we model the $i$th response from the $j$th subject with
 
@@ -137,7 +137,7 @@ We can also plot the estimated smooth term:
 plot(mod_gamm4$gam)
 ```
 
-![plot of chunk semiparametric-gaussian-gamm4-smooth](semiparametric-gaussian-gamm4-smooth-1.png)
+![Smooth term estimated by gamm4.](semiparametric-gaussian-gamm4-smooth-1.png)
 
 In contrast, invoking the `plot` function on the mixed model part gives us a diagnostic plot.
 
@@ -146,7 +146,7 @@ In contrast, invoking the `plot` function on the mixed model part gives us a dia
 plot(mod_gamm4$mer)
 ```
 
-![plot of chunk semiparametric-gaussian-gamm4-diagnostic](semiparametric-gaussian-gamm4-diagnostic-1.png)
+![Diagnostic plot for gamm4 model.](semiparametric-gaussian-gamm4-diagnostic-1.png)
 
 
 With `galamm` we use similar argument, but the `random` specification is now part of the model formula.
@@ -196,7 +196,7 @@ The `plot` function now gives us a diagnostic plot, which by inspection can be s
 plot(mod)
 ```
 
-![plot of chunk semiparametric-gaussian-gamm-diagnostic](semiparametric-gaussian-gamm-diagnostic-1.png)
+![Diagnostic plot for model fitted with galamm.](semiparametric-gaussian-gamm-diagnostic-1.png)
 
 In order to plot the smooth term, we use `plot_smooth`.
 
@@ -205,7 +205,7 @@ In order to plot the smooth term, we use `plot_smooth`.
 plot_smooth(mod)
 ```
 
-![plot of chunk semiparametric-gaussian-gamm-smooth1](semiparametric-gaussian-gamm-smooth1-1.png)
+![Smooth term estimated with galamm.](semiparametric-gaussian-gamm-smooth1-1.png)
 
 The `plot_smooth` function is a thin wrapper around the `plot.gam` function provided by the `mgcv` package [@woodGeneralizedAdditiveModels2017a]. This means that the arguments used by `plot.gam` can be used also here, as see with the examples below:
 
@@ -217,13 +217,13 @@ plot_smooth(mod,
 )
 ```
 
-![plot of chunk semiparametric-gaussian-gamm-smooth2](semiparametric-gaussian-gamm-smooth2-1.png)
+![Alternative ways of visualizing the smooth term.](semiparametric-gaussian-gamm-smooth2-1.png)
 
 ```r
 plot_smooth(mod, se = FALSE)
 ```
 
-![plot of chunk semiparametric-gaussian-gamm-smooth2](semiparametric-gaussian-gamm-smooth2-2.png)
+![Alternative ways of visualizing the smooth term.](semiparametric-gaussian-gamm-smooth2-2.png)
 
 
 ### Binomial Responses
@@ -307,7 +307,7 @@ And we can plot the smooth term. The diagnostic plot is not very useful in the b
 plot(mod_gamm4$gam)
 ```
 
-![plot of chunk semiparametric-gamm4-binomial](semiparametric-gamm4-binomial-1.png)
+![Smooth term estimated by gamm4.](semiparametric-gamm4-binomial-1.png)
 
 Again the `galamm` syntax is similar, but it puts the random effect specification into the model formula.
 
@@ -354,7 +354,7 @@ summary(mod)
 plot_smooth(mod)
 ```
 
-![plot of chunk semiparametric-gamm-binomial](semiparametric-gamm-binomial-1.png)
+![Smooth term estimated with galamm.](semiparametric-gamm-binomial-1.png)
 
 
 ## Generalized Additive Models with Factor Structures
@@ -471,7 +471,7 @@ We also plot the smooth term. Since we had a very large amount of data, there is
 plot_smooth(mod)
 ```
 
-![plot of chunk semiparametric-gaussian-factor](semiparametric-gaussian-factor-1.png)
+![Smooth term for GAMM with factor structure.](semiparametric-gaussian-factor-1.png)
 
 
 ### Binomial Responses

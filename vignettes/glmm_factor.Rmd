@@ -199,7 +199,7 @@ We can also show a diagnostic plot, although for a binomial model like this it i
 plot(mod)
 ```
 
-![plot of chunk glmm_factor_binomial_diagnostic](glmm_factor_binomial_diagnostic-1.png)
+![Diagnostic plot for binomial model.](glmm_factor_binomial_diagnostic-1.png)
 
 
 ## Binomial Model with Multiple Trials
@@ -338,7 +338,7 @@ We can again look at a diagnostic plot, which in this case looks much more reaso
 plot(count_mod)
 ```
 
-![plot of chunk glmm_factor_poisson_diagnostic](glmm_factor_poisson_diagnostic-1.png)
+![Diagnostic plot for Poisson model.](glmm_factor_poisson_diagnostic-1.png)
 
 
 In this case we can confirm that the `galamm` function is correctly implemented by comparing it to the output of `lme4::glmer`. For a model like this, it would also be best to use `lme4`, but with factor structures or other nonlinearities, `lme4` no longer provides the flexibility we need.
@@ -360,7 +360,7 @@ We can confirm that the diagnostic plot has the same values as for galamm:
 plot(count_mod_lme4)
 ```
 
-![plot of chunk glmm_factor_poisson_diagnostic_lme4](glmm_factor_poisson_diagnostic_lme4-1.png)
+![lme4 diagnostic plot for Poisson model.](glmm_factor_poisson_diagnostic_lme4-1.png)
 
 And we can do the same for the summary output.
 

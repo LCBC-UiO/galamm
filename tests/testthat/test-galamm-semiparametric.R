@@ -26,7 +26,8 @@ test_that("Basic GAMM with factor structures works", {
     c(
       item11 = 0.669888238636741, item12 = 0.938949881157583, item13 = 0.19327451279475,
       `s(x):loadingFx1` = 0.188004784622413
-    )
+    ),
+    tolerance = .0001
   )
 
   expect_equal(

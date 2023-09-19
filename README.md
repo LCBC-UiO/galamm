@@ -105,11 +105,13 @@ You can install the development version of galamm from
 remotes::install_github("LCBC-UiO/galamm")
 ```
 
-## Example
+## Examples
 
 ``` r
 library(galamm)
 ```
+
+### Mixed Response Model
 
 The dataframe `mresp` contains simulated data with mixed response types.
 
@@ -172,6 +174,49 @@ summary(mixed_resp)
 #> (Intercept)    0.041    0.05803  0.7065 4.799e-01
 #> x              0.971    0.08594 11.2994 1.321e-29
 ```
+
+### Generalized Additive Mixed Model with Factor Structures
+
+The dataframe `cognition` contains simulated for which latent ability in
+three cognitive domains is measured across time. We focus on the first
+cognitive domain, and estimate a smooth trajectory for how the latent
+ability depends on time.
+
+We start by reducing the data.
+
+``` r
+dat <- subset(cognition, domain == 1)
+dat$item <- factor(dat$item)
+```
+
+Next we define the matrix of factor loadings, where `NA` denotes unknown
+values to be estimated.
+
+``` r
+loading_matrix <- matrix(c(1, NA, NA), ncol = 1)
+```
+
+We then compute the model estimates, containing both a smooth term for
+the latent ability and random intercept for subject and timepoints.
+
+``` r
+mod <- galamm(
+  formula = y ~ 0 + item + s(x, load.var = "loading") +
+    (0 + loading | id / timepoint),
+  data = dat,
+  load.var = "item",
+  lambda = list(loading_matrix),
+  factor = list("loading")
+)
+```
+
+We finally plot the estimated smooth term.
+
+``` r
+plot_smooth(mod)
+```
+
+<img src="man/figures/README-unnamed-chunk-9-1.png" width="100%" />
 
 ## How to cite this package
 

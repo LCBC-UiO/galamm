@@ -163,7 +163,7 @@ factor_loadings(mod)
 
 A diagnostic plot of residuals versus predicted values also looks acceptable, although there seems to be a slight upward trend.
 
-```{r, lmm_factor_diagnostic_plot}
+```{r, lmm_factor_diagnostic_plot, fig.cap="Diagnostic plot for linear mixed model with factor structures."}
 plot(mod)
 ```
 
@@ -240,7 +240,7 @@ anova(
 
 ## Multi-Trait Multi-Rater Model
 
-We next consider a model based on example 1 in @rockwoodEstimatingComplexMeasurement2019, which uses the dataset `JUDGEsim` in [PLmixed](https://cran.r-project.org/package=PLmixed), which is simulated to mimic the data used by @kochCrossClassifiedCFAMTMMModel2016. We refer to @rockwoodEstimatingComplexMeasurement2019 for all the details, and merely present the model and how to estimate it using galamm.
+We next consider a model based on example 1 in @rockwoodEstimatingComplexMeasurement2019, which uses the dataset `JUDGEsim` in [PLmixed](https://cran.r-project.org/package=PLmixed), which is simulated to mimic the data used by @kochCrossClassifiedCFAMTMMModel2016. We refer to @rockwoodEstimatingComplexMeasurement2019 for all the details, and merely present the model and how to estimate it using `galamm`. Note however that although the fit with `galamm` is identical to that presented in @rockwoodEstimatingComplexMeasurement2019, our estimated factor loadings appear to differ from those in the table at the bottom of page 298 in @rockwoodEstimatingComplexMeasurement2019, due to an error in the way the matrix of factor loadings was presented in `PLmixed` versions `<= 0.1.6`. This issue has been fixed in `PLmixed` version `0.1.7` (Nicholas Rockwood, personal communication, August 2023).
 
 The data contains ratings of two traits in students, and the traits are rated by both students and teachers.
 
