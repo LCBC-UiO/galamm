@@ -21,6 +21,7 @@ test_that("Heteroscedastic model works", {
   )
 
   expect_equal(vcov(mod, parm = "weights"),
-               structure(0.00245961267414418, dim = c(1L, 1L)),
-               tolerance = 1e-4)
+    structure(0.00245961267414418, dim = c(1L, 1L)),
+    tolerance = 1e-4
+  )
 })

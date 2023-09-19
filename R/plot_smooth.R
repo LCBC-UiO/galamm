@@ -39,13 +39,13 @@ plot_smooth <- function(object, ...) {
 #'
 #' # We can now estimate the model.
 #' mod <- galamm(
-#'     formula = y ~ 0 + item + s(x, load.var = "loading") +
-#'               (0 + loading | id / timepoint),
-#'     data = dat,
-#'     load.var = "item",
-#'     lambda = list(loading_matrix),
-#'     factor = list("loading")
-#'     )
+#'   formula = y ~ 0 + item + s(x, load.var = "loading") +
+#'     (0 + loading | id / timepoint),
+#'   data = dat,
+#'   load.var = "item",
+#'   lambda = list(loading_matrix),
+#'   factor = list("loading")
+#' )
 #'
 #' # We can plot the estimated smooth term
 #' plot_smooth(mod, shade = TRUE)

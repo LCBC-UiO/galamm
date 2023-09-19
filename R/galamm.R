@@ -141,20 +141,20 @@
 #'
 #' # Model formula
 #' formula <- y ~ 0 + chd + (age * bus):chd + fiber +
-#'           (age * bus):fiber + fiber2 + (0 + loading | id)
+#'   (age * bus):fiber + fiber2 + (0 + loading | id)
 #'
 #' # We fit the model, setting the intial value of the random effect variance
 #' # to 10.
 #' mod <- galamm(
-#'     formula = formula,
-#'     data = diet,
-#'     family = families,
-#'     family_mapping = family_mapping,
-#'     factor = list("loading"),
-#'     load.var = "item",
-#'     lambda = list(loading_matrix),
-#'     start = list(theta = 10)
-#'   )
+#'   formula = formula,
+#'   data = diet,
+#'   family = families,
+#'   family_mapping = family_mapping,
+#'   factor = list("loading"),
+#'   load.var = "item",
+#'   lambda = list(loading_matrix),
+#'   start = list(theta = 10)
+#' )
 #'
 #' # Summary information
 #' summary(mod)
@@ -176,13 +176,13 @@
 #'
 #' # We can now estimate the model.
 #' mod <- galamm(
-#'     formula = y ~ 0 + item + s(x, load.var = "loading") +
-#'               (0 + loading | id / timepoint),
-#'     data = dat,
-#'     load.var = "item",
-#'     lambda = list(loading_matrix),
-#'     factor = list("loading")
-#'     )
+#'   formula = y ~ 0 + item + s(x, load.var = "loading") +
+#'     (0 + loading | id / timepoint),
+#'   data = dat,
+#'   load.var = "item",
+#'   lambda = list(loading_matrix),
+#'   factor = list("loading")
+#' )
 #'
 #' # We can show summary information.
 #' summary(mod)
@@ -324,7 +324,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
 
   pearson_residuals <- (response_obj[, 1] - fit) /
     unlist(Map(function(x, y) sqrt(family_list[[x]]$variance(y)),
-               x = family_mapping, y = fit
+      x = family_mapping, y = fit
     ))
 
   if (length(family_list) == 1 && family_list[[1]]$family == "gaussian") {

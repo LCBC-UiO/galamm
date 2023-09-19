@@ -16,9 +16,10 @@
 #' @examples
 #' # Linear mixed model with heteroscedastic residuals
 #' mod <- galamm(
-#'     formula = y ~ x + (1 | id),
-#'     weights = ~ (1 | item),
-#'     data = hsced)
+#'   formula = y ~ x + (1 | id),
+#'   weights = ~ (1 | item),
+#'   data = hsced
+#' )
 #'
 #' # Extract covariance matrix for fixed regression coefficients
 #' vcov(mod, parm = "beta")

@@ -21,14 +21,16 @@
 #'
 #' @examples
 #' # Poisson GLMM
-#' count_mod <- galamm(formula = y ~ lbas * treat + lage + v4 + (1 | subj),
-#'                     data = epilep, family = poisson)
+#' count_mod <- galamm(
+#'   formula = y ~ lbas * treat + lage + v4 + (1 | subj),
+#'   data = epilep, family = poisson
+#' )
 #'
 #' # Plot response versus link:
 #' plot(
-#'      predict(count_mod, type = "link"),
-#'      predict(count_mod, type = "response")
-#'      )
+#'   predict(count_mod, type = "link"),
+#'   predict(count_mod, type = "response")
+#' )
 #'
 predict.galamm <- function(object, newdata = NULL,
                            type = c("link", "response"),
