@@ -38,75 +38,74 @@ gamm4.setup <- function(formula, pterms,
 
   used.names <- names(data) ## keep track of all variable names already used
 
-  if (G$m) {
-    for (i in 1:G$m) { ## work through the smooths
+  for (i in seq_len(G$m)) { ## work through the smooths
 
-      sm <- G$smooth[[i]]
-      sm$X <- G$X[, sm$first.para:sm$last.para, drop = FALSE]
-      rasm <- mgcv::smooth2random(sm, used.names, type = 2) ## convert smooth to random effect and fixed effects
-      used.names <- c(used.names, names(rasm$rand))
+    sm <- G$smooth[[i]]
+    sm$X <- G$X[, sm$first.para:sm$last.para, drop = FALSE]
+    rasm <- mgcv::smooth2random(sm, used.names, type = 2) ## convert smooth to random effect and fixed effects
+    used.names <- c(used.names, names(rasm$rand))
 
-      sm$fixed <- rasm$fixed
+    sm$fixed <- rasm$fixed
 
-      ## deal with creation of sparse full model matrix
-      if (!is.null(sm$fac)) {
-        flev <- levels(sm$fac) ## grouping factor for smooth
-        n.lev <- length(flev)
-        for (k in 1:n.lev) {
-          G$Xf <- methods::cbind2(G$Xf, methods::as(sm$X * as.numeric(sm$fac == flev[k]), "dgCMatrix"))
-        }
-      } else {
-        n.lev <- 1
-        G$Xf <- methods::cbind2(G$Xf, methods::as(sm$X, "dgCMatrix"))
+    ## deal with creation of sparse full model matrix
+    if (!is.null(sm$fac)) {
+      flev <- levels(sm$fac) ## grouping factor for smooth
+      n.lev <- length(flev)
+      for (k in 1:n.lev) {
+        G$Xf <- methods::cbind2(G$Xf, methods::as(sm$X * as.numeric(sm$fac == flev[k]), "dgCMatrix"))
       }
-
-      ## now append random effects to main list
-      n.para <- 0 ## count random coefficients
-
-      if (!sm$fixed) {
-        for (k in seq_along(rasm$rand)) n.para <- n.para + ncol(rasm$rand[[k]])
-        sm$lmer.name <- names(rasm$rand)
-        random <- c(random, rasm$rand)
-        sm$trans.D <- rasm$trans.D
-        sm$trans.U <- rasm$trans.U ## matrix mapping fit coefs back to original
-      }
-
-      ## ensure stored first and last para relate to G$Xf in expanded version
-
-      sm$last.para <- first.para + ncol(rasm$Xf) + n.para - 1
-      sm$first.para <- first.para
-      first.para <- sm$last.para + 1
-
-      if (ncol(rasm$Xf)) {
-        Xfnames <- rep("", ncol(rasm$Xf))
-        k <- length(xlab) + 1
-        for (j in seq_len(ncol(rasm$Xf))) {
-          xlab[k] <- Xfnames[j] <-
-            mgcv::new.name(paste(sm$label, "Fx", j, sep = ""), xlab)
-          k <- k + 1
-        }
-        colnames(rasm$Xf) <- Xfnames
-      }
-
-      X <- cbind(X, rasm$Xf) # add fixed model matrix to overall fixed X
-
-      sm$first.f.para <- first.f.para
-      first.f.para <- first.f.para + ncol(rasm$Xf)
-      sm$last.f.para <- first.f.para - 1 ## note less than sm$first.f.para => no fixed
-
-      ## store indices of random parameters in smooth specific array
-      sm$rind <- rasm$rind
-      sm$rinc <- rasm$rinc
-
-      sm$pen.ind <- rasm$pen.ind ## pen.ind==i TRUE for coef penalized by ith penalty
-
-      sm$n.para <- n.para
-
-      sm$X <- NULL ## delete model matrix
-
-      G$smooth[[i]] <- sm ## replace smooth object with extended version
+    } else {
+      n.lev <- 1
+      G$Xf <- methods::cbind2(G$Xf, methods::as(sm$X, "dgCMatrix"))
     }
+
+    ## now append random effects to main list
+    n.para <- 0 ## count random coefficients
+
+    if (!sm$fixed) {
+      for (k in seq_along(rasm$rand)) n.para <- n.para + ncol(rasm$rand[[k]])
+      sm$lmer.name <- names(rasm$rand)
+      random <- c(random, rasm$rand)
+      sm$trans.D <- rasm$trans.D
+      sm$trans.U <- rasm$trans.U ## matrix mapping fit coefs back to original
+    }
+
+    ## ensure stored first and last para relate to G$Xf in expanded version
+
+    sm$last.para <- first.para + ncol(rasm$Xf) + n.para - 1
+    sm$first.para <- first.para
+    first.para <- sm$last.para + 1
+
+    if (ncol(rasm$Xf)) {
+      Xfnames <- rep("", ncol(rasm$Xf))
+      k <- length(xlab) + 1
+      for (j in seq_len(ncol(rasm$Xf))) {
+        xlab[k] <- Xfnames[j] <-
+          mgcv::new.name(paste(sm$label, "Fx", j, sep = ""), xlab)
+        k <- k + 1
+      }
+      colnames(rasm$Xf) <- Xfnames
+    }
+
+    X <- cbind(X, rasm$Xf) # add fixed model matrix to overall fixed X
+
+    sm$first.f.para <- first.f.para
+    first.f.para <- first.f.para + ncol(rasm$Xf)
+    sm$last.f.para <- first.f.para - 1 ## note less than sm$first.f.para => no fixed
+
+    ## store indices of random parameters in smooth specific array
+    sm$rind <- rasm$rind
+    sm$rinc <- rasm$rinc
+
+    sm$pen.ind <- rasm$pen.ind ## pen.ind==i TRUE for coef penalized by ith penalty
+
+    sm$n.para <- n.para
+
+    sm$X <- NULL ## delete model matrix
+
+    G$smooth[[i]] <- sm ## replace smooth object with extended version
   }
+
 
   G$random <- random ## named list of random effect matrices
   G$X <- X ## fixed effects model matrix

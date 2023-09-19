@@ -15,8 +15,7 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>",
-  eval = FALSE
+  comment = "#>"
 )
 ```
 
@@ -27,7 +26,7 @@ library(ggplot2)
 theme_set(theme_bw())
 ```
 
-This vignette describes how to use `galamm` to estimate latent variable models with smooth terms, or equivalently, generalized additive mixed models with factor structures. The examples are based on Section 4 and 5 in @sorensenLongitudinalModelingAgeDependent2023, but as we cannot share the data, we have instead simulated somewhat simpler datasets that will be used. We will gradually add complexity, starting with a simple generalized additive mixed. Please refer to the [introductory vignette](https://lcbc-uio.github.io/galamm/articles/galamm.html) for an overview of the statistical models.
+This vignette describes how to use `galamm` to estimate latent variable models with smooth terms, or equivalently, generalized additive mixed models with factor structures. The examples are based on Section 4 and 5 in @sorensenLongitudinalModelingAgeDependent2023, but as we cannot share the data, we have instead simulated somewhat simpler datasets that will be used. We will gradually add complexity, starting with a simple generalized additive mixed model. Please refer to the [introductory vignette](https://lcbc-uio.github.io/galamm/articles/galamm.html) for an overview of the statistical models.
 
 ## Generalized Additive Mixed Models
 
@@ -176,7 +175,7 @@ plot_smooth(mod)
 
 We now add factor structures to the GAMMs. These are the types of models that neither `gamm4` nor `mgcv` are able to estimate (at least without lots of manual hacking), and where `galamm` provides new functionality.
 
-### Conditionally Gaussian Responses
+### Gaussian Responses
 
 To illustrate basic usage, we continue with the cognition data, but now use all items of cognitive domain 1. These are all conditionally normal distributed.
 
@@ -204,17 +203,17 @@ $$
 y_{i} = \beta_{i} + \lambda_{i} \left\{ h(x) + \zeta^{(2)} + \zeta^{(3)} \right\} + \epsilon_{i}
 $$
 
-To set up the smooth term, we need a `by`-variable. This is an example of a varying-coefficient term [@hastieVaryingCoefficientModels1993], where $h(x)$ is being interpreted as a regression coefficient for the effect of $\lambda_{i}$ on $y_{i}$, and the regression term varies with $x$. In contrast to @hastieVaryingCoefficientModels1993 and other uses of varying-coefficient terms, however, in this case the predictor $\lambda_{i}$ is a model parameter. We have three items loading in $\eta$ and fix the first loading to 1 for identifiability, so the loading matrix is as follows:
+We will use a varying-coefficient term, where $h(x)$ is being interpreted as a regression coefficient for the effect of $\lambda_{i}$ on $y_{i}$, and the regression term varies with $x$. In contrast to @hastieVaryingCoefficientModels1993 and other uses of varying-coefficient terms, however, in this case the predictor $\lambda_{i}$ is a model parameter. We have three items loading in $\eta$ and fix the first loading to 1 for identifiability, so the loading matrix is as follows:
 
 ```{r}
 (loading_matrix <- matrix(c(1, NA, NA), ncol = 1))
 ```
 
-We use the term "loading" to identify the factor loading, and set `load.var = "item"` to specify that the loadings to be applied are identified by the "item" variable.
+We use the term "loading" to identify the factor loading, and set `load.var = "item"` to specify that the loadings to be applied are identified by the "item" variable. Using `mgcv`'s `by` variable would also work in this particular case, i.e., replacing `s(x, load.var = "loading")` with `s(x, by = loading)`. However, in most cases this would lead to identifiability issues due to the way varying-coefficient terms are set up by `mgcv`, so `galamm` provides an additional `load.var` arguments which alleviates most of these issues.
 
 ```{r}
 mod <- galamm(
-  formula = y ~ 0 + item + s(x, by = loading) +
+  formula = y ~ 0 + item + s(x, load.var = "loading") +
     (0 + loading | id / timepoint),
   data = dat,
   load.var = "item",
@@ -236,7 +235,7 @@ plot_smooth(mod)
 ```
 
 
-### Conditionally Binomial Responses
+### Binomial Responses
 
 We can now move on to the part of the cognition data that is conditionally binomially distributed. We consider domain 2, where each response measures success or not in a single trial. In this case there are only two items, so we must change the lambda matrix accordingly. Other than that, and setting `family = binomial`, the model is the same as before.
 
@@ -245,7 +244,7 @@ dat <- subset(cognition, domain == 2)
 dat$item <- factor(dat$item)
 
 mod <- galamm(
-  formula = y ~ 0 + item + s(x, by = loading) +
+  formula = y ~ 0 + item + s(x, load.var = "loading") +
     (0 + loading | id / timepoint),
   data = dat,
   family = binomial,
@@ -298,96 +297,6 @@ dat$item <- factor(dat$item)
 ```
 
 
-It also makes life easier when setting up the model below, if we have have dummy variables for the items ready in our dataframe. We create this below. We drop the first items in each domain, since these will be captured by the overall intercept of the smooth terms.
-
-```{r}
-mm <- model.matrix(~ 0 + item, data = dat)
-dat <- cbind(dat, mm[, c("item12", "item13", "item32", "item33", "item34")])
-```
-
-To build up the complexity step-by-step, and also make sure that the model is correctly set up, we start by fixing the factor loadings to their true values.
-
-
-```{r}
-dat$loading1 <- c(1, 1.4, 3, 0, 0, 0, 0)[dat$item]
-dat$loading3 <- c(0, 0, 0, 1, 1, 1, 2)[dat$item]
-```
-
-We then fit the same model using `gamm4` and `galamm`. Some comments to the formula are useful here.
-
-First, the varying-coefficient terms `s(x, by = loading1, k = 10)` and `s(x, by = loading3, k = 10)` each contain an intercept, and since `loading1` is zero for all items in domain 3 and `loading3` is zero for all terms in domain 1, these functions contribute one intercept to each domain. Thus, we need to remove the overall intercept by starting the formula with `0 + `. We use the first item in each domain as a reference level, so the effects of `item12` and `item13` are the difference between these items and `item11`, with the latter intercept being captured by the intercept of `s(x, by = loading1, k = 10)`. The same applies to the items in domain 3. 
-
-Considering the random effect specification, `(0 + loading1 + loading3 | id)` specifies that there are two latent variables at the subject level ($\eta_{1}$ and $\eta_{3}$), their factor loadings are given by `loading1` and `loading3`, and they are allowed to be correlated. Next, `(0 + loading1 | id : timepoint) + (0 + loading3 | id : timepoint)` specifies that there are latent variables also varying between timepoints of the same individual, but by splitting the terms, we specify that these latent variables are not correlated. We do this for two reasons: first, including correlations between latent variables at multiple levels typically leads to identifiability issues. Secondly, when simulating the data, the level-2 latent variables were set to be uncorrelated, and hence in this case the assumption is satisfied.
-
-```{r}
-mod_gamm4 <- gamm4(
-  formula = y ~ 0 + item12 + item13 + item32 + item33 + item34 +
-    s(x, by = loading1, k = 10) +
-    s(x, by = loading3, k = 10),
-  random = ~ (0 + loading1 + loading3 | id) +
-    (0 + loading1 | id:timepoint) +
-    (0 + loading3 | id:timepoint),
-  data = dat,
-  REML = FALSE
-)
-
-mod <- galamm(
-  formula = y ~ 0 + item12 + item13 + item32 + item33 + item34 +
-    s(x, by = loading1, k = 10) +
-    s(x, by = loading3, k = 10) +
-    (0 + loading1 + loading3 | id) +
-    (0 + loading1 | id:timepoint) +
-    (0 + loading3 | id:timepoint),
-  data = dat
-)
-```
-
-We confirm that the model summary outputs are practically identical.
-
-```{r}
-summary(mod_gamm4$mer)
-summary(mod_gamm4$gam)
-summary(mod)
-```
-
-
-We also plot the two smooth terms, and confirm that they are indentical.
-
-```{r}
-plot_smooth(mod, pages = 1, scale = 0, shade = TRUE)
-plot(mod_gamm4$gam, pages = 1, scale = 0, shade = TRUE)
-```
-
-```{r}
-dat$loading1 <- dat$loading3 <- NULL
-```
-
-We define the loading matrix, with one column for each domain.
-
-```{r}
-(lambda <- matrix(c(
-  1, NA, .3, 0, 0, 0, 0,
-  0, 0, 0, 1, 1, 1, NA
-), ncol = 2))
-```
-
-At this point we enter a part of the package which is under active development.
-
-```{r, eval=FALSE}
-mod <- galamm(
-  formula = y ~ 0 + item12 + item13 + item32 + item33 + item34 +
-    s(x, by = loading1, k = 4) +
-    s(x, by = loading3, k = 4) +
-    (0 + loading1 + loading3 | id) +
-    (0 + loading1 | id:timepoint) +
-    (0 + loading3 | id:timepoint),
-  data = dat,
-  load.var = "item",
-  lambda = list(lambda),
-  factor = list(c("loading1", "loading3")),
-  control = galamm_control(optim_control = list(maxit = 3, trace = 3))
-)
-```
-
+At this point we are entering the bleeding edge of the development of this package. Currently, multiple smooth terms for different domains is not working. A low-level way of achieving this can be found in [this file](https://github.com/LCBC-UiO/galamm-scripts/blob/main/code/cognition_model/estimate_model.R). I'm currently wrapping my head around how to achieve the same through a formula interface.
 
 # References
