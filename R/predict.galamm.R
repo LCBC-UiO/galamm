@@ -19,6 +19,16 @@
 #' @seealso [fitted.galamm()] for model fits, [residuals.galamm()] for residuals,
 #' and [predict()] for the generic function.
 #'
+#' @examples
+#' # Poisson GLMM
+#' count_mod <- galamm(formula = y ~ lbas * treat + lage + v4 + (1 | subj),
+#'                     data = epilep, family = poisson)
+#'
+#' # Plot response versus link:
+#' plot(
+#'      predict(count_mod, type = "link"),
+#'      predict(count_mod, type = "response")
+#'      )
 #'
 predict.galamm <- function(object, newdata = NULL,
                            type = c("link", "response"),
@@ -29,8 +39,8 @@ predict.galamm <- function(object, newdata = NULL,
   }
 
   if (type == "response") {
-    object$fit
+    fitted(object)
   } else {
-    object$family[[1]]()$linkfun(object$fit)
+    family(object)[[1]]$linkfun(fitted(object))
   }
 }

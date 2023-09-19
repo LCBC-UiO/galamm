@@ -18,6 +18,17 @@ A numeric value giving the deviance of the model fit.
 \description{
 Extract deviance of galamm object
 }
+\examples{
+# Linear mixed model with heteroscedastic residuals
+mod <- galamm(
+    formula = y ~ x + (1 | id),
+    weights = ~ (1 | item),
+    data = hsced)
+
+# Extract deviance
+deviance(mod)
+
+}
 \seealso{
 \code{\link[=logLik.galamm]{logLik.galamm()}} for a function returning the log likelihood and
 \code{\link[=deviance]{deviance()}} for the generic function.

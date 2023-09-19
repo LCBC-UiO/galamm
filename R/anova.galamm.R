@@ -20,6 +20,18 @@
 #' @seealso [summary.galamm()] for the summary method and [anova()] for the
 #'   generic function.
 #'
+#' @examples
+#' # Poisson GLMM
+#' count_mod <- galamm(formula = y ~ lbas * treat + lage + v4 + (1 | subj),
+#'                     data = epilep, family = poisson)
+#'
+#' # Model without interaction
+#' count_mod0 <- galamm(formula = y ~ lbas + treat + lage + v4 + (1 | subj),
+#'                      data = epilep, family = poisson)
+#'
+#' # Model comparison
+#' anova(count_mod, count_mod0)
+#'
 anova.galamm <- function(object, ...) {
   mCall <- match.call(expand.dots = TRUE)
   dots <- list(...)
@@ -61,7 +73,7 @@ anova.galamm <- function(object, ...) {
       AIC = vapply(llks, AIC, 1),
       BIC = vapply(llks, BIC, 1),
       logLik = llk,
-      deviance = -2 * llk, Chisq = chisq,
+      deviance = deviance(object), Chisq = chisq,
       Df = dfChisq,
       `Pr(>Chisq)` = ifelse(dfChisq == 0, NA,
         pchisq(chisq, dfChisq, lower.tail = FALSE)
@@ -121,5 +133,5 @@ abbrDeparse <- function(x, width = 60) {
 #'
 #' @keywords internal
 nobs.galamm <- function(object, ...) {
-  object$n
+  object$model$n
 }

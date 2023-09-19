@@ -27,6 +27,18 @@ add the opportunity to specify the level of prediction in the future. This is
 particularly important for models containing smooth terms, for which the
 predictions currently don't make much sense.
 }
+\examples{
+# Poisson GLMM
+count_mod <- galamm(formula = y ~ lbas * treat + lage + v4 + (1 | subj),
+                    data = epilep, family = poisson)
+
+# Plot response versus link:
+plot(
+     predict(count_mod, type = "link"),
+     predict(count_mod, type = "response")
+     )
+
+}
 \seealso{
 \code{\link[=fitted.galamm]{fitted.galamm()}} for model fits, \code{\link[=residuals.galamm]{residuals.galamm()}} for residuals,
 and \code{\link[=predict]{predict()}} for the generic function.

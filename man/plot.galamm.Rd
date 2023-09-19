@@ -17,6 +17,24 @@ A plot is displayed.
 \description{
 Diagnostic plots for galamm objects
 }
+\examples{
+# Linear mixed model with factor structures
+library(PLmixed) # needed for KYPSsim dataset
+
+# Define loading matrix
+loading_matrix <- list(rbind(c(1, 0), c(NA, 0), c(NA, 1), c(NA, NA)))
+
+# Model formula
+form <- esteem ~ time + (0 + ms | mid) + (0 + hs | hid) + (1 | sid)
+
+# Estimate model
+mod <- galamm(formula = form, data = KYPSsim, factor = list(c("ms", "hs")),
+              load.var = "time", lambda = loading_matrix)
+
+# Diagnostic plot
+plot(mod)
+
+}
 \seealso{
 \code{\link[=residuals.galamm]{residuals.galamm()}} for extracting residuals and \code{\link[=plot]{plot()}} for the
 generic function.

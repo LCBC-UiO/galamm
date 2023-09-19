@@ -17,16 +17,26 @@ NULL
 #'
 #' @seealso [print.VarCorr.galamm()] for the print function.
 #'
+#' @examples
+#' # Linear mixed model with heteroscedastic residuals
+#' mod <- galamm(
+#'     formula = y ~ x + (1 | id),
+#'     weights = ~ (1 | item),
+#'     data = hsced)
+#'
+#' # Extract information on variance and covariance
+#' VarCorr(mod)
+#'
 VarCorr.galamm <- function(x, sigma = 1, ...) {
   useSc <- Reduce(function(`&&`, y) y$family == "gaussian",
-    x$family,
+    family(x),
     init = TRUE
   )
 
   structure(
-    lme4::mkVarCorr(sqrt(x$phi)[[1]], x$cnms,
-      nc = lengths(x$cnms),
-      theta = x$par[x$theta_inds], names(x$cnms)
+    lme4::mkVarCorr(sigma(x)[[1]], x$model$lmod$reTrms$cnms,
+      nc = lengths(x$model$lmod$reTrms$cnms),
+      theta = x$parameters$parameter_estimates[x$parameters$theta_inds], names(x$model$lmod$reTrms$cnms)
     ),
     useSc = useSc,
     class = "VarCorr.galamm"
@@ -58,6 +68,16 @@ VarCorr.galamm <- function(x, sigma = 1, ...) {
 #'
 #' @seealso [VarCorr.galamm()] for the function creating the variance-covariance
 #'   objects.
+#'
+#' @examples
+#' # Linear mixed model with heteroscedastic residuals
+#' mod <- galamm(
+#'     formula = y ~ x + (1 | id),
+#'     weights = ~ (1 | item),
+#'     data = hsced)
+#'
+#' # Extract information on variance and covariance
+#' VarCorr(mod)
 #'
 print.VarCorr.galamm <- function(x, digits = max(3, getOption("digits") - 2),
                                  comp = c("Std.Dev.", "Variance"), corr = any(comp == "Std.Dev."), ...) {

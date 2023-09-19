@@ -19,8 +19,17 @@ NULL
 #'
 #' @seealso [ranef.galamm()] for random effects, [coef.galamm()] for
 #' coefficients more generally, and [confint.galamm()] for confidence intervals.
+#'
+#' @examples
+#' # Poisson GLMM
+#' count_mod <- galamm(formula = y ~ lbas * treat + lage + v4 + (1 | subj),
+#'                     data = epilep, family = poisson)
+#'
+#' # Extract fixed effects
+#' fixef(count_mod)
+#'
 fixef.galamm <- function(object, ...) {
-  ret <- object$par[object$beta_inds]
-  names(ret) <- object$par_names[object$beta_inds]
+  ret <- object$parameters$parameter_estimates[object$parameters$beta_inds]
+  names(ret) <- object$parameters$parameter_names[object$parameters$beta_inds]
   ret
 }

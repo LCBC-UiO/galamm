@@ -22,7 +22,6 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(galamm)
-library(lme4)
 ```
 
 This vignette describes how `galamm` can be used to estimate models with mixed response types.

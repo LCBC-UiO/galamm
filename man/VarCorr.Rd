@@ -21,6 +21,17 @@ An object of class \code{VarCorr.galamm}.
 \description{
 Extract variance and correlation components from model
 }
+\examples{
+# Linear mixed model with heteroscedastic residuals
+mod <- galamm(
+    formula = y ~ x + (1 | id),
+    weights = ~ (1 | item),
+    data = hsced)
+
+# Extract information on variance and covariance
+VarCorr(mod)
+
+}
 \seealso{
 \code{\link[=print.VarCorr.galamm]{print.VarCorr.galamm()}} for the print function.
 }

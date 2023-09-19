@@ -23,16 +23,25 @@ NULL
 #'
 #' @seealso [fixef.galamm()] for fixed effects and [coef.galamm()] for
 #'   coefficients more generally.
+#'
+#' @examples
+#' # Poisson GLMM
+#' count_mod <- galamm(formula = y ~ lbas * treat + lage + v4 + (1 | subj),
+#'                     data = epilep, family = poisson)
+#'
+#' # Extract random effects
+#' ranef(count_mod)
+#'
 ranef.galamm <- function(object, ...) {
-  ans <- object$b ## not always == c(matrix(unlist(getME(object,"b"))))
-  if (!is.null(fl <- object$lmod$reTrms$flist)) {
+  ans <- object$random_effects$b
+  if (!is.null(fl <- object$model$lmod$reTrms$flist)) {
     ## evaluate the list of matrices
     levs <- lapply(fl, levels)
     asgn <- attr(fl, "assign")
-    cnms <- object$lmod$reTrms$cnms
+    cnms <- object$model$lmod$reTrms$cnms
     nc <- lengths(cnms) ## number of terms
 
-    nb <- diff(object$lmod$reTrms$Gp) ## differencing group index is more robust
+    nb <- diff(object$model$lmod$reTrms$Gp) ## differencing group index is more robust
     nbseq <- rep.int(seq_along(nb), nb)
     ml <- split(ans, nbseq)
     for (i in seq_along(ml)) {

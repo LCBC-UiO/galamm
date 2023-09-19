@@ -13,11 +13,19 @@
 #' model predictions, and [plot.galamm()] for diagnostic plots. The generic
 #' function is [residuals()].
 #'
+#' @examples
+#' # Poisson GLMM
+#' count_mod <- galamm(formula = y ~ lbas * treat + lage + v4 + (1 | subj),
+#'                     data = epilep, family = poisson)
+#'
+#' # Extract residuals
+#' residuals(count_mod)
+#'
 residuals.galamm <- function(object, type = c("pearson", "deviance"), ...) {
   type <- match.arg(type, c("pearson", "deviance"))
   if (type == "pearson") {
-    object$pearson_residuals
+    object$model$pearson_residuals
   } else if (type == "deviance") {
-    object$deviance_residuals
+    object$model$deviance_residuals
   }
 }

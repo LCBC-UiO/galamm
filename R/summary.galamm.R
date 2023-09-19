@@ -18,6 +18,14 @@
 #' @seealso [print.summary.galamm()] for the print method and [summary()] for
 #'   the generic.
 #'
+#' @examples
+#' # Linear mixed model with heteroscedastic residuals
+#' mod <- galamm(
+#'     formula = y ~ x + (1 | id),
+#'     weights = ~ (1 | item),
+#'     data = hsced)
+#'
+#' summary(mod)
 #'
 summary.galamm <- function(object, ...) {
   ret <- object
@@ -27,9 +35,9 @@ summary.galamm <- function(object, ...) {
   ret$Lambda <- factor_loadings(object)
   ret$VarCorr <- VarCorr(ret)
 
-  if (!is.null(object$weights_obj)) {
-    ret$weights <- c(1, 1 / object$par[object$weights_inds])
-    names(ret$weights) <- levels(object$weights_obj$flist[[1]])
+  if (!is.null(object$model$weights_obj)) {
+    ret$weights <- c(1, 1 / object$parameters$parameter_estimates[object$parameters$weights_inds])
+    names(ret$weights) <- levels(object$model$weights_obj$flist[[1]])
   }
 
   ret$fixef <- fixef(object)
@@ -43,7 +51,7 @@ summary.galamm <- function(object, ...) {
   colnames(ret$fixef)[3] <- paste(if (attr(ret$VarCorr, "useSc")) "t" else "z", "value")
   ret$fixef <- cbind(ret$fixef, 2 * pnorm(abs(cf3), lower.tail = FALSE))
   colnames(ret$fixef)[4] <- paste("Pr(>|", substr(colnames(ret$fixef)[3], 1, 1), "|)", sep = "")
-  rownames(ret$fixef) <- object$par_names[object$beta_inds]
+  rownames(ret$fixef) <- object$parameters$parameter_names[object$parameters$beta_inds]
 
   if (!is.null(ret$gam)) {
     ret$gam_summary <- summary(ret$gam)
@@ -76,14 +84,23 @@ summary.galamm <- function(object, ...) {
 #'
 #' @references \insertAllCited{}
 #'
+#' @examples
+#' # Linear mixed model with heteroscedastic residuals
+#' mod <- galamm(
+#'     formula = y ~ x + (1 | id),
+#'     weights = ~ (1 | item),
+#'     data = hsced)
+#'
+#' summary(mod)
+#'
 print.summary.galamm <- function(x, digits = max(3, getOption("digits") - 3), ...) {
   cat("Generalized additive latent and mixed model fit by maximum marginal likelihood.\n")
   lme4::.prt.call(x$call)
-  lme4::.prt.family(x$family)
+  lme4::.prt.family(family(x))
   cat("\n")
   lme4::.prt.aictab(x$AICtab)
   cat("\n")
-  lme4::.prt.resids(x$pearson_residuals / sqrt(x$phi), digits = digits)
+  lme4::.prt.resids(residuals(x) / sigma(x), digits = digits)
   if (exists("Lambda", x)) {
     cat("Lambda:\n")
     x$Lambda[x$Lambda == 0] <- NA
@@ -91,7 +108,7 @@ print.summary.galamm <- function(x, digits = max(3, getOption("digits") - 3), ..
     cat("\n")
   }
   lme4::.prt.VC(x$VarCorr, digits = digits, comp = c("Var", "Std.Dev."))
-  lme4::.prt.grps(vapply(x$lmod$reTrms$flist, nlevels, 1), x$n)
+  lme4::.prt.grps(vapply(x$model$lmod$reTrms$flist, nlevels, 1), nobs(x))
   cat("\n")
   if (exists("weights", x)) {
     cat("Variance function:\n")
@@ -138,6 +155,6 @@ llikAIC.galamm <- function(object) {
     BIC = BIC(llik),
     logLik = llik,
     deviance = deviance(object),
-    df.resid = object$n - object$df
+    df.resid = nobs(object) - object$model$df
   )
 }

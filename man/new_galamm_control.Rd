@@ -24,6 +24,12 @@ provided as an argument to \code{\link{galamm}}.
 This function can be called for controling the optimization procedure used
 when fitting GALAMMs using \code{\link{galamm}}.
 }
+\examples{
+# Define control object with quite a high degree of verbosity (trace = 6)
+# and using the last 20 BFGS updates to estimate the Hessian in L-BFGS-B.
+control <- galamm_control(optim_control = list(trace = 6, lmm = 20))
+
+}
 \seealso{
 \code{\link[=galamm_control]{galamm_control()}}
 }

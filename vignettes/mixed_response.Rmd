@@ -17,7 +17,6 @@ vignette: >
 
 ```r
 library(galamm)
-library(lme4)
 ```
 
 This vignette describes how `galamm` can be used to estimate models with mixed response types.
@@ -250,13 +249,7 @@ We can inspect the model implied by the formula by using the `nobars` function f
 
 ```r
 head(model.matrix(nobars(formula), data = diet))
-#>   chd fiber fiber2 chd:age chd:bus age:fiber bus:fiber chd:age:bus age:bus:fiber
-#> 1   0     1      0    0.00       0     -0.38         1        0.00         -0.38
-#> 2   1     0      0   -0.38       1      0.00         0       -0.38          0.00
-#> 3   0     1      0    0.00       0      0.54         1        0.00          0.54
-#> 4   1     0      0    0.54       1      0.00         0        0.54          0.00
-#> 5   0     1      0    0.00       0      8.78         1        0.00          8.78
-#> 6   1     0      0    8.78       1      0.00         0        8.78          0.00
+#> Error in nobars(formula): could not find function "nobars"
 ```
 
 Finally, the random effects part `(0 + loading | id)` specifies that for each `id` there should be a single random intercept, which corresponds to latent fiber intake $\eta_{j}$. Write `0 + loading` means that $\eta_{j}$ should be multiplied by the factor loadings defined in the loading matrix.
@@ -282,8 +275,8 @@ Looking at the summary output, however, reveals that there is an issue here:
 
 ```r
 summary(mod)
-#> Warning in vcov.galamm(object, parm = object$lambda_inds): Rank deficient Hessian matrix. Could not compute
-#> covariance matrix.
+#> Warning in vcov.galamm(object, parm = object$parameters$lambda_inds): Rank deficient Hessian matrix. Could not
+#> compute covariance matrix.
 #> Warning in vcov.galamm(object, "beta"): Rank deficient Hessian matrix. Could not compute covariance matrix.
 #> Generalized additive latent and mixed model fit by maximum marginal likelihood.
 #> Formula: formula
@@ -544,8 +537,8 @@ anova(mod, mod0)
 #> mod0: formula0
 #> mod: formula
 #>      npar    AIC    BIC  logLik deviance  Chisq Df Pr(>Chisq)
-#> mod0    9 2764.0 2805.5 -1373.0   2746.0                     
-#> mod    12 2768.3 2823.6 -1372.2   2744.3 1.7058  3     0.6357
+#> mod0    9 2764.0 2805.5 -1373.0   2002.9                     
+#> mod    12 2768.3 2823.6 -1372.2   2002.9 1.7058  3     0.6357
 ```
 
 

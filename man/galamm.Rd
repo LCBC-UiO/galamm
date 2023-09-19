@@ -72,7 +72,56 @@ are used.}
 \code{galamm_control} resulting from calling \code{\link{galamm_control}}.}
 }
 \value{
-A model object of class \code{galamm}.
+A model object of class \code{galamm}, containing the following
+elements:
+\itemize{
+\item \code{call} the matched call used when fitting the model.
+\item \code{random_effects} a list containing the following two elements:
+\itemize{
+\item \code{b} random effects in original parametrization.
+\item \code{u} random effects standardized to have identity covariance matrix.
+}
+\item \code{model} a list with various elements related to the model setup and fit:
+\itemize{
+\item \code{deviance} deviance of final model.
+\item \code{deviance_residuals} deviance residuals of the final model.
+\item \code{df} degrees of freedom of model.
+\item \code{family} a list of one or more family objects, as specified in the \code{family}
+arguments to \code{galamm}.
+\item \code{fit} a numeric vector with fitted values.
+\item \code{hessian} Hessian matrix of final model, i.e., the second derivative of the
+log-likelihood with respect to all model parameters.
+\item \code{lmod} Linear model object returned by \code{lme4::lFormula}, which
+is used internally for setting up the models.
+\item \code{loglik} Log-likelihood of final model.
+\item \code{n} Number of observations.
+\item \code{pearson_residual} Pearson residuals of final model.
+\item \code{response} A numeric vector containing the response values used when
+fitting the model.
+\item \code{weights_object} Object with weights used in model fitting. Is \code{NULL}
+when no weights were used.
+}
+\item \code{parameters} A list object with model parameters and related information:
+\itemize{
+\item \code{beta_inds} Integer vector specifying the indices of fixed regression
+coefficients among the estimated model parameters.
+\item \code{dispersion_parameter} One or more dispersion parameters of the final model.
+\item \code{lambda_dummy} Dummy matrix of factor loadings, which shows the structure of the
+loading matrix that was supplied in the \code{lambda} arguments.
+\item \code{lambda_inds} Integer vector specifying the indices of factor loadings among
+the estimated model parameters.
+\item \code{parameter_estimates} Numeric vector of final parameter estimates.
+\item \code{parameter_names} Names of all parameters estimates.
+\item \code{theta_inds} Integer vector specifying the indices of variance components among
+the estimated model parameters. Technically these are the entries of the
+Cholesky decomposition of the covariance matrix.
+\item \code{weights_inds} Integer vector specifying the indices of estimated weights
+(used in heteroscedastic Gaussian models) among the estimated model
+parameters.
+}
+\item \code{gam} List containing information about smooth terms in the model. If no
+smooth terms are contained in the model, then it is \code{NULL}.
+}
 }
 \description{
 This function fits a generalized additive latent and mixed model (GALAMMs),
@@ -96,6 +145,75 @@ mixed models by the \code{lme4} package
 define factor structures is based on that used by the \code{PLmixed} package,
 which is detailed in
 \insertCite{rockwoodEstimatingComplexMeasurement2019;textual}{galamm}.
+}
+\examples{
+# Mixed response measurement error model ------------------------------------
+
+# Measurement error model with mixed Gaussian and binomial outcome.
+# The statistical model is explained in further detail in the vignette
+# on mixed response models.
+
+# The first two items are replicate measurements of fiber intake, and
+# receive a fixed factor loading of 1. The third item is a binary indicator
+# of coronary heart disease, and it's factor loading will be estimated.
+loading_matrix <- matrix(c(1, 1, NA), ncol = 1)
+
+# The model has mixed Gaussian and binomial responses, and we need to
+# define the mapping.
+families <- c(gaussian, binomial)
+family_mapping <- ifelse(diet$item == "chd", 2, 1)
+
+# Model formula
+formula <- y ~ 0 + chd + (age * bus):chd + fiber +
+          (age * bus):fiber + fiber2 + (0 + loading | id)
+
+# We fit the model, setting the intial value of the random effect variance
+# to 10.
+mod <- galamm(
+    formula = formula,
+    data = diet,
+    family = families,
+    family_mapping = family_mapping,
+    factor = list("loading"),
+    load.var = "item",
+    lambda = list(loading_matrix),
+    start = list(theta = 10)
+  )
+
+# Summary information
+summary(mod)
+
+# Generalized additive mixed model with factor structures -------------------
+
+# The cognition dataset contains simulated measurements of three latent
+# time-dependent processes, corresponding to individuals' abilities in
+# cognitive domains. We focus here on the first domain, and subset the data
+# accordingly.
+dat <- subset(cognition, domain == 1)
+dat$item <- factor(dat$item)
+
+# There are eight timepoints for each individual, and at each timepoint
+# there are three items measuring ability in the cognitive domain. We fix
+# the factor loading for the first measurement to one, and estimate the
+# remaining two. This is specified in the loading matrix.
+loading_matrix <- matrix(c(1, NA, NA), ncol = 1)
+
+# We can now estimate the model.
+mod <- galamm(
+    formula = y ~ 0 + item + s(x, load.var = "loading") +
+              (0 + loading | id / timepoint),
+    data = dat,
+    load.var = "item",
+    lambda = list(loading_matrix),
+    factor = list("loading")
+    )
+
+# We can show summary information.
+summary(mod)
+
+# We can plot the estimated smooth term
+plot_smooth(mod, shade = TRUE)
+
 }
 \references{
 \insertAllCited{}

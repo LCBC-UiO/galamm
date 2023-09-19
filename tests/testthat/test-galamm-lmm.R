@@ -44,7 +44,7 @@ test_that("LMM with simple factor works", {
     fixed = TRUE
   )
 
-  expect_equal(mod$loglik, -193.563337783604)
+  expect_equal(mod$model$loglik, -193.563337783604)
   expect_equal(
     summary(mod)$AICtab,
     c(
@@ -64,7 +64,7 @@ test_that("LMM with simple factor works", {
   )
 
   expect_equal(
-    mod$pearson_residuals[c(4, 8, 11)],
+    residuals(mod)[c(4, 8, 11)],
     c(0.0513522294535425, -0.181269847807669, 0.0759916652950277)
   )
 })
@@ -89,8 +89,8 @@ test_that("LMM with two factors works", {
     lambda = list(kyps.lam)
   )
 
-  expect_equal(kyps_model$loglik, -33.7792632108483)
-  expect_equal(kyps_model$par[kyps_model$lambda_inds],
+  expect_equal(kyps_model$model$loglik, -33.7792632108483)
+  expect_equal(kyps_model$parameters$parameter_estimates[kyps_model$parameters$lambda_inds],
     c(
       0.631763067142624, -0.114603879076418, 0.0145214343084242,
       1.07489949334559
@@ -206,8 +206,8 @@ test_that("LMM with two raters works", {
 #                     "trait2.t", "trait1.s", "trait2.s"))
 #   )
 #
-#   expect_equal(judge_galamm$loglik, -56553.2785661794)
-#   expect_equal(judge_galamm$par,
+#   expect_equal(judge_galamm$model$loglik, -56553.2785661794)
+#   expect_equal(judge_galamm$parameters$parameter_estimates,
 #                c(0.784430334881896, 0.566133764367859, 0.398568132799786, 0.200370294453492,
 #                  0.334085183988745, 0.00647882691731993, 0.235677264194959, 0.773891841821503,
 #                  0.337997663719164, 0.869131637864806, 0.498543199885178, 0.239475682251201,

@@ -20,6 +20,15 @@ A matrix with the requested fixed effects.
 \description{
 Extract the fixed regression coefficients.
 }
+\examples{
+# Poisson GLMM
+count_mod <- galamm(formula = y ~ lbas * treat + lage + v4 + (1 | subj),
+                    data = epilep, family = poisson)
+
+# Extract fixed effects
+fixef(count_mod)
+
+}
 \seealso{
 \code{\link[=ranef.galamm]{ranef.galamm()}} for random effects, \code{\link[=coef.galamm]{coef.galamm()}} for
 coefficients more generally, and \code{\link[=confint.galamm]{confint.galamm()}} for confidence intervals.

@@ -267,7 +267,7 @@ gamm4.wrapup <- function(gobj, ret, final_model) {
     smooth = gobj$G$smooth,
     nsdf = gobj$G$nsdf,
     df.null = nrow(gobj$G$X),
-    y = ret$response,
+    y = ret$model$response,
     terms = gobj$gam.terms,
     pterms = gobj$G$pterms,
     xlevels = gobj$G$xlevels,

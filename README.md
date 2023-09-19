@@ -167,7 +167,7 @@ summary(mixed_resp)
 #> Random effects:
 #>  Groups Name    Variance Std.Dev.
 #>  id     loading 1.05     1.025   
-#> Number of obs: 4000, groups:  id, 1000
+#>  id, 1000
 #> 
 #> Fixed effects:
 #>             Estimate Std. Error z value  Pr(>|z|)

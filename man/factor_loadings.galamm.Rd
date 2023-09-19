@@ -22,6 +22,36 @@ Extract factor loadings from galamm object
 This function has been named \code{factor_loadings} rather than just
 \code{loadings} to avoid conflict with \code{stats::loadings}.
 }
+\examples{
+# Generalized additive mixed model with factor structures -------------------
+
+# The cognition dataset contains simulated measurements of three latent
+# time-dependent processes, corresponding to individuals' abilities in
+# cognitive domains. We focus here on the first domain, and subset the data
+# accordingly.
+dat <- subset(cognition, domain == 1)
+dat$item <- factor(dat$item)
+
+# There are eight timepoints for each individual, and at each timepoint
+# there are three items measuring ability in the cognitive domain. We fix
+# the factor loading for the first measurement to one, and estimate the
+# remaining two. This is specified in the loading matrix.
+loading_matrix <- matrix(c(1, NA, NA), ncol = 1)
+
+# We can now estimate the model.
+mod <- galamm(
+    formula = y ~ 0 + item + s(x, load.var = "loading") +
+              (0 + loading | id / timepoint),
+    data = dat,
+    load.var = "item",
+    lambda = list(loading_matrix),
+    factor = list("loading")
+    )
+
+# Extract factor loadings
+factor_loadings(mod)
+
+}
 \seealso{
 \code{\link[=fixef.galamm]{fixef.galamm()}} for fixed regression coefficients,
 \code{\link[=confint.galamm]{confint.galamm()}} for confidence intervals, and \code{\link[=coef.galamm]{coef.galamm()}} for

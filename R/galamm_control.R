@@ -17,6 +17,12 @@
 #' @export
 #'
 #' @seealso [galamm()]
+#'
+#' @examples
+#' # Define control object with quite a high degree of verbosity (trace = 6)
+#' # and using the last 20 BFGS updates to estimate the Hessian in L-BFGS-B.
+#' control <- galamm_control(optim_control = list(trace = 6, lmm = 20))
+#'
 galamm_control <- function(optim_control = list(),
                            maxit_conditional_modes = 10) {
   if (length(trace) != 1L && trace < 0) {

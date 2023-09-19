@@ -21,6 +21,15 @@ Numeric vector of residual values.
 \description{
 Residuals of galamm objects
 }
+\examples{
+# Poisson GLMM
+count_mod <- galamm(formula = y ~ lbas * treat + lage + v4 + (1 | subj),
+                    data = epilep, family = poisson)
+
+# Extract residuals
+residuals(count_mod)
+
+}
 \seealso{
 \code{\link[=fitted.galamm]{fitted.galamm()}} for model fitted values, \code{\link[=predict.galamm]{predict.galamm()}} for
 model predictions, and \code{\link[=plot.galamm]{plot.galamm()}} for diagnostic plots. The generic
