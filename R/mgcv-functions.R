@@ -700,7 +700,7 @@ interpret.gam0 <- function(gf) {
   for (i in seq_len(nt)) { # work through all terms
     if (k <= ns && ((ks <= len.sp && sp[ks] == i) ||
       (kt2 <= len.t2p && t2p[kt2] == i))) { # it's a smooth
-      smooth.spec[[k]] <- eval(parse(text = terms[i]), envir = p.env)
+      smooth.spec[[k]] <- eval(parse(text = paste0("galamm::", terms[[i]])), envir = p.env)
       if (!is.null(a <- attr(smooth.spec[[k]], "load.var"))) {
         smooth.spec[[k]]$label <- paste(smooth.spec[[k]]$label, a, sep = ":")
       }
