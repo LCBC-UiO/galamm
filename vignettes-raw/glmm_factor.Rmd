@@ -122,7 +122,7 @@ confint(mod, parm = "lambda")
 
 We can also show a diagnostic plot, although for a binomial model like this it is not very informative.
 
-```{r, glmm_factor_binomial_diagnostic}
+```{r, glmm_factor_binomial_diagnostic, fig.cap="Diagnostic plot for binomial model."}
 plot(mod)
 ```
 
@@ -189,7 +189,7 @@ factor_loadings(count_mod)
 
 We can again look at a diagnostic plot, which in this case looks much more reasonable.
 
-```{r, glmm_factor_poisson_diagnostic}
+```{r, glmm_factor_poisson_diagnostic, fig.cap="Diagnostic plot for Poisson model."}
 plot(count_mod)
 ```
 
@@ -207,7 +207,7 @@ count_mod_lme4 <- glmer(
 
 We can confirm that the diagnostic plot has the same values as for galamm:
 
-```{r, glmm_factor_poisson_diagnostic_lme4}
+```{r, glmm_factor_poisson_diagnostic_lme4, fig.cap="lme4 diagnostic plot for Poisson model."}
 plot(count_mod_lme4)
 ```
 

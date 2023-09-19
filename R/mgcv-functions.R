@@ -19,21 +19,7 @@
 #'
 gam.setup <- function(formula, pterms,
                       data = stop("No data supplied to gam.setup")) {
-  H <- NULL
-  if (inherits(formula, "split.gam.formula")) {
-    split <- formula
-  } else if (inherits(formula, "formula")) {
-    split <- mgcv::interpret.gam(formula)
-  } else {
-    stop("First argument is no sort of formula!")
-  }
-
-  if (length(split$smooth.spec) == 0) {
-    if (split$pfok == 0) stop("You've got no model....")
-    m <- 0
-  } else {
-    m <- length(split$smooth.spec)
-  } # number of smooth terms
+  m <- length(formula$smooth.spec)
 
   G <- list(
     m = m, min.sp = NULL, H = NULL, pearson.extra = 0,
@@ -41,19 +27,19 @@ gam.setup <- function(formula, pterms,
   ) ## dev.extra gets added to deviance if REML/ML used in gam.fit3
 
   if (is.null(attr(data, "terms"))) { # then data is not a model frame
-    mf <- model.frame(split$pf, data, drop.unused.levels = FALSE)
+    mf <- model.frame(formula$pf, data, drop.unused.levels = FALSE)
   } else {
     mf <- data
-  } # data is already a model frame
+  }
 
   G$intercept <- attr(attr(mf, "terms"), "intercept") > 0
-  G$offset <- model.offset(mf)
 
+  ## get any model offset. Complicated by possibility of offsets in multiple formulae...
+  G$offset <- model.offset(mf) # get any model offset including from offset argument
 
   if (!is.null(G$offset)) G$offset <- as.numeric(G$offset)
 
   # construct strictly parametric model matrix....
-
   X <- model.matrix(pterms, mf)
 
   rownames(X) <- NULL ## save memory
@@ -64,80 +50,41 @@ gam.setup <- function(formula, pterms,
   G$assign <- attr(X, "assign") # used to tell which coeffs relate to which pterms
 
   ## now deal with any user supplied penalties on the parametric part of the model...
-  PP <- NULL
 
   # next work through smooth terms (if any) extending model matrix.....
 
   G$smooth <- list()
   G$S <- list()
+  id.list <- list()
+  for (i in seq_len(m)) {
+    attr(formula$smooth.spec[[i]], "gamm") <- TRUE
+  }
 
 
-  if (m > 0) for (i in 1:m) attr(split$smooth.spec[[i]], "gamm") <- TRUE
-
-
-  if (m > 0) { ## search smooth.spec[[]] for terms linked by common id's
-    id.list <- list() ## id information list
-    for (i in 1:m) {
-      if (!is.null(split$smooth.spec[[i]]$id)) {
-        id <- as.character(split$smooth.spec[[i]]$id)
-        if (length(id.list) && id %in% names(id.list)) { ## it's an existing id
-          ni <- length(id.list[[id]]$sm.i) ## number of terms so far with this id
-          id.list[[id]]$sm.i[ni + 1] <- i ## adding smooth.spec index to this id's list
-          ## clone smooth.spec from base smooth spec....
-          base.i <- id.list[[id]]$sm.i[1]
-
-          split$smooth.spec[[i]] <- clone.smooth.spec(
-            split$smooth.spec[[base.i]],
-            split$smooth.spec[[i]]
-          )
-
-          ## add data for this term to the data list for basis setup...
-          temp.term <- split$smooth.spec[[i]]$term
-
-          ## note cbind deliberate in next line, as construction will handle matrix argument
-          ## correctly...
-          for (j in seq_along(temp.term)) {
-            id.list[[id]]$data[[j]] <- cbind(
-              id.list[[id]]$data[[j]],
-              mgcv::get.var(temp.term[j], data, vecMat = FALSE)
-            )
-          }
-        } else { ## new id
-          id.list[[id]] <- list(sm.i = i) ## start the array of indices of smooths with this id
-          id.list[[id]]$data <- list()
-          ## need to collect together all data for which this basis will be used,
-          ## for basis setup...
-          term <- split$smooth.spec[[i]]$term
-          for (j in seq_along(term)) id.list[[id]]$data[[j]] <- mgcv::get.var(term[j], data, vecMat = FALSE)
-        } ## new id finished
-      }
-    }
-  } ## id.list complete
 
   G$off <- array(0, 0)
   first.para <- G$nsdf + 1
   sm <- list()
   newm <- 0
-  if (m > 0) {
-    for (i in 1:m) {
-      # idea here is that terms are set up in accordance with information given in split$smooth.spec
-      # appropriate basis constructor is called depending on the class of the smooth
-      # constructor returns penalty matrices model matrix and basis specific information
+  id.list <- list()
 
-      id <- split$smooth.spec[[i]]$id
-      if (is.null(id)) { ## regular evaluation
-        sml <- mgcv::smoothCon(split$smooth.spec[[i]], data, absorb.cons = TRUE)
-      } else { ## it's a smooth with an id, so basis setup data differs from model matrix data
-        names(id.list[[id]]$data) <- split$smooth.spec[[i]]$term ## give basis data suitable names
-        sml <- mgcv::smoothCon(split$smooth.spec[[i]], id.list[[id]]$data,
-          absorb.cons = TRUE, dataX = data
-        )
-      }
 
-      ind <- seq_along(sml)
-      sm[ind + newm] <- sml[ind]
-      newm <- newm + length(sml)
+  for (i in seq_len(m)) {
+    # idea here is that terms are set up in accordance with information given in formula$smooth.spec
+    # appropriate basis constructor is called depending on the class of the smooth
+    # constructor returns penalty matrices model matrix and basis specific information
+
+    id <- formula$smooth.spec[[i]]$id
+    sml <- mgcv::smoothCon(formula$smooth.spec[[i]], data, absorb.cons = TRUE)
+    for (k in seq_along(sml)) {
+      sml[[k]]$label <- paste(sml[[k]]$label,
+        attr(formula$smooth.spec[[i]], "load.var")[[k]],
+        sep = ":"
+      )
     }
+    ind <- seq_along(sml)
+    sm[ind + newm] <- sml[ind]
+    newm <- newm + length(sml)
   }
 
   G$m <- m <- newm ## number of actual smooths
@@ -167,7 +114,7 @@ gam.setup <- function(formula, pterms,
         } else {
           Sname <- names(sm[[i]]$S)
           lspn <- if (is.null(Sname)) {
-            paste(sm[[i]]$label, seq(length.S), sep = "")
+            paste(sm[[i]]$label, 1:length.S, sep = "")
           } else {
             paste(sm[[i]]$label, Sname, sep = "")
           } ## names for all sp's
@@ -206,46 +153,42 @@ gam.setup <- function(formula, pterms,
   ## create the model matrix...
 
   Xp <- NULL ## model matrix under prediction constraints, if given
-  if (m > 0) {
-    for (i in 1:m) {
-      n.para <- ncol(sm[[i]]$X)
-      # define which elements in the parameter vector this smooth relates to....
-      sm[[i]]$first.para <- first.para
-      first.para <- first.para + n.para
-      sm[[i]]$last.para <- first.para - 1
-      ## termwise offset handling ...
-      Xoff <- attr(sm[[i]]$X, "offset")
-      if (!is.null(Xoff)) {
-        if (is.null(G$offset)) {
-          G$offset <- Xoff
-        } else {
-          G$offset <- G$offset + Xoff
-        }
-      }
-      ## model matrix accumulation ...
-
-      ## alternative version under alternative constraint first (prediction only)
-      if (is.null(sm[[i]]$Xp)) {
-        if (!is.null(Xp)) Xp <- methods::cbind2(Xp, sm[[i]]$X)
+  for (i in seq_len(m)) {
+    n.para <- ncol(sm[[i]]$X)
+    # define which elements in the parameter vector this smooth relates to....
+    sm[[i]]$first.para <- first.para
+    first.para <- first.para + n.para
+    sm[[i]]$last.para <- first.para - 1
+    ## termwise offset handling ...
+    Xoff <- attr(sm[[i]]$X, "offset")
+    if (!is.null(Xoff)) {
+      if (is.null(G$offset)) {
+        G$offset <- Xoff
       } else {
-        if (is.null(Xp)) Xp <- X
-        Xp <- methods::cbind2(Xp, sm[[i]]$Xp)
-        sm[[i]]$Xp <- NULL
+        G$offset <- G$offset + Xoff
       }
-      ## now version to use for fitting ...
-      X <- methods::cbind2(X, sm[[i]]$X)
-      sm[[i]]$X <- NULL
-
-      G$smooth[[i]] <- sm[[i]]
     }
+    ## model matrix accumulation ...
+
+    ## alternative version under alternative constraint first (prediction only)
+    if (is.null(sm[[i]]$Xp)) {
+      if (!is.null(Xp)) Xp <- methods::cbind2(Xp, sm[[i]]$X)
+    } else {
+      if (is.null(Xp)) Xp <- X
+      Xp <- methods::cbind2(Xp, sm[[i]]$Xp)
+      sm[[i]]$Xp <- NULL
+    }
+    ## now version to use for fitting ...
+    X <- methods::cbind2(X, sm[[i]]$X)
+    sm[[i]]$X <- NULL
+
+    G$smooth[[i]] <- sm[[i]]
   }
 
   if (is.null(Xp)) {
     G$cmX <- colMeans(X) ## useful for componentwise CI construction
   } else {
     G$cmX <- colMeans(Xp)
-    ## transform from fit params to prediction params...
-
 
     qrx <- qr(Xp, LAPACK = TRUE)
     R <- qr.R(qrx)
@@ -268,6 +211,8 @@ gam.setup <- function(formula, pterms,
   G$X <- X
   rm(X)
   n.p <- ncol(G$X)
+  # deal with penalties
+
   G$sp <- rep(-1, ncol(L))
 
   names(G$sp) <- sp.names
@@ -306,64 +251,45 @@ gam.setup <- function(formula, pterms,
   ## fixed and free...
   k <- 1
   if (length(idx)) for (i in seq_along(idx)) idx[[i]]$sp.done <- FALSE
-  if (m > 0) {
-    for (i in 1:m) { ## work through all smooths
-      id <- sm[[i]]$id
-      if (!is.null(id)) { ## smooth with id
-        if (idx[[id]]$nc > 0) { ## only copy if there are sp's
-          G$smooth[[i]]$sp <- G$sp[idx[[id]]$c:(idx[[id]]$c + idx[[id]]$nc - 1)]
-        }
-        if (!idx[[id]]$sp.done) { ## only update k on first encounter with this smooth
-          idx[[id]]$sp.done <- TRUE
-          k <- k + idx[[id]]$nc
-        }
-      } else { ## no id, just work through sp
-        if (is.null(sm[[i]]$L)) nc <- length(sm[[i]]$S) else nc <- ncol(sm[[i]]$L)
-        if (nc > 0) G$smooth[[i]]$sp <- G$sp[k:(k + nc - 1)]
-        k <- k + nc
+
+  for (i in seq_len(m)) { ## work through all smooths
+    id <- sm[[i]]$id
+    if (!is.null(id)) { ## smooth with id
+      if (idx[[id]]$nc > 0) { ## only copy if there are sp's
+        G$smooth[[i]]$sp <- G$sp[idx[[id]]$c:(idx[[id]]$c + idx[[id]]$nc - 1)]
       }
+      if (!idx[[id]]$sp.done) { ## only update k on first encounter with this smooth
+        idx[[id]]$sp.done <- TRUE
+        k <- k + idx[[id]]$nc
+      }
+    } else { ## no id, just work through sp
+      if (is.null(sm[[i]]$L)) nc <- length(sm[[i]]$S) else nc <- ncol(sm[[i]]$L)
+      if (nc > 0) G$smooth[[i]]$sp <- G$sp[k:(k + nc - 1)]
+      k <- k + nc
     }
-  } ## now all elements of G$smooth have a record of initial sp.
+  }
+
+
+
 
   k.sp <- 0 # count through sp and S
   G$rank <- array(0, 0)
   if (m > 0) {
     for (i in 1:m) {
       sm <- G$smooth[[i]]
-      if (length(sm$S) > 0) {
-        for (j in seq_along(sm$S)) { # work through penalty matrices
-          k.sp <- k.sp + 1
-          G$off[k.sp] <- sm$first.para
-          G$S[[k.sp]] <- sm$S[[j]]
-          G$rank[k.sp] <- sm$rank[j]
-        }
+
+      for (j in seq_along(sm$S)) { # work through penalty matrices
+        k.sp <- k.sp + 1
+        G$off[k.sp] <- sm$first.para
+        G$S[[k.sp]] <- sm$S[[j]]
+        G$rank[k.sp] <- sm$rank[j]
       }
     }
   }
 
   ## need to modify L, lsp.names, G$S, G$sp, G$rank and G$off to include any penalties
   ## on parametric stuff, at this point....
-  if (!is.null(PP)) { ## deal with penalties on parametric terms
-    L <- rbind(
-      cbind(L, matrix(0, nrow(L), ncol(PP$L))),
-      cbind(matrix(0, nrow(PP$L), ncol(L)), PP$L)
-    )
-    G$off <- c(PP$off, G$off)
-    G$S <- c(PP$S, G$S)
-    G$rank <- c(PP$rank, G$rank)
-    G$sp <- c(PP$sp, G$sp)
-    lsp.names <- c(PP$full.sp.names, lsp.names)
-    G$n.paraPen <- length(PP$off)
-    if (!is.null(PP$min.sp)) { ## deal with minimum sps
-      H <- matrix(0, n.p, n.p)
-      for (i in seq_along(PP$S)) {
-        ind <- PP$off[i]:(PP$off[i] + ncol(PP$S[[i]]) - 1)
-        H[ind, ind] <- H[ind, ind] + PP$min.sp[i] * PP$S[[i]]
-      }
-    } ## min.sp stuff finished
-  } else {
-    G$n.paraPen <- 0
-  }
+  G$n.paraPen <- 0
 
 
   ## Now remove columns of L and rows of sp relating to fixed
@@ -374,14 +300,14 @@ gam.setup <- function(formula, pterms,
   if (sum(fix.ind)) {
     lsp0 <- G$sp[fix.ind]
     ind <- lsp0 == 0 ## find the zero s.p.s
-    ef0 <- indi <- (seq_along(ind))[ind]
-    if (length(indi) > 0) {
-      for (i in seq_along(indi)) {
-        ## find "effective zero" to replace each zero s.p. with
-        ii <- G$off[i]:(G$off[i] + ncol(G$S[[i]]) - 1)
-        ef0[i] <- norm(G$X[, ii], type = "F")^2 / norm(G$S[[i]], type = "F") * .Machine$double.eps * .1
-      }
+    ef0 <- indi <- seq_along(ind)[ind]
+
+    for (i in seq_along(indi)) {
+      ## find "effective zero" to replace each zero s.p. with
+      ii <- seq(from = G$off[i], to = (G$off[i] + ncol(G$S[[i]]) - 1), by = 1)
+      ef0[i] <- norm(G$X[, ii], type = "F")^2 / norm(G$S[[i]], type = "F") * .Machine$double.eps * .1
     }
+
     lsp0[!ind] <- log(lsp0[!ind])
     lsp0[ind] <- log(ef0)
     lsp0 <- as.numeric(L[, fix.ind, drop = FALSE] %*% lsp0)
@@ -392,7 +318,7 @@ gam.setup <- function(formula, pterms,
     lsp0 <- rep(0, nrow(L))
   }
 
-  G$H <- H
+
 
   if (ncol(L) == nrow(L) && !sum(L != diag(ncol(L)))) L <- NULL ## it's just the identity
 
@@ -400,7 +326,7 @@ gam.setup <- function(formula, pterms,
   G$lsp0 <- lsp0
   names(G$lsp0) <- lsp.names ## names of all smoothing parameters (not just underlying)
 
-  G$y <- drop(data[[split$response]])
+  G$y <- drop(data[[formula$response]])
   ydim <- dim(G$y)
   if (!is.null(ydim) && length(ydim) < 2) dim(G$y) <- NULL
 
@@ -445,7 +371,7 @@ gam.setup <- function(formula, pterms,
   ## Deal with non-linear parameterizations...
 
 
-  G$pP <- PP ## return paraPen object, if present
+  G$pP <- NULL ## return paraPen object, if present
 
   G
 } ## gam.setup
@@ -485,29 +411,29 @@ variable.summary <- function(pf, dl, n) {
   p.name <- all.vars(pf[-2]) ## variables in parametric part (not response)
   vs <- list()
   v.n <- length(v.name)
-  if (v.n > 0) {
-    for (i in 1:v.n) {
-      if (v.name[i] %in% p.name) para <- TRUE else para <- FALSE ## is variable in the parametric part?
 
-      if (para && is.matrix(dl[[v.name[i]]]) && ncol(dl[[v.name[i]]]) > 1) { ## parametric matrix --- a special case
-        x <- matrix(apply(dl[[v.name[i]]], 2, quantile, probs = 0.5, type = 3, na.rm = TRUE), 1, ncol(dl[[v.name[i]]])) ## nearest to median entries
-      } else { ## anything else
-        x <- dl[[v.name[i]]]
-        if (is.character(x)) x <- as.factor(x)
-        if (is.factor(x)) {
-          x <- x[!is.na(x)]
-          lx <- levels(x)
-          freq <- tabulate(x)
-          ii <- min((seq_along(lx))[freq == max(freq)])
-          x <- factor(lx[ii], levels = lx)
-        } else {
-          x <- as.numeric(x)
-          x <- c(min(x, na.rm = TRUE), as.numeric(quantile(x, probs = .5, type = 3, na.rm = TRUE)), max(x, na.rm = TRUE)) ## 3 figure summary
-        }
+  for (i in seq_len(v.n)) {
+    if (v.name[i] %in% p.name) para <- TRUE else para <- FALSE ## is variable in the parametric part?
+
+    if (para && is.matrix(dl[[v.name[i]]]) && ncol(dl[[v.name[i]]]) > 1) { ## parametric matrix --- a special case
+      x <- matrix(apply(dl[[v.name[i]]], 2, quantile, probs = 0.5, type = 3, na.rm = TRUE), 1, ncol(dl[[v.name[i]]])) ## nearest to median entries
+    } else { ## anything else
+      x <- dl[[v.name[i]]]
+      if (is.character(x)) x <- as.factor(x)
+      if (is.factor(x)) {
+        x <- x[!is.na(x)]
+        lx <- levels(x)
+        freq <- tabulate(x)
+        ii <- min((seq_along(lx))[freq == max(freq)])
+        x <- factor(lx[ii], levels = lx)
+      } else {
+        x <- as.numeric(x)
+        x <- c(min(x, na.rm = TRUE), as.numeric(quantile(x, probs = .5, type = 3, na.rm = TRUE)), max(x, na.rm = TRUE)) ## 3 figure summary
       }
-      vs[[v.name[i]]] <- x
     }
+    vs[[v.name[i]]] <- x
   }
+
   vs
 }
 
@@ -536,7 +462,7 @@ gam.side <- function(sm, Xp, tol = .Machine$double.eps^.5) {
   }
   v.names <- array("", 0)
   maxDim <- 1
-  for (i in 1:m) { ## collect all term names and max smooth `dim'
+  for (i in seq_len(m)) { ## collect all term names and max smooth `dim'
     vn <- sm[[i]]$term
     ## need to include by variables in names
     if (sm[[i]]$by != "NA") vn <- paste(vn, sm[[i]]$by, sep = "")
@@ -602,8 +528,8 @@ gam.side <- function(sm, Xp, tol = .Machine$double.eps^.5) {
   }
   nobs <- nrow(sm[[1]]$X) ## number of observations
 
-  for (d in 1:maxDim) { ## work up through dimensions
-    for (i in 1:m) { ## work through smooths
+  for (d in seq_len(maxDim)) { ## work up through dimensions
+    for (i in seq_len(m)) { ## work through smooths
       if (sm[[i]]$dim == d && sm[[i]]$side.constrain) { ## check for nesting
         if (with.pen) {
           X1 <- matrix(c(rep(1, nobs), rep(0, np)), nobs + np, as.integer(intercept))
@@ -611,20 +537,19 @@ gam.side <- function(sm, Xp, tol = .Machine$double.eps^.5) {
           X1 <- matrix(1, nobs, as.integer(intercept))
         }
         X1comp <- rep(0, 0) ## list of components of X1 to avoid duplication
-        for (j in 1:d) { ## work through variables
+        for (j in seq_len(d)) { ## work through variables
           b <- sm.id[[sm[[i]]$vn[j]]] # list of smooths dependent on this variable
           k <- (seq_along(b))[b == i] ## locate current smooth in list
-          if (k > 1) {
-            for (l in 1:(k - 1)) {
-              if (!b[l] %in% X1comp) { ## collect X columns
-                X1comp <- c(X1comp, b[l]) ## keep track of components to avoid adding same one twice
-                if (with.pen) { ## need to use augmented model matrix in testing
-                  if (is.null(sm[[b[l]]]$Xa)) sm[[b[l]]]$Xa <- augment.smX(sm[[b[l]]], nobs, np)
-                  X1 <- cbind(X1, sm[[b[l]]]$Xa)
-                } else {
-                  X1 <- cbind(X1, sm[[b[l]]]$X)
-                } ## penalties not considered
-              }
+
+          for (l in seq_len(k - 1)) {
+            if (!b[l] %in% X1comp) { ## collect X columns
+              X1comp <- c(X1comp, b[l]) ## keep track of components to avoid adding same one twice
+              if (with.pen) { ## need to use augmented model matrix in testing
+                if (is.null(sm[[b[l]]]$Xa)) sm[[b[l]]]$Xa <- augment.smX(sm[[b[l]]], nobs, np)
+                X1 <- cbind(X1, sm[[b[l]]]$Xa)
+              } else {
+                X1 <- cbind(X1, sm[[b[l]]]$X)
+              } ## penalties not considered
             }
           }
         } ## Now X1 contains columns for all lower dimensional terms
@@ -644,7 +569,7 @@ gam.side <- function(sm, Xp, tol = .Machine$double.eps^.5) {
           ## work through list of penalty matrices, applying constraints...
           nsmS <- length(sm[[i]]$S)
           if (nsmS > 0) {
-            for (j in nsmS:1) { ## working down so that dropping is painless
+            for (j in seq(from = nsmS, to = 1, by = -1)) { ## working down so that dropping is painless
               sm[[i]]$S[[j]] <- sm[[i]]$S[[j]][-ind, -ind]
               if (sum(sm[[i]]$S[[j]] != 0) == 0) {
                 rank <- 0
@@ -796,3 +721,123 @@ augment.smX <- function(sm, nobs, np) {
   X[nobs + sm$p.ind, ] <- t(rS) ## add in
   X ## scaled augmented model matrix
 } ## augment.smX
+
+
+#' Internal function for interpreting GAM formulas
+#'
+#' This formula is based on \code{mgcv:::interpret.gam0}. It takes a formula
+#' and returns a model formula for the parametric and a list of
+#' descriptors for the smooths.
+#'
+#' @param gf A formula object.
+#'
+#' @return An object of class \code{split.gam.formula}, containing a
+#'     specification of the smooth terms and a specification of the
+#'     parametric components.
+#' @keywords internal
+#' @author Simon Wood, with modifications by Oystein Sorensen.
+#'
+#' @references
+#' \insertRef{woodGeneralizedAdditiveModels2017a}{galamm}
+#'
+interpret.gam0 <- function(gf) {
+  p.env <- environment(gf)
+  tf <- terms.formula(gf, specials = c("s", "t2"))
+
+  terms <- attr(tf, "term.labels") # labels of the model terms
+  nt <- length(terms) # how many terms?
+
+  if (attr(tf, "response") > 0) { # start the replacement formulae
+    response <- as.character(attr(tf, "variables")[2])
+  } else {
+    response <- NULL
+  }
+  sp <- attr(tf, "specials")$s # array of indices of smooth terms
+  t2p <- attr(tf, "specials")$t2 # indices of type 2 tensor product terms
+  off <- attr(tf, "offset") # location of offset in formula
+
+  vtab <- attr(tf, "factors") # cross tabulation of vars to terms
+
+  for (i in seq_along(sp)) {
+    ind <- (seq_len(nt))[as.logical(vtab[sp[i], ])]
+    sp[i] <- ind # the term that smooth relates to
+  }
+
+  for (i in seq_along(t2p)) {
+    ind <- seq_len(nt)[as.logical(vtab[t2p[i], ])]
+    t2p[i] <- ind # the term that smooth relates to
+  }
+
+  k <- kt2 <- ks <- kp <- 1 # counters for terms in the 2 formulae
+  len.sp <- length(sp)
+  len.t2p <- length(t2p)
+
+  ns <- len.sp + len.t2p # number of smooths
+  pav <- av <- rep("", 0)
+  smooth.spec <- list()
+
+  for (i in seq_len(nt)) { # work through all terms
+    if (k <= ns && ((ks <= len.sp && sp[ks] == i) ||
+      (kt2 <= len.t2p && t2p[kt2] == i))) { # it's a smooth
+
+      smooth.spec[[k]] <- eval(parse(text = paste0("galamm::", terms[[i]])), envir = p.env)
+
+      if (ks <= len.sp && sp[ks] == i) {
+        ks <- ks + 1
+      } else {
+        kt2 <- kt2 + 1
+      }
+      k <- k + 1 # counts smooth terms
+    } else { # parametric
+      av[kp] <- terms[i] ## element kp on rhs of parametric
+      kp <- kp + 1 # counts parametric terms
+    }
+  }
+
+  if (!is.null(off)) { ## deal with offset
+    av[kp] <- as.character(attr(tf, "variables")[1 + off])
+    kp <- kp + 1
+  }
+
+  pf <- paste(response, "~", paste(av, collapse = " + "))
+  if (attr(tf, "intercept") == 0) {
+    pf <- paste(pf, "-1", sep = "")
+    if (kp > 1) pfok <- 1 else pfok <- 0
+  } else {
+    pfok <- 1
+    if (kp == 1) {
+      pf <- paste(pf, "1")
+    }
+  }
+
+  fake.formula <- pf
+
+  if (length(smooth.spec) > 0) {
+    for (i in seq_along(smooth.spec)) {
+      nt <- length(smooth.spec[[i]]$term)
+      ff1 <- paste(smooth.spec[[i]]$term[seq_len(nt)], collapse = "+")
+      fake.formula <- paste(fake.formula, "+", ff1)
+      if (smooth.spec[[i]]$by != "NA") {
+        fake.formula <- paste(fake.formula, "+", smooth.spec[[i]]$by)
+        av <- c(av, smooth.spec[[i]]$term, smooth.spec[[i]]$by)
+      } else {
+        av <- c(av, smooth.spec[[i]]$term)
+      }
+    }
+  }
+  fake.formula <- as.formula(fake.formula, p.env)
+  if (length(av)) {
+    pred.formula <- as.formula(paste("~", paste(av, collapse = "+")))
+    pav <- all.vars(pred.formula) ## trick to strip out 'offset(x)' etc...
+    pred.formula <- reformulate(pav, env = p.env)
+  } else {
+    pred.formula <- ~1
+  }
+  ret <- list(
+    pf = as.formula(pf, p.env), pfok = pfok, smooth.spec = smooth.spec,
+    fake.formula = fake.formula, response = response, fake.names = av,
+    pred.names = pav, pred.formula = pred.formula
+  )
+  class(ret) <- "split.gam.formula"
+  ret
+} ## interpret.gam0

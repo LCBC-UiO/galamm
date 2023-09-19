@@ -276,8 +276,6 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
 
   ## Deal with smooth terms ----
   # If there are smooth terms in the model, postprocess them
-  # This should eventually be a function, and it should be specified that this
-  # code is derived from gamm4, with author Simon Wood
   if (length(gobj$G$smooth) > 0) {
     ret$gam <- gamm4.wrapup(gobj, ret, final_model)
   }

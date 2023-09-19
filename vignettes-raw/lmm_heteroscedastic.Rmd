@@ -72,7 +72,7 @@ summary(mod_nlme)
 
 The diagnostic plot also looks good.
 
-```{r, lmm_heteroscedastic_diagnostic}
+```{r, lmm_heteroscedastic_diagnostic, fig.cap="Diagnostic plot for heteroscedastic model."}
 plot(mod)
 ```
 

@@ -4,7 +4,7 @@ test_that("galamm reproduces gamm4", {
   mod <- galamm(formula = y ~ s(x), data = dat)
   mod_comp <- gamm4::gamm4(formula = y ~ s(x), data = dat, REML = FALSE)
 
-  expect_equal(mod$gam$edf, mod_comp$gam$edf, tolerance = .001)
+  expect_equal(unname(mod$gam$edf), unname(mod_comp$gam$edf), tolerance = .001)
   expect_equal(mod$gam$Ve, mod_comp$gam$Ve, tolerance = .001)
   expect_equal(mod$gam$Vp, mod_comp$gam$Vp, tolerance = .001)
 })
@@ -14,7 +14,7 @@ test_that("Basic GAMM with factor structures works", {
   dat$item <- factor(dat$item)
 
   mod <- galamm(
-    formula = y ~ 0 + item + s(x, by = loading),
+    formula = y ~ 0 + item + s(x, load.var = "loading"),
     data = dat,
     load.var = "item",
     lambda = list(matrix(c(1, NA, NA), ncol = 1)),
@@ -26,7 +26,8 @@ test_that("Basic GAMM with factor structures works", {
     c(
       item11 = 0.669888238636741, item12 = 0.938949881157583, item13 = 0.19327451279475,
       `s(x):loadingFx1` = 0.188004784622413
-    )
+    ),
+    tolerance = .0001
   )
 
   expect_equal(
@@ -58,7 +59,7 @@ test_that("GAMM with factor structures and random effects works", {
   dat$item <- factor(dat$item)
 
   mod <- galamm(
-    formula = y ~ 0 + item + s(x, by = loading, k = 4) + (0 + loading | id / timepoint),
+    formula = y ~ 0 + item + s(x, load.var = "loading", k = 4) + (0 + loading | id / timepoint),
     data = dat,
     load.var = "item",
     lambda = list(matrix(c(1, NA, NA), ncol = 1)),

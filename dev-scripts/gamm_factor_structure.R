@@ -1,23 +1,25 @@
 rm(list=ls())
 devtools::load_all()
 
-dat <- subset(cognition, domain %in% 1:2 & id < 5 & timepoint %in% c(1, 4, 8))
+dat <- subset(cognition, domain %in% c(1, 3))
 dat$domain <- factor(dat$domain)
-dat$item <- factor(paste0(dat$domain, dat$item))
-dat$item12 <- as.integer(dat$item == "12")
-dat$item13 <- as.integer(dat$item == "13")
-dat$item22 <- as.integer(dat$item == "22")
+dat$item <- factor(dat$item)
+dat$loading1 <- NULL #c(1, 1.4, .3, 0, 0, 0, 0)[dat$item]
+dat$loading3 <- NULL #c(0, 0, 0, 1, 1, 1, 2)[dat$item]
 
-formula = y ~
-  s(x, by = loading1, k = 4) +
-  s(x, by = loading2, k = 4)
+formula = y ~ domain +
+  s(x, by = domain, load.var = c("loading1", "loading3"), k = 4)
+
 weights <- NULL
-data <- dat
-family <- c(gaussian, gaussian)
-family_mapping <- ifelse(dat$domain == 1, 1L, 2L)
-lambda <- list(matrix(c(1, NA, NA, 0, 0,
-                        0, 0, 0, 1, NA), ncol = 2))
+data = dat
+family <- gaussian
+family_mapping <- rep(1L, nrow(data))
 load.var <- "item"
-factor <- list(c("loading1", "loading2"))
+lambda <- list(lambda <- matrix(c(
+  1, 1, NA, 0, 0, 0, 0,
+  0, 0, 0, 1, 1, 1, NA
+), ncol = 2))
+factor <- list(c("loading1", "loading3"))
 start <- NULL
-control <- galamm_control(optim_control = list(trace = 3, maxit = 3))
+control = galamm_control()
+

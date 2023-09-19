@@ -3,6 +3,7 @@
 ^README\.Rmd$
 ^LICENSE\.md$
 ^data-raw$
+^vignettes-raw$
 
 ^\.github$
 ^codecov\.yml$
@@ -19,3 +20,10 @@
 rebuild-long-running-vignettes.R
 update_autodiff.sh
 insert_sparse_autodiff.R
+
+vignettes/lmm_factor.Rmd.orig
+vignettes/glmm_factor.Rmd.orig
+vignettes/mixed_response.Rmd.orig
+vignettes/lmm_heteroscedastic.Rmd.orig
+vignettes/semiparametric.Rmd.orig
+
