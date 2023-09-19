@@ -15,7 +15,8 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  eval = FALSE
 )
 ```
 
@@ -134,7 +135,8 @@ dat <- subset(cognition, domain == 2 & item == "21")
 Again we can fit this model using `gamm4`.
 
 ```{r}
-mod_gamm4 <- gamm4(y ~ s(x), random = ~ (1 | id),
+mod_gamm4 <- gamm4(y ~ s(x),
+  random = ~ (1 | id),
   data = dat, family = binomial
 )
 ```
@@ -320,22 +322,22 @@ Considering the random effect specification, `(0 + loading1 + loading3 | id)` sp
 ```{r}
 mod_gamm4 <- gamm4(
   formula = y ~ 0 + item12 + item13 + item32 + item33 + item34 +
-    s(x, by = loading1, k = 10) + 
+    s(x, by = loading1, k = 10) +
     s(x, by = loading3, k = 10),
-  random = ~ (0 + loading1 + loading3 | id) + 
-    (0 + loading1 | id : timepoint) + 
-    (0 + loading3 | id : timepoint),
+  random = ~ (0 + loading1 + loading3 | id) +
+    (0 + loading1 | id:timepoint) +
+    (0 + loading3 | id:timepoint),
   data = dat,
   REML = FALSE
 )
 
 mod <- galamm(
   formula = y ~ 0 + item12 + item13 + item32 + item33 + item34 +
-    s(x, by = loading1, k = 10) + 
-    s(x, by = loading3, k = 10) + 
-    (0 + loading1 + loading3 | id) + 
-    (0 + loading1 | id : timepoint) + 
-    (0 + loading3 | id : timepoint),
+    s(x, by = loading1, k = 10) +
+    s(x, by = loading3, k = 10) +
+    (0 + loading1 + loading3 | id) +
+    (0 + loading1 | id:timepoint) +
+    (0 + loading3 | id:timepoint),
   data = dat
 )
 ```
@@ -374,11 +376,11 @@ At this point we enter a part of the package which is under active development.
 ```{r, eval=FALSE}
 mod <- galamm(
   formula = y ~ 0 + item12 + item13 + item32 + item33 + item34 +
-    s(x, by = loading1, k = 4) + 
-    s(x, by = loading3, k = 4) + 
-    (0 + loading1 + loading3 | id) + 
-    (0 + loading1 | id : timepoint) + 
-    (0 + loading3 | id : timepoint),
+    s(x, by = loading1, k = 4) +
+    s(x, by = loading3, k = 4) +
+    (0 + loading1 + loading3 | id) +
+    (0 + loading1 | id:timepoint) +
+    (0 + loading3 | id:timepoint),
   data = dat,
   load.var = "item",
   lambda = list(lambda),

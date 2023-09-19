@@ -23,14 +23,11 @@ gamm4.setup <- function(formula, pterms,
                         data = stop("No data supplied to gamm.setup")) {
   G <- gam.setup(formula, pterms, data = data)
 
-  if (!is.null(G$L)) stop("gamm can not handle linked smoothing parameters (probably from use of `id' or adaptive smooths)")
-  # now perform re-parameterization...
-
   first.f.para <- G$nsdf + 1
 
   random <- list()
 
-  if (G$nsdf > 0) ind <- 1:G$nsdf else ind <- rep(0, 0)
+  ind <- seq_len(G$nsdf)
   X <- G$X[, ind, drop = FALSE] # accumulate fixed effects into here
 
   xlab <- rep("", 0)
@@ -150,7 +147,7 @@ gamm4 <- function(fixed, random = NULL, data = list()) {
   }
 
   # create model frame.....
-  gp <- mgcv::interpret.gam(fixed) # interpret the formula
+  gp <- interpret.gam0(fixed) # interpret the formula
 
   mf <- match.call(expand.dots = FALSE)
 

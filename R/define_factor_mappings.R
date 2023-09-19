@@ -1,10 +1,22 @@
+factor_finder <- function(factor, vars){
+  vapply(factor, function(x) any(vapply(vars, function(y) any(vapply(x, function(z) grepl(z, y), TRUE)), TRUE)), TRUE)
+}
+
 define_factor_mappings <- function(gobj, load.var, lambda, factor, data) {
+
   vars_in_fixed <- all.vars(gobj$fake.formula[-2])
-  factor_in_fixed <-
-    vapply(factor, function(x) any(x %in% vars_in_fixed), TRUE)
+
+  # Add fixed part of smooth terms
+  vars_in_fixed <- c(vars_in_fixed, unlist(lapply(gobj$G$smooth, function(x){
+    if(x$null.space.dim > 0){
+      x$label
+    }
+  })))
+  vars_in_fixed <- unique(vars_in_fixed)
+  factor_in_fixed <- factor_finder(factor, vars_in_fixed)
+
   vars_in_random <- unique(unlist(gobj$lmod$reTrms$cnms))
-  factor_in_random <-
-    vapply(factor, function(x) any(vapply(vars_in_random, function(y) any(vapply(x, function(z) grepl(z, y), TRUE)), TRUE)), TRUE)
+  factor_in_random <- factor_finder(factor, vars_in_random)
 
   X <- gobj$lmod$X
   if (any(factor_in_fixed)) {
@@ -41,7 +53,6 @@ define_factor_mappings <- function(gobj, load.var, lambda, factor, data) {
 
         mapping_component <- rep(NA_integer_, length(delta))
 
-
         cnms_match <- vapply(
           colnames(lambda[[f]]),
           function(x) any(grepl(x, cnms)), TRUE
@@ -52,7 +63,6 @@ define_factor_mappings <- function(gobj, load.var, lambda, factor, data) {
           mapping_component[delta != 0] <- -1L
           return(lapply(mapping_component, function(x) rep(x, each = max(delta))))
         }
-
 
         for (j in seq_along(cnms)) {
           cn <- unlist(lapply(factor[[f]], function(x) {
