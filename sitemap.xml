@@ -115,6 +115,9 @@
     <loc>https://lcbc-uio.github.io/galamm/reference/index.html</loc>
   </url>
   <url>
+    <loc>https://lcbc-uio.github.io/galamm/reference/interpret.gam0.html</loc>
+  </url>
+  <url>
     <loc>https://lcbc-uio.github.io/galamm/reference/llikAIC.galamm.html</loc>
   </url>
   <url>
@@ -149,6 +152,9 @@
   </url>
   <url>
     <loc>https://lcbc-uio.github.io/galamm/reference/residuals.galamm.html</loc>
+  </url>
+  <url>
+    <loc>https://lcbc-uio.github.io/galamm/reference/s.html</loc>
   </url>
   <url>
     <loc>https://lcbc-uio.github.io/galamm/reference/summary.galamm.html</loc>

@@ -99,7 +99,7 @@ Section 4 and 5 in <span class="citation">Sørensen, Fjell, and Walhovd
 (<a href="#ref-sorensenLongitudinalModelingAgeDependent2023" role="doc-biblioref">2023</a>)</span>, but as we cannot share the data,
 we have instead simulated somewhat simpler datasets that will be used.
 We will gradually add complexity, starting with a simple generalized
-additive mixed. Please refer to the <a href="https://lcbc-uio.github.io/galamm/articles/galamm.html">introductory
+additive mixed model. Please refer to the <a href="https://lcbc-uio.github.io/galamm/articles/galamm.html">introductory
 vignette</a> for an overview of the statistical models.</p>
 <div class="section level3">
 <h3 id="generalized-additive-mixed-models">Generalized Additive Mixed Models<a class="anchor" aria-label="anchor" href="#generalized-additive-mixed-models"></a>
@@ -130,7 +130,9 @@ can plot the measurements as follows:</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">dat</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span>, y <span class="op">=</span> <span class="va">y</span>, group <span class="op">=</span> <span class="va">id</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">.1</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">.3</span><span class="op">)</span></span></code></pre></div>
-<p><img src="semiparametric_files/figure-html/unnamed-chunk-4-1.png" width="700"></p>
+<div class="figure">
+<img src="semiparametric-spaghetti-plot-1.png" alt=""><p class="caption">Plot of data for domain 1 and item 11.</p>
+</div>
 <p>We use a generalized additive mixed model with random intercepts per
 subject to estimate the function relating <span class="math inline">\(x\)</span> to <span class="math inline">\(y\)</span>. In terms of the model framework
 outlined in the <a href="https://lcbc-uio.github.io/galamm/articles/galamm.html">introductory
@@ -146,7 +148,7 @@ function to be estimated, <span class="math inline">\(\eta_{j} \sim N(0,
 residual term.</p>
 <p>This model can be estimated using <code>gamm4</code> as follows:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">mod_gamm4</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gamm4.html">gamm4</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/pkg/mgcv/man/s.html" class="external-link">s</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, random <span class="op">=</span> <span class="op">~</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">dat</span>, REML <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">mod_gamm4</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gamm4.html">gamm4</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="fu"><a href="../reference/s.html">s</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, random <span class="op">=</span> <span class="op">~</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">dat</span>, REML <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <p>The package <code>gamm4</code> uses <code>lme4</code> to fit the
 underlying model, and the resulting model has two components.
 <code>mod_gamm4$mer</code> contains the mixed model representation,
@@ -204,16 +206,20 @@ smooth terms. We can look at the model summary for each:</p>
 <p>We can also plot the estimated smooth term:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mod_gamm4</span><span class="op">$</span><span class="va">gam</span><span class="op">)</span></span></code></pre></div>
-<p><img src="semiparametric_files/figure-html/semiparametric-gaussian-gamm4-smooth-1.png" width="700"></p>
+<div class="figure">
+<img src="semiparametric-gaussian-gamm4-smooth-1.png" alt=""><p class="caption">Smooth term estimated by gamm4.</p>
+</div>
 <p>In contrast, invoking the <code>plot</code> function on the mixed
 model part gives us a diagnostic plot.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mod_gamm4</span><span class="op">$</span><span class="va">mer</span><span class="op">)</span></span></code></pre></div>
-<p><img src="semiparametric_files/figure-html/semiparametric-gaussian-gamm4-diagnostic-1.png" width="700"></p>
+<div class="figure">
+<img src="semiparametric-gaussian-gamm4-diagnostic-1.png" alt=""><p class="caption">Diagnostic plot for gamm4 model.</p>
+</div>
 <p>With <code>galamm</code> we use similar argument, but the
 <code>random</code> specification is now part of the model formula.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/pkg/mgcv/man/s.html" class="external-link">s</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">dat</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="fu"><a href="../reference/s.html">s</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">dat</span><span class="op">)</span></span></code></pre></div>
 <p>As opposed to <code>gamm4</code>, <code>galamm</code> gives a single
 summary. As can be seen, smooth terms are both reported as random
 effects, and in a separate line under the header “Approximate
@@ -237,29 +243,33 @@ computational algorithms.</p>
 <span><span class="co">#&gt; Random effects:</span></span>
 <span><span class="co">#&gt;  Groups   Name        Variance Std.Dev.</span></span>
 <span><span class="co">#&gt;  id       (Intercept) 0.8551   0.9247  </span></span>
-<span><span class="co">#&gt;  Xr       s(x)        2.0346   1.4264  </span></span>
+<span><span class="co">#&gt;  Xr       s(x):       2.0346   1.4264  </span></span>
 <span><span class="co">#&gt;  Residual             0.2501   0.5001  </span></span>
 <span><span class="co">#&gt; Number of obs: 1600, groups:  id, 200; Xr, 8</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Fixed effects:</span></span>
 <span><span class="co">#&gt;             Estimate Std. Error t value  Pr(&gt;|t|)</span></span>
 <span><span class="co">#&gt; (Intercept)   1.2694    0.06657 19.0672 4.731e-81</span></span>
-<span><span class="co">#&gt; s(x)Fx1      -0.1582    0.20236 -0.7818 4.343e-01</span></span>
+<span><span class="co">#&gt; s(x):Fx1     -0.1582    0.20236 -0.7818 4.343e-01</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Approximate significance of smooth terms:</span></span>
-<span><span class="co">#&gt;        edf Ref.df     F p-value</span></span>
-<span><span class="co">#&gt; s(x) 6.681  6.681 324.9  &lt;2e-16</span></span></code></pre></div>
+<span><span class="co">#&gt;         edf Ref.df     F p-value</span></span>
+<span><span class="co">#&gt; s(x): 6.681  6.681 324.9  &lt;2e-16</span></span></code></pre></div>
 <p>The <code>plot</code> function now gives us a diagnostic plot, which
 by inspection can be seen to be almost identical to the plot produced
 from the mixed model part of the <code>gamm4</code> model.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span></code></pre></div>
-<p><img src="semiparametric_files/figure-html/semiparametric-gaussian-gamm-diagnostic-1.png" width="700"></p>
+<div class="figure">
+<img src="semiparametric-gaussian-gamm-diagnostic-1.png" alt=""><p class="caption">Diagnostic plot for model fitted with galamm.</p>
+</div>
 <p>In order to plot the smooth term, we use
 <code>plot_smooth</code>.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_smooth.galamm.html">plot_smooth</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span></code></pre></div>
-<p><img src="semiparametric_files/figure-html/semiparametric-gaussian-gamm-smooth1-1.png" width="700"></p>
+<div class="figure">
+<img src="semiparametric-gaussian-gamm-smooth1-1.png" alt=""><p class="caption">Smooth term estimated with galamm.</p>
+</div>
 <p>The <code>plot_smooth</code> function is a thin wrapper around the
 <code>plot.gam</code> function provided by the <code>mgcv</code> package
 <span class="citation">(<a href="#ref-woodGeneralizedAdditiveModels2017a" role="doc-biblioref">Wood
@@ -271,10 +281,14 @@ below:</p>
 <span>  shade <span class="op">=</span> <span class="cn">TRUE</span>, rug <span class="op">=</span> <span class="cn">FALSE</span>, seWithMean <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  shift <span class="op">=</span> <span class="op">+</span><span class="fl">2</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="semiparametric_files/figure-html/semiparametric-gaussian-gamm-smooth2-1.png" width="700"></p>
+<div class="figure">
+<img src="semiparametric-gaussian-gamm-smooth2-1.png" alt=""><p class="caption">Alternative ways of visualizing the smooth term.</p>
+</div>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_smooth.galamm.html">plot_smooth</a></span><span class="op">(</span><span class="va">mod</span>, se <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="semiparametric_files/figure-html/semiparametric-gaussian-gamm-smooth2-2.png" width="700"></p>
+<div class="figure">
+<img src="semiparametric-gaussian-gamm-smooth2-2.png" alt=""><p class="caption">Alternative ways of visualizing the smooth term.</p>
+</div>
 </div>
 <div class="section level4">
 <h4 id="binomial-responses">Binomial Responses<a class="anchor" aria-label="anchor" href="#binomial-responses"></a>
@@ -286,15 +300,14 @@ such data can be modeled.</p>
 <code class="sourceCode R"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">cognition</span>, <span class="va">domain</span> <span class="op">==</span> <span class="fl">2</span> <span class="op">&amp;</span> <span class="va">item</span> <span class="op">==</span> <span class="st">"21"</span><span class="op">)</span></span></code></pre></div>
 <p>Again we can fit this model using <code>gamm4</code>.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">mod_gamm4</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gamm4.html">gamm4</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/pkg/mgcv/man/s.html" class="external-link">s</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>,</span>
+<code class="sourceCode R"><span><span class="va">mod_gamm4</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gamm4.html">gamm4</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="fu"><a href="../reference/s.html">s</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>,</span>
 <span>  random <span class="op">=</span> <span class="op">~</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">dat</span>, family <span class="op">=</span> <span class="va">binomial</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>We can look at the summary output as before.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod_gamm4</span><span class="op">$</span><span class="va">mer</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Generalized linear mixed model fit by maximum likelihood (Laplace</span></span>
-<span><span class="co">#&gt;   Approximation) [glmerMod]</span></span>
+<span><span class="co">#&gt; Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']</span></span>
 <span><span class="co">#&gt;  Family: binomial  ( logit )</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;      AIC      BIC   logLik deviance df.resid </span></span>
@@ -312,14 +325,14 @@ such data can be modeled.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Fixed effects:</span></span>
 <span><span class="co">#&gt;              Estimate Std. Error z value Pr(&gt;|z|)    </span></span>
-<span><span class="co">#&gt; X(Intercept)   2.8115     0.2034  13.825  &lt; 2e-16 ***</span></span>
-<span><span class="co">#&gt; Xs(x)Fx1       1.4110     0.4242   3.326  0.00088 ***</span></span>
+<span><span class="co">#&gt; X(Intercept)   2.8115     0.2034  13.824  &lt; 2e-16 ***</span></span>
+<span><span class="co">#&gt; Xs(x)Fx1      -1.4110     0.4242  -3.326  0.00088 ***</span></span>
 <span><span class="co">#&gt; ---</span></span>
 <span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Correlation of Fixed Effects:</span></span>
 <span><span class="co">#&gt;          X(Int)</span></span>
-<span><span class="co">#&gt; Xs(x)Fx1 0.440</span></span>
+<span><span class="co">#&gt; Xs(x)Fx1 -0.440</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod_gamm4</span><span class="op">$</span><span class="va">gam</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Family: binomial </span></span>
@@ -346,11 +359,13 @@ such data can be modeled.</p>
 useful in the binomial case, so we omit it.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mod_gamm4</span><span class="op">$</span><span class="va">gam</span><span class="op">)</span></span></code></pre></div>
-<p><img src="semiparametric_files/figure-html/semiparametric-gamm4-binomial-1.png" width="700"></p>
+<div class="figure">
+<img src="semiparametric-gamm4-binomial-1.png" alt=""><p class="caption">Smooth term estimated by gamm4.</p>
+</div>
 <p>Again the <code>galamm</code> syntax is similar, but it puts the
 random effect specification into the model formula.</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/pkg/mgcv/man/s.html" class="external-link">s</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">dat</span>, family <span class="op">=</span> <span class="va">binomial</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="fu"><a href="../reference/s.html">s</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">dat</span>, family <span class="op">=</span> <span class="va">binomial</span><span class="op">)</span></span></code></pre></div>
 <p>The estimates are very similar, although not identical. The
 difference in deviance is due to differences in the way deviance is
 defined. The call <code>deviance(mod_gamm4$mer)</code> gives the same
@@ -371,20 +386,22 @@ value as in the summary for the model fitted with galamm.</p>
 <span><span class="co">#&gt; Random effects:</span></span>
 <span><span class="co">#&gt;  Groups Name        Variance Std.Dev.</span></span>
 <span><span class="co">#&gt;  id     (Intercept) 0.2316   0.4813  </span></span>
-<span><span class="co">#&gt;  Xr     s(x)        0.9387   0.9688  </span></span>
+<span><span class="co">#&gt;  Xr     s(x):       0.9387   0.9688  </span></span>
 <span><span class="co">#&gt; Number of obs: 1600, groups:  id, 200; Xr, 8</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Fixed effects:</span></span>
 <span><span class="co">#&gt;             Estimate Std. Error z value  Pr(&gt;|z|)</span></span>
 <span><span class="co">#&gt; (Intercept)    2.808     0.1956  14.354 9.989e-47</span></span>
-<span><span class="co">#&gt; s(x)Fx1        1.406     0.4134   3.402 6.697e-04</span></span>
+<span><span class="co">#&gt; s(x):Fx1      -1.406     0.4134  -3.402 6.697e-04</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Approximate significance of smooth terms:</span></span>
-<span><span class="co">#&gt;        edf Ref.df Chi.sq p-value</span></span>
-<span><span class="co">#&gt; s(x) 2.124  2.124    114  &lt;2e-16</span></span></code></pre></div>
+<span><span class="co">#&gt;         edf Ref.df Chi.sq p-value</span></span>
+<span><span class="co">#&gt; s(x): 2.124  2.124    114  &lt;2e-16</span></span></code></pre></div>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_smooth.galamm.html">plot_smooth</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span></code></pre></div>
-<p><img src="semiparametric_files/figure-html/semiparametric-gamm-binomial-1.png" width="700"></p>
+<div class="figure">
+<img src="semiparametric-gamm-binomial-1.png" alt=""><p class="caption">Smooth term estimated with galamm.</p>
+</div>
 </div>
 </div>
 <div class="section level3">
@@ -395,7 +412,7 @@ models that neither <code>gamm4</code> nor <code>mgcv</code> are able to
 estimate (at least without lots of manual hacking), and where
 <code>galamm</code> provides new functionality.</p>
 <div class="section level4">
-<h4 id="conditionally-gaussian-responses">Conditionally Gaussian Responses<a class="anchor" aria-label="anchor" href="#conditionally-gaussian-responses"></a>
+<h4 id="gaussian-responses-1">Gaussian Responses<a class="anchor" aria-label="anchor" href="#gaussian-responses-1"></a>
 </h4>
 <p>To illustrate basic usage, we continue with the cognition data, but
 now use all items of cognitive domain 1. These are all conditionally
@@ -428,8 +445,7 @@ across timepoints <span class="math inline">\(\zeta^{(3)}\)</span>.</p>
 y_{i} = \beta_{i} + \lambda_{i} \left\{ h(x) + \zeta^{(2)} + \zeta^{(3)}
 \right\} + \epsilon_{i}
 \]</span></p>
-<p>To set up the smooth term, we need a <code>by</code>-variable. This
-is an example of a varying-coefficient term <span class="citation">(<a href="#ref-hastieVaryingCoefficientModels1993" role="doc-biblioref">Hastie and Tibshirani 1993</a>)</span>, where <span class="math inline">\(h(x)\)</span> is being interpreted as a regression
+<p>We will use a varying-coefficient term, where <span class="math inline">\(h(x)\)</span> is being interpreted as a regression
 coefficient for the effect of <span class="math inline">\(\lambda_{i}\)</span> on <span class="math inline">\(y_{i}\)</span>, and the regression term varies
 with <span class="math inline">\(x\)</span>. In contrast to <span class="citation">Hastie and Tibshirani (<a href="#ref-hastieVaryingCoefficientModels1993" role="doc-biblioref">1993</a>)</span> and other uses of
 varying-coefficient terms, however, in this case the predictor <span class="math inline">\(\lambda_{i}\)</span> is a model parameter. We have
@@ -444,10 +460,17 @@ follows:</p>
 <span><span class="co">#&gt; [3,]   NA</span></span></code></pre></div>
 <p>We use the term “loading” to identify the factor loading, and set
 <code>load.var = "item"</code> to specify that the loadings to be
-applied are identified by the “item” variable.</p>
+applied are identified by the “item” variable. Using <code>mgcv</code>’s
+<code>by</code> variable would also work in this particular case, i.e.,
+replacing <code>s(x, load.var = "loading")</code> with
+<code>s(x, by = loading)</code>. However, in most cases this would lead
+to identifiability issues due to the way varying-coefficient terms are
+set up by <code>mgcv</code>, so <code>galamm</code> provides an
+additional <code>load.var</code> arguments which alleviates most of
+these issues.</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
-<span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="fl">0</span> <span class="op">+</span> <span class="va">item</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/pkg/mgcv/man/s.html" class="external-link">s</a></span><span class="op">(</span><span class="va">x</span>, by <span class="op">=</span> <span class="va">loading</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="fl">0</span> <span class="op">+</span> <span class="va">item</span> <span class="op">+</span> <span class="fu"><a href="../reference/s.html">s</a></span><span class="op">(</span><span class="va">x</span>, load.var <span class="op">=</span> <span class="st">"loading"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">loading</span> <span class="op">|</span> <span class="va">id</span> <span class="op">/</span> <span class="va">timepoint</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">dat</span>,</span>
 <span>  load.var <span class="op">=</span> <span class="st">"item"</span>,</span>
@@ -455,8 +478,8 @@ applied are identified by the “item” variable.</p>
 <span>  factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"loading"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>We print the model summary below. In the data simulation, the factor
-loadings we set to 1, 1.4, and 0.3, respectively, and this is very well
-recovered. Furthermore, the ground truth standard deviation at the
+loadings were set to 1, 1.4, and 0.3, respectively, and this is very
+well recovered. Furthermore, the ground truth standard deviation at the
 <code>id</code> level was 1, at the <code>timepoint</code> level it was
 0.5, and the residual standard deviation was 0.1. The estimates are
 close to these values. Real data will typically not have this strong
@@ -465,7 +488,7 @@ the model is implemented incorrectly.</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Generalized additive latent and mixed model fit by maximum marginal likelihood.</span></span>
-<span><span class="co">#&gt; Formula: y ~ 0 + item + s(x, by = loading) + (0 + loading | id/timepoint)</span></span>
+<span><span class="co">#&gt; Formula: y ~ 0 + item + s(x, load.var = "loading") + (0 + loading | id/timepoint)</span></span>
 <span><span class="co">#&gt;    Data: dat</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;      AIC      BIC   logLik deviance df.resid </span></span>
@@ -503,10 +526,12 @@ the model is implemented incorrectly.</p>
 data, there is essentially no uncertainty about the estimate.</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_smooth.galamm.html">plot_smooth</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span></code></pre></div>
-<p><img src="semiparametric_files/figure-html/unnamed-chunk-18-1.png" width="700"></p>
+<div class="figure">
+<img src="semiparametric-gaussian-factor-1.png" alt=""><p class="caption">Smooth term for GAMM with factor structure.</p>
+</div>
 </div>
 <div class="section level4">
-<h4 id="conditionally-binomial-responses">Conditionally Binomial Responses<a class="anchor" aria-label="anchor" href="#conditionally-binomial-responses"></a>
+<h4 id="binomial-responses-1">Binomial Responses<a class="anchor" aria-label="anchor" href="#binomial-responses-1"></a>
 </h4>
 <p>We can now move on to the part of the cognition data that is
 conditionally binomially distributed. We consider domain 2, where each
@@ -519,7 +544,7 @@ is the same as before.</p>
 <span><span class="va">dat</span><span class="op">$</span><span class="va">item</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">dat</span><span class="op">$</span><span class="va">item</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
-<span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="fl">0</span> <span class="op">+</span> <span class="va">item</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/pkg/mgcv/man/s.html" class="external-link">s</a></span><span class="op">(</span><span class="va">x</span>, by <span class="op">=</span> <span class="va">loading</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="fl">0</span> <span class="op">+</span> <span class="va">item</span> <span class="op">+</span> <span class="fu"><a href="../reference/s.html">s</a></span><span class="op">(</span><span class="va">x</span>, load.var <span class="op">=</span> <span class="st">"loading"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">loading</span> <span class="op">|</span> <span class="va">id</span> <span class="op">/</span> <span class="va">timepoint</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">dat</span>,</span>
 <span>  family <span class="op">=</span> <span class="va">binomial</span>,</span>
@@ -542,7 +567,7 @@ data with a low number of repeated observations <span class="citation">(<a href=
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Generalized additive latent and mixed model fit by maximum marginal likelihood.</span></span>
-<span><span class="co">#&gt; Formula: y ~ 0 + item + s(x, by = loading) + (0 + loading | id/timepoint)</span></span>
+<span><span class="co">#&gt; Formula: y ~ 0 + item + s(x, load.var = "loading") + (0 + loading | id/timepoint)</span></span>
 <span><span class="co">#&gt;    Data: dat</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;      AIC      BIC   logLik deviance df.resid </span></span>
@@ -568,7 +593,7 @@ data with a low number of repeated observations <span class="citation">(<a href=
 <span><span class="co">#&gt;                 Estimate Std. Error z value  Pr(&gt;|z|)</span></span>
 <span><span class="co">#&gt; item21             2.944     0.1903  15.473 5.249e-54</span></span>
 <span><span class="co">#&gt; item22             6.319     0.5853  10.796 3.612e-27</span></span>
-<span><span class="co">#&gt; s(x):loadingFx1    1.389     0.2837   4.897 9.733e-07</span></span>
+<span><span class="co">#&gt; s(x):loadingFx1   -1.389     0.2837  -4.897 9.733e-07</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Approximate significance of smooth terms:</span></span>
 <span><span class="co">#&gt;                edf Ref.df Chi.sq p-value</span></span>
@@ -579,75 +604,6 @@ confidence limits.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint</a></span><span class="op">(</span><span class="va">mod</span>, parm <span class="op">=</span> <span class="st">"lambda"</span><span class="op">)</span></span>
 <span><span class="co">#&gt;            2.5 %   97.5 %</span></span>
 <span><span class="co">#&gt; lambda1 1.612341 2.791192</span></span></code></pre></div>
-<p>While <code>gamm4</code> is not able to estimate the factor loadings,
-it is able to fit the model if we treat the estimated factor loadings as
-data. We confirm this below, where we add the estimated loadings as
-data. Some changes also have to be done to the formula, due to how
-smooths are set up by <code>mgcv</code> and <code>gamm4</code>.
-Explaining this is beyond the scope of this vignette, but set
-<code><a href="https://rdrr.io/pkg/mgcv/man/gam.models.html" class="external-link">?mgcv::gam.models</a></code> for details.</p>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">dat_gamm4</span> <span class="op">&lt;-</span> <span class="va">dat</span></span>
-<span><span class="va">dat_gamm4</span><span class="op">$</span><span class="va">loading</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span></span>
-<span>  <span class="va">dat_gamm4</span><span class="op">$</span><span class="va">item</span> <span class="op">==</span> <span class="st">"21"</span>, <span class="fl">1</span>,</span>
-<span>  <span class="fu"><a href="../reference/factor_loadings.galamm.html">factor_loadings</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span><span class="op">[</span><span class="st">"lambda2"</span>, <span class="st">"loading"</span><span class="op">]</span></span>
-<span><span class="op">)</span></span>
-<span><span class="va">dat_gamm4</span><span class="op">$</span><span class="va">item2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="va">dat</span><span class="op">$</span><span class="va">item</span> <span class="op">==</span> <span class="st">"22"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">dat_gamm4</span><span class="op">)</span></span>
-<span><span class="co">#&gt;      id domain          x timepoint item trials y  loading item2</span></span>
-<span><span class="co">#&gt; 4801  1      2 0.07897118         1   21      1 0 1.000000     0</span></span>
-<span><span class="co">#&gt; 4802  1      2 0.07897118         1   22      1 1 2.201766     1</span></span>
-<span><span class="co">#&gt; 4803  1      2 0.25567312         2   21      1 1 1.000000     0</span></span>
-<span><span class="co">#&gt; 4804  1      2 0.25567312         2   22      1 1 2.201766     1</span></span>
-<span><span class="co">#&gt; 4805  1      2 0.41654735         3   21      1 1 1.000000     0</span></span>
-<span><span class="co">#&gt; 4806  1      2 0.41654735         3   22      1 1 2.201766     1</span></span>
-<span></span>
-<span><span class="va">mod_gamm4</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gamm4.html">gamm4</a></span><span class="op">(</span></span>
-<span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="fl">0</span> <span class="op">+</span> <span class="va">item2</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/pkg/mgcv/man/s.html" class="external-link">s</a></span><span class="op">(</span><span class="va">x</span>, by <span class="op">=</span> <span class="va">loading</span><span class="op">)</span>,</span>
-<span>  random <span class="op">=</span> <span class="op">~</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">loading</span> <span class="op">|</span> <span class="va">id</span> <span class="op">/</span> <span class="va">timepoint</span><span class="op">)</span>,</span>
-<span>  data <span class="op">=</span> <span class="va">dat_gamm4</span>,</span>
-<span>  family <span class="op">=</span> <span class="va">binomial</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-<p>We see that the log-likelihood are very similar, but that the GALAMM
-uses one more degree of freedom than the GAMM, due to the factor loading
-that is being estimated.</p>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># galamm model with estimated factor loadings</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/stats/logLik.html" class="external-link">logLik</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span>
-<span><span class="co">#&gt; 'log Lik.' -740.7564 (df=7)</span></span>
-<span><span class="co"># gamm4 model with fixed factor loadings</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/stats/logLik.html" class="external-link">logLik</a></span><span class="op">(</span><span class="va">mod_gamm4</span><span class="op">$</span><span class="va">mer</span><span class="op">)</span></span>
-<span><span class="co">#&gt; 'log Lik.' -742.6834 (df=6)</span></span></code></pre></div>
-<p>We can also compare the smooth terms visually. In order to do this,
-we must impose sum-to-zero constraints on the GAMM fit. We also include
-the data-generating function with a blue curve. For the GALAMM, this has
-been done automatically. Although not identical, it is clear that the
-two terms are very close.</p>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># gamm4 fit</span></span>
-<span><span class="va">nd</span> <span class="op">&lt;-</span> <span class="va">dat_gamm4</span></span>
-<span><span class="va">nd</span><span class="op">$</span><span class="va">loading</span> <span class="op">&lt;-</span> <span class="fl">1</span></span>
-<span><span class="va">nd</span> <span class="op">&lt;-</span> <span class="va">nd</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">nd</span><span class="op">$</span><span class="va">x</span><span class="op">)</span>, <span class="op">]</span></span>
-<span><span class="va">gamm4_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">mod_gamm4</span><span class="op">$</span><span class="va">gam</span>, newdata <span class="op">=</span> <span class="va">nd</span><span class="op">)</span></span>
-<span><span class="va">gamm4_fit</span> <span class="op">&lt;-</span> <span class="va">gamm4_fit</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">gamm4_fit</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># true function</span></span>
-<span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span>, length.out <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span>
-<span><span class="va">true_fun</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="fl">2</span> <span class="op">*</span> <span class="va">x</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
-<span><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu">true_fun</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
-<span><span class="va">y</span> <span class="op">&lt;-</span> <span class="va">y</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># plot them</span></span>
-<span><span class="fu"><a href="../reference/plot_smooth.galamm.html">plot_smooth</a></span><span class="op">(</span><span class="va">mod</span>, main <span class="op">=</span> <span class="st">"Comparison of smooth terms"</span>, shade <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="va">nd</span><span class="op">$</span><span class="va">x</span>, <span class="va">gamm4_fit</span>, col <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, col <span class="op">=</span> <span class="st">"blue"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span></span>
-<span>  x <span class="op">=</span> <span class="fl">0</span>, y <span class="op">=</span> <span class="fl">4</span>, legend <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"GALAMM"</span>, <span class="st">"GAMM4"</span>, <span class="st">"True"</span><span class="op">)</span>,</span>
-<span>  col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"black"</span>, <span class="st">"red"</span>, <span class="st">"blue"</span><span class="op">)</span>, lty <span class="op">=</span> <span class="fl">1</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-<p><img src="semiparametric_files/figure-html/unnamed-chunk-24-1.png" width="700"></p>
 </div>
 <div class="section level4">
 <h4 id="multivariate-gaussian-model">Multivariate Gaussian Model<a class="anchor" aria-label="anchor" href="#multivariate-gaussian-model"></a>
@@ -677,227 +633,15 @@ across timepoints <span class="math inline">\(\zeta^{(3)}\)</span>.</p>
 \]</span></p>
 <p>We first subset the cognition dataset to get the observations we
 want.</p>
-<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">cognition</span>, <span class="va">domain</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">dat</span><span class="op">$</span><span class="va">domain</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">dat</span><span class="op">$</span><span class="va">domain</span><span class="op">)</span></span>
 <span><span class="va">dat</span><span class="op">$</span><span class="va">item</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">dat</span><span class="op">$</span><span class="va">item</span><span class="op">)</span></span></code></pre></div>
-<p>It also makes life easier when setting up the model below, if we have
-have dummy variables for the items ready in our dataframe. We create
-this below. We drop the first items in each domain, since these will be
-captured by the overall intercept of the smooth terms.</p>
-<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">mm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html" class="external-link">model.matrix</a></span><span class="op">(</span><span class="op">~</span> <span class="fl">0</span> <span class="op">+</span> <span class="va">item</span>, data <span class="op">=</span> <span class="va">dat</span><span class="op">)</span></span>
-<span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">dat</span>, <span class="va">mm</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"item12"</span>, <span class="st">"item13"</span>, <span class="st">"item32"</span>, <span class="st">"item33"</span>, <span class="st">"item34"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
-<p>To build up the complexity step-by-step, and also make sure that the
-model is correctly set up, we start by fixing the factor loadings to
-their true values.</p>
-<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">dat</span><span class="op">$</span><span class="va">loading1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1.4</span>, <span class="fl">3</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span><span class="op">[</span><span class="va">dat</span><span class="op">$</span><span class="va">item</span><span class="op">]</span></span>
-<span><span class="va">dat</span><span class="op">$</span><span class="va">loading3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span><span class="op">[</span><span class="va">dat</span><span class="op">$</span><span class="va">item</span><span class="op">]</span></span></code></pre></div>
-<p>We then fit the same model using <code>gamm4</code> and
-<code>galamm</code>. Some comments to the formula are useful here.</p>
-<p>First, the varying-coefficient terms
-<code>s(x, by = loading1, k = 10)</code> and
-<code>s(x, by = loading3, k = 10)</code> each contain an intercept, and
-since <code>loading1</code> is zero for all items in domain 3 and
-<code>loading3</code> is zero for all terms in domain 1, these functions
-contribute one intercept to each domain. Thus, we need to remove the
-overall intercept by starting the formula with <code>0 +</code>. We use
-the first item in each domain as a reference level, so the effects of
-<code>item12</code> and <code>item13</code> are the difference between
-these items and <code>item11</code>, with the latter intercept being
-captured by the intercept of <code>s(x, by = loading1, k = 10)</code>.
-The same applies to the items in domain 3.</p>
-<p>Considering the random effect specification,
-<code>(0 + loading1 + loading3 | id)</code> specifies that there are two
-latent variables at the subject level (<span class="math inline">\(\eta_{1}\)</span> and <span class="math inline">\(\eta_{3}\)</span>), their factor loadings are
-given by <code>loading1</code> and <code>loading3</code>, and they are
-allowed to be correlated. Next,
-<code>(0 + loading1 | id : timepoint) + (0 + loading3 | id : timepoint)</code>
-specifies that there are latent variables also varying between
-timepoints of the same individual, but by splitting the terms, we
-specify that these latent variables are not correlated. We do this for
-two reasons: first, including correlations between latent variables at
-multiple levels typically leads to identifiability issues. Secondly,
-when simulating the data, the level-2 latent variables were set to be
-uncorrelated, and hence in this case the assumption is satisfied.</p>
-<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">mod_gamm4</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gamm4.html">gamm4</a></span><span class="op">(</span></span>
-<span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="fl">0</span> <span class="op">+</span> <span class="va">item12</span> <span class="op">+</span> <span class="va">item13</span> <span class="op">+</span> <span class="va">item32</span> <span class="op">+</span> <span class="va">item33</span> <span class="op">+</span> <span class="va">item34</span> <span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://rdrr.io/pkg/mgcv/man/s.html" class="external-link">s</a></span><span class="op">(</span><span class="va">x</span>, by <span class="op">=</span> <span class="va">loading1</span>, k <span class="op">=</span> <span class="fl">10</span><span class="op">)</span> <span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://rdrr.io/pkg/mgcv/man/s.html" class="external-link">s</a></span><span class="op">(</span><span class="va">x</span>, by <span class="op">=</span> <span class="va">loading3</span>, k <span class="op">=</span> <span class="fl">10</span><span class="op">)</span>,</span>
-<span>  random <span class="op">=</span> <span class="op">~</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">loading1</span> <span class="op">+</span> <span class="va">loading3</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span> <span class="op">+</span></span>
-<span>    <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">loading1</span> <span class="op">|</span> <span class="va">id</span><span class="op">:</span><span class="va">timepoint</span><span class="op">)</span> <span class="op">+</span></span>
-<span>    <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">loading3</span> <span class="op">|</span> <span class="va">id</span><span class="op">:</span><span class="va">timepoint</span><span class="op">)</span>,</span>
-<span>  data <span class="op">=</span> <span class="va">dat</span>,</span>
-<span>  REML <span class="op">=</span> <span class="cn">FALSE</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
-<span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="fl">0</span> <span class="op">+</span> <span class="va">item12</span> <span class="op">+</span> <span class="va">item13</span> <span class="op">+</span> <span class="va">item32</span> <span class="op">+</span> <span class="va">item33</span> <span class="op">+</span> <span class="va">item34</span> <span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://rdrr.io/pkg/mgcv/man/s.html" class="external-link">s</a></span><span class="op">(</span><span class="va">x</span>, by <span class="op">=</span> <span class="va">loading1</span>, k <span class="op">=</span> <span class="fl">10</span><span class="op">)</span> <span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://rdrr.io/pkg/mgcv/man/s.html" class="external-link">s</a></span><span class="op">(</span><span class="va">x</span>, by <span class="op">=</span> <span class="va">loading3</span>, k <span class="op">=</span> <span class="fl">10</span><span class="op">)</span> <span class="op">+</span></span>
-<span>    <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">loading1</span> <span class="op">+</span> <span class="va">loading3</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span> <span class="op">+</span></span>
-<span>    <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">loading1</span> <span class="op">|</span> <span class="va">id</span><span class="op">:</span><span class="va">timepoint</span><span class="op">)</span> <span class="op">+</span></span>
-<span>    <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">loading3</span> <span class="op">|</span> <span class="va">id</span><span class="op">:</span><span class="va">timepoint</span><span class="op">)</span>,</span>
-<span>  data <span class="op">=</span> <span class="va">dat</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-<p>We confirm that the model summary outputs are practically
-identical.</p>
-<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod_gamm4</span><span class="op">$</span><span class="va">mer</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Linear mixed model fit by maximum likelihood  ['lmerMod']</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;      AIC      BIC   logLik deviance df.resid </span></span>
-<span><span class="co">#&gt;  27661.0  27785.5 -13813.5  27627.0    11183 </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Scaled residuals: </span></span>
-<span><span class="co">#&gt;     Min      1Q  Median      3Q     Max </span></span>
-<span><span class="co">#&gt; -6.0436 -0.2908 -0.0056  0.2905  5.8054 </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Random effects:</span></span>
-<span><span class="co">#&gt;  Groups         Name          Variance  Std.Dev. Corr</span></span>
-<span><span class="co">#&gt;  id.timepoint   loading3        0.20909  0.4573      </span></span>
-<span><span class="co">#&gt;  id.timepoint.1 loading1        0.00000  0.0000      </span></span>
-<span><span class="co">#&gt;  id             loading1        0.08763  0.2960      </span></span>
-<span><span class="co">#&gt;                 loading3        0.99820  0.9991  0.30</span></span>
-<span><span class="co">#&gt;  Xr.0           s(x):loading3 624.90887 24.9982      </span></span>
-<span><span class="co">#&gt;  Xr             s(x):loading1   0.22380  0.4731      </span></span>
-<span><span class="co">#&gt;  Residual                       0.50474  0.7105      </span></span>
-<span><span class="co">#&gt; Number of obs: 11200, groups:  id:timepoint, 1600; id, 200; Xr.0, 8; Xr, 8</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Fixed effects:</span></span>
-<span><span class="co">#&gt;                    Estimate Std. Error t value</span></span>
-<span><span class="co">#&gt; Xitem12            0.001686   0.030558   0.055</span></span>
-<span><span class="co">#&gt; Xitem13           -3.428432   0.056166 -61.041</span></span>
-<span><span class="co">#&gt; Xitem32            0.001105   0.025118   0.044</span></span>
-<span><span class="co">#&gt; Xitem33            0.006250   0.025118   0.249</span></span>
-<span><span class="co">#&gt; Xitem34            0.007141   0.039716   0.180</span></span>
-<span><span class="co">#&gt; Xs(x):loading1Fx1 -0.043823   0.070125  -0.625</span></span>
-<span><span class="co">#&gt; Xs(x):loading1Fx2  1.838894   0.104855  17.538</span></span>
-<span><span class="co">#&gt; Xs(x):loading3Fx1  5.465477   0.319140  17.126</span></span>
-<span><span class="co">#&gt; Xs(x):loading3Fx2 10.024813   0.424924  23.592</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Correlation of Fixed Effects:</span></span>
-<span><span class="co">#&gt;             Xitm12 Xitm13 Xitm32 Xitm33 Xitm34 X():1F1 X():1F2 X():3F1</span></span>
-<span><span class="co">#&gt; Xitem13      0.772                                                    </span></span>
-<span><span class="co">#&gt; Xitem32      0.000  0.000                                             </span></span>
-<span><span class="co">#&gt; Xitem33      0.000  0.000  0.500                                      </span></span>
-<span><span class="co">#&gt; Xitem34      0.000  0.000  0.632  0.632                               </span></span>
-<span><span class="co">#&gt; Xs(x):ld1F1  0.000  0.000  0.000  0.000  0.000                        </span></span>
-<span><span class="co">#&gt; Xs(x):ld1F2 -0.138 -0.161  0.000  0.000  0.000 -0.023                 </span></span>
-<span><span class="co">#&gt; Xs(x):ld3F1  0.000  0.000  0.000  0.000  0.000  0.000   0.000         </span></span>
-<span><span class="co">#&gt; Xs(x):ld3F2  0.000  0.000 -0.030 -0.030 -0.037  0.000   0.010  -0.093</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod_gamm4</span><span class="op">$</span><span class="va">gam</span><span class="op">)</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Family: gaussian </span></span>
-<span><span class="co">#&gt; Link function: identity </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Formula:</span></span>
-<span><span class="co">#&gt; y ~ 0 + item12 + item13 + item32 + item33 + item34 + s(x, by = loading1, </span></span>
-<span><span class="co">#&gt;     k = 10) + s(x, by = loading3, k = 10)</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Parametric coefficients:</span></span>
-<span><span class="co">#&gt;         Estimate Std. Error t value Pr(&gt;|t|)    </span></span>
-<span><span class="co">#&gt; item12  0.001686   0.030558   0.055    0.956    </span></span>
-<span><span class="co">#&gt; item13 -3.428432   0.056166 -61.041   &lt;2e-16 ***</span></span>
-<span><span class="co">#&gt; item32  0.001105   0.025118   0.044    0.965    </span></span>
-<span><span class="co">#&gt; item33  0.006250   0.025118   0.249    0.804    </span></span>
-<span><span class="co">#&gt; item34  0.007141   0.039716   0.180    0.857    </span></span>
-<span><span class="co">#&gt; ---</span></span>
-<span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Approximate significance of smooth terms:</span></span>
-<span><span class="co">#&gt;                 edf Ref.df      F p-value    </span></span>
-<span><span class="co">#&gt; s(x):loading1 7.061  7.061  493.8  &lt;2e-16 ***</span></span>
-<span><span class="co">#&gt; s(x):loading3 9.977  9.977 4049.0  &lt;2e-16 ***</span></span>
-<span><span class="co">#&gt; ---</span></span>
-<span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; R-sq.(adj) =  0.863   </span></span>
-<span><span class="co">#&gt; lmer.REML =  27627  Scale est. = 0.50474   n = 11200</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Generalized additive latent and mixed model fit by maximum marginal likelihood.</span></span>
-<span><span class="co">#&gt; Formula: </span></span>
-<span><span class="co">#&gt; y ~ 0 + item12 + item13 + item32 + item33 + item34 + s(x, by = loading1,  </span></span>
-<span><span class="co">#&gt;     k = 10) + s(x, by = loading3, k = 10) + (0 + loading1 + loading3 |  </span></span>
-<span><span class="co">#&gt;     id) + (0 + loading1 | id:timepoint) + (0 + loading3 | id:timepoint)</span></span>
-<span><span class="co">#&gt;    Data: dat</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;      AIC      BIC   logLik deviance df.resid </span></span>
-<span><span class="co">#&gt;  27661.0  27785.5 -13813.5  27627.0    11183 </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Scaled residuals: </span></span>
-<span><span class="co">#&gt;     Min      1Q  Median      3Q     Max </span></span>
-<span><span class="co">#&gt; -6.0436 -0.2908 -0.0056  0.2905  5.8054 </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Random effects:</span></span>
-<span><span class="co">#&gt;  Groups         Name          Variance  Std.Dev. Corr</span></span>
-<span><span class="co">#&gt;  id.timepoint   loading3        0.20910  0.4573      </span></span>
-<span><span class="co">#&gt;  id.timepoint.1 loading1        0.00000  0.0000      </span></span>
-<span><span class="co">#&gt;  id             loading1        0.08762  0.2960      </span></span>
-<span><span class="co">#&gt;                 loading3        0.99801  0.9990  0.30</span></span>
-<span><span class="co">#&gt;  Xr.0           s(x):loading3 626.00531 25.0201      </span></span>
-<span><span class="co">#&gt;  Xr             s(x):loading1   0.22287  0.4721      </span></span>
-<span><span class="co">#&gt;  Residual                       0.50474  0.7105      </span></span>
-<span><span class="co">#&gt; Number of obs: 11200, groups:  id:timepoint, 1600; id, 200; Xr.0, 8; Xr, 8</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Fixed effects:</span></span>
-<span><span class="co">#&gt;                   Estimate Std. Error   t value   Pr(&gt;|t|)</span></span>
-<span><span class="co">#&gt; item12            0.001718    0.03056   0.05622  9.552e-01</span></span>
-<span><span class="co">#&gt; item13           -3.428362    0.05617 -61.03946  0.000e+00</span></span>
-<span><span class="co">#&gt; item32            0.001217    0.02512   0.04847  9.613e-01</span></span>
-<span><span class="co">#&gt; item33            0.006210    0.02512   0.24723  8.047e-01</span></span>
-<span><span class="co">#&gt; item34            0.007248    0.03972   0.18251  8.552e-01</span></span>
-<span><span class="co">#&gt; s(x):loading1Fx1 -0.043763    0.07008  -0.62445  5.323e-01</span></span>
-<span><span class="co">#&gt; s(x):loading1Fx2  1.838841    0.10521  17.47771  2.119e-68</span></span>
-<span><span class="co">#&gt; s(x):loading3Fx1  5.465585    0.31942  17.11120  1.225e-65</span></span>
-<span><span class="co">#&gt; s(x):loading3Fx2 10.025970    0.42511  23.58455 5.553e-123</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Approximate significance of smooth terms:</span></span>
-<span><span class="co">#&gt;                  edf Ref.df      F p-value</span></span>
-<span><span class="co">#&gt; s(x):loading1  7.056  7.056  494.2  &lt;2e-16</span></span>
-<span><span class="co">#&gt; s(x):loading3 10.000 10.000 4036.6  &lt;2e-16</span></span></code></pre></div>
-<p>We also plot the two smooth terms, and confirm that they are
-indentical.</p>
-<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_smooth.galamm.html">plot_smooth</a></span><span class="op">(</span><span class="va">mod</span>, pages <span class="op">=</span> <span class="fl">1</span>, scale <span class="op">=</span> <span class="fl">0</span>, shade <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="semiparametric_files/figure-html/unnamed-chunk-30-1.png" width="700"></p>
-<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mod_gamm4</span><span class="op">$</span><span class="va">gam</span>, pages <span class="op">=</span> <span class="fl">1</span>, scale <span class="op">=</span> <span class="fl">0</span>, shade <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="semiparametric_files/figure-html/unnamed-chunk-30-2.png" width="700"></p>
-<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">dat</span><span class="op">$</span><span class="va">loading1</span> <span class="op">&lt;-</span> <span class="va">dat</span><span class="op">$</span><span class="va">loading3</span> <span class="op">&lt;-</span> <span class="cn">NULL</span></span></code></pre></div>
-<p>We define the loading matrix, with one column for each domain.</p>
-<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="op">(</span><span class="va">lambda</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span>  <span class="fl">1</span>, <span class="cn">NA</span>, <span class="fl">.3</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>,</span>
-<span>  <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="cn">NA</span></span>
-<span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;      [,1] [,2]</span></span>
-<span><span class="co">#&gt; [1,]  1.0    0</span></span>
-<span><span class="co">#&gt; [2,]   NA    0</span></span>
-<span><span class="co">#&gt; [3,]  0.3    0</span></span>
-<span><span class="co">#&gt; [4,]  0.0    1</span></span>
-<span><span class="co">#&gt; [5,]  0.0    1</span></span>
-<span><span class="co">#&gt; [6,]  0.0    1</span></span>
-<span><span class="co">#&gt; [7,]  0.0   NA</span></span></code></pre></div>
-<p>At this point we enter a part of the package which is under active
-development.</p>
-<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
-<span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="fl">0</span> <span class="op">+</span> <span class="va">item12</span> <span class="op">+</span> <span class="va">item13</span> <span class="op">+</span> <span class="va">item32</span> <span class="op">+</span> <span class="va">item33</span> <span class="op">+</span> <span class="va">item34</span> <span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://rdrr.io/pkg/mgcv/man/s.html" class="external-link">s</a></span><span class="op">(</span><span class="va">x</span>, by <span class="op">=</span> <span class="va">loading1</span>, k <span class="op">=</span> <span class="fl">4</span><span class="op">)</span> <span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://rdrr.io/pkg/mgcv/man/s.html" class="external-link">s</a></span><span class="op">(</span><span class="va">x</span>, by <span class="op">=</span> <span class="va">loading3</span>, k <span class="op">=</span> <span class="fl">4</span><span class="op">)</span> <span class="op">+</span></span>
-<span>    <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">loading1</span> <span class="op">+</span> <span class="va">loading3</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span> <span class="op">+</span></span>
-<span>    <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">loading1</span> <span class="op">|</span> <span class="va">id</span><span class="op">:</span><span class="va">timepoint</span><span class="op">)</span> <span class="op">+</span></span>
-<span>    <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">loading3</span> <span class="op">|</span> <span class="va">id</span><span class="op">:</span><span class="va">timepoint</span><span class="op">)</span>,</span>
-<span>  data <span class="op">=</span> <span class="va">dat</span>,</span>
-<span>  load.var <span class="op">=</span> <span class="st">"item"</span>,</span>
-<span>  lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">lambda</span><span class="op">)</span>,</span>
-<span>  factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"loading1"</span>, <span class="st">"loading3"</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  control <span class="op">=</span> <span class="fu"><a href="../reference/galamm_control.html">galamm_control</a></span><span class="op">(</span>optim_control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>maxit <span class="op">=</span> <span class="fl">3</span>, trace <span class="op">=</span> <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<p>At this point we are entering the bleeding edge of the development of
+this package. Currently, multiple smooth terms for different domains is
+not working. A low-level way of achieving this can be found in <a href="https://github.com/LCBC-UiO/galamm-scripts/blob/main/code/cognition_model/estimate_model.R" class="external-link">this
+file</a>. I’m currently wrapping my head around how to achieve the same
+through a formula interface.</p>
 </div>
 </div>
 <div class="section level2">

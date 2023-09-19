@@ -138,10 +138,13 @@
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"LCBC-UiO/galamm"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
+<h2 id="examples">Examples<a class="anchor" aria-label="anchor" href="#examples"></a>
 </h2>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/LCBC-UiO/galamm" class="external-link">galamm</a></span><span class="op">)</span></span></code></pre></div>
+<div class="section level3">
+<h3 id="mixed-response-model">Mixed Response Model<a class="anchor" aria-label="anchor" href="#mixed-response-model"></a>
+</h3>
 <p>The dataframe <code>mresp</code> contains simulated data with mixed response types.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">mresp</span><span class="op">)</span></span>
@@ -192,10 +195,37 @@
 <span><span class="co">#&gt; (Intercept)    0.041    0.05803  0.7065 4.799e-01</span></span>
 <span><span class="co">#&gt; x              0.971    0.08594 11.2994 1.321e-29</span></span></code></pre></div>
 </div>
+<div class="section level3">
+<h3 id="generalized-additive-mixed-model-with-factor-structures">Generalized Additive Mixed Model with Factor Structures<a class="anchor" aria-label="anchor" href="#generalized-additive-mixed-model-with-factor-structures"></a>
+</h3>
+<p>The dataframe <code>cognition</code> contains simulated for which latent ability in three cognitive domains is measured across time. We focus on the first cognitive domain, and estimate a smooth trajectory for how the latent ability depends on time.</p>
+<p>We start by reducing the data.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">cognition</span>, <span class="va">domain</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="va">dat</span><span class="op">$</span><span class="va">item</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">dat</span><span class="op">$</span><span class="va">item</span><span class="op">)</span></span></code></pre></div>
+<p>Next we define the matrix of factor loadings, where <code>NA</code> denotes unknown values to be estimated.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">loading_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
+<p>We then compute the model estimates, containing both a smooth term for the latent ability and random intercept for subject and timepoints.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/galamm.html">galamm</a></span><span class="op">(</span></span>
+<span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="fl">0</span> <span class="op">+</span> <span class="va">item</span> <span class="op">+</span> <span class="fu"><a href="reference/s.html">s</a></span><span class="op">(</span><span class="va">x</span>, load.var <span class="op">=</span> <span class="st">"loading"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">loading</span> <span class="op">|</span> <span class="va">id</span> <span class="op">/</span> <span class="va">timepoint</span><span class="op">)</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">dat</span>,</span>
+<span>  load.var <span class="op">=</span> <span class="st">"item"</span>,</span>
+<span>  lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">loading_matrix</span><span class="op">)</span>,</span>
+<span>  factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"loading"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>We finally plot the estimated smooth term.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/plot_smooth.galamm.html">plot_smooth</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span></code></pre></div>
+<p><img src="reference/figures/README-unnamed-chunk-9-1.png" width="100%"></p>
+</div>
+</div>
 <div class="section level2">
 <h2 id="how-to-cite-this-package">How to cite this package<a class="anchor" aria-label="anchor" href="#how-to-cite-this-package"></a>
 </h2>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/citation.html" class="external-link">citation</a></span><span class="op">(</span><span class="st">"galamm"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; To cite package 'galamm' in publications use:</span></span>
 <span><span class="co">#&gt; </span></span>

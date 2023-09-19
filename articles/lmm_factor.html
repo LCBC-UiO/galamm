@@ -321,7 +321,8 @@ acceptable, although there seems to be a slight upward trend.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="lmm_factor_diagnostic_plot-1.png" alt=""><p class="caption">plot of chunk lmm_factor_diagnostic_plot</p>
+<img src="lmm_factor_diagnostic_plot-1.png" alt=""><p class="caption">Diagnostic plot for linear mixed model with factor
+structures.</p>
 </div>
 <p>We can also compare the estimated model to a model with constrained
 factor loadings. In particular, we could assume that the teacher effect
@@ -426,7 +427,15 @@ dataset.</p>
 <code>JUDGEsim</code> in <a href="https://cran.r-project.org/package=PLmixed" class="external-link">PLmixed</a>, which is
 simulated to mimic the data used by <span class="citation">Koch et al.
 (<a href="#ref-kochCrossClassifiedCFAMTMMModel2016" role="doc-biblioref">2016</a>)</span>. We refer to <span class="citation">Rockwood and Jeon (<a href="#ref-rockwoodEstimatingComplexMeasurement2019" role="doc-biblioref">2019</a>)</span> for all the details, and merely
-present the model and how to estimate it using galamm.</p>
+present the model and how to estimate it using <code>galamm</code>. Note
+however that although the fit with <code>galamm</code> is identical to
+that presented in <span class="citation">Rockwood and Jeon (<a href="#ref-rockwoodEstimatingComplexMeasurement2019" role="doc-biblioref">2019</a>)</span>, our estimated factor loadings
+appear to differ from those in the table at the bottom of page 298 in
+<span class="citation">Rockwood and Jeon (<a href="#ref-rockwoodEstimatingComplexMeasurement2019" role="doc-biblioref">2019</a>)</span>, due to an error in the way the
+matrix of factor loadings was presented in <code>PLmixed</code> versions
+<code>&lt;= 0.1.6</code>. This issue has been fixed in
+<code>PLmixed</code> version <code>0.1.7</code> (Nicholas Rockwood,
+personal communication, August 2023).</p>
 <p>The data contains ratings of two traits in students, and the traits
 are rated by both students and teachers.</p>
 <p>Initially, we need to convert the item variable to a factor.</p>
