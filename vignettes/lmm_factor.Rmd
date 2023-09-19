@@ -32,13 +32,13 @@ This example comes from Section 3.1 in @jeonProfileLikelihoodApproachEstimating2
 
 ```r
 head(KYPSsim)
-#>   mid hid sid time   esteem
-#> 1   1   1   1    1 2.759234
-#> 2   1   1   1    2 2.980368
-#> 3   1   1   1    3 3.130784
-#> 4   1   1   1    4 3.310306
-#> 5   2   1   2    1 2.924520
-#> 6   2   1   2    2 2.997440
+#>   mid hid sid time   esteem time12 time34
+#> 1   1   1   1    1 2.759234      1      0
+#> 2   1   1   1    2 2.980368      1      0
+#> 3   1   1   1    3 3.130784      0      1
+#> 4   1   1   1    4 3.310306      0      1
+#> 5   2   1   2    1 2.924520      1      0
+#> 6   2   1   2    2 2.997440      1      0
 ```
 
 Student self esteem (variable `esteem`) was assessed at four timepoints, the first two while the student attended middle school, and the second two while the student attended high school. The variables `mid` and `hid` represent the middle school and high school which a given student attended, and `sid` is the student identifier. The variable `time` indicates the given timepoint.

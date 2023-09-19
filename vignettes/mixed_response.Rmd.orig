@@ -15,7 +15,8 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  fig.path = ""
 )
 ```
 
@@ -63,7 +64,7 @@ We define the loading matrix as follows, where the value `1` indicates that the 
 (loading_matrix <- matrix(c(1, NA), ncol = 1))
 ```
 
-We set `load.var = "itemgroup"` because all rows of the data with the same value of `itemgroup` will receive the same factor loading. In `formula`, we state `(0 + level | id)` to specify that each subject, identified by `id`, has a given level. `level` is not an element of the `mresp` data, but is instead the factor onto which the loading matrix loads. We identify this with the argument `factor = list("level")`. We could have chosen any other name for `"level"`, except for names that are already columns in `mresp`. 
+We set `load.var = "itemgroup"` because all rows of the data with the same value of `itemgroup` will receive the same factor loading. In `formula`, we state `(0 + level | id)` to specify that each subject, identified by `id`, has a given level. `level` is not an element of the `mresp` data, but is instead the factor onto which the loading matrix loads. We identify this with the argument `factor = list("level")`. We could have chosen any other name for `"level"`, except for names that are already columns in `mresp`.
 
 We also need to define the response families, with the vector
 
@@ -210,7 +211,7 @@ summary(mod)
 ```
 
 
-The Hessian matrix is not invertible, which means that we cannot compute the variance-covariance matrix. We note that the variance of the latent variable is estimated to be exactly zero, and although zero variance estimates is a well known phenomenon in these types of models (see @hodgesRichlyParameterizedLinear2013 for a book-length treatment), it does not seem reasonable in this case that there is no variation in the true fiber intake in this population of bankers and transport workers. 
+The Hessian matrix is not invertible, which means that we cannot compute the variance-covariance matrix. We note that the variance of the latent variable is estimated to be exactly zero, and although zero variance estimates is a well known phenomenon in these types of models (see @hodgesRichlyParameterizedLinear2013 for a book-length treatment), it does not seem reasonable in this case that there is no variation in the true fiber intake in this population of bankers and transport workers.
 
 We suspect that this is a convergence issue of the algorithm, and start by simply turning a lever to make the algorithm more verbose. The argument `trace = 3` is passed onto `optim`.
 

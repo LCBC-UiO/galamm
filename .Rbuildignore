@@ -19,3 +19,10 @@
 rebuild-long-running-vignettes.R
 update_autodiff.sh
 insert_sparse_autodiff.R
+
+vignettes/lmm_factor.orig.Rmd
+vignettes/glmm_factor.orig.Rmd
+vignettes/mixed_response.orig.Rmd
+vignettes/lmm_heteroscedastic.orig.Rmd
+vignettes/semiparametric.orig.Rmd
+

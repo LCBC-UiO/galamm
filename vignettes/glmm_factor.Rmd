@@ -346,7 +346,6 @@ In this case we can confirm that the `galamm` function is correctly implemented 
 
 ```r
 library(lme4)
-#> Loading required package: Matrix
 count_mod_lme4 <- glmer(
   formula = y ~ lbas * treat + lage + v4 + (1 | subj),
   data = epilep,

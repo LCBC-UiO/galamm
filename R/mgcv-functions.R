@@ -165,13 +165,13 @@ gam.setup <- function(formula, pterms,
 
       ## alternative version under alternative constraint first (prediction only)
       if (is.null(sm[[i]]$Xp)) {
-        if (!is.null(Xp)) Xp <- cbind2(Xp,sm[[i]]$X)
+        if (!is.null(Xp)) Xp <- methods::cbind2(Xp,sm[[i]]$X)
       } else {
         if (is.null(Xp)) Xp <- X
-        Xp <- cbind2(Xp,sm[[i]]$Xp);sm[[i]]$Xp <- NULL
+        Xp <- methods::cbind2(Xp,sm[[i]]$Xp);sm[[i]]$Xp <- NULL
       }
       ## now version to use for fitting ...
-      X <- cbind2(X,sm[[i]]$X);sm[[i]]$X<-NULL
+      X <- methods::cbind2(X,sm[[i]]$X);sm[[i]]$X<-NULL
 
       G$smooth[[i]] <- sm[[i]]
     }
