@@ -17,9 +17,10 @@
 #' @examples
 #' # Linear mixed model with heteroscedastic residuals
 #' mod <- galamm(
-#'     formula = y ~ x + (1 | id),
-#'     weights = ~ (1 | item),
-#'     data = hsced)
+#'   formula = y ~ x + (1 | id),
+#'   weights = ~ (1 | item),
+#'   data = hsced
+#' )
 #'
 #' # Extract residual standard deviation.
 #' sigma(mod)
@@ -29,6 +30,6 @@
 #' # various grouping levels:
 #' summary(mod)
 #'
-sigma.galamm <- function(object, ...){
+sigma.galamm <- function(object, ...) {
   sqrt(object$parameters$dispersion_parameter)
 }

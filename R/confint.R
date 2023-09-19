@@ -21,8 +21,10 @@
 #'
 #' @examples
 #' # Poisson GLMM
-#' count_mod <- galamm(formula = y ~ lbas * treat + lage + v4 + (1 | subj),
-#'                     data = epilep, family = poisson)
+#' count_mod <- galamm(
+#'   formula = y ~ lbas * treat + lage + v4 + (1 | subj),
+#'   data = epilep, family = poisson
+#' )
 #'
 #' confint(count_mod, parm = "beta", level = .99)
 #'

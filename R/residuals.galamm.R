@@ -15,8 +15,10 @@
 #'
 #' @examples
 #' # Poisson GLMM
-#' count_mod <- galamm(formula = y ~ lbas * treat + lage + v4 + (1 | subj),
-#'                     data = epilep, family = poisson)
+#' count_mod <- galamm(
+#'   formula = y ~ lbas * treat + lage + v4 + (1 | subj),
+#'   data = epilep, family = poisson
+#' )
 #'
 #' # Extract residuals
 #' residuals(count_mod)
