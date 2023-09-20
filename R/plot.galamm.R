@@ -9,6 +9,8 @@
 #' @seealso [residuals.galamm()] for extracting residuals and [plot()] for the
 #'   generic function.
 #'
+#' @family {summary functions}
+#'
 #' @examples
 #' # Linear mixed model example from lme4
 #' data("sleepstudy", package = "lme4")

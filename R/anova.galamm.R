@@ -20,6 +20,8 @@
 #' @seealso [summary.galamm()] for the summary method and [anova()] for the
 #'   generic function.
 #'
+#' @family {summary functions}
+#'
 #' @examples
 #' # Poisson GLMM
 #' count_mod <- galamm(

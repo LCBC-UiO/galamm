@@ -179,6 +179,8 @@
 #' # We can plot the estimated smooth term
 #' plot_smooth(mod, shade = TRUE)
 #'
+#' @family {modeling functions}
+#'
 #' @md
 galamm <- function(formula, weights = NULL, data, family = gaussian,
                    family_mapping = rep(1L, nrow(data)),

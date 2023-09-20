@@ -25,6 +25,8 @@ factor_loadings <- function(object) {
 #'   authors Nicholas Rockwood and Minjeong Jeon
 #'   \insertCite{rockwoodEstimatingComplexMeasurement2019}{galamm}.
 #'
+#' @family {details of model fit}
+#'
 #' @examples
 #' # Logistic mixed model with factor loadings, example from PLmixed
 #' data("IRTsim", package = "PLmixed")

@@ -18,6 +18,8 @@
 #' @seealso [print.summary.galamm()] for the print method and [summary()] for
 #'   the generic.
 #'
+#' @family {summary functions}
+#'
 #' @examples
 #' # Linear mixed model with heteroscedastic residuals
 #' mod <- galamm(
@@ -85,6 +87,8 @@ summary.galamm <- function(object, ...) {
 #'
 #' @references \insertAllCited{}
 #'
+#' @family {summary functions}
+#'
 #' @examples
 #' # Linear mixed model with heteroscedastic residuals
 #' mod <- galamm(
@@ -149,6 +153,19 @@ llikAIC <- function(object) {
 #' @return A list containing AIC, BIC, log likelihood, deviance and residual
 #'   degrees of freedom.
 #' @export
+#'
+#' @family {details of model fit}
+#'
+#' @examples
+#' # Linear mixed model with heteroscedastic residuals
+#' mod <- galamm(
+#'   formula = y ~ x + (1 | id),
+#'   weights = ~ (1 | item),
+#'   data = hsced
+#' )
+#'
+#' llikAIC(mod)
+#'
 #'
 llikAIC.galamm <- function(object) {
   llik <- logLik(object)

@@ -11,6 +11,8 @@
 #'
 #' @seealso [galamm()]
 #'
+#' @family {details of model fit}
+#'
 #' @examples
 #' # Mixed response model
 #' loading_matrix <- matrix(c(1, NA), ncol = 1)

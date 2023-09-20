@@ -35,4 +35,12 @@ the dataset is used.
 \references{
 \insertAllCited{}
 }
+\seealso{
+Other datasets: 
+\code{\link{cognition}},
+\code{\link{diet}},
+\code{\link{hsced}},
+\code{\link{mresp}}
+}
+\concept{datasets}
 \keyword{datasets}

@@ -17,6 +17,8 @@ NULL
 #'
 #' @seealso [print.VarCorr.galamm()] for the print function.
 #'
+#' @family {details of model fit}
+#'
 #' @examples
 #' # Linear mixed model with heteroscedastic residuals
 #' mod <- galamm(
@@ -69,6 +71,8 @@ VarCorr.galamm <- function(x, sigma = 1, ...) {
 #'
 #' @seealso [VarCorr.galamm()] for the function creating the variance-covariance
 #'   objects.
+#'
+#' @family {details of model fit}
 #'
 #' @examples
 #' # Linear mixed model with heteroscedastic residuals

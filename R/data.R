@@ -18,6 +18,7 @@
 #'   weeks preceeding entry into the trial.}
 #' }
 #' @source <http://www.gllamm.org/books/readme.html#11.3>
+#' @family datasets
 #' @references \insertAllCited{}
 "epilep"
 
@@ -35,6 +36,8 @@
 #'   distributed responses and "b" for the binomially distributed response
 #'   (with 1 trial).}
 #' }
+#'
+#' @family datasets
 "mresp"
 
 #' Diet Data
@@ -64,6 +67,7 @@
 #'   at timepoint 2.}
 #' }
 #' @source <http://www.gllamm.org/books/readme.html#14.2>
+#' @family datasets
 #' @references \insertAllCited{}
 "diet"
 
@@ -80,6 +84,7 @@
 #'   \item{x}{Explanatory variable}
 #'   \item{y}{Outcome.}
 #' }
+#' @family datasets
 #' @references \insertAllCited{}
 "hsced"
 
@@ -103,7 +108,7 @@
 #'   \item{y}{Response variable. For domain 1 a real number, for domain 2 a
 #'   binomially distributed variable based on a single trial, for domain 3 a real number.}
 #' }
-#'
+#' @family datasets
 #' @references \insertAllCited{}
 #'
 "cognition"

@@ -32,4 +32,9 @@ control <- galamm_control(optim_control = list(trace = 6, lmm = 20))
 }
 \seealso{
 \code{\link[=galamm]{galamm()}}
+
+Other {modeling functions}: 
+\code{\link{galamm}()},
+\code{\link{s}()}
 }
+\concept{{modeling functions}}

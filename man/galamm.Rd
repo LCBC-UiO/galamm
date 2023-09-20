@@ -207,3 +207,9 @@ plot_smooth(mod, shade = TRUE)
 \references{
 \insertAllCited{}
 }
+\seealso{
+Other {modeling functions}: 
+\code{\link{galamm_control}()},
+\code{\link{s}()}
+}
+\concept{{modeling functions}}

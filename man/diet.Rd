@@ -42,4 +42,12 @@ dataset is used. See also
 \references{
 \insertAllCited{}
 }
+\seealso{
+Other datasets: 
+\code{\link{cognition}},
+\code{\link{epilep}},
+\code{\link{hsced}},
+\code{\link{mresp}}
+}
+\concept{datasets}
 \keyword{datasets}

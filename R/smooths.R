@@ -14,6 +14,7 @@
 #'   order to produce the observed outcome.
 #'
 #' @export
+#' @family {modeling functions}
 #'
 #' @references
 #'

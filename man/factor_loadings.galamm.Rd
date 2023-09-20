@@ -48,9 +48,27 @@ factor_loadings(mod)
 \code{\link[=fixef.galamm]{fixef.galamm()}} for fixed regression coefficients,
 \code{\link[=confint.galamm]{confint.galamm()}} for confidence intervals, and \code{\link[=coef.galamm]{coef.galamm()}} for
 coefficients more generally.
+
+Other {details of model fit}: 
+\code{\link{VarCorr}()},
+\code{\link{coef.galamm}()},
+\code{\link{confint.galamm}()},
+\code{\link{deviance.galamm}()},
+\code{\link{family.galamm}()},
+\code{\link{fitted.galamm}()},
+\code{\link{fixef}()},
+\code{\link{llikAIC.galamm}()},
+\code{\link{logLik.galamm}()},
+\code{\link{predict.galamm}()},
+\code{\link{print.VarCorr.galamm}()},
+\code{\link{ranef.galamm}()},
+\code{\link{residuals.galamm}()},
+\code{\link{sigma.galamm}()},
+\code{\link{vcov.galamm}()}
 }
 \author{
 The example for this function comes from \code{PLmixed}, with
 authors Nicholas Rockwood and Minjeong Jeon
 \insertCite{rockwoodEstimatingComplexMeasurement2019}{galamm}.
 }
+\concept{{details of model fit}}
