@@ -18,7 +18,7 @@
 #'
 #' @seealso [galamm()]
 #'
-#' @family {modeling functions}
+#' @family modeling functions
 #'
 #' @examples
 #' # Define control object with quite a high degree of verbosity (trace = 6)

@@ -20,7 +20,7 @@ NULL
 #' @seealso [ranef.galamm()] for random effects, [coef.galamm()] for
 #' coefficients more generally, and [confint.galamm()] for confidence intervals.
 #'
-#' @family {details of model fit}
+#' @family details of model fit
 #'
 #' @examples
 #' # Poisson GLMM

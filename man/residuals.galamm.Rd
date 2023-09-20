@@ -37,7 +37,7 @@ residuals(count_mod)
 model predictions, and \code{\link[=plot.galamm]{plot.galamm()}} for diagnostic plots. The generic
 function is \code{\link[=residuals]{residuals()}}.
 
-Other {details of model fit}: 
+Other details of model fit: 
 \code{\link{VarCorr}()},
 \code{\link{coef.galamm}()},
 \code{\link{confint.galamm}()},
@@ -54,4 +54,4 @@ Other {details of model fit}:
 \code{\link{sigma.galamm}()},
 \code{\link{vcov.galamm}()}
 }
-\concept{{details of model fit}}
+\concept{details of model fit}

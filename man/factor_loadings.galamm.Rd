@@ -49,7 +49,7 @@ factor_loadings(mod)
 \code{\link[=confint.galamm]{confint.galamm()}} for confidence intervals, and \code{\link[=coef.galamm]{coef.galamm()}} for
 coefficients more generally.
 
-Other {details of model fit}: 
+Other details of model fit: 
 \code{\link{VarCorr}()},
 \code{\link{coef.galamm}()},
 \code{\link{confint.galamm}()},
@@ -71,4 +71,4 @@ The example for this function comes from \code{PLmixed}, with
 authors Nicholas Rockwood and Minjeong Jeon
 \insertCite{rockwoodEstimatingComplexMeasurement2019}{galamm}.
 }
-\concept{{details of model fit}}
+\concept{details of model fit}

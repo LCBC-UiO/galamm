@@ -19,7 +19,7 @@ plot_smooth <- function(object, ...) {
 #' @return A plot is displayed on the screen.
 #' @export
 #'
-#' @family {summary functions}
+#' @family summary functions
 #'
 #' @references \insertAllCited{}
 #'

@@ -16,7 +16,7 @@ NULL
 #'
 #' @export
 #'
-#' @family {details of model fit}
+#' @family details of model fit
 #'
 #' @author This function is derived from \code{lme4::ranef.merMod}, written by
 #'   Douglas Bates, Martin Maechler, Ben Bolker, Steve Walker.
@@ -54,7 +54,7 @@ ranef.galamm <- function(object, ...) {
         dimnames = list(NULL, cnms[[i]])
       )
     }
-    ## create a list of data frames corresponding to factors
+
     ans <- lapply(
       seq_along(fl),
       function(i) {
@@ -64,9 +64,6 @@ ranef.galamm <- function(object, ...) {
         if (length(ub2) > 1) {
           stop("differing numbers of b per group")
         }
-        ## if number of sets of modes != number of levels (e.g. Gaussian process/phyloglmm),
-        ##   generate numeric sequence for names
-
         rnms <- if (ub2 == length(levs[[i]])) levs[[i]] else seq(ub2)
         data.frame(do.call(cbind, m),
           row.names = rnms,

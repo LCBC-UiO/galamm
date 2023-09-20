@@ -16,7 +16,8 @@
 cognitive domain.}
 \item{trials}{Number of trials, if applicable.}
 \item{y}{Response variable. For domain 1 a real number, for domain 2 a
-binomially distributed variable based on a single trial, for domain 3 a real number.}
+binomially distributed variable based on a single trial, for
+domain 3 a real number.}
 }
 }
 }

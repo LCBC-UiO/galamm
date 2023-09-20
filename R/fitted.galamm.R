@@ -8,7 +8,7 @@
 #' @return A numerical vector with fit values for each row in the input data.
 #' @export
 #'
-#' @family {details of model fit}
+#' @family details of model fit
 #'
 #' @examples
 #' # Linear mixed model with heteroscedastic residuals

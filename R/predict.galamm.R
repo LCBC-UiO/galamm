@@ -16,10 +16,10 @@
 #' @return A numeric vector of predicted values.
 #' @export
 #'
-#' @seealso [fitted.galamm()] for model fits, [residuals.galamm()] for residuals,
-#' and [predict()] for the generic function.
+#' @seealso [fitted.galamm()] for model fits, [residuals.galamm()] for
+#'   residuals, and [predict()] for the generic function.
 #'
-#' @family {details of model fit}
+#' @family details of model fit
 #'
 #' @examples
 #' # Poisson GLMM

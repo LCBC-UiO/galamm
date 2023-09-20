@@ -13,7 +13,7 @@
 #' @seealso [confint.galamm()] for the method computing confidence intervals.
 #'   See [vcov()] for the generic function.
 #'
-#' @family {details of model fit}
+#' @family details of model fit
 #'
 #' @examples
 #' # Linear mixed model with heteroscedastic residuals

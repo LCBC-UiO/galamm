@@ -39,7 +39,7 @@ ranef(count_mod)
 \code{\link[=fixef.galamm]{fixef.galamm()}} for fixed effects and \code{\link[=coef.galamm]{coef.galamm()}} for
 coefficients more generally.
 
-Other {details of model fit}: 
+Other details of model fit: 
 \code{\link{VarCorr}()},
 \code{\link{coef.galamm}()},
 \code{\link{confint.galamm}()},
@@ -60,4 +60,4 @@ Other {details of model fit}:
 This function is derived from \code{lme4::ranef.merMod}, written by
 Douglas Bates, Martin Maechler, Ben Bolker, Steve Walker.
 }
-\concept{{details of model fit}}
+\concept{details of model fit}

@@ -11,7 +11,7 @@
 #'
 #' @seealso [galamm()]
 #'
-#' @family {details of model fit}
+#' @family details of model fit
 #'
 #' @examples
 #' # Mixed response model

@@ -41,7 +41,7 @@ vcov(mod, parm = "weights")
 \code{\link[=confint.galamm]{confint.galamm()}} for the method computing confidence intervals.
 See \code{\link[=vcov]{vcov()}} for the generic function.
 
-Other {details of model fit}: 
+Other details of model fit: 
 \code{\link{VarCorr}()},
 \code{\link{coef.galamm}()},
 \code{\link{confint.galamm}()},
@@ -58,4 +58,4 @@ Other {details of model fit}:
 \code{\link{residuals.galamm}()},
 \code{\link{sigma.galamm}()}
 }
-\concept{{details of model fit}}
+\concept{details of model fit}

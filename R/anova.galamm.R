@@ -20,7 +20,7 @@
 #' @seealso [summary.galamm()] for the summary method and [anova()] for the
 #'   generic function.
 #'
-#' @family {summary functions}
+#' @family summary functions
 #'
 #' @examples
 #' # Poisson GLMM
@@ -99,7 +99,7 @@ anova.galamm <- function(object, ...) {
       )
     )
   } else {
-    message("Analysis of variance table for galamm objects not implemented yet.")
+    message("ANOVA tables for galamm objects not implemented yet.")
   }
 }
 

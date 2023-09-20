@@ -33,7 +33,7 @@ logLik(mod)
 \code{\link[=deviance.galamm]{deviance.galamm()}} for a function returning deviance and
 \code{\link[=logLik]{logLik()}} for the generic function.
 
-Other {details of model fit}: 
+Other details of model fit: 
 \code{\link{VarCorr}()},
 \code{\link{coef.galamm}()},
 \code{\link{confint.galamm}()},
@@ -50,4 +50,4 @@ Other {details of model fit}:
 \code{\link{sigma.galamm}()},
 \code{\link{vcov.galamm}()}
 }
-\concept{{details of model fit}}
+\concept{details of model fit}

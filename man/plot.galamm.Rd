@@ -30,10 +30,10 @@ plot(mod)
 \code{\link[=residuals.galamm]{residuals.galamm()}} for extracting residuals and \code{\link[=plot]{plot()}} for the
 generic function.
 
-Other {summary functions}: 
+Other summary functions: 
 \code{\link{anova.galamm}()},
 \code{\link{plot_smooth.galamm}()},
 \code{\link{print.summary.galamm}()},
 \code{\link{summary.galamm}()}
 }
-\concept{{summary functions}}
+\concept{summary functions}

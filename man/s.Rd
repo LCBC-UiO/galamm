@@ -29,9 +29,9 @@ specification of loading variables for smooth terms.
 \insertRef{woodGeneralizedAdditiveModels2017a}{galamm}
 }
 \seealso{
-Other {modeling functions}: 
+Other modeling functions: 
 \code{\link{galamm_control}()},
 \code{\link{galamm}()},
 \code{\link{t2}()}
 }
-\concept{{modeling functions}}
+\concept{modeling functions}

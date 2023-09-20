@@ -208,10 +208,14 @@ gam.setup <- function(formula, pterms, mf) {
 
   for (i in seq_len(n.smooth)) {
     k <- 1
-    jj <- seq(from = G$smooth[[i]]$first.para, to = G$smooth[[i]]$last.para, by = 1)
+    jj <- seq(
+      from = G$smooth[[i]]$first.para,
+      to = G$smooth[[i]]$last.para, by = 1
+    )
     if (G$smooth[[i]]$df > 0) {
       for (j in jj) {
-        term.names[j] <- paste(G$smooth[[i]]$label, ".", as.character(k), sep = "")
+        term.names[j] <-
+          paste(G$smooth[[i]]$label, ".", as.character(k), sep = "")
         k <- k + 1
       }
     }
@@ -265,10 +269,13 @@ variable.summary <- function(pf, dl, n) {
   v.n <- length(v.name)
 
   for (i in seq_len(v.n)) {
-    if (v.name[i] %in% p.name) para <- TRUE else para <- FALSE ## is variable in the parametric part?
+    if (v.name[i] %in% p.name) para <- TRUE else para <- FALSE
 
-    if (para && is.matrix(dl[[v.name[i]]]) && ncol(dl[[v.name[i]]]) > 1) { ## parametric matrix --- a special case
-      x <- matrix(apply(dl[[v.name[i]]], 2, stats::quantile, probs = 0.5, type = 3, na.rm = TRUE), 1, ncol(dl[[v.name[i]]])) ## nearest to median entries
+    if (para && is.matrix(dl[[v.name[i]]]) && ncol(dl[[v.name[i]]]) > 1) {
+      x <- matrix(apply(dl[[v.name[i]]], 2, stats::quantile,
+        probs = 0.5,
+        type = 3, na.rm = TRUE
+      ), 1, ncol(dl[[v.name[i]]]))
     } else { ## anything else
       x <- dl[[v.name[i]]]
       if (is.character(x)) x <- as.factor(x)
@@ -280,7 +287,11 @@ variable.summary <- function(pf, dl, n) {
         x <- factor(lx[ii], levels = lx)
       } else {
         x <- as.numeric(x)
-        x <- c(min(x, na.rm = TRUE), as.numeric(stats::quantile(x, probs = .5, type = 3, na.rm = TRUE)), max(x, na.rm = TRUE)) ## 3 figure summary
+        x <- c(
+          min(x, na.rm = TRUE),
+          as.numeric(stats::quantile(x, probs = .5, type = 3, na.rm = TRUE)),
+          max(x, na.rm = TRUE)
+        )
       }
     }
     vs[[v.name[i]]] <- x
@@ -370,7 +381,8 @@ interpret.gam0 <- function(gf) {
     if (k <= ns && ((ks <= len.sp && sp[ks] == i) ||
       (kt2 <= len.t2p && t2p[kt2] == i))) { # it's a smooth
 
-      smooth.spec[[k]] <- eval(parse(text = paste0("galamm::", terms[[i]])), envir = p.env)
+      smooth.spec[[k]] <-
+        eval(parse(text = paste0("galamm::", terms[[i]])), envir = p.env)
 
       if (ks <= len.sp && sp[ks] == i) {
         ks <- ks + 1

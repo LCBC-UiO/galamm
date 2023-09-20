@@ -25,7 +25,7 @@ factor_loadings <- function(object) {
 #'   authors Nicholas Rockwood and Minjeong Jeon
 #'   \insertCite{rockwoodEstimatingComplexMeasurement2019}{galamm}.
 #'
-#' @family {details of model fit}
+#' @family details of model fit
 #'
 #' @examples
 #' # Logistic mixed model with factor loadings, example from PLmixed
@@ -56,7 +56,8 @@ factor_loadings.galamm <- function(object) {
   lambda_tmp_est <- lambda_tmp_se <- object$parameters$lambda_dummy[[1]]
   lambda_tmp_se[lambda_tmp_se %in% c(0, 1)] <- NA_real_
 
-  lambda_tmp_est[lambda_tmp_est > 1] <- object$parameters$parameter_estimates[object$parameters$lambda_inds]
+  lambda_tmp_est[lambda_tmp_est > 1] <-
+    object$parameters$parameter_estimates[object$parameters$lambda_inds]
   lambda_tmp_se[!is.na(lambda_tmp_se)] <-
     sqrt(diag(vcov(object, parm = "lambda")))
 
