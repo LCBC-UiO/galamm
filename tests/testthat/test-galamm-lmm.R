@@ -1,4 +1,4 @@
-library(PLmixed)
+data("IRTsim", package = "PLmixed")
 test_that("LMM with simple factor works", {
   IRTsub <- IRTsim[IRTsim$item < 4, ] # Select items 1-3
   set.seed(12345)
@@ -75,6 +75,7 @@ test_that("LMM with simple factor works", {
   expect_snapshot(round(confint(mod, parm = "theta"), 2))
 })
 
+data("KYPSsim", package = "PLmixed")
 test_that("LMM with two factors works", {
   # Making data small for it to run faster
   dat <- subset(KYPSsim, hid <= 5 & mid <= 5)
@@ -125,6 +126,7 @@ test_that("LMM with two factors works", {
   )
 })
 
+data("JUDGEsim", package = "PLmixed")
 test_that("LMM with two raters works", {
   dat <- subset(JUDGEsim, item %in% 1:6 & stu < 20)
   dat$item <- factor(dat$item)

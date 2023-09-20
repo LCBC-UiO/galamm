@@ -13,9 +13,26 @@ test_that("wrong input is handled properly", {
     )
   )
 
+  newdat <- dat
+  newdat$loading <- 1
+  expect_error(
+    mod <- galamm(
+      formula = y ~ 0 + item + s(x, by = loading) + (0 + loading | id / timepoint),
+      data = newdat,
+      family = binomial,
+      load.var = "item",
+      lambda = list(matrix(c(1, NA, NA), ncol = 1)),
+      factor = list("loading")
+    ),
+    "Factor already a column in data"
+  )
+
   expect_error(
     mod <- galamm(formula = y ~ (1 | id), data = subset(dat, FALSE))
   )
+
+  expect_error(galamm_control(optim_control = list(maximum_iterations = 10)),
+               "Unknown control names")
 })
 
 test_that("family can be defined in three different ways", {
@@ -38,8 +55,8 @@ test_that("family can be defined in three different ways", {
 })
 
 test_that("multiple factors and factors in fixed effects are allowed", {
-  library(PLmixed)
-  data("KYPSsim")
+
+  data("KYPSsim", package = "PLmixed")
 
   kyps.lam <- rbind(
     c(1, 0),
@@ -58,7 +75,7 @@ test_that("multiple factors and factors in fixed effects are allowed", {
   expect_s3_class(test, "galamm")
 })
 
-test_that("anova function gives the right output", {
+test_that("functions fail when they should", {
   data("sleepstudy", package = "lme4")
   sleepstudy_copy <- sleepstudy
   mod1 <- galamm(Reaction ~ Days + (Days | Subject), data = sleepstudy)
@@ -67,4 +84,10 @@ test_that("anova function gives the right output", {
 
   expect_error(anova(mod1, mod2), "not all fitted to the same size")
   expect_error(anova(mod1, mod3), "to the same data object")
+
+  expect_error(confint(mod1, parm = "beta", level = 1.2))
+  expect_error(confint(mod1, parm = "beta", level = c(.2, .3)))
+  expect_error(confint(mod1), "is missing")
+
+
 })

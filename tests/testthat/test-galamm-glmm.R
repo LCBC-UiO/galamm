@@ -1,4 +1,4 @@
-library(PLmixed)
+data("IRTsim", package = "PLmixed")
 test_that("Logistic GLMM with simple factor works", {
   dat <- subset(IRTsim, sid < 50)
   dat$item <- factor(dat$item)
