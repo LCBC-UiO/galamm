@@ -27,7 +27,7 @@ gam.setup <- function(formula, pterms,
   ) ## dev.extra gets added to deviance if REML/ML used in gam.fit3
 
   if (is.null(attr(data, "terms"))) { # then data is not a model frame
-    mf <- model.frame(formula$pf, data, drop.unused.levels = FALSE)
+    mf <- stats::model.frame(formula$pf, data, drop.unused.levels = FALSE)
   } else {
     mf <- data
   }
@@ -35,18 +35,18 @@ gam.setup <- function(formula, pterms,
   G$intercept <- attr(attr(mf, "terms"), "intercept") > 0
 
   ## get any model offset. Complicated by possibility of offsets in multiple formulae...
-  G$offset <- model.offset(mf) # get any model offset including from offset argument
+  G$offset <- stats::model.offset(mf) # get any model offset including from offset argument
 
   if (!is.null(G$offset)) G$offset <- as.numeric(G$offset)
 
   # construct strictly parametric model matrix....
-  X <- model.matrix(pterms, mf)
+  X <- stats::model.matrix(pterms, mf)
 
   rownames(X) <- NULL ## save memory
 
   G$nsdf <- ncol(X)
   G$contrasts <- attr(X, "contrasts")
-  G$xlevels <- .getXlevels(pterms, mf)
+  G$xlevels <- stats::.getXlevels(pterms, mf)
   G$assign <- attr(X, "assign") # used to tell which coeffs relate to which pterms
 
   ## now deal with any user supplied penalties on the parametric part of the model...
@@ -416,7 +416,7 @@ variable.summary <- function(pf, dl, n) {
     if (v.name[i] %in% p.name) para <- TRUE else para <- FALSE ## is variable in the parametric part?
 
     if (para && is.matrix(dl[[v.name[i]]]) && ncol(dl[[v.name[i]]]) > 1) { ## parametric matrix --- a special case
-      x <- matrix(apply(dl[[v.name[i]]], 2, quantile, probs = 0.5, type = 3, na.rm = TRUE), 1, ncol(dl[[v.name[i]]])) ## nearest to median entries
+      x <- matrix(apply(dl[[v.name[i]]], 2, stats::quantile, probs = 0.5, type = 3, na.rm = TRUE), 1, ncol(dl[[v.name[i]]])) ## nearest to median entries
     } else { ## anything else
       x <- dl[[v.name[i]]]
       if (is.character(x)) x <- as.factor(x)
@@ -428,7 +428,7 @@ variable.summary <- function(pf, dl, n) {
         x <- factor(lx[ii], levels = lx)
       } else {
         x <- as.numeric(x)
-        x <- c(min(x, na.rm = TRUE), as.numeric(quantile(x, probs = .5, type = 3, na.rm = TRUE)), max(x, na.rm = TRUE)) ## 3 figure summary
+        x <- c(min(x, na.rm = TRUE), as.numeric(stats::quantile(x, probs = .5, type = 3, na.rm = TRUE)), max(x, na.rm = TRUE)) ## 3 figure summary
       }
     }
     vs[[v.name[i]]] <- x
@@ -483,7 +483,7 @@ gam.side <- function(sm, Xp, tol = .Machine$double.eps^.5) {
   intercept <- FALSE
   if (ncol(Xp)) {
     ## first check columns directly...
-    if (sum(apply(Xp, 2, sd) < .Machine$double.eps^.75) > 0) {
+    if (sum(apply(Xp, 2, stats::sd) < .Machine$double.eps^.75) > 0) {
       intercept <- TRUE
     } else {
       ## no constant column, so need to check span of Xp...
@@ -742,7 +742,7 @@ augment.smX <- function(sm, nobs, np) {
 #'
 interpret.gam0 <- function(gf) {
   p.env <- environment(gf)
-  tf <- terms.formula(gf, specials = c("s", "t2"))
+  tf <- stats::terms.formula(gf, specials = c("s", "t2"))
 
   terms <- attr(tf, "term.labels") # labels of the model terms
   nt <- length(terms) # how many terms?
@@ -825,11 +825,11 @@ interpret.gam0 <- function(gf) {
       }
     }
   }
-  fake.formula <- as.formula(fake.formula, p.env)
+  fake.formula <- stats::as.formula(fake.formula, p.env)
   if (length(av)) {
-    pred.formula <- as.formula(paste("~", paste(av, collapse = "+")))
+    pred.formula <- stats::as.formula(paste("~", paste(av, collapse = "+")))
     pav <- all.vars(pred.formula) ## trick to strip out 'offset(x)' etc...
-    pred.formula <- reformulate(pav, env = p.env)
+    pred.formula <- stats::reformulate(pav, env = p.env)
   } else {
     pred.formula <- ~1
   }
