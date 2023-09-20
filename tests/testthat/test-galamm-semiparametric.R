@@ -15,11 +15,12 @@ test_that("galamm reproduces gamm4", {
   expect_equal(mod$gam$Vp, mod_comp$gam$Vp, tolerance = .001)
 
   mod <- galamm(formula = y ~ s(x, fx = TRUE) + (1 | id), data = dat)
-  mod_comp <- gamm4::gamm4(formula = y ~ s(x, fx = TRUE),
-                           random = ~(1 | id), data = dat, REML = FALSE)
+  mod_comp <- gamm4::gamm4(
+    formula = y ~ s(x, fx = TRUE),
+    random = ~ (1 | id), data = dat, REML = FALSE
+  )
 
   expect_equal(deviance(mod), deviance(mod_comp$mer), tolerance = .0001)
-
 })
 
 test_that("Basic GAMM with factor structures works", {
@@ -36,8 +37,10 @@ test_that("Basic GAMM with factor structures works", {
 
   expect_equal(
     coef(mod)[1:3],
-    c(item11 = 0.669888238636741, item12 = 0.938949881157583,
-      item13 = 0.19327451279475),
+    c(
+      item11 = 0.669888238636741, item12 = 0.938949881157583,
+      item13 = 0.19327451279475
+    ),
     tolerance = .0001
   )
 

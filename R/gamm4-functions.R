@@ -42,7 +42,8 @@ gamm4.setup <- function(formula, pterms, data) {
       n.lev <- length(flev)
       for (k in seq_len(n.lev)) {
         G$Xf <- methods::cbind2(
-          G$Xf, methods::as(sm$X * as.numeric(sm$fac == flev[k]), "dgCMatrix"))
+          G$Xf, methods::as(sm$X * as.numeric(sm$fac == flev[k]), "dgCMatrix")
+        )
       }
     } else {
       n.lev <- 1
@@ -120,7 +121,6 @@ gamm4.setup <- function(formula, pterms, data) {
 #' \insertRef{woodGeneralizedAdditiveModels2017a}{galamm}
 #'
 gamm4 <- function(fixed, random = NULL, data = list()) {
-
   random.vars <- all.vars(random)
   gp <- interpret.gam0(fixed)
   mf <- match.call(expand.dots = FALSE)
@@ -175,7 +175,8 @@ gamm4 <- function(fixed, random = NULL, data = list()) {
 
   for (i in seq_len(n.sr)) {
     mf[[r.name[i]]] <- factor(rep(seq_len(ncol(G$random[[i]])),
-                                  length = nrow(G$random[[i]])))
+      length = nrow(G$random[[i]])
+    ))
     lme4.formula <- paste(lme4.formula, "+ (1|", r.name[i], ")")
   }
 
@@ -184,7 +185,8 @@ gamm4 <- function(fixed, random = NULL, data = list()) {
     lme4.formula <- paste(
       lme4.formula, "+",
       substring(paste(deparse(random, backtick = TRUE), collapse = ""),
-                first = 2)
+        first = 2
+      )
     )
   }
 
