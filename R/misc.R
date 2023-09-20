@@ -83,22 +83,38 @@ find_k <- function(family_txt, family_mapping, y, trials) {
 }
 
 set_initial_values <- function(gobj, start, beta_inds, lambda_inds, weights_inds) {
+  if (length(start) > 0 && any(!names(start) %in% c("beta", "theta", "lambda", "weights"))) {
+    stop("Unknown names in initial value list.")
+  }
+
   theta_init <- if (!is.null(start$theta)) {
+    if (length(start$theta) != length(gobj$lmod$reTrms$theta)) {
+      stop("Wrong number of elements in start$theta")
+    }
     start$theta
   } else {
     gobj$lmod$reTrms$theta
   }
   beta_init <- if (!is.null(start$beta)) {
+    if (length(start$beta) != length(beta_inds)) {
+      stop("Wrong number of elements in start$beta")
+    }
     start$beta
   } else {
     rep(0, length(beta_inds))
   }
   lambda_init <- if (!is.null(start$lambda)) {
+    if (length(start$lambda) != length(lambda_inds)) {
+      stop("Wrong number of elements in start$lambda")
+    }
     start$lambda
   } else {
     rep(1, length(lambda_inds))
   }
   weights_init <- if (!is.null(start$weights)) {
+    if (length(start$weights) != length(weights_inds)) {
+      stop("Wrong number of elements in start$weights")
+    }
     start$weights
   } else {
     rep(1, length(weights_inds))

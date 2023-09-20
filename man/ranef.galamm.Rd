@@ -38,8 +38,26 @@ ranef(count_mod)
 \seealso{
 \code{\link[=fixef.galamm]{fixef.galamm()}} for fixed effects and \code{\link[=coef.galamm]{coef.galamm()}} for
 coefficients more generally.
+
+Other {details of model fit}: 
+\code{\link{VarCorr}()},
+\code{\link{coef.galamm}()},
+\code{\link{confint.galamm}()},
+\code{\link{deviance.galamm}()},
+\code{\link{factor_loadings.galamm}()},
+\code{\link{family.galamm}()},
+\code{\link{fitted.galamm}()},
+\code{\link{fixef}()},
+\code{\link{llikAIC.galamm}()},
+\code{\link{logLik.galamm}()},
+\code{\link{predict.galamm}()},
+\code{\link{print.VarCorr.galamm}()},
+\code{\link{residuals.galamm}()},
+\code{\link{sigma.galamm}()},
+\code{\link{vcov.galamm}()}
 }
 \author{
 This function is derived from \code{lme4::ranef.merMod}, written by
 Douglas Bates, Martin Maechler, Ben Bolker, Steve Walker.
 }
+\concept{{details of model fit}}

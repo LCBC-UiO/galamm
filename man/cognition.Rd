@@ -33,4 +33,12 @@ explanatory variable x.
 \references{
 \insertAllCited{}
 }
+\seealso{
+Other datasets: 
+\code{\link{diet}},
+\code{\link{epilep}},
+\code{\link{hsced}},
+\code{\link{mresp}}
+}
+\concept{datasets}
 \keyword{datasets}

@@ -42,9 +42,16 @@ anova(count_mod, count_mod0)
 \seealso{
 \code{\link[=summary.galamm]{summary.galamm()}} for the summary method and \code{\link[=anova]{anova()}} for the
 generic function.
+
+Other {summary functions}: 
+\code{\link{plot.galamm}()},
+\code{\link{plot_smooth.galamm}()},
+\code{\link{print.summary.galamm}()},
+\code{\link{summary.galamm}()}
 }
 \author{
 Some of the source code for this function is adapted from
 \code{lme4:::anova.merMod}, with authors Douglas M. Bates, Martin Maechler,
 Ben Bolker, and Steve Walker.
 }
+\concept{{summary functions}}

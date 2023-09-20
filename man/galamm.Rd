@@ -21,7 +21,7 @@ galamm(
 \item{formula}{A formula specifying the model. Smooth terms are defined in
 the style of the \code{mgcv} and \code{gamm4} packages, see
 \insertCite{woodGeneralizedAdditiveModels2017a}{galamm} for an
-introduction. Random effects are specifified using \code{lme4} syntax,
+introduction. Random effects are specified using \code{lme4} syntax,
 which is described in detail in
 \insertCite{batesFittingLinearMixedEffects2015}{galamm}. Factor loadings
 will also be part of the model formula, and is based on the syntax of the
@@ -207,3 +207,10 @@ plot_smooth(mod, shade = TRUE)
 \references{
 \insertAllCited{}
 }
+\seealso{
+Other {modeling functions}: 
+\code{\link{galamm_control}()},
+\code{\link{s}()},
+\code{\link{t2}()}
+}
+\concept{{modeling functions}}

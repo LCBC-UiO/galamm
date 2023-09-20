@@ -30,6 +30,23 @@ test_that("Mixed response works", {
     residuals(mod)[c(4, 8, 11)],
     c(0.647057715636119, 1.00640920636177, -1.0876543193226)
   )
+
+  # Now test using initial values
+  mod2 <- galamm(
+    formula = y ~ x + (0 + loading | id),
+    data = dat,
+    family = c(gaussian, binomial),
+    family_mapping = ifelse(dat$itemgroup == "a", 1L, 2L),
+    load.var = "itemgroup",
+    lambda = list(matrix(c(1, NA), ncol = 1)),
+    factor = list("loading"),
+    start = list(
+      theta = mod$parameters$parameter_estimates[mod$parameters$theta_inds],
+      beta = mod$parameters$parameter_estimates[mod$parameters$beta_inds],
+      lambda = mod$parameters$parameter_estimates[mod$parameters$lambda_inds]
+    )
+  )
+  expect_equal(logLik(mod2), logLik(mod))
 })
 
 test_that("Covariate measurement error model works", {

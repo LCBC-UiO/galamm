@@ -13,6 +13,8 @@
 #' model predictions, and [plot.galamm()] for diagnostic plots. The generic
 #' function is [residuals()].
 #'
+#' @family {details of model fit}
+#'
 #' @examples
 #' # Poisson GLMM
 #' count_mod <- galamm(

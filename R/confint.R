@@ -19,6 +19,8 @@
 #' coefficients more generally, and [vcov.galamm()] for the variance-covariance
 #' matrix. [confint()] is the generic function.
 #'
+#' @family {details of model fit}
+#'
 #' @examples
 #' # Poisson GLMM
 #' count_mod <- galamm(

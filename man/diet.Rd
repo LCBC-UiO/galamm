@@ -33,8 +33,8 @@ diet
 }
 \description{
 Longitudinal epilepsy data from
-\insertCite{morrisDietHeartPostscript1977;textual}{galamm}. This documenation
-is based on Chapter 14.2 of
+\insertCite{morrisDietHeartPostscript1977;textual}{galamm}. This
+documentation is based on Chapter 14.2 of
 \insertCite{skrondalGeneralizedLatentVariable2004;textual}{galamm}, where the
 dataset is used. See also
 \insertCite{rabe-heskethCorrectingCovariateMeasurement2003;textual}{galamm}.
@@ -42,4 +42,12 @@ dataset is used. See also
 \references{
 \insertAllCited{}
 }
+\seealso{
+Other datasets: 
+\code{\link{cognition}},
+\code{\link{epilep}},
+\code{\link{hsced}},
+\code{\link{mresp}}
+}
+\concept{datasets}
 \keyword{datasets}

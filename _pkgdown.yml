@@ -22,45 +22,20 @@ reference:
 - title: Modeling
   desc: Fit a generalized additive latent and mixed model.
   contents:
-  - galamm
-  - galamm_control
+  - has_concept("modeling functions")
   - galamm-package
-  - s
 
 - title: High-level model output
   desc: Functions for summarising the result of model fits.
   contents:
-  - anova.galamm
-  - plot.galamm
-  - plot_smooth.galamm
-  - summary.galamm
-  - print.summary.galamm
+  - has_concept("summary functions")
 
 - title: Model details
   desc: Detailed information on specific parts of model fits.
   contents:
-  - coef.galamm
-  - confint.galamm
-  - deviance.galamm
-  - factor_loadings.galamm
-  - family.galamm
-  - fitted.galamm
-  - fixef.galamm
-  - llikAIC.galamm
-  - logLik.galamm
-  - predict.galamm
-  - ranef.galamm
-  - residuals.galamm
-  - sigma.galamm
-  - VarCorr.galamm
-  - print.VarCorr.galamm
-  - vcov.galamm
+  - has_concept("details of model fit")
 
 - title: Datasets
   desc: Simulated and real example datasets.
   contents:
-  - cognition
-  - diet
-  - epilep
-  - hsced
-  - mresp
+  - has_concept("datasets")

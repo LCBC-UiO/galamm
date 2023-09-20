@@ -18,6 +18,8 @@
 #'
 #' @seealso [galamm()]
 #'
+#' @family {modeling functions}
+#'
 #' @examples
 #' # Define control object with quite a high degree of verbosity (trace = 6)
 #' # and using the last 20 BFGS updates to estimate the Hessian in L-BFGS-B.
@@ -61,7 +63,7 @@ galamm_control <- function(optim_control = list(),
 #' Constructor method for galamm_control objects
 #'
 #' @inherit galamm_control
-#' @keywords internal
+#' @noRd
 #' @seealso [galamm_control()]
 new_galamm_control <- function(optim_control, maxit_conditional_modes) {
   if (is.null(optim_control$fnscale)) {

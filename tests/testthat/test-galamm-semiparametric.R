@@ -7,6 +7,12 @@ test_that("galamm reproduces gamm4", {
   expect_equal(unname(mod$gam$edf), unname(mod_comp$gam$edf), tolerance = .001)
   expect_equal(mod$gam$Ve, mod_comp$gam$Ve, tolerance = .001)
   expect_equal(mod$gam$Vp, mod_comp$gam$Vp, tolerance = .001)
+
+  mod <- galamm(formula = y ~ t2(x), data = dat)
+  mod_comp <- gamm4::gamm4(formula = y ~ t2(x), data = dat, REML = FALSE)
+  expect_equal(unname(mod$gam$edf), unname(mod_comp$gam$edf), tolerance = .001)
+  expect_equal(mod$gam$Ve, mod_comp$gam$Ve, tolerance = .001)
+  expect_equal(mod$gam$Vp, mod_comp$gam$Vp, tolerance = .001)
 })
 
 test_that("Basic GAMM with factor structures works", {

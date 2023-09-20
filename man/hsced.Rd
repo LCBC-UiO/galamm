@@ -26,4 +26,12 @@ items.
 \references{
 \insertAllCited{}
 }
+\seealso{
+Other datasets: 
+\code{\link{cognition}},
+\code{\link{diet}},
+\code{\link{epilep}},
+\code{\link{mresp}}
+}
+\concept{datasets}
 \keyword{datasets}

@@ -52,8 +52,26 @@ VarCorr(mod)
 \seealso{
 \code{\link[=VarCorr.galamm]{VarCorr.galamm()}} for the function creating the variance-covariance
 objects.
+
+Other {details of model fit}: 
+\code{\link{VarCorr}()},
+\code{\link{coef.galamm}()},
+\code{\link{confint.galamm}()},
+\code{\link{deviance.galamm}()},
+\code{\link{factor_loadings.galamm}()},
+\code{\link{family.galamm}()},
+\code{\link{fitted.galamm}()},
+\code{\link{fixef}()},
+\code{\link{llikAIC.galamm}()},
+\code{\link{logLik.galamm}()},
+\code{\link{predict.galamm}()},
+\code{\link{ranef.galamm}()},
+\code{\link{residuals.galamm}()},
+\code{\link{sigma.galamm}()},
+\code{\link{vcov.galamm}()}
 }
 \author{
 This function is derived from \code{lme4:::print.VarCorr.merMod}
 written by Douglas M. Bates, Martin Maechler, Ben Bolker, and Steve Walker.
 }
+\concept{{details of model fit}}

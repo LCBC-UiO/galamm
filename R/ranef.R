@@ -16,6 +16,8 @@ NULL
 #'
 #' @export
 #'
+#' @family {details of model fit}
+#'
 #' @author This function is derived from \code{lme4::ranef.merMod}, written by
 #'   Douglas Bates, Martin Maechler, Ben Bolker, Steve Walker.
 #'

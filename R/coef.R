@@ -13,6 +13,8 @@
 #' @seealso [fixef.galamm()] for fixed effects, [ranef.galamm()] for random
 #'   effects, and [coef()] for the generic function.
 #'
+#' @family {details of model fit}
+#'
 #' @examples
 #' # Poisson GLMM
 #' count_mod <- galamm(

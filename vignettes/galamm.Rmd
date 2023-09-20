@@ -31,7 +31,7 @@ The GLLAMM framework contains many elements which are currently not implemented 
 
 ### Response Model
 
-GALAMMs are specified using three building blocks. First, $n$ resposes $y_{1}, \dots, y_{n}$ are assumed independently distributed according to an exponential family with density
+GALAMMs are specified using three building blocks. First, $n$ responses $y_{1}, \dots, y_{n}$ are assumed independently distributed according to an exponential family with density
 
 $$
 f\left(y | \theta, \phi\right) = \exp \left( \frac{y\theta(\mu) - b\left(\theta(\mu)\right)}{\phi} + c\left(y, \phi\right) \right)

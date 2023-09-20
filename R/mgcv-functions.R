@@ -10,7 +10,7 @@
 #' @return A list containing all the data necessary to fit a GAMM.
 #' @author Simon N Wood and Oystein Sorensen.
 #'
-#' @keywords internal
+#' @noRd
 #'
 #' @seealso [gamm4.setup()] and [gamm4()].
 #'
@@ -387,7 +387,7 @@ gam.setup <- function(formula, pterms,
 #'
 #' @return A list containing summary statistics for each variable in the model.
 #' @author Simon Wood
-#' @keywords internal
+#' @noRd
 #'
 #' @references
 #' \insertRef{woodGeneralizedAdditiveModels2017a}{galamm}
@@ -448,7 +448,7 @@ variable.summary <- function(pf, dl, n) {
 #' @return A list of smooth terms, with identifiability constraints imposed.
 #' @author Simon Wood
 #'
-#' @keywords internal
+#' @noRd
 #'
 #' @references
 #' \insertRef{woodGeneralizedAdditiveModels2017a}{galamm}
@@ -647,7 +647,7 @@ gam.side <- function(sm, Xp, tol = .Machine$double.eps^.5) {
 #' @return A cloned smooth specification.
 #' @author Simon Wood
 #'
-#' @keywords internal
+#' @noRd
 #'
 #' @references
 #' \insertRef{woodGeneralizedAdditiveModels2017a}{galamm}
@@ -695,7 +695,7 @@ clone.smooth.spec <- function(specb, spec) {
 #' @return A scaled and augmented model matrix.
 #' @author Simon Wood
 #'
-#' @keywords internal
+#' @noRd
 #'
 #' @references
 #' \insertRef{woodGeneralizedAdditiveModels2017a}{galamm}
@@ -734,7 +734,7 @@ augment.smX <- function(sm, nobs, np) {
 #' @return An object of class \code{split.gam.formula}, containing a
 #'     specification of the smooth terms and a specification of the
 #'     parametric components.
-#' @keywords internal
+#' @noRd
 #' @author Simon Wood, with modifications by Oystein Sorensen.
 #'
 #' @references

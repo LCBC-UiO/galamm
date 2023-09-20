@@ -15,7 +15,7 @@
 \item{v4}{Dummy for visit 4.}
 \item{lage}{Logarithm of age.}
 \item{lbas}{Logarithm of a quarter of the number of seizures in the eight
-weeks preceeding entry into the trial.}
+weeks preceding entry into the trial.}
 }
 }
 }
@@ -28,11 +28,19 @@ epilep
 \description{
 Longitudinal epilepsy data from
 \insertCite{leppikControlledStudyProgabide1987;textual}{galamm}. This
-documenation is based on Chapter 11.3 of
+documentation is based on Chapter 11.3 of
 \insertCite{skrondalGeneralizedLatentVariable2004;textual}{galamm}, where
 the dataset is used.
 }
 \references{
 \insertAllCited{}
 }
+\seealso{
+Other datasets: 
+\code{\link{cognition}},
+\code{\link{diet}},
+\code{\link{hsced}},
+\code{\link{mresp}}
+}
+\concept{datasets}
 \keyword{datasets}

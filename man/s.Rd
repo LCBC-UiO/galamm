@@ -2,32 +2,36 @@
 % Please edit documentation in R/smooths.R
 \name{s}
 \alias{s}
-\alias{t2}
 \title{Set up smooth term with factor loading}
 \usage{
 s(..., load.var = NULL)
-
-t2(..., load.var = NULL)
 }
 \arguments{
-\item{...}{Arguments passed on to \code{mgcv::s} or \code{mgcv::t2}.}
+\item{...}{Arguments passed on to \code{mgcv::s}.}
 
 \item{load.var}{Optional character argument specifying the loading variable.}
 }
 \value{
 An object of class \code{xx.smooth.spec}, where \code{xx} is a basis
-identifying code given by the \code{bs} argument of \code{s} or \code{t2}.
-It differs from the smooth returned by \code{mgcv::s} or \code{mgcv::t2} in
+identifying code given by the \code{bs} argument of \code{s}.
+It differs from the smooth returned by \code{mgcv::s} in
 that it has an additional attribute named \code{"load.var"} which specifies
 any factor loading which this smooth term should be multiplied with in
 order to produce the observed outcome.
 }
 \description{
-Thes are very thin wrappers around \code{mgcv::s} and \code{mgcv::t2}. They
-enable the specification of loading variables for smooth terms.
+This is a very thin wrappers around \code{mgcv::s}. It enables the
+specification of loading variables for smooth terms.
 }
 \references{
 \insertRef{woodThinPlateRegression2003}{galamm}
 
 \insertRef{woodGeneralizedAdditiveModels2017a}{galamm}
 }
+\seealso{
+Other {modeling functions}: 
+\code{\link{galamm_control}()},
+\code{\link{galamm}()},
+\code{\link{t2}()}
+}
+\concept{{modeling functions}}

@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# Generalized Additive Latent and Mixed Models
+# Generalized Additive Latent and Mixed Models <a href="https://lcbc-uio.github.io/galamm/"><img src="man/figures/logo.png" align="right" height="139" alt="galamm website" /></a>
 
 <!-- badges: start -->
 
@@ -247,12 +247,18 @@ citation("galamm")
 ## Acknowledgement
 
 Some parts of the code base for galamm has been derived from internal
-functions of [gamm4](https://cran.r-project.org/package=gamm4) (authors:
-Simon Wood and Fabian Scheipl) and
-[lme4](https://cran.r-project.org/package=lme4) (authors: Douglas M.
-Bates, Martin Maechler, Ben Bolker, and Steve Walker). Whenever a
-function uses code derived from other packages, this has been marked in
-the documentation of the corresponding functions.
+functions of the R packages,
+[gamm4](https://cran.r-project.org/package=gamm4) (authors: Simon Wood
+and Fabian Scheipl), [lme4](https://cran.r-project.org/package=lme4)
+(authors: Douglas Bates, Martin Maechler, Ben Bolker, and Steven
+Walker), and [mgcv](https://cran.r-project.org/package=mgcv) (author:
+Simon Wood), as well the C++ library
+[autodiff](https://autodiff.github.io/) (author: Allan Leal). In
+accordance with the [CRAN Repository
+Policy](https://cran.r-project.org/web/packages/policies.html), all
+these authors are listed as contributors in the `DESCRIPTION` file. If
+you are among these authors, and don’t want to be listed as a
+contributor to this package, please let me know, and I will remove you.
 
 ## Code of Conduct
 

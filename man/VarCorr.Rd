@@ -35,4 +35,22 @@ VarCorr(mod)
 }
 \seealso{
 \code{\link[=print.VarCorr.galamm]{print.VarCorr.galamm()}} for the print function.
+
+Other {details of model fit}: 
+\code{\link{coef.galamm}()},
+\code{\link{confint.galamm}()},
+\code{\link{deviance.galamm}()},
+\code{\link{factor_loadings.galamm}()},
+\code{\link{family.galamm}()},
+\code{\link{fitted.galamm}()},
+\code{\link{fixef}()},
+\code{\link{llikAIC.galamm}()},
+\code{\link{logLik.galamm}()},
+\code{\link{predict.galamm}()},
+\code{\link{print.VarCorr.galamm}()},
+\code{\link{ranef.galamm}()},
+\code{\link{residuals.galamm}()},
+\code{\link{sigma.galamm}()},
+\code{\link{vcov.galamm}()}
 }
+\concept{{details of model fit}}

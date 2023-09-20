@@ -2,6 +2,7 @@
 % Please edit documentation in R/summary.galamm.R
 \name{llikAIC.galamm}
 \alias{llikAIC.galamm}
+\alias{llikAIC}
 \title{Extract log likelihood, AIC, and related statistics from a GALAMM}
 \usage{
 \method{llikAIC}{galamm}(object)
@@ -17,3 +18,33 @@ degrees of freedom.
 \description{
 This function is assembles the values used by \code{\link{summary.galamm}}.
 }
+\examples{
+# Linear mixed model with heteroscedastic residuals
+mod <- galamm(
+  formula = y ~ x + (1 | id),
+  weights = ~ (1 | item),
+  data = hsced
+)
+
+llikAIC(mod)
+
+}
+\seealso{
+Other {details of model fit}: 
+\code{\link{VarCorr}()},
+\code{\link{coef.galamm}()},
+\code{\link{confint.galamm}()},
+\code{\link{deviance.galamm}()},
+\code{\link{factor_loadings.galamm}()},
+\code{\link{family.galamm}()},
+\code{\link{fitted.galamm}()},
+\code{\link{fixef}()},
+\code{\link{logLik.galamm}()},
+\code{\link{predict.galamm}()},
+\code{\link{print.VarCorr.galamm}()},
+\code{\link{ranef.galamm}()},
+\code{\link{residuals.galamm}()},
+\code{\link{sigma.galamm}()},
+\code{\link{vcov.galamm}()}
+}
+\concept{{details of model fit}}

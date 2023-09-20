@@ -9,7 +9,7 @@
 #'
 #' @return model
 #' @author Simon N Wood, with some modifications by Oystein Sorensen.
-#' @keywords internal
+#' @noRd
 #'
 #' @seealso [gamm4()] and [gam.setup()].
 #'
@@ -128,7 +128,7 @@ gamm4.setup <- function(formula, pterms,
 #' @return An object of class \code{lmod}, returned from \code{lme4::lFormula}.
 #'
 #' @author Simon Wood and Fabian Scheipl.
-#' @keywords internal
+#' @noRd
 #'
 #' @seealso [gamm4.setup()] and [gam.setup()].
 #'

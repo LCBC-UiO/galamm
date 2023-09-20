@@ -1,12 +1,20 @@
 Package: galamm
 Title: Generalized Additive Latent and Mixed Models
 Version: 0.1.0
-Authors@R: 
+Authors@R: c(
     person(given = "Øystein",
            family = "Sørensen",
            role = c("aut", "cre"),
            email = "oystein.sorensen@psykologi.uio.no",
-           comment = c(ORCID = "0000-0003-0724-3542"))
+           comment = c(ORCID = "0000-0003-0724-3542")),
+    person(given = "Douglas", family = "Bates", role = "ctb"),       
+    person(given = "Ben", family = "Bolker", role = "ctb"),
+    person(given = "Martin", family = "Maechler", role = "ctb"),
+    person(given = "Allan", family = "Leal", role = "ctb"),
+    person(given = "Fabian", family = "Scheipl", role = "ctb"),
+    person(given = "Steven", family = "Walker", role = "ctb"),
+    person(given = "Simon", family = "Wood", role = "ctb")
+           )
 Description: Estimates generalized additive latent and
     mixed models using maximum marginal likelihood, 
     as defined in Sorensen et al. (2023) 
