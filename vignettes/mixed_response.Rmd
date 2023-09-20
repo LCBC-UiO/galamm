@@ -261,7 +261,7 @@ head(model.matrix(nobars(formula), data = diet))
 
 Finally, the random effects part `(0 + loading | id)` specifies that for each `id` there should be a single random intercept, which corresponds to latent fiber intake $\eta_{j}$. Write `0 + loading` means that $\eta_{j}$ should be multiplied by the factor loadings defined in the loading matrix.
 
-We are now ready to fit the model, and we see that it gives a warning.
+We are now ready to fit the model.
 
 
 ```r
@@ -274,12 +274,26 @@ mod <- galamm(
   load.var = "item",
   lambda = list(loading_matrix)
 )
-#> Warning in galamm(formula = formula, data = diet, family = families, family_mapping = family_mapping, : Rank
-#> deficient Hessian matrix at optimum.
+```
+
+Looking at the summary output, however, we see a warning that the Hessian matrix is rank deficient.
+
+
+```r
+summary(mod)
+#> Rank deficient Hessian matrix. Recomputing without variance components.
+#> Warning in sqrt(diag(vcov(object, parm = object$parameters$lambda_inds))): NaNs produced
+#> Warning in lambda_tmp_se[!is.na(lambda_tmp_se)] <- sqrt(diag(vcov(object, : number of items to replace is not a
+#> multiple of replacement length
+#> Rank deficient Hessian matrix. Recomputing without variance components.
+#> Warning in sqrt(diag(vcov(object, "beta"))): NaNs produced
+#> Warning in cbind(Estimate = fixef(object), `Std. Error` = sqrt(diag(vcov(object, : number of rows of result is not
+#> a multiple of vector length (arg 1)
+#> Error in dimnames(x) <- dn: length of 'dimnames' [1] not equal to array extent
 ```
 
 
-The Hessian matrix is not invertible, which means that we cannot compute the variance-covariance matrix. We suspect that this is a convergence issue of the algorithm, and start by simply turning a lever to make the algorithm more verbose. The argument `trace = 3` is passed onto `optim`.
+We suspect that this is a convergence issue of the algorithm, and start by simply turning a lever to make the algorithm more verbose. The argument `trace = 3` is passed onto `optim`.
 
 
 
@@ -313,8 +327,6 @@ mod <- galamm(
 #> F = 1406.8
 #> final  value 1406.801105 
 #> converged
-#> Warning in galamm(formula = formula, data = diet, family = families, family_mapping = family_mapping, : Rank
-#> deficient Hessian matrix at optimum.
 ```
 
 Now we got some information, but the final estimate is the same, since we otherwise used the same parameters. We now instead try to increase the intial estimate of the random effect parameter $\theta$. In general $\theta$ is a vector containing elements of the Cholesky factor of the covariance matrix (see, @batesFittingLinearMixedEffects2015), but in this case it is just the standard deviation of the latent variable. By default, its initial value is 1, but we now try to increase it to 10, with the `start` argument.

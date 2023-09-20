@@ -189,9 +189,9 @@ head(model.matrix(nobars(formula), data = diet))
 
 Finally, the random effects part `(0 + loading | id)` specifies that for each `id` there should be a single random intercept, which corresponds to latent fiber intake $\eta_{j}$. Write `0 + loading` means that $\eta_{j}$ should be multiplied by the factor loadings defined in the loading matrix.
 
-We are now ready to fit the model, and we see that it gives a warning.
+We are now ready to fit the model.
 
-```{r, warning=TRUE}
+```{r}
 mod <- galamm(
   formula = formula,
   data = diet,
@@ -203,8 +203,14 @@ mod <- galamm(
 )
 ```
 
+Looking at the summary output, however, we see a warning that the Hessian matrix is rank deficient.
 
-The Hessian matrix is not invertible, which means that we cannot compute the variance-covariance matrix. We suspect that this is a convergence issue of the algorithm, and start by simply turning a lever to make the algorithm more verbose. The argument `trace = 3` is passed onto `optim`.
+```{r, warning=TRUE}
+summary(mod)
+```
+
+
+We suspect that this is a convergence issue of the algorithm, and start by simply turning a lever to make the algorithm more verbose. The argument `trace = 3` is passed onto `optim`.
 
 
 ```{r, warning=TRUE}
