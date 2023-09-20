@@ -69,6 +69,10 @@ test_that("LMM with simple factor works", {
   )
 
   expect_snapshot(print(VarCorr(mod), digits = 2))
+
+  expect_snapshot(round(confint(mod, parm = "beta"), 2))
+  expect_snapshot(round(confint(mod, parm = "lambda"), 2))
+  expect_snapshot(round(confint(mod, parm = "theta"), 2))
 })
 
 test_that("LMM with two factors works", {
