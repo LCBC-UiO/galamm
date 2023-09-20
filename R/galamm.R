@@ -186,7 +186,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
                    family_mapping = rep(1L, nrow(data)),
                    load.var = NULL, lambda = NULL, factor = NULL,
                    start = NULL, control = galamm_control()) {
-  data <- na.omit(data)
+  data <- stats::na.omit(data)
   if (nrow(data) == 0) stop("No data, nothing to do.")
   data <- as.data.frame(data)
   mc <- match.call()
@@ -200,7 +200,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   rm(tmp)
 
   rf <- lme4::findbars(formula)
-  rf <- if (!is.null(rf)) as.formula(paste("~", paste("(", rf, ")", collapse = "+")))
+  rf <- if (!is.null(rf)) stats::as.formula(paste("~", paste("(", rf, ")", collapse = "+")))
   gobj <- gamm4(fixed = lme4::nobars(formula), random = rf, data = data)
 
   colnames(gobj$lmod$X) <- gsub("^X", "", colnames(gobj$lmod$X))

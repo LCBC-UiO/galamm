@@ -5,7 +5,7 @@
 #' @param formula Formula including smooth terms, but not \code{lme4} style
 #' random effect terms.
 #' @param pterms Parametric terms.
-#' @param data Model data.
+#' @param mf Model frame.
 #'
 #' @return A list containing all the data necessary to fit a GAMM.
 #' @author Simon N Wood and Oystein Sorensen.
@@ -17,36 +17,23 @@
 #' @references
 #' \insertRef{woodGeneralizedAdditiveModels2017a}{galamm}
 #'
-gam.setup <- function(formula, pterms,
-                      data = stop("No data supplied to gam.setup")) {
+gam.setup <- function(formula, pterms, mf) {
   m <- length(formula$smooth.spec)
 
   G <- list(
     m = m, min.sp = NULL, H = NULL, pearson.extra = 0,
-    dev.extra = 0, n.true = -1, pterms = pterms
-  ) ## dev.extra gets added to deviance if REML/ML used in gam.fit3
-
-  if (is.null(attr(data, "terms"))) { # then data is not a model frame
-    mf <- model.frame(formula$pf, data, drop.unused.levels = FALSE)
-  } else {
-    mf <- data
-  }
+    n.true = -1, pterms = pterms
+  )
 
   G$intercept <- attr(attr(mf, "terms"), "intercept") > 0
 
-  # construct strictly parametric model matrix....
-  X <- model.matrix(pterms, mf)
-
-  rownames(X) <- NULL ## save memory
+  X <- stats::model.matrix(pterms, mf)
+  rownames(X) <- NULL
 
   G$nsdf <- ncol(X)
   G$contrasts <- attr(X, "contrasts")
-  G$xlevels <- .getXlevels(pterms, mf)
-  G$assign <- attr(X, "assign") # used to tell which coeffs relate to which pterms
-
-  ## now deal with any user supplied penalties on the parametric part of the model...
-
-  # next work through smooth terms (if any) extending model matrix.....
+  G$xlevels <- stats::.getXlevels(pterms, mf)
+  G$assign <- attr(X, "assign")
 
   G$smooth <- list()
   G$S <- list()
@@ -54,8 +41,6 @@ gam.setup <- function(formula, pterms,
   for (i in seq_len(m)) {
     attr(formula$smooth.spec[[i]], "gamm") <- TRUE
   }
-
-
 
   G$off <- array(0, 0)
   first.para <- G$nsdf + 1
@@ -66,7 +51,7 @@ gam.setup <- function(formula, pterms,
 
   for (i in seq_len(m)) {
     id <- formula$smooth.spec[[i]]$id
-    sml <- mgcv::smoothCon(formula$smooth.spec[[i]], data, absorb.cons = TRUE)
+    sml <- mgcv::smoothCon(formula$smooth.spec[[i]], mf, absorb.cons = TRUE)
     for (k in seq_along(sml)) {
       sml[[k]]$label <- paste(sml[[k]]$label,
         attr(formula$smooth.spec[[i]], "load.var")[[k]],
@@ -79,19 +64,20 @@ gam.setup <- function(formula, pterms,
   }
 
   G$m <- m <- newm ## number of actual smooths
-
-  if (m > 0) {
-    sm <- gam.side(sm, X, tol = .Machine$double.eps^.5)
-  }
+  sm <- gam.side(sm, X, tol = .Machine$double.eps^.5)
 
   idx <- list()
   L <- matrix(0, 0, 0)
-  lsp.names <- sp.names <- rep("", 0) ## need a list of names to identify sps in global sp array
+  lsp.names <- sp.names <- rep("", 0)
 
   for (i in seq_len(m)) {
     id <- sm[[i]]$id
     ## get the L matrix for this smooth...
-    length.S <- if (is.null(sm[[i]]$updateS)) length(sm[[i]]$S) else sm[[i]]$n.sp ## deals with possibility of non-linear penalty
+    length.S <- if (is.null(sm[[i]]$updateS)) {
+      length(sm[[i]]$S)
+      } else {
+        sm[[i]]$n.sp
+      }
     Li <- if (is.null(sm[[i]]$L)) diag(length.S) else sm[[i]]$L
 
     if (length.S > 0) { ## there are smoothing parameters to name
@@ -122,31 +108,16 @@ gam.setup <- function(formula, pterms,
         sp.names <- c(sp.names, spn) ## extend the sp name vector
         lsp.names <- c(lsp.names, lspn) ## extend full.sp name vector
       }
-    } else { ## it's a repeat id => shares existing sp's
-      L0 <- matrix(0, nrow(Li), ncol(L))
-      if (ncol(Li) > idx[[id]]$nc) {
-        stop("Later terms sharing an `id' can not have more smoothing parameters than the first such term")
-      }
-      L0[, idx[[id]]$c:(idx[[id]]$c + ncol(Li) - 1)] <- Li
-      L <- rbind(L, L0)
-      if (length.S > 0) { ## there are smoothing parameters to name
-        lsp.names <- c(lsp.names, lspn) ## extend full.sp name vector
-      }
     }
   }
 
-
-  ## create the model matrix...
-
-  Xp <- NULL ## model matrix under prediction constraints, if given
+  Xp <- NULL
   for (i in seq_len(m)) {
     n.para <- ncol(sm[[i]]$X)
-    # define which elements in the parameter vector this smooth relates to....
     sm[[i]]$first.para <- first.para
     first.para <- first.para + n.para
     sm[[i]]$last.para <- first.para - 1
 
-    ## alternative version under alternative constraint first (prediction only)
     if (is.null(sm[[i]]$Xp)) {
       if (!is.null(Xp)) Xp <- methods::cbind2(Xp, sm[[i]]$X)
     } else {
@@ -154,7 +125,6 @@ gam.setup <- function(formula, pterms,
       Xp <- methods::cbind2(Xp, sm[[i]]$Xp)
       sm[[i]]$Xp <- NULL
     }
-    ## now version to use for fitting ...
     X <- methods::cbind2(X, sm[[i]]$X)
     sm[[i]]$X <- NULL
 
@@ -193,77 +163,28 @@ gam.setup <- function(formula, pterms,
 
   names(G$sp) <- sp.names
 
-  k <- 1 ## current location in `sp' array
-
-  for (i in seq_len(m)) {
-    id <- sm[[i]]$id
-    if (is.null(sm[[i]]$L)) Li <- diag(length(sm[[i]]$S)) else Li <- sm[[i]]$L
-    if (is.null(id)) { ## it's a smooth without an id
-      spi <- sm[[i]]$sp
-      if (!is.null(spi)) { ## sp supplied in `s' or `te'
-        if (length(spi) != ncol(Li)) stop("incorrect number of smoothing parameters supplied for a smooth term")
-        G$sp[k:(k + ncol(Li) - 1)] <- spi
-      }
-      k <- k + ncol(Li)
-    } else { ## smooth has an id
-      spi <- sm[[i]]$sp
-      if (is.null(idx[[id]]$sp.done)) { ## not already dealt with these sp's
-        if (!is.null(spi)) { ## sp supplied in `s' or `te'
-          if (length(spi) != ncol(Li)) stop("incorrect number of smoothing parameters supplied for a smooth term")
-          G$sp[idx[[id]]$c:(idx[[id]]$c + idx[[id]]$nc - 1)] <- spi
-        }
-        idx[[id]]$sp.done <- TRUE ## only makes sense to use supplied `sp' from defining term
-        k <- k + idx[[id]]$nc
-      }
-    }
-  }
-
-
-  ## copy initial sp's back into smooth objects, so there is a record of
-  ## fixed and free...
   k <- 1
   if (length(idx)) for (i in seq_along(idx)) idx[[i]]$sp.done <- FALSE
 
-  for (i in seq_len(m)) { ## work through all smooths
-    id <- sm[[i]]$id
-    if (!is.null(id)) { ## smooth with id
-      if (idx[[id]]$nc > 0) { ## only copy if there are sp's
-        G$smooth[[i]]$sp <- G$sp[idx[[id]]$c:(idx[[id]]$c + idx[[id]]$nc - 1)]
-      }
-      if (!idx[[id]]$sp.done) { ## only update k on first encounter with this smooth
-        idx[[id]]$sp.done <- TRUE
-        k <- k + idx[[id]]$nc
-      }
-    } else { ## no id, just work through sp
-      if (is.null(sm[[i]]$L)) nc <- length(sm[[i]]$S) else nc <- ncol(sm[[i]]$L)
-      if (nc > 0) G$smooth[[i]]$sp <- G$sp[k:(k + nc - 1)]
-      k <- k + nc
-    }
-  }
-
   k.sp <- 0 # count through sp and S
   G$rank <- array(0, 0)
-  if (m > 0) {
-    for (i in 1:m) {
-      sm <- G$smooth[[i]]
 
-      for (j in seq_along(sm$S)) { # work through penalty matrices
-        k.sp <- k.sp + 1
-        G$off[k.sp] <- sm$first.para
-        G$S[[k.sp]] <- sm$S[[j]]
-        G$rank[k.sp] <- sm$rank[j]
-      }
+  for (i in seq_len(m)) { ## work through all smooths
+    id <- sm[[i]]$id
+    if (is.null(sm[[i]]$L)) nc <- length(sm[[i]]$S) else nc <- ncol(sm[[i]]$L)
+    if (nc > 0) G$smooth[[i]]$sp <- G$sp[k:(k + nc - 1)]
+    k <- k + nc
+    sm <- G$smooth[[i]]
+
+    for (j in seq_along(sm$S)) { # work through penalty matrices
+      k.sp <- k.sp + 1
+      G$off[k.sp] <- sm$first.para
+      G$S[[k.sp]] <- sm$S[[j]]
+      G$rank[k.sp] <- sm$rank[j]
     }
   }
 
-  ## need to modify L, lsp.names, G$S, G$sp, G$rank and G$off to include any penalties
-  ## on parametric stuff, at this point....
   G$n.paraPen <- 0
-
-
-  ## Now remove columns of L and rows of sp relating to fixed
-  ## smoothing parameters, and use removed elements to create lsp0
-
   fix.ind <- G$sp >= 0
 
   if (sum(fix.ind)) {
@@ -293,19 +214,11 @@ gam.setup <- function(formula, pterms,
   G$lsp0 <- lsp0
   names(G$lsp0) <- lsp.names ## names of all smoothing parameters (not just underlying)
 
-  G$y <- drop(data[[formula$response]])
+  G$y <- drop(mf[[formula$response]])
   ydim <- dim(G$y)
   if (!is.null(ydim) && length(ydim) < 2) dim(G$y) <- NULL
 
-  G$n <- nrow(data)
-
-  if (is.null(data$"(weights)")) {
-    G$w <- rep(1, G$n)
-  } else {
-    G$w <- data$"(weights)"
-  }
-
-  ## Create names for model coefficients...
+  G$n <- nrow(mf)
 
   if (G$nsdf > 0) term.names <- colnames(G$X)[seq_len(G$nsdf)] else term.names <- array("", 0)
   n.smooth <- length(G$smooth)
@@ -315,7 +228,7 @@ gam.setup <- function(formula, pterms,
 
   for (i in seq_len(n.smooth)) {
     k <- 1
-    jj <- G$smooth[[i]]$first.para:G$smooth[[i]]$last.para
+    jj <- seq(from = G$smooth[[i]]$first.para, to = G$smooth[[i]]$last.para, by = 1)
     if (G$smooth[[i]]$df > 0) {
       for (j in jj) {
         term.names[j] <- paste(G$smooth[[i]]$label, ".", as.character(k), sep = "")
@@ -334,12 +247,6 @@ gam.setup <- function(formula, pterms,
   }
 
   G$term.names <- term.names
-
-  ## Deal with non-linear parameterizations...
-
-
-  G$pP <- NULL ## return paraPen object, if present
-
   G
 } ## gam.setup
 
@@ -381,7 +288,7 @@ variable.summary <- function(pf, dl, n) {
     if (v.name[i] %in% p.name) para <- TRUE else para <- FALSE ## is variable in the parametric part?
 
     if (para && is.matrix(dl[[v.name[i]]]) && ncol(dl[[v.name[i]]]) > 1) { ## parametric matrix --- a special case
-      x <- matrix(apply(dl[[v.name[i]]], 2, quantile, probs = 0.5, type = 3, na.rm = TRUE), 1, ncol(dl[[v.name[i]]])) ## nearest to median entries
+      x <- matrix(apply(dl[[v.name[i]]], 2, stats::quantile, probs = 0.5, type = 3, na.rm = TRUE), 1, ncol(dl[[v.name[i]]])) ## nearest to median entries
     } else { ## anything else
       x <- dl[[v.name[i]]]
       if (is.character(x)) x <- as.factor(x)
@@ -393,7 +300,7 @@ variable.summary <- function(pf, dl, n) {
         x <- factor(lx[ii], levels = lx)
       } else {
         x <- as.numeric(x)
-        x <- c(min(x, na.rm = TRUE), as.numeric(quantile(x, probs = .5, type = 3, na.rm = TRUE)), max(x, na.rm = TRUE)) ## 3 figure summary
+        x <- c(min(x, na.rm = TRUE), as.numeric(stats::quantile(x, probs = .5, type = 3, na.rm = TRUE)), max(x, na.rm = TRUE)) ## 3 figure summary
       }
     }
     vs[[v.name[i]]] <- x
@@ -447,7 +354,7 @@ gam.side <- function(sm, Xp, tol = .Machine$double.eps^.5) {
   intercept <- FALSE
   if (ncol(Xp)) {
     ## first check columns directly...
-    if (sum(apply(Xp, 2, sd) < .Machine$double.eps^.75) > 0) {
+    if (sum(apply(Xp, 2, stats::sd) < .Machine$double.eps^.75) > 0) {
       intercept <- TRUE
     } else {
       ## no constant column, so need to check span of Xp...
@@ -578,7 +485,7 @@ gam.side <- function(sm, Xp, tol = .Machine$double.eps^.5) {
 #'
 interpret.gam0 <- function(gf) {
   p.env <- environment(gf)
-  tf <- terms.formula(gf, specials = c("s", "t2"))
+  tf <- stats::terms.formula(gf, specials = c("s", "t2"))
 
   terms <- attr(tf, "term.labels") # labels of the model terms
   nt <- length(terms) # how many terms?
@@ -655,16 +562,16 @@ interpret.gam0 <- function(gf) {
       }
     }
   }
-  fake.formula <- as.formula(fake.formula, p.env)
+  fake.formula <- stats::as.formula(fake.formula, p.env)
   if (length(av)) {
-    pred.formula <- as.formula(paste("~", paste(av, collapse = "+")))
+    pred.formula <- stats::as.formula(paste("~", paste(av, collapse = "+")))
     pav <- all.vars(pred.formula)
-    pred.formula <- reformulate(pav, env = p.env)
+    pred.formula <- stats::reformulate(pav, env = p.env)
   } else {
     pred.formula <- ~1
   }
   ret <- list(
-    pf = as.formula(pf, p.env), pfok = pfok, smooth.spec = smooth.spec,
+    pf = stats::as.formula(pf, p.env), pfok = pfok, smooth.spec = smooth.spec,
     fake.formula = fake.formula, response = response, fake.names = av,
     pred.names = pav, pred.formula = pred.formula
   )

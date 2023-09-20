@@ -52,7 +52,7 @@ summary.galamm <- function(object, ...) {
     deparse.level = 0
   )
   colnames(ret$fixef)[3] <- paste(if (attr(ret$VarCorr, "useSc")) "t" else "z", "value")
-  ret$fixef <- cbind(ret$fixef, 2 * pnorm(abs(cf3), lower.tail = FALSE))
+  ret$fixef <- cbind(ret$fixef, 2 * stats::pnorm(abs(cf3), lower.tail = FALSE))
   colnames(ret$fixef)[4] <- paste("Pr(>|", substr(colnames(ret$fixef)[3], 1, 1), "|)", sep = "")
   rownames(ret$fixef) <- object$parameters$parameter_names[object$parameters$beta_inds]
 
@@ -127,7 +127,7 @@ print.summary.galamm <- function(x, digits = max(3, getOption("digits") - 3), ..
   cat("\n")
   if (exists("gam_summary", x)) {
     cat("Approximate significance of smooth terms:\n")
-    printCoefmat(x$gam_summary$s.table,
+    stats::printCoefmat(x$gam_summary$s.table,
       digits = digits, signif.stars = FALSE,
       has.Pvalue = TRUE, na.print = "NA", cs.ind = 1, ...
     )
@@ -173,8 +173,8 @@ llikAIC <- function(object) {
 llikAIC.galamm <- function(object) {
   llik <- logLik(object)
   c(
-    AIC = AIC(llik),
-    BIC = BIC(llik),
+    AIC = stats::AIC(llik),
+    BIC = stats::BIC(llik),
     logLik = llik,
     deviance = deviance(object),
     df.resid = nobs(object) - object$model$df

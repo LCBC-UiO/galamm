@@ -19,9 +19,8 @@
 #' \insertRef{woodGeneralizedAdditiveModels2017a}{galamm}
 #'
 #'
-gamm4.setup <- function(formula, pterms,
-                        data = stop("No data supplied to gamm.setup")) {
-  G <- gam.setup(formula, pterms, data = data)
+gamm4.setup <- function(formula, pterms, data) {
+  G <- gam.setup(formula, pterms, mf = data)
 
   first.f.para <- G$nsdf + 1
 
@@ -160,7 +159,7 @@ gamm4 <- function(fixed, random = NULL, data = list()) {
   gam.terms <- attr(gmf, "terms") # terms object for `gam' part of fit -- need this for prediction to work properly
 
   if (length(random.vars)) {
-    mf$formula <- as.formula(paste(paste(deparse(gp$fake.formula,
+    mf$formula <- stats::as.formula(paste(paste(deparse(gp$fake.formula,
       backtick = TRUE
     ), collapse = ""), "+", paste(random.vars,
       collapse = "+"
@@ -220,7 +219,7 @@ gamm4 <- function(fixed, random = NULL, data = list()) {
     )
   }
 
-  lme4.formula <- as.formula(lme4.formula)
+  lme4.formula <- stats::as.formula(lme4.formula)
 
   ## NOTE: further arguments should be passed here...
   b <- lme4::lFormula(lme4.formula, data = mf, REML = FALSE)
@@ -264,9 +263,9 @@ gamm4.wrapup <- function(gobj, ret, final_model) {
     method = "ML"
   )
 
-  pvars <- all.vars(delete.response(object$terms))
+  pvars <- all.vars(stats::delete.response(object$terms))
   object$pred.formula <- if (length(pvars) > 0) {
-    reformulate(pvars)
+    stats::reformulate(pvars)
   } else {
     NULL
   }

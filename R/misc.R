@@ -48,8 +48,8 @@ setup_response_object <- function(family_list, family_mapping, data, gobj) {
 
   for (i in seq_along(family_list)) {
     f <- family_list[[i]]
-    mf <- model.frame(lme4::nobars(gobj$fake.formula), data = data[family_mapping == i, ])
-    mr <- model.response(mf)
+    mf <- stats::model.frame(lme4::nobars(gobj$fake.formula), data = data[family_mapping == i, ])
+    mr <- stats::model.response(mf)
 
     if (f$family == "binomial" && !is.null(dim(mr))) {
       trials <- rowSums(mr)
