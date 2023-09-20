@@ -64,7 +64,7 @@ gam.setup <- function(formula, pterms, mf) {
   }
 
   G$m <- m <- newm ## number of actual smooths
-  sm <- gam.side(sm, X, tol = .Machine$double.eps^.5)
+  sm <- gam.side(sm)
 
   idx <- list()
   L <- matrix(0, 0, 0)
@@ -75,9 +75,9 @@ gam.setup <- function(formula, pterms, mf) {
     ## get the L matrix for this smooth...
     length.S <- if (is.null(sm[[i]]$updateS)) {
       length(sm[[i]]$S)
-      } else {
-        sm[[i]]$n.sp
-      }
+    } else {
+      sm[[i]]$n.sp
+    }
     Li <- if (is.null(sm[[i]]$L)) diag(length.S) else sm[[i]]$L
 
     if (length.S > 0) { ## there are smoothing parameters to name
@@ -185,34 +185,11 @@ gam.setup <- function(formula, pterms, mf) {
   }
 
   G$n.paraPen <- 0
-  fix.ind <- G$sp >= 0
-
-  if (sum(fix.ind)) {
-    lsp0 <- G$sp[fix.ind]
-    ind <- lsp0 == 0 ## find the zero s.p.s
-    ef0 <- indi <- seq_along(ind)[ind]
-
-    for (i in seq_along(indi)) {
-      ## find "effective zero" to replace each zero s.p. with
-      ii <- seq(from = G$off[i], to = (G$off[i] + ncol(G$S[[i]]) - 1), by = 1)
-      ef0[i] <- norm(G$X[, ii], type = "F")^2 / norm(G$S[[i]], type = "F") * .Machine$double.eps * .1
-    }
-
-    lsp0[!ind] <- log(lsp0[!ind])
-    lsp0[ind] <- log(ef0)
-    lsp0 <- as.numeric(L[, fix.ind, drop = FALSE] %*% lsp0)
-
-    L <- L[, !fix.ind, drop = FALSE]
-    G$sp <- G$sp[!fix.ind]
-  } else {
-    lsp0 <- rep(0, nrow(L))
-  }
-
-  if (ncol(L) == nrow(L) && !sum(L != diag(ncol(L)))) L <- NULL ## it's just the identity
+  G$lsp0 <- rep(0, nrow(L))
+  if (ncol(L) == nrow(L) && !sum(L != diag(ncol(L)))) L <- NULL
 
   G$L <- L
-  G$lsp0 <- lsp0
-  names(G$lsp0) <- lsp.names ## names of all smoothing parameters (not just underlying)
+  names(G$lsp0) <- lsp.names
 
   G$y <- drop(mf[[formula$response]])
   ydim <- dim(G$y)
@@ -220,10 +197,13 @@ gam.setup <- function(formula, pterms, mf) {
 
   G$n <- nrow(mf)
 
-  if (G$nsdf > 0) term.names <- colnames(G$X)[seq_len(G$nsdf)] else term.names <- array("", 0)
+
+  if (G$nsdf > 0) {
+    term.names <- colnames(G$X)[seq_len(G$nsdf)]
+  } else {
+    term.names <- array("", 0)
+  }
   n.smooth <- length(G$smooth)
-  ## create coef names, if smooth has any coefs, and create a global indicator of non-linear parameters
-  ## g.index, if needed
   n.sp0 <- 0
 
   for (i in seq_len(n.smooth)) {
@@ -314,8 +294,6 @@ variable.summary <- function(pf, dl, n) {
 #' This function is derived \code{mgcv:::gam.side}.
 #'
 #' @param sm List of smooth terms.
-#' @param Xp Parametric model matrix.
-#' @param tol Numerical tolerance.
 #'
 #' @return A list of smooth terms, with identifiability constraints imposed.
 #' @author Simon Wood
@@ -325,145 +303,15 @@ variable.summary <- function(pf, dl, n) {
 #' @references
 #' \insertRef{woodGeneralizedAdditiveModels2017a}{galamm}
 #'
-gam.side <- function(sm, Xp, tol = .Machine$double.eps^.5) {
-
-  m <- length(sm)
-  if (m == 0) {
-    return(sm)
-  }
-  v.names <- array("", 0)
-  maxDim <- 1
-  for (i in seq_len(m)) { ## collect all term names and max smooth `dim'
+gam.side <- function(sm) {
+  for (i in seq_along(sm)) {
     vn <- sm[[i]]$term
-    ## need to include by variables in names
-    if (sm[[i]]$by != "NA") vn <- paste(vn, sm[[i]]$by, sep = "")
-    ## need to distinguish levels of factor by variables...
-    if (!is.null(sm[[i]]$by.level)) vn <- paste(vn, sm[[i]]$by.level, sep = "")
-    sm[[i]]$vn <- vn ## use this record to identify variables from now
-    v.names <- c(v.names, vn)
-    if (sm[[i]]$dim > maxDim) maxDim <- sm[[i]]$dim
-  }
-  lv <- length(v.names)
-  v.names <- unique(v.names)
-  if (lv == length(v.names)) {
-    return(sm)
-  } ## no repeats => no nesting
-
-  ## Only get this far if there is nesting.
-  ## Need to test for intercept or equivalent in Xp
-  intercept <- FALSE
-  if (ncol(Xp)) {
-    ## first check columns directly...
-    if (sum(apply(Xp, 2, stats::sd) < .Machine$double.eps^.75) > 0) {
-      intercept <- TRUE
-    } else {
-      ## no constant column, so need to check span of Xp...
-      f <- rep(1, nrow(Xp))
-      ff <- qr.fitted(qr(Xp), f)
-      if (max(abs(ff - f)) < .Machine$double.eps^.75) intercept <- TRUE
-    }
-  }
-
-  sm.id <- as.list(v.names)
-  names(sm.id) <- v.names
-  for (i in seq_along(sm.id)) sm.id[[i]] <- array(0, 0)
-  sm.dim <- sm.id
-  for (d in seq_len(maxDim)) {
-    for (i in seq_len(m)) {
-      if (sm[[i]]$dim == d && sm[[i]]$side.constrain) {
-        for (j in 1:d) { ## work through terms
-          term <- sm[[i]]$vn[j]
-          a <- sm.id[[term]]
-          la <- length(a) + 1
-          sm.id[[term]][la] <- i ## record smooth i.d. for this variable
-          sm.dim[[term]][la] <- d ## ... and smooth dim.
-        }
-      }
-    }
-  }
-
-  if (maxDim == 1) warning("model has repeated 1-d smooths of same variable.")
-
-  nobs <- nrow(sm[[1]]$X) ## number of observations
-
-  for (d in seq_len(maxDim)) { ## work up through dimensions
-    for (i in seq_len(m)) { ## work through smooths
-      if (sm[[i]]$dim == d && sm[[i]]$side.constrain) { ## check for nesting
-        X1 <- matrix(1, nobs, as.integer(intercept))
-
-        X1comp <- rep(0, 0) ## list of components of X1 to avoid duplication
-        for (j in seq_len(d)) { ## work through variables
-          b <- sm.id[[sm[[i]]$vn[j]]] # list of smooths dependent on this variable
-          k <- (seq_along(b))[b == i] ## locate current smooth in list
-
-          for (l in seq_len(k - 1)) {
-            if (!b[l] %in% X1comp) { ## collect X columns
-              X1comp <- c(X1comp, b[l]) ## keep track of components to avoid adding same one twice
-              X1 <- cbind(X1, sm[[b[l]]]$X)
-            }
-          }
-        } ## Now X1 contains columns for all lower dimensional terms
-        if (ncol(X1) == as.integer(intercept)) {
-          ind <- NULL
-        } else {
-          ind <- mgcv::fixDependence(X1, sm[[i]]$X, tol = tol)
-        }
-        ## ... the columns to zero to ensure independence
-        if (!is.null(ind)) {
-          sm[[i]]$X <- sm[[i]]$X[, -ind]
-          ## work through list of penalty matrices, applying constraints...
-          nsmS <- length(sm[[i]]$S)
-          if (nsmS > 0) {
-            for (j in seq(from = nsmS, to = 1, by = -1)) { ## working down so that dropping is painless
-              sm[[i]]$S[[j]] <- sm[[i]]$S[[j]][-ind, -ind]
-              if (sum(sm[[i]]$S[[j]] != 0) == 0) {
-                rank <- 0
-              } else {
-                rank <- qr(sm[[i]]$S[[j]], tol = tol, LAPACK = FALSE)$rank
-              }
-              sm[[i]]$rank[j] <- rank ## replace previous rank with new rank
-              if (rank == 0) { ## drop the penalty
-                sm[[i]]$rank <- sm[[i]]$rank[-j]
-                sm[[i]]$S[[j]] <- NULL
-                sm[[i]]$S.scale <- sm[[i]]$S.scale[-j]
-                if (!is.null(sm[[i]]$L)) sm[[i]]$L <- sm[[i]]$L[-j, , drop = FALSE]
-              }
-            }
-          } ## penalty matrices finished
-          ## Now we need to establish null space rank for the term
-          mi <- length(sm[[i]]$S)
-          if (mi > 0) {
-            St <- sm[[i]]$S[[1]] / norm(sm[[i]]$S[[1]], type = "F")
-            if (mi > 1) {
-              for (j in 1:mi) {
-                St <- St +
-                  sm[[i]]$S[[j]] / norm(sm[[i]]$S[[j]], type = "F")
-              }
-            }
-            es <- eigen(St, symmetric = TRUE, only.values = TRUE)
-            sm[[i]]$null.space.dim <- sum(es$values < max(es$values) * .Machine$double.eps^.75)
-          } ## rank found
-
-          if (!is.null(sm[[i]]$L)) {
-            ind <- as.numeric(colSums(sm[[i]]$L != 0)) != 0
-            sm[[i]]$L <- sm[[i]]$L[, ind, drop = FALSE] ## retain only those sps that influence something!
-          }
-
-          sm[[i]]$df <- ncol(sm[[i]]$X)
-          attr(sm[[i]], "del.index") <- ind
-          if (!is.null(sm[[i]]$Xp)) { ## need to get deletion indices under prediction parameterization
-            ind <- mgcv::fixDependence(X1, sm[[i]]$Xp, rank.def = length(ind))
-
-            sm[[i]]$Xp <- sm[[i]]$Xp[, -ind, drop = FALSE]
-            attr(sm[[i]], "del.index") <- ind ## over-writes original
-          }
-        }
-        sm[[i]]$vn <- NULL
-      }
-    }
+    if (sm[[i]]$by != "NA") vn <- paste0(vn, sm[[i]]$by)
+    if (!is.null(sm[[i]]$by.level)) vn <- paste0(vn, sm[[i]]$by.level)
+    sm[[i]]$vn <- vn
   }
   sm
-} ## gam.side
+}
 
 
 #' Internal function for interpreting GAM formulas
@@ -577,4 +425,4 @@ interpret.gam0 <- function(gf) {
   )
   class(ret) <- "split.gam.formula"
   ret
-} ## interpret.gam0
+}
