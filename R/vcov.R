@@ -31,6 +31,9 @@
 #'
 vcov.galamm <- function(object, parm = "beta", ...) {
   inds <- find_parm_inds(object, parm)
+  if(length(inds) == 0) {
+    stop("Parameter not found.")
+  }
 
   if (qr(object$model$hessian)$rank < ncol(object$model$hessian)) {
     warning("Rank deficient Hessian matrix. Could not compute covariance matrix.\n")
