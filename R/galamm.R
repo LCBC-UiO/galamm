@@ -123,37 +123,27 @@
 #' @references \insertAllCited{}
 #'
 #' @examples
-#' # Mixed response measurement error model ------------------------------------
+#' # Mixed response model ------------------------------------
 #'
-#' # Measurement error model with mixed Gaussian and binomial outcome.
-#' # The statistical model is explained in further detail in the vignette
-#' # on mixed response models.
+#' # The mresp dataset contains a mix of binomial and Gaussian responses.
 #'
-#' # The first two items are replicate measurements of fiber intake, and
-#' # receive a fixed factor loading of 1. The third item is a binary indicator
-#' # of coronary heart disease, and it's factor loading will be estimated.
-#' loading_matrix <- matrix(c(1, 1, NA), ncol = 1)
+#' # We need to estimate a factor loading which scales the two response types.
+#' loading_matrix <- matrix(c(1, NA), ncol = 1)
 #'
-#' # The model has mixed Gaussian and binomial responses, and we need to
-#' # define the mapping.
+#' # Define mapping to families.
 #' families <- c(gaussian, binomial)
-#' family_mapping <- ifelse(diet$item == "chd", 2, 1)
+#' family_mapping <- ifelse(mresp$itemgroup == "a", 1, 2)
 #'
-#' # Model formula
-#' formula <- y ~ 0 + chd + (age * bus):chd + fiber +
-#'   (age * bus):fiber + fiber2 + (0 + loading | id)
 #'
-#' # We fit the model, setting the intial value of the random effect variance
-#' # to 10.
+#' # Fit the model
 #' mod <- galamm(
-#'   formula = formula,
-#'   data = diet,
+#'   formula = y ~ x + (0 + level | id),
+#'   data = mresp,
 #'   family = families,
 #'   family_mapping = family_mapping,
-#'   factor = list("loading"),
-#'   load.var = "item",
-#'   lambda = list(loading_matrix),
-#'   start = list(theta = 10)
+#'   factor = list("level"),
+#'   load.var = "itemgroup",
+#'   lambda = list(loading_matrix)
 #' )
 #'
 #' # Summary information
@@ -163,29 +153,28 @@
 #'
 #' # The cognition dataset contains simulated measurements of three latent
 #' # time-dependent processes, corresponding to individuals' abilities in
-#' # cognitive domains. We focus here on the first domain, and subset the data
-#' # accordingly.
+#' # cognitive domains. We focus here on the first domain, and take a single
+#' # random timepoint per person:
 #' dat <- subset(cognition, domain == 1)
+#' dat <- split(dat, f = dat$id)
+#' dat <- lapply(dat, function(x) x[x$timepoint %in% sample(x$timepoint, 1), ])
+#' dat <- do.call(rbind, dat)
 #' dat$item <- factor(dat$item)
 #'
-#' # There are eight timepoints for each individual, and at each timepoint
-#' # there are three items measuring ability in the cognitive domain. We fix
-#' # the factor loading for the first measurement to one, and estimate the
-#' # remaining two. This is specified in the loading matrix.
+#' # At each timepoint there are three items measuring ability in the cognitive
+#' # domain. We fix the factor loading for the first measurement to one, and
+#' # estimate the remaining two. This is specified in the loading matrix.
 #' loading_matrix <- matrix(c(1, NA, NA), ncol = 1)
 #'
 #' # We can now estimate the model.
 #' mod <- galamm(
 #'   formula = y ~ 0 + item + s(x, load.var = "loading") +
-#'     (0 + loading | id / timepoint),
+#'     (0 + loading | id),
 #'   data = dat,
 #'   load.var = "item",
 #'   lambda = list(loading_matrix),
 #'   factor = list("loading")
 #' )
-#'
-#' # We can show summary information.
-#' summary(mod)
 #'
 #' # We can plot the estimated smooth term
 #' plot_smooth(mod, shade = TRUE)

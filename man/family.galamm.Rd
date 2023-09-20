@@ -25,14 +25,14 @@ families <- c(gaussian, binomial)
 family_mapping <- ifelse(mresp$itemgroup == "a", 1, 2)
 
 mixed_resp <- galamm(
-                     formula = y ~ x + (0 + level | id),
-                     data = mresp,
-                     family = families,
-                     family_mapping = family_mapping,
-                     load.var = "itemgroup",
-                     lambda = list(loading_matrix),
-                     factor = list("level")
-                     )
+  formula = y ~ x + (0 + level | id),
+  data = mresp,
+  family = families,
+  family_mapping = family_mapping,
+  load.var = "itemgroup",
+  lambda = list(loading_matrix),
+  factor = list("level")
+)
 
 # This model has two family objects
 family(mixed_resp)

@@ -40,13 +40,13 @@ loading_matrix <- matrix(c(1, NA, NA), ncol = 1)
 
 # We can now estimate the model.
 mod <- galamm(
-    formula = y ~ 0 + item + s(x, load.var = "loading") +
-              (0 + loading | id / timepoint),
-    data = dat,
-    load.var = "item",
-    lambda = list(loading_matrix),
-    factor = list("loading")
-    )
+  formula = y ~ 0 + item + s(x, load.var = "loading") +
+    (0 + loading | id / timepoint),
+  data = dat,
+  load.var = "item",
+  lambda = list(loading_matrix),
+  factor = list("loading")
+)
 
 # Extract factor loadings
 factor_loadings(mod)

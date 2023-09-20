@@ -21,9 +21,10 @@ Extract model fitted values
 \examples{
 # Linear mixed model with heteroscedastic residuals
 mod <- galamm(
-    formula = y ~ x + (1 | id),
-    weights = ~ (1 | item),
-    data = hsced)
+  formula = y ~ x + (1 | id),
+  weights = ~ (1 | item),
+  data = hsced
+)
 
 # Extract fitted values and plot against x
 plot(hsced$x, fitted(mod))

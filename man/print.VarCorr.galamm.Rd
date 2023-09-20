@@ -37,9 +37,10 @@ Print method for variance-covariance objects
 \examples{
 # Linear mixed model with heteroscedastic residuals
 mod <- galamm(
-    formula = y ~ x + (1 | id),
-    weights = ~ (1 | item),
-    data = hsced)
+  formula = y ~ x + (1 | id),
+  weights = ~ (1 | item),
+  data = hsced
+)
 
 # Extract information on variance and covariance
 VarCorr(mod)

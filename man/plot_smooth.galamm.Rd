@@ -26,26 +26,28 @@ wrapper around \code{mgcv::plot.gam}
 
 # The cognition dataset contains simulated measurements of three latent
 # time-dependent processes, corresponding to individuals' abilities in
-# cognitive domains. We focus here on the first domain, and subset the data
-# accordingly.
+# cognitive domains. We focus here on the first domain, and take a single
+# random timepoint per person:
 dat <- subset(cognition, domain == 1)
+dat <- split(dat, f = dat$id)
+dat <- lapply(dat, function(x) x[x$timepoint \%in\% sample(x$timepoint, 1), ])
+dat <- do.call(rbind, dat)
 dat$item <- factor(dat$item)
 
-# There are eight timepoints for each individual, and at each timepoint
-# there are three items measuring ability in the cognitive domain. We fix
-# the factor loading for the first measurement to one, and estimate the
-# remaining two. This is specified in the loading matrix.
+# At each timepoint there are three items measuring ability in the cognitive
+# domain. We fix the factor loading for the first measurement to one, and
+# estimate the remaining two. This is specified in the loading matrix.
 loading_matrix <- matrix(c(1, NA, NA), ncol = 1)
 
 # We can now estimate the model.
 mod <- galamm(
-    formula = y ~ 0 + item + s(x, load.var = "loading") +
-              (0 + loading | id / timepoint),
-    data = dat,
-    load.var = "item",
-    lambda = list(loading_matrix),
-    factor = list("loading")
-    )
+  formula = y ~ 0 + item + s(x, load.var = "loading") +
+    (0 + loading | id),
+  data = dat,
+  load.var = "item",
+  lambda = list(loading_matrix),
+  factor = list("loading")
+)
 
 # We can plot the estimated smooth term
 plot_smooth(mod, shade = TRUE)

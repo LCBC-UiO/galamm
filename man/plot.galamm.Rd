@@ -28,11 +28,14 @@ loading_matrix <- list(rbind(c(1, 0), c(NA, 0), c(NA, 1), c(NA, NA)))
 form <- esteem ~ time + (0 + ms | mid) + (0 + hs | hid) + (1 | sid)
 
 # Estimate model
-mod <- galamm(formula = form, data = KYPSsim, factor = list(c("ms", "hs")),
-              load.var = "time", lambda = loading_matrix)
+mod <- galamm(
+  formula = form, data = KYPSsim, factor = list(c("ms", "hs")),
+  load.var = "time", lambda = loading_matrix
+)
 
 # Diagnostic plot
 plot(mod)
+
 
 }
 \seealso{
