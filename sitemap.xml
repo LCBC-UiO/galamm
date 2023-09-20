@@ -49,16 +49,7 @@
     <loc>https://lcbc-uio.github.io/galamm/reference/VarCorr.html</loc>
   </url>
   <url>
-    <loc>https://lcbc-uio.github.io/galamm/reference/abbrDeparse.html</loc>
-  </url>
-  <url>
     <loc>https://lcbc-uio.github.io/galamm/reference/anova.galamm.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/reference/augment.smX.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/reference/clone.smooth.spec.html</loc>
   </url>
   <url>
     <loc>https://lcbc-uio.github.io/galamm/reference/coef.galamm.html</loc>
@@ -100,25 +91,10 @@
     <loc>https://lcbc-uio.github.io/galamm/reference/galamm_control.html</loc>
   </url>
   <url>
-    <loc>https://lcbc-uio.github.io/galamm/reference/gam.setup.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/reference/gam.side.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/reference/gamm4.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/reference/gamm4.setup.html</loc>
-  </url>
-  <url>
     <loc>https://lcbc-uio.github.io/galamm/reference/hsced.html</loc>
   </url>
   <url>
     <loc>https://lcbc-uio.github.io/galamm/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/reference/interpret.gam0.html</loc>
   </url>
   <url>
     <loc>https://lcbc-uio.github.io/galamm/reference/llikAIC.galamm.html</loc>
@@ -128,9 +104,6 @@
   </url>
   <url>
     <loc>https://lcbc-uio.github.io/galamm/reference/mresp.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/reference/new_galamm_control.html</loc>
   </url>
   <url>
     <loc>https://lcbc-uio.github.io/galamm/reference/nobs.galamm.html</loc>
@@ -166,7 +139,7 @@
     <loc>https://lcbc-uio.github.io/galamm/reference/summary.galamm.html</loc>
   </url>
   <url>
-    <loc>https://lcbc-uio.github.io/galamm/reference/variable.summary.html</loc>
+    <loc>https://lcbc-uio.github.io/galamm/reference/t2.html</loc>
   </url>
   <url>
     <loc>https://lcbc-uio.github.io/galamm/reference/vcov.galamm.html</loc>

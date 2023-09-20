@@ -19,6 +19,12 @@
     &lt;doi:10.18637/jss.v067.i01&gt;) and PLmixed' (Rockwood and Jeon (2019) 
     &lt;doi:10.1080/00273171.2018.1516541&gt;).">
 <title>Generalized Additive Latent and Mixed Models • galamm</title>
+<!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="apple-touch-icon.png">
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="apple-touch-icon-120x120.png">
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="apple-touch-icon-76x76.png">
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="apple-touch-icon-60x60.png">
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
@@ -37,6 +43,7 @@
     formulation is close to lme4 (Bates et al. (2015) 
     &lt;doi:10.18637/jss.v067.i01&gt;) and PLmixed' (Rockwood and Jeon (2019) 
     &lt;doi:10.1080/00273171.2018.1516541&gt;).">
+<meta property="og:image" content="https://lcbc-uio.github.io/galamm/logo.png">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -98,8 +105,11 @@
 </nav><div class="container template-home">
 <div class="row">
   <main id="main" class="col-md-9"><div class="section level1">
-<div class="page-header"><h1 id="generalized-additive-latent-and-mixed-models">Generalized Additive Latent and Mixed Models<a class="anchor" aria-label="anchor" href="#generalized-additive-latent-and-mixed-models"></a>
-</h1></div>
+<div class="page-header">
+<img src="logo.png" class="logo" alt=""><h1 id="generalized-additive-latent-and-mixed-models-">Generalized Additive Latent and Mixed Models 
+<a class="anchor" aria-label="anchor" href="#generalized-additive-latent-and-mixed-models-"></a>
+</h1>
+</div>
 <!-- badges: start -->
 
 <p>galamm estimates generalized additive latent and mixed models (GALAMMs). The model framework and the computational algorithms were introduced in Sørensen, Fjell, and Walhovd (<a href="#ref-sorensenLongitudinalModelingAgeDependent2023">2023</a>), which is <a href="https://doi.org/10.1007/s11336-023-09910-z" class="external-link">freely available from Psychometrika</a>. It is an extension of the GLLAMM framework for multilevel latent variable modeling detailed in Rabe-Hesketh, Skrondal, and Pickles (<a href="#ref-rabe-heskethGeneralizedMultilevelStructural2004">2004</a>) and Skrondal and Rabe-Hesketh (<a href="#ref-skrondalGeneralizedLatentVariable2004">2004</a>), in particular by efficiently handling crossed random effects and semiparametric estimation.</p>
@@ -251,7 +261,7 @@
 <div class="section level2">
 <h2 id="acknowledgement">Acknowledgement<a class="anchor" aria-label="anchor" href="#acknowledgement"></a>
 </h2>
-<p>Some parts of the code base for galamm has been derived from internal functions of <a href="https://cran.r-project.org/package=gamm4" class="external-link">gamm4</a> (authors: Simon Wood and Fabian Scheipl) and <a href="https://cran.r-project.org/package=lme4" class="external-link">lme4</a> (authors: Douglas M. Bates, Martin Maechler, Ben Bolker, and Steve Walker). Whenever a function uses code derived from other packages, this has been marked in the documentation of the corresponding functions.</p>
+<p>Some parts of the code base for galamm has been derived from internal functions of the R packages, <a href="https://cran.r-project.org/package=gamm4" class="external-link">gamm4</a> (authors: Simon Wood and Fabian Scheipl), <a href="https://cran.r-project.org/package=lme4" class="external-link">lme4</a> (authors: Douglas Bates, Martin Maechler, Ben Bolker, and Steven Walker), and <a href="https://cran.r-project.org/package=mgcv" class="external-link">mgcv</a> (author: Simon Wood), as well the C++ library <a href="https://autodiff.github.io/" class="external-link">autodiff</a> (author: Allan Leal). In accordance with the <a href="https://cran.r-project.org/web/packages/policies.html" class="external-link">CRAN Repository Policy</a>, all these authors are listed as contributors in the <code>DESCRIPTION</code> file. If you are among these authors, and don’t want to be listed as a contributor to this package, please let me know, and I will remove you.</p>
 </div>
 <div class="section level2">
 <h2 id="code-of-conduct">Code of Conduct<a class="anchor" aria-label="anchor" href="#code-of-conduct"></a>
@@ -333,6 +343,7 @@ Wood, Simon N. 2017. <em>Generalized Additive Models: An Introduction with R</em
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
 <li>Øystein Sørensen <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0003-0724-3542" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li><a href="authors.html">More about authors...</a></li>
 </ul>
 </div>
 
