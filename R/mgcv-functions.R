@@ -78,8 +78,8 @@ gam.setup <- function(formula, pterms,
     sml <- mgcv::smoothCon(formula$smooth.spec[[i]], data, absorb.cons = TRUE)
     for (k in seq_along(sml)) {
       sml[[k]]$label <- paste(sml[[k]]$label,
-                              attr(formula$smooth.spec[[i]], "load.var")[[k]],
-                              sep = ":"
+        attr(formula$smooth.spec[[i]], "load.var")[[k]],
+        sep = ":"
       )
     }
     ind <- seq_along(sml)
@@ -778,7 +778,7 @@ interpret.gam0 <- function(gf) {
 
   for (i in seq_len(nt)) { # work through all terms
     if (k <= ns && ((ks <= len.sp && sp[ks] == i) ||
-                    (kt2 <= len.t2p && t2p[kt2] == i))) { # it's a smooth
+      (kt2 <= len.t2p && t2p[kt2] == i))) { # it's a smooth
 
       smooth.spec[[k]] <- eval(parse(text = paste0("galamm::", terms[[i]])), envir = p.env)
 
