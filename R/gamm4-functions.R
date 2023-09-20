@@ -181,7 +181,6 @@ gamm4 <- function(fixed, random = NULL, data = list()) {
   names(dl) <- vars ## list of all variables needed
   var.summary <- variable.summary(gp$pf, dl, nrow(mf)) ## summarize the input data
 
-  ## lmer offset handling work around...
   mvars <- vars[!vars %in% names(mf)] ## variables not in mf raw -- can cause lmer problem
   if (length(mvars) > 0) for (i in seq_along(mvars)) mf[[mvars[i]]] <- dl[[mvars[i]]] ## append raw versions to mf
 
@@ -198,25 +197,12 @@ gamm4 <- function(fixed, random = NULL, data = list()) {
 
   n.sr <- length(G$random) # number of random smooths (i.e. s(...,fx=FALSE,...) terms)
 
-  if (is.null(random) && n.sr == 0) {
-    stop("gamm4 models must have at least 1 smooth with unknown smoothing parameter or at least one other random effect")
-  }
-
-  offset.name <- attr(mf, "names")[attr(attr(mf, "terms"), "offset")]
-
   yname <- mgcv::new.name("y", names(mf))
   eval(parse(text = paste("mf$", yname, "<-G$y", sep = "")))
   Xname <- mgcv::new.name("X", names(mf))
   eval(parse(text = paste("mf$", Xname, "<-G$X", sep = "")))
 
   lme4.formula <- paste(yname, "~", Xname, "-1")
-  if (length(offset.name)) {
-    lme4.formula <- paste(lme4.formula, "+", offset.name)
-  }
-
-  ## Basic trick is to call (g)lFormula to set up model, with simple i.i.d. dummy random effects for the
-  ## penalized component of each smooth. This results in columns of Z being produced for these dummy's,
-  ## which can be over-written with the right thing. NOTE: that lambdat could also be modified, I think!!
 
   ## Add the random effect dummy variables for the smooth
   r.name <- names(G$random)
