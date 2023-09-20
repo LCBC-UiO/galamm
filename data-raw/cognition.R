@@ -54,7 +54,8 @@ cognition <- crossing(
   mutate(tests = tests[as.integer(domain)]) %>%
   uncount(tests, .id = "item") %>%
   mutate(
-    loading = map2_dbl(domain, item, ~ lambda[[as.integer(.x)]][as.integer(.y)]),
+    loading = map2_dbl(domain, item,
+                       ~ lambda[[as.integer(.x)]][as.integer(.y)]),
     trials = map_dbl(domain, ~ trials[[as.integer(.x)]])
   ) %>%
   mutate(

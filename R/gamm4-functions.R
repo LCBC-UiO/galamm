@@ -20,7 +20,7 @@
 #'
 #'
 gamm4.setup <- function(formula, pterms, data) {
-  G <- gam.setup(formula, pterms, mf = data)
+  G <- gam.setup(formula, pterms, data = data)
   first.f.para <- G$nsdf + 1
   random <- list()
   ind <- seq_len(G$nsdf)

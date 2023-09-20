@@ -40,7 +40,7 @@ jobs:
             trailing_blank_lines_linter(), trailing_whitespace_linter(),
             unnecessary_concatenation_linter()
             )
-          excluded_files <- c("tests/", "data-raw/", "R/RcppExports.R", "vignettes/")
+          excluded_files <- c("data-raw/", "R/RcppExports.R")
           lint_package(linters = style_rules, exclusions = excluded_files)
         shell: Rscript {0}
         env:

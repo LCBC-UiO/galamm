@@ -21,6 +21,11 @@ test_that("galamm reproduces gamm4", {
   )
 
   expect_equal(deviance(mod), deviance(mod_comp$mer), tolerance = .0001)
+
+  set.seed(1)
+  dat <- mgcv::gamSim(4, verbose = FALSE)
+  mod0 <- gamm4::gamm4(y ~ fac + s(x2, by = fac), data = dat, REML = FALSE)
+  mod1 <- galamm(y ~ fac + s(x2, by = fac), data = dat)
 })
 
 test_that("Basic GAMM with factor structures works", {

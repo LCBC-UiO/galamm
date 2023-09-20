@@ -48,7 +48,8 @@ test_that("LMM with simple factor works", {
   expect_equal(
     summary(mod)$AICtab,
     c(
-      AIC = 403.126675567209, BIC = 432.756935364458, logLik = -193.563337783604,
+      AIC = 403.126675567209, BIC = 432.756935364458,
+      logLik = -193.563337783604,
       deviance = 387.126675567209, df.resid = 292
     )
   )
@@ -97,7 +98,8 @@ test_that("LMM with two factors works", {
   )
 
   expect_equal(kyps_model$model$loglik, -33.7792632108483)
-  expect_equal(kyps_model$parameters$parameter_estimates[kyps_model$parameters$lambda_inds],
+  expect_equal(kyps_model$parameters$parameter_estimates[
+    kyps_model$parameters$lambda_inds],
     c(
       0.631763067142624, -0.114603879076418, 0.0145214343084242,
       1.07489949334559
@@ -108,7 +110,8 @@ test_that("LMM with two factors works", {
   expect_equal(
     llikAIC(kyps_model),
     c(
-      AIC = 91.5585264216966, BIC = 115.202029384322, logLik = -33.7792632108483,
+      AIC = 91.5585264216966, BIC = 115.202029384322,
+      logLik = -33.7792632108483,
       deviance = 67.5585264216966, df.resid = 41
     )
   )
@@ -143,7 +146,8 @@ test_that("LMM with two raters works", {
   )
 
   judge_galamm <- galamm(
-    formula = response ~ 0 + item + (1 | class) + (0 + teacher1 + teacher2 | tch),
+    formula = response ~ 0 + item + (1 | class) +
+      (0 + teacher1 + teacher2 | tch),
     data = dat,
     lambda = list(judge.lam),
     load.var = "item",
@@ -158,7 +162,8 @@ test_that("LMM with two raters works", {
   expect_equal(
     llikAIC(judge_galamm),
     c(
-      AIC = 2188.16155409666, BIC = 2259.16258247423, logLik = -1079.08077704833,
+      AIC = 2188.16155409666, BIC = 2259.16258247423,
+      logLik = -1079.08077704833,
       deviance = 2158.16155409666, df.resid = 825
     )
   )
@@ -181,7 +186,8 @@ test_that("LMM with two raters works", {
 
   expect_equal(quantile(residuals(judge_galamm)),
     c(
-      `0%` = -2.26827478113357, `25%` = -0.578443286096374, `50%` = -0.00403503141561323,
+      `0%` = -2.26827478113357, `25%` = -0.578443286096374,
+      `50%` = -0.00403503141561323,
       `75%` = 0.55979417430233, `100%` = 2.22456795070249
     ),
     tolerance = 1e-4

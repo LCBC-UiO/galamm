@@ -9,7 +9,8 @@ test_that("Heteroscedastic model works", {
   expect_equal(
     summary(mod)$AICtab,
     c(
-      AIC = 4126.28042652208, BIC = 4151.73081070096, logLik = -2058.14021326104,
+      AIC = 4126.28042652208, BIC = 4151.73081070096,
+      logLik = -2058.14021326104,
       deviance = 4116.28042652208, df.resid = 1195
     )
   )

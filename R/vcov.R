@@ -36,7 +36,8 @@ vcov.galamm <- function(object, parm = "beta", ...) {
   }
 
   if (qr(object$model$hessian)$rank < ncol(object$model$hessian)) {
-    warning("Rank deficient Hessian matrix. Could not compute covariance matrix.\n")
+    warning("Rank deficient Hessian matrix.",
+            "Could not compute covariance matrix.\n")
     (NA * object$model$hessian)[inds, inds, drop = FALSE]
   } else {
     -solve(object$model$hessian)[inds, inds, drop = FALSE]

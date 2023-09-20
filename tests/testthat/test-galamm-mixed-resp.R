@@ -10,11 +10,13 @@ test_that("Mixed response works", {
     factor = list("loading")
   )
 
-  expect_equal(logLik(mod), structure(-441.199885684125, nobs = 396L, df = 5L, class = "logLik"))
+  expect_equal(logLik(mod), structure(-441.199885684125, nobs = 396L, df = 5L,
+                                      class = "logLik"))
   expect_equal(
     llikAIC(mod),
     c(
-      AIC = 892.399771368249, BIC = 912.306842424522, logLik = -441.199885684125,
+      AIC = 892.399771368249, BIC = 912.306842424522,
+      logLik = -441.199885684125,
       deviance = 322.712453540071, df.resid = 391
     )
   )
@@ -69,7 +71,9 @@ test_that("Covariate measurement error model works", {
 
   expect_equal(
     factor_loadings(mod),
-    structure(c(1, 1, -0.13392200444942, NA, NA, 0.0512082698234306), dim = 3:2, dimnames = list(c("lambda1", "lambda2", "lambda3"), c("loading", "SE"))),
+    structure(c(1, 1, -0.13392200444942, NA, NA, 0.0512082698234306),
+              dim = 3:2, dimnames = list(c("lambda1", "lambda2", "lambda3"),
+                                         c("loading", "SE"))),
     tolerance = 1e-4
   )
 
