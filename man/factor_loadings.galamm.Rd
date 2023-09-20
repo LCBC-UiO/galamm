@@ -23,32 +23,23 @@ This function has been named \code{factor_loadings} rather than just
 \code{loadings} to avoid conflict with \code{stats::loadings}.
 }
 \examples{
-# Generalized additive mixed model with factor structures -------------------
+# Logistic mixed model with factor loadings, example from PLmixed
+data("IRTsim", package = "PLmixed")
 
-# The cognition dataset contains simulated measurements of three latent
-# time-dependent processes, corresponding to individuals' abilities in
-# cognitive domains. We focus here on the first domain, and subset the data
-# accordingly.
-dat <- subset(cognition, domain == 1)
-dat$item <- factor(dat$item)
+# Reduce data size for the example to run faster
+IRTsub <- IRTsim[IRTsim$item < 4, ]
+IRTsub <- IRTsub[sample(nrow(IRTsub), 300), ]
+IRTsub$item <- factor(IRTsub$item)
 
-# There are eight timepoints for each individual, and at each timepoint
-# there are three items measuring ability in the cognitive domain. We fix
-# the factor loading for the first measurement to one, and estimate the
-# remaining two. This is specified in the loading matrix.
+# Fix loading for first item to 1, and estimate the two others freely
 loading_matrix <- matrix(c(1, NA, NA), ncol = 1)
 
-# We can now estimate the model.
-mod <- galamm(
-  formula = y ~ 0 + item + s(x, load.var = "loading") +
-    (0 + loading | id / timepoint),
-  data = dat,
-  load.var = "item",
-  lambda = list(loading_matrix),
-  factor = list("loading")
-)
+# Estimate model
+mod <- galamm(y ~ item + (0 + ability | sid) + (0 + ability | school),
+              data = IRTsub, family = binomial, load.var = "item",
+              factor = list("ability"), lambda = list(loading_matrix))
 
-# Extract factor loadings
+# Show estimated factor loadings, with standard errors
 factor_loadings(mod)
 
 }
@@ -56,4 +47,9 @@ factor_loadings(mod)
 \code{\link[=fixef.galamm]{fixef.galamm()}} for fixed regression coefficients,
 \code{\link[=confint.galamm]{confint.galamm()}} for confidence intervals, and \code{\link[=coef.galamm]{coef.galamm()}} for
 coefficients more generally.
+}
+\author{
+The example for this function comes from \code{PLmixed}, with
+authors Nicholas Rockwood and Minjeong Jeon
+\insertCite{rockwoodEstimatingComplexMeasurement2019}{galamm}.
 }
