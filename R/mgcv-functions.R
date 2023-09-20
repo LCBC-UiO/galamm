@@ -834,7 +834,7 @@ interpret.gam0 <- function(gf) {
     pred.formula <- ~1
   }
   ret <- list(
-    pf = as.formula(pf, p.env), pfok = pfok, smooth.spec = smooth.spec,
+    pf = stats::as.formula(pf, p.env), pfok = pfok, smooth.spec = smooth.spec,
     fake.formula = fake.formula, response = response, fake.names = av,
     pred.names = pav, pred.formula = pred.formula
   )
