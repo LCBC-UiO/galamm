@@ -36,7 +36,7 @@ VarCorr(mod)
 \seealso{
 \code{\link[=print.VarCorr.galamm]{print.VarCorr.galamm()}} for the print function.
 
-Other {details of model fit}: 
+Other details of model fit: 
 \code{\link{coef.galamm}()},
 \code{\link{confint.galamm}()},
 \code{\link{deviance.galamm}()},
@@ -53,4 +53,4 @@ Other {details of model fit}:
 \code{\link{sigma.galamm}()},
 \code{\link{vcov.galamm}()}
 }
-\concept{{details of model fit}}
+\concept{details of model fit}

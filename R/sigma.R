@@ -14,7 +14,7 @@
 #' @seealso [galamm()]
 #' @export
 #'
-#' @family {details of model fit}
+#' @family details of model fit
 #'
 #' @examples
 #' # Linear mixed model with heteroscedastic residuals

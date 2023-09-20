@@ -35,7 +35,7 @@ fixef(count_mod)
 \code{\link[=ranef.galamm]{ranef.galamm()}} for random effects, \code{\link[=coef.galamm]{coef.galamm()}} for
 coefficients more generally, and \code{\link[=confint.galamm]{confint.galamm()}} for confidence intervals.
 
-Other {details of model fit}: 
+Other details of model fit: 
 \code{\link{VarCorr}()},
 \code{\link{coef.galamm}()},
 \code{\link{confint.galamm}()},
@@ -52,4 +52,4 @@ Other {details of model fit}:
 \code{\link{sigma.galamm}()},
 \code{\link{vcov.galamm}()}
 }
-\concept{{details of model fit}}
+\concept{details of model fit}

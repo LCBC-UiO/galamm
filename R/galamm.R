@@ -179,14 +179,14 @@
 #' # We can plot the estimated smooth term
 #' plot_smooth(mod, shade = TRUE)
 #'
-#' @family {modeling functions}
+#' @family modeling functions
 #'
 #' @md
 galamm <- function(formula, weights = NULL, data, family = gaussian,
                    family_mapping = rep(1L, nrow(data)),
                    load.var = NULL, lambda = NULL, factor = NULL,
                    start = NULL, control = galamm_control()) {
-  data <- na.omit(data)
+  data <- stats::na.omit(data)
   if (nrow(data) == 0) stop("No data, nothing to do.")
   data <- as.data.frame(data)
   mc <- match.call()
@@ -200,13 +200,17 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   rm(tmp)
 
   rf <- lme4::findbars(formula)
-  rf <- if (!is.null(rf)) as.formula(paste("~", paste("(", rf, ")", collapse = "+")))
+  rf <- if (!is.null(rf)) {
+    stats::as.formula(paste("~", paste("(", rf, ")", collapse = "+")))
+  }
   gobj <- gamm4(fixed = lme4::nobars(formula), random = rf, data = data)
 
   colnames(gobj$lmod$X) <- gsub("^X", "", colnames(gobj$lmod$X))
 
-  response_obj <- setup_response_object(family_list, family_mapping, data, gobj)
-  lambda_mappings <- define_factor_mappings(gobj, load.var, lambda, factor, data)
+  response_obj <-
+    setup_response_object(family_list, family_mapping, data, gobj)
+  lambda_mappings <-
+    define_factor_mappings(gobj, load.var, lambda, factor, data)
 
   theta_mapping <- gobj$lmod$reTrms$Lind - 1L
 
@@ -281,7 +285,8 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
     mlmem(par)$gradient
   }
 
-  par_init <- set_initial_values(gobj, start, beta_inds, lambda_inds, weights_inds)
+  par_init <-
+    set_initial_values(gobj, start, beta_inds, lambda_inds, weights_inds)
 
   opt <- stats::optim(par_init,
     fn = fn, gr = gr,
@@ -295,7 +300,8 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   gobj$lmod$reTrms$Lambdat@x <- opt$par[theta_inds][gobj$lmod$reTrms$Lind]
   # Update Zt to include factor loadings (if there are factor loadings)
   if (length(lambda_inds) > 1) {
-    gobj$lmod$reTrms$Zt@x <- c(1, opt$par[lambda_inds])[lambda_mappings$lambda_mapping_Zt + 2L]
+    gobj$lmod$reTrms$Zt@x <-
+      c(1, opt$par[lambda_inds])[lambda_mappings$lambda_mapping_Zt + 2L]
   }
 
   # Random effects in original parametrization

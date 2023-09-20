@@ -14,7 +14,7 @@
 #'   order to produce the observed outcome.
 #'
 #' @export
-#' @family {modeling functions}
+#' @family modeling functions
 #'
 #' @references
 #'
@@ -44,7 +44,7 @@ s <- function(..., load.var = NULL) {
 #'   order to produce the observed outcome.
 #'
 #' @export
-#' @family {modeling functions}
+#' @family modeling functions
 #'
 #' @references
 #'

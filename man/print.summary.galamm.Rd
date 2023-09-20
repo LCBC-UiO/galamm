@@ -40,7 +40,7 @@ summary(mod)
 \code{\link[=summary.galamm]{summary.galamm()}} for the summary function and \code{\link[=print]{print()}} for the
 generic function.
 
-Other {summary functions}: 
+Other summary functions: 
 \code{\link{anova.galamm}()},
 \code{\link{plot.galamm}()},
 \code{\link{plot_smooth.galamm}()},
@@ -52,4 +52,4 @@ from the summary methods of \code{mgcv} (author: Simon Wood) and
 \code{lme4} \insertCite{batesFittingLinearMixedEffects2015}{galamm}
 (authors: Douglas M. Bates, Martin Maechler, Ben Bolker, and Steve Walker).
 }
-\concept{{summary functions}}
+\concept{summary functions}

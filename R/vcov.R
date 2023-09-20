@@ -13,7 +13,7 @@
 #' @seealso [confint.galamm()] for the method computing confidence intervals.
 #'   See [vcov()] for the generic function.
 #'
-#' @family {details of model fit}
+#' @family details of model fit
 #'
 #' @examples
 #' # Linear mixed model with heteroscedastic residuals
@@ -31,6 +31,9 @@
 #'
 vcov.galamm <- function(object, parm = "beta", ...) {
   inds <- find_parm_inds(object, parm)
+  if (length(inds) == 0) {
+    stop("Parameter not found.")
+  }
 
   if (qr(object$model$hessian)$rank < ncol(object$model$hessian)) {
     warning("Rank deficient Hessian matrix. Could not compute covariance matrix.\n")

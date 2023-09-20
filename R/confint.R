@@ -19,7 +19,7 @@
 #' coefficients more generally, and [vcov.galamm()] for the variance-covariance
 #' matrix. [confint()] is the generic function.
 #'
-#' @family {details of model fit}
+#' @family details of model fit
 #'
 #' @examples
 #' # Poisson GLMM
@@ -42,7 +42,7 @@ confint.galamm <- function(object, parm, level = 0.95,
 
   a <- (1 - level) / 2
   a <- c(a, 1 - a)
-  fac <- qnorm(a)
+  fac <- stats::qnorm(a)
   pct <- paste(
     format(100 * a, trim = TRUE, scientific = FALSE, digits = 3), "%"
   )

@@ -48,8 +48,10 @@ setup_response_object <- function(family_list, family_mapping, data, gobj) {
 
   for (i in seq_along(family_list)) {
     f <- family_list[[i]]
-    mf <- model.frame(lme4::nobars(gobj$fake.formula), data = data[family_mapping == i, ])
-    mr <- model.response(mf)
+    mf <- stats::model.frame(lme4::nobars(gobj$fake.formula),
+      data = data[family_mapping == i, ]
+    )
+    mr <- stats::model.response(mf)
 
     if (f$family == "binomial" && !is.null(dim(mr))) {
       trials <- rowSums(mr)
@@ -72,7 +74,8 @@ find_k <- function(family_txt, family_mapping, y, trials) {
     } else if (family_txt[[i]] == "binomial") {
       trials0 <- trials[family_mapping == i]
       y0 <- y[family_mapping == i]
-      k[[i]] <- sum(lgamma(trials0 + 1) - lgamma(y0 + 1) - lgamma(trials0 - y0 + 1))
+      k[[i]] <-
+        sum(lgamma(trials0 + 1) - lgamma(y0 + 1) - lgamma(trials0 - y0 + 1))
     } else if (family_txt[[i]] == "poisson") {
       trials0 <- trials[family_mapping == i]
       y0 <- y[family_mapping == i]
@@ -82,8 +85,10 @@ find_k <- function(family_txt, family_mapping, y, trials) {
   k
 }
 
-set_initial_values <- function(gobj, start, beta_inds, lambda_inds, weights_inds) {
-  if (length(start) > 0 && any(!names(start) %in% c("beta", "theta", "lambda", "weights"))) {
+set_initial_values <- function(
+    gobj, start, beta_inds, lambda_inds, weights_inds) {
+  if (length(start) > 0 &&
+    any(!names(start) %in% c("beta", "theta", "lambda", "weights"))) {
     stop("Unknown names in initial value list.")
   }
 

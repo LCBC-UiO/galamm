@@ -1,5 +1,9 @@
 factor_finder <- function(factor, vars) {
-  vapply(factor, function(x) any(vapply(vars, function(y) any(vapply(x, function(z) grepl(z, y), TRUE)), TRUE)), TRUE)
+  vapply(factor, function(x) {
+    any(vapply(vars, function(y) {
+      any(vapply(x, function(z) grepl(z, y), TRUE))
+    }, TRUE))
+  }, TRUE)
 }
 
 define_factor_mappings <- function(gobj, load.var, lambda, factor, data) {
@@ -26,7 +30,10 @@ define_factor_mappings <- function(gobj, load.var, lambda, factor, data) {
 
   for (f in seq_along(factor_in_fixed)) {
     if (factor_in_fixed[[f]]) {
-      cols <- unlist(lapply(factor[[1]], function(fact) grep(fact, colnames(X))))
+      cols <- unlist(lapply(
+        factor[[1]],
+        function(fact) grep(fact, colnames(X))
+      ))
       for (cc in cols) {
         lambda_mapping_X[
           seq(from = (cc - 1) * nrow(X) + 1, to = cc * nrow(X))
@@ -60,7 +67,9 @@ define_factor_mappings <- function(gobj, load.var, lambda, factor, data) {
           ll <- lambda[[f]][, names(cnms_match[cnms_match]), drop = FALSE] - 2L
         } else {
           mapping_component[delta != 0] <- -1L
-          return(lapply(mapping_component, function(x) rep(x, each = max(delta))))
+          return(lapply(mapping_component, function(x) {
+            rep(x, each = max(delta))
+          }))
         }
 
         for (j in seq_along(cnms)) {
@@ -70,7 +79,9 @@ define_factor_mappings <- function(gobj, load.var, lambda, factor, data) {
           }))
 
           inds <- which(data[, cn] != 0)
-          inds_expanded <- unlist(Map(function(x, y) rep(x, each = y), x = inds, y = pmin(1, delta[inds])))
+          inds_expanded <- unlist(Map(function(x, y) {
+            rep(x, each = y)
+          }, x = inds, y = pmin(1, delta[inds])))
 
           mapping_component[inds_expanded] <-
             Map(function(x, y) rep(ll[x, cn], each = y),
@@ -81,7 +92,9 @@ define_factor_mappings <- function(gobj, load.var, lambda, factor, data) {
         mapping_component
       })
 
-      lambda_mapping_Zt <- unlist(do.call(function(...) mapply(c, ..., SIMPLIFY = FALSE), mappings))
+      lambda_mapping_Zt <- unlist(do.call(function(...) {
+        mapply(c, ..., SIMPLIFY = FALSE)
+      }, mappings))
       lambda_mapping_Zt <- lambda_mapping_Zt[!is.na(lambda_mapping_Zt)]
 
       stopifnot(length(lambda_mapping_Zt) == sum(diff(Zt@p)))

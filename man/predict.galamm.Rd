@@ -42,10 +42,10 @@ plot(
 
 }
 \seealso{
-\code{\link[=fitted.galamm]{fitted.galamm()}} for model fits, \code{\link[=residuals.galamm]{residuals.galamm()}} for residuals,
-and \code{\link[=predict]{predict()}} for the generic function.
+\code{\link[=fitted.galamm]{fitted.galamm()}} for model fits, \code{\link[=residuals.galamm]{residuals.galamm()}} for
+residuals, and \code{\link[=predict]{predict()}} for the generic function.
 
-Other {details of model fit}: 
+Other details of model fit: 
 \code{\link{VarCorr}()},
 \code{\link{coef.galamm}()},
 \code{\link{confint.galamm}()},
@@ -62,4 +62,4 @@ Other {details of model fit}:
 \code{\link{sigma.galamm}()},
 \code{\link{vcov.galamm}()}
 }
-\concept{{details of model fit}}
+\concept{details of model fit}

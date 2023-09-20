@@ -124,6 +124,8 @@ test_that("LMM with two factors works", {
     c(-0.411647523673306, 1.30437183262668),
     tolerance = 1e-4
   )
+
+  expect_warning(vcov(kyps_model), "Rank deficient Hessian matrix")
 })
 
 data("JUDGEsim", package = "PLmixed")

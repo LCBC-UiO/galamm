@@ -10,7 +10,7 @@
 #' @seealso [deviance.galamm()] for a function returning deviance and
 #' [logLik()] for the generic function.
 #'
-#' @family {details of model fit}
+#' @family details of model fit
 #'
 #' @examples
 #' # Linear mixed model with heteroscedastic residuals
@@ -45,7 +45,7 @@ logLik.galamm <- function(object, ...) {
 #' @seealso [logLik.galamm()] for a function returning the log likelihood and
 #'   [deviance()] for the generic function.
 #'
-#' @family {details of model fit}
+#' @family details of model fit
 #'
 #' @examples
 #' # Linear mixed model with heteroscedastic residuals

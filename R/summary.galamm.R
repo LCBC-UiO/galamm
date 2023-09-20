@@ -18,7 +18,7 @@
 #' @seealso [print.summary.galamm()] for the print method and [summary()] for
 #'   the generic.
 #'
-#' @family {summary functions}
+#' @family summary functions
 #'
 #' @examples
 #' # Linear mixed model with heteroscedastic residuals
@@ -39,7 +39,10 @@ summary.galamm <- function(object, ...) {
   ret$VarCorr <- VarCorr(ret)
 
   if (!is.null(object$model$weights_obj)) {
-    ret$weights <- c(1, 1 / object$parameters$parameter_estimates[object$parameters$weights_inds])
+    ret$weights <- c(
+      1,
+      1 / object$parameters$parameter_estimates[object$parameters$weights_inds]
+    )
     names(ret$weights) <- levels(object$model$weights_obj$flist[[1]])
   }
 
@@ -51,10 +54,17 @@ summary.galamm <- function(object, ...) {
   ret$fixef <- cbind(ret$fixef, (cf3 <- ret$fixef[, 1] / ret$fixef[, 2]),
     deparse.level = 0
   )
-  colnames(ret$fixef)[3] <- paste(if (attr(ret$VarCorr, "useSc")) "t" else "z", "value")
-  ret$fixef <- cbind(ret$fixef, 2 * pnorm(abs(cf3), lower.tail = FALSE))
-  colnames(ret$fixef)[4] <- paste("Pr(>|", substr(colnames(ret$fixef)[3], 1, 1), "|)", sep = "")
-  rownames(ret$fixef) <- object$parameters$parameter_names[object$parameters$beta_inds]
+  colnames(ret$fixef)[3] <- paste(
+    if (attr(ret$VarCorr, "useSc")) "t" else "z",
+    "value"
+  )
+  ret$fixef <- cbind(ret$fixef, 2 * stats::pnorm(abs(cf3), lower.tail = FALSE))
+  colnames(ret$fixef)[4] <- paste("Pr(>|",
+    substr(colnames(ret$fixef)[3], 1, 1), "|)",
+    sep = ""
+  )
+  rownames(ret$fixef) <-
+    object$parameters$parameter_names[object$parameters$beta_inds]
 
   if (!is.null(ret$gam)) {
     ret$gam_summary <- summary(ret$gam)
@@ -87,7 +97,7 @@ summary.galamm <- function(object, ...) {
 #'
 #' @references \insertAllCited{}
 #'
-#' @family {summary functions}
+#' @family summary functions
 #'
 #' @examples
 #' # Linear mixed model with heteroscedastic residuals
@@ -99,8 +109,9 @@ summary.galamm <- function(object, ...) {
 #'
 #' summary(mod)
 #'
-print.summary.galamm <- function(x, digits = max(3, getOption("digits") - 3), ...) {
-  cat("Generalized additive latent and mixed model fit by maximum marginal likelihood.\n")
+print.summary.galamm <- function(
+    x, digits = max(3, getOption("digits") - 3), ...) {
+  cat("GALAMM fit by maximum marginal likelihood.\n")
   lme4::.prt.call(x$call)
   lme4::.prt.family(family(x))
   cat("\n")
@@ -127,7 +138,7 @@ print.summary.galamm <- function(x, digits = max(3, getOption("digits") - 3), ..
   cat("\n")
   if (exists("gam_summary", x)) {
     cat("Approximate significance of smooth terms:\n")
-    printCoefmat(x$gam_summary$s.table,
+    stats::printCoefmat(x$gam_summary$s.table,
       digits = digits, signif.stars = FALSE,
       has.Pvalue = TRUE, na.print = "NA", cs.ind = 1, ...
     )
@@ -158,7 +169,7 @@ llikAIC <- function(object) {
 #'   degrees of freedom.
 #'
 #'
-#' @family {details of model fit}
+#' @family details of model fit
 #'
 #' @examples
 #' # Linear mixed model with heteroscedastic residuals
@@ -173,8 +184,8 @@ llikAIC <- function(object) {
 llikAIC.galamm <- function(object) {
   llik <- logLik(object)
   c(
-    AIC = AIC(llik),
-    BIC = BIC(llik),
+    AIC = stats::AIC(llik),
+    BIC = stats::BIC(llik),
     logLik = llik,
     deviance = deviance(object),
     df.resid = nobs(object) - object$model$df

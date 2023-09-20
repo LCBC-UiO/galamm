@@ -3,7 +3,7 @@
     Code
       summary(mod)
     Output
-      Generalized additive latent and mixed model fit by maximum marginal likelihood.
+      GALAMM fit by maximum marginal likelihood.
       Formula: form
          Data: dat
       

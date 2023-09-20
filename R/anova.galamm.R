@@ -20,7 +20,7 @@
 #' @seealso [summary.galamm()] for the summary method and [anova()] for the
 #'   generic function.
 #'
-#' @family {summary functions}
+#' @family summary functions
 #'
 #' @examples
 #' # Poisson GLMM
@@ -52,7 +52,7 @@ anova.galamm <- function(object, ...) {
   if (any(modp)) {
     mods <- c(list(object), dots[modp])
     nobs.vec <- vapply(mods, nobs, 1L)
-    if (var(nobs.vec) > 0) {
+    if (stats::var(nobs.vec) > 0) {
       stop("models were not all fitted to the same size of dataset")
     }
     mNms <- vapply(as.list(mCall)[c(FALSE, TRUE, modp)], deparse1, "")
@@ -63,7 +63,7 @@ anova.galamm <- function(object, ...) {
     llks <- llks[ii]
     npar <- npar[ii]
 
-    calls <- lapply(mods, getCall)
+    calls <- lapply(mods, stats::getCall)
     data <- lapply(calls, `[[`, "data")
     if (!all(vapply(data, identical, NA, data[[1]]))) {
       stop("all models must be fit to the same data object")
@@ -76,13 +76,13 @@ anova.galamm <- function(object, ...) {
 
     val <- data.frame(
       npar = npar,
-      AIC = vapply(llks, AIC, 1),
-      BIC = vapply(llks, BIC, 1),
+      AIC = vapply(llks, stats::AIC, 1),
+      BIC = vapply(llks, stats::BIC, 1),
       logLik = llk,
       deviance = deviance(object), Chisq = chisq,
       Df = dfChisq,
       `Pr(>Chisq)` = ifelse(dfChisq == 0, NA,
-        pchisq(chisq, dfChisq, lower.tail = FALSE)
+        stats::pchisq(chisq, dfChisq, lower.tail = FALSE)
       ),
       row.names = names(mods), check.names = FALSE
     )
@@ -99,7 +99,7 @@ anova.galamm <- function(object, ...) {
       )
     )
   } else {
-    message("Analysis of variance table for galamm objects not implemented yet.")
+    message("ANOVA tables for galamm objects not implemented yet.")
   }
 }
 

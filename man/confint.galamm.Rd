@@ -43,7 +43,7 @@ confint(count_mod, parm = "beta", level = .99)
 coefficients more generally, and \code{\link[=vcov.galamm]{vcov.galamm()}} for the variance-covariance
 matrix. \code{\link[=confint]{confint()}} is the generic function.
 
-Other {details of model fit}: 
+Other details of model fit: 
 \code{\link{VarCorr}()},
 \code{\link{coef.galamm}()},
 \code{\link{deviance.galamm}()},
@@ -60,4 +60,4 @@ Other {details of model fit}:
 \code{\link{sigma.galamm}()},
 \code{\link{vcov.galamm}()}
 }
-\concept{{details of model fit}}
+\concept{details of model fit}

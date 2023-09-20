@@ -208,9 +208,9 @@ plot_smooth(mod, shade = TRUE)
 \insertAllCited{}
 }
 \seealso{
-Other {modeling functions}: 
+Other modeling functions: 
 \code{\link{galamm_control}()},
 \code{\link{s}()},
 \code{\link{t2}()}
 }
-\concept{{modeling functions}}
+\concept{modeling functions}

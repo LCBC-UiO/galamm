@@ -9,7 +9,7 @@
 #' @seealso [residuals.galamm()] for extracting residuals and [plot()] for the
 #'   generic function.
 #'
-#' @family {summary functions}
+#' @family summary functions
 #'
 #' @examples
 #' # Linear mixed model example from lme4
