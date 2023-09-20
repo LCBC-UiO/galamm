@@ -96,8 +96,10 @@ test_that("wrong input is handled properly", {
     mod <- galamm(formula = y ~ (1 | id), data = subset(dat, FALSE))
   )
 
-  expect_error(galamm_control(optim_control = list(maximum_iterations = 10)),
-               "Unknown control names")
+  expect_error(
+    galamm_control(optim_control = list(maximum_iterations = 10)),
+    "Unknown control names"
+  )
 })
 
 test_that("family can be defined in three different ways", {
@@ -120,7 +122,6 @@ test_that("family can be defined in three different ways", {
 })
 
 test_that("multiple factors and factors in fixed effects are allowed", {
-
   data("KYPSsim", package = "PLmixed")
 
   kyps.lam <- rbind(
@@ -153,6 +154,4 @@ test_that("functions fail when they should", {
   expect_error(confint(mod1, parm = "beta", level = 1.2))
   expect_error(confint(mod1, parm = "beta", level = c(.2, .3)))
   expect_error(confint(mod1), "is missing")
-
-
 })
