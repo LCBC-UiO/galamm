@@ -26,10 +26,10 @@ test_that("Heteroscedastic model works", {
   )
 
   expect_equal(vcov(mod, parm = 1L),
-               structure(0.00543386086733993, dim = c(1L, 1L)),
-               tolerance = 1e-4)
+    structure(0.00543386086733993, dim = c(1L, 1L)),
+    tolerance = 1e-4
+  )
 
   expect_error(vcov(mod, parm = 5L), "out of bounds")
   expect_error(vcov(mod, parm = "phi"), "Parameter not found")
-
 })
