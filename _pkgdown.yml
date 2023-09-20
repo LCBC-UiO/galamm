@@ -28,12 +28,12 @@ reference:
 - title: High-level model output
   desc: Functions for summarising the result of model fits.
   contents:
-  - has_concept("high-level-output")
+  - has_concept("summary functions")
 
 - title: Model details
   desc: Detailed information on specific parts of model fits.
   contents:
-  - has_concept("output-details")
+  - has_concept("details of model fit")
 
 - title: Datasets
   desc: Simulated and real example datasets.

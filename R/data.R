@@ -2,7 +2,7 @@
 #'
 #' Longitudinal epilepsy data from
 #' \insertCite{leppikControlledStudyProgabide1987;textual}{galamm}. This
-#' documenation is based on Chapter 11.3 of
+#' documentation is based on Chapter 11.3 of
 #' \insertCite{skrondalGeneralizedLatentVariable2004;textual}{galamm}, where
 #' the dataset is used.
 #'
@@ -15,7 +15,7 @@
 #'   \item{v4}{Dummy for visit 4.}
 #'   \item{lage}{Logarithm of age.}
 #'   \item{lbas}{Logarithm of a quarter of the number of seizures in the eight
-#'   weeks preceeding entry into the trial.}
+#'   weeks preceding entry into the trial.}
 #' }
 #' @source <http://www.gllamm.org/books/readme.html#11.3>
 #' @family datasets
@@ -43,8 +43,8 @@
 #' Diet Data
 #'
 #' Longitudinal epilepsy data from
-#' \insertCite{morrisDietHeartPostscript1977;textual}{galamm}. This documenation
-#' is based on Chapter 14.2 of
+#' \insertCite{morrisDietHeartPostscript1977;textual}{galamm}. This
+#' documentation is based on Chapter 14.2 of
 #' \insertCite{skrondalGeneralizedLatentVariable2004;textual}{galamm}, where the
 #' dataset is used. See also
 #' \insertCite{rabe-heskethCorrectingCovariateMeasurement2003;textual}{galamm}.

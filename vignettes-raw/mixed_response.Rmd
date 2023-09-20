@@ -36,7 +36,7 @@ head(mresp)
 ```
 
 
-In terms of the GALAMM defined in the [introductory vignette](https://lcbc-uio.github.io/galamm/articles/galamm.html), and for simplicity assuming we use canonincal link functions, we have the response model
+In terms of the GALAMM defined in the [introductory vignette](https://lcbc-uio.github.io/galamm/articles/galamm.html), and for simplicity assuming we use canonical link functions, we have the response model
 
 $$
 f\left(y_{ij} | \nu_{ij}, \phi\right) = \exp \left( \frac{y_{ij}\nu_{ij} - b\left(\nu_{ij}\right)}{\phi} + c\left(y_{ij}, \phi\right) \right)
@@ -226,7 +226,7 @@ mod <- galamm(
 )
 ```
 
-Now we got some information, but the final estimate is the same, since we otherwise used the same parameters. We now instead try to increase the intial estimate of the random effect parameter $\theta$. In general $\theta$ is a vector containing elements of the Cholesky factor of the covariance matrix (see, @batesFittingLinearMixedEffects2015), but in this case it is just the standard deviation of the latent variable. By default, its initial value is 1, but we now try to increase it to 10, with the `start` argument.
+Now we got some information, but the final estimate is the same, since we otherwise used the same parameters. We now instead try to increase the initial estimate of the random effect parameter $\theta$. In general $\theta$ is a vector containing elements of the Cholesky factor of the covariance matrix (see, @batesFittingLinearMixedEffects2015), but in this case it is just the standard deviation of the latent variable. By default, its initial value is 1, but we now try to increase it to 10, with the `start` argument.
 
 
 ```{r}
@@ -286,7 +286,7 @@ mod0 <- galamm(
 )
 ```
 
-Looking at the summary ouptput, the estimates are now close to the first column in Table 14.1 of @skrondalGeneralizedLatentVariable2004.
+Looking at the summary output, the estimates are now close to the first column in Table 14.1 of @skrondalGeneralizedLatentVariable2004.
 
 ```{r}
 summary(mod0)

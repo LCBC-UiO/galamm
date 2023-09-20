@@ -27,7 +27,6 @@ mod <- galamm(
 
 llikAIC(mod)
 
-
 }
 \seealso{
 Other {details of model fit}: 

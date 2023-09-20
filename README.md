@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# Generalized Additive Latent and Mixed Models
+# Generalized Additive Latent and Mixed Models <a href="https://lcbc-uio.github.io/galamm/"><img src="man/figures/logo.png" align="right" height="139" alt="galamm website" /></a>
 
 <!-- badges: start -->
 
