@@ -13,6 +13,71 @@ test_that("wrong input is handled properly", {
     )
   )
 
+  expect_error(
+    mod <- galamm(
+      formula = y ~ 0 + item + s(x, by = loading) + (0 + loading | id / timepoint),
+      data = dat,
+      family = binomial,
+      load.var = "item",
+      lambda = list(matrix(c(1, NA), ncol = 1)),
+      factor = list("loading"),
+      start = list(phi = 1)
+    ),
+    "Unknown names in initial value list"
+  )
+
+  expect_error(
+    mod <- galamm(
+      formula = y ~ 0 + item + s(x, by = loading) + (0 + loading | id / timepoint),
+      data = dat,
+      family = binomial,
+      load.var = "item",
+      lambda = list(matrix(c(1, NA), ncol = 1)),
+      factor = list("loading"),
+      start = list(theta = 1)
+    ),
+    "Wrong number of elements"
+  )
+
+  expect_error(
+    mod <- galamm(
+      formula = y ~ 0 + item + s(x, by = loading) + (0 + loading | id / timepoint),
+      data = dat,
+      family = binomial,
+      load.var = "item",
+      lambda = list(matrix(c(1, NA), ncol = 1)),
+      factor = list("loading"),
+      start = list(beta = rep(1, 10))
+    ),
+    "Wrong number of elements"
+  )
+
+  expect_error(
+    mod <- galamm(
+      formula = y ~ 0 + item + s(x, by = loading) + (0 + loading | id / timepoint),
+      data = dat,
+      family = binomial,
+      load.var = "item",
+      lambda = list(matrix(c(1, NA), ncol = 1)),
+      factor = list("loading"),
+      start = list(lambda = rep(1, 5))
+    ),
+    "Wrong number of elements"
+  )
+
+  expect_error(
+    mod <- galamm(
+      formula = y ~ 0 + item + s(x, by = loading) + (0 + loading | id / timepoint),
+      data = dat,
+      family = binomial,
+      load.var = "item",
+      lambda = list(matrix(c(1, NA), ncol = 1)),
+      factor = list("loading"),
+      start = list(weights = rep(1, 5))
+    ),
+    "Wrong number of elements"
+  )
+
   newdat <- dat
   newdat$loading <- 1
   expect_error(
