@@ -19,6 +19,17 @@ A list of summary statistics of the fitted model, of class
 \description{
 Summary method for class "galamm".
 }
+\examples{
+# Linear mixed model with heteroscedastic residuals
+mod <- galamm(
+  formula = y ~ x + (1 | id),
+  weights = ~ (1 | item),
+  data = hsced
+)
+
+summary(mod)
+
+}
 \seealso{
 \code{\link[=print.summary.galamm]{print.summary.galamm()}} for the print method and \code{\link[=summary]{summary()}} for
 the generic.

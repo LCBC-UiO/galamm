@@ -18,6 +18,17 @@ A matrix with the requested coefficients.
 \description{
 Currently, this function only returns the fixed effects.
 }
+\examples{
+# Poisson GLMM
+count_mod <- galamm(
+  formula = y ~ lbas * treat + lage + v4 + (1 | subj),
+  data = epilep, family = poisson
+)
+
+# Extract coefficients
+coef(count_mod)
+
+}
 \seealso{
 \code{\link[=fixef.galamm]{fixef.galamm()}} for fixed effects, \code{\link[=ranef.galamm]{ranef.galamm()}} for random
 effects, and \code{\link[=coef]{coef()}} for the generic function.

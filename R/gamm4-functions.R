@@ -2,7 +2,7 @@
 #'
 #' This function is derived from an internal function in the \code{gamm4} package.
 #'
-#' @param fixed A formula excluding lme4 style random effects but including
+#' @param formula A formula excluding lme4 style random effects but including
 #'   smooths.
 #' @param pterms Parametric terms in the model.
 #' @param data Model frame.
@@ -267,7 +267,7 @@ gamm4.wrapup <- function(gobj, ret, final_model) {
     smooth = gobj$G$smooth,
     nsdf = gobj$G$nsdf,
     df.null = nrow(gobj$G$X),
-    y = ret$response,
+    y = ret$model$response,
     terms = gobj$gam.terms,
     pterms = gobj$G$pterms,
     xlevels = gobj$G$xlevels,

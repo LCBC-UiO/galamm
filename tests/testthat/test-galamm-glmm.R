@@ -94,10 +94,10 @@ test_that("Poisson GLMM works", {
     data = epilep,
     family = poisson
   )
-  expect_equal(count_mod$loglik, -665.358734786824)
-  expect_equal(count_mod$deviance, 407.006167030425)
+  expect_equal(as.numeric(logLik(count_mod)), -665.358734786824)
+  expect_equal(deviance(count_mod), 407.006167030425, tolerance = .0001)
   expect_equal(
-    count_mod$par,
+    count_mod$parameters$parameter_estimates,
     c(
       0.501565551064086, 1.79356916017583, 0.884503952015789, -0.334962607667788,
       0.48458513737595, -0.161087431903879, 0.338389940944434

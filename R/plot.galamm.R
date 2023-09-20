@@ -9,6 +9,14 @@
 #' @seealso [residuals.galamm()] for extracting residuals and [plot()] for the
 #'   generic function.
 #'
+#' @examples
+#' # Linear mixed model example from lme4
+#' data("sleepstudy", package = "lme4")
+#' mod <- galamm(Reaction ~ Days + (Days | Subject), data = sleepstudy)
+#'
+#' # Diagnostic plot
+#' plot(mod)
+#'
 plot.galamm <- function(x, ...) {
   plot(fitted(x), residuals(x, type = "pearson"),
     xlab = "Predicted values",

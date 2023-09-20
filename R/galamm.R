@@ -75,12 +75,111 @@
 #' @param control Control object for the optimization procedure of class
 #'   \code{galamm_control} resulting from calling \code{\link{galamm_control}}.
 #'
-#' @return A model object of class \code{galamm}.
+#' @return A model object of class \code{galamm}, containing the following
+#'   elements:
+#' * \code{call} the matched call used when fitting the model.
+#' * \code{random_effects} a list containing the following two elements:
+#'   * \code{b} random effects in original parametrization.
+#'   * \code{u} random effects standardized to have identity covariance matrix.
+#' * \code{model} a list with various elements related to the model setup and fit:
+#'   * \code{deviance} deviance of final model.
+#'   * \code{deviance_residuals} deviance residuals of the final model.
+#'   * \code{df} degrees of freedom of model.
+#'   * \code{family} a list of one or more family objects, as specified in the \code{family}
+#'   arguments to \code{galamm}.
+#'   * \code{fit} a numeric vector with fitted values.
+#'   * \code{hessian} Hessian matrix of final model, i.e., the second derivative of the
+#'   log-likelihood with respect to all model parameters.
+#'   * \code{lmod} Linear model object returned by \code{lme4::lFormula}, which
+#'   is used internally for setting up the models.
+#'   * \code{loglik} Log-likelihood of final model.
+#'   * \code{n} Number of observations.
+#'   * \code{pearson_residual} Pearson residuals of final model.
+#'   * \code{response} A numeric vector containing the response values used when
+#'   fitting the model.
+#'   * \code{weights_object} Object with weights used in model fitting. Is \code{NULL}
+#'   when no weights were used.
+#' * \code{parameters} A list object with model parameters and related information:
+#'   * \code{beta_inds} Integer vector specifying the indices of fixed regression
+#'   coefficients among the estimated model parameters.
+#'   * \code{dispersion_parameter} One or more dispersion parameters of the final model.
+#'   * \code{lambda_dummy} Dummy matrix of factor loadings, which shows the structure of the
+#'   loading matrix that was supplied in the \code{lambda} arguments.
+#'   * \code{lambda_inds} Integer vector specifying the indices of factor loadings among
+#'   the estimated model parameters.
+#'   * \code{parameter_estimates} Numeric vector of final parameter estimates.
+#'   * \code{parameter_names} Names of all parameters estimates.
+#'   * \code{theta_inds} Integer vector specifying the indices of variance components among
+#'   the estimated model parameters. Technically these are the entries of the
+#'   Cholesky decomposition of the covariance matrix.
+#'   * \code{weights_inds} Integer vector specifying the indices of estimated weights
+#'   (used in heteroscedastic Gaussian models) among the estimated model
+#'   parameters.
+#'  * \code{gam} List containing information about smooth terms in the model. If no
+#'   smooth terms are contained in the model, then it is \code{NULL}.
+#'
 #' @export
 #'
 #' @references \insertAllCited{}
 #'
+#' @examples
+#' # Mixed response model ------------------------------------
 #'
+#' # The mresp dataset contains a mix of binomial and Gaussian responses.
+#'
+#' # We need to estimate a factor loading which scales the two response types.
+#' loading_matrix <- matrix(c(1, NA), ncol = 1)
+#'
+#' # Define mapping to families.
+#' families <- c(gaussian, binomial)
+#' family_mapping <- ifelse(mresp$itemgroup == "a", 1, 2)
+#'
+#'
+#' # Fit the model
+#' mod <- galamm(
+#'   formula = y ~ x + (0 + level | id),
+#'   data = mresp,
+#'   family = families,
+#'   family_mapping = family_mapping,
+#'   factor = list("level"),
+#'   load.var = "itemgroup",
+#'   lambda = list(loading_matrix)
+#' )
+#'
+#' # Summary information
+#' summary(mod)
+#'
+#' # Generalized additive mixed model with factor structures -------------------
+#'
+#' # The cognition dataset contains simulated measurements of three latent
+#' # time-dependent processes, corresponding to individuals' abilities in
+#' # cognitive domains. We focus here on the first domain, and take a single
+#' # random timepoint per person:
+#' dat <- subset(cognition, domain == 1)
+#' dat <- split(dat, f = dat$id)
+#' dat <- lapply(dat, function(x) x[x$timepoint %in% sample(x$timepoint, 1), ])
+#' dat <- do.call(rbind, dat)
+#' dat$item <- factor(dat$item)
+#'
+#' # At each timepoint there are three items measuring ability in the cognitive
+#' # domain. We fix the factor loading for the first measurement to one, and
+#' # estimate the remaining two. This is specified in the loading matrix.
+#' loading_matrix <- matrix(c(1, NA, NA), ncol = 1)
+#'
+#' # We can now estimate the model.
+#' mod <- galamm(
+#'   formula = y ~ 0 + item + s(x, load.var = "loading") +
+#'     (0 + loading | id),
+#'   data = dat,
+#'   load.var = "item",
+#'   lambda = list(loading_matrix),
+#'   factor = list("loading")
+#' )
+#'
+#' # We can plot the estimated smooth term
+#' plot_smooth(mod, shade = TRUE)
+#'
+#' @md
 galamm <- function(formula, weights = NULL, data, family = gaussian,
                    family_mapping = rep(1L, nrow(data)),
                    load.var = NULL, lambda = NULL, factor = NULL,
@@ -212,43 +311,14 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
     preds[i, j]
   }, i = seq_len(nrow(preds)), j = family_mapping))
 
-  ret <- list()
-  ret$b <- b
-  ret$u <- final_model$u
-  ret$lambda <- lambda
-  ret$cnms <- gobj$lmod$reTrms$cnms
-  ret$par_names <- c(
-    paste0("theta", seq_along(theta_inds), recycle0 = TRUE),
-    colnames(gobj$lmod$X),
-    paste0("lambda", seq_along(lambda_inds), recycle0 = TRUE),
-    paste0("weights", seq_along(weights_inds), recycle0 = TRUE)
-  )
-  ret$hessian <- final_model$hessian
-  ret$par <- opt$par
-  ret$lambda_inds <- lambda_inds
-  ret$beta_inds <- beta_inds
-  ret$theta_inds <- theta_inds
-  ret$weights_inds <- weights_inds
-  ret$phi <- final_model$phi
-  ret$loglik <- opt$value
-
-  ret$lmod <- gobj$lmod
-  ret$weights_obj <- weights_obj
-  ret$call <- mc
-  ret$family <- family_list
-  ret$df <- length(opt$par) +
-    sum(vapply(family_list, function(x) is.na(x$dispersion), logical(1)))
-
-  ret$n <- nrow(gobj$lmod$X)
-
-  ret$pearson_residuals <- (response_obj[, 1] - fit) /
+  pearson_residuals <- (response_obj[, 1] - fit) /
     unlist(Map(function(x, y) sqrt(family_list[[x]]$variance(y)),
       x = family_mapping, y = fit
     ))
 
   if (length(family_list) == 1 && family_list[[1]]$family == "gaussian") {
-    ret$deviance_residuals <- response_obj[, 1] - fit
-    ret$deviance <- -2 * ret$loglik
+    deviance_residuals <- response_obj[, 1] - fit
+    deviance <- -2 * opt$value
   } else {
     # McCullagh and Nelder (1989), page 39
     tmp <- lapply(
@@ -265,21 +335,54 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
       function(i) tmp[[family_mapping[[i]]]][[i]], 1
     ))
 
-    ret$deviance_residuals <- sign(response_obj[, 1] - fit) * dev_res
-    ret$deviance <- sum((dev_res)^2)
+    deviance_residuals <- sign(response_obj[, 1] - fit) * dev_res
+    deviance <- sum((dev_res)^2)
   }
 
-  ret$fit <- fit
-  ret$response <- response_obj[, 1]
+
+  ret <- list()
+
+  ret$call <- mc
+  ret$random_effects <- list(
+    b = as.numeric(b),
+    u = as.numeric(final_model$u)
+  )
+  ret$model <- list(
+    deviance = deviance,
+    deviance_residuals = deviance_residuals,
+    df = length(opt$par) +
+      sum(vapply(family_list, function(x) is.na(x$dispersion), logical(1))),
+    family = family_list,
+    fit = fit,
+    hessian = final_model$hessian,
+    lmod = gobj$lmod,
+    loglik = opt$value,
+    n = nrow(gobj$lmod$X),
+    pearson_residuals = pearson_residuals,
+    response = response_obj[, 1],
+    weights_obj = weights_obj
+  )
+
+  ret$parameters <- list(
+    beta_inds = beta_inds,
+    dispersion_parameter = final_model$phi,
+    lambda_dummy = lambda,
+    lambda_inds = lambda_inds,
+    parameter_estimates = opt$par,
+    parameter_names = c(
+      paste0("theta", seq_along(theta_inds), recycle0 = TRUE),
+      colnames(gobj$lmod$X),
+      paste0("lambda", seq_along(lambda_inds), recycle0 = TRUE),
+      paste0("weights", seq_along(weights_inds), recycle0 = TRUE)
+    ),
+    theta_inds = theta_inds,
+    weights_inds = weights_inds
+  )
 
   class(ret) <- "galamm"
-
-  ## Deal with smooth terms ----
-  # If there are smooth terms in the model, postprocess them
   if (length(gobj$G$smooth) > 0) {
     ret$gam <- gamm4.wrapup(gobj, ret, final_model)
   }
-
 
   ret
 }

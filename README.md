@@ -247,11 +247,12 @@ citation("galamm")
 ## Acknowledgement
 
 Some parts of the code base for galamm has been derived from internal
-functions of [gamm4](https://cran.r-project.org/package=gamm4) (author:
+functions of [gamm4](https://cran.r-project.org/package=gamm4) (authors:
 Simon Wood and Fabian Scheipl) and
 [lme4](https://cran.r-project.org/package=lme4) (authors: Douglas M.
-Bates, Martin Maechler, Ben Bolker, and Steve Walker). This has been
-marked in the documentation of the corresponding functions.
+Bates, Martin Maechler, Ben Bolker, and Steve Walker). Whenever a
+function uses code derived from other packages, this has been marked in
+the documentation of the corresponding functions.
 
 ## Code of Conduct
 

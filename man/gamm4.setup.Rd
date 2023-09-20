@@ -7,12 +7,12 @@
 gamm4.setup(formula, pterms, data = stop("No data supplied to gamm.setup"))
 }
 \arguments{
+\item{formula}{A formula excluding lme4 style random effects but including
+smooths.}
+
 \item{pterms}{Parametric terms in the model.}
 
 \item{data}{Model frame.}
-
-\item{fixed}{A formula excluding lme4 style random effects but including
-smooths.}
 }
 \value{
 model

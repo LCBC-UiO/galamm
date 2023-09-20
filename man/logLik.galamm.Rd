@@ -17,6 +17,18 @@ Object of class \code{logLik}
 \description{
 Extract Log-Likelihood of galamm Object
 }
+\examples{
+# Linear mixed model with heteroscedastic residuals
+mod <- galamm(
+  formula = y ~ x + (1 | id),
+  weights = ~ (1 | item),
+  data = hsced
+)
+
+# Extract log likelihood
+logLik(mod)
+
+}
 \seealso{
 \code{\link[=deviance.galamm]{deviance.galamm()}} for a function returning deviance and
 \code{\link[=logLik]{logLik()}} for the generic function.

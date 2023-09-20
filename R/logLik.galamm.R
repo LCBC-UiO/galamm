@@ -9,11 +9,23 @@
 #'
 #' @seealso [deviance.galamm()] for a function returning deviance and
 #' [logLik()] for the generic function.
+#'
+#' @examples
+#' # Linear mixed model with heteroscedastic residuals
+#' mod <- galamm(
+#'   formula = y ~ x + (1 | id),
+#'   weights = ~ (1 | item),
+#'   data = hsced
+#' )
+#'
+#' # Extract log likelihood
+#' logLik(mod)
+#'
 logLik.galamm <- function(object, ...) {
   structure(
-    object$loglik,
-    nobs = object$n,
-    df = object$df,
+    object$model$loglik,
+    nobs = nobs(object),
+    df = object$model$df,
     class = "logLik"
   )
 }
@@ -28,10 +40,20 @@ logLik.galamm <- function(object, ...) {
 #' @return A numeric value giving the deviance of the model fit.
 #' @export
 #'
-#'
 #' @seealso [logLik.galamm()] for a function returning the log likelihood and
 #'   [deviance()] for the generic function.
 #'
+#' @examples
+#' # Linear mixed model with heteroscedastic residuals
+#' mod <- galamm(
+#'   formula = y ~ x + (1 | id),
+#'   weights = ~ (1 | item),
+#'   data = hsced
+#' )
+#'
+#' # Extract deviance
+#' deviance(mod)
+#'
 deviance.galamm <- function(object, ...) {
-  object$deviance
+  object$model$deviance
 }

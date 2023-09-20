@@ -19,6 +19,23 @@ A table with model comparison metric.
 \description{
 Anova function for comparing different GALAMMs fitted on the same data.
 }
+\examples{
+# Poisson GLMM
+count_mod <- galamm(
+  formula = y ~ lbas * treat + lage + v4 + (1 | subj),
+  data = epilep, family = poisson
+)
+
+# Model without interaction
+count_mod0 <- galamm(
+  formula = y ~ lbas + treat + lage + v4 + (1 | subj),
+  data = epilep, family = poisson
+)
+
+# Model comparison
+anova(count_mod, count_mod0)
+
+}
 \references{
 \insertRef{batesFittingLinearMixedEffects2015}{galamm}
 }

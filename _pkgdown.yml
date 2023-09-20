@@ -43,6 +43,7 @@ reference:
   - confint.galamm
   - deviance.galamm
   - factor_loadings.galamm
+  - family.galamm
   - fitted.galamm
   - fixef.galamm
   - llikAIC.galamm
@@ -50,6 +51,7 @@ reference:
   - predict.galamm
   - ranef.galamm
   - residuals.galamm
+  - sigma.galamm
   - VarCorr.galamm
   - print.VarCorr.galamm
   - vcov.galamm

@@ -28,6 +28,16 @@ A matrix with the requested confidence intervals.
 \description{
 Confidence intervals for model parameters
 }
+\examples{
+# Poisson GLMM
+count_mod <- galamm(
+  formula = y ~ lbas * treat + lage + v4 + (1 | subj),
+  data = epilep, family = poisson
+)
+
+confint(count_mod, parm = "beta", level = .99)
+
+}
 \seealso{
 \code{\link[=fixef.galamm]{fixef.galamm()}} for fixed effects, \code{\link[=coef.galamm]{coef.galamm()}} for
 coefficients more generally, and \code{\link[=vcov.galamm]{vcov.galamm()}} for the variance-covariance

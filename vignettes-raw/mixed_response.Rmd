@@ -203,20 +203,17 @@ mod <- galamm(
 )
 ```
 
+Looking at the summary output, however, we see a warning that the Hessian matrix is rank deficient.
 
-Looking at the summary output, however, reveals that there is an issue here:
-
-```{r, error=TRUE, warning=TRUE}
+```{r, warning=TRUE}
 summary(mod)
 ```
 
 
-The Hessian matrix is not invertible, which means that we cannot compute the variance-covariance matrix. We note that the variance of the latent variable is estimated to be exactly zero, and although zero variance estimates is a well known phenomenon in these types of models (see @hodgesRichlyParameterizedLinear2013 for a book-length treatment), it does not seem reasonable in this case that there is no variation in the true fiber intake in this population of bankers and transport workers.
-
 We suspect that this is a convergence issue of the algorithm, and start by simply turning a lever to make the algorithm more verbose. The argument `trace = 3` is passed onto `optim`.
 
 
-```{r}
+```{r, warning=TRUE}
 mod <- galamm(
   formula = formula,
   data = diet,

@@ -22,8 +22,35 @@ Extract factor loadings from galamm object
 This function has been named \code{factor_loadings} rather than just
 \code{loadings} to avoid conflict with \code{stats::loadings}.
 }
+\examples{
+# Logistic mixed model with factor loadings, example from PLmixed
+data("IRTsim", package = "PLmixed")
+
+# Reduce data size for the example to run faster
+IRTsub <- IRTsim[IRTsim$item < 4, ]
+IRTsub <- IRTsub[sample(nrow(IRTsub), 300), ]
+IRTsub$item <- factor(IRTsub$item)
+
+# Fix loading for first item to 1, and estimate the two others freely
+loading_matrix <- matrix(c(1, NA, NA), ncol = 1)
+
+# Estimate model
+mod <- galamm(y ~ item + (0 + ability | sid) + (0 + ability | school),
+  data = IRTsub, family = binomial, load.var = "item",
+  factor = list("ability"), lambda = list(loading_matrix)
+)
+
+# Show estimated factor loadings, with standard errors
+factor_loadings(mod)
+
+}
 \seealso{
 \code{\link[=fixef.galamm]{fixef.galamm()}} for fixed regression coefficients,
 \code{\link[=confint.galamm]{confint.galamm()}} for confidence intervals, and \code{\link[=coef.galamm]{coef.galamm()}} for
 coefficients more generally.
+}
+\author{
+The example for this function comes from \code{PLmixed}, with
+authors Nicholas Rockwood and Minjeong Jeon
+\insertCite{rockwoodEstimatingComplexMeasurement2019}{galamm}.
 }

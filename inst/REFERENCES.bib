@@ -8,11 +8,9 @@
   pages = {1--24},
   issn = {1548-7660},
   doi = {10.18637/jss.v052.i05},
-  urldate = {2021-11-09},
   abstract = {The RcppEigen package provides access from R (R Core Team 2012a) to the Eigen (Guennebaud, Jacob, and others 2012) C++ template library for numerical linear algebra. Rcpp (Eddelbuettel and Fran\c{c}ois 2011, 2012) classes and specializations of the C++ templated functions as and wrap from Rcpp provide the "glue" for passing objects from R to C++ and back. Several introductory examples are presented. This is followed by an in-depth discussion of various available approaches for solving least-squares problems, including rank-revealing methods, concluding with an empirical run-time comparison. Last but not least, sparse matrix methods are discussed.},
   copyright = {Copyright (c) 2011 Douglas Bates, Dirk Eddelbuettel},
-  langid = {english},
-  file = {/Users/oyss/Zotero/storage/WDQYGC8Q/Bates and Eddelbuettel - 2013 - Fast and Elegant Numerical Linear Algebra Using th.pdf}
+  langid = {english}
 }
 
 @article{batesFittingLinearMixedEffects2015,
@@ -26,11 +24,9 @@
   pages = {1--48},
   issn = {1548-7660},
   doi = {10.18637/jss.v067.i01},
-  urldate = {2020-11-25},
   copyright = {Copyright (c) 2015 Douglas Bates, Martin M\"achler, Ben Bolker, Steve Walker},
   langid = {english},
-  keywords = {Cholesky decomposition,linear mixed models,penalized least squares,sparse matrix methods},
-  file = {/Users/oyss/Zotero/storage/9WJRVLK3/Bates et al. - 2015 - Fitting Linear Mixed-Effects Models Using lme4.pdf;/Users/oyss/Zotero/storage/FAV723AQ/v067i01.html}
+  keywords = {Cholesky decomposition,linear mixed models,penalized least squares,sparse matrix methods}
 }
 
 @article{blackburnRevisedAdministrationScoring1959,
@@ -43,9 +39,7 @@
   pages = {139},
   publisher = {{US: American Psychological Association}},
   issn = {0095-8891},
-  doi = {10.1037/h0047235},
-  urldate = {2021-03-25},
-  file = {/Users/oyss/Zotero/storage/SUCHZC75/1959-01244-001.html}
+  doi = {10.1037/h0047235}
 }
 
 @article{breslowApproximateInferenceGeneralized1993,
@@ -55,15 +49,26 @@
   journal = {Journal of the American Statistical Association},
   volume = {88},
   number = {421},
-  eprint = {2290687},
-  eprinttype = {jstor},
   pages = {9--25},
   publisher = {{[American Statistical Association, Taylor \& Francis, Ltd.]}},
   issn = {0162-1459},
   doi = {10.2307/2290687},
-  urldate = {2020-12-02},
-  abstract = {Statistical approaches to overdispersion, correlated errors, shrinkage estimation, and smoothing of regression relationships may be encompassed within the framework of the generalized linear mixed model (GLMM). Given an unobserved vector of random effects, observations are assumed to be conditionally independent with means that depend on the linear predictor through a specified link function and conditional variances that are specified by a variance function, known prior weights and a scale factor. The random effects are assumed to be normally distributed with mean zero and dispersion matrix depending on unknown variance components. For problems involving time series, spatial aggregation and smoothing, the dispersion may be specified in terms of a rank deficient inverse covariance matrix. Approximation of the marginal quasi-likelihood using Laplace's method leads eventually to estimating equations based on penalized quasilikelihood or PQL for the mean parameters and pseudo-likelihood for the variances. Implementation involves repeated calls to normal theory procedures for REML estimation in variance components problems. By means of informal mathematical arguments, simulations and a series of worked examples, we conclude that PQL is of practical value for approximate inference on parameters and realizations of random effects in the hierarchical model. The applications cover overdispersion in binomial proportions of seed germination; longitudinal analysis of attack rates in epilepsy patients; smoothing of birth cohort effects in an age-cohort model of breast cancer incidence; evaluation of curvature of birth cohort effects in a case-control study of childhood cancer and obstetric radiation; spatial aggregation of lip cancer rates in Scottish counties; and the success of salamander matings in a complicated experiment involving crossing of male and female effects. PQL tends to underestimate somewhat the variance components and (in absolute value) fixed effects when applied to clustered binary data, but the situation improves rapidly for binomial observations having denominators greater than one.},
-  file = {/Users/oyss/Zotero/storage/IADI4HQB/Breslow and Clayton - 1993 - Approximate Inference in Generalized Linear Mixed .pdf}
+  abstract = {Statistical approaches to overdispersion, correlated errors, shrinkage estimation, and smoothing of regression relationships may be encompassed within the framework of the generalized linear mixed model (GLMM). Given an unobserved vector of random effects, observations are assumed to be conditionally independent with means that depend on the linear predictor through a specified link function and conditional variances that are specified by a variance function, known prior weights and a scale factor. The random effects are assumed to be normally distributed with mean zero and dispersion matrix depending on unknown variance components. For problems involving time series, spatial aggregation and smoothing, the dispersion may be specified in terms of a rank deficient inverse covariance matrix. Approximation of the marginal quasi-likelihood using Laplace's method leads eventually to estimating equations based on penalized quasilikelihood or PQL for the mean parameters and pseudo-likelihood for the variances. Implementation involves repeated calls to normal theory procedures for REML estimation in variance components problems. By means of informal mathematical arguments, simulations and a series of worked examples, we conclude that PQL is of practical value for approximate inference on parameters and realizations of random effects in the hierarchical model. The applications cover overdispersion in binomial proportions of seed germination; longitudinal analysis of attack rates in epilepsy patients; smoothing of birth cohort effects in an age-cohort model of breast cancer incidence; evaluation of curvature of birth cohort effects in a case-control study of childhood cancer and obstetric radiation; spatial aggregation of lip cancer rates in Scottish counties; and the success of salamander matings in a complicated experiment involving crossing of male and female effects. PQL tends to underestimate somewhat the variance components and (in absolute value) fixed effects when applied to clustered binary data, but the situation improves rapidly for binomial observations having denominators greater than one.}
+}
+
+@article{byrdLimitedMemoryAlgorithm1995,
+  title = {A {{Limited Memory Algorithm}} for {{Bound Constrained Optimization}}},
+  author = {Byrd, Richard H. and Lu, Peihuang and Nocedal, Jorge and Zhu, Ciyou},
+  year = {1995},
+  month = sep,
+  journal = {SIAM Journal on Scientific Computing},
+  volume = {16},
+  number = {5},
+  pages = {1190--1208},
+  publisher = {{Society for Industrial and Applied Mathematics}},
+  issn = {1064-8275},
+  doi = {10.1137/0916069},
+  abstract = {An algorithm for solving large nonlinear optimization problems with simple bounds is described. It is based on the gradient projection method and uses a limited memory BFGS matrix to approximate the Hessian of the objective function. It is shown how to take advantage of the form of the limited memory approximation to implement the algorithm efficiently. The results of numerical tests on a set of large problems are reported.}
 }
 
 @book{carrollMeasurementErrorNonlinear2006,
@@ -101,14 +106,10 @@
   journal = {The Annals of Statistics},
   volume = {9},
   number = {4},
-  eprint = {2240854},
-  eprinttype = {jstor},
   pages = {861--869},
   publisher = {{Institute of Mathematical Statistics}},
   issn = {0090-5364},
-  urldate = {2021-03-18},
-  abstract = {Let X\textsubscript{1}, {$\cdots$}, X\textsubscript{n} be i.i.d. random variables with probability distribution F\textsubscript{\texttheta, p} indexed by two real parameters. Let {\^p} = {\^p}(X\textsubscript{1}, {$\cdots$}, X\textsubscript{n}) be an estimate of p other than the maximum likelihood estimate, and let {\^\texttheta} be the solution of the likelihood equation {$\partial$}/{$\partial$} \texttheta{} ln L(x, \texttheta, {\^p}) = 0 which maximizes the likelihood. We call {\^\texttheta} a pseudo maximum likelihood estimate of \texttheta, and give conditions under which {\^\texttheta} is consistent and asymptotically normal. Pseudo maximum likelihood estimation easily extends to k-parameter models, and is of interest in problems in which the likelihood surface is ill-behaved in higher dimensions but well-behaved in lower dimensions. We examine several signal-plus-noise, or convolution, models which exhibit such behavior and satisfy the regularity conditions of the asymptotic theory. For specific models, a numerical comparison of asymptotic variances suggests that a pseudo maximum likelihood estimate of the signal parameter is uniformly more efficient than estimators proposed previously.},
-  file = {/Users/oyss/Zotero/storage/GQWKTTPF/Gong and Samaniego - 1981 - Pseudo Maximum Likelihood Estimation Theory and A.pdf}
+  abstract = {Let X\textsubscript{1}, {$\cdots$}, X\textsubscript{n} be i.i.d. random variables with probability distribution F\textsubscript{\texttheta, p} indexed by two real parameters. Let {\^p} = {\^p}(X\textsubscript{1}, {$\cdots$}, X\textsubscript{n}) be an estimate of p other than the maximum likelihood estimate, and let {\^\texttheta} be the solution of the likelihood equation {$\partial$}/{$\partial$} \texttheta{} ln L(x, \texttheta, {\^p}) = 0 which maximizes the likelihood. We call {\^\texttheta} a pseudo maximum likelihood estimate of \texttheta, and give conditions under which {\^\texttheta} is consistent and asymptotically normal. Pseudo maximum likelihood estimation easily extends to k-parameter models, and is of interest in problems in which the likelihood surface is ill-behaved in higher dimensions but well-behaved in lower dimensions. We examine several signal-plus-noise, or convolution, models which exhibit such behavior and satisfy the regularity conditions of the asymptotic theory. For specific models, a numerical comparison of asymptotic variances suggests that a pseudo maximum likelihood estimate of the signal parameter is uniformly more efficient than estimators proposed previously.}
 }
 
 @article{harvilleMaximumLikelihoodApproaches1977,
@@ -118,15 +119,11 @@
   journal = {Journal of the American Statistical Association},
   volume = {72},
   number = {358},
-  eprint = {2286796},
-  eprinttype = {jstor},
   pages = {320--338},
   publisher = {{[American Statistical Association, Taylor \& Francis, Ltd.]}},
   issn = {0162-1459},
   doi = {10.2307/2286796},
-  urldate = {2022-07-22},
-  abstract = {Recent developments promise to increase greatly the popularity of maximum likelihood (ML) as a technique for estimating variance components. Patterson and Thompson (1971) proposed a restricted maximum likelihood (REML) approach which takes into account the loss in degrees of freedom resulting from estimating fixed effects. Miller (1973) developed a satisfactory asymptotic theory for ML estimators of variance components. There are many iterative algorithms that can be considered for computing the ML or REML estimates. The computations on each iteration of these algorithms are those associated with computing estimates of fixed and random effects for given values of the variance components.},
-  file = {/Users/oyss/Zotero/storage/L24X7K67/Harville - 1977 - Maximum Likelihood Approaches to Variance Componen.pdf}
+  abstract = {Recent developments promise to increase greatly the popularity of maximum likelihood (ML) as a technique for estimating variance components. Patterson and Thompson (1971) proposed a restricted maximum likelihood (REML) approach which takes into account the loss in degrees of freedom resulting from estimating fixed effects. Miller (1973) developed a satisfactory asymptotic theory for ML estimators of variance components. There are many iterative algorithms that can be considered for computing the ML or REML estimates. The computations on each iteration of these algorithms are those associated with computing estimates of fixed and random effects for given values of the variance components.}
 }
 
 @article{hastieVaryingCoefficientModels1993,
@@ -139,12 +136,10 @@
   pages = {757--779},
   issn = {2517-6161},
   doi = {10.1111/j.2517-6161.1993.tb01939.x},
-  urldate = {2020-11-30},
   abstract = {We explore a class of regression and generalized regression models in which the coefficients are allowed to vary as smooth functions of other variables. General algorithms are presented for estimating the models flexibly and some examples are given. This class of models ties together generalized additive models and dynamic generalized linear models into one common framework. When applied to the proportional hazards model for survival data, this approach provides a new way of modelling departures from the proportional hazards assumption.},
   copyright = {\textcopyright{} 1993 Royal Statistical Society},
   langid = {english},
-  keywords = {dynamic generalized linear models,generalized additive models,generalized linear models,regression,smoothing,splines,survival analysis},
-  file = {/Users/oyss/Zotero/storage/URU3MMCY/Hastie and Tibshirani - 1993 - Varying-Coefficient Models.pdf;/Users/oyss/Zotero/storage/LF6J6W2F/j.2517-6161.1993.tb01939.html}
+  keywords = {dynamic generalized linear models,generalized additive models,generalized linear models,regression,smoothing,splines,survival analysis}
 }
 
 @article{hendersonBestLinearUnbiased1975,
@@ -154,15 +149,11 @@
   journal = {Biometrics},
   volume = {31},
   number = {2},
-  eprint = {2529430},
-  eprinttype = {jstor},
   pages = {423--447},
   publisher = {{[Wiley, International Biometric Society]}},
   issn = {0006-341X},
   doi = {10.2307/2529430},
-  urldate = {2022-07-22},
-  abstract = {Mixed linear models are assumed in most animal breeding applications. Convenient methods for computing BLUE of the estimable linear functions of the fixed elements of the model and for computing best linear unbiased predictions of the random elements of the model have been available. Most data available to animal breeders, however, do not meet the usual requirements of random sampling, the problem being that the data arise either from selection experiments or from breeders' herds which are undergoing selection. Consequently, the usual methods are likely to yield biased estimates and predictions. Methods for dealing with such data are presented in this paper.},
-  file = {/Users/oyss/Zotero/storage/WWULUYH6/Henderson - 1975 - Best Linear Unbiased Estimation and Prediction und.pdf}
+  abstract = {Mixed linear models are assumed in most animal breeding applications. Convenient methods for computing BLUE of the estimable linear functions of the fixed elements of the model and for computing best linear unbiased predictions of the random elements of the model have been available. Most data available to animal breeders, however, do not meet the usual requirements of random sampling, the problem being that the data arise either from selection experiments or from breeders' herds which are undergoing selection. Consequently, the usual methods are likely to yield biased estimates and predictions. Methods for dealing with such data are presented in this paper.}
 }
 
 @book{hodgesRichlyParameterizedLinear2013,
@@ -187,10 +178,8 @@
   publisher = {{American Educational Research Association}},
   issn = {1076-9986},
   doi = {10.3102/1076998611417628},
-  urldate = {2020-11-05},
   abstract = {In this article, the authors suggest a profile-likelihood approach for estimating complex models by maximum likelihood (ML) using standard software and minimal programming. The method works whenever setting some of the parameters of the model to known constants turns the model into a standard model. An important class of models that can be estimated this way is generalized linear mixed models with factor structures. Such models are useful in educational research, for example, for estimation of value-added teacher or school effects with persistence parameters and for analysis of large-scale assessment data using multilevel item response models with discrimination parameters. The authors describe the profile-likelihood approach, implement it in the R software, and apply the method to longitudinal data and binary item response data. Simulation studies and comparison with gllamm show that the profile-likelihood method performs well in both types of applications. The authors also briefly discuss other types of models that can be estimated using the profile-likelihood idea.},
-  langid = {english},
-  file = {/Users/oyss/Zotero/storage/SQK5KJQ3/Jeon and Rabe-Hesketh - 2012 - Profile-Likelihood Approach for Estimating General.pdf}
+  langid = {english}
 }
 
 @article{joeAccuracyLaplaceApproximation2008,
@@ -204,10 +193,8 @@
   pages = {5066--5074},
   issn = {0167-9473},
   doi = {10.1016/j.csda.2008.05.002},
-  urldate = {2021-11-05},
   abstract = {The Laplace approximation is amongst the computational methods used for estimation in generalized linear mixed models. It is computationally the fastest, but there hasn't been a clear analysis of when its accuracy is adequate. In this paper, for a few factors we do calculations for a variety of mixed models to show patterns in the asymptotic bias of the estimator based on the maximum of the Laplace approximation of the log-likelihood. The biggest factor for asymptotic bias is the amount of discreteness in the response variable; there is more bias for binary and ordinal responses than for a count response, and more bias for a count response when its support is mainly near 0. When there is bias, the bias decreases as the cluster size increases. Often, the Laplace approximation is adequate even for small cluster sizes. Even with bias, the Laplace approximation may be adequate for quick assessment of competing mixed models with different random effects and covariates.},
-  langid = {english},
-  file = {/Users/oyss/Zotero/storage/ZBDD9A5W/Joe - 2008 - Accuracy of Laplace approximation for discrete res.pdf}
+  langid = {english}
 }
 
 @article{kochCrossClassifiedCFAMTMMModel2016,
@@ -222,11 +209,9 @@
   publisher = {{Routledge}},
   issn = {0027-3171},
   doi = {10.1080/00273171.2015.1101367},
-  urldate = {2023-08-18},
   abstract = {Multirater (multimethod, multisource) studies are increasingly applied in psychology. Eid and colleagues (2008) proposed a multilevel confirmatory factor model for multitrait-multimethod (MTMM) data combining structurally different and multiple independent interchangeable methods (raters). In many studies, however, different interchangeable raters (e.g., peers, subordinates) are asked to rate different targets (students, supervisors), leading to violations of the independence assumption and to cross-classified data structures. In the present work, we extend the ML-CFA-MTMM model by Eid and colleagues (2008) to cross-classified multirater designs. The new C4 model (Cross-Classified CTC[M-1] Combination of Methods) accounts for nonindependent interchangeable raters and enables researchers to explicitly model the interaction between targets and raters as a latent variable. Using a real data application, it is shown how credibility intervals of model parameters and different variance components can be obtained using Bayesian estimation techniques.},
   pmid = {26881958},
-  keywords = {Bayesian analysis,cross-classification,MTMM modeling,structurally different and interchangeable methods},
-  file = {/Users/oyss/Zotero/storage/JQK2YI8G/Koch et al. - 2016 - A Cross-Classified CFA-MTMM Model for Structurally.pdf}
+  keywords = {Bayesian analysis,cross-classification,MTMM modeling,structurally different and interchangeable methods}
 }
 
 @article{lairdRandomEffectsModelsLongitudinal1982,
@@ -236,15 +221,11 @@
   journal = {Biometrics},
   volume = {38},
   number = {4},
-  eprint = {2529876},
-  eprinttype = {jstor},
   pages = {963--974},
   publisher = {{[Wiley, International Biometric Society]}},
   issn = {0006-341X},
   doi = {10.2307/2529876},
-  urldate = {2020-11-25},
-  abstract = {Models for the analysis of longitudinal data must recognize the relationship between serial observations on the same unit. Multivariate models with general covariance structure are often difficult to apply to highly unbalanced data, whereas two-stage random-effects models can be used easily. In two-stage models, the probability distributions for the response vectors of different individuals belong to a single family, but some random-effects parameters vary across individuals, with a distribution specified at the second stage. A general family of models is discussed, which includes both growth models and repeated-measures models as special cases. A unified approach to fitting these models, based on a combination of empirical Bayes and maximum likelihood estimation of model parameters and using the EM algorithm, is discussed. Two examples are taken from a current epidemiological study of the health effects of air pollution.},
-  file = {/Users/oyss/Zotero/storage/HM8LL33D/Laird and Ware - 1982 - Random-Effects Models for Longitudinal Data.pdf}
+  abstract = {Models for the analysis of longitudinal data must recognize the relationship between serial observations on the same unit. Multivariate models with general covariance structure are often difficult to apply to highly unbalanced data, whereas two-stage random-effects models can be used easily. In two-stage models, the probability distributions for the response vectors of different individuals belong to a single family, but some random-effects parameters vary across individuals, with a distribution specified at the second stage. A general family of models is discussed, which includes both growth models and repeated-measures models as special cases. A unified approach to fitting these models, based on a combination of empirical Bayes and maximum likelihood estimation of model parameters and using the EM algorithm, is discussed. Two examples are taken from a current epidemiological study of the health effects of air pollution.}
 }
 
 @misc{lealAutodiffModernFast2018,
@@ -282,10 +263,16 @@
   publisher = {{American Educational Research Association}},
   issn = {1076-9986},
   doi = {10.3102/10769986029001067},
-  urldate = {2023-08-18},
   abstract = {The use of complex value-added models that attempt to isolate the contributions of teachers or schools to student development is increasing. Several variations on these models are being applied in the research literature, and policy makers have expressed interest in using these models for evaluating teachers and schools. In this article, we present a general multivariate, longitudinal mixed-model that incorporates the complex grouping structures inherent to longitudinal student data linked to teachers. We summarize the principal existing modeling approaches, show how these approaches are special cases of the proposed model, and discuss possible extensions to model more complex data structures. We present simulation and analytical results that clarify the interplay between estimated teacher effects and repeated outcomes on students over time. We also explore the potential impact of model misspecifications, including missing student covariates and assumptions about the accumulation of teacher effects over time, on key inferences made from the models. We conclude that mixed models that account for student correlation over time are reasonably robust to such misspecifications when all the schools in the sample serve similar student populations. However, student characteristics are likely to confound estimated teacher effects when schools serve distinctly different populations.},
-  langid = {english},
-  file = {/Users/oyss/Zotero/storage/RDNCZNH2/McCaffrey et al. - 2004 - Models for Value-Added Modeling of Teacher Effects.pdf}
+  langid = {english}
+}
+
+@book{mccullaghGeneralizedLinearModels1989,
+  title = {Generalized Linear Models},
+  author = {McCullagh, P. and Nelder, J. A.},
+  year = {1989},
+  publisher = {{Chapman \& Hall / CRC}},
+  address = {{London}}
 }
 
 @article{morrisDietHeartPostscript1977,
@@ -301,8 +288,7 @@
   issn = {0007-1447, 1468-5833},
   doi = {10.1136/bmj.2.6098.1307},
   abstract = {During 1956-66, 337 healthy middle-aged men in London and south-east England participated in a seven-day individual weighed dietary survey. By the end of 1976, 45 of them had developed clinical coronary heart disease (CHD) which showed two main relationships with diet. Men with a high energy intake had a lower rate of disease than the rest, and, independently of this, so did men with a high intake of dietary fibre from cereals. Energy intake reflects physical activity, but the advantage of a diet high in cereal fibre cannot be explained; there was no evidence that the disease was associated with consumption of refined carbohydrates. Fewer cases of CHD developed among men with a relatively high ratio of polyunsaturated to saturated fatty acids in their diet, but the difference was not statistically significant.},
-  langid = {english},
-  file = {/Users/oyss/Zotero/storage/RXU8WWQS/Morris et al. - 1977 - Diet and heart a postscript..pdf}
+  langid = {english}
 }
 
 @article{nealeOpenMxExtendedStructural2016,
@@ -317,11 +303,23 @@
   pages = {535--549},
   issn = {1860-0980},
   doi = {10.1007/s11336-014-9435-8},
-  urldate = {2023-08-15},
   abstract = {The new software package OpenMx~2.0 for structural equation and other statistical modeling is introduced and its features are described. OpenMx is evolving in a modular direction and now allows a mix-and-match computational approach that separates model expectations from fit functions and optimizers. Major backend architectural improvements include a move to swappable open-source optimizers such as the newly written CSOLNP. Entire new methodologies such as item factor analysis and state space modeling have been implemented. New model expectation functions including support for the expression of models in LISREL syntax and a simplified multigroup expectation function are available. Ease-of-use improvements include helper functions to standardize model parameters and compute their Jacobian-based standard errors, access to model components through standard R \$ mechanisms, and improved tab completion from within the R Graphical User Interface.},
   langid = {english},
-  keywords = {behavior genetics,big data,full information maximum likelihood,item factor analysis,latent class analysis,mixture distribution,optimization,ordinal data,path analysis,state space modeling,structural equation modeling,substance use data analysis,time series},
-  file = {/Users/oyss/Zotero/storage/F3P8UEHV/Neale et al. - 2016 - OpenMx 2.0 Extended Structural Equation and Stati.pdf}
+  keywords = {behavior genetics,big data,full information maximum likelihood,item factor analysis,latent class analysis,mixture distribution,optimization,ordinal data,path analysis,state space modeling,structural equation modeling,substance use data analysis,time series}
+}
+
+@article{nelderSimplexMethodFunction1965,
+  title = {A {{Simplex Method}} for {{Function Minimization}}},
+  author = {Nelder, J. A. and Mead, R.},
+  year = {1965},
+  month = jan,
+  journal = {The Computer Journal},
+  volume = {7},
+  number = {4},
+  pages = {308--313},
+  issn = {0010-4620},
+  doi = {10.1093/comjnl/7.4.308},
+  abstract = {A method is described for the minimization of a function of n variables, which depends on the comparison of function values at the (n + 1) vertices of a general simplex, followed by the replacement of the vertex with the highest value by another point. The simplex adapts itself to the local landscape, and contracts on to the final minimum. The method is shown to be effective and computationally compact. A procedure is given for the estimation of the Hessian matrix in the neighbourhood of the minimum, needed in statistical estimation problems.}
 }
 
 @article{ostrosky-solisDigitSpanEffect2006,
@@ -335,11 +333,9 @@
   pages = {333--341},
   issn = {1464-066X},
   doi = {10.1080/00207590500345724},
-  urldate = {2021-03-25},
   abstract = {The Digit Span test is one of the most commonly used measures of immediate verbal recall, attentional capacity, and working memory in neuropsychological research and clinical evaluations. This test comprises two modalities, digits forward and digits backward. It has been established that age, education, and culture are important variables that affect performance on this test. The purposes of this study were as follows. First, performance on digit span in a Spanish-speaking sample was analysed to establish appropriate age and educational ranges in which data from the Digit Span test can be best analysed, and to determine the contribution of age and education to performance on the digit span forward and backward. Second, different studies on digit span were compared and reviewed in order to identify differences in terms of the variables of age, education, and culture. This study evaluated 2574 Spanish-speaking subjects and three studies were included in the cross-cultural analysis. Scores from the Spanish-speaking sample were matched with the data presented by the other studies according to age and level of education. Results showed that the stronger predicting variable in the Spanish-speaking sample was the level of education, both for digits forward and backward. Regarding culture, differences were found among the studies on digit span for both the forward and backward conditions. It can be argued that learning to read and write affects the development or usage of the abilities measured by the Digit Span task, and that cultural variables such as language and quality of education might also contribute to the differences found between countries.},
   copyright = {\textcopyright{} 2006 International Union of Psychological Science},
-  langid = {french},
-  file = {/Users/oyss/Zotero/storage/JALIYH9M/Ostrosky‐Solís and Lozano - 2006 - Digit Span Effect of education and culture.pdf;/Users/oyss/Zotero/storage/YKL5MX5U/00207590500345724.html}
+  langid = {french}
 }
 
 @article{parkePseudoMaximumLikelihood1986,
@@ -350,14 +346,10 @@
   journal = {The Annals of Statistics},
   volume = {14},
   number = {1},
-  eprint = {2241287},
-  eprinttype = {jstor},
   pages = {355--357},
   publisher = {{Institute of Mathematical Statistics}},
   issn = {0090-5364},
-  urldate = {2020-12-08},
-  abstract = {Gong and Samaniego (1981) define pseudo maximum likelihood estimation and derive the asymptotic distribution of the resulting estimates. This note gives a simpler and more elegant expression for the asymptotic variance of a pseudo maximum likelihood estimate.},
-  file = {/Users/oyss/Zotero/storage/PYE2TSZ6/Parke - 1986 - Pseudo Maximum Likelihood Estimation The Asymptot.pdf}
+  abstract = {Gong and Samaniego (1981) define pseudo maximum likelihood estimation and derive the asymptotic distribution of the resulting estimates. This note gives a simpler and more elegant expression for the asymptotic variance of a pseudo maximum likelihood estimate.}
 }
 
 @book{pawitanAllLikelihood2001,
@@ -391,8 +383,7 @@
   issn = {1471-082X},
   doi = {10.1191/1471082X03st056oa},
   abstract = {When covariates are measured with error, inference based on conventional generalized linear models can yield biased estimates of regression parameters. This problem can potentially be rectified by using generalized linear latent and mixed models (GLLAMM), including a measurement model for the relationship between observed and true covariates. However, the models are typically estimated under the assumption that both the true covariates and the measurement errors are normally distributed, although skewed covariate distributions are often observed in practice. In this article we relax the normality assumption for the true covariates by developing nonparametric maximum likelihood estimation (NPMLE) for GLLAMMs. The methodology is applied to estimating the effect of dietary fibre intake on coronary heart disease. We also assess the performance of estimation of regression parameters and empirical Bayes prediction of the true covariate. Normal as well as skewed covariate distributions are simulated and inference is performed based on both maximum likelihood assuming normality and NPMLE. Both estimators are unbiased and have similar root mean square errors when the true covariate is normal. With a skewed covariate, the conventional estimator is biased but has a smaller mean square error than the NPMLE. NPMLE produces substantially improved empirical Bayes predictions of the true covariate when its distribution is skewed.},
-  langid = {english},
-  file = {/Users/oyss/Zotero/storage/6EKWK2F5/Rabe-Hesketh et al. - 2003 - Correcting for covariate measurement error in logi.pdf}
+  langid = {english}
 }
 
 @article{rabe-heskethGeneralizedMultilevelStructural2004,
@@ -406,10 +397,8 @@
   pages = {167--190},
   issn = {1860-0980},
   doi = {10.1007/BF02295939},
-  urldate = {2020-11-03},
   abstract = {A unifying framework for generalized multilevel structural equation modeling is introduced. The models in the framework, called generalized linear latent and mixed models (GLLAMM), combine features of generalized linear mixed models (GLMM) and structural equation models (SEM) and consist of a response model and a structural model for the latent variables. The response model generalizes GLMMs to incorporate factor structures in addition to random intercepts and coefficients. As in GLMMs, the data can have an arbitrary number of levels and can be highly unbalanced with different numbers of lower-level units in the higher-level units and missing data. A wide range of response processes can be modeled including ordered and unordered categorical responses, counts, and responses of mixed types. The structural model is similar to the structural part of a SEM except that it may include latent and observed variables varying at different levels. For example, unit-level latent variables (factors or random coefficients) can be regressed on cluster-level latent variables. Special cases of this framework are explored and data from the British Social Attitudes Survey are used for illustration. Maximum likelihood estimation and empirical Bayes latent score prediction within the GLLAMM framework can be performed using adaptive quadrature in gllamm, a freely available program running in Stata.},
-  langid = {english},
-  file = {/Users/oyss/Zotero/storage/75KIMKIT/Rabe-Hesketh et al. - 2004 - Generalized multilevel structural equation modelin.pdf}
+  langid = {english}
 }
 
 @article{rabe-heskethMaximumLikelihoodEstimation2003,
@@ -424,10 +413,8 @@
   publisher = {{SAGE Publications}},
   issn = {1536-867X},
   doi = {10.1177/1536867X0400300408},
-  urldate = {2023-08-17},
   abstract = {Generalized linear models with covariate measurement error can be estimated by maximum likelihood using gllamm, a program that fits a large class of multilevel latent variable models (Rabe-Hesketh, Skrondal, and Pickles 2004). The program uses adaptive quadrature to evaluate the log likelihood, producing more reliable results than many other methods (Rabe-Hesketh, Skrondal, and Pickles 2002). For a single covariate measured with error (assuming a classical measurement model), we describe a ``wrapper'' command, cme, that calls gllamm to estimate the model. The wrapper makes life easy for the user by accepting a simple syntax and data structure and producing extended and easily interpretable output. The commands for preparing the data and running gllamm can also be obtained from cme. We first discuss the case where several measurements are available and subsequently consider estimation when the measurement error variance is instead assumed known. The latter approach is useful for sensitivity analysis assessing the impact of assuming perfectly measured covariates in generalized linear models. An advantage of using gllamm directly is that the classical covariate measurement error model can be extended in various ways. For instance, we can use nonparametric maximum likelihood estimation (NPMLE) to relax the normality assumption for the true covariate. We can also specify a congeneric measurement model which relaxes the assumption that the measurements for a unit are exchangeable replicates by allowing for different measurement scales and error variances.},
-  langid = {english},
-  file = {/Users/oyss/Zotero/storage/Y3Z3Y5PF/Rabe-Hesketh et al. - 2003 - Maximum Likelihood Estimation of Generalized Linea.pdf}
+  langid = {english}
 }
 
 @article{rabe-heskethMaximumLikelihoodEstimation2005,
@@ -441,11 +428,9 @@
   pages = {301--323},
   issn = {0304-4076},
   doi = {10.1016/j.jeconom.2004.08.017},
-  urldate = {2020-11-25},
   abstract = {Gauss\textendash Hermite quadrature is often used to evaluate and maximize the likelihood for random component probit models. Unfortunately, the estimates are biased for large cluster sizes and/or intraclass correlations. We show that adaptive quadrature largely overcomes these problems. We then extend the adaptive quadrature approach to general random coefficient models with limited and discrete dependent variables. The models can include several nested random effects (intercepts and coefficients) representing unobserved heterogeneity at different levels of a hierarchical dataset. The required multivariate integrals are evaluated efficiently using spherical quadrature rules. Simulations show that adaptive quadrature performs well in a wide range of situations.},
   langid = {english},
-  keywords = {Adaptive quadrature,GLLAMM,Hierarchical models,Multilevel models,Numerical integration,Random coefficients,Random effects,Spherical quadrature rules},
-  file = {/Users/oyss/Zotero/storage/LQ2WSX3W/Rabe-Hesketh et al. - 2005 - Maximum likelihood estimation of limited and discr.pdf;/Users/oyss/Zotero/storage/G5BV7KCL/S0304407604001599.html}
+  keywords = {Adaptive quadrature,GLLAMM,Hierarchical models,Multilevel models,Numerical integration,Random coefficients,Random effects,Spherical quadrature rules}
 }
 
 @article{rigbyGeneralizedAdditiveModels2005,
@@ -458,11 +443,9 @@
   pages = {507--554},
   issn = {1467-9876},
   doi = {10.1111/j.1467-9876.2005.00510.x},
-  urldate = {2021-09-14},
   abstract = {Summary. A general class of statistical models for a univariate response variable is presented which we call the generalized additive model for location, scale and shape (GAMLSS). The model assumes independent observations of the response variable y given the parameters, the explanatory variables and the values of the random effects. The distribution for the response variable in the GAMLSS can be selected from a very general family of distributions including highly skew or kurtotic continuous and discrete distributions. The systematic part of the model is expanded to allow modelling not only of the mean (or location) but also of the other parameters of the distribution of y, as parametric and/or additive nonparametric (smooth) functions of explanatory variables and/or random-effects terms. Maximum (penalized) likelihood estimation is used to fit the (non)parametric models. A Newton\textendash Raphson or Fisher scoring algorithm is used to maximize the (penalized) likelihood. The additive terms in the model are fitted by using a backfitting algorithm. Censored data are easily incorporated into the framework. Five data sets from different fields of application are analysed to emphasize the generality of the GAMLSS class of models.},
   langid = {english},
-  keywords = {Beta\textendash binomial distribution,Box\textendash Cox transformation,Centile estimation,Cubic smoothing splines,Generalized linear mixed model,LMS method,Negative binomial distribution,Non-normality,Nonparametric models,Overdispersion,Penalized likelihood,Random effects,Skewness and kurtosis},
-  file = {/Users/oyss/Zotero/storage/B6SBD6DX/Rigby and Stasinopoulos - 2005 - Generalized additive models for location, scale an.pdf}
+  keywords = {Beta\textendash binomial distribution,Box\textendash Cox transformation,Centile estimation,Cubic smoothing splines,Generalized linear mixed model,LMS method,Negative binomial distribution,Non-normality,Nonparametric models,Overdispersion,Penalized likelihood,Random effects,Skewness and kurtosis}
 }
 
 @article{rockwoodEstimatingComplexMeasurement2019,
@@ -476,10 +459,8 @@
   pages = {288--306},
   issn = {0027-3171},
   doi = {10.1080/00273171.2018.1516541},
-  urldate = {2020-11-25},
   abstract = {Measurement models, such as factor analysis and item response theory models, are commonly implemented within educational, psychological, and behavioral science research to mitigate the negative effects of measurement error. These models can be formulated as an extension of generalized linear mixed models within a unifying framework that encompasses various kinds of multilevel models and longitudinal models, such as partially nonlinear latent growth models. We introduce the R package PLmixed, which implements profile maximum likelihood estimation to estimate complex measurement and growth models that can be formulated within the general modeling framework using the existing R package lme4 and function optim. We demonstrate the use of PLmixed through two examples before concluding with a brief overview of other possible models.},
-  keywords = {crossed random effects,GLMM,growth models,IRT,lme4,partially linear mixed models},
-  file = {/Users/oyss/Zotero/storage/DU7P3PXM/Rockwood and Jeon - 2019 - Estimating Complex Measurement and Growth Models U.pdf;/Users/oyss/Zotero/storage/9NH99JKL/00273171.2018.html}
+  keywords = {crossed random effects,GLMM,growth models,IRT,lme4,partially linear mixed models}
 }
 
 @article{rosseelLavaanPackageStructural2012,
@@ -493,11 +474,22 @@
   pages = {1--36},
   issn = {1548-7660},
   doi = {10.18637/jss.v048.i02},
-  urldate = {2022-01-11},
   abstract = {Structural equation modeling (SEM) is a vast field and widely used by many applied researchers in the social and behavioral sciences. Over the years, many software packages for structural equation modeling have been developed, both free and commercial. However, perhaps the best state-of-the-art software packages in this field are still closed-source and/or commercial. The R package lavaan has been developed to provide applied researchers, teachers, and statisticians, a free, fully open-source, but commercial-quality package for latent variable modeling. This paper explains the aims behind the development of the package, gives an overview of its most important features, and provides some examples to illustrate how lavaan works in practice.},
   copyright = {Copyright (c) 2011 Yves Rosseel},
-  langid = {english},
-  file = {/Users/oyss/Zotero/storage/GIWRN597/Rosseel - 2012 - lavaan An R Package for Structural Equation Model.pdf}
+  langid = {english}
+}
+
+@article{skaugAutomaticDifferentiationFacilitate2002,
+  title = {Automatic {{Differentiation}} to {{Facilitate Maximum Likelihood Estimation}} in {{Nonlinear Random Effects Models}}},
+  author = {Skaug, Hans J.},
+  year = {2002},
+  journal = {Journal of Computational and Graphical Statistics},
+  volume = {11},
+  number = {2},
+  pages = {458--470},
+  publisher = {{[American Statistical Association, Taylor \& Francis, Ltd., Institute of Mathematical Statistics, Interface Foundation of America]}},
+  issn = {1061-8600},
+  abstract = {Maximum likelihood estimation in random effects models for non-Gaussian data is a computationally challenging task that currently receives much attention. This article shows that the estimation process can be facilitated by the use of automatic differentiation, which is a technique for exact numerical differentiation of functions represented as computer programs. Automatic differentiation is applied to an approximation of the likelihood function, obtained by using either Laplace's method of integration or importance sampling. The approach is applied to generalized linear mixed models. The computational speed is high compared to the Monte Carlo EM algorithm and the Monte Carlo Newton-Raphson method.}
 }
 
 @book{skrondalGeneralizedLatentVariable2004,
@@ -520,11 +512,9 @@
   pages = {456--486},
   issn = {1860-0980},
   doi = {10.1007/s11336-023-09910-z},
-  urldate = {2023-05-25},
   abstract = {We present generalized additive latent and mixed models (GALAMMs) for analysis of clustered data with responses and latent variables depending smoothly on observed variables. A scalable maximum likelihood estimation algorithm is proposed, utilizing the Laplace approximation, sparse matrix computation, and automatic differentiation. Mixed response types, heteroscedasticity, and crossed random effects are naturally incorporated into the framework. The models developed were motivated by applications in cognitive neuroscience, and two case studies are presented. First, we show how GALAMMs can jointly model the complex lifespan trajectories of episodic memory, working memory, and speed/executive function, measured by the California Verbal Learning Test (CVLT), digit span tests, and Stroop tests, respectively. Next, we study the effect of socioeconomic status on brain structure, using data on education and income together with hippocampal volumes estimated by magnetic resonance imaging. By combining semiparametric estimation with latent variable modeling, GALAMMs allow a more realistic representation of how brain and cognition vary across the lifespan, while simultaneously estimating latent traits from measured items. Simulation experiments suggest that model estimates are accurate even with moderate sample sizes.},
   langid = {english},
-  keywords = {brain and cognition,generalized additive mixed models,latent variable modeling,lifespan trajectories,mixed response},
-  file = {/Users/oyss/Zotero/storage/B4P5AH4W/Sørensen et al. - 2023 - Longitudinal Modeling of Age-Dependent Latent Trai.pdf}
+  keywords = {brain and cognition,generalized additive mixed models,latent variable modeling,lifespan trajectories,mixed response}
 }
 
 @article{stroopStudiesInterferenceSerial1935,
@@ -540,6 +530,13 @@
   doi = {10.1037/h0054651}
 }
 
+@manual{wickhamMemoiseMemoisationFunctions2021,
+  type = {Manual},
+  title = {Memoise: 'memoisation' of Functions},
+  author = {Wickham, Hadley and Hester, Jim and Chang, Winston and M{\"u}ller, Kirill and Cook, Daniel},
+  year = {2021}
+}
+
 @article{woodConfidenceIntervalsGeneralized2006,
   title = {On {{Confidence Intervals}} for {{Generalized Additive Models Based}} on {{Penalized Regression Splines}}},
   author = {Wood, Simon N.},
@@ -550,11 +547,9 @@
   pages = {445--464},
   issn = {1467-842X},
   doi = {10.1111/j.1467-842X.2006.00450.x},
-  urldate = {2022-08-26},
   abstract = {Generalized additive models represented using low rank penalized regression splines, estimated by penalized likelihood maximisation and with smoothness selected by generalized cross validation or similar criteria, provide a computationally efficient general framework for practical smooth modelling. Various authors have proposed approximate Bayesian interval estimates for such models, based on extensions of the work of Wahba, G. (1983)[Bayesian confidence intervals for the cross validated smoothing spline. J. R. Statist. Soc. B45, 133\textendash 150] and Silverman, B.W. (1985)[Some aspects of the spline smoothing approach to nonparametric regression curve fitting. J. R. Statist. Soc. B47, 1\textendash 52] on smoothing spline models of Gaussian data, but testing of such intervals has been rather limited and there is little supporting theory for the approximations used in the generalized case. This paper aims to improve this situation by providing simulation tests and obtaining asymptotic results supporting the approximations employed for the generalized case. The simulation results suggest that while across-the-model performance is good, component-wise coverage probabilities are not as reliable. Since this is likely to result from the neglect of smoothing parameter variability, a simple and efficient simulation method is proposed to account for smoothing parameter uncertainty: this is demonstrated to substantially improve the performance of component-wise intervals.},
   langid = {english},
-  keywords = {Bayesian confidence interval,generalized additive model (GAM),generalized cross validation (GCV),multiple smoothing parameters,penalized regression spline},
-  file = {/Users/oyss/Zotero/storage/FHUZEL5K/Wood - 2006 - On Confidence Intervals for Generalized Additive M.pdf;/Users/oyss/Zotero/storage/DZ9VVKLC/j.1467-842X.2006.00450.html}
+  keywords = {Bayesian confidence interval,generalized additive model (GAM),generalized cross validation (GCV),multiple smoothing parameters,penalized regression spline}
 }
 
 @book{woodGeneralizedAdditiveModels2017a,
@@ -576,10 +571,8 @@
   pages = {341--360},
   issn = {1573-1375},
   doi = {10.1007/s11222-012-9314-z},
-  urldate = {2020-11-26},
   abstract = {Tensor product smooths provide the natural way of representing smooth interaction terms in regression models because they are invariant to the units in which the covariates are measured, hence avoiding the need for arbitrary decisions about relative scaling of variables. They would also be the natural way to represent smooth interactions in mixed regression models, but for the fact that the tensor product constructions proposed to date are difficult or impossible to estimate using most standard mixed modelling software. This paper proposes a new approach to the construction of tensor product smooths, which allows the smooth to be written as the sum of some fixed effects and some sets of i.i.d. Gaussian random effects: no previously published construction achieves this. Because of the simplicity of this random effects structure, our construction is useable with almost any flexible mixed modelling software, allowing smooth interaction terms to be readily incorporated into any Generalized Linear Mixed Model. To achieve the computationally convenient separation of smoothing penalties, the construction differs from previous tensor product approaches in the penalties used to control smoothness, but the penalties have the advantage over several alternative approaches of being explicitly interpretable in terms of function shape. Like all tensor product smoothing methods, our approach builds up smooth functions of several variables from marginal smooths of lower dimension, but unlike much of the previous literature we treat the general case in which the marginal smooths can be any quadratically penalized basis expansion, and there can be any number of them. We also point out that the imposition of identifiability constraints on smoothers requires more care in the mixed model setting than it would in a simple additive model setting, and show how to deal with the issue. An interesting side effect of our construction is that an ANOVA-decomposition of the smooth can be read off from the estimates, although this is not our primary focus. We were motivated to undertake this work by applied problems in the analysis of abundance survey data, and two examples of this are presented.},
-  langid = {english},
-  file = {/Users/oyss/Zotero/storage/HVZW6E97/Wood et al. - 2013 - Straightforward intermediate rank tensor product s.pdf}
+  langid = {english}
 }
 
 @article{woodThinPlateRegression2003,
@@ -589,8 +582,6 @@
   journal = {Journal of the Royal Statistical Society. Series B (Statistical Methodology)},
   volume = {65},
   number = {1},
-  eprint = {3088828},
-  eprinttype = {jstor},
   pages = {95--114},
   publisher = {{[Royal Statistical Society, Wiley]}},
   issn = {1369-7412},

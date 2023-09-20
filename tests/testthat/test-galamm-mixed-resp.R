@@ -48,7 +48,7 @@ test_that("Covariate measurement error model works", {
     start = list(theta = 10)
   )
 
-  expect_equal(mod$loglik, -1372.16038649521)
+  expect_equal(mod$model$loglik, -1372.16038649521)
 
   expect_equal(
     factor_loadings(mod),

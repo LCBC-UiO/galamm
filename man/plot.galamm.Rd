@@ -17,6 +17,15 @@ A plot is displayed.
 \description{
 Diagnostic plots for galamm objects
 }
+\examples{
+# Linear mixed model example from lme4
+data("sleepstudy", package = "lme4")
+mod <- galamm(Reaction ~ Days + (Days | Subject), data = sleepstudy)
+
+# Diagnostic plot
+plot(mod)
+
+}
 \seealso{
 \code{\link[=residuals.galamm]{residuals.galamm()}} for extracting residuals and \code{\link[=plot]{plot()}} for the
 generic function.

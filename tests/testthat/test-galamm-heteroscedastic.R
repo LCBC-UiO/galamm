@@ -5,7 +5,7 @@ test_that("Heteroscedastic model works", {
     data = hsced
   )
 
-  expect_equal(mod$loglik, -2058.14021326104)
+  expect_equal(mod$model$loglik, -2058.14021326104)
   expect_equal(
     summary(mod)$AICtab,
     c(
@@ -16,7 +16,12 @@ test_that("Heteroscedastic model works", {
   expect_equal(summary(mod)$Lambda, NULL)
 
   expect_equal(
-    mod$pearson_residuals[c(4, 8, 11)],
+    residuals(mod)[c(4, 8, 11)],
     c(0.879617156429014, -1.83921105781445, 0.769190482966503)
+  )
+
+  expect_equal(vcov(mod, parm = "weights"),
+    structure(0.00245961267414418, dim = c(1L, 1L)),
+    tolerance = 1e-4
   )
 })

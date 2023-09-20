@@ -253,6 +253,8 @@ mod_constr1 <- galamm(
   load.var = load.var,
   lambda = loading_matrix_constr1
 )
+#> Warning in galamm(formula = form, data = KYPSsim, factor = factors, load.var = load.var, : Rank deficient Hessian
+#> matrix at optimum.
 ```
 
 We could further assume that the factor loadings at timepoints 1 and 2 for middle school and at timepoints 3 and 4 for high schools are identical, which in practice would lead to a linear mixed model with no factors. One way of estimating this model is to define a new loading matrix:
@@ -326,9 +328,9 @@ anova(
 #> mod_constr1: form
 #> mod: form
 #>              npar   AIC   BIC  logLik deviance   Chisq Df Pr(>Chisq)   
-#> mod_constr2     8 19394 19452 -9688.9    19378                         
-#> mod_constr2b    8 19394 19452 -9688.9    19378  0.0000  0              
-#> mod_constr1    10 19397 19471 -9688.5    19377  0.6661  2   0.716735   
+#> mod_constr2     8 19394 19452 -9688.9    19364                         
+#> mod_constr2b    8 19394 19452 -9688.9    19364  0.0000  0              
+#> mod_constr1    10 19397 19471 -9688.5    19364  0.6661  2   0.716735   
 #> mod            12 19388 19476 -9682.0    19364 13.1070  2   0.001425 **
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1

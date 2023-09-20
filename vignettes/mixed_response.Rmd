@@ -276,14 +276,12 @@ mod <- galamm(
 )
 ```
 
-
-Looking at the summary output, however, reveals that there is an issue here:
+Looking at the summary output, however, we see a warning that the Hessian matrix is rank deficient.
 
 
 ```r
 summary(mod)
-#> Warning in vcov.galamm(object, parm = object$lambda_inds): Rank deficient Hessian matrix. Could not compute
-#> covariance matrix.
+#> Warning in vcov.galamm(object, parm = "lambda"): Rank deficient Hessian matrix. Could not compute covariance matrix.
 #> Warning in vcov.galamm(object, "beta"): Rank deficient Hessian matrix. Could not compute covariance matrix.
 #> Generalized additive latent and mixed model fit by maximum marginal likelihood.
 #> Formula: formula
@@ -320,8 +318,6 @@ summary(mod)
 #> fiber:age:bus  0.16097         NA      NA       NA
 ```
 
-
-The Hessian matrix is not invertible, which means that we cannot compute the variance-covariance matrix. We note that the variance of the latent variable is estimated to be exactly zero, and although zero variance estimates is a well known phenomenon in these types of models (see @hodgesRichlyParameterizedLinear2013 for a book-length treatment), it does not seem reasonable in this case that there is no variation in the true fiber intake in this population of bankers and transport workers.
 
 We suspect that this is a convergence issue of the algorithm, and start by simply turning a lever to make the algorithm more verbose. The argument `trace = 3` is passed onto `optim`.
 
@@ -544,8 +540,8 @@ anova(mod, mod0)
 #> mod0: formula0
 #> mod: formula
 #>      npar    AIC    BIC  logLik deviance  Chisq Df Pr(>Chisq)
-#> mod0    9 2764.0 2805.5 -1373.0   2746.0                     
-#> mod    12 2768.3 2823.6 -1372.2   2744.3 1.7058  3     0.6357
+#> mod0    9 2764.0 2805.5 -1373.0   2002.9                     
+#> mod    12 2768.3 2823.6 -1372.2   2002.9 1.7058  3     0.6357
 ```
 
 

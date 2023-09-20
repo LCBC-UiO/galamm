@@ -19,6 +19,15 @@
 #' coefficients more generally, and [vcov.galamm()] for the variance-covariance
 #' matrix. [confint()] is the generic function.
 #'
+#' @examples
+#' # Poisson GLMM
+#' count_mod <- galamm(
+#'   formula = y ~ lbas * treat + lage + v4 + (1 | subj),
+#'   data = epilep, family = poisson
+#' )
+#'
+#' confint(count_mod, parm = "beta", level = .99)
+#'
 confint.galamm <- function(object, parm, level = 0.95,
                            method = "Wald", ...) {
   method <- match.arg(method, "Wald")
@@ -26,7 +35,7 @@ confint.galamm <- function(object, parm, level = 0.95,
 
   inds <- find_parm_inds(object, parm)
 
-  cf <- object$par[inds]
+  cf <- object$parameters$parameter_estimates[inds]
   ses <- sqrt(diag(vcov(object, parm)))
 
   a <- (1 - level) / 2
@@ -40,6 +49,6 @@ confint.galamm <- function(object, parm, level = 0.95,
     dimnames = list(inds, pct)
   )
   ci[] <- cf + ses %o% fac
-  rownames(ci) <- object$par_names[inds]
+  rownames(ci) <- object$parameters$parameter_names[inds]
   ci
 }
