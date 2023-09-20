@@ -2,7 +2,7 @@
   "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
   "@type": "SoftwareSourceCode",
   "identifier": "galamm",
-  "description": "Estimates generalized additive latent and mixed models using maximum marginal likelihood, as defined in Sorensen et al. (2023) <doi:10.1007/s11336-023-09910-z>, which is an extension of Rabe-Hesketh and Skrondal (2004)'s unifying framework for multilevel latent variable modeling <10.1007/BF02295939>. Efficient computation is done using sparse matrix methods, Laplace approximation, and automatic differentiation. The framework includes generalized multilevel models with heteroscedastic residuals, mixed response types, factor loadings, smoothing splines, crossed random effects, and combinations thereof. Syntax for model formulation is close to 'lme4' (Bates et al. (2015) <doi:10.18637/jss.v067.i01>) and 'PLmixed' (Rockwood and Jeon (2019) <doi:10.1080/00273171.2018.1516541>).",
+  "description": "Estimates generalized additive latent and mixed models using maximum marginal likelihood, as defined in Sorensen et al. (2023) <doi:10.1007/s11336-023-09910-z>, which is an extension of Rabe-Hesketh and Skrondal (2004)'s unifying framework for multilevel latent variable modeling <doi:10.1007/BF02295939>. Efficient computation is done using sparse matrix methods, Laplace approximation, and automatic differentiation. The framework includes generalized multilevel models with heteroscedastic residuals, mixed response types, factor loadings, smoothing splines, crossed random effects, and combinations thereof. Syntax for model formulation is close to 'lme4' (Bates et al. (2015) <doi:10.18637/jss.v067.i01>) and 'PLmixed' (Rockwood and Jeon (2019) <doi:10.1080/00273171.2018.1516541>).",
   "name": "galamm: Generalized Additive Latent and Mixed Models",
   "relatedLink": "https://lcbc-uio.github.io/galamm/",
   "codeRepository": "https://github.com/LCBC-UiO/galamm",
@@ -48,6 +48,30 @@
     },
     {
       "@type": "SoftwareApplication",
+      "identifier": "gamm4",
+      "name": "gamm4",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=gamm4"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "ggplot2",
+      "name": "ggplot2",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=ggplot2"
+    },
+    {
+      "@type": "SoftwareApplication",
       "identifier": "knitr",
       "name": "knitr",
       "provider": {
@@ -57,6 +81,18 @@
         "url": "https://cran.r-project.org"
       },
       "sameAs": "https://CRAN.R-project.org/package=knitr"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "PLmixed",
+      "name": "PLmixed",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=PLmixed"
     },
     {
       "@type": "SoftwareApplication",
@@ -123,17 +159,34 @@
     },
     "4": {
       "@type": "SoftwareApplication",
-      "identifier": "PLmixed",
-      "name": "PLmixed",
+      "identifier": "methods",
+      "name": "methods"
+    },
+    "5": {
+      "@type": "SoftwareApplication",
+      "identifier": "mgcv",
+      "name": "mgcv",
       "provider": {
         "@id": "https://cran.r-project.org",
         "@type": "Organization",
         "name": "Comprehensive R Archive Network (CRAN)",
         "url": "https://cran.r-project.org"
       },
-      "sameAs": "https://CRAN.R-project.org/package=PLmixed"
+      "sameAs": "https://CRAN.R-project.org/package=mgcv"
     },
-    "5": {
+    "6": {
+      "@type": "SoftwareApplication",
+      "identifier": "nlme",
+      "name": "nlme",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=nlme"
+    },
+    "7": {
       "@type": "SoftwareApplication",
       "identifier": "Rcpp",
       "name": "Rcpp",
@@ -145,7 +198,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=Rcpp"
     },
-    "6": {
+    "8": {
       "@type": "SoftwareApplication",
       "identifier": "Rdpack",
       "name": "Rdpack",
@@ -157,18 +210,61 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=Rdpack"
     },
-    "7": {
+    "9": {
+      "@type": "SoftwareApplication",
+      "identifier": "stats",
+      "name": "stats"
+    },
+    "10": {
       "@type": "SoftwareApplication",
       "identifier": "R",
       "name": "R",
       "version": ">= 3.5.0"
     },
-    "SystemRequirements": null
+    "SystemRequirements": "C++17"
   },
-  "fileSize": "24158.266KB",
+  "fileSize": "25447.507KB",
+  "citation": [
+    {
+      "@type": "ScholarlyArticle",
+      "datePublished": "2023",
+      "author": [
+        {
+          "@type": "Person",
+          "givenName": "{\\O}ystein",
+          "familyName": "S{\\o}rensen"
+        },
+        {
+          "@type": "Person",
+          "givenName": "Kristine B.",
+          "familyName": "Walhovd"
+        },
+        {
+          "@type": "Person",
+          "givenName": "Anders M.",
+          "familyName": "Fjell"
+        }
+      ],
+      "name": "Longitudinal Modeling of Age-Dependent Latent Traits with Generalized Additive Latent and Mixed Models",
+      "identifier": "10.1007/s11336-023-09910-z",
+      "pagination": "456-486",
+      "@id": "https://doi.org/10.1007/s11336-023-09910-z",
+      "sameAs": "https://doi.org/10.1007/s11336-023-09910-z",
+      "isPartOf": {
+        "@type": "PublicationIssue",
+        "issueNumber": "2",
+        "datePublished": "2023",
+        "isPartOf": {
+          "@type": ["PublicationVolume", "Periodical"],
+          "volumeNumber": "88",
+          "name": "Psychometrika"
+        }
+      }
+    }
+  ],
   "releaseNotes": "https://github.com/LCBC-UiO/galamm/blob/master/NEWS.md",
   "readme": "https://github.com/LCBC-UiO/galamm/blob/main/README.md",
   "contIntegration": ["https://github.com/LCBC-UiO/galamm/actions/workflows/R-CMD-check.yaml", "https://app.codecov.io/gh/LCBC-UiO/galamm?branch=main"],
-  "developmentStatus": "https://lifecycle.r-lib.org/articles/stages.html#experimental",
+  "developmentStatus": ["https://lifecycle.r-lib.org/articles/stages.html#experimental", "https://www.repostatus.org/#wip"],
   "keywords": ["structural-equation-models", "generalized-additive-models", "item-response-theory", "hierarchical-models", "latent-variable-models"]
 }
