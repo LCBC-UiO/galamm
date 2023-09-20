@@ -48,7 +48,7 @@ formula <- y ~ 0 + chd + (age * bus):chd + fiber +
   (age * bus):fiber + fiber2 + (0 + loading | id)
 ```
 
-Fitting the model with default arguments yields a warning.
+Fitting the model with default arguments yields a warning when we look at the summary object.
 
 ```{r, warning=TRUE}
 mod <- galamm(
@@ -60,6 +60,8 @@ mod <- galamm(
   load.var = "item",
   lambda = list(loading_matrix)
 )
+
+summary(mod)
 ```
 
 In this case, we can increase the amount of information provided by `optim`, with the `trace` argument. To avoid getting too much output, we also reduce the number of iterations. We set the `control` argument as follows:
@@ -82,6 +84,7 @@ mod <- galamm(
   lambda = list(loading_matrix),
   control = control
 )
+vcov(mod)
 ```
 
 Since what we did was simply to turn in more reporting, it is no surprise that the Hessian is still rank deficient, but from the output, it is also clear that there are no obvious errors, like values that diverge to infinity. The latter may also happen from time to time.
@@ -105,9 +108,10 @@ mod <- galamm(
   lambda = list(loading_matrix),
   control = control
 )
+vcov(mod)
 ```
 
-Looking at the model output from the model we just estimated, we see that the random effect variance is estimated to be exactly zero.
+Looking at the model output again, we see that the random effect variance is estimated to be exactly zero.
 
 ```{r}
 summary(mod)

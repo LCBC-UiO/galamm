@@ -281,15 +281,41 @@ Looking at the summary output, however, we see a warning that the Hessian matrix
 
 ```r
 summary(mod)
-#> Rank deficient Hessian matrix. Recomputing without variance components.
-#> Warning in sqrt(diag(vcov(object, parm = object$parameters$lambda_inds))): NaNs produced
-#> Warning in lambda_tmp_se[!is.na(lambda_tmp_se)] <- sqrt(diag(vcov(object, : number of items to replace is not a
-#> multiple of replacement length
-#> Rank deficient Hessian matrix. Recomputing without variance components.
-#> Warning in sqrt(diag(vcov(object, "beta"))): NaNs produced
-#> Warning in cbind(Estimate = fixef(object), `Std. Error` = sqrt(diag(vcov(object, : number of rows of result is not
-#> a multiple of vector length (arg 1)
-#> Error in dimnames(x) <- dn: length of 'dimnames' [1] not equal to array extent
+#> Warning in vcov.galamm(object, parm = "lambda"): Rank deficient Hessian matrix. Could not compute covariance matrix.
+#> Warning in vcov.galamm(object, "beta"): Rank deficient Hessian matrix. Could not compute covariance matrix.
+#> Generalized additive latent and mixed model fit by maximum marginal likelihood.
+#> Formula: formula
+#>    Data: diet
+#> 
+#>      AIC      BIC   logLik deviance df.resid 
+#>   2837.6   2892.9  -1406.8  12529.3      730 
+#> 
+#> Scaled residuals: 
+#>      Min       1Q   Median       3Q      Max 
+#> -10.1375  -0.4389  -0.3522   0.2743  27.3350 
+#> 
+#> Lambda:
+#>         loading SE
+#> lambda1   1.000  .
+#> lambda2   1.000  .
+#> lambda3  -2.026  .
+#> 
+#> Random effects:
+#>  Groups Name    Variance Std.Dev.
+#>  id     loading 0        0       
+#> Number of obs: 742, groups:  id, 333
+#> 
+#> Fixed effects:
+#>               Estimate Std. Error z value Pr(>|z|)
+#> chd           -1.78692         NA      NA       NA
+#> fiber         17.96184         NA      NA       NA
+#> fiber2        -0.64927         NA      NA       NA
+#> chd:age        0.06682         NA      NA       NA
+#> chd:bus       -0.06882         NA      NA       NA
+#> fiber:age     -0.20480         NA      NA       NA
+#> fiber:bus     -1.69601         NA      NA       NA
+#> chd:age:bus   -0.04934         NA      NA       NA
+#> fiber:age:bus  0.16097         NA      NA       NA
 ```
 
 

@@ -56,7 +56,7 @@ factor_loadings.galamm <- function(object) {
 
   lambda_tmp_est[lambda_tmp_est > 1] <- object$parameters$parameter_estimates[object$parameters$lambda_inds]
   lambda_tmp_se[!is.na(lambda_tmp_se)] <-
-    sqrt(diag(vcov(object, parm = object$parameters$lambda_inds)))
+    sqrt(diag(vcov(object, parm = "lambda")))
 
   matrix(rbind(lambda_tmp_est, lambda_tmp_se),
     nrow = nrow(lambda_tmp_est),

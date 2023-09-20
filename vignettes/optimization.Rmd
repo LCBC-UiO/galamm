@@ -44,7 +44,7 @@ formula <- y ~ 0 + chd + (age * bus):chd + fiber +
   (age * bus):fiber + fiber2 + (0 + loading | id)
 ```
 
-Fitting the model with default arguments yields a warning.
+Fitting the model with default arguments yields a warning when we look at the summary object.
 
 
 ```r
@@ -57,8 +57,43 @@ mod <- galamm(
   load.var = "item",
   lambda = list(loading_matrix)
 )
-#> Warning in galamm(formula = formula, data = diet, family = families, family_mapping = family_mapping, : Rank
-#> deficient Hessian matrix at optimum.
+
+summary(mod)
+#> Warning in vcov.galamm(object, parm = "lambda"): Rank deficient Hessian matrix. Could not compute covariance matrix.
+#> Warning in vcov.galamm(object, "beta"): Rank deficient Hessian matrix. Could not compute covariance matrix.
+#> Generalized additive latent and mixed model fit by maximum marginal likelihood.
+#> Formula: formula
+#>    Data: diet
+#> 
+#>      AIC      BIC   logLik deviance df.resid 
+#>   2837.6   2892.9  -1406.8  12529.3      730 
+#> 
+#> Scaled residuals: 
+#>      Min       1Q   Median       3Q      Max 
+#> -10.1375  -0.4389  -0.3522   0.2743  27.3350 
+#> 
+#> Lambda:
+#>         loading SE
+#> lambda1   1.000  .
+#> lambda2   1.000  .
+#> lambda3  -2.026  .
+#> 
+#> Random effects:
+#>  Groups Name    Variance Std.Dev.
+#>  id     loading 0        0       
+#> Number of obs: 742, groups:  id, 333
+#> 
+#> Fixed effects:
+#>               Estimate Std. Error z value Pr(>|z|)
+#> chd           -1.78692         NA      NA       NA
+#> fiber         17.96184         NA      NA       NA
+#> fiber2        -0.64927         NA      NA       NA
+#> chd:age        0.06682         NA      NA       NA
+#> chd:bus       -0.06882         NA      NA       NA
+#> fiber:age     -0.20480         NA      NA       NA
+#> fiber:bus     -1.69601         NA      NA       NA
+#> chd:age:bus   -0.04934         NA      NA       NA
+#> fiber:age:bus  0.16097         NA      NA       NA
 ```
 
 In this case, we can increase the amount of information provided by `optim`, with the `trace` argument. To avoid getting too much output, we also reduce the number of iterations. We set the `control` argument as follows:
@@ -94,8 +129,18 @@ mod <- galamm(
 #> At iterate     6  f =       1887.9  |proj g|=        49.147
 #> final  value 1887.871646 
 #> stopped after 6 iterations
-#> Warning in galamm(formula = formula, data = diet, family = families, family_mapping = family_mapping, : Rank
-#> deficient Hessian matrix at optimum.
+vcov(mod)
+#> Warning in vcov.galamm(mod): Rank deficient Hessian matrix. Could not compute covariance matrix.
+#>       [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9]
+#>  [1,]   NA   NA   NA   NA   NA   NA   NA   NA   NA
+#>  [2,]   NA   NA   NA   NA   NA   NA   NA   NA   NA
+#>  [3,]   NA   NA   NA   NA   NA   NA   NA   NA   NA
+#>  [4,]   NA   NA   NA   NA   NA   NA   NA   NA   NA
+#>  [5,]   NA   NA   NA   NA   NA   NA   NA   NA   NA
+#>  [6,]   NA   NA   NA   NA   NA   NA   NA   NA   NA
+#>  [7,]   NA   NA   NA   NA   NA   NA   NA   NA   NA
+#>  [8,]   NA   NA   NA   NA   NA   NA   NA   NA   NA
+#>  [9,]   NA   NA   NA   NA   NA   NA   NA   NA   NA
 ```
 
 Since what we did was simply to turn in more reporting, it is no surprise that the Hessian is still rank deficient, but from the output, it is also clear that there are no obvious errors, like values that diverge to infinity. The latter may also happen from time to time.
@@ -139,17 +184,26 @@ mod <- galamm(
 #> F = 1406.8
 #> final  value 1406.801104 
 #> converged
-#> Warning in galamm(formula = formula, data = diet, family = families, family_mapping = family_mapping, : Rank
-#> deficient Hessian matrix at optimum.
+vcov(mod)
+#> Warning in vcov.galamm(mod): Rank deficient Hessian matrix. Could not compute covariance matrix.
+#>       [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9]
+#>  [1,]   NA   NA   NA   NA   NA   NA   NA   NA   NA
+#>  [2,]   NA   NA   NA   NA   NA   NA   NA   NA   NA
+#>  [3,]   NA   NA   NA   NA   NA   NA   NA   NA   NA
+#>  [4,]   NA   NA   NA   NA   NA   NA   NA   NA   NA
+#>  [5,]   NA   NA   NA   NA   NA   NA   NA   NA   NA
+#>  [6,]   NA   NA   NA   NA   NA   NA   NA   NA   NA
+#>  [7,]   NA   NA   NA   NA   NA   NA   NA   NA   NA
+#>  [8,]   NA   NA   NA   NA   NA   NA   NA   NA   NA
+#>  [9,]   NA   NA   NA   NA   NA   NA   NA   NA   NA
 ```
 
-Looking at the model output from the model we just estimated, we see that the random effect variance is estimated to be exactly zero.
+Looking at the model output again, we see that the random effect variance is estimated to be exactly zero.
 
 
 ```r
 summary(mod)
-#> Warning in vcov.galamm(object, parm = object$parameters$lambda_inds): Rank deficient Hessian matrix. Could not
-#> compute covariance matrix.
+#> Warning in vcov.galamm(object, parm = "lambda"): Rank deficient Hessian matrix. Could not compute covariance matrix.
 #> Warning in vcov.galamm(object, "beta"): Rank deficient Hessian matrix. Could not compute covariance matrix.
 #> Generalized additive latent and mixed model fit by maximum marginal likelihood.
 #> Formula: formula
