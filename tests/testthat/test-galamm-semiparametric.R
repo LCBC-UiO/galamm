@@ -13,6 +13,13 @@ test_that("galamm reproduces gamm4", {
   expect_equal(unname(mod$gam$edf), unname(mod_comp$gam$edf), tolerance = .001)
   expect_equal(mod$gam$Ve, mod_comp$gam$Ve, tolerance = .001)
   expect_equal(mod$gam$Vp, mod_comp$gam$Vp, tolerance = .001)
+
+  mod <- galamm(formula = y ~ s(x, fx = TRUE) + (1 | id), data = dat)
+  mod_comp <- gamm4::gamm4(formula = y ~ s(x, fx = TRUE),
+                           random = ~(1 | id), data = dat, REML = FALSE)
+
+  expect_equal(deviance(mod), deviance(mod_comp$mer), tolerance = .0001)
+
 })
 
 test_that("Basic GAMM with factor structures works", {
@@ -29,7 +36,8 @@ test_that("Basic GAMM with factor structures works", {
 
   expect_equal(
     coef(mod)[1:3],
-    c(item11 = 0.669888238636741, item12 = 0.938949881157583, item13 = 0.19327451279475),
+    c(item11 = 0.669888238636741, item12 = 0.938949881157583,
+      item13 = 0.19327451279475),
     tolerance = .0001
   )
 
@@ -37,7 +45,8 @@ test_that("Basic GAMM with factor structures works", {
     predict(mod$gam)[3:9],
     structure(c(
       `3` = -0.0468214579631071, `25` = 0.0227632205604528,
-      `26` = 0.291824863081295, `27` = -0.453850505281539, `49` = -0.00253156792150957,
+      `26` = 0.291824863081295, `27` = -0.453850505281539,
+      `49` = -0.00253156792150957,
       `50` = 0.266530074599332, `51` = -0.479145293763501
     ), dim = 7L, dimnames = list(
       c("3", "25", "26", "27", "49", "50", "51")
@@ -75,7 +84,8 @@ test_that("GAMM with factor structures and random effects works", {
   dat$item <- factor(dat$item)
 
   mod <- galamm(
-    formula = y ~ 0 + item + s(x, load.var = "loading", k = 4) + (0 + loading | id / timepoint),
+    formula = y ~ 0 + item + s(x, load.var = "loading", k = 4) +
+      (0 + loading | id / timepoint),
     data = dat,
     load.var = "item",
     lambda = list(matrix(c(1, NA, NA), ncol = 1)),
@@ -85,7 +95,8 @@ test_that("GAMM with factor structures and random effects works", {
   expect_equal(
     coef(mod),
     c(
-      item11 = 1.15744460299196, item12 = 1.60878967518903, item13 = 0.341634130725673,
+      item11 = 1.15744460299196, item12 = 1.60878967518903,
+      item13 = 0.341634130725673,
       `s(x):loadingFx1` = -0.146146004977857
     )
   )
@@ -115,8 +126,10 @@ test_that("GAMM with factor structures and random effects works", {
 
   expect_equal(mod$gam$edf,
     c(
-      item11 = 1.00000000000001, item12 = 1.00000000000003, item13 = 0.999999999999996,
-      `s(x):loading.1` = 0.995315567672236, `s(x):loading.2` = 0.999757875374097,
+      item11 = 1.00000000000001, item12 = 1.00000000000003,
+      item13 = 0.999999999999996,
+      `s(x):loading.1` = 0.995315567672236,
+      `s(x):loading.2` = 0.999757875374097,
       `s(x):loading.3` = 1.00000000000007
     ),
     tolerance = .1
@@ -124,7 +137,8 @@ test_that("GAMM with factor structures and random effects works", {
 
   expect_equal(mod$gam$coefficients,
     c(
-      item11 = 1.15744460299196, item12 = 1.60878967518903, item13 = 0.341634130725673,
+      item11 = 1.15744460299196, item12 = 1.60878967518903,
+      item13 = 0.341634130725673,
       `s(x):loading.1` = 0.601163762614973, `s(x):loading.2` = 3.02308664034339,
       `s(x):loading.3` = -0.146146004977857
     ),

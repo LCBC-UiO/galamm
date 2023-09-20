@@ -231,19 +231,14 @@ gamm4.wrapup <- function(gobj, ret, final_model) {
   )
 
   pvars <- all.vars(stats::delete.response(object$terms))
-  object$pred.formula <- if (length(pvars) > 0) {
-    stats::reformulate(pvars)
-  } else {
-    NULL
-  }
+  object$pred.formula <- stats::reformulate(pvars)
 
   B <- Matrix::Matrix(0, ncol(gobj$G$Xf), ncol(gobj$G$Xf))
   diag(B) <- 1
   Xfp <- gobj$G$Xf
 
-  ## Transform  parameters back to the original space....
-  bf <- as.numeric(fixef(ret)) ## the fixed effects
-  br <- ranef(ret) ## a named list
+  bf <- as.numeric(fixef(ret))
+  br <- ranef(ret)
   p <- bf[seq_len(gobj$G$nsdf)]
 
   for (i in seq_len(gobj$G$m)) {
