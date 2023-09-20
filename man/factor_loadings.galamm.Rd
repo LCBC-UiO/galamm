@@ -36,8 +36,9 @@ loading_matrix <- matrix(c(1, NA, NA), ncol = 1)
 
 # Estimate model
 mod <- galamm(y ~ item + (0 + ability | sid) + (0 + ability | school),
-              data = IRTsub, family = binomial, load.var = "item",
-              factor = list("ability"), lambda = list(loading_matrix))
+  data = IRTsub, family = binomial, load.var = "item",
+  factor = list("ability"), lambda = list(loading_matrix)
+)
 
 # Show estimated factor loadings, with standard errors
 factor_loadings(mod)
