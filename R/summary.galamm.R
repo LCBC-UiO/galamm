@@ -147,12 +147,16 @@ llikAIC <- function(object) {
 #'
 #' This function is assembles the values used by \code{\link{summary.galamm}}.
 #'
+#' @aliases llikAIC llikAIC.galamm
+#' @export llikAIC
+#' @export
+#'
 #' @param object Object of class \code{galamm} returned from
 #'   \code{\link{galamm}}.
 #'
 #' @return A list containing AIC, BIC, log likelihood, deviance and residual
 #'   degrees of freedom.
-#' @export
+#'
 #'
 #' @family {details of model fit}
 #'

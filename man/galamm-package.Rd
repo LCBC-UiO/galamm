@@ -24,5 +24,16 @@ Useful links:
 \author{
 \strong{Maintainer}: Øystein Sørensen \email{oystein.sorensen@psykologi.uio.no} (\href{https://orcid.org/0000-0003-0724-3542}{ORCID})
 
+Other contributors:
+\itemize{
+  \item Douglas Bates [contributor]
+  \item Ben Bolker [contributor]
+  \item Martin Maechler [contributor]
+  \item Allan Leal [contributor]
+  \item Fabian Scheipl [contributor]
+  \item Steven Walker [contributor]
+  \item Simon Wood [contributor]
+}
+
 }
 \keyword{internal}
