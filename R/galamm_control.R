@@ -61,7 +61,7 @@ galamm_control <- function(optim_control = list(),
 #' Constructor method for galamm_control objects
 #'
 #' @inherit galamm_control
-#' @keywords internal
+#' @noRd
 #' @seealso [galamm_control()]
 new_galamm_control <- function(optim_control, maxit_conditional_modes) {
   if (is.null(optim_control$fnscale)) {
