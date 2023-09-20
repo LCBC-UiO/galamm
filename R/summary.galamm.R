@@ -166,7 +166,6 @@ llikAIC <- function(object) {
 #'
 #' llikAIC(mod)
 #'
-#'
 llikAIC.galamm <- function(object) {
   llik <- logLik(object)
   c(
