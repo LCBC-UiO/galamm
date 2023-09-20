@@ -40,9 +40,11 @@ test_that("Mixed response works", {
     load.var = "itemgroup",
     lambda = list(matrix(c(1, NA), ncol = 1)),
     factor = list("loading"),
-    start = list(theta = mod$parameters$parameter_estimates[mod$parameters$theta_inds],
-                 beta = mod$parameters$parameter_estimates[mod$parameters$beta_inds],
-                 lambda = mod$parameters$parameter_estimates[mod$parameters$lambda_inds])
+    start = list(
+      theta = mod$parameters$parameter_estimates[mod$parameters$theta_inds],
+      beta = mod$parameters$parameter_estimates[mod$parameters$beta_inds],
+      lambda = mod$parameters$parameter_estimates[mod$parameters$lambda_inds]
+    )
   )
   expect_equal(logLik(mod2), logLik(mod))
 })
