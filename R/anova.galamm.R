@@ -68,7 +68,7 @@ anova.galamm <- function(object, ...) {
     if (!all(vapply(data, identical, NA, data[[1]]))) {
       stop("all models must be fit to the same data object")
     }
-    header <- paste("Data:", abbrDeparse(data[[1]]))
+    header <- paste("Data:", deparse(data[[1]]))
 
     llk <- unlist(llks)
     chisq <- 2 * pmax(0, c(NA, diff(llk)))
@@ -100,32 +100,6 @@ anova.galamm <- function(object, ...) {
     )
   } else {
     message("Analysis of variance table for galamm objects not implemented yet.")
-  }
-}
-
-
-
-
-#' Abbreviated deparse function
-#'
-#' Function used to abbreviate name of dataset in \code{\link{anova}} function.
-#' Taken from \code{lme4}.
-#'
-#' @param x Name to deparse, a character string.
-#' @param width Field width, an integer.
-#'
-#' @author Douglas M. Bates, Martin Maechler, Ben Bolker, and Steve Walker
-#'
-#' @return A character string.
-#' @keywords internal
-#' @references
-#' \insertRef{batesFittingLinearMixedEffects2015}{galamm}
-abbrDeparse <- function(x, width = 60) {
-  r <- deparse(x, width)
-  if (length(r) > 1) {
-    paste(r[1], "...")
-  } else {
-    r
   }
 }
 

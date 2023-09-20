@@ -58,7 +58,7 @@ test_that("multiple factors and factors in fixed effects are allowed", {
   expect_s3_class(test, "galamm")
 })
 
-test_that("anova function fails when it should", {
+test_that("anova function gives the right output", {
   data("sleepstudy", package = "lme4")
   sleepstudy_copy <- sleepstudy
   mod1 <- galamm(Reaction ~ Days + (Days | Subject), data = sleepstudy)
@@ -67,4 +67,5 @@ test_that("anova function fails when it should", {
 
   expect_error(anova(mod1, mod2), "not all fitted to the same size")
   expect_error(anova(mod1, mod3), "to the same data object")
+
 })
