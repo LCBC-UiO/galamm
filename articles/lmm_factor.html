@@ -349,7 +349,9 @@ would then have the following loading matrix.</p>
 <span>  factor <span class="op">=</span> <span class="va">factors</span>,</span>
 <span>  load.var <span class="op">=</span> <span class="va">load.var</span>,</span>
 <span>  lambda <span class="op">=</span> <span class="va">loading_matrix_constr1</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in galamm(formula = form, data = KYPSsim, factor = factors, load.var = load.var, : Rank deficient Hessian</span></span>
+<span><span class="co">#&gt; matrix at optimum.</span></span></code></pre></div>
 <p>We could further assume that the factor loadings at timepoints 1 and
 2 for middle school and at timepoints 3 and 4 for high schools are
 identical, which in practice would lead to a linear mixed model with no
@@ -413,9 +415,9 @@ dataset.</p>
 <span><span class="co">#&gt; mod_constr1: form</span></span>
 <span><span class="co">#&gt; mod: form</span></span>
 <span><span class="co">#&gt;              npar   AIC   BIC  logLik deviance   Chisq Df Pr(&gt;Chisq)   </span></span>
-<span><span class="co">#&gt; mod_constr2     8 19394 19452 -9688.9    19378                         </span></span>
-<span><span class="co">#&gt; mod_constr2b    8 19394 19452 -9688.9    19378  0.0000  0              </span></span>
-<span><span class="co">#&gt; mod_constr1    10 19397 19471 -9688.5    19377  0.6661  2   0.716735   </span></span>
+<span><span class="co">#&gt; mod_constr2     8 19394 19452 -9688.9    19364                         </span></span>
+<span><span class="co">#&gt; mod_constr2b    8 19394 19452 -9688.9    19364  0.0000  0              </span></span>
+<span><span class="co">#&gt; mod_constr1    10 19397 19471 -9688.5    19364  0.6661  2   0.716735   </span></span>
 <span><span class="co">#&gt; mod            12 19388 19476 -9682.0    19364 13.1070  2   0.001425 **</span></span>
 <span><span class="co">#&gt; ---</span></span>
 <span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span></code></pre></div>

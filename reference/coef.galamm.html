@@ -91,6 +91,21 @@ used.</p></dd>
 effects, and <code><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef()</a></code> for the generic function.</p></div>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Poisson GLMM</span></span></span>
+<span class="r-in"><span><span class="va">count_mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="galamm.html">galamm</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">lbas</span> <span class="op">*</span> <span class="va">treat</span> <span class="op">+</span> <span class="va">lage</span> <span class="op">+</span> <span class="va">v4</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">subj</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  data <span class="op">=</span> <span class="va">epilep</span>, family <span class="op">=</span> <span class="va">poisson</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Extract coefficients</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">count_mod</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)        lbas       treat        lage          v4  lbas:treat </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   1.7935692   0.8845040  -0.3349626   0.4845851  -0.1610874   0.3383899 </span>
+<span class="r-in"><span></span></span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside></div>
 

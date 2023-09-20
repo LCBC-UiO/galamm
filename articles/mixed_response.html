@@ -391,12 +391,11 @@ multiplied by the factor loadings defined in the loading matrix.</p>
 <span>  load.var <span class="op">=</span> <span class="st">"item"</span>,</span>
 <span>  lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">loading_matrix</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p>Looking at the summary output, however, reveals that there is an
-issue here:</p>
+<p>Looking at the summary output, however, we see a warning that the
+Hessian matrix is rank deficient.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in vcov.galamm(object, parm = object$lambda_inds): Rank deficient Hessian matrix. Could not compute</span></span>
-<span><span class="co">#&gt; covariance matrix.</span></span>
+<span><span class="co">#&gt; Warning in vcov.galamm(object, parm = "lambda"): Rank deficient Hessian matrix. Could not compute covariance matrix.</span></span>
 <span><span class="co">#&gt; Warning in vcov.galamm(object, "beta"): Rank deficient Hessian matrix. Could not compute covariance matrix.</span></span>
 <span><span class="co">#&gt; Generalized additive latent and mixed model fit by maximum marginal likelihood.</span></span>
 <span><span class="co">#&gt; Formula: formula</span></span>
@@ -431,14 +430,6 @@ issue here:</p>
 <span><span class="co">#&gt; fiber:bus     -1.69601         NA      NA       NA</span></span>
 <span><span class="co">#&gt; chd:age:bus   -0.04934         NA      NA       NA</span></span>
 <span><span class="co">#&gt; fiber:age:bus  0.16097         NA      NA       NA</span></span></code></pre></div>
-<p>The Hessian matrix is not invertible, which means that we cannot
-compute the variance-covariance matrix. We note that the variance of the
-latent variable is estimated to be exactly zero, and although zero
-variance estimates is a well known phenomenon in these types of models
-(see <span class="citation">Hodges (<a href="#ref-hodgesRichlyParameterizedLinear2013" role="doc-biblioref">2013</a>)</span> for a book-length treatment), it
-does not seem reasonable in this case that there is no variation in the
-true fiber intake in this population of bankers and transport
-workers.</p>
 <p>We suspect that this is a convergence issue of the algorithm, and
 start by simply turning a lever to make the algorithm more verbose. The
 argument <code>trace = 3</code> is passed onto <code>optim</code>.</p>
@@ -653,8 +644,8 @@ effects.</p>
 <span><span class="co">#&gt; mod0: formula0</span></span>
 <span><span class="co">#&gt; mod: formula</span></span>
 <span><span class="co">#&gt;      npar    AIC    BIC  logLik deviance  Chisq Df Pr(&gt;Chisq)</span></span>
-<span><span class="co">#&gt; mod0    9 2764.0 2805.5 -1373.0   2746.0                     </span></span>
-<span><span class="co">#&gt; mod    12 2768.3 2823.6 -1372.2   2744.3 1.7058  3     0.6357</span></span></code></pre></div>
+<span><span class="co">#&gt; mod0    9 2764.0 2805.5 -1373.0   2002.9                     </span></span>
+<span><span class="co">#&gt; mod    12 2768.3 2823.6 -1372.2   2002.9 1.7058  3     0.6357</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -673,13 +664,6 @@ Models</span>: <span>A Modern Perspective</span></em>. 2nd ed.
 Monographs on <span>Statistics</span> and <span>Applied
 Probability</span>. <span>Boca Raton, Florida</span>: <span>John Wiley
 &amp; Sons</span>.
-</div>
-<div id="ref-hodgesRichlyParameterizedLinear2013" class="csl-entry">
-Hodges, James S. 2013. <em>Richly <span>Parameterized Linear Models
-Additive</span>, <span>Time Series</span>, and <span>Spatial Models
-Using Random Effects</span></em>. 1st ed. Chapman &amp;
-<span>Hall</span>/<span>CRC Texts</span> in <span>Statistical
-Science</span>. <span>Chapman &amp; Hall</span>.
 </div>
 <div id="ref-morrisDietHeartPostscript1977" class="csl-entry">
 Morris, J. N., J. W. Marr, and D. G. Clayton. 1977. <span>“Diet and

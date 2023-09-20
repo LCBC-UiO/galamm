@@ -93,7 +93,7 @@ random effects.</p>
 “Fitting Linear Mixed-Effects Models Using Lme4.”
 <em>Journal of Statistical Software</em>, <b>67</b>(1), 1--48.
 ISSN 1548-7660, <a href="https://doi.org/10.18637/jss.v067.i01" class="external-link">doi:10.18637/jss.v067.i01</a>
-, <a href="2020-11-25">2020-11-25</a>.</p>
+.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -106,6 +106,83 @@ coefficients more generally.</p></div>
 Douglas Bates, Martin Maechler, Ben Bolker, Steve Walker.</p>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Poisson GLMM</span></span></span>
+<span class="r-in"><span><span class="va">count_mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="galamm.html">galamm</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">lbas</span> <span class="op">*</span> <span class="va">treat</span> <span class="op">+</span> <span class="va">lage</span> <span class="op">+</span> <span class="va">v4</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">subj</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  data <span class="op">=</span> <span class="va">epilep</span>, family <span class="op">=</span> <span class="va">poisson</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Extract random effects</span></span></span>
+<span class="r-in"><span><span class="fu">ranef</span><span class="op">(</span><span class="va">count_mod</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $subj</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     (Intercept)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   0.054801194</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2   0.067128734</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   0.339005443</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   0.156539399</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5   0.018769146</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  -0.203361347</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  -0.121249992</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8   0.445388051</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  -0.183126098</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10  0.941223293</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11  0.164707632</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12 -0.013318772</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13 -0.069755556</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14 -0.080784157</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15 -0.220238514</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16 -0.856980819</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17 -0.756729929</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18  0.192712910</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19 -0.247883354</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20 -0.109262155</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21  0.020112309</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22  0.336336442</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23 -0.312726250</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24  0.097464659</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25  0.959569912</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26 -0.457892584</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27  0.039653228</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28  0.263425805</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29 -0.311198889</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30 -0.155081893</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31 -0.320528837</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 32  0.539457657</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 33  0.460522482</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 34 -0.305186294</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 35  1.018964462</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 36  0.548834571</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 37  0.275759175</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 38 -0.688740932</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 39 -0.046734600</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 40  0.005348547</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 41 -0.569016659</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 42  0.134020686</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 43  0.392476777</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 44  0.016707046</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 45  0.100750799</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 46  0.381237132</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 47  0.109689790</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 48 -0.373107851</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 49  0.686635579</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 50 -0.212730301</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 51 -0.194902788</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 52 -0.772084418</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 53  0.443822432</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 54 -0.389679998</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 55  0.201819631</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 56  1.101943180</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 57 -0.645241909</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 58 -0.938185103</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 59  0.094489081</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ranef.galamm"</span>
+<span class="r-in"><span></span></span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside></div>
 

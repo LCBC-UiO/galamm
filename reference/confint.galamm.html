@@ -108,6 +108,25 @@ coefficients more generally, and <code><a href="vcov.galamm.html">vcov.galamm()<
 matrix. <code><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint()</a></code> is the generic function.</p></div>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Poisson GLMM</span></span></span>
+<span class="r-in"><span><span class="va">count_mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="galamm.html">galamm</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">lbas</span> <span class="op">*</span> <span class="va">treat</span> <span class="op">+</span> <span class="va">lage</span> <span class="op">+</span> <span class="va">v4</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">subj</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  data <span class="op">=</span> <span class="va">epilep</span>, family <span class="op">=</span> <span class="va">poisson</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint</a></span><span class="op">(</span><span class="va">count_mod</span>, parm <span class="op">=</span> <span class="st">"beta"</span>, level <span class="op">=</span> <span class="fl">.99</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                  0.5 %      99.5 %</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)  1.5239392  2.06319914</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> lbas         0.5471847  1.22182317</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> treat       -0.7155511  0.04562592</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> lage        -0.4081356  1.37730585</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> v4          -0.3016653 -0.02050959</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> lbas:treat  -0.1843249  0.86110474</span>
+<span class="r-in"><span></span></span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside></div>
 

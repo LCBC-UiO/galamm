@@ -113,7 +113,7 @@ argument <code>x</code> is silently returned.</p>
 “Fitting Linear Mixed-Effects Models Using Lme4.”
 <em>Journal of Statistical Software</em>, <b>67</b>(1), 1--48.
 ISSN 1548-7660, <a href="https://doi.org/10.18637/jss.v067.i01" class="external-link">doi:10.18637/jss.v067.i01</a>
-, <a href="2020-11-25">2020-11-25</a>.</p>
+.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -126,6 +126,23 @@ objects.</p></div>
 written by Douglas M. Bates, Martin Maechler, Ben Bolker, and Steve Walker.</p>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Linear mixed model with heteroscedastic residuals</span></span></span>
+<span class="r-in"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="galamm.html">galamm</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">x</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  weights <span class="op">=</span> <span class="op">~</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">item</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  data <span class="op">=</span> <span class="va">hsced</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Extract information on variance and covariance</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="VarCorr.html">VarCorr</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Groups   Name        Std.Dev. Variance</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  id       (Intercept) 0.99400  0.98804 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Residual             0.97964  0.95970 </span>
+<span class="r-in"><span></span></span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside></div>
 

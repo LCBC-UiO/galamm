@@ -100,6 +100,47 @@ from the summary methods of <code>mgcv</code> (author: Simon Wood) and
 (authors: Douglas M. Bates, Martin Maechler, Ben Bolker, and Steve Walker).</p>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Linear mixed model with heteroscedastic residuals</span></span></span>
+<span class="r-in"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="galamm.html">galamm</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">x</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  weights <span class="op">=</span> <span class="op">~</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">item</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  data <span class="op">=</span> <span class="va">hsced</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Generalized additive latent and mixed model fit by maximum marginal likelihood.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Formula: y ~ x + (1 | id)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Data: hsced</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Weights: ~(1 | item)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      AIC      BIC   logLik deviance df.resid </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   4126.3   4151.7  -2058.1   4116.3     1195 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Scaled residuals: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Min      1Q  Median      3Q     Max </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -5.6545 -0.7105  0.0286  0.6827  4.3261 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Random effects:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Groups   Name        Variance Std.Dev.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  id       (Intercept) 0.9880   0.9940  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Residual             0.9597   0.9796  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Number of obs: 1200, groups:  id, 200</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Variance function:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     1     2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1.000 1.995 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Fixed effects:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             Estimate Std. Error t value  Pr(&gt;|t|)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)   0.1289     0.0992   1.299 1.938e-01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x             0.7062     0.1213   5.822 5.819e-09</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span></span></span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside></div>
 

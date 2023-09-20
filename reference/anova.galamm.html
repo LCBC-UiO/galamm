@@ -92,7 +92,7 @@ models are provided in this argument, no table will be returned.</p></dd>
 “Fitting Linear Mixed-Effects Models Using Lme4.”
 <em>Journal of Statistical Software</em>, <b>67</b>(1), 1--48.
 ISSN 1548-7660, <a href="https://doi.org/10.18637/jss.v067.i01" class="external-link">doi:10.18637/jss.v067.i01</a>
-, <a href="2020-11-25">2020-11-25</a>.</p>
+.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -106,6 +106,34 @@ generic function.</p></div>
 Ben Bolker, and Steve Walker.</p>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Poisson GLMM</span></span></span>
+<span class="r-in"><span><span class="va">count_mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="galamm.html">galamm</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">lbas</span> <span class="op">*</span> <span class="va">treat</span> <span class="op">+</span> <span class="va">lage</span> <span class="op">+</span> <span class="va">v4</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">subj</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  data <span class="op">=</span> <span class="va">epilep</span>, family <span class="op">=</span> <span class="va">poisson</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Model without interaction</span></span></span>
+<span class="r-in"><span><span class="va">count_mod0</span> <span class="op">&lt;-</span> <span class="fu"><a href="galamm.html">galamm</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">lbas</span> <span class="op">+</span> <span class="va">treat</span> <span class="op">+</span> <span class="va">lage</span> <span class="op">+</span> <span class="va">v4</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">subj</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  data <span class="op">=</span> <span class="va">epilep</span>, family <span class="op">=</span> <span class="va">poisson</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Model comparison</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/anova.html" class="external-link">anova</a></span><span class="op">(</span><span class="va">count_mod</span>, <span class="va">count_mod0</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Data: epilep</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Models:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> count_mod0: y ~ lbas + treat + lage + v4 + (1 | subj)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> count_mod: y ~ lbas * treat + lage + v4 + (1 | subj)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            npar    AIC    BIC  logLik deviance  Chisq Df Pr(&gt;Chisq)  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> count_mod0    6 1345.4 1366.2 -666.72   407.01                       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> count_mod     7 1344.7 1369.0 -665.36   407.01 2.7208  1    0.09905 .</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ---</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1</span>
+<span class="r-in"><span></span></span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside></div>
 
