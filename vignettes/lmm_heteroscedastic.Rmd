@@ -86,7 +86,7 @@ summary(mod)
 #> Fixed effects:
 #>             Estimate Std. Error t value  Pr(>|t|)
 #> (Intercept)   0.1289     0.0992   1.299 1.938e-01
-#> x             0.7062     0.1212   5.826 5.681e-09
+#> x             0.7062     0.1213   5.822 5.819e-09
 ```
 
 We can confirm that the lme function from the nlme package gives the same result. It reports the multiplies on the standard deviation scale, so since $1.412369^2 = 1.995$, the results are identical.
@@ -94,6 +94,11 @@ We can confirm that the lme function from the nlme package gives the same result
 
 ```r
 library(nlme)
+#> 
+#> Attaching package: 'nlme'
+#> The following object is masked from 'package:lme4':
+#> 
+#>     lmList
 mod_nlme <- lme(y ~ x,
   data = hsced, random = list(id = ~1),
   weights = varIdent(form = ~ 1 | item), method = "ML"
@@ -162,7 +167,7 @@ anova(mod, mod0)
 #> mod0: y ~ x + (1 | id)
 #> mod: y ~ x + (1 | id)
 #>      npar    AIC    BIC  logLik deviance  Chisq Df Pr(>Chisq)    
-#> mod0    4 4171.6 4191.9 -2081.8   4163.6                         
+#> mod0    4 4171.6 4191.9 -2081.8   4116.3                         
 #> mod     5 4126.3 4151.7 -2058.1   4116.3 47.281  1   6.15e-12 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
