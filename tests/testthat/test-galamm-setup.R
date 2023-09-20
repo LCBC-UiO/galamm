@@ -67,5 +67,4 @@ test_that("anova function gives the right output", {
 
   expect_error(anova(mod1, mod2), "not all fitted to the same size")
   expect_error(anova(mod1, mod3), "to the same data object")
-
 })
