@@ -12,10 +12,15 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = ""
+)
+```
 
-
-
-```r
+```{r setup}
 library(galamm)
 ```
 
@@ -35,8 +40,7 @@ At convergence, the Hessian matrix of second derivatives is computed exactly, ag
 
 We will illustrate some ways of modifying the optimization procedure with the covariate measurement model example shown in the [vignette on models with mixed response types](https://lcbc-uio.github.io/galamm/articles/mixed_response.html). Here we start by simply setting up what we need to fit the model.
 
-
-```r
+```{r}
 loading_matrix <- matrix(c(1, 1, NA), ncol = 1)
 families <- c(gaussian, binomial)
 family_mapping <- ifelse(diet$item == "chd", 2, 1)
@@ -46,8 +50,7 @@ formula <- y ~ 0 + chd + (age * bus):chd + fiber +
 
 Fitting the model with default arguments yields a warning.
 
-
-```r
+```{r, warning=TRUE}
 mod <- galamm(
   formula = formula,
   data = diet,
@@ -57,22 +60,18 @@ mod <- galamm(
   load.var = "item",
   lambda = list(loading_matrix)
 )
-#> Warning in galamm(formula = formula, data = diet, family = families, family_mapping = family_mapping, : Rank
-#> deficient Hessian matrix at optimum.
 ```
 
 In this case, we can increase the amount of information provided by `optim`, with the `trace` argument. To avoid getting too much output, we also reduce the number of iterations. We set the `control` argument as follows:
 
-
-```r
+```{r}
 control <- galamm_control(optim_control = list(maxit = 5, trace = 3, REPORT = 1))
 ```
 
 Here, `maxit = 5` means that we take at most 5 iterations, `trace = 3` means that we want more information from L-BFGS-B, and `REPORT= = 1` means that we want L-BFGS-B to report information at each step it takes. We provide this object to the `control` argument in `galamm`, and rerun the model:
 
 
-
-```r
+```{r, warning=TRUE}
 mod <- galamm(
   formula = formula,
   data = diet,
@@ -83,34 +82,19 @@ mod <- galamm(
   lambda = list(loading_matrix),
   control = control
 )
-#> N = 11, M = 20 machine precision = 2.22045e-16
-#> At X0, 0 variables are exactly at the bounds
-#> At iterate     0  f=         2148  |proj g|=       122.68
-#> At iterate     1  f =       2132.1  |proj g|=        275.51
-#> At iterate     2  f =       2100.1  |proj g|=         193.7
-#> At iterate     3  f =       1975.6  |proj g|=        177.11
-#> At iterate     4  f =       1923.2  |proj g|=         165.7
-#> At iterate     5  f =       1898.8  |proj g|=        83.839
-#> At iterate     6  f =       1887.9  |proj g|=        49.147
-#> final  value 1887.871646 
-#> stopped after 6 iterations
-#> Warning in galamm(formula = formula, data = diet, family = families, family_mapping = family_mapping, : Rank
-#> deficient Hessian matrix at optimum.
 ```
 
 Since what we did was simply to turn in more reporting, it is no surprise that the Hessian is still rank deficient, but from the output, it is also clear that there are no obvious errors, like values that diverge to infinity. The latter may also happen from time to time.
 
 By default, L-BFGS-B uses the last 5 evaluations of the gradient to approximate the Hessian that is used during optimization (not to be confused with the exact Hessian compute with automatic differentiation after convergence). We try to increase this to 25, and see if that makes a difference. This is done with the `lmm` argument. We also reduce the amount of reporting to be every 10th step, and avoid setting the maximum number of iterations, which means that `optim()`'s default option is used.
 
-
-```r
+```{r}
 control <- galamm_control(optim_control = list(trace = 3, REPORT = 10, lmm = 25))
 ```
 
 It is clear that neither this solved the issue.
 
-
-```r
+```{r, warning=TRUE}
 mod <- galamm(
   formula = formula,
   data = diet,
@@ -121,76 +105,17 @@ mod <- galamm(
   lambda = list(loading_matrix),
   control = control
 )
-#> N = 11, M = 25 machine precision = 2.22045e-16
-#> At X0, 0 variables are exactly at the bounds
-#> At iterate     0  f=         2148  |proj g|=       122.68
-#> At iterate    10  f =       1770.3  |proj g|=        30.656
-#> At iterate    20  f =       1467.2  |proj g|=        11.286
-#> At iterate    30  f =         1413  |proj g|=        4.3102
-#> 
-#> iterations 38
-#> function evaluations 44
-#> segments explored during Cauchy searches 39
-#> BFGS updates skipped 0
-#> active bounds at final generalized Cauchy point 1
-#> norm of the final projected gradient 0.001689
-#> final function value 1406.8
-#> 
-#> F = 1406.8
-#> final  value 1406.801104 
-#> converged
-#> Warning in galamm(formula = formula, data = diet, family = families, family_mapping = family_mapping, : Rank
-#> deficient Hessian matrix at optimum.
 ```
 
 Looking at the model output from the model we just estimated, we see that the random effect variance is estimated to be exactly zero.
 
-
-```r
+```{r}
 summary(mod)
-#> Warning in vcov.galamm(object, parm = object$parameters$lambda_inds): Rank deficient Hessian matrix. Could not
-#> compute covariance matrix.
-#> Warning in vcov.galamm(object, "beta"): Rank deficient Hessian matrix. Could not compute covariance matrix.
-#> Generalized additive latent and mixed model fit by maximum marginal likelihood.
-#> Formula: formula
-#>    Data: diet
-#> Control: control
-#> 
-#>      AIC      BIC   logLik deviance df.resid 
-#>   2837.6   2892.9  -1406.8  12529.3      730 
-#> 
-#> Scaled residuals: 
-#>      Min       1Q   Median       3Q      Max 
-#> -10.1374  -0.4390  -0.3523   0.2743  27.3347 
-#> 
-#> Lambda:
-#>         loading SE
-#> lambda1   1.000  .
-#> lambda2   1.000  .
-#> lambda3  -1.922  .
-#> 
-#> Random effects:
-#>  Groups Name    Variance Std.Dev.
-#>  id     loading 0        0       
-#> Number of obs: 742, groups:  id, 333
-#> 
-#> Fixed effects:
-#>               Estimate Std. Error z value Pr(>|z|)
-#> chd           -1.78673         NA      NA       NA
-#> fiber         17.96179         NA      NA       NA
-#> fiber2        -0.64904         NA      NA       NA
-#> chd:age        0.06685         NA      NA       NA
-#> chd:bus       -0.06894         NA      NA       NA
-#> fiber:age     -0.20479         NA      NA       NA
-#> fiber:bus     -1.69628         NA      NA       NA
-#> chd:age:bus   -0.04937         NA      NA       NA
-#> fiber:age:bus  0.16092         NA      NA       NA
 ```
 
  These types of obviously wrong zero variance estimates are well-known for users of mixed models [@hodgesRichlyParameterizedLinear2013]. We see if increase the initial value for the variance parameter solves the issue. This is done with the `start` argument to `galamm`. The start argument requires a named list, with optional arguments `theta`, `beta`, `lambda`, and `weights`, giving initial values for each of these groups of parameters. In this case `theta` is the standard deviation of the random effect, and we increase it to 10 to see what happens. By default, the initial value equals 1.
  
-
-```r
+```{r, warning=TRUE}
 mod <- galamm(
   formula = formula,
   data = diet,
@@ -202,68 +127,12 @@ mod <- galamm(
   start = list(theta = 10),
   control = control
 )
-#> N = 11, M = 25 machine precision = 2.22045e-16
-#> At X0, 0 variables are exactly at the bounds
-#> At iterate     0  f=       2827.6  |proj g|=       123.31
-#> At iterate    10  f =       1764.5  |proj g|=        103.86
-#> At iterate    20  f =       1623.6  |proj g|=        131.81
-#> At iterate    30  f =       1447.9  |proj g|=        75.096
-#> At iterate    40  f =       1400.5  |proj g|=        35.591
-#> At iterate    50  f =       1373.1  |proj g|=        3.3359
-#> At iterate    60  f =       1372.2  |proj g|=     0.0016541
-#> 
-#> iterations 60
-#> function evaluations 72
-#> segments explored during Cauchy searches 61
-#> BFGS updates skipped 0
-#> active bounds at final generalized Cauchy point 0
-#> norm of the final projected gradient 0.00165415
-#> final function value 1372.16
-#> 
-#> F = 1372.16
-#> final  value 1372.160386 
-#> converged
-```
+``` 
 
 Now we see that the model converged and that the Hessian is no longer rank deficient.
 
-
-```r
+```{r}
 summary(mod)
-#> Generalized additive latent and mixed model fit by maximum marginal likelihood.
-#> Formula: formula
-#>    Data: diet
-#> Control: control
-#> 
-#>      AIC      BIC   logLik deviance df.resid 
-#>   2768.3   2823.6  -1372.2   2002.9      730 
-#> 
-#> Scaled residuals: 
-#>     Min      1Q  Median      3Q     Max 
-#> -258522      -1       0       0      66 
-#> 
-#> Lambda:
-#>         loading      SE
-#> lambda1  1.0000       .
-#> lambda2  1.0000       .
-#> lambda3 -0.1339 0.05121
-#> 
-#> Random effects:
-#>  Groups Name    Variance Std.Dev.
-#>  id     loading 23.64    4.862   
-#> Number of obs: 742, groups:  id, 333
-#> 
-#> Fixed effects:
-#>               Estimate Std. Error  z value   Pr(>|z|)
-#> chd           -1.91525    0.27229 -7.03373  2.011e-12
-#> fiber         17.94849    0.48686 36.86601 1.620e-297
-#> fiber2         0.22402    0.41783  0.53614  5.919e-01
-#> chd:age        0.06615    0.05931  1.11531  2.647e-01
-#> chd:bus       -0.02895    0.34355 -0.08427  9.328e-01
-#> fiber:age     -0.21204    0.10090 -2.10135  3.561e-02
-#> fiber:bus     -1.68303    0.63721 -2.64123  8.261e-03
-#> chd:age:bus   -0.04999    0.06507 -0.76822  4.424e-01
-#> fiber:age:bus  0.16818    0.11223  1.49854  1.340e-01
 ```
 
 

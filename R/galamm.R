@@ -289,6 +289,10 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
 
   final_model <- mlwrapper(opt$par, TRUE)
 
+  if (qr(final_model$hessian)$rank < ncol(final_model$hessian)) {
+    warning("Rank deficient Hessian matrix at optimum.")
+  }
+
   # Update Cholesky factor of covariance matrix
   gobj$lmod$reTrms$Lambdat@x <- opt$par[theta_inds][gobj$lmod$reTrms$Lind]
   # Update Zt to include factor loadings (if there are factor loadings)

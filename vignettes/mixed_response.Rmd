@@ -17,6 +17,8 @@ vignette: >
 
 ```r
 library(galamm)
+library(lme4)
+#> Loading required package: Matrix
 ```
 
 This vignette describes how `galamm` can be used to estimate models with mixed response types.
@@ -249,12 +251,18 @@ We can inspect the model implied by the formula by using the `nobars` function f
 
 ```r
 head(model.matrix(nobars(formula), data = diet))
-#> Error in nobars(formula): could not find function "nobars"
+#>   chd fiber fiber2 chd:age chd:bus age:fiber bus:fiber chd:age:bus age:bus:fiber
+#> 1   0     1      0    0.00       0     -0.38         1        0.00         -0.38
+#> 2   1     0      0   -0.38       1      0.00         0       -0.38          0.00
+#> 3   0     1      0    0.00       0      0.54         1        0.00          0.54
+#> 4   1     0      0    0.54       1      0.00         0        0.54          0.00
+#> 5   0     1      0    0.00       0      8.78         1        0.00          8.78
+#> 6   1     0      0    8.78       1      0.00         0        8.78          0.00
 ```
 
 Finally, the random effects part `(0 + loading | id)` specifies that for each `id` there should be a single random intercept, which corresponds to latent fiber intake $\eta_{j}$. Write `0 + loading` means that $\eta_{j}$ should be multiplied by the factor loadings defined in the loading matrix.
 
-We are now ready to fit the model.
+We are now ready to fit the model, and we see that it gives a warning.
 
 
 ```r
@@ -267,56 +275,12 @@ mod <- galamm(
   load.var = "item",
   lambda = list(loading_matrix)
 )
+#> Warning in galamm(formula = formula, data = diet, family = families, family_mapping = family_mapping, : Rank
+#> deficient Hessian matrix at optimum.
 ```
 
 
-Looking at the summary output, however, reveals that there is an issue here:
-
-
-```r
-summary(mod)
-#> Warning in vcov.galamm(object, parm = object$parameters$lambda_inds): Rank deficient Hessian matrix. Could not
-#> compute covariance matrix.
-#> Warning in vcov.galamm(object, "beta"): Rank deficient Hessian matrix. Could not compute covariance matrix.
-#> Generalized additive latent and mixed model fit by maximum marginal likelihood.
-#> Formula: formula
-#>    Data: diet
-#> 
-#>      AIC      BIC   logLik deviance df.resid 
-#>   2837.6   2892.9  -1406.8  12529.3      730 
-#> 
-#> Scaled residuals: 
-#>      Min       1Q   Median       3Q      Max 
-#> -10.1375  -0.4389  -0.3522   0.2743  27.3350 
-#> 
-#> Lambda:
-#>         loading SE
-#> lambda1   1.000  .
-#> lambda2   1.000  .
-#> lambda3  -2.026  .
-#> 
-#> Random effects:
-#>  Groups Name    Variance Std.Dev.
-#>  id     loading 0        0       
-#> Number of obs: 742, groups:  id, 333
-#> 
-#> Fixed effects:
-#>               Estimate Std. Error z value Pr(>|z|)
-#> chd           -1.78692         NA      NA       NA
-#> fiber         17.96184         NA      NA       NA
-#> fiber2        -0.64927         NA      NA       NA
-#> chd:age        0.06682         NA      NA       NA
-#> chd:bus       -0.06882         NA      NA       NA
-#> fiber:age     -0.20480         NA      NA       NA
-#> fiber:bus     -1.69601         NA      NA       NA
-#> chd:age:bus   -0.04934         NA      NA       NA
-#> fiber:age:bus  0.16097         NA      NA       NA
-```
-
-
-The Hessian matrix is not invertible, which means that we cannot compute the variance-covariance matrix. We note that the variance of the latent variable is estimated to be exactly zero, and although zero variance estimates is a well known phenomenon in these types of models (see @hodgesRichlyParameterizedLinear2013 for a book-length treatment), it does not seem reasonable in this case that there is no variation in the true fiber intake in this population of bankers and transport workers.
-
-We suspect that this is a convergence issue of the algorithm, and start by simply turning a lever to make the algorithm more verbose. The argument `trace = 3` is passed onto `optim`.
+The Hessian matrix is not invertible, which means that we cannot compute the variance-covariance matrix. We suspect that this is a convergence issue of the algorithm, and start by simply turning a lever to make the algorithm more verbose. The argument `trace = 3` is passed onto `optim`.
 
 
 
@@ -350,6 +314,8 @@ mod <- galamm(
 #> F = 1406.8
 #> final  value 1406.801105 
 #> converged
+#> Warning in galamm(formula = formula, data = diet, family = families, family_mapping = family_mapping, : Rank
+#> deficient Hessian matrix at optimum.
 ```
 
 Now we got some information, but the final estimate is the same, since we otherwise used the same parameters. We now instead try to increase the intial estimate of the random effect parameter $\theta$. In general $\theta$ is a vector containing elements of the Cholesky factor of the covariance matrix (see, @batesFittingLinearMixedEffects2015), but in this case it is just the standard deviation of the latent variable. By default, its initial value is 1, but we now try to increase it to 10, with the `start` argument.
