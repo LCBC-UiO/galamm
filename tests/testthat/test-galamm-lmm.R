@@ -98,8 +98,10 @@ test_that("LMM with two factors works", {
   )
 
   expect_equal(kyps_model$model$loglik, -33.7792632108483)
-  expect_equal(kyps_model$parameters$parameter_estimates[
-    kyps_model$parameters$lambda_inds],
+  expect_equal(
+    kyps_model$parameters$parameter_estimates[
+      kyps_model$parameters$lambda_inds
+    ],
     c(
       0.631763067142624, -0.114603879076418, 0.0145214343084242,
       1.07489949334559
