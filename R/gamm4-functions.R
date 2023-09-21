@@ -6,7 +6,7 @@
 #' @param formula A formula excluding lme4 style random effects but including
 #'   smooths.
 #' @param pterms Parametric terms in the model.
-#' @param data Model frame.
+#' @param mf Model frame.
 #'
 #' @return model
 #' @author Simon N Wood, with some modifications by Oystein Sorensen.
@@ -19,8 +19,8 @@
 #' \insertRef{woodGeneralizedAdditiveModels2017a}{galamm}
 #'
 #'
-gamm4.setup <- function(formula, pterms, data) {
-  G <- gam.setup(formula, pterms, data = data)
+gamm4.setup <- function(formula, pterms, mf) {
+  G <- gam.setup(formula, pterms, mf)
   first.f.para <- G$nsdf + 1
   random <- list()
   ind <- seq_len(G$nsdf)
@@ -28,7 +28,7 @@ gamm4.setup <- function(formula, pterms, data) {
   xlab <- rep("", 0)
   G$Xf <- methods::as(X, "dgCMatrix")
   first.para <- G$nsdf + 1
-  used.names <- names(data)
+  used.names <- names(mf)
 
   for (i in seq_len(G$m)) {
     sm <- G$smooth[[i]]
@@ -120,9 +120,11 @@ gamm4.setup <- function(formula, pterms, data) {
 #'
 #' \insertRef{woodGeneralizedAdditiveModels2017a}{galamm}
 #'
-gamm4 <- function(fixed, random = NULL, data = list()) {
+gamm4 <- function(fixed, random = NULL, data) {
   random.vars <- all.vars(random)
   gp <- interpret.gam0(fixed)
+  # when run interactively, do
+  # mf <- match.call(gamm4, call("gamm4", lme4::nobars(formula), rf, data))
   mf <- match.call(expand.dots = FALSE)
 
   mf$formula <- gp$fake.formula
@@ -159,7 +161,7 @@ gamm4 <- function(fixed, random = NULL, data = list()) {
   pmf <- eval(pmf, parent.frame())
   pTerms <- attr(pmf, "terms")
 
-  G <- gamm4.setup(gp, pterms = pTerms, data = mf)
+  G <- gamm4.setup(formula = gp, pterms = pTerms, mf = mf)
   G$var.summary <- var.summary
   n.sr <- length(G$random)
 
@@ -285,6 +287,12 @@ gamm4.wrapup <- function(gobj, ret, final_model) {
   vr <- lme4::VarCorr(ret)
 
   scale <- as.numeric(attr(vr, "sc"))^2
+  if (!is.finite(scale) || scale == 1) {
+    scale <- 1
+    object$scale.estimated <- FALSE
+  } else {
+    object$scale.estimated <- TRUE
+  }
   sp <- rep(-1, gobj$n.sr)
 
   sn <- names(gobj$G$random)
