@@ -286,7 +286,7 @@ gamm4.wrapup <- function(gobj, ret, final_model) {
         B[ind, ind] <- t(D * t(gobj$G$smooth[[i]]$trans.U))
       }
     }
-    ## and finally transform gobj$G$Xf into fitting parameterization...
+
     Xfp[, ind] <- gobj$G$Xf[, ind, drop = FALSE] %*% B[ind, ind, drop = FALSE]
   }
 
@@ -295,8 +295,8 @@ gamm4.wrapup <- function(gobj, ret, final_model) {
 
   vr <- VarCorr(ret)
 
-  scale <- as.numeric(attr(vr, "sc"))^2 ## get the scale parameter
-  if (!is.finite(scale) || scale == 1) { ## NOTE: better test???
+  scale <- as.numeric(attr(vr, "sc"))^2
+  if (!is.finite(scale) || scale == 1) {
     scale <- 1
     object$scale.estimated <- FALSE
   } else {
@@ -306,15 +306,15 @@ gamm4.wrapup <- function(gobj, ret, final_model) {
   sp <- rep(-1, gobj$n.sr)
 
   Zt <- Matrix::Matrix(0, 0, ncol(gobj$lmod$reTrms$Zt))
-  if (gobj$n.sr == 0) sn <- NULL ## names by which smooths are known in mer
+  if (gobj$n.sr == 0) sn <- NULL
   rn <- names(vr)
-  ind <- rep(0, 0) ## index the non-smooth random effects among the random effects
+  ind <- rep(0, 0)
   for (i in seq_along(vr)) {
-    if (is.null(sn) || !rn[i] %in% sn) { ## append non smooth r.e.s to Zt
+    if (is.null(sn) || !rn[i] %in% sn) {
       Gp <- ret$model$lmod$reTrms$Gp
       ind <- c(ind, seq(from = (Gp[i] + 1), to = Gp[i + 1], by = 1))
-    } else if (!is.null(sn)) { ## extract smoothing parameters for smooth r.e.s
-      k <- (1:gobj$n.sr)[rn[i] == sn] ## where in original smooth ordering is current smoothing param
+    } else if (!is.null(sn)) {
+      k <- (1:gobj$n.sr)[rn[i] == sn]
       if (as.numeric(vr[[i]] > 0)) {
         sp[k] <- scale / as.numeric(vr[[i]])
       } else {
@@ -340,22 +340,16 @@ gamm4.wrapup <- function(gobj, ret, final_model) {
 
   if (nrow(Zt) > 0) V <- V + Matrix::crossprod(root.phi %*% Zt) * scale ## data or pseudodata cov matrix, treating smooths as fixed now
 
-  ## NOTE: Cholesky probably better in the following - then pivoting
-  ##       automatic when solving....
-
-  R <- Matrix::chol(V, pivot = TRUE)
+  R <- Matrix::chol(V, pivot = FALSE)
   piv <- attr(R, "pivot")
 
   gobj$G$Xf <- methods::as(gobj$G$Xf, "dgCMatrix")
   Xfp <- methods::as(Xfp, "dgCMatrix")
 
-  if (is.null(piv)) {
-    WX <- methods::as(Matrix::solve(Matrix::t(R), Xfp), "matrix") ## V^{-.5}Xp -- fit parameterization
-    XVX <- methods::as(Matrix::solve(Matrix::t(R), gobj$G$Xf), "matrix") ## same in original parameterization
-  } else {
-    WX <- methods::as(Matrix::solve(Matrix::t(R), Xfp[piv, ]), "matrix") ## V^{-.5}Xp -- fit parameterization
-    XVX <- methods::as(Matrix::solve(Matrix::t(R), gobj$G$Xf[piv, ]), "matrix") ## same in original parameterization
-  }
+
+  WX <- methods::as(Matrix::solve(Matrix::t(R), Xfp), "matrix")
+  XVX <- methods::as(Matrix::solve(Matrix::t(R), gobj$G$Xf), "matrix")
+
   qrz <- qr(XVX, LAPACK = TRUE)
   object$R <- qr.R(qrz)
   object$R[, qrz$pivot] <- object$R
