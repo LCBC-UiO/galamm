@@ -18,7 +18,6 @@
 #' \insertRef{woodGeneralizedAdditiveModels2017a}{galamm}
 #'
 gam.setup <- function(formula, pterms, mf) {
-
   m <- length(formula$smooth.spec)
   G <- list(
     m = m, min.sp = NULL, H = NULL, pearson.extra = 0,
