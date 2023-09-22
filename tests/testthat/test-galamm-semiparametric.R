@@ -77,7 +77,6 @@ test_that("galamm reproduces gamm4", {
   expect_equal(deviance(mod0$mer), deviance(mod1), tolerance = .1)
   expect_equal(mod0$gam$edf, mod1$gam$edf, tolerance = .1)
   expect_snapshot(print(summary(mod1$gam), digits = 2))
-
 })
 
 test_that("Basic GAMM with factor structures works", {
