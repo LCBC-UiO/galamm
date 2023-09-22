@@ -243,7 +243,6 @@ gam.setup <- function(formula, pterms, mf) {
     if (is.null(sm[[i]]$L)) nc <- length(sm[[i]]$S) else nc <- ncol(sm[[i]]$L)
     if (nc > 0) G$smooth[[i]]$sp <- G$sp[k:(k + nc - 1)]
     k <- k + nc
-
   }
 
   k.sp <- 0 # count through sp and S
@@ -257,7 +256,6 @@ gam.setup <- function(formula, pterms, mf) {
       G$S[[k.sp]] <- sm$S[[j]]
       G$rank[k.sp] <- sm$rank[j]
     }
-
   }
 
 
@@ -404,8 +402,6 @@ gam.side <- function(sm, Xp, tol = .Machine$double.eps^.5) {
   if (m == 0) {
     return(sm)
   }
-  v.names <- array("", 0)
-  maxDim <- 1
   for (i in seq_len(m)) { ## collect all term names and max smooth `dim'
     vn <- sm[[i]]$term
     ## need to include by variables in names
@@ -413,136 +409,6 @@ gam.side <- function(sm, Xp, tol = .Machine$double.eps^.5) {
     ## need to distinguish levels of factor by variables...
     if (!is.null(sm[[i]]$by.level)) vn <- paste(vn, sm[[i]]$by.level, sep = "")
     sm[[i]]$vn <- vn ## use this record to identify variables from now
-    v.names <- c(v.names, vn)
-    if (sm[[i]]$dim > maxDim) maxDim <- sm[[i]]$dim
-  }
-  lv <- length(v.names)
-  v.names <- unique(v.names)
-  if (lv == length(v.names)) {
-    return(sm)
-  } ## no repeats => no nesting
-
-  ## Only get this far if there is nesting.
-  ## Need to test for intercept or equivalent in Xp
-  intercept <- FALSE
-  if (ncol(Xp)) {
-    ## first check columns directly...
-    if (sum(apply(Xp, 2, stats::sd) < .Machine$double.eps^.75) > 0) {
-      intercept <- TRUE
-    } else {
-      ## no constant column, so need to check span of Xp...
-      f <- rep(1, nrow(Xp))
-      ff <- qr.fitted(qr(Xp), f)
-      if (max(abs(ff - f)) < .Machine$double.eps^.75) intercept <- TRUE
-    }
-  }
-
-  sm.id <- as.list(v.names)
-  names(sm.id) <- v.names
-  for (i in seq_along(sm.id)) sm.id[[i]] <- array(0, 0)
-  sm.dim <- sm.id
-  for (d in 1:maxDim) {
-    for (i in 1:m) {
-      if (sm[[i]]$dim == d && sm[[i]]$side.constrain) {
-        for (j in 1:d) { ## work through terms
-          term <- sm[[i]]$vn[j]
-          a <- sm.id[[term]]
-          la <- length(a) + 1
-          sm.id[[term]][la] <- i ## record smooth i.d. for this variable
-          sm.dim[[term]][la] <- d ## ... and smooth dim.
-        }
-      }
-    }
-  }
-  ## so now each unique variable name has an associated array of
-  ## the smooths of which it is an argument, arranged in ascending
-  ## order of dimension. Smooths for which side.constrain==FALSE are excluded.
-  if (maxDim == 1) warning("model has repeated 1-d smooths of same variable.")
-
-
-  nobs <- nrow(sm[[1]]$X) ## number of observations
-
-  for (d in seq_len(maxDim)) { ## work up through dimensions
-    for (i in seq_len(m)) { ## work through smooths
-      if (sm[[i]]$dim == d && sm[[i]]$side.constrain) { ## check for nesting
-
-        X1 <- matrix(1, nobs, as.integer(intercept))
-
-        X1comp <- rep(0, 0) ## list of components of X1 to avoid duplication
-        for (j in seq_len(d)) { ## work through variables
-          b <- sm.id[[sm[[i]]$vn[j]]] # list of smooths dependent on this variable
-          k <- (seq_along(b))[b == i] ## locate current smooth in list
-
-          for (l in seq_len(k - 1)) {
-            if (!b[l] %in% X1comp) { ## collect X columns
-              X1comp <- c(X1comp, b[l]) ## keep track of components to avoid adding same one twice
-
-              X1 <- cbind(X1, sm[[b[l]]]$X)
-            }
-          }
-        } ## Now X1 contains columns for all lower dimensional terms
-        if (ncol(X1) == as.integer(intercept)) {
-          ind <- NULL
-        } else {
-          ind <- mgcv::fixDependence(X1, sm[[i]]$X, tol = tol)
-        }
-        ## ... the columns to zero to ensure independence
-        if (!is.null(ind)) {
-          sm[[i]]$X <- sm[[i]]$X[, -ind]
-          ## work through list of penalty matrices, applying constraints...
-          nsmS <- length(sm[[i]]$S)
-          if (nsmS > 0) {
-            for (j in seq(from = nsmS, to = 1, by = -1)) { ## working down so that dropping is painless
-              sm[[i]]$S[[j]] <- sm[[i]]$S[[j]][-ind, -ind]
-              if (sum(sm[[i]]$S[[j]] != 0) == 0) {
-                rank <- 0
-              } else {
-                rank <- qr(sm[[i]]$S[[j]], tol = tol, LAPACK = FALSE)$rank
-              }
-              sm[[i]]$rank[j] <- rank ## replace previous rank with new rank
-              if (rank == 0) { ## drop the penalty
-                sm[[i]]$rank <- sm[[i]]$rank[-j]
-                sm[[i]]$S[[j]] <- NULL
-                sm[[i]]$S.scale <- sm[[i]]$S.scale[-j]
-                if (!is.null(sm[[i]]$L)) sm[[i]]$L <- sm[[i]]$L[-j, , drop = FALSE]
-              }
-            }
-          } ## penalty matrices finished
-          ## Now we need to establish null space rank for the term
-          mi <- length(sm[[i]]$S)
-          if (mi > 0) {
-            St <- sm[[i]]$S[[1]] / norm(sm[[i]]$S[[1]], type = "F")
-            if (mi > 1) {
-              for (j in 1:mi) {
-                St <- St +
-                  sm[[i]]$S[[j]] / norm(sm[[i]]$S[[j]], type = "F")
-              }
-            }
-            es <- eigen(St, symmetric = TRUE, only.values = TRUE)
-            sm[[i]]$null.space.dim <- sum(es$values < max(es$values) * .Machine$double.eps^.75)
-          } ## rank found
-
-          if (!is.null(sm[[i]]$L)) {
-            ind <- as.numeric(colSums(sm[[i]]$L != 0)) != 0
-            sm[[i]]$L <- sm[[i]]$L[, ind, drop = FALSE] ## retain only those sps that influence something!
-          }
-
-          sm[[i]]$df <- ncol(sm[[i]]$X)
-          attr(sm[[i]], "del.index") <- ind
-          ## Now deal with case in which prediction constraints differ from fit constraints
-          if (!is.null(sm[[i]]$Xp)) { ## need to get deletion indices under prediction parameterization
-            ## Note that: i) it doesn't matter what the identifiability con on X1 is
-            ##            ii) the degree of rank deficiency can't be changed by an identifiability con
-
-            ind <- mgcv::fixDependence(X1, sm[[i]]$Xp, rank.def = length(ind))
-
-            sm[[i]]$Xp <- sm[[i]]$Xp[, -ind, drop = FALSE]
-            attr(sm[[i]], "del.index") <- ind ## over-writes original
-          }
-        }
-        sm[[i]]$vn <- NULL
-      } ## end if (sm[[i]]$dim == d)
-    } ## end i in 1:m loop
   }
 
   sm
