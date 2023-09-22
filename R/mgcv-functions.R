@@ -268,28 +268,8 @@ gam.setup <- function(formula, pterms, mf) {
   ## Now remove columns of L and rows of sp relating to fixed
   ## smoothing parameters, and use removed elements to create lsp0
 
-  fix.ind <- G$sp >= 0
+  lsp0 <- rep(0, nrow(L))
 
-  if (sum(fix.ind)) {
-    lsp0 <- G$sp[fix.ind]
-    ind <- lsp0 == 0 ## find the zero s.p.s
-    ef0 <- indi <- (1:length(ind))[ind]
-    if (length(indi) > 0) {
-      for (i in 1:length(indi)) {
-        ## find "effective zero" to replace each zero s.p. with
-        ii <- G$off[i]:(G$off[i] + ncol(G$S[[i]]) - 1)
-        ef0[i] <- norm(G$X[, ii], type = "F")^2 / norm(G$S[[i]], type = "F") * .Machine$double.eps * .1
-      }
-    }
-    lsp0[!ind] <- log(lsp0[!ind])
-    lsp0[ind] <- log(ef0) ## log(.Machine$double.xmin)*1000 ## zero fudge
-    lsp0 <- as.numeric(L[, fix.ind, drop = FALSE] %*% lsp0)
-
-    L <- L[, !fix.ind, drop = FALSE]
-    G$sp <- G$sp[!fix.ind]
-  } else {
-    lsp0 <- rep(0, nrow(L))
-  }
 
   G$H <- H
 
