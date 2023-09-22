@@ -13,8 +13,31 @@
 \item{...}{Further arguments passed on to other methods. Currently not used.}
 }
 \value{
-A list of summary statistics of the fitted model, of class
-\code{summary.galamm}.
+A list of summary statistics of the fitted model of class
+\code{summary.galamm}, containing the following elements:
+\itemize{
+\item \code{AICtab} a table of model fit measures, returned by
+\code{\link{llikAIC}}.
+\item \code{call} the matched call used when fitting the model.
+\item \code{fixef} a matrix with fixed effect estimated, returned by
+\code{\link{fixef}}.
+\item \code{gam} List containing information about smooth terms in the model. If no
+smooth terms are contained in the model, then it is a list of length zero.
+\item \code{model} a list with various elements related to the model setup and fit.
+See \code{?galamm} for details.
+\item \code{parameters} A list object with model parameters and related information.
+See \code{?galamm} for details.
+\item \code{Lambda} An object containing the estimated factor loadings. Returned
+from \code{\link{factor_loadings.galamm}}. If there are no estimated factor
+loadings, then this object is \code{NULL}.
+\item \code{random_effects} a list containing the random effects.
+See \code{?galamm} for details.
+\item \code{VarCorr} An object of class \code{VarCorr.galamm}, returned from
+\code{\link{VarCorr.galamm}}.
+\item \code{weights} An object containing information about estimated variance
+functions, when there are heteroscedastic residuals. Otherwise the object
+is \code{NULL}.
+}
 }
 \description{
 Summary method for class "galamm".

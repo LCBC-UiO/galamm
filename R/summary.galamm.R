@@ -6,8 +6,31 @@
 #'   \code{\link{galamm}}.
 #' @param ... Further arguments passed on to other methods. Currently not used.
 #'
-#' @return A list of summary statistics of the fitted model, of class
-#'   \code{summary.galamm}.
+#' @return A list of summary statistics of the fitted model of class
+#'   \code{summary.galamm}, containing the following elements:
+#'
+#' * \code{AICtab} a table of model fit measures, returned by
+#'   \code{\link{llikAIC}}.
+#' * \code{call} the matched call used when fitting the model.
+#' * \code{fixef} a matrix with fixed effect estimated, returned by
+#'   \code{\link{fixef}}.
+#' * \code{gam} List containing information about smooth terms in the model. If no
+#'   smooth terms are contained in the model, then it is a list of length zero.
+#' * \code{model} a list with various elements related to the model setup and fit.
+#'    See \code{?galamm} for details.
+#' * \code{parameters} A list object with model parameters and related information.
+#'    See \code{?galamm} for details.
+#' * \code{Lambda} An object containing the estimated factor loadings. Returned
+#' from \code{\link{factor_loadings.galamm}}. If there are no estimated factor
+#' loadings, then this object is \code{NULL}.
+#' * \code{random_effects} a list containing the random effects.
+#'    See \code{?galamm} for details.
+#' * \code{VarCorr} An object of class \code{VarCorr.galamm}, returned from
+#' \code{\link{VarCorr.galamm}}.
+#' * \code{weights} An object containing information about estimated variance
+#' functions, when there are heteroscedastic residuals. Otherwise the object
+#' is \code{NULL}.
+#'
 #' @export
 #'
 #' @author Some of the code for producing summary information has been derived
@@ -30,6 +53,7 @@
 #'
 #' summary(mod)
 #'
+#' @md
 summary.galamm <- function(object, ...) {
   ret <- object
   class(ret) <- append("summary.galamm", class(object))
