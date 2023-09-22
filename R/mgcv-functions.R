@@ -532,7 +532,6 @@ variable.summary <- function(pf, dl, n) {
 #' \insertRef{woodGeneralizedAdditiveModels2017a}{galamm}
 #'
 gam.side <- function(sm, Xp, tol = .Machine$double.eps^.5) {
-
   m <- length(sm)
   if (m == 0) {
     return(sm)
@@ -599,7 +598,7 @@ gam.side <- function(sm, Xp, tol = .Machine$double.eps^.5) {
     for (i in seq_len(m)) { ## work through smooths
       if (sm[[i]]$dim == d && sm[[i]]$side.constrain) { ## check for nesting
 
-          X1 <- matrix(1, nobs, as.integer(intercept))
+        X1 <- matrix(1, nobs, as.integer(intercept))
 
         X1comp <- rep(0, 0) ## list of components of X1 to avoid duplication
         for (j in seq_len(d)) { ## work through variables
@@ -610,17 +609,14 @@ gam.side <- function(sm, Xp, tol = .Machine$double.eps^.5) {
             if (!b[l] %in% X1comp) { ## collect X columns
               X1comp <- c(X1comp, b[l]) ## keep track of components to avoid adding same one twice
 
-                X1 <- cbind(X1, sm[[b[l]]]$X)
-
+              X1 <- cbind(X1, sm[[b[l]]]$X)
             }
           }
         } ## Now X1 contains columns for all lower dimensional terms
         if (ncol(X1) == as.integer(intercept)) {
           ind <- NULL
         } else {
-
-            ind <- mgcv::fixDependence(X1, sm[[i]]$X, tol = tol)
-
+          ind <- mgcv::fixDependence(X1, sm[[i]]$X, tol = tol)
         }
         ## ... the columns to zero to ensure independence
         if (!is.null(ind)) {
@@ -670,7 +666,7 @@ gam.side <- function(sm, Xp, tol = .Machine$double.eps^.5) {
             ## Note that: i) it doesn't matter what the identifiability con on X1 is
             ##            ii) the degree of rank deficiency can't be changed by an identifiability con
 
-              ind <- mgcv::fixDependence(X1, sm[[i]]$Xp, rank.def = length(ind))
+            ind <- mgcv::fixDependence(X1, sm[[i]]$Xp, rank.def = length(ind))
 
             sm[[i]]$Xp <- sm[[i]]$Xp[, -ind, drop = FALSE]
             attr(sm[[i]], "del.index") <- ind ## over-writes original
