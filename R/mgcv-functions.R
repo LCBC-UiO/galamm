@@ -159,9 +159,6 @@ gam.setup <- function(formula, pterms, mf) {
     G$cmX <- colMeans(X) ## useful for componentwise CI construction
   } else {
     G$cmX <- colMeans(Xp)
-    ## transform from fit params to prediction params...
-    ## G$P <- qr.coef(qr(Xp),X) ## old code assumes always full rank!!
-
     qrx <- qr(Xp, LAPACK = TRUE)
     R <- qr.R(qrx)
     p <- ncol(R)
@@ -180,13 +177,7 @@ gam.setup <- function(formula, pterms, mf) {
     }
     G$P[qrx$pivot, ] <- G$P
   }
-  ## cmX relates to computation of CIs incorportating uncertainty about the mean
-  ## It may make more sense to incorporate all uncertainty about the mean,
-  ## rather than just the uncertainty in the fixed effects mean. This means
-  ## incorporating the mean of random effects and unconstrained smooths. Hence
-  ## comment out the following.
-  # if (G$nsdf>0) G$cmX[-(1:G$nsdf)] <- 0 ## zero the smooth parts here
-  # else G$cmX <- G$cmX * 0
+
   G$X <- X
   rm(X)
   n.p <- ncol(G$X)
@@ -195,9 +186,7 @@ gam.setup <- function(formula, pterms, mf) {
 
   names(G$sp) <- sp.names
 
-  ## now work through the smooths searching for any `sp' elements
-  ## supplied in `s' or `te' terms.... This relies on `idx' created
-  ## above...
+
   for (i in seq_len(m)) {
     id <- sm[[i]]$id
     if (is.null(sm[[i]]$L)) Li <- diag(length(sm[[i]]$S)) else Li <- sm[[i]]$L

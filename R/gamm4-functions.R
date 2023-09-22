@@ -269,7 +269,7 @@ gamm4.wrapup <- function(gobj, ret, final_model) {
         b <- beta
       } else { ## not fixed so need to undo transform of random effects etc.
         b <- rep(0, 0)
-        for (k in 1:length(gobj$G$smooth[[i]]$lmer.name)) { ## collect all coefs associated with this smooth
+        for (k in seq_along(gobj$G$smooth[[i]]$lmer.name)) { ## collect all coefs associated with this smooth
           b <- c(b, as.numeric(br[[gobj$G$smooth[[i]]$lmer.name[k]]][[1]]))
         }
         b <- b[gobj$G$smooth[[i]]$rind] ## make sure coefs are in order expected by smooth
@@ -315,7 +315,7 @@ gamm4.wrapup <- function(gobj, ret, final_model) {
   if (gobj$n.sr == 0) sn <- NULL ## names by which smooths are known in mer
   rn <- names(vr)
   ind <- rep(0, 0) ## index the non-smooth random effects among the random effects
-  for (i in 1:length(vr)) {
+  for (i in seq_along(vr)) {
     if (is.null(sn) || !rn[i] %in% sn) { ## append non smooth r.e.s to Zt
       Gp <- ret$model$lmod$reTrms$Gp
       ind <- c(ind, (Gp[i] + 1):Gp[i + 1])
@@ -378,7 +378,7 @@ gamm4.wrapup <- function(gobj, ret, final_model) {
     for (i in 1:gobj$G$m) { # Accumulate the total penalty matrix
       if (!object$smooth[[i]]$fixed) {
         ii <- object$smooth[[i]]$first.para:object$smooth[[i]]$last.para ## index this smooth's params
-        for (j in 1:length(object$smooth[[i]]$S)) { ## work through penalty list
+        for (j in seq_along(object$smooth[[i]]$S)) { ## work through penalty list
           ind <- ii[object$smooth[[i]]$pen.ind == j] ## index of currently penalized
           diag(Sp)[ind] <- sqrt(object$sp[k]) ## diagonal penalty
           k <- k + 1
@@ -395,7 +395,7 @@ gamm4.wrapup <- function(gobj, ret, final_model) {
   qrx <- qr(rbind(WX, Sp / sqrt(scale)), LAPACK = TRUE)
   Ri <- backsolve(qr.R(qrx), diag(ncol(WX)))
   ind <- qrx$pivot
-  ind[ind] <- 1:length(ind) ## qrx$pivot
+  ind[ind] <- seq_along(ind) ## qrx$pivot
   Ri <- Ri[ind, ] ## unpivoted square root of cov matrix in fitting parameterization Ri Ri' = cov
   Vb <- methods::as(B %*% Ri, "matrix")
   Vb <- Vb %*% Matrix::t(Vb)
@@ -440,17 +440,15 @@ gamm4.wrapup <- function(gobj, ret, final_model) {
 
   if (gobj$G$nsdf > 0) term.names <- colnames(gobj$G$X)[1:gobj$G$nsdf] else term.names <- array("", 0)
   n.smooth <- length(gobj$G$smooth)
-  if (n.smooth) {
-    for (i in 1:n.smooth)
-    {
-      k <- 1
-      for (j in object$smooth[[i]]$first.para:object$smooth[[i]]$last.para)
-      {
-        term.names[j] <- paste(object$smooth[[i]]$label, ".", as.character(k), sep = "")
-        k <- k + 1
-      }
+
+  for (i in seq_len(n.smooth)) {
+    k <- 1
+    for (j in object$smooth[[i]]$first.para:object$smooth[[i]]$last.para) {
+      term.names[j] <- paste(object$smooth[[i]]$label, ".", as.character(k), sep = "")
+      k <- k + 1
     }
   }
+
   names(object$coefficients) <- term.names # note - won't work on matrices!!
   names(object$edf) <- term.names
   names(object$sp) <- names(gobj$G$sp)
