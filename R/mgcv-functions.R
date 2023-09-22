@@ -8,7 +8,7 @@
 #' @param mf Model data.
 #'
 #' @return A list containing all the data necessary to fit a GAMM.
-#' @author Simon N Wood and Oystein Sorensen.
+#' @author Simon N Wood with modifications by Oystein Sorensen.
 #'
 #' @noRd
 #'
@@ -193,10 +193,7 @@ gam.setup <- function(formula, pterms, mf) {
     spi <- sm[[i]]$sp
   }
 
-
-  ## copy initial sp's back into smooth objects, so there is a record of
-  ## fixed and free...
-  k <- 1
+    k <- 1
 
   for (i in seq_len(m)) { ## work through all smooths
     id <- sm[[i]]$id
@@ -265,7 +262,7 @@ gam.setup <- function(formula, pterms, mf) {
 #' @param n Integer specifying the number of observations.
 #'
 #' @return A list containing summary statistics for each variable in the model.
-#' @author Simon Wood
+#' @author Simon Wood with modifications by Oystein Sorensen
 #' @noRd
 #'
 #' @references
@@ -284,9 +281,6 @@ variable.summary <- function(pf, dl, n) {
     }
   }
   v.name <- v.name[seq_len(k)]
-
-
-
   p.name <- all.vars(pf[-2]) ## variables in parametric part (not response)
   vs <- list()
   v.n <- length(v.name)
@@ -325,7 +319,7 @@ variable.summary <- function(pf, dl, n) {
 #' @param tol Numerical tolerance.
 #'
 #' @return A list of smooth terms, with identifiability constraints imposed.
-#' @author Simon Wood
+#' @author Simon Wood with modifications by Oystein Sorensen
 #'
 #' @noRd
 #'
@@ -362,7 +356,7 @@ gam.side <- function(sm, Xp, tol = .Machine$double.eps^.5) {
 #'     specification of the smooth terms and a specification of the
 #'     parametric components.
 #' @noRd
-#' @author Simon Wood, with modifications by Oystein Sorensen.
+#' @author Simon Wood with modifications by Oystein Sorensen.
 #'
 #' @references
 #' \insertRef{woodGeneralizedAdditiveModels2017a}{galamm}
@@ -461,4 +455,4 @@ interpret.gam0 <- function(gf) {
   )
   class(ret) <- "split.gam.formula"
   ret
-} ## interpret.gam0
+}
