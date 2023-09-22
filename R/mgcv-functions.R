@@ -129,7 +129,6 @@ gam.setup <- function(formula, pterms, mf) {
       sp.names <- c(sp.names, spn) ## extend the sp name vector
       lsp.names <- c(lsp.names, lspn) ## extend full.sp name vector
     }
-
   }
 
 
@@ -224,91 +223,46 @@ gam.setup <- function(formula, pterms, mf) {
   for (i in seq_len(m)) {
     id <- sm[[i]]$id
     if (is.null(sm[[i]]$L)) Li <- diag(length(sm[[i]]$S)) else Li <- sm[[i]]$L
-    if (is.null(id)) { ## it's a smooth without an id
-      spi <- sm[[i]]$sp
-      if (!is.null(spi)) { ## sp supplied in `s' or `te'
-        if (length(spi) != ncol(Li)) stop("incorrect number of smoothing parameters supplied for a smooth term")
-        G$sp[k:(k + ncol(Li) - 1)] <- spi
-      }
-      k <- k + ncol(Li)
-    } else { ## smooth has an id
-      spi <- sm[[i]]$sp
-      if (is.null(idx[[id]]$sp.done)) { ## not already dealt with these sp's
-        if (!is.null(spi)) { ## sp supplied in `s' or `te'
-          if (length(spi) != ncol(Li)) stop("incorrect number of smoothing parameters supplied for a smooth term")
-          G$sp[idx[[id]]$c:(idx[[id]]$c + idx[[id]]$nc - 1)] <- spi
-        }
-        idx[[id]]$sp.done <- TRUE ## only makes sense to use supplied `sp' from defining term
-        k <- k + idx[[id]]$nc
-      }
+
+    spi <- sm[[i]]$sp
+    if (!is.null(spi)) { ## sp supplied in `s' or `te'
+      if (length(spi) != ncol(Li)) stop("incorrect number of smoothing parameters supplied for a smooth term")
+      G$sp[k:(k + ncol(Li) - 1)] <- spi
     }
+    k <- k + ncol(Li)
   }
 
 
   ## copy initial sp's back into smooth objects, so there is a record of
   ## fixed and free...
   k <- 1
-  for (i in seq_along(idx)) idx[[i]]$sp.done <- FALSE
 
   for (i in seq_len(m)) { ## work through all smooths
     id <- sm[[i]]$id
-    if (!is.null(id)) { ## smooth with id
-      if (idx[[id]]$nc > 0) { ## only copy if there are sp's
-        G$smooth[[i]]$sp <- G$sp[idx[[id]]$c:(idx[[id]]$c + idx[[id]]$nc - 1)]
-      }
-      if (!idx[[id]]$sp.done) { ## only update k on first encounter with this smooth
-        idx[[id]]$sp.done <- TRUE
-        k <- k + idx[[id]]$nc
-      }
-    } else { ## no id, just work through sp
-      if (is.null(sm[[i]]$L)) nc <- length(sm[[i]]$S) else nc <- ncol(sm[[i]]$L)
-      if (nc > 0) G$smooth[[i]]$sp <- G$sp[k:(k + nc - 1)]
-      k <- k + nc
-    }
+
+    if (is.null(sm[[i]]$L)) nc <- length(sm[[i]]$S) else nc <- ncol(sm[[i]]$L)
+    if (nc > 0) G$smooth[[i]]$sp <- G$sp[k:(k + nc - 1)]
+    k <- k + nc
+
   }
-
-
-
 
   k.sp <- 0 # count through sp and S
   G$rank <- array(0, 0)
 
   for (i in seq_len(m)) {
     sm <- G$smooth[[i]]
-    if (length(sm$S) > 0) {
-      for (j in 1:length(sm$S)) { # work through penalty matrices
-        k.sp <- k.sp + 1
-        G$off[k.sp] <- sm$first.para
-        G$S[[k.sp]] <- sm$S[[j]]
-        G$rank[k.sp] <- sm$rank[j]
-      }
+    for (j in seq_along(sm$S)) { # work through penalty matrices
+      k.sp <- k.sp + 1
+      G$off[k.sp] <- sm$first.para
+      G$S[[k.sp]] <- sm$S[[j]]
+      G$rank[k.sp] <- sm$rank[j]
     }
+
   }
 
 
-  ## need to modify L, lsp.names, G$S, G$sp, G$rank and G$off to include any penalties
-  ## on parametric stuff, at this point....
-  if (!is.null(PP)) { ## deal with penalties on parametric terms
-    L <- rbind(
-      cbind(L, matrix(0, nrow(L), ncol(PP$L))),
-      cbind(matrix(0, nrow(PP$L), ncol(L)), PP$L)
-    )
-    G$off <- c(PP$off, G$off)
-    G$S <- c(PP$S, G$S)
-    G$rank <- c(PP$rank, G$rank)
-    G$sp <- c(PP$sp, G$sp)
-    lsp.names <- c(PP$full.sp.names, lsp.names)
-    G$n.paraPen <- length(PP$off)
-    if (!is.null(PP$min.sp)) { ## deal with minimum sps
-      H <- matrix(0, n.p, n.p)
-      for (i in 1:length(PP$S)) {
-        ind <- PP$off[i]:(PP$off[i] + ncol(PP$S[[i]]) - 1)
-        H[ind, ind] <- H[ind, ind] + PP$min.sp[i] * PP$S[[i]]
-      }
-    } ## min.sp stuff finished
-  } else {
-    G$n.paraPen <- 0
-  }
+  G$n.paraPen <- 0
+
 
 
   ## Now remove columns of L and rows of sp relating to fixed
