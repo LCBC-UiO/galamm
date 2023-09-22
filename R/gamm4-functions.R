@@ -6,7 +6,7 @@
 #' @param formula A formula excluding lme4 style random effects but including
 #'   smooths.
 #' @param pterms Parametric terms in the model.
-#' @param data Model frame.
+#' @param mf Model frame.
 #'
 #' @return model
 #' @author Simon N Wood, with some modifications by Oystein Sorensen.
@@ -19,8 +19,8 @@
 #' \insertRef{woodGeneralizedAdditiveModels2017a}{galamm}
 #'
 #'
-gamm4.setup <- function(formula, pterms, data) {
-  G <- gam.setup(formula, pterms, mf = data)
+gamm4.setup <- function(formula, pterms, mf) {
+  G <- gam.setup(formula, pterms, mf)
   first.f.para <- G$nsdf + 1
   random <- list()
   ind <- seq_len(G$nsdf)
@@ -28,7 +28,7 @@ gamm4.setup <- function(formula, pterms, data) {
   xlab <- rep("", 0)
   G$Xf <- methods::as(X, "dgCMatrix")
   first.para <- G$nsdf + 1
-  used.names <- names(data)
+  used.names <- names(mf)
 
   for (i in seq_len(G$m)) {
     sm <- G$smooth[[i]]
@@ -120,7 +120,7 @@ gamm4.setup <- function(formula, pterms, data) {
 #'
 #' \insertRef{woodGeneralizedAdditiveModels2017a}{galamm}
 #'
-gamm4 <- function(fixed, random = NULL, data = list()) {
+gamm4 <- function(fixed, random = NULL, data) {
   random.vars <- all.vars(random)
   gp <- interpret.gam0(fixed)
   mf <- match.call(expand.dots = FALSE)
@@ -159,7 +159,7 @@ gamm4 <- function(fixed, random = NULL, data = list()) {
   pmf <- eval(pmf, parent.frame())
   pTerms <- attr(pmf, "terms")
 
-  G <- gamm4.setup(gp, pterms = pTerms, data = mf)
+  G <- gamm4.setup(formula = gp, pterms = pTerms, mf = mf)
   G$var.summary <- var.summary
   n.sr <- length(G$random)
 
@@ -216,10 +216,15 @@ gamm4 <- function(fixed, random = NULL, data = list()) {
 
 
 gamm4.wrapup <- function(gobj, ret, final_model) {
+  if (length(gobj$G$smooth) == 0) {
+    return(list())
+  }
+
   object <- list(
     model = gobj$mf,
     smooth = gobj$G$smooth,
     nsdf = gobj$G$nsdf,
+    family = ret$model$family[[1]],
     df.null = nrow(gobj$G$X),
     y = ret$model$response,
     terms = gobj$gam.terms,
@@ -227,20 +232,26 @@ gamm4.wrapup <- function(gobj, ret, final_model) {
     xlevels = gobj$G$xlevels,
     contrasts = gobj$G$contrasts,
     assign = gobj$G$assign,
+    na.action = attr(gobj$mf, "na.action"),
     cmX = gobj$G$cmX,
-    var.summary = gobj$G$var.summary,
-    method = "ML"
+    var.summary = gobj$G$var.summary
   )
-
   pvars <- all.vars(stats::delete.response(object$terms))
-  object$pred.formula <- stats::reformulate(pvars)
+  object$pred.formula <- if (length(pvars) > 0) stats::reformulate(pvars) else NULL
+  sn <- names(gobj$G$random)
+
+  if (object$family$family == "gaussian" && object$family$link == "identity") {
+    linear <- TRUE
+  } else {
+    linear <- FALSE
+  }
 
   B <- Matrix::Matrix(0, ncol(gobj$G$Xf), ncol(gobj$G$Xf))
   diag(B) <- 1
   Xfp <- gobj$G$Xf
-
-  bf <- as.numeric(fixef(ret))
-  br <- ranef(ret)
+  ## Transform  parameters back to the original space....
+  bf <- fixef(ret)
+  br <- ranef(ret) ## a named list
   p <- bf[seq_len(gobj$G$nsdf)]
 
   for (i in seq_len(gobj$G$m)) {
@@ -248,28 +259,25 @@ gamm4.wrapup <- function(gobj, ret, final_model) {
     first <- gobj$G$smooth[[i]]$first.f.para
     last <- gobj$G$smooth[[i]]$last.f.para
     beta <- bf[seq(from = first, to = last, by = 1)]
-
     if (fx) {
       b <- beta
-    } else {
-      b <- numeric()
-      for (k in seq_along(gobj$G$smooth[[i]]$lmer.name)) {
+    } else { ## not fixed so need to undo transform of random effects etc.
+      b <- rep(0, 0)
+      for (k in seq_along(gobj$G$smooth[[i]]$lmer.name)) { ## collect all coefs associated with this smooth
         b <- c(b, as.numeric(br[[gobj$G$smooth[[i]]$lmer.name[k]]][[1]]))
       }
-      b <- b[gobj$G$smooth[[i]]$rind]
+      b <- b[gobj$G$smooth[[i]]$rind] ## make sure coefs are in order expected by smooth
       b <- c(b, beta)
       b <- gobj$G$smooth[[i]]$trans.D * b
-      if (!is.null(gobj$G$smooth[[i]]$trans.U)) {
-        b <- gobj$G$smooth[[i]]$trans.U %*% b
-      }
+      if (!is.null(gobj$G$smooth[[i]]$trans.U)) b <- gobj$G$smooth[[i]]$trans.U %*% b ## transform back to original
     }
     p <- c(p, b)
 
-    ind <- with(
-      gobj$G$smooth[[i]],
-      seq(from = first.para, to = last.para, by = 1)
+    ## now fill in B...
+    ind <- seq(
+      from = gobj$G$smooth[[i]]$first.para,
+      to = gobj$G$smooth[[i]]$last.para, by = 1
     )
-
     if (!fx) {
       D <- gobj$G$smooth[[i]]$trans.D
       if (is.null(gobj$G$smooth[[i]]$trans.U)) {
@@ -278,63 +286,92 @@ gamm4.wrapup <- function(gobj, ret, final_model) {
         B[ind, ind] <- t(D * t(gobj$G$smooth[[i]]$trans.U))
       }
     }
+
     Xfp[, ind] <- gobj$G$Xf[, ind, drop = FALSE] %*% B[ind, ind, drop = FALSE]
   }
 
+
   object$coefficients <- p
-  vr <- lme4::VarCorr(ret)
+
+  vr <- VarCorr(ret)
 
   scale <- as.numeric(attr(vr, "sc"))^2
+  if (!is.finite(scale) || scale == 1) {
+    scale <- 1
+    object$scale.estimated <- FALSE
+  } else {
+    object$scale.estimated <- TRUE
+  }
+
   sp <- rep(-1, gobj$n.sr)
 
-  sn <- names(gobj$G$random)
+  Zt <- Matrix::Matrix(0, 0, ncol(gobj$lmod$reTrms$Zt))
   if (gobj$n.sr == 0) sn <- NULL
   rn <- names(vr)
-  ind <- integer()
+  ind <- rep(0, 0)
   for (i in seq_along(vr)) {
-    if (is.null(sn) || !rn[[i]] %in% sn) {
-      Gp <- gobj$lmod$reTrms$Gp
+    if (is.null(sn) || !rn[i] %in% sn) {
+      Gp <- ret$model$lmod$reTrms$Gp
       ind <- c(ind, seq(from = (Gp[i] + 1), to = Gp[i + 1], by = 1))
     } else if (!is.null(sn)) {
-      k <- seq(gobj$n.sr)[rn[i] == sn]
-      sp[k] <- min(scale / as.numeric(vr[[i]]), 1e10)
+      k <- (1:gobj$n.sr)[rn[i] == sn]
+      if (as.numeric(vr[[i]] > 0)) {
+        sp[k] <- scale / as.numeric(vr[[i]])
+      } else {
+        sp[k] <- 1e10
+      }
     }
   }
 
-  Zt <- gobj$lmod$reTrms$Zt[ind, ]
-  root.phi <- gobj$lmod$reTrms$Lambdat[ind, ind]
-  V <- Matrix::Diagonal(length(final_model$V), scale / final_model$V) +
-    Matrix::crossprod(root.phi %*% Zt) * scale
+  if (length(ind)) { ## extract columns corresponding to non-smooth r.e.s
+    Zt <- gobj$lmod$reTrms$Zt[ind, ] ## extracting random effects model matrix
+    root.phi <- gobj$lmod$reTrms$Lambdat[ind, ind] ## and corresponding sqrt of cov matrix (phi)
+  }
 
-  R <- Matrix::chol(V, pivot = TRUE)
+  object$prior.weights <- gobj$G$w
+
+  if (linear) {
+    object$weights <- object$prior.weights
+    V <- Matrix::Diagonal(n = length(object$weights), x = scale / object$weights)
+  } else {
+    V <- Matrix::Diagonal(length(final_model$V), scale / final_model$V)
+  }
+
+
+  if (nrow(Zt) > 0) V <- V + Matrix::crossprod(root.phi %*% Zt) * scale ## data or pseudodata cov matrix, treating smooths as fixed now
+
+  R <- Matrix::chol(V, pivot = FALSE)
   piv <- attr(R, "pivot")
 
   gobj$G$Xf <- methods::as(gobj$G$Xf, "dgCMatrix")
   Xfp <- methods::as(Xfp, "dgCMatrix")
 
-  if (is.null(piv)) {
-    WX <- methods::as(Matrix::solve(Matrix::t(R), Xfp), "matrix")
-    XVX <- methods::as(Matrix::solve(Matrix::t(R), gobj$G$Xf), "matrix")
-  } else {
-    WX <- methods::as(Matrix::solve(Matrix::t(R), Xfp[piv, ]), "matrix")
-    XVX <- methods::as(Matrix::solve(Matrix::t(R), gobj$G$Xf[piv, ]), "matrix")
-  }
+
+  WX <- methods::as(Matrix::solve(Matrix::t(R), Xfp), "matrix")
+  XVX <- methods::as(Matrix::solve(Matrix::t(R), gobj$G$Xf), "matrix")
 
   qrz <- qr(XVX, LAPACK = TRUE)
   object$R <- qr.R(qrz)
   object$R[, qrz$pivot] <- object$R
-  XVX <- crossprod(object$R)
+
+  XVX <- crossprod(object$R) ## X'V^{-1}X original parameterization
+
   object$sp <- sp
+
   colx <- ncol(gobj$G$Xf)
-  Sp <- matrix(0, colx, colx)
+  Sp <- matrix(0, colx, colx) # penalty matrix - fit param
   first <- gobj$G$nsdf + 1
   k <- 1
-  for (i in seq_along(gobj$G$m)) {
+
+  for (i in seq_len(gobj$G$m)) { # Accumulate the total penalty matrix
     if (!object$smooth[[i]]$fixed) {
-      ii <- with(object$smooth[[i]], seq(from = first.para, to = last.para))
-      for (j in seq_along(object$smooth[[i]]$S)) {
-        ind <- ii[object$smooth[[i]]$pen.ind == j]
-        diag(Sp)[ind] <- sqrt(object$sp[k])
+      ii <- seq(
+        from = object$smooth[[i]]$first.para,
+        to = object$smooth[[i]]$last.para, by = 1
+      ) ## index this smooth's params
+      for (j in seq_along(object$smooth[[i]]$S)) { ## work through penalty list
+        ind <- ii[object$smooth[[i]]$pen.ind == j] ## index of currently penalized
+        diag(Sp)[ind] <- sqrt(object$sp[k]) ## diagonal penalty
         k <- k + 1
       }
     }
@@ -344,19 +381,29 @@ gamm4.wrapup <- function(gobj, ret, final_model) {
   qrx <- qr(rbind(WX, Sp / sqrt(scale)), LAPACK = TRUE)
   Ri <- backsolve(qr.R(qrx), diag(ncol(WX)))
   ind <- qrx$pivot
-  ind[ind] <- seq_along(ind)
-  Ri <- Ri[ind, ]
-  Vb <- methods::as(B, "matrix") %*% Ri
-  Vb <- Vb %*% t(Vb)
+  ind[ind] <- seq_along(ind) ## qrx$pivot
+  Ri <- Ri[ind, ] ## unpivoted square root of cov matrix in fitting parameterization Ri Ri' = cov
+  Vb <- methods::as(B %*% Ri, "matrix")
+  Vb <- Vb %*% Matrix::t(Vb)
 
   object$edf <- rowSums(Vb * t(XVX))
+
   object$df.residual <- length(object$y) - sum(object$edf)
+
   object$sig2 <- scale
+  if (linear) {
+    object$method <- "lmer.REML"
+  } else {
+    object$method <- "glmer.ML"
+  }
+
   object$Vp <- methods::as(Vb, "matrix")
+
   object$Ve <- methods::as(Vb %*% XVX %*% Vb, "matrix")
 
   class(object) <- "gam"
 
+  ## Restore original smooth list, if it was split to deal with t2 terms...
   if (!is.null(gobj$G$original.smooth)) {
     object$smooth <- gobj$G$smooth <- gobj$G$original.smooth
   }
@@ -367,33 +414,32 @@ gamm4.wrapup <- function(gobj, ret, final_model) {
     object$Ve <- gobj$G$P %*% object$Ve %*% t(gobj$G$P)
   }
 
-  object$linear.predictors <- predict(object, type = "link")
-  object$fitted.values <- object$linear.predictors
+  object$linear.predictors <- predict(ret, type = "link")
+  object$fitted.values <- object$family$linkinv(object$linear.predictors)
 
-  object$residuals <- residuals(ret)
+  object$residuals <- residuals(ret$mer)
 
-  term.names <- colnames(gobj$G$X)[seq(length.out = gobj$G$nsdf)]
+  term.names <- colnames(gobj$G$X)[seq_len(gobj$G$nsdf)]
   n.smooth <- length(gobj$G$smooth)
 
-  for (i in seq_along(n.smooth)) {
+  for (i in seq_len(n.smooth)) {
     k <- 1
-    for (j in with(
-      object$smooth[[i]],
-      seq(from = first.para, to = last.para)
+    for (j in seq(
+      from = object$smooth[[i]]$first.para,
+      to = object$smooth[[i]]$last.para, by = 1
     )) {
-      term.names[j] <- paste(object$smooth[[i]]$label, ".",
-        as.character(k),
-        sep = ""
-      )
+      term.names[j] <- paste(object$smooth[[i]]$label, ".", as.character(k), sep = "")
       k <- k + 1
     }
   }
-  names(object$coefficients) <- term.names
+
+  names(object$coefficients) <- term.names # note - won't work on matrices!!
   names(object$edf) <- term.names
   names(object$sp) <- names(gobj$G$sp)
 
-  object$gcv.ubre <- deviance(ret)
+  object$gcv.ubre <- deviance(ret$mer)
 
-  if (!is.null(gobj$G$Xcentre)) object$Xcentre <- gobj$G$Xcentre
+  if (!is.null(gobj$G$Xcentre)) object$Xcentre <- gobj$G$Xcentre ## any column centering applied to smooths
+
   object
 }

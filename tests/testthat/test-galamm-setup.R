@@ -4,7 +4,8 @@ test_that("wrong input is handled properly", {
 
   expect_error(
     mod <- galamm(
-      formula = y ~ 0 + item + s(x, by = loading) + (0 + loading | id / timepoint),
+      formula = y ~ 0 + item + s(x, by = loading) +
+        (0 + loading | id / timepoint),
       data = dat,
       family = binomial,
       load.var = "item",
@@ -15,7 +16,8 @@ test_that("wrong input is handled properly", {
 
   expect_error(
     mod <- galamm(
-      formula = y ~ 0 + item + s(x, by = loading) + (0 + loading | id / timepoint),
+      formula = y ~ 0 + item + s(x, by = loading) +
+        (0 + loading | id / timepoint),
       data = dat,
       family = binomial,
       load.var = "item",
@@ -28,7 +30,8 @@ test_that("wrong input is handled properly", {
 
   expect_error(
     mod <- galamm(
-      formula = y ~ 0 + item + s(x, by = loading) + (0 + loading | id / timepoint),
+      formula = y ~ 0 + item + s(x, by = loading) +
+        (0 + loading | id / timepoint),
       data = dat,
       family = binomial,
       load.var = "item",
@@ -41,7 +44,8 @@ test_that("wrong input is handled properly", {
 
   expect_error(
     mod <- galamm(
-      formula = y ~ 0 + item + s(x, by = loading) + (0 + loading | id / timepoint),
+      formula = y ~ 0 + item + s(x, by = loading) +
+        (0 + loading | id / timepoint),
       data = dat,
       family = binomial,
       load.var = "item",
@@ -54,7 +58,8 @@ test_that("wrong input is handled properly", {
 
   expect_error(
     mod <- galamm(
-      formula = y ~ 0 + item + s(x, by = loading) + (0 + loading | id / timepoint),
+      formula = y ~ 0 + item + s(x, by = loading) +
+        (0 + loading | id / timepoint),
       data = dat,
       family = binomial,
       load.var = "item",
@@ -67,7 +72,8 @@ test_that("wrong input is handled properly", {
 
   expect_error(
     mod <- galamm(
-      formula = y ~ 0 + item + s(x, by = loading) + (0 + loading | id / timepoint),
+      formula = y ~ 0 + item + s(x, by = loading) +
+        (0 + loading | id / timepoint),
       data = dat,
       family = binomial,
       load.var = "item",
@@ -82,7 +88,8 @@ test_that("wrong input is handled properly", {
   newdat$loading <- 1
   expect_error(
     mod <- galamm(
-      formula = y ~ 0 + item + s(x, by = loading) + (0 + loading | id / timepoint),
+      formula = y ~ 0 + item + s(x, by = loading) +
+        (0 + loading | id / timepoint),
       data = newdat,
       family = binomial,
       load.var = "item",

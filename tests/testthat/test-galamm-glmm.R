@@ -82,7 +82,8 @@ test_that("Logistic GLMM with simple factor works", {
   expect_equal(
     llikAIC(galamm_mod_trials),
     c(
-      AIC = 832.676919325154, BIC = 846.681952167332, logLik = -412.338459662577,
+      AIC = 832.676919325154, BIC = 846.681952167332,
+      logLik = -412.338459662577,
       deviance = 388.350924875839, df.resid = 241
     )
   )
@@ -99,7 +100,8 @@ test_that("Poisson GLMM works", {
   expect_equal(
     count_mod$parameters$parameter_estimates,
     c(
-      0.501565551064086, 1.79356916017583, 0.884503952015789, -0.334962607667788,
+      0.501565551064086, 1.79356916017583, 0.884503952015789,
+      -0.334962607667788,
       0.48458513737595, -0.161087431903879, 0.338389940944434
     )
   )

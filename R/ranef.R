@@ -45,7 +45,7 @@ ranef.galamm <- function(object, ...) {
     cnms <- object$model$lmod$reTrms$cnms
     nc <- lengths(cnms) ## number of terms
 
-    nb <- diff(object$model$lmod$reTrms$Gp) ## differencing group index is more robust
+    nb <- diff(object$model$lmod$reTrms$Gp)
     nbseq <- rep.int(seq_along(nb), nb)
     ml <- split(ans, nbseq)
     for (i in seq_along(ml)) {

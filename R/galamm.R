@@ -116,7 +116,7 @@
 #'   (used in heteroscedastic Gaussian models) among the estimated model
 #'   parameters.
 #'  * \code{gam} List containing information about smooth terms in the model. If no
-#'   smooth terms are contained in the model, then it is \code{NULL}.
+#'   smooth terms are contained in the model, then it is a list of length zero.
 #'
 #' @export
 #'
@@ -388,9 +388,9 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   )
 
   class(ret) <- "galamm"
-  if (length(gobj$G$smooth) > 0) {
-    ret$gam <- gamm4.wrapup(gobj, ret, final_model)
-  }
+
+  ret$gam <- gamm4.wrapup(gobj, ret, final_model)
+
 
   ret
 }
