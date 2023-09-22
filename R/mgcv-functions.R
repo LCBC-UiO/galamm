@@ -193,7 +193,7 @@ gam.setup <- function(formula, pterms, mf) {
     spi <- sm[[i]]$sp
   }
 
-    k <- 1
+  k <- 1
 
   for (i in seq_len(m)) { ## work through all smooths
     id <- sm[[i]]$id
