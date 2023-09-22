@@ -238,8 +238,8 @@ gamm4.wrapup <- function(gobj, ret, final_model) {
     cmX = gobj$G$cmX,
     var.summary = gobj$G$var.summary
   )
-  pvars <- all.vars(delete.response(object$terms))
-  object$pred.formula <- if (length(pvars) > 0) reformulate(pvars) else NULL
+  pvars <- all.vars(stats::delete.response(object$terms))
+  object$pred.formula <- if (length(pvars) > 0) stats::reformulate(pvars) else NULL
   sn <- names(gobj$G$random)
 
   if (object$family$family == "gaussian" && object$family$link == "identity") linear <- TRUE else linear <- FALSE
@@ -352,15 +352,15 @@ gamm4.wrapup <- function(gobj, ret, final_model) {
   R <- Matrix::chol(V, pivot = TRUE)
   piv <- attr(R, "pivot")
 
-  gobj$G$Xf <- as(gobj$G$Xf, "dgCMatrix")
-  Xfp <- as(Xfp, "dgCMatrix")
+  gobj$G$Xf <- methods::as(gobj$G$Xf, "dgCMatrix")
+  Xfp <- methods::as(Xfp, "dgCMatrix")
 
   if (is.null(piv)) {
-    WX <- as(Matrix::solve(Matrix::t(R), Xfp), "matrix") ## V^{-.5}Xp -- fit parameterization
-    XVX <- as(Matrix::solve(Matrix::t(R), gobj$G$Xf), "matrix") ## same in original parameterization
+    WX <- methods::as(Matrix::solve(Matrix::t(R), Xfp), "matrix") ## V^{-.5}Xp -- fit parameterization
+    XVX <- methods::as(Matrix::solve(Matrix::t(R), gobj$G$Xf), "matrix") ## same in original parameterization
   } else {
-    WX <- as(Matrix::solve(Matrix::t(R), Xfp[piv, ]), "matrix") ## V^{-.5}Xp -- fit parameterization
-    XVX <- as(Matrix::solve(Matrix::t(R), gobj$G$Xf[piv, ]), "matrix") ## same in original parameterization
+    WX <- methods::as(Matrix::solve(Matrix::t(R), Xfp[piv, ]), "matrix") ## V^{-.5}Xp -- fit parameterization
+    XVX <- methods::as(Matrix::solve(Matrix::t(R), gobj$G$Xf[piv, ]), "matrix") ## same in original parameterization
   }
   qrz <- qr(XVX, LAPACK = TRUE)
   object$R <- qr.R(qrz)
@@ -397,7 +397,7 @@ gamm4.wrapup <- function(gobj, ret, final_model) {
   ind <- qrx$pivot
   ind[ind] <- 1:length(ind) ## qrx$pivot
   Ri <- Ri[ind, ] ## unpivoted square root of cov matrix in fitting parameterization Ri Ri' = cov
-  Vb <- as(B %*% Ri, "matrix")
+  Vb <- methods::as(B %*% Ri, "matrix")
   Vb <- Vb %*% Matrix::t(Vb)
 
   object$edf <- rowSums(Vb * t(XVX))
@@ -411,9 +411,9 @@ gamm4.wrapup <- function(gobj, ret, final_model) {
     object$method <- "glmer.ML"
   }
 
-  object$Vp <- as(Vb, "matrix")
+  object$Vp <- methods::as(Vb, "matrix")
 
-  object$Ve <- as(Vb %*% XVX %*% Vb, "matrix")
+  object$Ve <- methods::as(Vb %*% XVX %*% Vb, "matrix")
 
   class(object) <- "gam"
 

@@ -28,26 +28,22 @@ gam.setup <- function(formula, pterms, mf) {
   G$intercept <- attr(attr(mf, "terms"), "intercept") > 0
 
   ## get any model offset. Complicated by possibility of offsets in multiple formulae...
-  G$offset <- model.offset(mf) # get any model offset including from offset argument
+  G$offset <- stats::model.offset(mf) # get any model offset including from offset argument
 
   if (!is.null(G$offset)) G$offset <- as.numeric(G$offset)
 
   # construct strictly parametric model matrix....
 
-  X <- model.matrix(pterms, mf)
+  X <- stats::model.matrix(pterms, mf)
 
   rownames(X) <- NULL ## save memory
 
   G$nsdf <- ncol(X)
   G$contrasts <- attr(X, "contrasts")
-  G$xlevels <- .getXlevels(pterms, mf)
+  G$xlevels <- stats::.getXlevels(pterms, mf)
   G$assign <- attr(X, "assign") # used to tell which coeffs relate to which pterms
 
-  ## now deal with any user supplied penalties on the parametric part of the model...
-  PP <- mgcv:::parametricPenalty(pterms, G$assign, NULL, NULL)
-  if (!is.null(PP)) { ## strip out supplied sps already used
-    ind <- 1:length(PP$sp)
-  }
+  PP <- NULL
 
   # next work through smooth terms (if any) extending model matrix.....
 
@@ -220,14 +216,14 @@ gam.setup <- function(formula, pterms, mf) {
 
       ## alternative version under alternative constraint first (prediction only)
       if (is.null(sm[[i]]$Xp)) {
-        if (!is.null(Xp)) Xp <- cbind2(Xp, sm[[i]]$X)
+        if (!is.null(Xp)) Xp <- methods::cbind2(Xp, sm[[i]]$X)
       } else {
         if (is.null(Xp)) Xp <- X
-        Xp <- cbind2(Xp, sm[[i]]$Xp)
+        Xp <- methods::cbind2(Xp, sm[[i]]$Xp)
         sm[[i]]$Xp <- NULL
       }
       ## now version to use for fitting ...
-      X <- cbind2(X, sm[[i]]$X)
+      X <- methods::cbind2(X, sm[[i]]$X)
       sm[[i]]$X <- NULL
 
       G$smooth[[i]] <- sm[[i]]
