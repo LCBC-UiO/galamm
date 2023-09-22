@@ -123,8 +123,6 @@ gamm4.setup <- function(formula, pterms, mf) {
 gamm4 <- function(fixed, random = NULL, data) {
   random.vars <- all.vars(random)
   gp <- interpret.gam0(fixed)
-  # when run interactively, do
-  # mf <- match.call(gamm4, call("gamm4", lme4::nobars(formula), rf, data))
   mf <- match.call(expand.dots = FALSE)
 
   mf$formula <- gp$fake.formula
@@ -276,8 +274,10 @@ gamm4.wrapup <- function(gobj, ret, final_model) {
     p <- c(p, b)
 
     ## now fill in B...
-    ind <- seq(from = gobj$G$smooth[[i]]$first.para,
-               to = gobj$G$smooth[[i]]$last.para, by = 1)
+    ind <- seq(
+      from = gobj$G$smooth[[i]]$first.para,
+      to = gobj$G$smooth[[i]]$last.para, by = 1
+    )
     if (!fx) {
       D <- gobj$G$smooth[[i]]$trans.D
       if (is.null(gobj$G$smooth[[i]]$trans.U)) {
@@ -365,8 +365,10 @@ gamm4.wrapup <- function(gobj, ret, final_model) {
 
   for (i in seq_len(gobj$G$m)) { # Accumulate the total penalty matrix
     if (!object$smooth[[i]]$fixed) {
-      ii <- seq(from = object$smooth[[i]]$first.para,
-                to = object$smooth[[i]]$last.para, by = 1) ## index this smooth's params
+      ii <- seq(
+        from = object$smooth[[i]]$first.para,
+        to = object$smooth[[i]]$last.para, by = 1
+      ) ## index this smooth's params
       for (j in seq_along(object$smooth[[i]]$S)) { ## work through penalty list
         ind <- ii[object$smooth[[i]]$pen.ind == j] ## index of currently penalized
         diag(Sp)[ind] <- sqrt(object$sp[k]) ## diagonal penalty
@@ -422,8 +424,10 @@ gamm4.wrapup <- function(gobj, ret, final_model) {
 
   for (i in seq_len(n.smooth)) {
     k <- 1
-    for (j in seq(from = object$smooth[[i]]$first.para,
-                  to = object$smooth[[i]]$last.para, by = 1)) {
+    for (j in seq(
+      from = object$smooth[[i]]$first.para,
+      to = object$smooth[[i]]$last.para, by = 1
+    )) {
       term.names[j] <- paste(object$smooth[[i]]$label, ".", as.character(k), sep = "")
       k <- k + 1
     }
