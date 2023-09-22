@@ -242,15 +242,11 @@ gamm4.wrapup <- function(gobj, ret, final_model) {
   object$pred.formula <- if (length(pvars) > 0) stats::reformulate(pvars) else NULL
   sn <- names(gobj$G$random)
 
-  if (object$family$family == "gaussian" && object$family$link == "identity") linear <- TRUE else linear <- FALSE
-
-  ## to unpack coefficients look at names(ret$lme$flist), ret$lme@Zt, ranef(), fixef()
-
-  ## let the GAM coefficients in the original parameterization be beta,
-  ## and let them be beta' in the fitting parameterization.
-  ## Then beta = B beta'. B and B^{-1} can be efficiently accumulated
-  ## and are useful for stable computation of the covariance matrix
-  ## etc...
+  if (object$family$family == "gaussian" && object$family$link == "identity") {
+    linear <- TRUE
+  } else {
+    linear <- FALSE
+  }
 
   B <- Matrix::Matrix(0, ncol(gobj$G$Xf), ncol(gobj$G$Xf))
   diag(B) <- 1
@@ -258,46 +254,44 @@ gamm4.wrapup <- function(gobj, ret, final_model) {
   ## Transform  parameters back to the original space....
   bf <- fixef(ret)
   br <- ranef(ret) ## a named list
-  if (gobj$G$nsdf) p <- bf[1:gobj$G$nsdf] else p <- array(0, 0) ## fixed parametric componet
-  if (gobj$G$m > 0) {
-    for (i in 1:gobj$G$m) {
-      fx <- gobj$G$smooth[[i]]$fixed
-      first <- gobj$G$smooth[[i]]$first.f.para
-      last <- gobj$G$smooth[[i]]$last.f.para
-      if (first <= last) beta <- bf[first:last] else beta <- array(0, 0)
-      if (fx) {
-        b <- beta
-      } else { ## not fixed so need to undo transform of random effects etc.
-        b <- rep(0, 0)
-        for (k in seq_along(gobj$G$smooth[[i]]$lmer.name)) { ## collect all coefs associated with this smooth
-          b <- c(b, as.numeric(br[[gobj$G$smooth[[i]]$lmer.name[k]]][[1]]))
-        }
-        b <- b[gobj$G$smooth[[i]]$rind] ## make sure coefs are in order expected by smooth
-        b <- c(b, beta)
-        b <- gobj$G$smooth[[i]]$trans.D * b
-        if (!is.null(gobj$G$smooth[[i]]$trans.U)) b <- gobj$G$smooth[[i]]$trans.U %*% b ## transform back to original
-      }
-      p <- c(p, b)
+  p <- bf[seq_len(gobj$G$nsdf)]
 
-      ## now fill in B...
-      ind <- gobj$G$smooth[[i]]$first.para:gobj$G$smooth[[i]]$last.para
-      if (!fx) {
-        D <- gobj$G$smooth[[i]]$trans.D
-        if (is.null(gobj$G$smooth[[i]]$trans.U)) {
-          B[ind, ind] <- Matrix::Diagonal(length(D), D)
-        } else {
-          B[ind, ind] <- t(D * t(gobj$G$smooth[[i]]$trans.U))
-        }
+  for (i in seq_len(gobj$G$m)) {
+    fx <- gobj$G$smooth[[i]]$fixed
+    first <- gobj$G$smooth[[i]]$first.f.para
+    last <- gobj$G$smooth[[i]]$last.f.para
+    beta <- bf[seq(from = first, to = last, by = 1)]
+    if (fx) {
+      b <- beta
+    } else { ## not fixed so need to undo transform of random effects etc.
+      b <- rep(0, 0)
+      for (k in seq_along(gobj$G$smooth[[i]]$lmer.name)) { ## collect all coefs associated with this smooth
+        b <- c(b, as.numeric(br[[gobj$G$smooth[[i]]$lmer.name[k]]][[1]]))
       }
-      ## and finally transform gobj$G$Xf into fitting parameterization...
-      Xfp[, ind] <- gobj$G$Xf[, ind, drop = FALSE] %*% B[ind, ind, drop = FALSE]
+      b <- b[gobj$G$smooth[[i]]$rind] ## make sure coefs are in order expected by smooth
+      b <- c(b, beta)
+      b <- gobj$G$smooth[[i]]$trans.D * b
+      if (!is.null(gobj$G$smooth[[i]]$trans.U)) b <- gobj$G$smooth[[i]]$trans.U %*% b ## transform back to original
     }
+    p <- c(p, b)
+
+    ## now fill in B...
+    ind <- seq(from = gobj$G$smooth[[i]]$first.para,
+               to = gobj$G$smooth[[i]]$last.para, by = 1)
+    if (!fx) {
+      D <- gobj$G$smooth[[i]]$trans.D
+      if (is.null(gobj$G$smooth[[i]]$trans.U)) {
+        B[ind, ind] <- Matrix::Diagonal(length(D), D)
+      } else {
+        B[ind, ind] <- t(D * t(gobj$G$smooth[[i]]$trans.U))
+      }
+    }
+    ## and finally transform gobj$G$Xf into fitting parameterization...
+    Xfp[, ind] <- gobj$G$Xf[, ind, drop = FALSE] %*% B[ind, ind, drop = FALSE]
   }
 
-  object$coefficients <- p
 
-  ## need to drop smooths from Zt and then
-  ## form Z'phiZ + I \sigma^2
+  object$coefficients <- p
 
   vr <- VarCorr(ret)
 
@@ -318,7 +312,7 @@ gamm4.wrapup <- function(gobj, ret, final_model) {
   for (i in seq_along(vr)) {
     if (is.null(sn) || !rn[i] %in% sn) { ## append non smooth r.e.s to Zt
       Gp <- ret$model$lmod$reTrms$Gp
-      ind <- c(ind, (Gp[i] + 1):Gp[i + 1])
+      ind <- c(ind, seq(from = (Gp[i] + 1), to = Gp[i + 1], by = 1))
     } else if (!is.null(sn)) { ## extract smoothing parameters for smooth r.e.s
       k <- (1:gobj$n.sr)[rn[i] == sn] ## where in original smooth ordering is current smoothing param
       if (as.numeric(vr[[i]] > 0)) {
@@ -374,24 +368,20 @@ gamm4.wrapup <- function(gobj, ret, final_model) {
   Sp <- matrix(0, colx, colx) # penalty matrix - fit param
   first <- gobj$G$nsdf + 1
   k <- 1
-  if (gobj$G$m > 0) {
-    for (i in 1:gobj$G$m) { # Accumulate the total penalty matrix
-      if (!object$smooth[[i]]$fixed) {
-        ii <- object$smooth[[i]]$first.para:object$smooth[[i]]$last.para ## index this smooth's params
-        for (j in seq_along(object$smooth[[i]]$S)) { ## work through penalty list
-          ind <- ii[object$smooth[[i]]$pen.ind == j] ## index of currently penalized
-          diag(Sp)[ind] <- sqrt(object$sp[k]) ## diagonal penalty
-          k <- k + 1
-        }
+
+  for (i in seq_len(gobj$G$m)) { # Accumulate the total penalty matrix
+    if (!object$smooth[[i]]$fixed) {
+      ii <- seq(from = object$smooth[[i]]$first.para,
+                to = object$smooth[[i]]$last.para, by = 1) ## index this smooth's params
+      for (j in seq_along(object$smooth[[i]]$S)) { ## work through penalty list
+        ind <- ii[object$smooth[[i]]$pen.ind == j] ## index of currently penalized
+        diag(Sp)[ind] <- sqrt(object$sp[k]) ## diagonal penalty
+        k <- k + 1
       }
-      first <- last + 1
     }
+    first <- last + 1
   }
 
-  ## Alternative cov matrix calculation. Basic
-  ## idea is that cov matrix is computed stably in
-  ## fitting parameterization, and then transformed to
-  ## original parameterization.
   qrx <- qr(rbind(WX, Sp / sqrt(scale)), LAPACK = TRUE)
   Ri <- backsolve(qr.R(qrx), diag(ncol(WX)))
   ind <- qrx$pivot
@@ -422,28 +412,24 @@ gamm4.wrapup <- function(gobj, ret, final_model) {
     object$smooth <- gobj$G$smooth <- gobj$G$original.smooth
   }
 
-  ## If prediction parameterization differs from fit parameterization, transform now...
-  ## (important for t2 smooths, where fit constraint is not good for component wise
-  ##  prediction s.e.s)
-
   if (!is.null(gobj$G$P)) {
     object$coefficients <- gobj$G$P %*% object$coefficients
     object$Vp <- gobj$G$P %*% object$Vp %*% t(gobj$G$P)
     object$Ve <- gobj$G$P %*% object$Ve %*% t(gobj$G$P)
   }
 
-
   object$linear.predictors <- predict(ret, type = "link")
   object$fitted.values <- object$family$linkinv(object$linear.predictors)
 
   object$residuals <- residuals(ret$mer)
 
-  if (gobj$G$nsdf > 0) term.names <- colnames(gobj$G$X)[1:gobj$G$nsdf] else term.names <- array("", 0)
+  term.names <- colnames(gobj$G$X)[seq_len(gobj$G$nsdf)]
   n.smooth <- length(gobj$G$smooth)
 
   for (i in seq_len(n.smooth)) {
     k <- 1
-    for (j in object$smooth[[i]]$first.para:object$smooth[[i]]$last.para) {
+    for (j in seq(from = object$smooth[[i]]$first.para,
+                  to = object$smooth[[i]]$last.para, by = 1)) {
       term.names[j] <- paste(object$smooth[[i]]$label, ".", as.character(k), sep = "")
       k <- k + 1
     }
