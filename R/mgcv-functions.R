@@ -18,7 +18,7 @@
 #' \insertRef{woodGeneralizedAdditiveModels2017a}{galamm}
 #'
 gam.setup <- function(formula, pterms, mf) {
-  H <- NULL
+
   m <- length(formula$smooth.spec)
   G <- list(
     m = m, min.sp = NULL, H = NULL, pearson.extra = 0,
@@ -192,19 +192,6 @@ gam.setup <- function(formula, pterms, mf) {
   G$X <- X
   rm(X)
   n.p <- ncol(G$X)
-  # deal with penalties
-
-
-  ## min.sp must be length nrow(L) to make sense
-  ## sp must be length ncol(L) --- need to partition
-  ## L into columns relating to free log smoothing parameters,
-  ## and columns, L0, corresponding to values supplied in sp.
-  ## lsp0 = L0%*%log(sp[sp>=0]) [need to fudge sp==0 case by
-  ## setting log(0) to log(effective zero) computed case-by-case]
-
-  ## following deals with supplied and estimated smoothing parameters...
-  ## first process the `sp' array supplied to `gam'...
-
 
   G$sp <- rep(-1, ncol(L))
 
@@ -213,19 +200,11 @@ gam.setup <- function(formula, pterms, mf) {
   ## now work through the smooths searching for any `sp' elements
   ## supplied in `s' or `te' terms.... This relies on `idx' created
   ## above...
-
-  k <- 1 ## current location in `sp' array
-
   for (i in seq_len(m)) {
     id <- sm[[i]]$id
     if (is.null(sm[[i]]$L)) Li <- diag(length(sm[[i]]$S)) else Li <- sm[[i]]$L
 
     spi <- sm[[i]]$sp
-    if (!is.null(spi)) { ## sp supplied in `s' or `te'
-      if (length(spi) != ncol(Li)) stop("incorrect number of smoothing parameters supplied for a smooth term")
-      G$sp[k:(k + ncol(Li) - 1)] <- spi
-    }
-    k <- k + ncol(Li)
   }
 
 
@@ -257,20 +236,12 @@ gam.setup <- function(formula, pterms, mf) {
 
   G$n.paraPen <- 0
 
+  G$lsp0 <- rep(0, nrow(L))
 
 
-  ## Now remove columns of L and rows of sp relating to fixed
-  ## smoothing parameters, and use removed elements to create lsp0
+  G$H <- NULL
 
-  lsp0 <- rep(0, nrow(L))
-
-
-  G$H <- H
-
-  if (ncol(L) == nrow(L) && !sum(L != diag(ncol(L)))) L <- NULL ## it's just the identity
-
-  G$L <- L
-  G$lsp0 <- lsp0
+  G$L <- NULL
   names(G$lsp0) <- lsp.names ## names of all smoothing parameters (not just underlying)
 
 
