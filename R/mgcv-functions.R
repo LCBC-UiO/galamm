@@ -77,7 +77,7 @@ gam.setup <- function(formula, pterms, mf) {
           for (j in 1:length(temp.term)) {
             id.list[[id]]$data[[j]] <- cbind(
               id.list[[id]]$data[[j]],
-              get.var(temp.term[j], mf, vecMat = FALSE)
+              mgcv::get.var(temp.term[j], mf, vecMat = FALSE)
             )
           }
         } else { ## new id
@@ -86,7 +86,7 @@ gam.setup <- function(formula, pterms, mf) {
           ## need to collect together all data for which this basis will be used,
           ## for basis setup...
           term <- formula$smooth.spec[[i]]$term
-          for (j in 1:length(term)) id.list[[id]]$data[[j]] <- get.var(term[j], mf, vecMat = FALSE)
+          for (j in 1:length(term)) id.list[[id]]$data[[j]] <- mgcv::get.var(term[j], mf, vecMat = FALSE)
         } ## new id finished
       }
     }
