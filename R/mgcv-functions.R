@@ -50,43 +50,6 @@ gam.setup <- function(formula, pterms, mf) {
   id.list <- list() ## id information list
 
 
-  for (i in seq_len(m)) {
-    if (!is.null(formula$smooth.spec[[i]]$id)) {
-      id <- as.character(formula$smooth.spec[[i]]$id)
-      if (length(id.list) && id %in% names(id.list)) { ## it's an existing id
-        ni <- length(id.list[[id]]$sm.i) ## number of terms so far with this id
-        id.list[[id]]$sm.i[ni + 1] <- i ## adding smooth.spec index to this id's list
-        ## clone smooth.spec from base smooth spec....
-        base.i <- id.list[[id]]$sm.i[1]
-
-        formula$smooth.spec[[i]] <- clone.smooth.spec(
-          formula$smooth.spec[[base.i]],
-          formula$smooth.spec[[i]]
-        )
-
-        ## add data for this term to the data list for basis setup...
-        temp.term <- formula$smooth.spec[[i]]$term
-
-        ## note cbind deliberate in next line, as construction will handle matrix argument
-        ## correctly...
-        for (j in seq_along(temp.term)) {
-          id.list[[id]]$data[[j]] <- cbind(
-            id.list[[id]]$data[[j]],
-            mgcv::get.var(temp.term[j], mf, vecMat = FALSE)
-          )
-        }
-      } else { ## new id
-        id.list[[id]] <- list(sm.i = i) ## start the array of indices of smooths with this id
-        id.list[[id]]$data <- list()
-        ## need to collect together all data for which this basis will be used,
-        ## for basis setup...
-        term <- formula$smooth.spec[[i]]$term
-        for (j in seq_along(term)) id.list[[id]]$data[[j]] <- mgcv::get.var(term[j], mf, vecMat = FALSE)
-      } ## new id finished
-    }
-  }
-
-
   G$off <- array(0, 0)
   first.para <- G$nsdf + 1
   sm <- list()
@@ -532,7 +495,6 @@ variable.summary <- function(pf, dl, n) {
 #' \insertRef{woodGeneralizedAdditiveModels2017a}{galamm}
 #'
 gam.side <- function(sm, Xp, tol = .Machine$double.eps^.5) {
-
   m <- length(sm)
   if (m == 0) {
     return(sm)
@@ -599,7 +561,7 @@ gam.side <- function(sm, Xp, tol = .Machine$double.eps^.5) {
     for (i in seq_len(m)) { ## work through smooths
       if (sm[[i]]$dim == d && sm[[i]]$side.constrain) { ## check for nesting
 
-          X1 <- matrix(1, nobs, as.integer(intercept))
+        X1 <- matrix(1, nobs, as.integer(intercept))
 
         X1comp <- rep(0, 0) ## list of components of X1 to avoid duplication
         for (j in seq_len(d)) { ## work through variables
@@ -610,17 +572,14 @@ gam.side <- function(sm, Xp, tol = .Machine$double.eps^.5) {
             if (!b[l] %in% X1comp) { ## collect X columns
               X1comp <- c(X1comp, b[l]) ## keep track of components to avoid adding same one twice
 
-                X1 <- cbind(X1, sm[[b[l]]]$X)
-
+              X1 <- cbind(X1, sm[[b[l]]]$X)
             }
           }
         } ## Now X1 contains columns for all lower dimensional terms
         if (ncol(X1) == as.integer(intercept)) {
           ind <- NULL
         } else {
-
-            ind <- mgcv::fixDependence(X1, sm[[i]]$X, tol = tol)
-
+          ind <- mgcv::fixDependence(X1, sm[[i]]$X, tol = tol)
         }
         ## ... the columns to zero to ensure independence
         if (!is.null(ind)) {
@@ -670,7 +629,7 @@ gam.side <- function(sm, Xp, tol = .Machine$double.eps^.5) {
             ## Note that: i) it doesn't matter what the identifiability con on X1 is
             ##            ii) the degree of rank deficiency can't be changed by an identifiability con
 
-              ind <- mgcv::fixDependence(X1, sm[[i]]$Xp, rank.def = length(ind))
+            ind <- mgcv::fixDependence(X1, sm[[i]]$Xp, rank.def = length(ind))
 
             sm[[i]]$Xp <- sm[[i]]$Xp[, -ind, drop = FALSE]
             attr(sm[[i]], "del.index") <- ind ## over-writes original
@@ -683,54 +642,6 @@ gam.side <- function(sm, Xp, tol = .Machine$double.eps^.5) {
 
   sm
 } ## gam.side
-
-#' Clone smooth specification for ID-linked bases
-#'
-#' This is an internal function from \code{mgcv} which clones the specifications
-#' for bases linked with an `id` argument.
-#'
-#' @param specb Specification to be cloned.
-#' @param spec Original specification which will be modified.
-#'
-#' @return A cloned smooth specification.
-#' @author Simon Wood
-#'
-#' @noRd
-#'
-#' @references
-#' \insertRef{woodGeneralizedAdditiveModels2017a}{galamm}
-#'
-clone.smooth.spec <- function(specb, spec) {
-  if (specb$dim != spec$dim) stop("`id' linked smooths must have same number of arguments")
-
-  if (inherits(specb, c("tensor.smooth.spec", "t2.smooth.spec"))) {
-    specb$term <- spec$term
-    specb$label <- spec$label
-    specb$by <- spec$by
-    k <- 1
-    for (i in seq_along(specb$margin)) {
-      if (is.null(spec$margin)) { ## sloppy user -- have to construct margin info...
-        for (j in seq_along(specb$margin[[i]]$term)) {
-          specb$margin[[i]]$term[j] <- spec$term[k]
-          k <- k + 1
-        }
-        specb$margin[[i]]$label <- ""
-      } else { ## second term was at least `te'/`t2', so margin cloning is easy
-        specb$margin[[i]]$term <- spec$margin[[i]]$term
-        specb$margin[[i]]$label <- spec$margin[[i]]$label
-        specb$margin[[i]]$xt <- spec$margin[[i]]$xt
-      }
-    }
-  } else { ## `s' generated case
-    specb$term <- spec$term
-    specb$label <- spec$label
-    specb$by <- spec$by
-    specb$xt <- spec$xt ## don't generally know what's in here => don't clone
-  }
-  specb
-}
-
-
 
 
 #' Internal function for interpreting GAM formulas
