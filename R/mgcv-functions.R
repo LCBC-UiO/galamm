@@ -61,21 +61,13 @@ gam.setup <- function(formula, pterms, mf) {
     # constructor returns penalty matrices model matrix and basis specific information
 
     id <- formula$smooth.spec[[i]]$id
-    if (is.null(id)) { ## regular evaluation
-      sml <- mgcv::smoothCon(formula$smooth.spec[[i]], mf, NULL, TRUE,
-        scale.penalty = TRUE,
-        null.space.penalty = FALSE, sparse.cons = 0,
-        diagonal.penalty = FALSE, apply.by = TRUE, modCon = 0
-      )
-    } else { ## it's a smooth with an id, so basis setup data differs from model matrix data
-      names(id.list[[id]]$data) <- formula$smooth.spec[[i]]$term ## give basis data suitable names
-      sml <- mgcv::smoothCon(formula$smooth.spec[[i]], id.list[[id]]$data, NULL,
-        TRUE,
-        n = nrow(mf), dataX = mf, scale.penalty = TRUE,
-        null.space.penalty = FALSE, sparse.cons = 0,
-        diagonal.penalty = FALSE, apply.by = TRUE, modCon = 0
-      )
-    }
+
+    sml <- mgcv::smoothCon(formula$smooth.spec[[i]], mf, NULL, TRUE,
+      scale.penalty = TRUE,
+      null.space.penalty = FALSE, sparse.cons = 0,
+      diagonal.penalty = FALSE, apply.by = TRUE, modCon = 0
+    )
+
     for (k in seq_along(sml)) {
       load_label <- attr(formula$smooth.spec[[i]], "load.var")[[k]]
       if (!is.null(load_label)) {
