@@ -120,7 +120,7 @@ Cholesky decomposition of the covariance matrix.
 parameters.
 }
 \item \code{gam} List containing information about smooth terms in the model. If no
-smooth terms are contained in the model, then it is \code{NULL}.
+smooth terms are contained in the model, then it is a list of length zero.
 }
 }
 \description{

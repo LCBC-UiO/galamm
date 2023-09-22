@@ -66,7 +66,7 @@ summary.galamm <- function(object, ...) {
   rownames(ret$fixef) <-
     object$parameters$parameter_names[object$parameters$beta_inds]
 
-  if (!is.null(ret$gam)) {
+  if (length(ret$gam) > 0) {
     ret$gam_summary <- summary(ret$gam)
   }
 
