@@ -4,7 +4,11 @@
 \alias{galamm_control}
 \title{Control values for galamm fit}
 \usage{
-galamm_control(optim_control = list(), maxit_conditional_modes = 10)
+galamm_control(
+  optim_control = list(),
+  maxit_conditional_modes = 10,
+  reduced_hessian = FALSE
+)
 }
 \arguments{
 \item{optim_control}{List passed on to \code{stats::optim}'s \code{control}
@@ -15,6 +19,13 @@ non-default values: \code{fnscale = -1} and \code{lmm = 20}.}
 iteratively reweighted least squares algorithm. Ignored if \code{family =
   "gaussian"} for all observations, since then a single step gives the exact
 answer.}
+
+\item{reduced_hessian}{Logical value. Defaults to \code{TRUE}, which means
+that the full Hessian matrix at the maximum marginal likelihood solution is
+computed. If \code{FALSE}, a reduced Hessian matrix with second order
+partial derivatives with respect to fixed regression coefficients and
+factor loadings. The latter can help is the full Hessian is not positive
+definite.}
 }
 \value{
 Object of class \code{galamm_control}, which typically will be

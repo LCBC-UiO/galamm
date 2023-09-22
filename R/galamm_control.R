@@ -12,8 +12,15 @@
 #'   "gaussian"} for all observations, since then a single step gives the exact
 #'   answer.
 #'
+#' @param reduced_hessian Logical value. Defaults to \code{TRUE}, which means
+#'   that the full Hessian matrix at the maximum marginal likelihood solution is
+#'   computed. If \code{FALSE}, a reduced Hessian matrix with second order
+#'   partial derivatives with respect to fixed regression coefficients and
+#'   factor loadings. The latter can help is the full Hessian is not positive
+#'   definite.
+#'
 #' @return Object of class \code{galamm_control}, which typically will be
-#' provided as an argument to \code{\link{galamm}}.
+#'   provided as an argument to \code{\link{galamm}}.
 #' @export
 #'
 #' @seealso [galamm()]
@@ -26,7 +33,8 @@
 #' control <- galamm_control(optim_control = list(trace = 6, lmm = 20))
 #'
 galamm_control <- function(optim_control = list(),
-                           maxit_conditional_modes = 10) {
+                           maxit_conditional_modes = 10,
+                           reduced_hessian = FALSE) {
   if (length(trace) != 1L && trace < 0) {
     stop("trace should be a non-negative integer of length one")
   }
@@ -55,7 +63,8 @@ galamm_control <- function(optim_control = list(),
 
   new_galamm_control(
     optim_control = optim_control,
-    maxit_conditional_modes = maxit_conditional_modes
+    maxit_conditional_modes = maxit_conditional_modes,
+    reduced_hessian = reduced_hessian
   )
 }
 
@@ -65,7 +74,8 @@ galamm_control <- function(optim_control = list(),
 #' @inherit galamm_control
 #' @noRd
 #' @seealso [galamm_control()]
-new_galamm_control <- function(optim_control, maxit_conditional_modes) {
+new_galamm_control <- function(optim_control, maxit_conditional_modes,
+                               reduced_hessian) {
   if (is.null(optim_control$fnscale)) {
     optim_control$fnscale <- -1
   }
@@ -77,6 +87,7 @@ new_galamm_control <- function(optim_control, maxit_conditional_modes) {
 
   ret <- list(
     maxit_conditional_modes = maxit_conditional_modes,
+    reduced_hessian = reduced_hessian,
     optim_control = optim_control
   )
 

@@ -8,7 +8,7 @@ lmat <- matrix(c(1, NA, NA, 0, 0, 0, 0,
 
 mod <- galamm(
   formula = y ~ 0 + domain +
-    s(x, k = 4, by = domain, load.var = c("ability1", "ability3")),
+    s(x, k = 4, by = domain, load.var = c("ability1", "ability3")) + (1 | id),
   data = dat,
   load.var = "item",
   lambda = list(lmat),
