@@ -243,7 +243,6 @@ gam.setup <- function(formula, pterms, mf) {
     if (is.null(sm[[i]]$L)) nc <- length(sm[[i]]$S) else nc <- ncol(sm[[i]]$L)
     if (nc > 0) G$smooth[[i]]$sp <- G$sp[k:(k + nc - 1)]
     k <- k + nc
-
   }
 
   k.sp <- 0 # count through sp and S
@@ -257,7 +256,6 @@ gam.setup <- function(formula, pterms, mf) {
       G$S[[k.sp]] <- sm$S[[j]]
       G$rank[k.sp] <- sm$rank[j]
     }
-
   }
 
 
