@@ -204,7 +204,6 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
     stats::as.formula(paste("~", paste("(", rf, ")", collapse = "+")))
   }
   gobj <- gamm4(fixed = lme4::nobars(formula), random = rf, data = data)
-
   colnames(gobj$lmod$X) <- gsub("^X", "", colnames(gobj$lmod$X))
 
   response_obj <-

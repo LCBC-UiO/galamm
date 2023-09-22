@@ -150,7 +150,8 @@ Rcpp::List wrapper(
     const Eigen::VectorXi& family_mapping,
     const Eigen::VectorXd& k,
     const int& maxit_conditional_modes,
-    const double& epsilon_u  ){
+    const double& epsilon_u,
+    const bool reduced_hessian = false){
 
 
   data<T> datlist{y, trials, X, Zt};
@@ -187,7 +188,7 @@ Rcpp::List wrapper(
     return logLik(parlist, datlist, mod);;
   };
 
-  return create_result(fx, gx, parlist);
+  return create_result(fx, gx, parlist, reduced_hessian);
 
 }
 
@@ -215,7 +216,8 @@ Rcpp::List marginal_likelihood_cpp(
     const int maxit_conditional_modes,
     const bool gradient,
     const bool hessian,
-    double epsilon_u
+    double epsilon_u,
+    bool reduced_hessian = false
 ){
 
   if(hessian){
@@ -223,7 +225,7 @@ Rcpp::List marginal_likelihood_cpp(
       y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, u_init, lambda,
       lambda_mapping_X, lambda_mapping_X_covs, lambda_mapping_Zt, lambda_mapping_Zt_covs,
       weights, weights_mapping, family, family_mapping, k,
-      maxit_conditional_modes, epsilon_u);
+      maxit_conditional_modes, epsilon_u, reduced_hessian);
   } else if(gradient){
     return wrapper<dual1st>(
       y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, u_init, lambda,
