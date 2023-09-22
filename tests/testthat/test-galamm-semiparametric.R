@@ -7,13 +7,14 @@ test_that("galamm reproduces gamm4", {
   expect_equal(unname(mod$gam$edf), unname(mod_comp$gam$edf), tolerance = .001)
   expect_equal(mod$gam$Ve, mod_comp$gam$Ve, tolerance = .001)
   expect_equal(mod$gam$Vp, mod_comp$gam$Vp, tolerance = .001)
+  expect_snapshot(print(summary(mod$gam), digits = 2))
 
   mod <- galamm(formula = y ~ t2(x), data = dat)
   mod_comp <- gamm4::gamm4(formula = y ~ t2(x), data = dat, REML = FALSE)
   expect_equal(unname(mod$gam$edf), unname(mod_comp$gam$edf), tolerance = .001)
   expect_equal(mod$gam$Ve, mod_comp$gam$Ve, tolerance = .001)
   expect_equal(mod$gam$Vp, mod_comp$gam$Vp, tolerance = .001)
-  expect_snapshot(print(summary(mod), digits = 2))
+  expect_snapshot(print(summary(mod$gam), digits = 2))
 
   mod <- galamm(formula = y ~ s(x, fx = TRUE) + (1 | id), data = dat)
   mod_comp <- gamm4::gamm4(
@@ -22,27 +23,27 @@ test_that("galamm reproduces gamm4", {
   )
 
   expect_equal(deviance(mod), deviance(mod_comp$mer), tolerance = .0001)
-  expect_snapshot(print(summary(mod), digits = 2))
+  expect_snapshot(print(summary(mod$gam), digits = 2))
 
   set.seed(1)
   dat <- mgcv::gamSim(4, verbose = FALSE)
   mod0 <- gamm4::gamm4(y ~ fac + s(x2, by = fac), data = dat, REML = FALSE)
   mod1 <- galamm(formula = y ~ fac + s(x2, by = fac), data = dat)
   expect_equal(deviance(mod0$mer), deviance(mod1), tolerance = .0001)
-  expect_snapshot(print(summary(mod1), digits = 2))
+  expect_snapshot(print(summary(mod1$gam), digits = 2))
   expect_equal(mod1$gam$edf, mod0$gam$edf, tolerance = .0001)
 
   mod0 <- gamm4::gamm4(y ~ s(x0, by = x2), data = dat, REML = FALSE)
   mod1 <- galamm(y ~ s(x0, by = x2), data = dat)
   expect_equal(mod0$gam$coefficients, mod1$gam$coefficients, tolerance = .0001)
   expect_equal(deviance(mod0$mer), deviance(mod1), tolerance = .0001)
-  expect_snapshot(print(summary(mod1), digits = 2))
+  expect_snapshot(print(summary(mod1$gam), digits = 2))
 
   mod0 <- gamm4::gamm4(y ~ t2(x0, by = x2), data = dat, REML = FALSE)
   mod1 <- galamm(y ~ t2(x0, by = x2), data = dat)
   expect_equal(mod0$gam$coefficients, mod1$gam$coefficients, tolerance = .0001)
   expect_equal(deviance(mod0$mer), deviance(mod1), tolerance = .0001)
-  expect_snapshot(print(summary(mod1), digits = 2))
+  expect_snapshot(print(summary(mod1$gam), digits = 2))
 })
 
 test_that("Basic GAMM with factor structures works", {
