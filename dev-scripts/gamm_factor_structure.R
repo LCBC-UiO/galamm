@@ -1,15 +1,8 @@
 rm(list=ls())
 devtools::load_all()
-set.seed(1)
-dat <- mgcv::gamSim(4, verbose = FALSE)
+dat <- subset(cognition, domain %in% c(1, 3) & item %in% c("11", "31"))
 
-formula <- y ~ fac + s(x2, by = fac)
-weights = NULL
-data <- dat
-family = gaussian
-family_mapping = rep(1L, nrow(data))
-load.var = NULL
-lambda = NULL
-factor = NULL
-start = NULL
-control = galamm_control()
+mod <- galamm(formula = y ~ domain + s(x, by = domain), data = dat)
+
+mod <- gamm4::gamm4(y ~ domain + s(x, by = domain), data = dat)
+plot(mod$gam, pages = 1, scale = 0)

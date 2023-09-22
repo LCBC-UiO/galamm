@@ -1,6 +1,5 @@
 test_that("wrong input is handled properly", {
   dat <- subset(cognition, domain == 2)
-  dat$item <- factor(dat$item)
 
   expect_error(
     mod <- galamm(
@@ -130,22 +129,31 @@ test_that("family can be defined in three different ways", {
 
 test_that("multiple factors and factors in fixed effects are allowed", {
   data("KYPSsim", package = "PLmixed")
+  kyps.lam <- rbind(c( 1,  0),  # Specify the lambda matrix
+                    c(NA,  0),
+                    c(NA,  1),
+                    c(NA, NA))
 
-  kyps.lam <- rbind(
-    c(1, 0),
-    c(NA, 0),
-    c(NA, 1),
-    c(NA, NA)
-  )
+  kyps.model <- galamm(esteem ~ as.factor(time) + (0 + hs | hid)
+                        + (0 + ms | mid), data = KYPSsim,
+                        factor = list(c("ms", "hs")), load.var = c("time"),
+                        lambda = list(kyps.lam),
+                       control = galamm_control(optim_control = list(maxit = 1),
+                                                maxit_conditional_modes = 1))
 
-  test <- galamm(esteem ~ 0 + hs + ms:time + (1 | sid),
-    data = KYPSsim,
-    factor = list(c("ms", "hs")), load.var = c("time"),
-    lambda = list(kyps.lam),
-    control = galamm_control(optim_control = list(maxit = 1))
-  )
+  expect_s3_class(kyps.model, "galamm")
+  expect_snapshot(print(summary(kyps.model), digits = 2))
 
-  expect_s3_class(test, "galamm")
+  # Model with factor loading on fixed effect
+  KYPSsim$time2 <- as.numeric(KYPSsim$time == 2)
+  kyps.model <- galamm(esteem ~ 1 + ms : time2 + (1 | sid),
+                       data = subset(KYPSsim, time %in% c(1, 2)),
+                       factor = list("ms"), load.var = c("time"),
+                       lambda = list(matrix(c(1, NA))),
+                       control = galamm_control(optim_control = list(maxit = 1),
+                                                maxit_conditional_modes = 1))
+
+  expect_snapshot(print(summary(kyps.model), digits = 2))
 })
 
 test_that("functions fail when they should", {

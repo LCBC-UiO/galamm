@@ -123,12 +123,13 @@ gamm4.setup <- function(formula, pterms, mf) {
 gamm4 <- function(fixed, random = NULL, data) {
   random.vars <- all.vars(random)
   gp <- interpret.gam0(fixed)
+  #mf <- match.call(gamm4, call("gamm4", fixed, random, data))
   mf <- match.call(expand.dots = FALSE)
 
   mf$formula <- gp$fake.formula
   mf$fixed <- NULL
   mf$control <- mf$random <- NULL
-
+  mf$drop.unused.levels <- TRUE
   mf[[1]] <- as.name("model.frame")
   pmf <- mf
   gmf <- eval(mf, parent.frame())

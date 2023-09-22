@@ -1,6 +1,9 @@
 setup_factor <- function(load.var, lambda, factor, data) {
+
   parameter_index <- 2
   if (!is.null(factor)) {
+    eval(parse(text = paste0("data$", load.var,
+                             "<- factor(data$", load.var, ")")))
     for (i in seq_along(factor)) {
       lambda[[i]][is.na(lambda[[i]])] <-
         seq(from = parameter_index, length.out = sum(is.na(lambda[[i]])))
