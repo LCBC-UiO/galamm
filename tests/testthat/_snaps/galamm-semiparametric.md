@@ -164,3 +164,57 @@
       R-sq.(adj) =  0.0212   
       lmer.REML =   Scale est. = 11.897    n = 400
 
+---
+
+    Code
+      print(summary(mod1$gam), digits = 2)
+    Output
+      
+      Family: binomial 
+      Link function: logit 
+      
+      Formula:
+      NULL
+      
+      Parametric coefficients:
+                  Estimate Std. Error z value Pr(>|z|)    
+      (Intercept)     2.84       0.31       9   <2e-16 ***
+      ---
+      Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+      
+      Approximate significance of smooth terms:
+               edf Ref.df Chi.sq p-value    
+      s(x0):x2   2      2     37  <2e-16 ***
+      ---
+      Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+      
+      R-sq.(adj) =  0.145   
+      glmer.ML =   Scale est. = 1         n = 400
+
+---
+
+    Code
+      print(summary(mod1$gam), digits = 2)
+    Output
+      
+      Family: binomial 
+      Link function: logit 
+      
+      Formula:
+      NULL
+      
+      Parametric coefficients:
+                  Estimate Std. Error z value Pr(>|z|)    
+      (Intercept)     2.84       0.31       9   <2e-16 ***
+      ---
+      Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+      
+      Approximate significance of smooth terms:
+                edf Ref.df Chi.sq p-value    
+      t2(x0):x2   3      3     40  <2e-16 ***
+      ---
+      Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+      
+      R-sq.(adj) =  0.158   
+      glmer.ML =   Scale est. = 1         n = 400
+
