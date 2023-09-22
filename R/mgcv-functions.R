@@ -27,11 +27,6 @@ gam.setup <- function(formula, pterms, mf) {
 
   G$intercept <- attr(attr(mf, "terms"), "intercept") > 0
 
-  ## get any model offset. Complicated by possibility of offsets in multiple formulae...
-  G$offset <- stats::model.offset(mf) # get any model offset including from offset argument
-
-  if (!is.null(G$offset)) G$offset <- as.numeric(G$offset)
-
   # construct strictly parametric model matrix....
 
   X <- stats::model.matrix(pterms, mf)
@@ -203,15 +198,7 @@ gam.setup <- function(formula, pterms, mf) {
       sm[[i]]$first.para <- first.para
       first.para <- first.para + n.para
       sm[[i]]$last.para <- first.para - 1
-      ## termwise offset handling ...
-      Xoff <- attr(sm[[i]]$X, "offset")
-      if (!is.null(Xoff)) {
-        if (is.null(G$offset)) {
-          G$offset <- Xoff
-        } else {
-          G$offset <- G$offset + Xoff
-        }
-      }
+
       ## model matrix accumulation ...
 
       ## alternative version under alternative constraint first (prediction only)
