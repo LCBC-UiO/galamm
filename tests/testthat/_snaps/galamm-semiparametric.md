@@ -110,3 +110,69 @@
       s(x2):fac3 7.0    7.0 34.0  <2e-16
       
 
+---
+
+    Code
+      print(summary(mod1), digits = 2)
+    Output
+      GALAMM fit by maximum marginal likelihood.
+      Formula: y ~ s(x0, by = x2)
+         Data: dat
+      
+           AIC      BIC   logLik deviance df.resid 
+        2140.1   2160.1  -1065.1   2130.1      395 
+      
+      Scaled residuals: 
+         Min     1Q Median     3Q    Max 
+       -2.55  -0.64   0.00   0.57   3.32 
+      
+      Random effects:
+       Groups   Name     Variance Std.Dev.
+       Xr       s(x0):x2  0       0.0     
+       Residual          12       3.5     
+      Number of obs: 400, groups:  Xr, 8
+      
+      Fixed effects:
+                  Estimate Std. Error t value Pr(>|t|)
+      (Intercept)     1.23       0.33    3.74  0.00019
+      s(x0):x2Fx1     0.77       0.31    2.44  0.01480
+      s(x0):x2Fx2    -0.26       0.58   -0.44  0.66162
+      
+      Approximate significance of smooth terms:
+               edf Ref.df F p-value
+      s(x0):x2   2      2 3    0.05
+      
+
+---
+
+    Code
+      print(summary(mod1), digits = 2)
+    Output
+      GALAMM fit by maximum marginal likelihood.
+      Formula: y ~ t2(x0, by = x2)
+         Data: dat
+      
+           AIC      BIC   logLik deviance df.resid 
+        2137.7   2157.7  -1063.9   2127.7      395 
+      
+      Scaled residuals: 
+         Min     1Q Median     3Q    Max 
+       -2.55  -0.66  -0.03   0.59   3.35 
+      
+      Random effects:
+       Groups   Name      Variance Std.Dev.
+       Xr       t2(x0):x2  3.9     2.0     
+       Residual           11.9     3.4     
+      Number of obs: 400, groups:  Xr, 3
+      
+      Fixed effects:
+                   Estimate Std. Error t value Pr(>|t|)
+      (Intercept)      1.22       0.33    3.72   0.0002
+      t2(x0):x2Fx1    -0.49       0.57   -0.87   0.3865
+      t2(x0):x2Fx2    -0.94       0.38   -2.49   0.0127
+      
+      Approximate significance of smooth terms:
+                edf Ref.df   F p-value
+      t2(x0):x2 3.1    3.1 3.4    0.02
+      
+
