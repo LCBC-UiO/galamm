@@ -38,8 +38,6 @@ gam.setup <- function(formula, pterms, mf) {
   G$xlevels <- stats::.getXlevels(pterms, mf)
   G$assign <- attr(X, "assign") # used to tell which coeffs relate to which pterms
 
-  PP <- NULL
-
   # next work through smooth terms (if any) extending model matrix.....
 
   G$smooth <- list()
@@ -233,17 +231,8 @@ gam.setup <- function(formula, pterms, mf) {
     }
   }
 
-
-  G$n.paraPen <- 0
-
   G$lsp0 <- rep(0, nrow(L))
-
-
-  G$H <- NULL
-
-  G$L <- NULL
   names(G$lsp0) <- lsp.names ## names of all smoothing parameters (not just underlying)
-
 
   G$y <- drop(mf[[formula$response]])
   ydim <- dim(G$y)
@@ -253,11 +242,8 @@ gam.setup <- function(formula, pterms, mf) {
   G$w <- rep(1, G$n)
 
   ## Create names for model coefficients...
-
   term.names <- colnames(G$X)[seq_len(G$nsdf)]
   n.smooth <- length(G$smooth)
-  ## create coef names, if smooth has any coefs, and create a global indicator of non-linear parameters
-  ## g.index, if needed
   n.sp0 <- 0
 
   for (i in seq_len(n.smooth)) {
@@ -277,14 +263,8 @@ gam.setup <- function(formula, pterms, mf) {
   }
 
   G$term.names <- term.names
-
-  ## Deal with non-linear parameterizations...
-
-
-  G$pP <- PP ## return paraPen object, if present
-
   G
-} ## gam.setup
+}
 
 
 
