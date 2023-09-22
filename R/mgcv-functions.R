@@ -91,7 +91,6 @@ gam.setup <- function(formula, pterms, mf) {
   ## The matrix, L, mapping the underlying log smoothing parameters to the
   ## log of the smoothing parameter multiplying the S[[i]] must be
   ## worked out...
-  idx <- list() ## idx[[id]]$c contains index of first col in L relating to id
   L <- matrix(0, 0, 0)
   lsp.names <- sp.names <- rep("", 0) ## need a list of names to identify sps in global sp array
 
@@ -117,10 +116,7 @@ gam.setup <- function(formula, pterms, mf) {
 
     ## extend the global L matrix...
 
-    if (!is.null(id)) { ## create record in `idx'
-      idx[[id]]$c <- ncol(L) + 1 ## starting column in L for this `id'
-      idx[[id]]$nc <- ncol(Li) ## number of columns relating to this `id'
-    }
+
     L <- rbind(
       cbind(L, matrix(0, nrow(L), ncol(Li))),
       cbind(matrix(0, nrow(Li), ncol(L)), Li)
