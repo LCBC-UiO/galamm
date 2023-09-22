@@ -284,44 +284,33 @@ gam.setup <- function(formula, pterms, mf) {
   ydim <- dim(G$y)
   if (!is.null(ydim) && length(ydim) < 2) dim(G$y) <- NULL
 
-
-
   G$n <- nrow(mf)
-
-  if (is.null(mf$"(weights)")) {
-    G$w <- rep(1, G$n)
-  } else {
-    G$w <- mf$"(weights)"
-  }
+  G$w <- rep(1, G$n)
 
   ## Create names for model coefficients...
 
-  if (G$nsdf > 0) term.names <- colnames(G$X)[1:G$nsdf] else term.names <- array("", 0)
+  term.names <- colnames(G$X)[seq_len(G$nsdf)]
   n.smooth <- length(G$smooth)
   ## create coef names, if smooth has any coefs, and create a global indicator of non-linear parameters
   ## g.index, if needed
   n.sp0 <- 0
-  if (n.smooth) {
-    for (i in 1:n.smooth) {
-      k <- 1
-      jj <- G$smooth[[i]]$first.para:G$smooth[[i]]$last.para
-      if (G$smooth[[i]]$df > 0) {
-        for (j in jj) {
-          term.names[j] <- paste(G$smooth[[i]]$label, ".", as.character(k), sep = "")
-          k <- k + 1
-        }
-      }
-      n.sp <- length(G$smooth[[i]]$S)
-      if (n.sp) { ## record sp this relates to in full sp vector
-        G$smooth[[i]]$first.sp <- n.sp0 + 1
-        n.sp0 <- G$smooth[[i]]$last.sp <- n.sp0 + n.sp
-      }
-      if (!is.null(G$smooth[[i]]$g.index)) {
-        if (is.null(G$g.index)) G$g.index <- rep(FALSE, n.p)
-        G$g.index[jj] <- G$smooth[[i]]$g.index
+
+  for (i in seq_len(n.smooth)) {
+    k <- 1
+    jj <- seq(from = G$smooth[[i]]$first.para, to = G$smooth[[i]]$last.para, by = 1)
+    if (G$smooth[[i]]$df > 0) {
+      for (j in jj) {
+        term.names[j] <- paste(G$smooth[[i]]$label, ".", as.character(k), sep = "")
+        k <- k + 1
       }
     }
+    n.sp <- length(G$smooth[[i]]$S)
+    if (n.sp) { ## record sp this relates to in full sp vector
+      G$smooth[[i]]$first.sp <- n.sp0 + 1
+      n.sp0 <- G$smooth[[i]]$last.sp <- n.sp0 + n.sp
+    }
   }
+
   G$term.names <- term.names
 
   ## Deal with non-linear parameterizations...
