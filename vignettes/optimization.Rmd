@@ -59,9 +59,9 @@ mod <- galamm(
 )
 
 summary(mod)
-#> Warning in vcov.galamm(object, parm = "lambda"): Rank deficient Hessian matrix. Could not compute covariance matrix.
-#> Warning in vcov.galamm(object, "beta"): Rank deficient Hessian matrix. Could not compute covariance matrix.
-#> Generalized additive latent and mixed model fit by maximum marginal likelihood.
+#> Warning in vcov.galamm(object, parm = "lambda"): Rank deficient Hessian matrix.Could not compute covariance matrix.
+#> Warning in vcov.galamm(object, "beta"): Rank deficient Hessian matrix.Could not compute covariance matrix.
+#> GALAMM fit by maximum marginal likelihood.
 #> Formula: formula
 #>    Data: diet
 #> 
@@ -130,7 +130,7 @@ mod <- galamm(
 #> final  value 1887.871646 
 #> stopped after 6 iterations
 vcov(mod)
-#> Warning in vcov.galamm(mod): Rank deficient Hessian matrix. Could not compute covariance matrix.
+#> Warning in vcov.galamm(mod): Rank deficient Hessian matrix.Could not compute covariance matrix.
 #>       [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9]
 #>  [1,]   NA   NA   NA   NA   NA   NA   NA   NA   NA
 #>  [2,]   NA   NA   NA   NA   NA   NA   NA   NA   NA
@@ -185,7 +185,7 @@ mod <- galamm(
 #> final  value 1406.801104 
 #> converged
 vcov(mod)
-#> Warning in vcov.galamm(mod): Rank deficient Hessian matrix. Could not compute covariance matrix.
+#> Warning in vcov.galamm(mod): Rank deficient Hessian matrix.Could not compute covariance matrix.
 #>       [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9]
 #>  [1,]   NA   NA   NA   NA   NA   NA   NA   NA   NA
 #>  [2,]   NA   NA   NA   NA   NA   NA   NA   NA   NA
@@ -203,9 +203,9 @@ Looking at the model output again, we see that the random effect variance is est
 
 ```r
 summary(mod)
-#> Warning in vcov.galamm(object, parm = "lambda"): Rank deficient Hessian matrix. Could not compute covariance matrix.
-#> Warning in vcov.galamm(object, "beta"): Rank deficient Hessian matrix. Could not compute covariance matrix.
-#> Generalized additive latent and mixed model fit by maximum marginal likelihood.
+#> Warning in vcov.galamm(object, parm = "lambda"): Rank deficient Hessian matrix.Could not compute covariance matrix.
+#> Warning in vcov.galamm(object, "beta"): Rank deficient Hessian matrix.Could not compute covariance matrix.
+#> GALAMM fit by maximum marginal likelihood.
 #> Formula: formula
 #>    Data: diet
 #> Control: control
@@ -284,7 +284,7 @@ Now we see that the model converged and that the Hessian is no longer rank defic
 
 ```r
 summary(mod)
-#> Generalized additive latent and mixed model fit by maximum marginal likelihood.
+#> GALAMM fit by maximum marginal likelihood.
 #> Formula: formula
 #>    Data: diet
 #> Control: control

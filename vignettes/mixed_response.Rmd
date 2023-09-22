@@ -18,12 +18,6 @@ vignette: >
 ```r
 library(galamm)
 library(lme4)
-#> Loading required package: Matrix
-#> 
-#> Attaching package: 'lme4'
-#> The following object is masked from 'package:galamm':
-#> 
-#>     llikAIC
 ```
 
 This vignette describes how `galamm` can be used to estimate models with mixed response types.
@@ -114,7 +108,7 @@ We can also look at its summary output.
 
 ```r
 summary(mixed_resp)
-#> Generalized additive latent and mixed model fit by maximum marginal likelihood.
+#> GALAMM fit by maximum marginal likelihood.
 #> Formula: y ~ x + (0 + level | id)
 #>    Data: mresp
 #> 
@@ -287,9 +281,9 @@ Looking at the summary output, however, we see a warning that the Hessian matrix
 
 ```r
 summary(mod)
-#> Warning in vcov.galamm(object, parm = "lambda"): Rank deficient Hessian matrix. Could not compute covariance matrix.
-#> Warning in vcov.galamm(object, "beta"): Rank deficient Hessian matrix. Could not compute covariance matrix.
-#> Generalized additive latent and mixed model fit by maximum marginal likelihood.
+#> Warning in vcov.galamm(object, parm = "lambda"): Rank deficient Hessian matrix.Could not compute covariance matrix.
+#> Warning in vcov.galamm(object, "beta"): Rank deficient Hessian matrix.Could not compute covariance matrix.
+#> GALAMM fit by maximum marginal likelihood.
 #> Formula: formula
 #>    Data: diet
 #> 
@@ -407,7 +401,7 @@ We can now use the summary method, where we find that our estimates are very clo
 
 ```r
 summary(mod)
-#> Generalized additive latent and mixed model fit by maximum marginal likelihood.
+#> GALAMM fit by maximum marginal likelihood.
 #> Formula: formula
 #>    Data: diet
 #> Control: galamm_control(optim_control = list(trace = 3))
@@ -502,7 +496,7 @@ Looking at the summary output, the estimates are now close to the first column i
 
 ```r
 summary(mod0)
-#> Generalized additive latent and mixed model fit by maximum marginal likelihood.
+#> GALAMM fit by maximum marginal likelihood.
 #> Formula: formula0
 #>    Data: diet
 #> Control: galamm_control(optim_control = list(trace = 3))

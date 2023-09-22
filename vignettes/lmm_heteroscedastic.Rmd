@@ -61,7 +61,7 @@ The output shows that for item 2, the residual variance is twice that of item 1.
 
 ```r
 summary(mod)
-#> Generalized additive latent and mixed model fit by maximum marginal likelihood.
+#> GALAMM fit by maximum marginal likelihood.
 #> Formula: y ~ x + (1 | id)
 #>    Data: hsced
 #> Weights: ~(1 | item)

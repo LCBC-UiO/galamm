@@ -161,7 +161,7 @@ As opposed to `gamm4`, `galamm` gives a single summary. As can be seen, smooth t
 
 ```r
 summary(mod)
-#> Generalized additive latent and mixed model fit by maximum marginal likelihood.
+#> GALAMM fit by maximum marginal likelihood.
 #> Formula: y ~ s(x) + (1 | id)
 #>    Data: dat
 #> 
@@ -175,18 +175,18 @@ summary(mod)
 #> Random effects:
 #>  Groups   Name        Variance Std.Dev.
 #>  id       (Intercept) 0.8551   0.9247  
-#>  Xr       s(x):       2.0346   1.4264  
+#>  Xr       s(x)        2.0346   1.4264  
 #>  Residual             0.2501   0.5001  
 #> Number of obs: 1600, groups:  id, 200; Xr, 8
 #> 
 #> Fixed effects:
 #>             Estimate Std. Error t value  Pr(>|t|)
 #> (Intercept)   1.2694    0.06657 19.0672 4.731e-81
-#> s(x):Fx1     -0.1582    0.20236 -0.7818 4.343e-01
+#> s(x)Fx1      -0.1582    0.20236 -0.7818 4.343e-01
 #> 
 #> Approximate significance of smooth terms:
-#>         edf Ref.df     F p-value
-#> s(x): 6.681  6.681 324.9  <2e-16
+#>        edf Ref.df     F p-value
+#> s(x) 6.681  6.681 324.9  <2e-16
 ```
 
 The `plot` function now gives us a diagnostic plot, which by inspection can be seen to be almost identical to the plot produced from the mixed model part of the `gamm4` model.
@@ -322,7 +322,7 @@ The estimates are very similar, although not identical. The difference in devian
 
 ```r
 summary(mod)
-#> Generalized additive latent and mixed model fit by maximum marginal likelihood.
+#> GALAMM fit by maximum marginal likelihood.
 #> Formula: y ~ s(x) + (1 | id)
 #>    Data: dat
 #> 
@@ -336,17 +336,17 @@ summary(mod)
 #> Random effects:
 #>  Groups Name        Variance Std.Dev.
 #>  id     (Intercept) 0.2316   0.4813  
-#>  Xr     s(x):       0.9387   0.9688  
+#>  Xr     s(x)        0.9387   0.9688  
 #> Number of obs: 1600, groups:  id, 200; Xr, 8
 #> 
 #> Fixed effects:
 #>             Estimate Std. Error z value  Pr(>|z|)
 #> (Intercept)    2.808     0.1956  14.354 9.989e-47
-#> s(x):Fx1      -1.406     0.4134  -3.402 6.697e-04
+#> s(x)Fx1       -1.406     0.4134  -3.402 6.697e-04
 #> 
 #> Approximate significance of smooth terms:
-#>         edf Ref.df Chi.sq p-value
-#> s(x): 2.124  2.124    114  <2e-16
+#>        edf Ref.df Chi.sq p-value
+#> s(x) 2.124  2.124    114  <2e-16
 ```
 
 
@@ -427,7 +427,7 @@ We print the model summary below. In the data simulation, the factor loadings we
 
 ```r
 summary(mod)
-#> Generalized additive latent and mixed model fit by maximum marginal likelihood.
+#> GALAMM fit by maximum marginal likelihood.
 #> Formula: y ~ 0 + item + s(x, load.var = "loading") + (0 + loading | id/timepoint)
 #>    Data: dat
 #> 
@@ -500,7 +500,7 @@ The summary is shown below. The factor loading $\lambda_{2} = 2$ was used when s
 
 ```r
 summary(mod)
-#> Generalized additive latent and mixed model fit by maximum marginal likelihood.
+#> GALAMM fit by maximum marginal likelihood.
 #> Formula: y ~ 0 + item + s(x, load.var = "loading") + (0 + loading | id/timepoint)
 #>    Data: dat
 #> 

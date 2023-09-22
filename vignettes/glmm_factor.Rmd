@@ -111,7 +111,7 @@ We can start by inspecting the fitted model:
 
 ```r
 summary(mod)
-#> Generalized additive latent and mixed model fit by maximum marginal likelihood.
+#> GALAMM fit by maximum marginal likelihood.
 #> Formula: y ~ item + (0 + ability | school/sid)
 #>    Data: IRTsim
 #> 
@@ -244,7 +244,7 @@ All the utility functions apply to this model as well. We simply post its summar
 
 ```r
 summary(galamm_mod_trials)
-#> Generalized additive latent and mixed model fit by maximum marginal likelihood.
+#> GALAMM fit by maximum marginal likelihood.
 #> Formula: cbind(y, trials - y) ~ item + (0 + ability | school/sid)
 #>    Data: dat
 #> 
@@ -297,7 +297,7 @@ We can look at the summary output.
 
 ```r
 summary(count_mod)
-#> Generalized additive latent and mixed model fit by maximum marginal likelihood.
+#> GALAMM fit by maximum marginal likelihood.
 #> Formula: y ~ lbas * treat + lage + v4 + (1 | subj)
 #>    Data: epilep
 #> 
@@ -347,6 +347,11 @@ In this case we can confirm that the `galamm` function is correctly implemented 
 ```r
 library(lme4)
 #> Loading required package: Matrix
+#> 
+#> Attaching package: 'lme4'
+#> The following object is masked from 'package:galamm':
+#> 
+#>     llikAIC
 count_mod_lme4 <- glmer(
   formula = y ~ lbas * treat + lage + v4 + (1 | subj),
   data = epilep,

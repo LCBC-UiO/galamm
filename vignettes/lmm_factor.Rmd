@@ -171,7 +171,7 @@ Using galamm's summary method, we can study the model output.
 
 ```r
 summary(mod)
-#> Generalized additive latent and mixed model fit by maximum marginal likelihood.
+#> GALAMM fit by maximum marginal likelihood.
 #> Formula: form
 #>    Data: KYPSsim
 #> 
@@ -253,8 +253,6 @@ mod_constr1 <- galamm(
   load.var = load.var,
   lambda = loading_matrix_constr1
 )
-#> Warning in galamm(formula = form, data = KYPSsim, factor = factors, load.var = load.var, : Rank deficient Hessian
-#> matrix at optimum.
 ```
 
 We could further assume that the factor loadings at timepoints 1 and 2 for middle school and at timepoints 3 and 4 for high schools are identical, which in practice would lead to a linear mixed model with no factors. One way of estimating this model is to define a new loading matrix:
@@ -561,7 +559,7 @@ judge_galamm <- galamm(
 
 ```r
 summary(judge_galamm)
-#> Generalized additive latent and mixed model fit by maximum marginal likelihood.
+#> GALAMM fit by maximum marginal likelihood.
 #> Formula: form
 #>    Data: JUDGEsim
 #> 
