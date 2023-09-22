@@ -164,7 +164,7 @@ gam.setup <- function(formula, pterms, mf) {
     rank <- mgcv::Rrank(R) ## rank of Xp/R
     QtX <- qr.qty(qrx, X)[1:rank, ]
     if (rank < p) { ## rank deficient
-      R <- R[1:rank, ]
+      R <- R[seq_len(rank), ]
       qrr <- qr(t(R), tol = 0)
       R <- qr.R(qrr)
       G$P <- forwardsolve(t(R), QtX)
@@ -202,7 +202,7 @@ gam.setup <- function(formula, pterms, mf) {
     id <- sm[[i]]$id
 
     if (is.null(sm[[i]]$L)) nc <- length(sm[[i]]$S) else nc <- ncol(sm[[i]]$L)
-    if (nc > 0) G$smooth[[i]]$sp <- G$sp[k:(k + nc - 1)]
+    if (nc > 0) G$smooth[[i]]$sp <- G$sp[seq(from = k, to = (k + nc - 1), by = 1)]
     k <- k + nc
   }
 
