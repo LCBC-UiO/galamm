@@ -116,30 +116,20 @@ gam.setup <- function(formula, pterms, mf) {
     }
 
     ## extend the global L matrix...
-    if (is.null(id) || is.null(idx[[id]])) { ## new `id'
-      if (!is.null(id)) { ## create record in `idx'
-        idx[[id]]$c <- ncol(L) + 1 ## starting column in L for this `id'
-        idx[[id]]$nc <- ncol(Li) ## number of columns relating to this `id'
-      }
-      L <- rbind(
-        cbind(L, matrix(0, nrow(L), ncol(Li))),
-        cbind(matrix(0, nrow(Li), ncol(L)), Li)
-      )
-      if (length.S > 0) { ## there are smoothing parameters to name
-        sp.names <- c(sp.names, spn) ## extend the sp name vector
-        lsp.names <- c(lsp.names, lspn) ## extend full.sp name vector
-      }
-    } else { ## it's a repeat id => shares existing sp's
-      L0 <- matrix(0, nrow(Li), ncol(L))
-      if (ncol(Li) > idx[[id]]$nc) {
-        stop("Later terms sharing an `id' can not have more smoothing parameters than the first such term")
-      }
-      L0[, seq(from = idx[[id]]$c, to = (idx[[id]]$c + ncol(Li) - 1), by = 1)] <- Li
-      L <- rbind(L, L0)
-      if (length.S > 0) { ## there are smoothing parameters to name
-        lsp.names <- c(lsp.names, lspn) ## extend full.sp name vector
-      }
+
+    if (!is.null(id)) { ## create record in `idx'
+      idx[[id]]$c <- ncol(L) + 1 ## starting column in L for this `id'
+      idx[[id]]$nc <- ncol(Li) ## number of columns relating to this `id'
     }
+    L <- rbind(
+      cbind(L, matrix(0, nrow(L), ncol(Li))),
+      cbind(matrix(0, nrow(Li), ncol(L)), Li)
+    )
+    if (length.S > 0) { ## there are smoothing parameters to name
+      sp.names <- c(sp.names, spn) ## extend the sp name vector
+      lsp.names <- c(lsp.names, lspn) ## extend full.sp name vector
+    }
+
   }
 
 
