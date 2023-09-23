@@ -75,3 +75,44 @@
       
       
 
+# multiple factors in fixed effects works
+
+    Code
+      print(summary(mod), digits = 2)
+    Output
+      GALAMM fit by maximum marginal likelihood.
+      Formula: 
+      y ~ 0 + x:domain1:lambda1 + x:domain2:lambda2 + (0 + domain1:lambda1 +  
+          domain2:lambda2 | id)
+         Data: dat
+      
+           AIC      BIC   logLik deviance df.resid 
+        6235.7   6295.8  -3107.9   6215.7     2990 
+      
+      Scaled residuals: 
+         Min     1Q Median     3Q    Max 
+       -5.39  -0.75  -0.04   0.76   4.48 
+      
+      Lambda:
+              lambda1    SE lambda2    SE
+      lambda1    1.00     .       .     .
+      lambda2    0.84 0.023       .     .
+      lambda3    1.31 0.029       .     .
+      lambda4       .     .    1.00     .
+      lambda5       .     .    0.67 0.017
+      lambda6       .     .    1.62 0.027
+      
+      Random effects:
+       Groups   Name            Variance Std.Dev. Corr 
+       id       domain1:lambda1 0.77     0.87          
+                domain2:lambda2 0.61     0.78     -0.07
+       Residual                 0.19     0.44          
+      Number of obs: 3000, groups:  id, 500
+      
+      Fixed effects:
+                        Estimate Std. Error t value Pr(>|t|)
+      x:domain1:lambda1      1.1      0.043      26 8.4e-153
+      x:domain2:lambda2      2.1      0.044      48  0.0e+00
+      
+      
+

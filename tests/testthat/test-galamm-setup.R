@@ -180,3 +180,24 @@ test_that("functions fail when they should", {
   expect_error(confint(mod1, parm = "beta", level = c(.2, .3)))
   expect_error(confint(mod1), "is missing")
 })
+
+
+test_that("multiple factors in fixed effects works", {
+  path <-
+    system.file("testdata", "test_multiple_factors.rds", package = "galamm")
+  dat <- readRDS(path)
+  lmat <- matrix(c(
+    1, NA, NA, 0, 0, 0,
+    0, 0, 0, 1, NA, NA
+  ), ncol = 2)
+
+  mod <- galamm(
+    formula = y ~ 0 + x:domain1:lambda1 + x:domain2:lambda2 +
+      (0 + domain1:lambda1 + domain2:lambda2 | id),
+    data = dat,
+    load.var = "item",
+    lambda = list(lmat),
+    factor = list(c("lambda1", "lambda2"))
+  )
+  expect_snapshot(print(summary(mod), digits = 2))
+})

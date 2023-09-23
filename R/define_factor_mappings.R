@@ -17,31 +17,36 @@ define_factor_mappings <- function(gobj, load.var, lambda, factor, data) {
   })))
   vars_in_fixed <- unique(vars_in_fixed)
   factor_in_fixed <- factor_finder(factor, vars_in_fixed)
+  if (!any(factor_in_fixed)) lambda_mapping_X <- integer()
+
+  X <- gobj$lmod$X
+  for (f in seq_along(factor_in_fixed)) {
+    if (factor_in_fixed[[f]]) {
+      mappings <- lapply(seq_len(ncol(X)), function(i) {
+        mapping_component <- rep(-1L, nrow(X))
+        target_cnm <- colnames(X)[[i]]
+        cnms_match <- vapply(
+          colnames(lambda[[f]]),
+          function(x) grepl(x, target_cnm), logical(1)
+        )
+        if (any(cnms_match)) {
+          ll <- lambda[[f]][, cnms_match, drop = FALSE] - 2L
+        } else {
+          return(mapping_component)
+        }
+
+        ll[data[, load.var]]
+      })
+
+      lambda_mapping_X <- do.call(c, mappings)
+
+      stopifnot(length(lambda_mapping_X) == length(X))
+    }
+  }
+
 
   vars_in_random <- unique(unlist(gobj$lmod$reTrms$cnms))
   factor_in_random <- factor_finder(factor, vars_in_random)
-
-  X <- gobj$lmod$X
-  if (any(factor_in_fixed)) {
-    lambda_mapping_X <- rep(-1L, length(X))
-  } else {
-    lambda_mapping_X <- integer()
-  }
-
-  for (f in seq_along(factor_in_fixed)) {
-    if (factor_in_fixed[[f]]) {
-      cols <- unlist(lapply(
-        factor[[1]],
-        function(fact) grep(fact, colnames(X))
-      ))
-      for (cc in cols) {
-        lambda_mapping_X[
-          seq(from = (cc - 1) * nrow(X) + 1, to = cc * nrow(X))
-        ] <-
-          lambda[[1]][data[, load.var]] - 2L
-      }
-    }
-  }
 
   Zt <- gobj$lmod$reTrms$Zt
 
