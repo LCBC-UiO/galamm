@@ -197,7 +197,8 @@ test_that("multiple factors in fixed effects works", {
     data = dat,
     load.var = "item",
     lambda = list(lmat),
-    factor = list(c("lambda1", "lambda2"))
+    factor = list(c("lambda1", "lambda2")),
+    control = galamm_control(optim_control = list(maxit = 3))
   )
   expect_snapshot(print(summary(mod), digits = 2))
 })

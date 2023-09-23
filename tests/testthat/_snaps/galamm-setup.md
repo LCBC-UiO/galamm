@@ -85,34 +85,35 @@
       y ~ 0 + x:domain1:lambda1 + x:domain2:lambda2 + (0 + domain1:lambda1 +  
           domain2:lambda2 | id)
          Data: dat
+      Control: galamm_control(optim_control = list(maxit = 3))
       
            AIC      BIC   logLik deviance df.resid 
-        6235.7   6295.8  -3107.9   6215.7     2990 
+        6517.7   6577.8  -3248.9   6497.7     2990 
       
       Scaled residuals: 
          Min     1Q Median     3Q    Max 
-       -5.39  -0.75  -0.04   0.76   4.48 
+       -4.11  -0.63   0.10   0.88   4.85 
       
       Lambda:
               lambda1    SE lambda2    SE
       lambda1    1.00     .       .     .
-      lambda2    0.84 0.023       .     .
-      lambda3    1.31 0.029       .     .
+      lambda2    0.95 0.030       .     .
+      lambda3    1.45 0.037       .     .
       lambda4       .     .    1.00     .
-      lambda5       .     .    0.67 0.017
-      lambda6       .     .    1.62 0.027
+      lambda5       .     .    0.83 0.026
+      lambda6       .     .    1.91 0.052
       
       Random effects:
-       Groups   Name            Variance Std.Dev. Corr 
-       id       domain1:lambda1 0.77     0.87          
-                domain2:lambda2 0.61     0.78     -0.07
-       Residual                 0.19     0.44          
+       Groups   Name            Variance Std.Dev. Corr
+       id       domain1:lambda1 0.47     0.68         
+                domain2:lambda2 0.73     0.85     0.25
+       Residual                 0.22     0.47         
       Number of obs: 3000, groups:  id, 500
       
       Fixed effects:
                         Estimate Std. Error t value Pr(>|t|)
-      x:domain1:lambda1      1.1      0.043      26 8.4e-153
-      x:domain2:lambda2      2.1      0.044      48  0.0e+00
+      x:domain1:lambda1     0.99      0.040      25 5.1e-134
+      x:domain2:lambda2     1.66      0.048      35 7.5e-265
       
       
 
