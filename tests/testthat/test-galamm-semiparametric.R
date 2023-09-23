@@ -49,18 +49,18 @@ test_that("galamm reproduces gamm4", {
   dat <- mgcv::gamSim(1, verbose = FALSE, dist = "binary")
   mod0 <- gamm4::gamm4(y ~ s(x0), family = binomial, data = dat)
   mod1 <- galamm(y ~ s(x0), family = binomial, data = dat)
-  expect_equal(deviance(mod0$mer), deviance(mod1), tolerance = .1)
+  expect_equal(deviance(mod0$mer), deviance(mod1), tolerance = .001)
 
   mod0 <- gamm4::gamm4(y ~ s(x0, by = x2), data = dat, family = binomial)
   mod1 <- galamm(y ~ s(x0, by = x2), data = dat, family = binomial)
   expect_equal(mod0$gam$coefficients, mod1$gam$coefficients, tolerance = .1)
-  expect_equal(deviance(mod0$mer), deviance(mod1), tolerance = .1)
+  expect_equal(deviance(mod0$mer), deviance(mod1), tolerance = .001)
   expect_snapshot(print(summary(mod1$gam), digits = 2))
 
   mod0 <- gamm4::gamm4(y ~ t2(x0, by = x2), data = dat, family = binomial)
   mod1 <- galamm(y ~ t2(x0, by = x2), data = dat, family = binomial)
   expect_equal(mod0$gam$coefficients, mod1$gam$coefficients, tolerance = .1)
-  expect_equal(deviance(mod0$mer), deviance(mod1), tolerance = .1)
+  expect_equal(deviance(mod0$mer), deviance(mod1), tolerance = .001)
   expect_snapshot(print(summary(mod1$gam), digits = 2))
 
   set.seed(1)
@@ -68,13 +68,13 @@ test_that("galamm reproduces gamm4", {
 
   mod0 <- gamm4::gamm4(y ~ s(x2), data = dat, family = poisson)
   mod1 <- galamm(y ~ s(x2), data = dat, family = poisson)
-  expect_equal(deviance(mod0$mer), deviance(mod1), tolerance = .1)
+  expect_equal(deviance(mod0$mer), deviance(mod1), tolerance = .001)
   expect_equal(mod0$gam$edf, mod1$gam$edf, tolerance = .1)
   expect_snapshot(print(summary(mod1$gam), digits = 2))
 
   mod0 <- gamm4::gamm4(y ~ t2(x2, by = x0), data = dat, family = poisson)
   mod1 <- galamm(y ~ t2(x2, by = x0), data = dat, family = poisson)
-  expect_equal(deviance(mod0$mer), deviance(mod1), tolerance = .1)
+  expect_equal(deviance(mod0$mer), deviance(mod1), tolerance = .001)
   expect_equal(mod0$gam$edf, mod1$gam$edf, tolerance = .1)
   expect_snapshot(print(summary(mod1$gam), digits = 2))
 })
