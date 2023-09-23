@@ -67,7 +67,11 @@ when fitting GALAMMs using <code><a href="galamm.html">galamm</a></code>.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">galamm_control</span><span class="op">(</span>optim_control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>, maxit_conditional_modes <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">galamm_control</span><span class="op">(</span></span>
+<span>  optim_control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  maxit_conditional_modes <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>  reduced_hessian <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -83,6 +87,15 @@ non-default values: <code>fnscale = -1</code> and <code>lmm = 20</code>.</p></dd
 iteratively reweighted least squares algorithm. Ignored if <code>family =
   "gaussian"</code> for all observations, since then a single step gives the exact
 answer.</p></dd>
+
+
+<dt>reduced_hessian</dt>
+<dd><p>Logical value. Defaults to <code>TRUE</code>, which means
+that the full Hessian matrix at the maximum marginal likelihood solution is
+computed. If <code>FALSE</code>, a reduced Hessian matrix with second order
+partial derivatives with respect to fixed regression coefficients and
+factor loadings. The latter can help is the full Hessian is not positive
+definite.</p></dd>
 
 </dl></div>
     <div class="section level2">

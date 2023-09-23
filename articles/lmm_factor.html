@@ -279,7 +279,7 @@ essentially equivalent, but we won’t run it in this vignette as it takes
 <p>Using galamm’s summary method, we can study the model output.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Generalized additive latent and mixed model fit by maximum marginal likelihood.</span></span>
+<span><span class="co">#&gt; GALAMM fit by maximum marginal likelihood.</span></span>
 <span><span class="co">#&gt; Formula: form</span></span>
 <span><span class="co">#&gt;    Data: KYPSsim</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -356,9 +356,7 @@ would then have the following loading matrix.</p>
 <span>  factor <span class="op">=</span> <span class="va">factors</span>,</span>
 <span>  load.var <span class="op">=</span> <span class="va">load.var</span>,</span>
 <span>  lambda <span class="op">=</span> <span class="va">loading_matrix_constr1</span></span>
-<span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in galamm(formula = form, data = KYPSsim, factor = factors, load.var = load.var, : Rank deficient Hessian</span></span>
-<span><span class="co">#&gt; matrix at optimum.</span></span></code></pre></div>
+<span><span class="op">)</span></span></code></pre></div>
 <p>We could further assume that the factor loadings at timepoints 1 and
 2 for middle school and at timepoints 3 and 4 for high schools are
 identical, which in practice would lead to a linear mixed model with no
@@ -651,7 +649,7 @@ minutes.</p>
 <span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">judge_galamm</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Generalized additive latent and mixed model fit by maximum marginal likelihood.</span></span>
+<span><span class="co">#&gt; GALAMM fit by maximum marginal likelihood.</span></span>
 <span><span class="co">#&gt; Formula: form</span></span>
 <span><span class="co">#&gt;    Data: JUDGEsim</span></span>
 <span><span class="co">#&gt; </span></span>

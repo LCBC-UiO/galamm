@@ -226,7 +226,10 @@ model part gives us a diagnostic plot.</p>
 <p>With <code>galamm</code> we use similar argument, but the
 <code>random</code> specification is now part of the model formula.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="fu"><a href="../reference/s.html">s</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">dat</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="fu"><a href="../reference/s.html">s</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">dat</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Error in parse(text = paste0("data$", load.var, "&lt;- factor(data$", load.var, : &lt;text&gt;:1:6: unexpected assignment</span></span>
+<span><span class="co">#&gt; 1: data$&lt;-</span></span>
+<span><span class="co">#&gt;          ^</span></span></code></pre></div>
 <p>As opposed to <code>gamm4</code>, <code>galamm</code> gives a single
 summary. As can be seen, smooth terms are both reported as random
 effects, and in a separate line under the header “Approximate
@@ -236,32 +239,38 @@ essentially equally, even though they use somewhat different
 computational algorithms.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Generalized additive latent and mixed model fit by maximum marginal likelihood.</span></span>
-<span><span class="co">#&gt; Formula: y ~ s(x) + (1 | id)</span></span>
+<span><span class="co">#&gt; GALAMM fit by maximum marginal likelihood.</span></span>
+<span><span class="co">#&gt; Formula: y ~ 0 + item + s(x, load.var = "loading") + (0 + loading | id/timepoint)</span></span>
 <span><span class="co">#&gt;    Data: dat</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;      AIC      BIC   logLik deviance df.resid </span></span>
-<span><span class="co">#&gt;   3025.2   3052.1  -1507.6   3015.2     1595 </span></span>
+<span><span class="co">#&gt;   1495.5   1538.0   -740.8   1614.8     3193 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Scaled residuals: </span></span>
 <span><span class="co">#&gt;      Min       1Q   Median       3Q      Max </span></span>
-<span><span class="co">#&gt; -2.93755 -0.65215  0.00612  0.62654  3.14290 </span></span>
+<span><span class="co">#&gt; -15.8546   0.0279   0.0780   0.1985   1.3948 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Lambda:</span></span>
+<span><span class="co">#&gt;         loading     SE</span></span>
+<span><span class="co">#&gt; lambda1   1.000      .</span></span>
+<span><span class="co">#&gt; lambda2   2.202 0.3007</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Random effects:</span></span>
-<span><span class="co">#&gt;  Groups   Name        Variance Std.Dev.</span></span>
-<span><span class="co">#&gt;  id       (Intercept) 0.8551   0.9247  </span></span>
-<span><span class="co">#&gt;  Xr       s(x):       2.0346   1.4264  </span></span>
-<span><span class="co">#&gt;  Residual             0.2501   0.5001  </span></span>
-<span><span class="co">#&gt; Number of obs: 1600, groups:  id, 200; Xr, 8</span></span>
+<span><span class="co">#&gt;  Groups       Name         Variance Std.Dev.</span></span>
+<span><span class="co">#&gt;  timepoint:id loading      0.0000   0.0000  </span></span>
+<span><span class="co">#&gt;  id           loading      0.6222   0.7888  </span></span>
+<span><span class="co">#&gt;  Xr           s(x):loading 1.5388   1.2405  </span></span>
+<span><span class="co">#&gt; Number of obs: 3200, groups:  timepoint:id, 1600; id, 200; Xr, 8</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Fixed effects:</span></span>
-<span><span class="co">#&gt;             Estimate Std. Error t value  Pr(&gt;|t|)</span></span>
-<span><span class="co">#&gt; (Intercept)   1.2694    0.06657 19.0672 4.731e-81</span></span>
-<span><span class="co">#&gt; s(x):Fx1     -0.1582    0.20236 -0.7818 4.343e-01</span></span>
+<span><span class="co">#&gt;                 Estimate Std. Error z value  Pr(&gt;|z|)</span></span>
+<span><span class="co">#&gt; item21             2.944     0.1903  15.473 5.249e-54</span></span>
+<span><span class="co">#&gt; item22             6.319     0.5853  10.796 3.612e-27</span></span>
+<span><span class="co">#&gt; s(x):loadingFx1   -1.389     0.2837  -4.897 9.733e-07</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Approximate significance of smooth terms:</span></span>
-<span><span class="co">#&gt;         edf Ref.df     F p-value</span></span>
-<span><span class="co">#&gt; s(x): 6.681  6.681 324.9  &lt;2e-16</span></span></code></pre></div>
+<span><span class="co">#&gt;                edf Ref.df Chi.sq p-value</span></span>
+<span><span class="co">#&gt; s(x):loading 2.491  2.491  115.1  &lt;2e-16</span></span></code></pre></div>
 <p>The <code>plot</code> function now gives us a diagnostic plot, which
 by inspection can be seen to be almost identical to the plot produced
 from the mixed model part of the <code>gamm4</code> model.</p>
@@ -372,38 +381,48 @@ useful in the binomial case, so we omit it.</p>
 <p>Again the <code>galamm</code> syntax is similar, but it puts the
 random effect specification into the model formula.</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="fu"><a href="../reference/s.html">s</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">dat</span>, family <span class="op">=</span> <span class="va">binomial</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="fu"><a href="../reference/s.html">s</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">dat</span>, family <span class="op">=</span> <span class="va">binomial</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Error in parse(text = paste0("data$", load.var, "&lt;- factor(data$", load.var, : &lt;text&gt;:1:6: unexpected assignment</span></span>
+<span><span class="co">#&gt; 1: data$&lt;-</span></span>
+<span><span class="co">#&gt;          ^</span></span></code></pre></div>
 <p>The estimates are very similar, although not identical. The
 difference in deviance is due to differences in the way deviance is
 defined. The call <code>deviance(mod_gamm4$mer)</code> gives the same
 value as in the summary for the model fitted with galamm.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Generalized additive latent and mixed model fit by maximum marginal likelihood.</span></span>
-<span><span class="co">#&gt; Formula: y ~ s(x) + (1 | id)</span></span>
+<span><span class="co">#&gt; GALAMM fit by maximum marginal likelihood.</span></span>
+<span><span class="co">#&gt; Formula: y ~ 0 + item + s(x, load.var = "loading") + (0 + loading | id/timepoint)</span></span>
 <span><span class="co">#&gt;    Data: dat</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;      AIC      BIC   logLik deviance df.resid </span></span>
-<span><span class="co">#&gt;    983.7   1005.2   -487.8    908.8     1596 </span></span>
+<span><span class="co">#&gt;   1495.5   1538.0   -740.8   1614.8     3193 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Scaled residuals: </span></span>
-<span><span class="co">#&gt;     Min      1Q  Median      3Q     Max </span></span>
-<span><span class="co">#&gt; -8.2237  0.0792  0.1947  0.4245  0.8226 </span></span>
+<span><span class="co">#&gt;      Min       1Q   Median       3Q      Max </span></span>
+<span><span class="co">#&gt; -15.8546   0.0279   0.0780   0.1985   1.3948 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Lambda:</span></span>
+<span><span class="co">#&gt;         loading     SE</span></span>
+<span><span class="co">#&gt; lambda1   1.000      .</span></span>
+<span><span class="co">#&gt; lambda2   2.202 0.3007</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Random effects:</span></span>
-<span><span class="co">#&gt;  Groups Name        Variance Std.Dev.</span></span>
-<span><span class="co">#&gt;  id     (Intercept) 0.2316   0.4813  </span></span>
-<span><span class="co">#&gt;  Xr     s(x):       0.9387   0.9688  </span></span>
-<span><span class="co">#&gt; Number of obs: 1600, groups:  id, 200; Xr, 8</span></span>
+<span><span class="co">#&gt;  Groups       Name         Variance Std.Dev.</span></span>
+<span><span class="co">#&gt;  timepoint:id loading      0.0000   0.0000  </span></span>
+<span><span class="co">#&gt;  id           loading      0.6222   0.7888  </span></span>
+<span><span class="co">#&gt;  Xr           s(x):loading 1.5388   1.2405  </span></span>
+<span><span class="co">#&gt; Number of obs: 3200, groups:  timepoint:id, 1600; id, 200; Xr, 8</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Fixed effects:</span></span>
-<span><span class="co">#&gt;             Estimate Std. Error z value  Pr(&gt;|z|)</span></span>
-<span><span class="co">#&gt; (Intercept)    2.808     0.1956  14.354 9.989e-47</span></span>
-<span><span class="co">#&gt; s(x):Fx1      -1.406     0.4134  -3.402 6.697e-04</span></span>
+<span><span class="co">#&gt;                 Estimate Std. Error z value  Pr(&gt;|z|)</span></span>
+<span><span class="co">#&gt; item21             2.944     0.1903  15.473 5.249e-54</span></span>
+<span><span class="co">#&gt; item22             6.319     0.5853  10.796 3.612e-27</span></span>
+<span><span class="co">#&gt; s(x):loadingFx1   -1.389     0.2837  -4.897 9.733e-07</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Approximate significance of smooth terms:</span></span>
-<span><span class="co">#&gt;         edf Ref.df Chi.sq p-value</span></span>
-<span><span class="co">#&gt; s(x): 2.124  2.124    114  &lt;2e-16</span></span></code></pre></div>
+<span><span class="co">#&gt;                edf Ref.df Chi.sq p-value</span></span>
+<span><span class="co">#&gt; s(x):loading 2.491  2.491  115.1  &lt;2e-16</span></span></code></pre></div>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_smooth.galamm.html">plot_smooth</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
@@ -426,7 +445,6 @@ now use all items of cognitive domain 1. These are all conditionally
 normal distributed.</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">cognition</span>, <span class="va">domain</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span></span>
-<span><span class="va">dat</span><span class="op">$</span><span class="va">item</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">dat</span><span class="op">$</span><span class="va">item</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   id domain          x timepoint item trials          y</span></span>
 <span><span class="co">#&gt; 1  1      1 0.06475113         1   11      1 0.16788973</span></span>
@@ -494,7 +512,7 @@ signal, but based on these results, there are no clear indications that
 the model is implemented incorrectly.</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Generalized additive latent and mixed model fit by maximum marginal likelihood.</span></span>
+<span><span class="co">#&gt; GALAMM fit by maximum marginal likelihood.</span></span>
 <span><span class="co">#&gt; Formula: y ~ 0 + item + s(x, load.var = "loading") + (0 + loading | id/timepoint)</span></span>
 <span><span class="co">#&gt;    Data: dat</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -548,7 +566,6 @@ Other than that, and setting <code>family = binomial</code>, the model
 is the same as before.</p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">cognition</span>, <span class="va">domain</span> <span class="op">==</span> <span class="fl">2</span><span class="op">)</span></span>
-<span><span class="va">dat</span><span class="op">$</span><span class="va">item</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">dat</span><span class="op">$</span><span class="va">item</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="fl">0</span> <span class="op">+</span> <span class="va">item</span> <span class="op">+</span> <span class="fu"><a href="../reference/s.html">s</a></span><span class="op">(</span><span class="va">x</span>, load.var <span class="op">=</span> <span class="st">"loading"</span><span class="op">)</span> <span class="op">+</span></span>
@@ -573,7 +590,7 @@ random effects, and this approximation may be inaccurate for binomial
 data with a low number of repeated observations <span class="citation">(<a href="#ref-joeAccuracyLaplaceApproximation2008" role="doc-biblioref">Joe 2008</a>)</span>.</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Generalized additive latent and mixed model fit by maximum marginal likelihood.</span></span>
+<span><span class="co">#&gt; GALAMM fit by maximum marginal likelihood.</span></span>
 <span><span class="co">#&gt; Formula: y ~ 0 + item + s(x, load.var = "loading") + (0 + loading | id/timepoint)</span></span>
 <span><span class="co">#&gt;    Data: dat</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -641,9 +658,7 @@ across timepoints <span class="math inline">\(\zeta^{(3)}\)</span>.</p>
 <p>We first subset the cognition dataset to get the observations we
 want.</p>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">cognition</span>, <span class="va">domain</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">dat</span><span class="op">$</span><span class="va">domain</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">dat</span><span class="op">$</span><span class="va">domain</span><span class="op">)</span></span>
-<span><span class="va">dat</span><span class="op">$</span><span class="va">item</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">dat</span><span class="op">$</span><span class="va">item</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">cognition</span>, <span class="va">domain</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>At this point we are entering the bleeding edge of the development of
 this package. Currently, multiple smooth terms for different domains is
 not working. A low-level way of achieving this can be found in <a href="https://github.com/LCBC-UiO/galamm-scripts/blob/main/code/cognition_model/estimate_model.R" class="external-link">this

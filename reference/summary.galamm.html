@@ -83,9 +83,29 @@
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>A list of summary statistics of the fitted model, of class
-<code>summary.galamm</code>.</p>
-    </div>
+<p>A list of summary statistics of the fitted model of class
+<code>summary.galamm</code>, containing the following elements:</p><ul><li><p><code>AICtab</code> a table of model fit measures, returned by
+<code><a href="llikAIC.galamm.html">llikAIC</a></code>.</p></li>
+<li><p><code>call</code> the matched call used when fitting the model.</p></li>
+<li><p><code>fixef</code> a matrix with fixed effect estimated, returned by
+<code><a href="fixef.html">fixef</a></code>.</p></li>
+<li><p><code>gam</code> List containing information about smooth terms in the model. If no
+smooth terms are contained in the model, then it is a list of length zero.</p></li>
+<li><p><code>model</code> a list with various elements related to the model setup and fit.
+See <code><a href="galamm.html">?galamm</a></code> for details.</p></li>
+<li><p><code>parameters</code> A list object with model parameters and related information.
+See <code><a href="galamm.html">?galamm</a></code> for details.</p></li>
+<li><p><code>Lambda</code> An object containing the estimated factor loadings. Returned
+from <code><a href="factor_loadings.galamm.html">factor_loadings.galamm</a></code>. If there are no estimated factor
+loadings, then this object is <code>NULL</code>.</p></li>
+<li><p><code>random_effects</code> a list containing the random effects.
+See <code><a href="galamm.html">?galamm</a></code> for details.</p></li>
+<li><p><code>VarCorr</code> An object of class <code>VarCorr.galamm</code>, returned from
+<code><a href="VarCorr.html">VarCorr.galamm</a></code>.</p></li>
+<li><p><code>weights</code> An object containing information about estimated variance
+functions, when there are heteroscedastic residuals. Otherwise the object
+is <code>NULL</code>.</p></li>
+</ul></div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p><code><a href="print.summary.galamm.html">print.summary.galamm()</a></code> for the print method and <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> for

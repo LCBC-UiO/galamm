@@ -220,7 +220,7 @@ formula, which is simply <code>item</code>, specifies the term <span class="math
 <p>We can start by inspecting the fitted model:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Generalized additive latent and mixed model fit by maximum marginal likelihood.</span></span>
+<span><span class="co">#&gt; GALAMM fit by maximum marginal likelihood.</span></span>
 <span><span class="co">#&gt; Formula: y ~ item + (0 + ability | school/sid)</span></span>
 <span><span class="co">#&gt;    Data: IRTsim</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -332,7 +332,7 @@ specified <code>cbind(successes, failures)</code>.</p>
 its summary output here.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">galamm_mod_trials</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Generalized additive latent and mixed model fit by maximum marginal likelihood.</span></span>
+<span><span class="co">#&gt; GALAMM fit by maximum marginal likelihood.</span></span>
 <span><span class="co">#&gt; Formula: cbind(y, trials - y) ~ item + (0 + ability | school/sid)</span></span>
 <span><span class="co">#&gt;    Data: dat</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -381,7 +381,7 @@ distributed responses.</p>
 <p>We can look at the summary output.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">count_mod</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Generalized additive latent and mixed model fit by maximum marginal likelihood.</span></span>
+<span><span class="co">#&gt; GALAMM fit by maximum marginal likelihood.</span></span>
 <span><span class="co">#&gt; Formula: y ~ lbas * treat + lage + v4 + (1 | subj)</span></span>
 <span><span class="co">#&gt;    Data: epilep</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -424,6 +424,11 @@ need.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/lme4/lme4/" class="external-link">lme4</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; Loading required package: Matrix</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Attaching package: 'lme4'</span></span>
+<span><span class="co">#&gt; The following object is masked from 'package:galamm':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     llikAIC</span></span>
 <span><span class="va">count_mod_lme4</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/lme4/man/glmer.html" class="external-link">glmer</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">lbas</span> <span class="op">*</span> <span class="va">treat</span> <span class="op">+</span> <span class="va">lage</span> <span class="op">+</span> <span class="va">v4</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">subj</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">epilep</span>,</span>
