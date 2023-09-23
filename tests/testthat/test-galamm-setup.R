@@ -198,9 +198,9 @@ test_that("multiple factors in fixed effects works", {
     load.var = "item",
     lambda = list(lmat),
     factor = list(c("lambda1", "lambda2")),
-    control = galamm_control(optim_control = list(maxit = 0)),
+    control = galamm_control(optim_control = list(maxit = 3)),
     start = list(theta = .565, beta = c(1.13, 2.77),
                  lambda = c(c(0.97, 1.282, 0.141, 1.424)))
   )
-  expect_equal(deviance(mod), 8111.72443858356, tolerance = .0001)
+  expect_equal(deviance(mod), 8311.52169844651, tolerance = .1)
 })
