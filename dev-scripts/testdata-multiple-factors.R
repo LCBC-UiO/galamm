@@ -3,7 +3,7 @@ library(tidyverse)
 set.seed(123)
 gamma <- c(1, 2)
 lambda <- c(1, .5, 2, 1, .5, 2)
-data <- tibble(id = seq_len(500)) %>%
+test_multiple_factors <- tibble(id = seq_len(500)) %>%
   uncount(2, .id = "domain") %>%
   mutate(b = rnorm(nrow(.))) %>%
   uncount(3, .id = "item") %>%
@@ -15,16 +15,5 @@ data <- tibble(id = seq_len(500)) %>%
     domain2 = as.numeric(domain == 2)
   )
 
-lmat <- matrix(c(1, NA, NA, 0, 0, 0,
-                 0, 0, 0, 1, NA, NA), ncol = 2)
+saveRDS(test_multiple_factors, "inst/testdata/test_multiple_factors.rds")
 
-mod <- galamm(
-  formula = y ~ 0 + x:domain1:lambda1 + x:domain2:lambda2 +
-    (0 + domain1:lambda1 + domain2:lambda2 | id),
-  data = data,
-  load.var = "item",
-  lambda = list(lmat),
-  factor = list(c("lambda1", "lambda2"))
-  )
-
-plot_smooth(mod, scale = 0, pages = 1)

@@ -218,3 +218,57 @@
       R-sq.(adj) =  0.158   
       glmer.ML =   Scale est. = 1         n = 400
 
+---
+
+    Code
+      print(summary(mod1$gam), digits = 2)
+    Output
+      
+      Family: poisson 
+      Link function: log 
+      
+      Formula:
+      NULL
+      
+      Parametric coefficients:
+                  Estimate Std. Error z value Pr(>|z|)    
+      (Intercept)    0.820      0.034      24   <2e-16 ***
+      ---
+      Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+      
+      Approximate significance of smooth terms:
+            edf Ref.df Chi.sq p-value    
+      s(x2) 6.1    6.1     83  <2e-16 ***
+      ---
+      Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+      
+      R-sq.(adj) =  0.137   
+      glmer.ML =   Scale est. = 1         n = 400
+
+---
+
+    Code
+      print(summary(mod1$gam), digits = 2)
+    Output
+      
+      Family: poisson 
+      Link function: log 
+      
+      Formula:
+      NULL
+      
+      Parametric coefficients:
+                  Estimate Std. Error z value Pr(>|z|)    
+      (Intercept)    0.913      0.066      14   <2e-16 ***
+      ---
+      Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+      
+      Approximate significance of smooth terms:
+                edf Ref.df Chi.sq p-value    
+      t2(x2):x0 4.8    4.8     57  <2e-16 ***
+      ---
+      Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+      
+      R-sq.(adj) =  0.0879   
+      glmer.ML =   Scale est. = 1         n = 400
+

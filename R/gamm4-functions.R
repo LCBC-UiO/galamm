@@ -120,6 +120,11 @@ gamm4.setup <- function(formula, pterms, mf) {
 #'
 #' \insertRef{woodGeneralizedAdditiveModels2017a}{galamm}
 #'
+#' @examples
+#' # To run the match.call(expand.dots = FALSE) interactively, do:
+#' mf <- match.call(gamm4, call("gamm4", fixed, random, data),
+#'                  expand.dots = FALSE)
+#'
 gamm4 <- function(fixed, random = NULL, data) {
   random.vars <- all.vars(random)
   gp <- interpret.gam0(fixed)
@@ -128,7 +133,7 @@ gamm4 <- function(fixed, random = NULL, data) {
   mf$formula <- gp$fake.formula
   mf$fixed <- NULL
   mf$control <- mf$random <- NULL
-
+  mf$drop.unused.levels <- TRUE
   mf[[1]] <- as.name("model.frame")
   pmf <- mf
   gmf <- eval(mf, parent.frame())

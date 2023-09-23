@@ -204,7 +204,6 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
     stats::as.formula(paste("~", paste("(", rf, ")", collapse = "+")))
   }
   gobj <- gamm4(fixed = lme4::nobars(formula), random = rf, data = data)
-
   colnames(gobj$lmod$X) <- gsub("^X", "", colnames(gobj$lmod$X))
 
   response_obj <-
@@ -273,7 +272,8 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
       maxit_conditional_modes = maxit_conditional_modes,
       gradient = TRUE,
       hessian = hessian,
-      epsilon_u = 1e-10
+      epsilon_u = 1e-10,
+      reduced_hessian = control$reduced_hessian
     )
   }
 

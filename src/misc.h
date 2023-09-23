@@ -26,7 +26,8 @@ SpMdual<T> inner_hessian(
 };
 
 template <typename T, typename Functor1, typename Functor2>
-Rcpp::List create_result(Functor1 fx, Functor2 gx, parameters<T>& parlist){
+Rcpp::List create_result(Functor1 fx, Functor2 gx, parameters<T>& parlist,
+                         bool reduced_hessian = false){
   T ll = fx(parlist);
   return Rcpp::List::create(
     Rcpp::Named("logLik") = static_cast<double>(ll)
@@ -35,7 +36,8 @@ Rcpp::List create_result(Functor1 fx, Functor2 gx, parameters<T>& parlist){
 
 // Specialization for dual1st, gives gradient vector
 template <typename Functor1, typename Functor2>
-Rcpp::List create_result(Functor1 fx, Functor2 gx, parameters<autodiff::dual1st>& parlist){
+Rcpp::List create_result(Functor1 fx, Functor2 gx, parameters<autodiff::dual1st>& parlist,
+                         bool reduced_hessian = false){
   autodiff::dual1st ll{};
   Eigen::VectorXd g{};
   g = gradient(fx, wrt(parlist.theta, parlist.beta, parlist.lambda,
@@ -50,12 +52,18 @@ Rcpp::List create_result(Functor1 fx, Functor2 gx, parameters<autodiff::dual1st>
 
 // Specialization for dual2nd, gives Hessian matrix plus some extra info
 template <typename Functor1, typename Functor2>
-Rcpp::List create_result(Functor1 fx, Functor2 gx, parameters<autodiff::dual2nd>& parlist){
+Rcpp::List create_result(Functor1 fx, Functor2 gx, parameters<autodiff::dual2nd>& parlist,
+                         bool reduced_hessian = false){
   autodiff::dual2nd ll{};
   Eigen::VectorXd g{};
   Eigen::MatrixXd H{};
   g = gradient(fx, wrt(parlist.theta, parlist.beta, parlist.lambda, parlist.weights), at(parlist), ll);
-  H = hessian(fx, wrt(parlist.theta, parlist.beta, parlist.lambda, parlist.weights), at(parlist));
+  if(reduced_hessian){
+    H = hessian(fx, wrt(parlist.beta, parlist.lambda), at(parlist));
+  } else {
+    H = hessian(fx, wrt(parlist.theta, parlist.beta, parlist.lambda, parlist.weights), at(parlist));
+  }
+
   logLikObject extras = gx(parlist);
 
   return Rcpp::List::create(
