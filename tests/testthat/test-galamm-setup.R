@@ -193,7 +193,7 @@ test_that("multiple factors in fixed effects works", {
 
   mod <- galamm(
     formula = y ~ 0 + x:domain1:lambda1 + x:domain2:lambda2 +
-      (0 + domain1:lambda1 + domain2:lambda2 | id),
+      (0 + 1 | id),
     data = dat,
     load.var = "item",
     lambda = list(lmat),
