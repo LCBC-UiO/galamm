@@ -295,15 +295,17 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   par_init <-
     set_initial_values(gobj, start, beta_inds, lambda_inds, weights_inds)
 
-  if(control$method == "L-BFGS-B") {
+  if (control$method == "L-BFGS-B") {
     opt <- stats::optim(par_init,
-                        fn = fn, gr = gr, gradient = TRUE,
-                        method = "L-BFGS-B", lower = bounds,
-                        control = control$optim_control)
+      fn = fn, gr = gr, gradient = TRUE,
+      method = "L-BFGS-B", lower = bounds,
+      control = control$optim_control
+    )
   } else {
     opt <- lme4::Nelder_Mead(
       fn = function(x) -fn(x, gradient = FALSE), par = par_init,
-      lower = bounds, control = control$optim_control)
+      lower = bounds, control = control$optim_control
+    )
     opt$value <- -opt$fval
   }
 

@@ -43,20 +43,19 @@ extract_optim_parameters <- function(object) {
 #'   control = galamm_control(method = "Nelder-Mead")
 #' )
 #'
-#'
 extract_optim_parameters.galamm <- function(object) {
   list(
     theta = object$parameters$parameter_estimates[
       object$parameters$theta_inds
-      ],
+    ],
     beta = object$parameters$parameter_estimates[
       object$parameters$beta_inds
-      ],
+    ],
     lambda = object$parameters$parameter_estimates[
       object$parameters$lambda_inds
-      ],
+    ],
     weights = object$parameters$parameter_estimates[
       object$parameters$weights_inds
-      ]
+    ]
   )
 }

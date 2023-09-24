@@ -82,7 +82,7 @@ gam.setup <- function(formula, pterms, mf) {
       if (is.null(sm[[i]]$updateS)) {
         length(sm[[i]]$S)
       } else {
-          sm[[i]]$n.sp
+        sm[[i]]$n.sp
       }
     Li <- if (is.null(sm[[i]]$L)) {
       diag(length.S)

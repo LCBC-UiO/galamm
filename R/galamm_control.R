@@ -61,7 +61,6 @@ galamm_control <- function(optim_control = list(),
                            method = c("L-BFGS-B", "Nelder-Mead"),
                            maxit_conditional_modes = 10,
                            reduced_hessian = FALSE) {
-
   if ("trace" %in% names(optim_control)) {
     if (length(optim_control$trace) != 1L || any(optim_control$trace < 0)) {
       stop("trace should be a non-negative integer of length one")
@@ -77,7 +76,7 @@ galamm_control <- function(optim_control = list(),
   }
 
   method <- match.arg(method)
-  if(method == "L-BFGS-B") {
+  if (method == "L-BFGS-B") {
     optim_control_names <- c(
       "trace", "fnscale", "parscale", "ndeps", "maxit",
       "abstol", "reltol", "alpha", "beta", "gamma",
@@ -115,7 +114,7 @@ galamm_control <- function(optim_control = list(),
 #' @seealso [galamm_control()]
 new_galamm_control <- function(optim_control, method, maxit_conditional_modes,
                                reduced_hessian) {
-  if(method == "L-BFGS-B") {
+  if (method == "L-BFGS-B") {
     if (is.null(optim_control$fnscale)) {
       optim_control$fnscale <- -1
     }

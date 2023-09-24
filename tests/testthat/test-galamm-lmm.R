@@ -87,7 +87,7 @@ test_that("LMM with simple factor works", {
       theta = mod$parameters$parameter_estimates[mod$parameters$theta_inds],
       beta = mod$parameters$parameter_estimates[mod$parameters$beta_inds],
       lambda = mod$parameters$parameter_estimates[mod$parameters$lambda_inds]
-      ),
+    ),
     control = galamm_control(reduced_hessian = TRUE)
   )
 
@@ -125,15 +125,24 @@ test_that("LMM with simple factor works with Nelder-Mead", {
   expect_equal(mod$model$loglik, -193.56333776973)
   expect_equal(
     summary(mod)$AICtab,
-    c(AIC = 403.12667553946, BIC = 432.756935336709, logLik = -193.56333776973,
-      deviance = 387.12667553946, df.resid = 292)
+    c(
+      AIC = 403.12667553946, BIC = 432.756935336709, logLik = -193.56333776973,
+      deviance = 387.12667553946, df.resid = 292
+    )
   )
   expect_equal(
     factor_loadings(mod),
-    structure(c(1, 1.05449523890597, 1.02128079445268, NA, 0.217885861133189,
-                0.236820565746212), dim = 3:2,
-              dimnames = list(c("lambda1", "lambda2", "lambda3"),
-                              c("abil.sid", "SE")))
+    structure(
+      c(
+        1, 1.05449523890597, 1.02128079445268, NA, 0.217885861133189,
+        0.236820565746212
+      ),
+      dim = 3:2,
+      dimnames = list(
+        c("lambda1", "lambda2", "lambda3"),
+        c("abil.sid", "SE")
+      )
+    )
   )
 
   expect_equal(
