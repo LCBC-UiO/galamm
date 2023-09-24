@@ -157,10 +157,18 @@ test_that("family can be defined in three different ways", {
   expect_equal(logLik(mod1), logLik(mod2))
   expect_equal(logLik(mod2), logLik(mod3))
 
+  expect_error(predict(mod1, newdata = dat),
+               "Not implemented yet")
+
+  expect_error(vcov(mod1, list(1:10)),
+               "parm must be an integer or character vector")
+
   expect_message(
     anova(mod1),
     "ANOVA tables for galamm objects not implemented yet."
   )
+  expect_error(plot_smooth(mod1), "No terms to plot.")
+
 })
 
 test_that("multiple factors and factors in fixed effects are allowed", {

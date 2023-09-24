@@ -15,6 +15,8 @@ test_that("LMM with simple factor works", {
     lambda = list(irt.lam)
   )
 
+  expect_invisible(plot(mod))
+
   # Must test that it works also with tibbles
   class(IRTsub) <- c("tbl_df", "tbl", "data.frame")
   mod1 <- galamm(

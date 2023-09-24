@@ -194,16 +194,6 @@ llikAIC <- function(object) {
 #'
 #' @family details of model fit
 #'
-#' @examples
-#' # Linear mixed model with heteroscedastic residuals
-#' mod <- galamm(
-#'   formula = y ~ x + (1 | id),
-#'   weights = ~ (1 | item),
-#'   data = hsced
-#' )
-#'
-#' llikAIC(mod)
-#'
 llikAIC.galamm <- function(object) {
   llik <- logLik(object)
   c(

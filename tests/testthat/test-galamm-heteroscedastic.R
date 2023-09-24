@@ -5,6 +5,7 @@ test_that("Heteroscedastic model works", {
     data = hsced
   )
 
+  expect_snapshot(print(summary(mod), digits = 3))
   expect_equal(mod$model$loglik, -2058.14021326104)
   expect_equal(
     summary(mod)$AICtab,

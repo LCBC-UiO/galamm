@@ -8,6 +8,7 @@ test_that("galamm reproduces gamm4", {
   expect_equal(mod$gam$Ve, mod_comp$gam$Ve, tolerance = .001)
   expect_equal(mod$gam$Vp, mod_comp$gam$Vp, tolerance = .001)
   expect_snapshot(print(summary(mod$gam), digits = 2))
+  expect_type(plot_smooth(mod), "list")
 
   mod <- galamm(formula = y ~ t2(x), data = dat)
   mod_comp <- gamm4::gamm4(formula = y ~ t2(x), data = dat, REML = FALSE)
@@ -293,5 +294,5 @@ test_that("galamm with by variables and loadings works", {
     control = galamm_control(optim_control = list(maxit = 3))
   )
 
-  expect_snapshot(print(summary(mod), digits = 2))
+  expect_snapshot(print(summary(mod)$gam_summary, digits = 2))
 })

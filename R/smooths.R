@@ -1,9 +1,13 @@
 ##' @importFrom mgcv s
 ##' @export s
+##' @name s
+##' @rdname sl
 NULL
 
 ##' @importFrom mgcv t2
 ##' @export t2
+##' @name t2
+##' @rdname t2l
 NULL
 
 #' Set up smooth term with factor loading

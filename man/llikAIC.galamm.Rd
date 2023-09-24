@@ -17,17 +17,6 @@ degrees of freedom.
 \description{
 This function is assembles the values used by \code{\link{summary.galamm}}.
 }
-\examples{
-# Linear mixed model with heteroscedastic residuals
-mod <- galamm(
-  formula = y ~ x + (1 | id),
-  weights = ~ (1 | item),
-  data = hsced
-)
-
-llikAIC(mod)
-
-}
 \seealso{
 Other details of model fit: 
 \code{\link{VarCorr}()},
