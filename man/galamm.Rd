@@ -197,7 +197,7 @@ loading_matrix <- matrix(c(1, NA, NA), ncol = 1)
 
 # We can now estimate the model.
 mod <- galamm(
-  formula = y ~ 0 + item + s(x, load.var = "loading") +
+  formula = y ~ 0 + item + sl(x, load.var = "loading") +
     (0 + loading | id),
   data = dat,
   load.var = "item",
