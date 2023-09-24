@@ -14,22 +14,23 @@
 #' * \code{call} the matched call used when fitting the model.
 #' * \code{fixef} a matrix with fixed effect estimated, returned by
 #'   \code{\link{fixef}}.
-#' * \code{gam} List containing information about smooth terms in the model. If no
-#'   smooth terms are contained in the model, then it is a list of length zero.
-#' * \code{model} a list with various elements related to the model setup and fit.
-#'    See \code{?galamm} for details.
-#' * \code{parameters} A list object with model parameters and related information.
-#'    See \code{?galamm} for details.
+#' * \code{gam} List containing information about smooth terms in the model. If
+#'   no smooth terms are contained in the model, then it is a list of length
+#'   zero.
+#' * \code{model} a list with various elements related to the model setup and
+#'   fit. See \code{?galamm} for details.
+#' * \code{parameters} A list object with model parameters and related
+#'   information. See \code{?galamm} for details.
 #' * \code{Lambda} An object containing the estimated factor loadings. Returned
-#' from \code{\link{factor_loadings.galamm}}. If there are no estimated factor
-#' loadings, then this object is \code{NULL}.
+#'   from \code{\link{factor_loadings.galamm}}. If there are no estimated factor
+#'   loadings, then this object is \code{NULL}.
 #' * \code{random_effects} a list containing the random effects.
-#'    See \code{?galamm} for details.
+#'   See \code{?galamm} for details.
 #' * \code{VarCorr} An object of class \code{VarCorr.galamm}, returned from
-#' \code{\link{VarCorr.galamm}}.
+#'   \code{\link{VarCorr.galamm}}.
 #' * \code{weights} An object containing information about estimated variance
-#' functions, when there are heteroscedastic residuals. Otherwise the object
-#' is \code{NULL}.
+#'   functions, when there are heteroscedastic residuals. Otherwise the object
+#'   is \code{NULL}.
 #'
 #' @export
 #'
@@ -182,9 +183,6 @@ llikAIC <- function(object) {
 #'
 #' This function is assembles the values used by \code{\link{summary.galamm}}.
 #'
-#' @aliases llikAIC llikAIC.galamm
-#' @export llikAIC
-#' @export
 #'
 #' @param object Object of class \code{galamm} returned from
 #'   \code{\link{galamm}}.
@@ -192,18 +190,9 @@ llikAIC <- function(object) {
 #' @return A list containing AIC, BIC, log likelihood, deviance and residual
 #'   degrees of freedom.
 #'
+#' @keywords internal
 #'
 #' @family details of model fit
-#'
-#' @examples
-#' # Linear mixed model with heteroscedastic residuals
-#' mod <- galamm(
-#'   formula = y ~ x + (1 | id),
-#'   weights = ~ (1 | item),
-#'   data = hsced
-#' )
-#'
-#' llikAIC(mod)
 #'
 llikAIC.galamm <- function(object) {
   llik <- logLik(object)

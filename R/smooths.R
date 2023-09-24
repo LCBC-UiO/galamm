@@ -1,7 +1,21 @@
+##' @importFrom mgcv s
+##' @export s
+##' @name s
+##' @rdname sl
+NULL
+
+##' @importFrom mgcv t2
+##' @export t2
+##' @name t2
+##' @rdname t2l
+NULL
+
 #' Set up smooth term with factor loading
 #'
-#' This is a very thin wrappers around \code{mgcv::s}. It enables the
-#' specification of loading variables for smooth terms.
+#' This is a very thin wrapper around \code{mgcv::s}. It enables the
+#' specification of loading variables for smooth terms. The last letter "l",
+#' which stands for "loading", has been added to avoid namespace conflicts
+#' with \code{mgcv} and \code{gamm4}.
 #'
 #' @param ... Arguments passed on to \code{mgcv::s}.
 #' @param load.var Optional character argument specifying the loading variable.
@@ -22,16 +36,18 @@
 #'
 #' \insertRef{woodGeneralizedAdditiveModels2017a}{galamm}
 #'
-s <- function(..., load.var = NULL) {
-  ret <- mgcv::s(...)
+sl <- function(..., load.var = NULL) {
+  ret <- s(...)
   attr(ret, "load.var") <- load.var
   ret
 }
 
 #' Set up smooth term with factor loading
 #'
-#' This is a very thin wrappers around \code{mgcv::t2}. It enables the
-#' specification of loading variables for smooth terms.
+#' This is a very thin wrapper around \code{mgcv::t2}. It enables the
+#' specification of loading variables for smooth terms. The last letter "l",
+#' which stands for "loading", has been added to avoid namespace conflicts
+#' with \code{mgcv} and \code{gamm4}.
 #'
 #' @param ... Arguments passed on to \code{mgcv::t2}.
 #' @param load.var Optional character argument specifying the loading variable.
@@ -52,8 +68,8 @@ s <- function(..., load.var = NULL) {
 #'
 #' \insertRef{woodGeneralizedAdditiveModels2017a}{galamm}
 #'
-t2 <- function(..., load.var = NULL) {
-  ret <- mgcv::t2(...)
+t2l <- function(..., load.var = NULL) {
+  ret <- t2(...)
   attr(ret, "load.var") <- load.var
   ret
 }

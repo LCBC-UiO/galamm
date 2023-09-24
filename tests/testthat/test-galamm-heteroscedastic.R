@@ -5,6 +5,7 @@ test_that("Heteroscedastic model works", {
     data = hsced
   )
 
+  expect_snapshot(print(summary(mod), digits = 3))
   expect_equal(mod$model$loglik, -2058.14021326104)
   expect_equal(
     summary(mod)$AICtab,
@@ -33,4 +34,19 @@ test_that("Heteroscedastic model works", {
 
   expect_error(vcov(mod, parm = 5L), "out of bounds")
   expect_error(vcov(mod, parm = "phi"), "Parameter not found")
+
+  # Now use initial values
+  mod_start <- galamm(
+    formula = y ~ x + (1 | id),
+    weights = ~ (1 | item),
+    data = hsced,
+    start = list(beta = c(.13, .70), theta = 1.01, weights = .501)
+  )
+
+  expect_equal(
+    mod_start$parameters$parameter_estimates,
+    mod$parameters$parameter_estimates,
+    tolerance = .01)
+
+
 })

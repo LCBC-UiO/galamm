@@ -35,10 +35,7 @@ gam.setup <- function(formula, pterms, mf) {
   G$nsdf <- ncol(X)
   G$contrasts <- attr(X, "contrasts")
   G$xlevels <- stats::.getXlevels(pterms, mf)
-  G$assign <- attr(X, "assign") # used to tell which coeffs relate to which pterms
-
-  # next work through smooth terms (if any) extending model matrix.....
-
+  G$assign <- attr(X, "assign")
   G$smooth <- list()
   G$S <- list()
 
@@ -53,10 +50,6 @@ gam.setup <- function(formula, pterms, mf) {
   newm <- 0
 
   for (i in seq_len(m)) {
-    # idea here is that terms are set up in accordance with information given in formula$smooth.spec
-    # appropriate basis constructor is called depending on the class of the smooth
-    # constructor returns penalty matrices model matrix and basis specific information
-
     id <- formula$smooth.spec[[i]]$id
 
     sml <- mgcv::smoothCon(formula$smooth.spec[[i]], mf, NULL, TRUE,
@@ -78,41 +71,29 @@ gam.setup <- function(formula, pterms, mf) {
 
 
   G$m <- m <- newm ## number of actual smooths
-
-  ## at this stage, it is neccessary to impose any side conditions required
-  ## for identifiability
-
   sm <- gam.side(sm, X, tol = .Machine$double.eps^.5)
-
-
-  ## The matrix, L, mapping the underlying log smoothing parameters to the
-  ## log of the smoothing parameter multiplying the S[[i]] must be
-  ## worked out...
   L <- matrix(0, 0, 0)
-  lsp.names <- sp.names <- rep("", 0) ## need a list of names to identify sps in global sp array
+  lsp.names <- sp.names <- rep("", 0)
 
   for (i in seq_len(m)) {
     id <- sm[[i]]$id
     ## get the L matrix for this smooth...
-    length.S <- if (is.null(sm[[i]]$updateS)) length(sm[[i]]$S) else sm[[i]]$n.sp ## deals with possibility of non-linear penalty
-    Li <- if (is.null(sm[[i]]$L)) diag(length.S) else sm[[i]]$L
-
-    if (length.S > 0) { ## there are smoothing parameters to name
-      if (length.S == 1) {
-        lspn <- sm[[i]]$label
+    length.S <-
+      if (is.null(sm[[i]]$updateS)) {
+        length(sm[[i]]$S)
       } else {
-        Sname <- names(sm[[i]]$S)
-        lspn <- if (is.null(Sname)) {
-          paste(sm[[i]]$label, 1:length.S, sep = "")
-        } else {
-          paste(sm[[i]]$label, Sname, sep = "")
-        } ## names for all sp's
+          sm[[i]]$n.sp
       }
-      spn <- lspn[seq_len(ncol(Li))] ## names for actual working sps
+    Li <- if (is.null(sm[[i]]$L)) {
+      diag(length.S)
+    } else {
+      sm[[i]]$L
     }
 
-    ## extend the global L matrix...
-
+    if (length.S > 0) {
+      lspn <- sm[[i]]$label
+      spn <- lspn[seq_len(ncol(Li))]
+    }
 
     L <- rbind(
       cbind(L, matrix(0, nrow(L), ncol(Li))),
@@ -199,7 +180,10 @@ gam.setup <- function(formula, pterms, mf) {
     id <- sm[[i]]$id
 
     if (is.null(sm[[i]]$L)) nc <- length(sm[[i]]$S) else nc <- ncol(sm[[i]]$L)
-    if (nc > 0) G$smooth[[i]]$sp <- G$sp[seq(from = k, to = (k + nc - 1), by = 1)]
+    if (nc > 0) {
+      G$smooth[[i]]$sp <-
+        G$sp[seq(from = k, to = (k + nc - 1), by = 1)]
+    }
     k <- k + nc
   }
 
@@ -217,7 +201,7 @@ gam.setup <- function(formula, pterms, mf) {
   }
 
   G$lsp0 <- rep(0, nrow(L))
-  names(G$lsp0) <- lsp.names ## names of all smoothing parameters (not just underlying)
+  names(G$lsp0) <- lsp.names
 
   G$y <- drop(mf[[formula$response]])
   ydim <- dim(G$y)
@@ -233,10 +217,16 @@ gam.setup <- function(formula, pterms, mf) {
 
   for (i in seq_len(n.smooth)) {
     k <- 1
-    jj <- seq(from = G$smooth[[i]]$first.para, to = G$smooth[[i]]$last.para, by = 1)
+    jj <- seq(
+      from = G$smooth[[i]]$first.para,
+      to = G$smooth[[i]]$last.para, by = 1
+    )
     if (G$smooth[[i]]$df > 0) {
       for (j in jj) {
-        term.names[j] <- paste(G$smooth[[i]]$label, ".", as.character(k), sep = "")
+        term.names[j] <- paste(G$smooth[[i]]$label, ".",
+          as.character(k),
+          sep = ""
+        )
         k <- k + 1
       }
     }
@@ -286,24 +276,25 @@ variable.summary <- function(pf, dl, n) {
   v.n <- length(v.name)
 
   for (i in seq_len(v.n)) {
-    if (v.name[i] %in% p.name) para <- TRUE else para <- FALSE ## is variable in the parametric part?
+    if (v.name[i] %in% p.name) para <- TRUE else para <- FALSE
 
-    if (para && is.matrix(dl[[v.name[i]]]) && ncol(dl[[v.name[i]]]) > 1) { ## parametric matrix --- a special case
-      x <- matrix(apply(dl[[v.name[i]]], 2, stats::quantile, probs = 0.5, type = 3, na.rm = TRUE), 1, ncol(dl[[v.name[i]]])) ## nearest to median entries
-    } else { ## anything else
-      x <- dl[[v.name[i]]]
-      if (is.character(x)) x <- as.factor(x)
-      if (is.factor(x)) {
-        x <- x[!is.na(x)]
-        lx <- levels(x)
-        freq <- tabulate(x)
-        ii <- min((seq_along(lx))[freq == max(freq)])
-        x <- factor(lx[ii], levels = lx)
-      } else {
-        x <- as.numeric(x)
-        x <- c(min(x, na.rm = TRUE), as.numeric(stats::quantile(x, probs = .5, type = 3, na.rm = TRUE)), max(x, na.rm = TRUE)) ## 3 figure summary
-      }
+    x <- dl[[v.name[i]]]
+    if (is.character(x)) x <- as.factor(x)
+    if (is.factor(x)) {
+      x <- x[!is.na(x)]
+      lx <- levels(x)
+      freq <- tabulate(x)
+      ii <- min((seq_along(lx))[freq == max(freq)])
+      x <- factor(lx[ii], levels = lx)
+    } else {
+      x <- as.numeric(x)
+      x <- c(
+        min(x, na.rm = TRUE),
+        as.numeric(stats::quantile(x, probs = .5, type = 3, na.rm = TRUE)),
+        max(x, na.rm = TRUE)
+      )
     }
+
     vs[[v.name[i]]] <- x
   }
 
@@ -363,18 +354,15 @@ gam.side <- function(sm, Xp, tol = .Machine$double.eps^.5) {
 #'
 interpret.gam0 <- function(gf) {
   p.env <- environment(gf)
-  tf <- stats::terms.formula(gf, specials = c("s", "t2"))
+  tf <- stats::terms.formula(gf, specials = c("s", "t2", "sl", "t2l"))
 
   terms <- attr(tf, "term.labels") # labels of the model terms
   nt <- length(terms) # how many terms?
 
-  if (attr(tf, "response") > 0) { # start the replacement formulae
-    response <- as.character(attr(tf, "variables")[2])
-  } else {
-    response <- NULL
-  }
-  sp <- attr(tf, "specials")$s # array of indices of smooth terms
-  t2p <- attr(tf, "specials")$t2 # indices of type 2 tensor product terms
+
+  response <- as.character(attr(tf, "variables")[2])
+  sp <- c(attr(tf, "specials")$s, attr(tf, "specials")$sl)
+  t2p <- c(attr(tf, "specials")$t2, attr(tf, "specials")$t2l)
 
   vtab <- attr(tf, "factors") # cross tabulation of vars to terms
 
@@ -400,7 +388,9 @@ interpret.gam0 <- function(gf) {
     if (k <= ns && ((ks <= len.sp && sp[ks] == i) ||
       (kt2 <= len.t2p && t2p[kt2] == i))) { # it's a smooth
 
-      smooth.spec[[k]] <- eval(parse(text = paste0("galamm::", terms[[i]])), envir = p.env)
+      smooth.spec[[k]] <- eval(parse(text = paste0("galamm::", terms[[i]])),
+        envir = p.env
+      )
 
       if (ks <= len.sp && sp[ks] == i) {
         ks <- ks + 1

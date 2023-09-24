@@ -8,6 +8,7 @@ test_that("galamm reproduces gamm4", {
   expect_equal(mod$gam$Ve, mod_comp$gam$Ve, tolerance = .001)
   expect_equal(mod$gam$Vp, mod_comp$gam$Vp, tolerance = .001)
   expect_snapshot(print(summary(mod$gam), digits = 2))
+  expect_type(plot_smooth(mod), "list")
 
   mod <- galamm(formula = y ~ t2(x), data = dat)
   mod_comp <- gamm4::gamm4(formula = y ~ t2(x), data = dat, REML = FALSE)
@@ -24,6 +25,14 @@ test_that("galamm reproduces gamm4", {
 
   expect_equal(deviance(mod), deviance(mod_comp$mer), tolerance = .0001)
   expect_snapshot(print(summary(mod$gam), digits = 2))
+
+  set.seed(1)
+  dat <- mgcv::gamSim(verbose = FALSE, scale = .1)
+  mod0 <- mgcv::gamm(y ~ s(x1) + t2(x2), data = dat, method = "ML")
+  mod1 <- galamm(y ~ s(x1) + t2(x2), data = dat)
+  expect_equal(as.numeric(deviance(mod0$lme)), deviance(mod1),
+               tolerance = .0001)
+  expect_snapshot(print(summary(mod1$gam), digits = 2))
 
   set.seed(1)
   dat <- mgcv::gamSim(4, verbose = FALSE)
@@ -77,14 +86,14 @@ test_that("galamm reproduces gamm4", {
   expect_equal(deviance(mod0$mer), deviance(mod1), tolerance = .001)
   expect_equal(mod0$gam$edf, mod1$gam$edf, tolerance = .1)
   expect_snapshot(print(summary(mod1$gam), digits = 2))
+
 })
 
 test_that("Basic GAMM with factor structures works", {
   dat <- subset(cognition, domain == 1 & timepoint == 1)
-  dat$item <- factor(dat$item)
 
   mod <- galamm(
-    formula = y ~ 0 + item + s(x, load.var = "loading"),
+    formula = y ~ 0 + item + sl(x, load.var = "loading"),
     data = dat,
     load.var = "item",
     lambda = list(matrix(c(1, NA, NA), ncol = 1)),
@@ -136,14 +145,74 @@ test_that("Basic GAMM with factor structures works", {
       "lambda3"
     ), c("loading", "SE")))
   )
+
+  mod <- galamm(
+    formula = y ~ 0 + item + t2l(x, load.var = "loading"),
+    data = dat,
+    load.var = "item",
+    lambda = list(matrix(c(1, NA, NA), ncol = 1)),
+    factor = list("loading")
+  )
+
+  expect_equal(
+    coef(mod)[1:3],
+    c(
+      item11 = 0.585985043619259, item12 = 0.821880314450475,
+      item13 = 0.169255594138125
+    ),
+    tolerance = .001
+  )
+
+  expect_equal(
+    predict(mod$gam)[3:9],
+    structure(
+      c(
+        `3` = 0.00564862054158604, `25` = 0.0151596217554541,
+        `26` = 0.251054892586669, `27` = -0.401569827725681,
+        `49` = -0.00924515260886517,
+        `50` = 0.22665011822235, `51` = -0.42597460209
+      ),
+      dim = 7L, dimnames = list(
+        c("3", "25", "26", "27", "49", "50", "51")
+      )
+    ),
+    tolerance = .0001
+  )
+
+  expect_equal(
+    vcov(mod),
+    structure(c(
+      0.0083132054251711, 0.00355423354003251, 0.000728096111493452,
+      0.00610186781361705, 0.00355423354003251, 0.0107112518833507,
+      0.00101403521195143, 0.00959339564679258, 0.000728096111493452,
+      0.00101403521195143, 0.0059689273518403, 0.00196479761841795,
+      0.00610186781361705, 0.00959339564679258, 0.00196479761841795,
+      0.0246253221170968
+    ), dim = c(4L, 4L)),
+    tolerance = .0001
+  )
+
+  expect_equal(
+    factor_loadings(mod),
+    structure(
+      c(
+        1, 1.39530180832884, 0.286267927177228, NA, 0.212062073868377,
+        0.128493620433266
+      ),
+      dim = 3:2,
+      dimnames = list(
+        c("lambda1", "lambda2", "lambda3"),
+        c("loading", "SE")
+      )
+    )
+  )
 })
 
 test_that("GAMM with factor structures and random effects works", {
   dat <- subset(cognition, domain == 1 & id < 50 & timepoint %in% c(1, 4, 8))
-  dat$item <- factor(dat$item)
 
   mod <- galamm(
-    formula = y ~ 0 + item + s(x, load.var = "loading", k = 4) +
+    formula = y ~ 0 + item + sl(x, load.var = "loading", k = 4) +
       (0 + loading | id / timepoint),
     data = dat,
     load.var = "item",
@@ -203,4 +272,27 @@ test_that("GAMM with factor structures and random effects works", {
     ),
     tolerance = .01
   )
+})
+
+test_that("galamm with by variables and loadings works", {
+  dat <- subset(cognition, domain %in% c(1, 3))
+  dat <- cbind(
+    dat,
+    model.matrix(~ 0 + domain, data = dat)[, c("domain1", "domain3")]
+  )
+  (lmat <- matrix(c(
+    1, NA, NA, 0, 0, 0, 0,
+    0, 0, 0, 1, NA, NA, NA
+  ), ncol = 2))
+  mod <- galamm(
+    formula = y ~ domain +
+      sl(x, k = 4, by = domain, load.var = c("ability1", "ability3")),
+    data = dat,
+    load.var = "item",
+    lambda = list(lmat),
+    factor = list(c("ability1", "ability3")),
+    control = galamm_control(optim_control = list(maxit = 3))
+  )
+
+  expect_snapshot(print(summary(mod)$gam_summary, digits = 2))
 })

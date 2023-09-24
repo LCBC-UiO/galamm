@@ -148,7 +148,7 @@ The summary function gives some information about the model fit.
 
 ``` r
 summary(mixed_resp)
-#> Generalized additive latent and mixed model fit by maximum marginal likelihood.
+#> GALAMM fit by maximum marginal likelihood.
 #> Formula: y ~ x + (0 + loading | id)
 #>    Data: mresp
 #> 
@@ -201,7 +201,7 @@ the latent ability and random intercept for subject and timepoints.
 
 ``` r
 mod <- galamm(
-  formula = y ~ 0 + item + s(x, load.var = "loading") +
+  formula = y ~ 0 + item + sl(x, load.var = "loading") +
     (0 + loading | id / timepoint),
   data = dat,
   load.var = "item",

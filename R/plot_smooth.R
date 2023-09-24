@@ -43,7 +43,7 @@ plot_smooth <- function(object, ...) {
 #'
 #' # We can now estimate the model.
 #' mod <- galamm(
-#'   formula = y ~ 0 + item + s(x, load.var = "loading") +
+#'   formula = y ~ 0 + item + sl(x, load.var = "loading") +
 #'     (0 + loading | id),
 #'   data = dat,
 #'   load.var = "item",
@@ -58,7 +58,7 @@ plot_smooth <- function(object, ...) {
 #' plot_smooth(mod, shade = TRUE, rug = FALSE)
 #'
 plot_smooth.galamm <- function(object, ...) {
-  if (!exists("gam", object)) stop("No terms to plot.")
+  if (!exists("gam", object) || length(object$gam) == 0) stop("No terms to plot.")
 
   plot(object$gam, ...)
 }

@@ -61,9 +61,6 @@ ranef.galamm <- function(object, ...) {
         m <- ml[asgn == i]
         b2 <- vapply(m, nrow, numeric(1))
         ub2 <- unique(b2)
-        if (length(ub2) > 1) {
-          stop("differing numbers of b per group")
-        }
         rnms <- if (ub2 == length(levs[[i]])) levs[[i]] else seq(ub2)
         data.frame(do.call(cbind, m),
           row.names = rnms,

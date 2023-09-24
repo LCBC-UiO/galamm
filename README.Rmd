@@ -116,7 +116,7 @@ We then compute the model estimates, containing both a smooth term for the laten
 
 ```{r}
 mod <- galamm(
-  formula = y ~ 0 + item + s(x, load.var = "loading") +
+  formula = y ~ 0 + item + sl(x, load.var = "loading") +
     (0 + loading | id / timepoint),
   data = dat,
   load.var = "item",

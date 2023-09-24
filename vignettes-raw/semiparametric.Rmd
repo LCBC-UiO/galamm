@@ -209,11 +209,11 @@ We will use a varying-coefficient term, where $h(x)$ is being interpreted as a r
 (loading_matrix <- matrix(c(1, NA, NA), ncol = 1))
 ```
 
-We use the term "loading" to identify the factor loading, and set `load.var = "item"` to specify that the loadings to be applied are identified by the "item" variable. Using `mgcv`'s `by` variable would also work in this particular case, i.e., replacing `s(x, load.var = "loading")` with `s(x, by = loading)`. However, in most cases this would lead to identifiability issues due to the way varying-coefficient terms are set up by `mgcv`, so `galamm` provides an additional `load.var` arguments which alleviates most of these issues.
+We provide thin wrappers around the `s()` and `t2()` functions from `mgcv` to support factor loadings in smooth terms. The wrappers are named `sl()` and `t2l()` to avoid namespace conflicts with `mgcv` and `gamm4`, and the last letter "l" stands for "loading". In this example, we set `load.var = "item"` to specify that the loadings to be applied are identified by the "item" variable. Using `mgcv`'s `by` variable would also work in this particular case, i.e., replacing `sl(x, load.var = "loading")` with `s(x, by = loading)`. However, in most cases this would lead to identifiability issues due to the way varying-coefficient terms are set up by `mgcv`, so `galamm` provides an additional `load.var` arguments which alleviates most of these issues.
 
 ```{r}
 mod <- galamm(
-  formula = y ~ 0 + item + s(x, load.var = "loading") +
+  formula = y ~ 0 + item + sl(x, load.var = "loading") +
     (0 + loading | id / timepoint),
   data = dat,
   load.var = "item",
@@ -243,7 +243,7 @@ We can now move on to the part of the cognition data that is conditionally binom
 dat <- subset(cognition, domain == 2)
 
 mod <- galamm(
-  formula = y ~ 0 + item + s(x, load.var = "loading") +
+  formula = y ~ 0 + item + sl(x, load.var = "loading") +
     (0 + loading | id / timepoint),
   data = dat,
   family = binomial,
@@ -286,13 +286,111 @@ $$
 \eta_{j} = h_{j}(x) + \zeta_{j}^{(2)} + \zeta_{j}^{(3)} ~j=1,3.
 $$
 
-We first subset the cognition dataset to get the observations we want.
+We first subset the cognition dataset to get the measurements of domain 1 and 3, which are conditionally normally distributed. We also create two dummy variable, `domain1` and `domain3`, which we need when defining the formulas below.
 
 ```{r}
 dat <- subset(cognition, domain %in% c(1, 3))
+dat <- cbind(
+  dat, 
+  model.matrix(~ 0 + domain, data = dat)[, c("domain1", "domain3")]
+)
+```
+
+Below is a plot of the data we are analyzing.
+
+```{r, semiparametric-multivariate-spaghetti, fig.cap="Spaghetti plot of measurements of domain 1 and 3."}
+ggplot(dat, aes(x = x, y = y, group = id)) + 
+  geom_point(size = .1) + 
+  geom_line(linewidth = .1, alpha = .3) +
+  facet_wrap(
+    vars(item), scales = "free_y",
+    labeller = as_labeller(function(x) paste("Domain", substr(x, 1, 1), 
+                                             "item", substr(x, 2, 2)))) + 
+  theme(strip.background = element_blank(),
+        panel.grid = element_blank())
+```
+
+Mathematically, the factor loading matrix we want is
+
+$$
+\Lambda = 
+\begin{bmatrix}
+1 & 0 \\
+\lambda_{12} & 0 \\
+\lambda_{13} & 0 \\
+0 & 1 \\
+0 & \lambda_{22} \\
+0 & \lambda_{23} \\
+0 & \lambda_{24}
+\end{bmatrix}
+$$
+
+In code, that becomes:
+
+```{r}
+(lmat <- matrix(c(1, NA, NA, 0, 0, 0, 0,
+                 0, 0, 0, 1, NA, NA, NA), ncol = 2))
+```
+
+Below is the call to fit the model.
+
+```{r}
+mod <- galamm(
+  formula = y ~ domain +
+    sl(x, k = 6, by = domain, load.var = c("ability1", "ability3")) + 
+    (0 + domain1:ability1 + domain3:ability3 | id) + 
+    (0 + domain1:ability1 | id:timepoint) + 
+    (0 + domain3:ability3 | id:timepoint),
+  data = dat,
+  load.var = "item",
+  lambda = list(lmat),
+  factor = list(c("ability1", "ability3"))
+)
+```
+
+Before showing the results, some comments are probably useful. In the `formula`, the first term `domain` represents an intercept per domain. Ideally we should have had an intercept per item, representing the item bias, but in this case all item biases were set to zero when simulating the data, and thus estimating an intercept for all of them is unnecessary. Next, the term `sl(x, k = 6, by = domain, load.var = c("ability1", "ability3"))` specifies that we want one smooth estimated independently for each level of the factor variable `domain`. For the two levels of the factor variable `domain`, the loadings `ability1` and `ability3` should be applied, respectively. These represent the two columns in the loading matrix above. Setting `k = 6` specifies that we want six basis functions for each of the smooth terms. The first random effects term `(0 + domain1:ability1 + domain3:ability3 | id)` corresponds to $\lambda \zeta_{j}^{(3)}$, and by specifying them in a single term, we allow the level-3 random intercepts to be correlated. The next two random effect terms `(0 + domain1:ability1 | id:timepoint)` and `(0 + domain3:ability3 | id:timepoint)` correspond to $\lambda \zeta_{j}^{(2)}$, and by specifying them independently we state that the level-2 random intercepts should be uncorrelated. The assumption of uncorrelated random intercepts at level 2 is reasonable here because we simulated the data this way. If correlations at both levels should be allowed, we could simply replace all the three random effects terms with the single term `(0 + domain1:ability1 + domain3:ability3 | id / timepoint)`.
+
+We can now look at the model output, which shows that the factor loadings are estimated very close to their true value, and that the level-3 random intercepts are estimated to have correlation of 0.61 which is actually a reasonable approximation of the true value 0.4, since random effect correlations are notoriously hard to estimate.
+
+```{r}
+summary(mod)
+```
+
+We now study the smooth terms. Since in this case we know the true values, we include these for comparison. First we look at the smooth for domain 1, and we see that the estimate very well captures the true value.
+
+```{r, semiparametric-multivariate-gaussian-smooth1, fig.cap="Comparison of estimate to true value."}
+# x-values to plot the true function
+x <- seq(from = 0, to = 1, by = .01)
+# True function
+f0 <- function(x) 2 * sin(pi * x)
+# Scale to mean zero across x
+y <- f0(x) - mean(f0(x))
+
+# Plot estimate
+plot_smooth(mod, select = 1, scale = 0)
+# Overlay true curve in red
+lines(x, y, col = "red")
+
+```
+
+Next we look at domain 3. In this case we see that our estimate is oversmoothing the true value. This is probably because we the number of basis functions to only six, to avoid convergence issues. In any case, the overall shape of the true trajectory is clearly being captured.
+
+```{r, semiparametric-multivariate-gaussian-smooth2, fig.cap="Comparison of estimate to true value."}
+# True function
+f2 <- function(x) {
+  0.2 * x^11 * (10 * (1 - x))^6 + 10 *
+    (10 * x)^3 * (1 - x)^10
+}
+# Scale to mean zero across x
+y <- f2(x) - mean(f2(x))
+
+# Plot estimate
+plot_smooth(mod, select = 2, scale = 0)
+# Overlay true curve in red
+lines(x, y, col = "red")
+
 ```
 
 
-At this point we are entering the bleeding edge of the development of this package. Currently, multiple smooth terms for different domains is not working. A low-level way of achieving this can be found in [this file](https://github.com/LCBC-UiO/galamm-scripts/blob/main/code/cognition_model/estimate_model.R). I'm currently wrapping my head around how to achieve the same through a formula interface.
 
 # References
