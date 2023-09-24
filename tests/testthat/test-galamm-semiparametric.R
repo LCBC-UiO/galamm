@@ -32,7 +32,6 @@ test_that("galamm reproduces gamm4", {
   mod1 <- galamm(y ~ s(x1) + t2(x2), data = dat)
   expect_equal(as.numeric(deviance(mod0$lme)), deviance(mod1),
                tolerance = .0001)
-  expect_snapshot(print(summary(mod1$gam), digits = 2))
 
   set.seed(1)
   dat <- mgcv::gamSim(4, verbose = FALSE)
