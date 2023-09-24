@@ -26,6 +26,27 @@ specification of loading variables for smooth terms. The last letter "l",
 which stands for "loading", has been added to avoid namespace conflicts
 with \code{mgcv} and \code{gamm4}.
 }
+\examples{
+# Linear mixed model with factor structures
+dat <- subset(cognition, domain == 1 & timepoint == 1)
+loading_matrix <- matrix(c(1, NA, NA), ncol = 1)
+
+# Model with four cubic regression splines as basis functions
+mod <- galamm(formula = y ~ 0 + item + t2l(x, k = 4, load.var = "loading"),
+              data = dat,
+              load.var = "item",
+              lambda = list(loading_matrix),
+              factor = list("loading"))
+
+# Model with four thin-plate regression splines as basis functions
+mod <- galamm(formula = y ~ 0 + item +
+              sl(x, bs = "tp", k = 4, load.var = "loading"),
+              data = dat,
+              load.var = "item",
+              lambda = list(loading_matrix),
+              factor = list("loading"))
+
+}
 \references{
 \insertRef{woodThinPlateRegression2003}{galamm}
 

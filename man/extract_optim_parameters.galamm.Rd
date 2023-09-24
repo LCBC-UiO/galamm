@@ -44,7 +44,6 @@ mod_nm <- galamm(
   control = galamm_control(method = "Nelder-Mead")
 )
 
-
 }
 \seealso{
 Other modeling functions: 
