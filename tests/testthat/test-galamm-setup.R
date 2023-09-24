@@ -199,10 +199,10 @@ test_that("multiple factors in fixed effects works", {
     load.var = "item",
     lambda = list(lmat),
     factor = list(c("lambda1", "lambda2")),
-    start = list(theta = .565, beta = c(1.13, 2.77),
-                 lambda = c(c(0.97, 1.282, 0.141, 1.424)))
+    start = list(
+      theta = .565, beta = c(1.13, 2.77),
+      lambda = c(c(0.97, 1.282, 0.141, 1.424))
+    )
   )
   expect_equal(deviance(mod), 7891.36597569295, tolerance = .001)
-
-
 })

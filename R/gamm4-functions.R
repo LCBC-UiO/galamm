@@ -123,7 +123,8 @@ gamm4.setup <- function(formula, pterms, mf) {
 #' @examples
 #' # To run the match.call(expand.dots = FALSE) interactively, do:
 #' mf <- match.call(gamm4, call("gamm4", fixed, random, data),
-#'                  expand.dots = FALSE)
+#'   expand.dots = FALSE
+#' )
 #'
 gamm4 <- function(fixed, random = NULL, data) {
   random.vars <- all.vars(random)

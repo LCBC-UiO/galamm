@@ -362,7 +362,6 @@ gam.side <- function(sm, Xp, tol = .Machine$double.eps^.5) {
 #' \insertRef{woodGeneralizedAdditiveModels2017a}{galamm}
 #'
 interpret.gam0 <- function(gf) {
-
   p.env <- environment(gf)
   tf <- stats::terms.formula(gf, specials = c("s", "t2", "sl", "t2l"))
 
