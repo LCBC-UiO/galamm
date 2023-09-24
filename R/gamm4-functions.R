@@ -36,19 +36,9 @@ gamm4.setup <- function(formula, pterms, mf) {
     rasm <- mgcv::smooth2random(sm, used.names, type = 2)
     used.names <- c(used.names, names(rasm$rand))
     sm$fixed <- rasm$fixed
+    n.lev <- 1
+    G$Xf <- methods::cbind2(G$Xf, methods::as(sm$X, "dgCMatrix"))
 
-    if (!is.null(sm$fac)) {
-      flev <- levels(sm$fac)
-      n.lev <- length(flev)
-      for (k in seq_len(n.lev)) {
-        G$Xf <- methods::cbind2(
-          G$Xf, methods::as(sm$X * as.numeric(sm$fac == flev[k]), "dgCMatrix")
-        )
-      }
-    } else {
-      n.lev <- 1
-      G$Xf <- methods::cbind2(G$Xf, methods::as(sm$X, "dgCMatrix"))
-    }
 
     n.para <- 0
 
@@ -411,11 +401,6 @@ gamm4.wrapup <- function(gobj, ret, final_model) {
   object$Ve <- methods::as(Vb %*% XVX %*% Vb, "matrix")
 
   class(object) <- "gam"
-
-  ## Restore original smooth list, if it was split to deal with t2 terms...
-  if (!is.null(gobj$G$original.smooth)) {
-    object$smooth <- gobj$G$smooth <- gobj$G$original.smooth
-  }
 
   if (!is.null(gobj$G$P)) {
     object$coefficients <- gobj$G$P %*% object$coefficients

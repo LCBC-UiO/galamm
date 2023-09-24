@@ -35,8 +35,11 @@
 galamm_control <- function(optim_control = list(),
                            maxit_conditional_modes = 10,
                            reduced_hessian = FALSE) {
-  if (length(trace) != 1L && trace < 0) {
-    stop("trace should be a non-negative integer of length one")
+
+  if("trace" %in% names(optim_control)) {
+    if (length(optim_control$trace) != 1L || any(optim_control$trace < 0)) {
+      stop("trace should be a non-negative integer of length one")
+    }
   }
 
   stopifnot(length(maxit_conditional_modes) == 1 && maxit_conditional_modes > 0)

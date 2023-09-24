@@ -83,6 +83,16 @@ test_that("wrong input is handled properly", {
     "Wrong number of elements"
   )
 
+  expect_error(
+    mod <- galamm(
+      formula = y ~ 0 + item + (1 | id),
+      weights = ~(1 | item) + (1 | domain),
+      data = dat
+    ),
+    "Multiple grouping terms in weights not yet implemented."
+  )
+
+
   newdat <- dat
   newdat$loading <- 1
   expect_error(
@@ -106,6 +116,27 @@ test_that("wrong input is handled properly", {
     galamm_control(optim_control = list(maximum_iterations = 10)),
     "Unknown control names"
   )
+
+  expect_error(
+    galamm_control(optim_control = list(fnscale = 2.3)),
+    "fnscale parameter should be negative."
+  )
+
+  dat <- hsced[1:100, ]
+  expect_error(mod1 <- galamm(
+    formula = y ~ x + (1 | id), data = dat, family = gaussian,
+    control = galamm_control(optim_control = list(fnscale = 2))
+  ), "fnscale parameter should be negative.")
+
+  expect_error(mod1 <- galamm(
+    formula = y ~ x + (1 | id), data = dat, family = gaussian,
+    control = galamm_control(optim_control = list(trace = -2))
+  ), "trace should be a non-negative integer of length one")
+
+  expect_error(mod1 <- galamm(
+    formula = y ~ x + (1 | id), data = dat, family = gaussian,
+    control = galamm_control(optim_control = list(trace = 1:4))
+  ), "trace should be a non-negative integer of length one")
 })
 
 test_that("family can be defined in three different ways", {
@@ -125,6 +156,9 @@ test_that("family can be defined in three different ways", {
 
   expect_equal(logLik(mod1), logLik(mod2))
   expect_equal(logLik(mod2), logLik(mod3))
+
+  expect_message(anova(mod1),
+                 "ANOVA tables for galamm objects not implemented yet.")
 })
 
 test_that("multiple factors and factors in fixed effects are allowed", {
