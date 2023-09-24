@@ -81,15 +81,16 @@
 #' * \code{random_effects} a list containing the following two elements:
 #'   * \code{b} random effects in original parametrization.
 #'   * \code{u} random effects standardized to have identity covariance matrix.
-#' * \code{model} a list with various elements related to the model setup and fit:
+#' * \code{model} a list with various elements related to the model setup and
+#'   fit:
 #'   * \code{deviance} deviance of final model.
 #'   * \code{deviance_residuals} deviance residuals of the final model.
 #'   * \code{df} degrees of freedom of model.
-#'   * \code{family} a list of one or more family objects, as specified in the \code{family}
-#'   arguments to \code{galamm}.
+#'   * \code{family} a list of one or more family objects, as specified in the
+#'   \code{family} arguments to \code{galamm}.
 #'   * \code{fit} a numeric vector with fitted values.
-#'   * \code{hessian} Hessian matrix of final model, i.e., the second derivative of the
-#'   log-likelihood with respect to all model parameters.
+#'   * \code{hessian} Hessian matrix of final model, i.e., the second
+#'   derivative of the log-likelihood with respect to all model parameters.
 #'   * \code{lmod} Linear model object returned by \code{lme4::lFormula}, which
 #'   is used internally for setting up the models.
 #'   * \code{loglik} Log-likelihood of final model.
@@ -97,26 +98,30 @@
 #'   * \code{pearson_residual} Pearson residuals of final model.
 #'   * \code{response} A numeric vector containing the response values used when
 #'   fitting the model.
-#'   * \code{weights_object} Object with weights used in model fitting. Is \code{NULL}
-#'   when no weights were used.
-#' * \code{parameters} A list object with model parameters and related information:
-#'   * \code{beta_inds} Integer vector specifying the indices of fixed regression
-#'   coefficients among the estimated model parameters.
-#'   * \code{dispersion_parameter} One or more dispersion parameters of the final model.
-#'   * \code{lambda_dummy} Dummy matrix of factor loadings, which shows the structure of the
-#'   loading matrix that was supplied in the \code{lambda} arguments.
-#'   * \code{lambda_inds} Integer vector specifying the indices of factor loadings among
-#'   the estimated model parameters.
+#'   * \code{weights_object} Object with weights used in model fitting. Is
+#'   \code{NULL} when no weights were used.
+#' * \code{parameters} A list object with model parameters and related
+#'   information:
+#'   * \code{beta_inds} Integer vector specifying the indices of fixed
+#'   regression coefficients among the estimated model parameters.
+#'   * \code{dispersion_parameter} One or more dispersion parameters of the
+#'   final model.
+#'   * \code{lambda_dummy} Dummy matrix of factor loadings, which shows the
+#'   structure of the loading matrix that was supplied in the \code{lambda}
+#'   arguments.
+#'   * \code{lambda_inds} Integer vector specifying the indices of factor
+#'   loadings among the estimated model parameters.
 #'   * \code{parameter_estimates} Numeric vector of final parameter estimates.
 #'   * \code{parameter_names} Names of all parameters estimates.
-#'   * \code{theta_inds} Integer vector specifying the indices of variance components among
-#'   the estimated model parameters. Technically these are the entries of the
-#'   Cholesky decomposition of the covariance matrix.
-#'   * \code{weights_inds} Integer vector specifying the indices of estimated weights
-#'   (used in heteroscedastic Gaussian models) among the estimated model
-#'   parameters.
-#'  * \code{gam} List containing information about smooth terms in the model. If no
-#'   smooth terms are contained in the model, then it is a list of length zero.
+#'   * \code{theta_inds} Integer vector specifying the indices of variance
+#'   components among the estimated model parameters. Technically these are the
+#'   entries of the Cholesky decomposition of the covariance matrix.
+#'   * \code{weights_inds} Integer vector specifying the indices of estimated
+#'   weights (used in heteroscedastic Gaussian models) among the estimated
+#'   model parameters.
+#'  * \code{gam} List containing information about smooth terms in the model.
+#'  If no smooth terms are contained in the model, then it is a list of length
+#'  zero.
 #'
 #' @export
 #'

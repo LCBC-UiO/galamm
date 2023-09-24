@@ -243,7 +243,8 @@ gamm4.wrapup <- function(gobj, ret, final_model) {
     var.summary = gobj$G$var.summary
   )
   pvars <- all.vars(stats::delete.response(object$terms))
-  object$pred.formula <- if (length(pvars) > 0) stats::reformulate(pvars) else NULL
+  object$pred.formula <-
+    if (length(pvars) > 0) stats::reformulate(pvars) else NULL
   sn <- names(gobj$G$random)
 
   if (object$family$family == "gaussian" && object$family$link == "identity") {
@@ -269,13 +270,15 @@ gamm4.wrapup <- function(gobj, ret, final_model) {
       b <- beta
     } else { ## not fixed so need to undo transform of random effects etc.
       b <- rep(0, 0)
-      for (k in seq_along(gobj$G$smooth[[i]]$lmer.name)) { ## collect all coefs associated with this smooth
+      for (k in seq_along(gobj$G$smooth[[i]]$lmer.name)) {
         b <- c(b, as.numeric(br[[gobj$G$smooth[[i]]$lmer.name[k]]][[1]]))
       }
-      b <- b[gobj$G$smooth[[i]]$rind] ## make sure coefs are in order expected by smooth
+      b <- b[gobj$G$smooth[[i]]$rind]
       b <- c(b, beta)
       b <- gobj$G$smooth[[i]]$trans.D * b
-      if (!is.null(gobj$G$smooth[[i]]$trans.U)) b <- gobj$G$smooth[[i]]$trans.U %*% b ## transform back to original
+      if (!is.null(gobj$G$smooth[[i]]$trans.U)) {
+        b <- gobj$G$smooth[[i]]$trans.U %*% b
+      }
     }
     p <- c(p, b)
 
@@ -329,9 +332,9 @@ gamm4.wrapup <- function(gobj, ret, final_model) {
     }
   }
 
-  if (length(ind)) { ## extract columns corresponding to non-smooth r.e.s
-    Zt <- gobj$lmod$reTrms$Zt[ind, ] ## extracting random effects model matrix
-    root.phi <- gobj$lmod$reTrms$Lambdat[ind, ind] ## and corresponding sqrt of cov matrix (phi)
+  if (length(ind)) {
+    Zt <- gobj$lmod$reTrms$Zt[ind, ]
+    root.phi <- gobj$lmod$reTrms$Lambdat[ind, ind]
   }
 
   object$prior.weights <- gobj$G$w
@@ -344,7 +347,7 @@ gamm4.wrapup <- function(gobj, ret, final_model) {
   }
 
 
-  if (nrow(Zt) > 0) V <- V + Matrix::crossprod(root.phi %*% Zt) * scale ## data or pseudodata cov matrix, treating smooths as fixed now
+  if (nrow(Zt) > 0) V <- V + Matrix::crossprod(root.phi %*% Zt) * scale
 
   R <- Matrix::chol(V, pivot = FALSE)
   piv <- attr(R, "pivot")
@@ -375,9 +378,9 @@ gamm4.wrapup <- function(gobj, ret, final_model) {
         from = object$smooth[[i]]$first.para,
         to = object$smooth[[i]]$last.para, by = 1
       ) ## index this smooth's params
-      for (j in seq_along(object$smooth[[i]]$S)) { ## work through penalty list
-        ind <- ii[object$smooth[[i]]$pen.ind == j] ## index of currently penalized
-        diag(Sp)[ind] <- sqrt(object$sp[k]) ## diagonal penalty
+      for (j in seq_along(object$smooth[[i]]$S)) {
+        ind <- ii[object$smooth[[i]]$pen.ind == j]
+        diag(Sp)[ind] <- sqrt(object$sp[k])
         k <- k + 1
       }
     }
@@ -387,8 +390,8 @@ gamm4.wrapup <- function(gobj, ret, final_model) {
   qrx <- qr(rbind(WX, Sp / sqrt(scale)), LAPACK = TRUE)
   Ri <- backsolve(qr.R(qrx), diag(ncol(WX)))
   ind <- qrx$pivot
-  ind[ind] <- seq_along(ind) ## qrx$pivot
-  Ri <- Ri[ind, ] ## unpivoted square root of cov matrix in fitting parameterization Ri Ri' = cov
+  ind[ind] <- seq_along(ind)
+  Ri <- Ri[ind, ]
   Vb <- methods::as(B %*% Ri, "matrix")
   Vb <- Vb %*% Matrix::t(Vb)
 
@@ -434,18 +437,19 @@ gamm4.wrapup <- function(gobj, ret, final_model) {
       from = object$smooth[[i]]$first.para,
       to = object$smooth[[i]]$last.para, by = 1
     )) {
-      term.names[j] <- paste(object$smooth[[i]]$label, ".", as.character(k), sep = "")
+      term.names[j] <-
+        paste(object$smooth[[i]]$label, ".", as.character(k), sep = "")
       k <- k + 1
     }
   }
 
-  names(object$coefficients) <- term.names # note - won't work on matrices!!
+  names(object$coefficients) <- term.names
   names(object$edf) <- term.names
   names(object$sp) <- names(gobj$G$sp)
 
   object$gcv.ubre <- deviance(ret$mer)
 
-  if (!is.null(gobj$G$Xcentre)) object$Xcentre <- gobj$G$Xcentre ## any column centering applied to smooths
+  if (!is.null(gobj$G$Xcentre)) object$Xcentre <- gobj$G$Xcentre
 
   object
 }

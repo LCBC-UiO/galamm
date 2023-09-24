@@ -21,12 +21,13 @@ A list of summary statistics of the fitted model of class
 \item \code{call} the matched call used when fitting the model.
 \item \code{fixef} a matrix with fixed effect estimated, returned by
 \code{\link{fixef}}.
-\item \code{gam} List containing information about smooth terms in the model. If no
-smooth terms are contained in the model, then it is a list of length zero.
-\item \code{model} a list with various elements related to the model setup and fit.
-See \code{?galamm} for details.
-\item \code{parameters} A list object with model parameters and related information.
-See \code{?galamm} for details.
+\item \code{gam} List containing information about smooth terms in the model. If
+no smooth terms are contained in the model, then it is a list of length
+zero.
+\item \code{model} a list with various elements related to the model setup and
+fit. See \code{?galamm} for details.
+\item \code{parameters} A list object with model parameters and related
+information. See \code{?galamm} for details.
 \item \code{Lambda} An object containing the estimated factor loadings. Returned
 from \code{\link{factor_loadings.galamm}}. If there are no estimated factor
 loadings, then this object is \code{NULL}.
