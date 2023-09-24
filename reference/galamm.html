@@ -260,6 +260,9 @@ is used internally for setting up the models.</p></li>
 <li><p><code>loglik</code> Log-likelihood of final model.</p></li>
 <li><p><code>n</code> Number of observations.</p></li>
 <li><p><code>pearson_residual</code> Pearson residuals of final model.</p></li>
+<li><p><code>reduced_hessian</code> Logical specifying whether the full Hessian
+matrix was computed, or a Hessian matrix with derivatives only with
+respect to beta and lambda.</p></li>
 <li><p><code>response</code> A numeric vector containing the response values used when
 fitting the model.</p></li>
 <li><p><code>weights_object</code> Object with weights used in model fitting. Is
@@ -331,6 +334,7 @@ Chapman and Hall/CRC.</p>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p>Other modeling functions: 
+<code><a href="extract_optim_parameters.galamm.html">extract_optim_parameters.galamm</a>()</code>,
 <code><a href="galamm_control.html">galamm_control</a>()</code>,
 <code><a href="sl.html">s</a>()</code>,
 <code><a href="t2l.html">t2</a>()</code></p></div>

@@ -70,6 +70,9 @@
     <loc>https://lcbc-uio.github.io/galamm/reference/epilep.html</loc>
   </url>
   <url>
+    <loc>https://lcbc-uio.github.io/galamm/reference/extract_optim_parameters.galamm.html</loc>
+  </url>
+  <url>
     <loc>https://lcbc-uio.github.io/galamm/reference/factor_loadings.galamm.html</loc>
   </url>
   <url>
@@ -97,7 +100,7 @@
     <loc>https://lcbc-uio.github.io/galamm/reference/index.html</loc>
   </url>
   <url>
-    <loc>https://lcbc-uio.github.io/galamm/reference/llikAIC.galamm.html</loc>
+    <loc>https://lcbc-uio.github.io/galamm/reference/llikAIC.html</loc>
   </url>
   <url>
     <loc>https://lcbc-uio.github.io/galamm/reference/logLik.galamm.html</loc>

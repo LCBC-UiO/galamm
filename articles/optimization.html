@@ -117,15 +117,20 @@ overwhelming majority of zeros, and to avoid wasting memory and time on
 storing and multiplying zero, we use sparse matrix methods.</p></li>
 <li><p>In the outer loop, we try to find the parameters that maximize
 the marginal likelihood. For each new set of parameters, the whole
-procedure in the inner loop has to be repeated. We use the limited
-memory Broyden-Fletcher-Goldfard-Shanno algorithm with box constraints
-<span class="citation">(<a href="#ref-byrdLimitedMemoryAlgorithm1995" role="doc-biblioref">Byrd et al. 1995</a>)</span>, abbreviated L-BFGS-B.
-In particular, we use the implementation in R’s <code><a href="https://rdrr.io/r/stats/optim.html" class="external-link">optim()</a></code>
-function, which is obtained by setting <code>method = "L-BFGS-B"</code>.
-L-BFGS-B requires first derivatives, and these are obtained by automatic
-differentiation <span class="citation">(<a href="#ref-skaugAutomaticDifferentiationFacilitate2002" role="doc-biblioref">Skaug 2002</a>)</span>. In most use cases of
+procedure in the inner loop has to be repeated. By default, we use the
+limited memory Broyden-Fletcher-Goldfard-Shanno algorithm with box
+constraints <span class="citation">(<a href="#ref-byrdLimitedMemoryAlgorithm1995" role="doc-biblioref">Byrd et
+al. 1995</a>)</span>, abbreviated L-BFGS-B. In particular, we use the
+implementation in R’s <code><a href="https://rdrr.io/r/stats/optim.html" class="external-link">optim()</a></code> function, which is obtained
+by setting <code>method = "L-BFGS-B"</code>. L-BFGS-B requires first
+derivatives, and these are obtained by automatic differentiation <span class="citation">(<a href="#ref-skaugAutomaticDifferentiationFacilitate2002" role="doc-biblioref">Skaug 2002</a>)</span>. In most use cases of
 <code>galamm</code>, we also use constraints on some of the parameters,
-e.g., to ensure that variances are non-negative.</p></li>
+e.g., to ensure that variances are non-negative. As an alternative, the
+Nelder-Mead algorithm with box constraints <span class="citation">(<a href="#ref-batesFittingLinearMixedEffects2015" role="doc-biblioref">Bates et al. 2015</a>; <a href="#ref-nelderSimplexMethodFunction1965" role="doc-biblioref">Nelder
+and Mead 1965</a>)</span> from <code>lme4</code> is also available.
+Since the Nelder-Mead algorithm is derivative free, automatic
+differentiation is not used in this case, except for computing the
+Hessian matrix at the final step.</p></li>
 </ul>
 <p>At convergence, the Hessian matrix of second derivatives is computed
 exactly, again using automatic differentiation. The inverse of this
@@ -133,7 +138,7 @@ matrix is the covariance matrix of the parameter estimates, and is used
 to compute Wald type confidence intervals.</p>
 </div>
 <div class="section level3">
-<h3 id="modifying-the-optimization-procedure">Modifying the Optimization Procedure<a class="anchor" aria-label="anchor" href="#modifying-the-optimization-procedure"></a>
+<h3 id="modifying-the-l-bfgs-b-algorithm">Modifying the L-BFGS-B algorithm<a class="anchor" aria-label="anchor" href="#modifying-the-l-bfgs-b-algorithm"></a>
 </h3>
 <p>We will illustrate some ways of modifying the optimization procedure
 with the covariate measurement model example shown in the <a href="https://lcbc-uio.github.io/galamm/articles/mixed_response.html">vignette
@@ -337,7 +342,7 @@ variance is estimated to be exactly zero.</p>
 <span><span class="co">#&gt; chd:age:bus   -0.04937         NA      NA       NA</span></span>
 <span><span class="co">#&gt; fiber:age:bus  0.16092         NA      NA       NA</span></span></code></pre></div>
 <p>These types of obviously wrong zero variance estimates are well-known
-for users of mixed models <span class="citation">(<a href="#ref-hodgesRichlyParameterizedLinear2013" role="doc-biblioref">Hodges 2013</a>)</span>. We see if increase the
+for users of mixed models <span class="citation">(<a href="#ref-hodgesRichlyParameterizedLinear2013" role="doc-biblioref">Hodges 2013</a>)</span>. We see if increasing the
 initial value for the variance parameter solves the issue. This is done
 with the <code>start</code> argument to <code>galamm</code>. The start
 argument requires a named list, with optional arguments
@@ -419,6 +424,98 @@ rank deficient.</p>
 <span><span class="co">#&gt; fiber:age:bus  0.16818    0.11223  1.49854  1.340e-01</span></span></code></pre></div>
 </div>
 <div class="section level3">
+<h3 id="optimization-with-the-nelder-mead-algorithm">Optimization with the Nelder-Mead algorithm<a class="anchor" aria-label="anchor" href="#optimization-with-the-nelder-mead-algorithm"></a>
+</h3>
+<p>The Nelder-Mead algorithm is turned on by setting
+<code>method = "Nelder-Mead"</code> when calling
+<code><a href="../reference/galamm_control.html">galamm_control()</a></code>. We also turn on reporting every 20th
+function evaluation by setting <code>verbose = 1</code>:</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">control</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm_control.html">galamm_control</a></span><span class="op">(</span></span>
+<span>  optim_control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>verbose <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,</span>
+<span>  method <span class="op">=</span> <span class="st">"Nelder-Mead"</span></span>
+<span>  <span class="op">)</span></span></code></pre></div>
+<p>We provide the estimates obtained with the L-BFGS-B algorithm as
+initial values. For this we can use the convenience function
+<code>extract_optim_parameters</code>:</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">start</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/extract_optim_parameters.galamm.html">extract_optim_parameters</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span></code></pre></div>
+<p>We now fit the model, providing the initial values to the
+<code>start</code> argument.</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">mod_nm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
+<span>  formula <span class="op">=</span> <span class="va">formula</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">diet</span>,</span>
+<span>  family <span class="op">=</span> <span class="va">families</span>,</span>
+<span>  family_mapping <span class="op">=</span> <span class="va">family_mapping</span>,</span>
+<span>  factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"loading"</span><span class="op">)</span>,</span>
+<span>  load.var <span class="op">=</span> <span class="st">"item"</span>,</span>
+<span>  lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">loading_matrix</span><span class="op">)</span>,</span>
+<span>  control <span class="op">=</span> <span class="va">control</span>,</span>
+<span>  start <span class="op">=</span> <span class="va">start</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; (NM) 20: f = 1372.16 at    1.84246   -1.91525    17.9485   0.224017   0.066146 -0.0289499  -0.212035   -1.68303 -0.0499864   0.168178  -0.133909</span></span>
+<span><span class="co">#&gt; (NM) 40: f = 1372.16 at    1.84246   -1.91525    17.9485   0.224017   0.066146 -0.0289499  -0.212035   -1.68303 -0.0499864   0.168178  -0.133909</span></span>
+<span><span class="co">#&gt; (NM) 60: f = 1372.16 at    1.84246   -1.91525    17.9485   0.224017   0.066146 -0.0289499  -0.212035   -1.68303 -0.0499864   0.168178  -0.133909</span></span>
+<span><span class="co">#&gt; (NM) 80: f = 1372.16 at    1.84246   -1.91525    17.9485   0.224017   0.066146 -0.0289499  -0.212035   -1.68303 -0.0499864   0.168178  -0.133909</span></span>
+<span><span class="co">#&gt; (NM) 100: f = 1372.16 at    1.84246   -1.91525    17.9485   0.224017   0.066146 -0.0289499  -0.212035   -1.68303 -0.0499864   0.168178  -0.133909</span></span>
+<span><span class="co">#&gt; (NM) 120: f = 1372.16 at    1.84246   -1.91525    17.9485   0.224017   0.066146 -0.0289499  -0.212035   -1.68303 -0.0499864   0.168178  -0.133909</span></span>
+<span><span class="co">#&gt; (NM) 140: f = 1372.16 at    1.84246   -1.91525    17.9485   0.224017   0.066146 -0.0289499  -0.212035   -1.68303 -0.0499864   0.168178  -0.133909</span></span>
+<span><span class="co">#&gt; (NM) 160: f = 1372.16 at    1.84246   -1.91525    17.9485   0.224017   0.066146 -0.0289499  -0.212035   -1.68303 -0.0499864   0.168178  -0.133909</span></span>
+<span><span class="co">#&gt; (NM) 180: f = 1372.16 at    1.84246   -1.91525    17.9485   0.224017   0.066146 -0.0289499  -0.212035   -1.68303 -0.0499864   0.168178  -0.133909</span></span>
+<span><span class="co">#&gt; (NM) 200: f = 1372.16 at    1.84246   -1.91525    17.9485   0.224017   0.066146 -0.0289499  -0.212035   -1.68303 -0.0499864   0.168178  -0.133909</span></span>
+<span><span class="co">#&gt; (NM) 220: f = 1372.16 at    1.84246   -1.91525    17.9485   0.224017   0.066146 -0.0289499  -0.212035   -1.68303 -0.0499864   0.168178  -0.133909</span></span>
+<span><span class="co">#&gt; (NM) 240: f = 1372.16 at    1.84246   -1.91525    17.9485   0.224017   0.066146 -0.0289499  -0.212035   -1.68303 -0.0499864   0.168178  -0.133909</span></span>
+<span><span class="co">#&gt; (NM) 260: f = 1372.16 at    1.84246   -1.91525    17.9485   0.224017   0.066146 -0.0289499  -0.212035   -1.68303 -0.0499864   0.168178  -0.133909</span></span>
+<span><span class="co">#&gt; (NM) 280: f = 1372.16 at    1.84246   -1.91525    17.9485   0.224017   0.066146 -0.0289499  -0.212035   -1.68303 -0.0499864   0.168178  -0.133909</span></span>
+<span><span class="co">#&gt; (NM) 300: f = 1372.16 at    1.84246   -1.91525    17.9485   0.224017   0.066146 -0.0289499  -0.212035   -1.68303 -0.0499864   0.168178  -0.133909</span></span>
+<span><span class="co">#&gt; (NM) 320: f = 1372.16 at    1.84246   -1.91525    17.9485   0.224017   0.066146 -0.0289499  -0.212035   -1.68303 -0.0499864   0.168178  -0.133909</span></span>
+<span><span class="co">#&gt; (NM) 340: f = 1372.16 at    1.84246   -1.91525    17.9485   0.224017   0.066146 -0.0289499  -0.212035   -1.68303 -0.0499864   0.168178  -0.133909</span></span>
+<span><span class="co">#&gt; (NM) 360: f = 1372.16 at    1.84247   -1.91525    17.9485   0.223968  0.0661412  -0.028921   -0.21203   -1.68308 -0.0499804   0.168172  -0.133908</span></span>
+<span><span class="co">#&gt; (NM) 380: f = 1372.16 at    1.84247   -1.91525    17.9485    0.22398  0.0661421 -0.0289289  -0.212034   -1.68304 -0.0499816   0.168174  -0.133909</span></span>
+<span><span class="co">#&gt; (NM) 400: f = 1372.16 at    1.84247   -1.91525    17.9485   0.223986  0.0661415 -0.0289274  -0.212031   -1.68305 -0.0499811   0.168171  -0.133909</span></span>
+<span><span class="co">#&gt; (NM) 420: f = 1372.16 at    1.84247   -1.91525    17.9485   0.223985  0.0661434 -0.0289358  -0.212032   -1.68304 -0.0499824   0.168172  -0.133908</span></span></code></pre></div>
+<p>The summary output shows that Nelder-Mead found exactly the same
+optimum in this particular case, which is not surprising given the
+intial values that we provided.</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod_nm</span><span class="op">)</span></span>
+<span><span class="co">#&gt; GALAMM fit by maximum marginal likelihood.</span></span>
+<span><span class="co">#&gt; Formula: formula</span></span>
+<span><span class="co">#&gt;    Data: diet</span></span>
+<span><span class="co">#&gt; Control: control</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;      AIC      BIC   logLik deviance df.resid </span></span>
+<span><span class="co">#&gt;   2768.3   2823.6  -1372.2   2002.9      730 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Scaled residuals: </span></span>
+<span><span class="co">#&gt;     Min      1Q  Median      3Q     Max </span></span>
+<span><span class="co">#&gt; -258524      -1       0       0      66 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Lambda:</span></span>
+<span><span class="co">#&gt;         loading      SE</span></span>
+<span><span class="co">#&gt; lambda1  1.0000       .</span></span>
+<span><span class="co">#&gt; lambda2  1.0000       .</span></span>
+<span><span class="co">#&gt; lambda3 -0.1339 0.05121</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Random effects:</span></span>
+<span><span class="co">#&gt;  Groups Name    Variance Std.Dev.</span></span>
+<span><span class="co">#&gt;  id     loading 23.64    4.862   </span></span>
+<span><span class="co">#&gt; Number of obs: 742, groups:  id, 333</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Fixed effects:</span></span>
+<span><span class="co">#&gt;               Estimate Std. Error  z value   Pr(&gt;|z|)</span></span>
+<span><span class="co">#&gt; chd           -1.91525    0.27229 -7.03373  2.011e-12</span></span>
+<span><span class="co">#&gt; fiber         17.94851    0.48686 36.86604 1.618e-297</span></span>
+<span><span class="co">#&gt; fiber2         0.22398    0.41783  0.53604  5.919e-01</span></span>
+<span><span class="co">#&gt; chd:age        0.06614    0.05931  1.11527  2.647e-01</span></span>
+<span><span class="co">#&gt; chd:bus       -0.02893    0.34355 -0.08421  9.329e-01</span></span>
+<span><span class="co">#&gt; fiber:age     -0.21203    0.10090 -2.10130  3.561e-02</span></span>
+<span><span class="co">#&gt; fiber:bus     -1.68305    0.63721 -2.64126  8.260e-03</span></span>
+<span><span class="co">#&gt; chd:age:bus   -0.04998    0.06507 -0.76815  4.424e-01</span></span>
+<span><span class="co">#&gt; fiber:age:bus  0.16817    0.11223  1.49847  1.340e-01</span></span></code></pre></div>
+</div>
+<div class="section level3">
 <h3 id="implementation-details">Implementation Details<a class="anchor" aria-label="anchor" href="#implementation-details"></a>
 </h3>
 <p>At a given set of parameters, the marginal likelihood is evaluated
@@ -448,13 +545,6 @@ least squares problem in C++.</p>
 <div class="section level3">
 <h3 id="future-improvements">Future Improvements<a class="anchor" aria-label="anchor" href="#future-improvements"></a>
 </h3>
-<p>In the future, we aim to allow use of the derivative-free Nelder-Mead
-algorithm <span class="citation">(<a href="#ref-nelderSimplexMethodFunction1965" role="doc-biblioref">Nelder
-and Mead 1965</a>)</span>, which has turn out to be very stable for
-estimating generalized linear mixed models in <code>lme4</code> <span class="citation">(<a href="#ref-batesFittingLinearMixedEffects2015" role="doc-biblioref">Bates et al. 2015</a>)</span>. The version of this
-algorithm provided by <code><a href="https://rdrr.io/r/stats/optim.html" class="external-link">optim()</a></code> does not allow box
-constraints, but <code>lme4</code>’s <code>Nelder_Mead</code> function
-does this.</p>
 <p>We also aim to perform also the outer optimization loop in C++, to
 avoid copying data back and forth between R and C++ during optimization.
 This requires finding an off-the-shelf optimization routine which is as
