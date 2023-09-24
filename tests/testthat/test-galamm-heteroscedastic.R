@@ -46,7 +46,6 @@ test_that("Heteroscedastic model works", {
   expect_equal(
     mod_start$parameters$parameter_estimates,
     mod$parameters$parameter_estimates,
-    tolerance = .01)
-
-
+    tolerance = .01
+  )
 })

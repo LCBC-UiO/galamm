@@ -58,7 +58,8 @@ plot_smooth <- function(object, ...) {
 #' plot_smooth(mod, shade = TRUE, rug = FALSE)
 #'
 plot_smooth.galamm <- function(object, ...) {
-  if (!exists("gam", object) || length(object$gam) == 0) stop("No terms to plot.")
+  if (!exists("gam", object) || length(object$gam) == 0)
+    stop("No terms to plot.")
 
   plot(object$gam, ...)
 }

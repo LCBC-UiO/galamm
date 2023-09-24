@@ -33,6 +33,7 @@ with \code{mgcv} and \code{gamm4}.
 }
 \seealso{
 Other modeling functions: 
+\code{\link{extract_optim_parameters.galamm}()},
 \code{\link{galamm_control}()},
 \code{\link{galamm}()},
 \code{\link{s}()}

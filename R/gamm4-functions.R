@@ -331,7 +331,8 @@ gamm4.wrapup <- function(gobj, ret, final_model) {
 
   if (linear) {
     object$weights <- object$prior.weights
-    V <- Matrix::Diagonal(n = length(object$weights), x = scale / object$weights)
+    V <- Matrix::Diagonal(n = length(object$weights),
+                          x = scale / object$weights)
   } else {
     V <- Matrix::Diagonal(length(final_model$V), scale / final_model$V)
   }

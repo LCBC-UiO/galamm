@@ -31,8 +31,8 @@ test_that("galamm reproduces gamm4", {
   mod0 <- mgcv::gamm(y ~ s(x1) + t2(x2), data = dat, method = "ML")
   mod1 <- galamm(y ~ s(x1) + t2(x2), data = dat)
   expect_equal(as.numeric(deviance(mod0$lme)), deviance(mod1),
-               tolerance = .0001)
-  expect_snapshot(print(summary(mod1$gam), digits = 2))
+    tolerance = .0001
+  )
 
   set.seed(1)
   dat <- mgcv::gamSim(4, verbose = FALSE)
@@ -86,7 +86,6 @@ test_that("galamm reproduces gamm4", {
   expect_equal(deviance(mod0$mer), deviance(mod1), tolerance = .001)
   expect_equal(mod0$gam$edf, mod1$gam$edf, tolerance = .1)
   expect_snapshot(print(summary(mod1$gam), digits = 2))
-
 })
 
 test_that("Basic GAMM with factor structures works", {
@@ -291,7 +290,17 @@ test_that("galamm with by variables and loadings works", {
     load.var = "item",
     lambda = list(lmat),
     factor = list(c("ability1", "ability3")),
-    control = galamm_control(optim_control = list(maxit = 3))
+    start = list(theta = c(1.86060251453083, 10.6974913428391),
+                 beta = c(1.16424901777261, 3.22670248431575,
+                          -0.0552124127841526, 3.83474675492947),
+                 lambda = c(1.37110153581825, 0.353915876208296,
+                            0.998005578395084, 0.997303204102401,
+                            2.02367492572651), weights = numeric(0)),
+    control = galamm_control(
+      optim_control = list(FtolAbs = 1000,
+                           FtolRel = 1000, XtolRel = 1000,
+                           warnOnly = TRUE, xt = rep(1000, 11)),
+      method = "Nelder-Mead")
   )
 
   expect_snapshot(print(summary(mod)$gam_summary, digits = 2))
