@@ -41,9 +41,9 @@ mod_nm <- galamm(
   formula = y ~ x + (1 | id),
   weights = ~ (1 | item),
   data = hsced,
+  start = start,
   control = galamm_control(method = "Nelder-Mead")
 )
-
 
 }
 \seealso{

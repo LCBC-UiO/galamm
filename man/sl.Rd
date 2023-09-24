@@ -14,17 +14,38 @@ sl(..., load.var = NULL)
 }
 \value{
 An object of class \code{xx.smooth.spec}, where \code{xx} is a basis
-identifying code given by the \code{bs} argument of \code{s}.
-It differs from the smooth returned by \code{mgcv::s} in
-that it has an additional attribute named \code{"load.var"} which specifies
-any factor loading which this smooth term should be multiplied with in
-order to produce the observed outcome.
+identifying code given by the \code{bs} argument of \code{s}. It differs
+from the smooth returned by \code{mgcv::s} in that it has an additional
+attribute named \code{"load.var"} which specifies any factor loading which
+this smooth term should be multiplied with in order to produce the observed
+outcome.
 }
 \description{
 This is a very thin wrapper around \code{mgcv::s}. It enables the
 specification of loading variables for smooth terms. The last letter "l",
-which stands for "loading", has been added to avoid namespace conflicts
-with \code{mgcv} and \code{gamm4}.
+which stands for "loading", has been added to avoid namespace conflicts with
+\code{mgcv} and \code{gamm4}.
+}
+\examples{
+# Linear mixed model with factor structures
+dat <- subset(cognition, domain == 1 & timepoint == 1)
+loading_matrix <- matrix(c(1, NA, NA), ncol = 1)
+
+# Model with four thin-plate regression splines as basis functions
+mod <- galamm(formula = y ~ 0 + item + sl(x, k = 4, load.var = "loading"),
+              data = dat,
+              load.var = "item",
+              lambda = list(loading_matrix),
+              factor = list("loading"))
+
+# Model with four cubic regression splines as basis functions
+mod <- galamm(formula = y ~ 0 + item +
+              sl(x, bs = "cr", k = 4, load.var = "loading"),
+              data = dat,
+              load.var = "item",
+              lambda = list(loading_matrix),
+              factor = list("loading"))
+
 }
 \references{
 \insertRef{woodThinPlateRegression2003}{galamm}

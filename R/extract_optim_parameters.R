@@ -14,7 +14,7 @@ extract_optim_parameters <- function(object) {
 #' @param object Object of class \code{galamm} returned from
 #'   \code{\link{galamm}}.
 #'
-#' @return A list containing the following elements:
+#' @return A \code{list} object containing the following elements:
 #' * \code{theta} Numerical vector of variance components, i.e., entries of
 #'   the lower Cholesky form of the covariance matrix of random effects.
 #' * \code{beta} Fixed regression coefficients.
@@ -40,6 +40,7 @@ extract_optim_parameters <- function(object) {
 #'   formula = y ~ x + (1 | id),
 #'   weights = ~ (1 | item),
 #'   data = hsced,
+#'   start = start,
 #'   control = galamm_control(method = "Nelder-Mead")
 #' )
 #'
