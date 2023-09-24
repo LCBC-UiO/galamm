@@ -117,6 +117,13 @@ test_that("wrong input is handled properly", {
     "Unknown control names"
   )
 
+  expect_error(galamm_control(method = "Quasi-Newton"))
+  expect_error(galamm_control(method = "Nelder-Mead",
+                              optim_control = list(maxit = 2)),
+               "Unknown control names maxit")
+  expect_error(galamm_control(optim_control = list(xst = .001)),
+               "Unknown control names xst")
+
   expect_error(
     galamm_control(optim_control = list(fnscale = 2.3)),
     "fnscale parameter should be negative."

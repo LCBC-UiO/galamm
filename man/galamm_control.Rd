@@ -12,17 +12,19 @@ galamm_control(
 )
 }
 \arguments{
-\item{optim_control}{List passed on to \code{stats::optim}'s \code{control}
-argument. If not otherwise specified, the following arguments are set to
+\item{optim_control}{List containing optimization parameters. If \code{method
+  = "L-BFGS-B"} it is passed on to \code{stats::optim}'s \code{control}
+argument and if \code{method = "Nelder-Mead"}, it is passed on to
+\code{lme4::Nelder_Mead}'s control argument. If not otherwise specified,
+and \code{method = "L-BFGS-B"}, the following arguments are set to
 non-default values: \code{fnscale = -1} and \code{lmm = 20}.}
 
 \item{method}{Character string defining the algorithm to be used for
-maximizing the marginal log-likelihood. The default is
-\code{"L-BFGS-B"}, which uses the limited memory
-Broyden-Fletcher-Goldfarb-Shanno algorithm with box constrained as
-implemented in \code{stats::optim}. The other options is
-\code{"Nelder-Mead"}, which calls the Nelder-Mead algorithm with box
-constraints implemented in \code{lme4::Nelder_Mead}.}
+maximizing the marginal log-likelihood. The default is \code{"L-BFGS-B"},
+which uses the limited memory Broyden-Fletcher-Goldfarb-Shanno algorithm
+with box constrained as implemented in \code{stats::optim}. The other
+options is \code{"Nelder-Mead"}, which calls the Nelder-Mead algorithm with
+box constraints implemented in \code{lme4::Nelder_Mead}.}
 
 \item{maxit_conditional_modes}{Maximum number of iterations in penalized
 iteratively reweighted least squares algorithm. Ignored if \code{family =
@@ -69,6 +71,7 @@ control <- galamm_control(optim_control = list(trace = 6, lmm = 20))
 \code{\link[=galamm]{galamm()}}
 
 Other modeling functions: 
+\code{\link{extract_optim_parameters.galamm}()},
 \code{\link{galamm}()},
 \code{\link{s}()},
 \code{\link{t2}()}

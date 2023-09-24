@@ -217,6 +217,7 @@ plot_smooth(mod, shade = TRUE)
 }
 \seealso{
 Other modeling functions: 
+\code{\link{extract_optim_parameters.galamm}()},
 \code{\link{galamm_control}()},
 \code{\link{s}()},
 \code{\link{t2}()}

@@ -31,7 +31,7 @@
 #'
 vcov.galamm <- function(object, parm = "beta", ...) {
   inds <- find_parm_inds(object, parm)
-  if (length(inds) == 0) {
+  if(length(inds) == 0) {
     stop("Parameter not found.")
   }
   if(object$model$reduced_hessian) {

@@ -220,14 +220,9 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
     define_factor_mappings(gobj, load.var, lambda, factor, data)
 
   theta_mapping <- gobj$lmod$reTrms$Lind - 1L
-
   theta_inds <- seq_along(gobj$lmod$reTrms$theta)
   beta_inds <- max(theta_inds) + seq_along(colnames(gobj$lmod$X))
   lambda_inds <- max(beta_inds) + seq_along(lambda[[1]][lambda[[1]] >= 2])
-  bounds <- c(
-    gobj$lmod$reTrms$lower,
-    rep(-Inf, length(beta_inds) + length(lambda_inds))
-  )
 
   if (!is.null(weights)) {
     weights_obj <- lme4::mkReTrms(lme4::findbars(weights), fr = data)
@@ -242,6 +237,12 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
     weights_mapping <- integer()
     weights_inds <- integer()
   }
+
+  bounds <- c(
+    gobj$lmod$reTrms$lower,
+    rep(-Inf, length(beta_inds) + length(lambda_inds)),
+    rep(0, length(weights_inds))
+  )
 
   y <- response_obj[, 1]
   trials <- response_obj[, 2]
@@ -298,11 +299,11 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
     opt <- stats::optim(par_init,
                         fn = fn, gr = gr, gradient = TRUE,
                         method = "L-BFGS-B", lower = bounds,
-                        control = control$optim_control
-    )
+                        control = control$optim_control)
   } else {
-    opt <- lme4::Nelder_Mead(fn = function(x) -fn(x, gradient = FALSE), par = par_init,
-                             lower = bounds)
+    opt <- lme4::Nelder_Mead(
+      fn = function(x) -fn(x, gradient = FALSE), par = par_init,
+      lower = bounds, control = control$optim_control)
     opt$value <- -opt$fval
   }
 

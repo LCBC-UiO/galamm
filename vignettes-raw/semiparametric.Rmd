@@ -467,4 +467,8 @@ plot_smooth(mod, select = 2, scale = 0)
 plot_smooth(mod, select = 3, scale = 0)
 ```
 
+In complex models like this, where convergence is hard, the Nelder-Mead algorithm [@nelderSimplexMethodFunction1965] might be a good alternative to try, as it is usually more robust, although slower. See [optimization vignette](https://lcbc-uio.github.io/galamm/articles/optimization.html) for details.
+
+
+
 # References

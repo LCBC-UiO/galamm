@@ -3,17 +3,19 @@
 #' This function can be called for controling the optimization procedure used
 #' when fitting GALAMMs using \code{\link{galamm}}.
 #'
-#' @param optim_control List passed on to \code{stats::optim}'s \code{control}
-#'   argument. If not otherwise specified, the following arguments are set to
+#' @param optim_control List containing optimization parameters. If \code{method
+#'   = "L-BFGS-B"} it is passed on to \code{stats::optim}'s \code{control}
+#'   argument and if \code{method = "Nelder-Mead"}, it is passed on to
+#'   \code{lme4::Nelder_Mead}'s control argument. If not otherwise specified,
+#'   and \code{method = "L-BFGS-B"}, the following arguments are set to
 #'   non-default values: \code{fnscale = -1} and \code{lmm = 20}.
 #'
 #' @param method Character string defining the algorithm to be used for
-#'   maximizing the marginal log-likelihood. The default is
-#'   \code{"L-BFGS-B"}, which uses the limited memory
-#'   Broyden-Fletcher-Goldfarb-Shanno algorithm with box constrained as
-#'   implemented in \code{stats::optim}. The other options is
-#'   \code{"Nelder-Mead"}, which calls the Nelder-Mead algorithm with box
-#'   constraints implemented in \code{lme4::Nelder_Mead}.
+#'   maximizing the marginal log-likelihood. The default is \code{"L-BFGS-B"},
+#'   which uses the limited memory Broyden-Fletcher-Goldfarb-Shanno algorithm
+#'   with box constrained as implemented in \code{stats::optim}. The other
+#'   options is \code{"Nelder-Mead"}, which calls the Nelder-Mead algorithm with
+#'   box constraints implemented in \code{lme4::Nelder_Mead}.
 #'
 #' @param maxit_conditional_modes Maximum number of iterations in penalized
 #'   iteratively reweighted least squares algorithm. Ignored if \code{family =
@@ -40,20 +42,19 @@
 #' # and using the last 20 BFGS updates to estimate the Hessian in L-BFGS-B.
 #' control <- galamm_control(optim_control = list(trace = 6, lmm = 20))
 #'
-#' @references
-#' \insertRef{batesFittingLinearMixedEffects2015}{galamm}
+#' @references \insertRef{batesFittingLinearMixedEffects2015}{galamm}
 #'
-#' \insertRef{broydenConvergenceClassDoublerank1970}{galamm}
+#'   \insertRef{broydenConvergenceClassDoublerank1970}{galamm}
 #'
-#' \insertRef{byrdLimitedMemoryAlgorithm1995}{galamm}
+#'   \insertRef{byrdLimitedMemoryAlgorithm1995}{galamm}
 #'
-#' \insertRef{fletcherNewApproachVariable1970}{galamm}
+#'   \insertRef{fletcherNewApproachVariable1970}{galamm}
 #'
-#' \insertRef{goldfarbFamilyVariablemetricMethods1970}{galamm}
+#'   \insertRef{goldfarbFamilyVariablemetricMethods1970}{galamm}
 #'
-#' \insertRef{nelderSimplexMethodFunction1965}{galamm}
+#'   \insertRef{nelderSimplexMethodFunction1965}{galamm}
 #'
-#' \insertRef{shannoConditioningQuasiNewtonMethods1970}{galamm}
+#'   \insertRef{shannoConditioningQuasiNewtonMethods1970}{galamm}
 #'
 #'
 galamm_control <- function(optim_control = list(),
@@ -75,12 +76,21 @@ galamm_control <- function(optim_control = list(),
     }
   }
 
-  optim_control_names <- c(
-    "trace", "fnscale", "parscale", "ndeps", "maxit",
-    "abstol", "reltol", "alpha", "beta", "gamma",
-    "REPORT", "warn.1d.NelderMead", "type", "lmm",
-    "factr", "pgtol", "tmax", "temp"
-  )
+  method <- match.arg(method)
+  if(method == "L-BFGS-B") {
+    optim_control_names <- c(
+      "trace", "fnscale", "parscale", "ndeps", "maxit",
+      "abstol", "reltol", "alpha", "beta", "gamma",
+      "REPORT", "warn.1d.NelderMead", "type", "lmm",
+      "factr", "pgtol", "tmax", "temp"
+    )
+  } else if (method == "Nelder-Mead") {
+    optim_control_names <- c(
+      "iprint", "maxfun", "FtolAbs", "FtolRel", "XtolRel", "MinfMax",
+      "xst", "xt", "verbose", "warnOnly"
+    )
+  }
+
 
   if (any(!names(optim_control) %in% optim_control_names)) {
     stop("Unknown control names ", paste(
@@ -91,7 +101,7 @@ galamm_control <- function(optim_control = list(),
 
   new_galamm_control(
     optim_control = optim_control,
-    method = match.arg(method),
+    method = method,
     maxit_conditional_modes = maxit_conditional_modes,
     reduced_hessian = reduced_hessian
   )
@@ -105,12 +115,14 @@ galamm_control <- function(optim_control = list(),
 #' @seealso [galamm_control()]
 new_galamm_control <- function(optim_control, method, maxit_conditional_modes,
                                reduced_hessian) {
-  if (is.null(optim_control$fnscale)) {
-    optim_control$fnscale <- -1
-  }
+  if(method == "L-BFGS-B") {
+    if (is.null(optim_control$fnscale)) {
+      optim_control$fnscale <- -1
+    }
 
-  if (is.null(optim_control$lmm)) {
-    optim_control$lmm <- 20
+    if (is.null(optim_control$lmm)) {
+      optim_control$lmm <- 20
+    }
   }
 
 
