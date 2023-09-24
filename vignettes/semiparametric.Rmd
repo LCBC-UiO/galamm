@@ -75,6 +75,7 @@ This model can be estimated using `gamm4` as follows:
 
 ```r
 mod_gamm4 <- gamm4(y ~ s(x), random = ~ (1 | id), data = dat, REML = FALSE)
+#> Error in gamm4(y ~ s(x), random = ~(1 | id), data = dat, REML = FALSE): unused argument (REML = FALSE)
 ```
 
 The package `gamm4` uses `lme4` to fit the underlying model, and the resulting model has two components. `mod_gamm4$mer` contains the mixed model representation, whereas in `mod_gamm4$gam` the fixed and random effects corresponding to spline coefficients have been converted into single smooth terms. We can look at the model summary for each:
@@ -82,52 +83,54 @@ The package `gamm4` uses `lme4` to fit the underlying model, and the resulting m
 
 ```r
 summary(mod_gamm4$mer)
-#> Linear mixed model fit by maximum likelihood  ['lmerMod']
+#> Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+#>  Family: binomial  ( logit )
 #> 
 #>      AIC      BIC   logLik deviance df.resid 
-#>   3025.2   3052.1  -1507.6   3015.2     1595 
+#>    983.7   1005.2   -487.8    975.7     1596 
 #> 
 #> Scaled residuals: 
-#>      Min       1Q   Median       3Q      Max 
-#> -2.93755 -0.65215  0.00612  0.62654  3.14289 
+#>     Min      1Q  Median      3Q     Max 
+#> -8.2547  0.0786  0.1946  0.4248  0.8213 
 #> 
 #> Random effects:
-#>  Groups   Name        Variance Std.Dev.
-#>  id       (Intercept) 0.8551   0.9247  
-#>  Xr       s(x)        2.0341   1.4262  
-#>  Residual             0.2501   0.5001  
+#>  Groups Name        Variance Std.Dev.
+#>  id     (Intercept) 0.2306   0.4802  
+#>  Xr     s(x)        0.9694   0.9846  
 #> Number of obs: 1600, groups:  id, 200; Xr, 8
 #> 
 #> Fixed effects:
-#>              Estimate Std. Error t value
-#> X(Intercept)  1.26938    0.06657  19.067
-#> Xs(x)Fx1     -0.15814    0.20156  -0.785
+#>              Estimate Std. Error z value Pr(>|z|)    
+#> X(Intercept)   2.8115     0.2034  13.824  < 2e-16 ***
+#> Xs(x)Fx1      -1.4110     0.4242  -3.326  0.00088 ***
+#> ---
+#> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
 #> Correlation of Fixed Effects:
 #>          X(Int)
-#> Xs(x)Fx1 0.000
+#> Xs(x)Fx1 -0.440
 summary(mod_gamm4$gam)
 #> 
-#> Family: gaussian 
-#> Link function: identity 
+#> Family: binomial 
+#> Link function: logit 
 #> 
 #> Formula:
 #> y ~ s(x)
 #> 
 #> Parametric coefficients:
-#>             Estimate Std. Error t value Pr(>|t|)    
-#> (Intercept)  1.26938    0.06657   19.07   <2e-16 ***
+#>             Estimate Std. Error z value Pr(>|z|)    
+#> (Intercept)   2.8115     0.1662   16.91   <2e-16 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
 #> Approximate significance of smooth terms:
-#>        edf Ref.df     F p-value    
-#> s(x) 6.681  6.681 324.9  <2e-16 ***
+#>       edf Ref.df Chi.sq p-value    
+#> s(x) 2.14   2.14  113.9  <2e-16 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
-#> R-sq.(adj) =  0.253   
-#> lmer.REML = 3015.2  Scale est. = 0.25012   n = 1600
+#> R-sq.(adj) =  0.116   
+#> glmer.ML = 908.96  Scale est. = 1         n = 1600
 ```
 
 We can also plot the estimated smooth term:
@@ -243,6 +246,7 @@ mod_gamm4 <- gamm4(y ~ s(x),
   random = ~ (1 | id),
   data = dat, family = binomial
 )
+#> Error in gamm4(y ~ s(x), random = ~(1 | id), data = dat, family = binomial): unused argument (family = binomial)
 ```
 
 We can look at the summary output as before.
@@ -730,6 +734,179 @@ lines(x, y, col = "red")
 
 ![Comparison of estimate to true value.](semiparametric-multivariate-gaussian-smooth2-1.png)
 
+### Multivariate Binomial and Gaussian Model
 
+We now extend the model above to also include the items measuring domain 2, which are all binomially distributed with a single trial.
+
+We start by adding dummy variables for each domain, as before.
+
+
+```r
+mm <- model.matrix(~ 0 + domain, data = cognition)
+dat <- cbind(cognition, mm)
+```
+
+Next we define the factor loading matrix, which now has three columns.
+
+
+```r
+(lmat <- matrix(
+  c(1, NA, NA, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 1, NA, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 1, NA, NA, NA),
+  ncol = 3))
+#>       [,1] [,2] [,3]
+#>  [1,]    1    0    0
+#>  [2,]   NA    0    0
+#>  [3,]   NA    0    0
+#>  [4,]    0    1    0
+#>  [5,]    0   NA    0
+#>  [6,]    0    0    1
+#>  [7,]    0    0   NA
+#>  [8,]    0    0   NA
+#>  [9,]    0    0   NA
+```
+
+The responses are now either conditionally Gaussian or conditionally binomial, so we define the family object and family mapping as follows:
+
+
+```r
+family <- c(gaussian, binomial)
+family_mapping <- ifelse(dat$domain %in% c(1, 3), 1L, 2L)
+```
+
+Since this model will be computationally challenging, we need to think about the optimization. We define the control object as follows, where `trace = 3` means that we want the `optim()` function to be relatively verbose, `REPORT = 5` which means that we want it to report every fifth iteration, and `factr = 1e9` which means that when the reduction in marginal loglikelihood is within $10^{9}$ times machine precision, then convergence has occured. The default for `factr` is `1e7`, so we are less strict than default. Finally, `reduced_hessian = TRUE` means that at the maximum marginal likelihood solution that is found, the Hessian matrix should only contain partial derivatives with respect to the fixed regression coefficients and the factor loadings. That is, it should not contain derivatives with respect to the variance components, which for models of this complexity typically leads to non-positive definite Hessian matrices. This also means that Wald type confidence intervals based on this Hessian matrix are more approximate than usual, since they ignore the uncertainty in the variance components. However, the simulations in @sorensenLongitudinalModelingAgeDependent2023 suggest that the results confidence intervals still are quite good for most parameters.
+
+
+
+```r
+control <-  galamm_control(
+  optim_control = list(trace = 3, REPORT = 5, factr = 1e9),
+  reduced_hessian = TRUE)
+```
+
+
+For this example, we also remove the level-2 disturbances, as they lead to further computational challenges which are not directly relevant to this example. For real data analysis in the first example of @sorensenLongitudinalModelingAgeDependent2023, level-2 disturbances were included and the model did converge, so it is not necessary in general to drop this level.
+
+
+```r
+mod <- galamm(
+  formula = y ~ domain + 
+    sl(x, k = 6, by = domain, 
+       load.var = c("ability1", "ability2", "ability3")) + 
+    (0 + domain1:ability1 + domain2:ability2 + domain3:ability3 | id),
+  data = dat,
+  family = family,
+  family_mapping = family_mapping,
+  load.var = "item",
+  lambda = list(lmat),
+  factor = list(c("ability1", "ability2", "ability3")),
+  control = control
+)
+#> N = 21, M = 20 machine precision = 2.22045e-16
+#> At X0, 0 variables are exactly at the bounds
+#> At iterate     0  f=        25990  |proj g|=         6749
+#> At iterate     5  f =        19398  |proj g|=        780.41
+#> At iterate    10  f =        15323  |proj g|=        1141.7
+#> At iterate    15  f =        14627  |proj g|=        1576.5
+#> At iterate    20  f =        14483  |proj g|=        162.98
+#> At iterate    25  f =        14397  |proj g|=         37.08
+#> At iterate    30  f =        14329  |proj g|=        314.17
+#> At iterate    35  f =        14260  |proj g|=        191.23
+#> At iterate    40  f =        14247  |proj g|=         27.04
+#> At iterate    45  f =        14242  |proj g|=        30.921
+#> At iterate    50  f =        14239  |proj g|=        28.512
+#> At iterate    55  f =        14237  |proj g|=        48.242
+#> At iterate    60  f =        14237  |proj g|=        25.373
+#> At iterate    65  f =        14236  |proj g|=        150.72
+#> At iterate    70  f =        14231  |proj g|=        110.19
+#> At iterate    75  f =        14230  |proj g|=        57.963
+#> At iterate    80  f =        14225  |proj g|=        32.814
+#> At iterate    85  f =        14224  |proj g|=        23.879
+#> At iterate    90  f =        14223  |proj g|=        17.141
+#> At iterate    95  f =        14220  |proj g|=        13.796
+#> At iterate   100  f =        14219  |proj g|=        21.301
+#> final  value 14218.761356 
+#> stopped after 101 iterations
+```
+
+The summary output is shown below:
+
+
+```r
+summary(mod)
+#> GALAMM fit by maximum marginal likelihood.
+#> Formula: y ~ domain + sl(x, k = 6, by = domain, load.var = c("ability1",  
+#>     "ability2", "ability3")) + (0 + domain1:ability1 + domain2:ability2 +      domain3:ability3 | id)
+#>    Data: dat
+#> Control: control
+#> 
+#>        AIC        BIC     logLik   deviance   df.resid 
+#>    28481.5    28648.2   -14218.8 35771641.8      14378 
+#> 
+#> Scaled residuals: 
+#>      Min       1Q   Median       3Q      Max 
+#> -253.327   -2.731    0.058   70.749  133.839 
+#> 
+#> Lambda:
+#>         ability1      SE ability2    SE ability3       SE
+#> lambda1   1.0000       .        .     .        .        .
+#> lambda2   1.4005 0.01851        .     .        .        .
+#> lambda3   0.2986 0.01512        .     .        .        .
+#> lambda4        .       .    1.000     .        .        .
+#> lambda5        .       .    1.725 0.147        .        .
+#> lambda6        .       .        .     .   1.0000        .
+#> lambda7        .       .        .     .   0.9999 0.005676
+#> lambda8        .       .        .     .   1.0007 0.005679
+#> lambda9        .       .        .     .   2.0111 0.011334
+#> 
+#> Random effects:
+#>  Groups Name                  Variance Std.Dev. Corr     
+#>  id     domain1:ability1        2.452   1.566            
+#>         domain2:ability2        3.646   1.909   0.86     
+#>         domain3:ability3       11.898   3.449   0.82 1.00
+#>  Xr.1   s(x):domain3:ability3 223.339  14.945            
+#>  Xr.0   s(x):domain2:ability2   1.665   1.290            
+#>  Xr     s(x):domain1:ability1   7.465   2.732            
+#> Number of obs: 14400, groups:  id, 200; Xr.1, 4; Xr.0, 4; Xr, 4
+#> 
+#> Fixed effects:
+#>                           Estimate Std. Error    z value  Pr(>|z|)
+#> (Intercept)               0.001827    0.03152    0.05796 9.538e-01
+#> domain2                   0.811792    0.12790    6.34727 2.192e-10
+#> domain3                   0.056704    0.04989    1.13662 2.557e-01
+#> s(x):domain1:ability1Fx1  0.159995    0.10127    1.57989 1.141e-01
+#> s(x):domain2:ability2Fx1 -0.337532    0.33719   -1.00103 3.168e-01
+#> s(x):domain3:ability3Fx1 -9.803813    0.08146 -120.35373 0.000e+00
+#> 
+#> Approximate significance of smooth terms:
+#>                         edf Ref.df       F p-value
+#> s(x):domain1:ability1 4.937  4.937   639.3  <2e-16
+#> s(x):domain2:ability2 4.659  4.659  1714.5  <2e-16
+#> s(x):domain3:ability3 4.998  4.998 16093.4  <2e-16
+```
+
+The estimated smooth terms are shown in the plots below.
+
+
+```r
+plot_smooth(mod, select = 1, scale = 0)
+```
+
+![First smooth term for semiparametric mixed response model.](semiparametric-mixedresponse-smooths1-1.png)
+
+
+```r
+plot_smooth(mod, select = 2, scale = 0)
+```
+
+![Second smooth term for semiparametric mixed response model.](semiparametric-mixedresponse-smooths2-1.png)
+
+
+```r
+plot_smooth(mod, select = 3, scale = 0)
+```
+
+![Third smooth term for semiparametric mixed response model.](semiparametric-mixedresponse-smooths3-1.png)
 
 # References

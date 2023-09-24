@@ -46,7 +46,7 @@ Other details of model fit:
 \code{\link{family.galamm}()},
 \code{\link{fitted.galamm}()},
 \code{\link{fixef}()},
-\code{\link{llikAIC.galamm}()},
+\code{\link{llikAIC}()},
 \code{\link{logLik.galamm}()},
 \code{\link{predict.galamm}()},
 \code{\link{print.VarCorr.galamm}()},

@@ -96,6 +96,9 @@
 #'   * \code{loglik} Log-likelihood of final model.
 #'   * \code{n} Number of observations.
 #'   * \code{pearson_residual} Pearson residuals of final model.
+#'   * \code{reduced_hessian} Logical specifying whether the full Hessian
+#'   matrix was computed, or a Hessian matrix with derivatives only with
+#'   respect to beta and lambda.
 #'   * \code{response} A numeric vector containing the response values used when
 #'   fitting the model.
 #'   * \code{weights_object} Object with weights used in model fitting. Is
@@ -372,6 +375,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
     loglik = opt$value,
     n = nrow(gobj$lmod$X),
     pearson_residuals = pearson_residuals,
+    reduced_hessian = control$reduced_hessian,
     response = response_obj[, 1],
     weights_obj = weights_obj
   )

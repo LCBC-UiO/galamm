@@ -97,6 +97,9 @@ is used internally for setting up the models.
 \item \code{loglik} Log-likelihood of final model.
 \item \code{n} Number of observations.
 \item \code{pearson_residual} Pearson residuals of final model.
+\item \code{reduced_hessian} Logical specifying whether the full Hessian
+matrix was computed, or a Hessian matrix with derivatives only with
+respect to beta and lambda.
 \item \code{response} A numeric vector containing the response values used when
 fitting the model.
 \item \code{weights_object} Object with weights used in model fitting. Is

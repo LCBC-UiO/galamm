@@ -34,6 +34,9 @@ vcov.galamm <- function(object, parm = "beta", ...) {
   if (length(inds) == 0) {
     stop("Parameter not found.")
   }
+  if(object$model$reduced_hessian) {
+    inds <- inds - max(object$parameters$theta_inds)
+  }
 
   if (qr(object$model$hessian)$rank < ncol(object$model$hessian)) {
     warning(

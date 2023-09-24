@@ -174,11 +174,6 @@ print.summary.galamm <- function(
 }
 
 
-llikAIC <- function(object) {
-  UseMethod("llikAIC")
-}
-
-
 #' Extract log likelihood, AIC, and related statistics from a GALAMM
 #'
 #' This function is assembles the values used by \code{\link{summary.galamm}}.
@@ -194,7 +189,7 @@ llikAIC <- function(object) {
 #'
 #' @family details of model fit
 #'
-llikAIC.galamm <- function(object) {
+llikAIC <- function(object) {
   llik <- logLik(object)
   c(
     AIC = stats::AIC(llik),

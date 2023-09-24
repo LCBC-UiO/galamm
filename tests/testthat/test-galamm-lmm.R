@@ -76,6 +76,22 @@ test_that("LMM with simple factor works", {
   expect_snapshot(round(confint(mod, parm = "beta"), 2))
   expect_snapshot(round(confint(mod, parm = "lambda"), 2))
   expect_snapshot(round(confint(mod, parm = "theta"), 2))
+
+  mod2 <- galamm(
+    formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
+    data = IRTsub,
+    load.var = c("item"),
+    factor = list(c("abil.sid")),
+    lambda = list(irt.lam),
+    start = list(
+      theta = mod$parameters$parameter_estimates[mod$parameters$theta_inds],
+      beta = mod$parameters$parameter_estimates[mod$parameters$beta_inds],
+      lambda = mod$parameters$parameter_estimates[mod$parameters$lambda_inds]
+      ),
+    control = galamm_control(reduced_hessian = TRUE)
+  )
+
+  expect_snapshot(print(summary(mod2), digits = 2))
 })
 
 data("KYPSsim", package = "PLmixed")
