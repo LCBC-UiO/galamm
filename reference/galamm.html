@@ -246,14 +246,15 @@ elements:</p><ul><li><p><code>call</code> the matched call used when fitting the
 <li><p><code>random_effects</code> a list containing the following two elements:</p><ul><li><p><code>b</code> random effects in original parametrization.</p></li>
 <li><p><code>u</code> random effects standardized to have identity covariance matrix.</p></li>
 </ul></li>
-<li><p><code>model</code> a list with various elements related to the model setup and fit:</p><ul><li><p><code>deviance</code> deviance of final model.</p></li>
+<li><p><code>model</code> a list with various elements related to the model setup and
+fit:</p><ul><li><p><code>deviance</code> deviance of final model.</p></li>
 <li><p><code>deviance_residuals</code> deviance residuals of the final model.</p></li>
 <li><p><code>df</code> degrees of freedom of model.</p></li>
-<li><p><code>family</code> a list of one or more family objects, as specified in the <code>family</code>
-arguments to <code>galamm</code>.</p></li>
+<li><p><code>family</code> a list of one or more family objects, as specified in the
+<code>family</code> arguments to <code>galamm</code>.</p></li>
 <li><p><code>fit</code> a numeric vector with fitted values.</p></li>
-<li><p><code>hessian</code> Hessian matrix of final model, i.e., the second derivative of the
-log-likelihood with respect to all model parameters.</p></li>
+<li><p><code>hessian</code> Hessian matrix of final model, i.e., the second
+derivative of the log-likelihood with respect to all model parameters.</p></li>
 <li><p><code>lmod</code> Linear model object returned by <code><a href="https://rdrr.io/pkg/lme4/man/modular.html" class="external-link">lme4::lFormula</a></code>, which
 is used internally for setting up the models.</p></li>
 <li><p><code>loglik</code> Log-likelihood of final model.</p></li>
@@ -261,27 +262,31 @@ is used internally for setting up the models.</p></li>
 <li><p><code>pearson_residual</code> Pearson residuals of final model.</p></li>
 <li><p><code>response</code> A numeric vector containing the response values used when
 fitting the model.</p></li>
-<li><p><code>weights_object</code> Object with weights used in model fitting. Is <code>NULL</code>
-when no weights were used.</p></li>
+<li><p><code>weights_object</code> Object with weights used in model fitting. Is
+<code>NULL</code> when no weights were used.</p></li>
 </ul></li>
-<li><p><code>parameters</code> A list object with model parameters and related information:</p><ul><li><p><code>beta_inds</code> Integer vector specifying the indices of fixed regression
-coefficients among the estimated model parameters.</p></li>
-<li><p><code>dispersion_parameter</code> One or more dispersion parameters of the final model.</p></li>
-<li><p><code>lambda_dummy</code> Dummy matrix of factor loadings, which shows the structure of the
-loading matrix that was supplied in the <code>lambda</code> arguments.</p></li>
-<li><p><code>lambda_inds</code> Integer vector specifying the indices of factor loadings among
-the estimated model parameters.</p></li>
+<li><p><code>parameters</code> A list object with model parameters and related
+information:</p><ul><li><p><code>beta_inds</code> Integer vector specifying the indices of fixed
+regression coefficients among the estimated model parameters.</p></li>
+<li><p><code>dispersion_parameter</code> One or more dispersion parameters of the
+final model.</p></li>
+<li><p><code>lambda_dummy</code> Dummy matrix of factor loadings, which shows the
+structure of the loading matrix that was supplied in the <code>lambda</code>
+arguments.</p></li>
+<li><p><code>lambda_inds</code> Integer vector specifying the indices of factor
+loadings among the estimated model parameters.</p></li>
 <li><p><code>parameter_estimates</code> Numeric vector of final parameter estimates.</p></li>
 <li><p><code>parameter_names</code> Names of all parameters estimates.</p></li>
-<li><p><code>theta_inds</code> Integer vector specifying the indices of variance components among
-the estimated model parameters. Technically these are the entries of the
-Cholesky decomposition of the covariance matrix.</p></li>
-<li><p><code>weights_inds</code> Integer vector specifying the indices of estimated weights
-(used in heteroscedastic Gaussian models) among the estimated model
-parameters.</p></li>
+<li><p><code>theta_inds</code> Integer vector specifying the indices of variance
+components among the estimated model parameters. Technically these are the
+entries of the Cholesky decomposition of the covariance matrix.</p></li>
+<li><p><code>weights_inds</code> Integer vector specifying the indices of estimated
+weights (used in heteroscedastic Gaussian models) among the estimated
+model parameters.</p></li>
 </ul></li>
-<li><p><code>gam</code> List containing information about smooth terms in the model. If no
-smooth terms are contained in the model, then it is a list of length zero.</p></li>
+<li><p><code>gam</code> List containing information about smooth terms in the model.
+If no smooth terms are contained in the model, then it is a list of length
+zero.</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
@@ -327,8 +332,8 @@ Chapman and Hall/CRC.</p>
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p>Other modeling functions: 
 <code><a href="galamm_control.html">galamm_control</a>()</code>,
-<code><a href="s.html">s</a>()</code>,
-<code><a href="t2.html">t2</a>()</code></p></div>
+<code><a href="sl.html">s</a>()</code>,
+<code><a href="t2l.html">t2</a>()</code></p></div>
     </div>
 
     <div class="section level2">
@@ -405,7 +410,7 @@ Chapman and Hall/CRC.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># We can now estimate the model.</span></span></span>
 <span class="r-in"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu">galamm</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="fl">0</span> <span class="op">+</span> <span class="va">item</span> <span class="op">+</span> <span class="fu"><a href="s.html">s</a></span><span class="op">(</span><span class="va">x</span>, load.var <span class="op">=</span> <span class="st">"loading"</span><span class="op">)</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="fl">0</span> <span class="op">+</span> <span class="va">item</span> <span class="op">+</span> <span class="fu"><a href="sl.html">sl</a></span><span class="op">(</span><span class="va">x</span>, load.var <span class="op">=</span> <span class="st">"loading"</span><span class="op">)</span> <span class="op">+</span></span></span>
 <span class="r-in"><span>    <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">loading</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  data <span class="op">=</span> <span class="va">dat</span>,</span></span>
 <span class="r-in"><span>  load.var <span class="op">=</span> <span class="st">"item"</span>,</span></span>
