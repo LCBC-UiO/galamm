@@ -26,6 +26,14 @@ test_that("galamm reproduces gamm4", {
   expect_snapshot(print(summary(mod$gam), digits = 2))
 
   set.seed(1)
+  dat <- mgcv::gamSim(verbose = FALSE, scale = .1)
+  mod0 <- mgcv::gamm(y ~ s(x1) + t2(x2), data = dat, method = "ML")
+  mod1 <- galamm(y ~ s(x1) + t2(x2), data = dat)
+  expect_equal(as.numeric(deviance(mod0$lme)), deviance(mod1),
+               tolerance = .0001)
+  expect_snapshot(print(summary(mod1$gam), digits = 2))
+
+  set.seed(1)
   dat <- mgcv::gamSim(4, verbose = FALSE)
   mod0 <- gamm4::gamm4(y ~ fac + s(x2, by = fac), data = dat, REML = FALSE)
   mod1 <- galamm(formula = y ~ fac + s(x2, by = fac), data = dat)
@@ -77,6 +85,7 @@ test_that("galamm reproduces gamm4", {
   expect_equal(deviance(mod0$mer), deviance(mod1), tolerance = .001)
   expect_equal(mod0$gam$edf, mod1$gam$edf, tolerance = .1)
   expect_snapshot(print(summary(mod1$gam), digits = 2))
+
 })
 
 test_that("Basic GAMM with factor structures works", {

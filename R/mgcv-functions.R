@@ -79,25 +79,21 @@ gam.setup <- function(formula, pterms, mf) {
     id <- sm[[i]]$id
     ## get the L matrix for this smooth...
     length.S <-
-      if (is.null(sm[[i]]$updateS)) length(sm[[i]]$S) else sm[[i]]$n.sp
-    Li <- if (is.null(sm[[i]]$L)) diag(length.S) else sm[[i]]$L
-
-    if (length.S > 0) { ## there are smoothing parameters to name
-      if (length.S == 1) {
-        lspn <- sm[[i]]$label
+      if (is.null(sm[[i]]$updateS)) {
+        length(sm[[i]]$S)
       } else {
-        Sname <- names(sm[[i]]$S)
-        lspn <- if (is.null(Sname)) {
-          paste(sm[[i]]$label, 1:length.S, sep = "")
-        } else {
-          paste(sm[[i]]$label, Sname, sep = "")
-        } ## names for all sp's
+          sm[[i]]$n.sp
       }
-      spn <- lspn[seq_len(ncol(Li))] ## names for actual working sps
+    Li <- if (is.null(sm[[i]]$L)) {
+      diag(length.S)
+    } else {
+      sm[[i]]$L
     }
 
-    ## extend the global L matrix...
-
+    if (length.S > 0) {
+      lspn <- sm[[i]]$label
+      spn <- lspn[seq_len(ncol(Li))]
+    }
 
     L <- rbind(
       cbind(L, matrix(0, nrow(L), ncol(Li))),
@@ -282,32 +278,23 @@ variable.summary <- function(pf, dl, n) {
   for (i in seq_len(v.n)) {
     if (v.name[i] %in% p.name) para <- TRUE else para <- FALSE
 
-    if (para && is.matrix(dl[[v.name[i]]]) && ncol(dl[[v.name[i]]]) > 1) {
-      x <- matrix(
-        apply(
-          dl[[v.name[i]]], 2, stats::quantile,
-          probs = 0.5,
-          type = 3, na.rm = TRUE
-        ), 1, ncol(dl[[v.name[i]]])
+    x <- dl[[v.name[i]]]
+    if (is.character(x)) x <- as.factor(x)
+    if (is.factor(x)) {
+      x <- x[!is.na(x)]
+      lx <- levels(x)
+      freq <- tabulate(x)
+      ii <- min((seq_along(lx))[freq == max(freq)])
+      x <- factor(lx[ii], levels = lx)
+    } else {
+      x <- as.numeric(x)
+      x <- c(
+        min(x, na.rm = TRUE),
+        as.numeric(stats::quantile(x, probs = .5, type = 3, na.rm = TRUE)),
+        max(x, na.rm = TRUE)
       )
-    } else { ## anything else
-      x <- dl[[v.name[i]]]
-      if (is.character(x)) x <- as.factor(x)
-      if (is.factor(x)) {
-        x <- x[!is.na(x)]
-        lx <- levels(x)
-        freq <- tabulate(x)
-        ii <- min((seq_along(lx))[freq == max(freq)])
-        x <- factor(lx[ii], levels = lx)
-      } else {
-        x <- as.numeric(x)
-        x <- c(
-          min(x, na.rm = TRUE),
-          as.numeric(stats::quantile(x, probs = .5, type = 3, na.rm = TRUE)),
-          max(x, na.rm = TRUE)
-        )
-      }
     }
+
     vs[[v.name[i]]] <- x
   }
 
@@ -372,11 +359,8 @@ interpret.gam0 <- function(gf) {
   terms <- attr(tf, "term.labels") # labels of the model terms
   nt <- length(terms) # how many terms?
 
-  if (attr(tf, "response") > 0) { # start the replacement formulae
-    response <- as.character(attr(tf, "variables")[2])
-  } else {
-    response <- NULL
-  }
+
+  response <- as.character(attr(tf, "variables")[2])
   sp <- c(attr(tf, "specials")$s, attr(tf, "specials")$sl)
   t2p <- c(attr(tf, "specials")$t2, attr(tf, "specials")$t2l)
 

@@ -93,6 +93,34 @@
       
       Parametric coefficients:
                   Estimate Std. Error t value Pr(>|t|)    
+      (Intercept)     8.01       0.04     199   <2e-16 ***
+      ---
+      Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+      
+      Approximate significance of smooth terms:
+             edf Ref.df    F p-value    
+      s(x1)  4.1    4.1  486  <2e-16 ***
+      t2(x2) 4.0    4.0 1167  <2e-16 ***
+      ---
+      Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+      
+      R-sq.(adj) =  0.941   
+      lmer.REML =   Scale est. = 0.64969   n = 400
+
+---
+
+    Code
+      print(summary(mod1$gam), digits = 2)
+    Output
+      
+      Family: gaussian 
+      Link function: identity 
+      
+      Formula:
+      NULL
+      
+      Parametric coefficients:
+                  Estimate Std. Error t value Pr(>|t|)    
       (Intercept)     1.27       0.19     6.6    1e-10 ***
       fac2           -2.27       0.26    -8.6   <2e-16 ***
       fac3            2.20       0.27     8.1    6e-15 ***
