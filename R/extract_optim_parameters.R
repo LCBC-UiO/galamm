@@ -40,6 +40,7 @@ extract_optim_parameters <- function(object) {
 #'   formula = y ~ x + (1 | id),
 #'   weights = ~ (1 | item),
 #'   data = hsced,
+#'   start = start,
 #'   control = galamm_control(method = "Nelder-Mead")
 #' )
 #'

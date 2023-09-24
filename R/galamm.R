@@ -131,7 +131,7 @@
 #' @references \insertAllCited{}
 #'
 #' @examples
-#' # Mixed response model ------------------------------------
+#' # Mixed response model ------------------------------------------------------
 #'
 #' # The mresp dataset contains a mix of binomial and Gaussian responses.
 #'
@@ -155,6 +155,13 @@
 #' )
 #'
 #' # Summary information
+#' summary(mod)
+#'
+#'
+#' # Heteroscedastic model -----------------------------------------------------
+#' # Residuals allowed to differ according to the item variable
+#' mod <- galamm(formula = y ~ x + (1 | id), weights = ~ (1 | item),
+#'               data = hsced)
 #' summary(mod)
 #'
 #' # Generalized additive mixed model with factor structures -------------------

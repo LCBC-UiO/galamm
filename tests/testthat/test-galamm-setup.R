@@ -167,6 +167,12 @@ test_that("family can be defined in three different ways", {
     control = galamm_control(optim_control = list(maxit = 1))
   )
 
+  expect_equal(
+    extract_optim_parameters(mod1),
+    list(theta = 0.882229439513062,
+         beta = c(-0.031119368224246, 0.412581926809024),
+         lambda = numeric(0), weights = numeric(0)))
+
   expect_equal(logLik(mod1), logLik(mod2))
   expect_equal(logLik(mod2), logLik(mod3))
 
