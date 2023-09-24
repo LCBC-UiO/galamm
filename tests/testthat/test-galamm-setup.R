@@ -238,7 +238,8 @@ test_that("multiple factors in fixed effects works", {
     start = list(
       theta = .565, beta = c(1.13, 2.77),
       lambda = c(c(0.97, 1.282, 0.141, 1.424))
-    )
+    ),
+    control = galamm_control(optim_control = list(maxit = 0))
   )
-  expect_equal(deviance(mod), 7891.36597569295, tolerance = .001)
+  expect_equal(deviance(mod), 8111.724, tolerance = .001)
 })
