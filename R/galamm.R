@@ -160,8 +160,10 @@
 #'
 #' # Heteroscedastic model -----------------------------------------------------
 #' # Residuals allowed to differ according to the item variable
+#' # We also set the initial value of the random intercept standard deviation
+#' # to 1
 #' mod <- galamm(formula = y ~ x + (1 | id), weights = ~ (1 | item),
-#'               data = hsced)
+#'               data = hsced, start = list(theta = 1))
 #' summary(mod)
 #'
 #' # Generalized additive mixed model with factor structures -------------------
