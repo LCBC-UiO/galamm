@@ -342,7 +342,7 @@ Chapman and Hall/CRC.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Mixed response model ------------------------------------</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Mixed response model ------------------------------------------------------</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># The mresp dataset contains a mix of binomial and Gaussian responses.</span></span></span>
 <span class="r-in"><span></span></span>
@@ -392,6 +392,43 @@ Chapman and Hall/CRC.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             Estimate Std. Error z value  Pr(&gt;|z|)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)    0.041    0.05803  0.7065 4.799e-01</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> x              0.971    0.08594 11.2994 1.321e-29</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Heteroscedastic model -----------------------------------------------------</span></span></span>
+<span class="r-in"><span><span class="co"># Residuals allowed to differ according to the item variable</span></span></span>
+<span class="r-in"><span><span class="co"># We also set the initial value of the random intercept standard deviation</span></span></span>
+<span class="r-in"><span><span class="co"># to 1</span></span></span>
+<span class="r-in"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu">galamm</span><span class="op">(</span>formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">x</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span>, weights <span class="op">=</span> <span class="op">~</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">item</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>              data <span class="op">=</span> <span class="va">hsced</span>, start <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>theta <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> GALAMM fit by maximum marginal likelihood.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Formula: y ~ x + (1 | id)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Data: hsced</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Weights: ~(1 | item)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      AIC      BIC   logLik deviance df.resid </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   4126.3   4151.7  -2058.1   4116.3     1195 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Scaled residuals: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Min      1Q  Median      3Q     Max </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -5.6545 -0.7105  0.0286  0.6827  4.3261 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Random effects:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Groups   Name        Variance Std.Dev.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  id       (Intercept) 0.9880   0.9940  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Residual             0.9597   0.9796  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Number of obs: 1200, groups:  id, 200</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Variance function:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     1     2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1.000 1.995 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Fixed effects:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             Estimate Std. Error t value  Pr(&gt;|t|)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)   0.1289     0.0992   1.299 1.938e-01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x             0.7062     0.1213   5.822 5.819e-09</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
