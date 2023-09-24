@@ -246,9 +246,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   y <- response_obj[, 1]
   trials <- response_obj[, 2]
   u_init <- rep(0, nrow(gobj$lmod$reTrms$Zt))
-
   family_txt <- vapply(family_list, function(f) f$family, "a")
-
   k <- find_k(family_txt, family_mapping, y, trials)
 
   maxit_conditional_modes <- ifelse(
@@ -256,7 +254,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
     1, control$maxit_conditional_modes
   )
 
-  mlwrapper <- function(par, hessian = FALSE) {
+  mlwrapper <- function(par, gradient = FALSE, hessian = FALSE) {
     marginal_likelihood_cpp(
       y = y,
       trials = trials,
@@ -278,7 +276,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
       family_mapping = as.integer(family_mapping) - 1L,
       k = k,
       maxit_conditional_modes = maxit_conditional_modes,
-      gradient = TRUE,
+      gradient = gradient,
       hessian = hessian,
       epsilon_u = 1e-10,
       reduced_hessian = control$reduced_hessian
@@ -286,23 +284,29 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   }
 
   mlmem <- memoise::memoise(mlwrapper)
-  fn <- function(par) {
-    mlmem(par)$logLik
+  fn <- function(par, gradient, hessian = FALSE) {
+    mlmem(par, gradient, hessian)$logLik
   }
-  gr <- function(par) {
-    mlmem(par)$gradient
+  gr <- function(par, gradient, hessian = FALSE) {
+    mlmem(par, gradient, hessian)$gradient
   }
 
   par_init <-
     set_initial_values(gobj, start, beta_inds, lambda_inds, weights_inds)
 
-  opt <- stats::optim(par_init,
-    fn = fn, gr = gr,
-    method = "L-BFGS-B", lower = bounds,
-    control = control$optim_control
-  )
+  if(control$method == "L-BFGS-B") {
+    opt <- stats::optim(par_init,
+                        fn = fn, gr = gr, gradient = TRUE,
+                        method = "L-BFGS-B", lower = bounds,
+                        control = control$optim_control
+    )
+  } else {
+    opt <- lme4::Nelder_Mead(fn = function(x) -fn(x, gradient = FALSE), par = par_init,
+                             lower = bounds)
+    opt$value <- -opt$fval
+  }
 
-  final_model <- mlwrapper(opt$par, TRUE)
+  final_model <- mlwrapper(opt$par, gradient = TRUE, hessian = TRUE)
 
   # Update Cholesky factor of covariance matrix
   gobj$lmod$reTrms$Lambdat@x <- opt$par[theta_inds][gobj$lmod$reTrms$Lind]
@@ -354,7 +358,6 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
     deviance_residuals <- sign(response_obj[, 1] - fit) * dev_res
     deviance <- sum((dev_res)^2)
   }
-
 
   ret <- list()
 

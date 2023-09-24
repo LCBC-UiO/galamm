@@ -94,6 +94,76 @@ test_that("LMM with simple factor works", {
   expect_snapshot(print(summary(mod2), digits = 2))
 })
 
+test_that("LMM with simple factor works with Nelder-Mead", {
+  IRTsub <- IRTsim[IRTsim$item < 4, ] # Select items 1-3
+  set.seed(12345)
+  IRTsub <- IRTsub[sample(nrow(IRTsub), 300), ] # Randomly sample 300 responses
+
+  IRTsub <- IRTsub[order(IRTsub$item), ] # Order by item
+  irt.lam <- matrix(c(1, NA, NA), ncol = 1) # Specify the lambda matrix
+
+  mod <- galamm(
+    formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
+    data = IRTsub,
+    load.var = c("item"),
+    factor = list(c("abil.sid")),
+    lambda = list(irt.lam),
+    control = galamm_control(method = "Nelder-Mead")
+  )
+
+  expect_equal(
+    sd(ranef(mod)$school$abil.sid),
+    0.180650156300753
+  )
+
+  expect_output(
+    lme4::.prt.call(mod$call),
+    "Formula: y ~ 0 + as.factor(item) + (0 + abil.sid | school/sid)",
+    fixed = TRUE
+  )
+
+  expect_equal(mod$model$loglik, -193.56333776973)
+  expect_equal(
+    summary(mod)$AICtab,
+    c(AIC = 403.12667553946, BIC = 432.756935336709, logLik = -193.56333776973,
+      deviance = 387.12667553946, df.resid = 292)
+  )
+  expect_equal(
+    factor_loadings(mod),
+    structure(c(1, 1.05449523890597, 1.02128079445268, NA, 0.217885861133189,
+                0.236820565746212), dim = 3:2,
+              dimnames = list(c("lambda1", "lambda2", "lambda3"),
+                              c("abil.sid", "SE")))
+  )
+
+  expect_equal(
+    residuals(mod)[c(4, 8, 11)],
+    c(0.051356304666937, -0.181273547504248, 0.0759965034510736)
+  )
+
+  expect_snapshot(print(VarCorr(mod), digits = 2))
+
+  expect_snapshot(round(confint(mod, parm = "beta"), 2))
+  expect_snapshot(round(confint(mod, parm = "lambda"), 2))
+  expect_snapshot(round(confint(mod, parm = "theta"), 2))
+
+  mod2 <- galamm(
+    formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
+    data = IRTsub,
+    load.var = c("item"),
+    factor = list(c("abil.sid")),
+    lambda = list(irt.lam),
+    start = list(
+      theta = mod$parameters$parameter_estimates[mod$parameters$theta_inds],
+      beta = mod$parameters$parameter_estimates[mod$parameters$beta_inds],
+      lambda = mod$parameters$parameter_estimates[mod$parameters$lambda_inds]
+    ),
+    control = galamm_control(reduced_hessian = TRUE)
+  )
+
+  expect_snapshot(print(summary(mod2), digits = 2))
+})
+
 data("KYPSsim", package = "PLmixed")
 test_that("LMM with two factors works", {
   # Making data small for it to run faster

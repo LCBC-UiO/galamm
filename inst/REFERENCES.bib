@@ -56,6 +56,20 @@
   abstract = {Statistical approaches to overdispersion, correlated errors, shrinkage estimation, and smoothing of regression relationships may be encompassed within the framework of the generalized linear mixed model (GLMM). Given an unobserved vector of random effects, observations are assumed to be conditionally independent with means that depend on the linear predictor through a specified link function and conditional variances that are specified by a variance function, known prior weights and a scale factor. The random effects are assumed to be normally distributed with mean zero and dispersion matrix depending on unknown variance components. For problems involving time series, spatial aggregation and smoothing, the dispersion may be specified in terms of a rank deficient inverse covariance matrix. Approximation of the marginal quasi-likelihood using Laplace's method leads eventually to estimating equations based on penalized quasilikelihood or PQL for the mean parameters and pseudo-likelihood for the variances. Implementation involves repeated calls to normal theory procedures for REML estimation in variance components problems. By means of informal mathematical arguments, simulations and a series of worked examples, we conclude that PQL is of practical value for approximate inference on parameters and realizations of random effects in the hierarchical model. The applications cover overdispersion in binomial proportions of seed germination; longitudinal analysis of attack rates in epilepsy patients; smoothing of birth cohort effects in an age-cohort model of breast cancer incidence; evaluation of curvature of birth cohort effects in a case-control study of childhood cancer and obstetric radiation; spatial aggregation of lip cancer rates in Scottish counties; and the success of salamander matings in a complicated experiment involving crossing of male and female effects. PQL tends to underestimate somewhat the variance components and (in absolute value) fixed effects when applied to clustered binary data, but the situation improves rapidly for binomial observations having denominators greater than one.}
 }
 
+@article{broydenConvergenceClassDoublerank1970,
+  title = {The {{Convergence}} of a {{Class}} of {{Double-rank Minimization Algorithms}} 1. {{General Considerations}}},
+  author = {BROYDEN, C. G.},
+  year = {1970},
+  month = mar,
+  journal = {IMA Journal of Applied Mathematics},
+  volume = {6},
+  number = {1},
+  pages = {76--90},
+  issn = {0272-4960},
+  doi = {10.1093/imamat/6.1.76},
+  abstract = {This paper presents a more detailed analysis of a class of minimization algorithms, which includes as a special case the DFP (Davidon-Fletcher-Powell) method, than has previously appeared. Only quadratic functions are considered but particular attention is paid to the magnitude of successive errors and their dependence upon the initial matrix. On the basis of this a possible explanation of some of the observed characteristics of the class is tentatively suggested.}
+}
+
 @article{byrdLimitedMemoryAlgorithm1995,
   title = {A {{Limited Memory Algorithm}} for {{Bound Constrained Optimization}}},
   author = {Byrd, Richard H. and Lu, Peihuang and Nocedal, Jorge and Zhu, Ciyou},
@@ -96,6 +110,35 @@
   year = {2000},
   publisher = {{Psychological Corporation}},
   address = {{San Antonio, TX}}
+}
+
+@article{fletcherNewApproachVariable1970,
+  title = {A New Approach to Variable Metric Algorithms},
+  author = {Fletcher, R.},
+  year = {1970},
+  month = jan,
+  journal = {The Computer Journal},
+  volume = {13},
+  number = {3},
+  pages = {317--322},
+  issn = {0010-4620},
+  doi = {10.1093/comjnl/13.3.317},
+  abstract = {An approach to variable metric algorithms has been investigated in which the linear search sub-problem no longer becomes necessary. The property of quadratic termination has been replaced by one of monotonic convergence of the eigenvalues of the approximating matrix to the inverse hessian. A convex class of updating formulae which possess this property has been established, and a strategy has been indicated for choosing a member of the class so as to keep the approximation away from both singularity and unboundedness. A FORTRAN program has been tested extensively with encouraging results.}
+}
+
+@article{goldfarbFamilyVariablemetricMethods1970,
+  title = {A Family of Variable-Metric Methods Derived by Variational Means},
+  author = {Goldfarb, Donald},
+  year = {1970},
+  journal = {Mathematics of Computation},
+  volume = {24},
+  number = {109},
+  pages = {23--26},
+  issn = {0025-5718, 1088-6842},
+  doi = {10.1090/S0025-5718-1970-0258249-6},
+  abstract = {Advancing research. Creating connections.},
+  langid = {english},
+  keywords = {Davidon method,rank-one formulas,Unconstrained optimization,variable-metric,variational methods}
 }
 
 @article{gongPseudoMaximumLikelihood1981,
@@ -477,6 +520,21 @@
   abstract = {Structural equation modeling (SEM) is a vast field and widely used by many applied researchers in the social and behavioral sciences. Over the years, many software packages for structural equation modeling have been developed, both free and commercial. However, perhaps the best state-of-the-art software packages in this field are still closed-source and/or commercial. The R package lavaan has been developed to provide applied researchers, teachers, and statisticians, a free, fully open-source, but commercial-quality package for latent variable modeling. This paper explains the aims behind the development of the package, gives an overview of its most important features, and provides some examples to illustrate how lavaan works in practice.},
   copyright = {Copyright (c) 2011 Yves Rosseel},
   langid = {english}
+}
+
+@article{shannoConditioningQuasiNewtonMethods1970,
+  title = {Conditioning of Quasi-{{Newton}} Methods for Function Minimization},
+  author = {Shanno, D. F.},
+  year = {1970},
+  journal = {Mathematics of Computation},
+  volume = {24},
+  number = {111},
+  pages = {647--656},
+  issn = {0025-5718, 1088-6842},
+  doi = {10.1090/S0025-5718-1970-0274029-X},
+  abstract = {Advancing research. Creating connections.},
+  langid = {english},
+  keywords = {conditioning of search methods,Function minimization,gradient search,Hessian matrix,inverse approximations,quasi-Newton methods,stability of search methods,steepest-descent methods,variable metric methods}
 }
 
 @article{skaugAutomaticDifferentiationFacilitate2002,
