@@ -154,9 +154,6 @@ With `galamm` we use similar argument, but the `random` specification is now par
 
 ```r
 mod <- galamm(y ~ s(x) + (1 | id), data = dat)
-#> Error in parse(text = paste0("data$", load.var, "<- factor(data$", load.var, : <text>:1:6: unexpected assignment
-#> 1: data$<-
-#>          ^
 ```
 
 As opposed to `gamm4`, `galamm` gives a single summary. As can be seen, smooth terms are both reported as random effects, and in a separate line under the header "Approximate significance of smooth terms:". Reassuringly, the results from fitting the model with `gamm4` and with `galamm` are essentially equally, even though they use somewhat different computational algorithms.
@@ -165,37 +162,31 @@ As opposed to `gamm4`, `galamm` gives a single summary. As can be seen, smooth t
 ```r
 summary(mod)
 #> GALAMM fit by maximum marginal likelihood.
-#> Formula: y ~ 0 + item + s(x, load.var = "loading") + (0 + loading | id/timepoint)
+#> Formula: y ~ s(x) + (1 | id)
 #>    Data: dat
 #> 
 #>      AIC      BIC   logLik deviance df.resid 
-#>   1495.5   1538.0   -740.8   1614.8     3193 
+#>   3025.2   3052.1  -1507.6   3015.2     1595 
 #> 
 #> Scaled residuals: 
 #>      Min       1Q   Median       3Q      Max 
-#> -15.8546   0.0279   0.0780   0.1985   1.3948 
-#> 
-#> Lambda:
-#>         loading     SE
-#> lambda1   1.000      .
-#> lambda2   2.202 0.3007
+#> -2.93755 -0.65215  0.00612  0.62654  3.14290 
 #> 
 #> Random effects:
-#>  Groups       Name         Variance Std.Dev.
-#>  timepoint:id loading      0.0000   0.0000  
-#>  id           loading      0.6222   0.7888  
-#>  Xr           s(x):loading 1.5388   1.2405  
-#> Number of obs: 3200, groups:  timepoint:id, 1600; id, 200; Xr, 8
+#>  Groups   Name        Variance Std.Dev.
+#>  id       (Intercept) 0.8551   0.9247  
+#>  Xr       s(x)        2.0346   1.4264  
+#>  Residual             0.2501   0.5001  
+#> Number of obs: 1600, groups:  id, 200; Xr, 8
 #> 
 #> Fixed effects:
-#>                 Estimate Std. Error z value  Pr(>|z|)
-#> item21             2.944     0.1903  15.473 5.249e-54
-#> item22             6.319     0.5853  10.796 3.612e-27
-#> s(x):loadingFx1   -1.389     0.2837  -4.897 9.733e-07
+#>             Estimate Std. Error t value  Pr(>|t|)
+#> (Intercept)   1.2694    0.06657 19.0672 4.731e-81
+#> s(x)Fx1      -0.1582    0.20236 -0.7818 4.343e-01
 #> 
 #> Approximate significance of smooth terms:
-#>                edf Ref.df Chi.sq p-value
-#> s(x):loading 2.491  2.491  115.1  <2e-16
+#>        edf Ref.df     F p-value
+#> s(x) 6.681  6.681 324.9  <2e-16
 ```
 
 The `plot` function now gives us a diagnostic plot, which by inspection can be seen to be almost identical to the plot produced from the mixed model part of the `gamm4` model.
@@ -324,9 +315,6 @@ Again the `galamm` syntax is similar, but it puts the random effect specificatio
 
 ```r
 mod <- galamm(y ~ s(x) + (1 | id), data = dat, family = binomial)
-#> Error in parse(text = paste0("data$", load.var, "<- factor(data$", load.var, : <text>:1:6: unexpected assignment
-#> 1: data$<-
-#>          ^
 ```
 
 The estimates are very similar, although not identical. The difference in deviance is due to differences in the way deviance is defined. The call `deviance(mod_gamm4$mer)` gives the same value as in the summary for the model fitted with galamm.
@@ -335,37 +323,30 @@ The estimates are very similar, although not identical. The difference in devian
 ```r
 summary(mod)
 #> GALAMM fit by maximum marginal likelihood.
-#> Formula: y ~ 0 + item + s(x, load.var = "loading") + (0 + loading | id/timepoint)
+#> Formula: y ~ s(x) + (1 | id)
 #>    Data: dat
 #> 
 #>      AIC      BIC   logLik deviance df.resid 
-#>   1495.5   1538.0   -740.8   1614.8     3193 
+#>    983.7   1005.2   -487.8    908.8     1596 
 #> 
 #> Scaled residuals: 
-#>      Min       1Q   Median       3Q      Max 
-#> -15.8546   0.0279   0.0780   0.1985   1.3948 
-#> 
-#> Lambda:
-#>         loading     SE
-#> lambda1   1.000      .
-#> lambda2   2.202 0.3007
+#>     Min      1Q  Median      3Q     Max 
+#> -8.2237  0.0792  0.1947  0.4245  0.8226 
 #> 
 #> Random effects:
-#>  Groups       Name         Variance Std.Dev.
-#>  timepoint:id loading      0.0000   0.0000  
-#>  id           loading      0.6222   0.7888  
-#>  Xr           s(x):loading 1.5388   1.2405  
-#> Number of obs: 3200, groups:  timepoint:id, 1600; id, 200; Xr, 8
+#>  Groups Name        Variance Std.Dev.
+#>  id     (Intercept) 0.2316   0.4813  
+#>  Xr     s(x)        0.9387   0.9688  
+#> Number of obs: 1600, groups:  id, 200; Xr, 8
 #> 
 #> Fixed effects:
-#>                 Estimate Std. Error z value  Pr(>|z|)
-#> item21             2.944     0.1903  15.473 5.249e-54
-#> item22             6.319     0.5853  10.796 3.612e-27
-#> s(x):loadingFx1   -1.389     0.2837  -4.897 9.733e-07
+#>             Estimate Std. Error z value  Pr(>|z|)
+#> (Intercept)    2.808     0.1956  14.354 9.989e-47
+#> s(x)Fx1       -1.406     0.4134  -3.402 6.697e-04
 #> 
 #> Approximate significance of smooth terms:
-#>                edf Ref.df Chi.sq p-value
-#> s(x):loading 2.491  2.491  115.1  <2e-16
+#>        edf Ref.df Chi.sq p-value
+#> s(x) 2.124  2.124    114  <2e-16
 ```
 
 
@@ -426,12 +407,12 @@ We will use a varying-coefficient term, where $h(x)$ is being interpreted as a r
 #> [3,]   NA
 ```
 
-We use the term "loading" to identify the factor loading, and set `load.var = "item"` to specify that the loadings to be applied are identified by the "item" variable. Using `mgcv`'s `by` variable would also work in this particular case, i.e., replacing `s(x, load.var = "loading")` with `s(x, by = loading)`. However, in most cases this would lead to identifiability issues due to the way varying-coefficient terms are set up by `mgcv`, so `galamm` provides an additional `load.var` arguments which alleviates most of these issues.
+We provide thin wrappers around the `s()` and `t2()` functions from `mgcv` to support factor loadings in smooth terms. The wrappers are named `sl()` and `t2l()` to avoid namespace conflicts with `mgcv` and `gamm4`, and the last letter "l" stands for "loading". In this example, we set `load.var = "item"` to specify that the loadings to be applied are identified by the "item" variable. Using `mgcv`'s `by` variable would also work in this particular case, i.e., replacing `sl(x, load.var = "loading")` with `s(x, by = loading)`. However, in most cases this would lead to identifiability issues due to the way varying-coefficient terms are set up by `mgcv`, so `galamm` provides an additional `load.var` arguments which alleviates most of these issues.
 
 
 ```r
 mod <- galamm(
-  formula = y ~ 0 + item + s(x, load.var = "loading") +
+  formula = y ~ 0 + item + sl(x, load.var = "loading") +
     (0 + loading | id / timepoint),
   data = dat,
   load.var = "item",
@@ -446,7 +427,7 @@ We print the model summary below. In the data simulation, the factor loadings we
 ```r
 summary(mod)
 #> GALAMM fit by maximum marginal likelihood.
-#> Formula: y ~ 0 + item + s(x, load.var = "loading") + (0 + loading | id/timepoint)
+#> Formula: y ~ 0 + item + sl(x, load.var = "loading") + (0 + loading | id/timepoint)
 #>    Data: dat
 #> 
 #>      AIC      BIC   logLik deviance df.resid 
@@ -501,7 +482,7 @@ We can now move on to the part of the cognition data that is conditionally binom
 dat <- subset(cognition, domain == 2)
 
 mod <- galamm(
-  formula = y ~ 0 + item + s(x, load.var = "loading") +
+  formula = y ~ 0 + item + sl(x, load.var = "loading") +
     (0 + loading | id / timepoint),
   data = dat,
   family = binomial,
@@ -517,7 +498,7 @@ The summary is shown below. The factor loading $\lambda_{2} = 2$ was used when s
 ```r
 summary(mod)
 #> GALAMM fit by maximum marginal likelihood.
-#> Formula: y ~ 0 + item + s(x, load.var = "loading") + (0 + loading | id/timepoint)
+#> Formula: y ~ 0 + item + sl(x, load.var = "loading") + (0 + loading | id/timepoint)
 #>    Data: dat
 #> 
 #>      AIC      BIC   logLik deviance df.resid 
@@ -580,14 +561,175 @@ $$
 \eta_{j} = h_{j}(x) + \zeta_{j}^{(2)} + \zeta_{j}^{(3)} ~j=1,3.
 $$
 
-We first subset the cognition dataset to get the observations we want.
+We first subset the cognition dataset to get the measurements of domain 1 and 3, which are conditionally normally distributed. We also create two dummy variable, `domain1` and `domain3`, which we need when defining the formulas below.
 
 
 ```r
 dat <- subset(cognition, domain %in% c(1, 3))
+dat <- cbind(
+  dat, 
+  model.matrix(~ 0 + domain, data = dat)[, c("domain1", "domain3")]
+)
 ```
 
+Below is a plot of the data we are analyzing.
 
-At this point we are entering the bleeding edge of the development of this package. Currently, multiple smooth terms for different domains is not working. A low-level way of achieving this can be found in [this file](https://github.com/LCBC-UiO/galamm-scripts/blob/main/code/cognition_model/estimate_model.R). I'm currently wrapping my head around how to achieve the same through a formula interface.
+
+```r
+ggplot(dat, aes(x = x, y = y, group = id)) + 
+  geom_point(size = .1) + 
+  geom_line(linewidth = .1, alpha = .3) +
+  facet_wrap(
+    vars(item), scales = "free_y",
+    labeller = as_labeller(function(x) paste("Domain", substr(x, 1, 1), 
+                                             "item", substr(x, 2, 2)))) + 
+  theme(strip.background = element_blank(),
+        panel.grid = element_blank())
+```
+
+![Spaghetti plot of measurements of domain 1 and 3.](semiparametric-multivariate-spaghetti-1.png)
+
+Mathematically, the factor loading matrix we want is
+
+$$
+\Lambda = 
+\begin{bmatrix}
+1 & 0 \\
+\lambda_{12} & 0 \\
+\lambda_{13} & 0 \\
+0 & 1 \\
+0 & \lambda_{22} \\
+0 & \lambda_{23} \\
+0 & \lambda_{24}
+\end{bmatrix}
+$$
+
+In code, that becomes:
+
+
+```r
+(lmat <- matrix(c(1, NA, NA, 0, 0, 0, 0,
+                 0, 0, 0, 1, NA, NA, NA), ncol = 2))
+#>      [,1] [,2]
+#> [1,]    1    0
+#> [2,]   NA    0
+#> [3,]   NA    0
+#> [4,]    0    1
+#> [5,]    0   NA
+#> [6,]    0   NA
+#> [7,]    0   NA
+```
+
+Below is the call to fit the model.
+
+
+```r
+mod <- galamm(
+  formula = y ~ domain +
+    sl(x, k = 6, by = domain, load.var = c("ability1", "ability3")) + 
+    (0 + domain1:ability1 + domain3:ability3 | id) + 
+    (0 + domain1:ability1 | id:timepoint) + 
+    (0 + domain3:ability3 | id:timepoint),
+  data = dat,
+  load.var = "item",
+  lambda = list(lmat),
+  factor = list(c("ability1", "ability3"))
+)
+```
+
+Before showing the results, some comments are probably useful. In the `formula`, the first term `domain` represents an intercept per domain. Ideally we should have had an intercept per item, representing the item bias, but in this case all item biases were set to zero when simulating the data, and thus estimating an intercept for all of them is unnecessary. Next, the term `sl(x, k = 6, by = domain, load.var = c("ability1", "ability3"))` specifies that we want one smooth estimated independently for each level of the factor variable `domain`. For the two levels of the factor variable `domain`, the loadings `ability1` and `ability3` should be applied, respectively. These represent the two columns in the loading matrix above. Setting `k = 6` specifies that we want six basis functions for each of the smooth terms. The first random effects term `(0 + domain1:ability1 + domain3:ability3 | id)` corresponds to $\lambda \zeta_{j}^{(3)}$, and by specifying them in a single term, we allow the level-3 random intercepts to be correlated. The next two random effect terms `(0 + domain1:ability1 | id:timepoint)` and `(0 + domain3:ability3 | id:timepoint)` correspond to $\lambda \zeta_{j}^{(2)}$, and by specifying them independently we state that the level-2 random intercepts should be uncorrelated. The assumption of uncorrelated random intercepts at level 2 is reasonable here because we simulated the data this way. If correlations at both levels should be allowed, we could simply replace all the three random effects terms with the single term `(0 + domain1:ability1 + domain3:ability3 | id / timepoint)`.
+
+We can now look at the model output, which shows that the factor loadings are estimated very close to their true value, and that the level-3 random intercepts are estimated to have correlation of 0.61 which is actually a reasonable approximation of the true value 0.4, since random effect correlations are notoriously hard to estimate.
+
+
+```r
+summary(mod)
+#> GALAMM fit by maximum marginal likelihood.
+#> Formula: y ~ domain + sl(x, k = 6, by = domain, load.var = c("ability1",  
+#>     "ability3")) + (0 + domain1:ability1 + domain3:ability3 |  
+#>     id) + (0 + domain1:ability1 | id:timepoint) + (0 + domain3:ability3 |      id:timepoint)
+#>    Data: dat
+#> 
+#>      AIC      BIC   logLik deviance df.resid 
+#>  -1319.6  -1195.1    676.8  -1353.6    11183 
+#> 
+#> Scaled residuals: 
+#>     Min      1Q  Median      3Q     Max 
+#>  -10.90    5.65 1015.94 1264.17 2490.17 
+#> 
+#> Lambda:
+#>         ability1       SE ability3        SE
+#> lambda1    1.000        .        .         .
+#> lambda2    1.398 0.002568        .         .
+#> lambda3    0.302 0.002006        .         .
+#> lambda4        .        .   1.0000         .
+#> lambda5        .        .   0.9995 0.0007682
+#> lambda6        .        .   1.0009 0.0007690
+#> lambda7        .        .   2.0003 0.0015716
+#> 
+#> Random effects:
+#>  Groups         Name                  Variance Std.Dev. Corr
+#>  id.timepoint   domain3:ability3       0.46249 0.6801       
+#>  id.timepoint.1 domain1:ability1       0.23946 0.4893       
+#>  id             domain1:ability1       8.70515 2.9504       
+#>                 domain3:ability3      18.80099 4.3360   0.61
+#>  Xr.0           s(x):domain3:ability3 13.89382 3.7274       
+#>  Xr             s(x):domain1:ability1 16.36177 4.0450       
+#>  Residual                              0.01007 0.1003       
+#> Number of obs: 11200, groups:  id:timepoint, 1600; id, 200; Xr.0, 4; Xr, 4
+#> 
+#> Fixed effects:
+#>                           Estimate Std. Error  t value Pr(>|t|)
+#> (Intercept)              -0.003987   0.004679  -0.8522   0.3941
+#> domain3                   0.002019   0.007608   0.2654   0.7907
+#> s(x):domain1:ability1Fx1  0.152050   0.118988   1.2779   0.2013
+#> s(x):domain3:ability3Fx1 -9.599527   0.171067 -56.1155   0.0000
+#> 
+#> Approximate significance of smooth terms:
+#>                         edf Ref.df      F p-value
+#> s(x):domain1:ability1 4.998  4.998   7718  <2e-16
+#> s(x):domain3:ability3 4.996  4.996 101282  <2e-16
+```
+
+We now study the smooth terms. Since in this case we know the true values, we include these for comparison. First we look at the smooth for domain 1, and we see that the estimate very well captures the true value.
+
+
+```r
+# x-values to plot the true function
+x <- seq(from = 0, to = 1, by = .01)
+# True function
+f0 <- function(x) 2 * sin(pi * x)
+# Scale to mean zero across x
+y <- f0(x) - mean(f0(x))
+
+# Plot estimate
+plot_smooth(mod, select = 1, scale = 0)
+# Overlay true curve in red
+lines(x, y, col = "red")
+```
+
+![Comparison of estimate to true value.](semiparametric-multivariate-gaussian-smooth1-1.png)
+
+Next we look at domain 3. In this case we see that our estimate is oversmoothing the true value. This is probably because we the number of basis functions to only six, to avoid convergence issues. In any case, the overall shape of the true trajectory is clearly being captured.
+
+
+```r
+# True function
+f2 <- function(x) {
+  0.2 * x^11 * (10 * (1 - x))^6 + 10 *
+    (10 * x)^3 * (1 - x)^10
+}
+# Scale to mean zero across x
+y <- f2(x) - mean(f2(x))
+
+# Plot estimate
+plot_smooth(mod, select = 2, scale = 0)
+# Overlay true curve in red
+lines(x, y, col = "red")
+```
+
+![Comparison of estimate to true value.](semiparametric-multivariate-gaussian-smooth2-1.png)
+
+
 
 # References
