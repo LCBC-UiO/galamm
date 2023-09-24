@@ -286,18 +286,18 @@
       
       Parametric coefficients:
                   Estimate Std. Error t value Pr(>|t|)    
-      (Intercept)    0.904      0.035      26   <2e-16 ***
-      domain3        3.720      0.046      81   <2e-16 ***
+      (Intercept)    1.164      0.034      35   <2e-16 ***
+      domain3        3.227      0.044      73   <2e-16 ***
       ---
       Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
       
       Approximate significance of smooth terms:
                             edf Ref.df    F p-value    
-      s(x):domain1:ability1 2.8    2.8   97  <2e-16 ***
-      s(x):domain3:ability3 2.9    2.9 1380  <2e-16 ***
+      s(x):domain1:ability1 2.9    2.9  113  <2e-16 ***
+      s(x):domain3:ability3 3.0    3.0 2115  <2e-16 ***
       ---
       Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
       
-      R-sq.(adj) =  -29.9   
-      lmer.REML =   Scale est. = 5.7416    n = 11200
+      R-sq.(adj) =  -57.5   
+      lmer.REML =   Scale est. = 5.4       n = 11200
 

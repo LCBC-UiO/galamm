@@ -15,7 +15,9 @@ test_that("LMM with simple factor works", {
     lambda = list(irt.lam)
   )
 
+  pdf(NULL)
   expect_invisible(plot(mod))
+  dev.off()
 
   # Must test that it works also with tibbles
   class(IRTsub) <- c("tbl_df", "tbl", "data.frame")
