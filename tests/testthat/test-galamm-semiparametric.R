@@ -263,3 +263,26 @@ test_that("GAMM with factor structures and random effects works", {
     tolerance = .01
   )
 })
+
+test_that("galamm with by variables and loadings works", {
+  dat <- subset(cognition, domain %in% c(1, 3))
+  dat <- cbind(
+    dat,
+    model.matrix(~ 0 + domain, data = dat)[, c("domain1", "domain3")]
+  )
+  (lmat <- matrix(c(
+    1, NA, NA, 0, 0, 0, 0,
+    0, 0, 0, 1, NA, NA, NA
+  ), ncol = 2))
+  mod <- galamm(
+    formula = y ~ domain +
+      sl(x, k = 4, by = domain, load.var = c("ability1", "ability3")),
+    data = dat,
+    load.var = "item",
+    lambda = list(lmat),
+    factor = list(c("ability1", "ability3")),
+    control = galamm_control(optim_control = list(maxit = 3))
+  )
+
+  expect_snapshot(print(summary(mod), digits = 2))
+})

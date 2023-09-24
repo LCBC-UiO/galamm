@@ -86,7 +86,7 @@ test_that("wrong input is handled properly", {
   expect_error(
     mod <- galamm(
       formula = y ~ 0 + item + (1 | id),
-      weights = ~(1 | item) + (1 | domain),
+      weights = ~ (1 | item) + (1 | domain),
       data = dat
     ),
     "Multiple grouping terms in weights not yet implemented."
@@ -157,8 +157,10 @@ test_that("family can be defined in three different ways", {
   expect_equal(logLik(mod1), logLik(mod2))
   expect_equal(logLik(mod2), logLik(mod3))
 
-  expect_message(anova(mod1),
-                 "ANOVA tables for galamm objects not implemented yet.")
+  expect_message(
+    anova(mod1),
+    "ANOVA tables for galamm objects not implemented yet."
+  )
 })
 
 test_that("multiple factors and factors in fixed effects are allowed", {

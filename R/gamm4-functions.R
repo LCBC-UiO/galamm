@@ -431,10 +431,7 @@ gamm4.wrapup <- function(gobj, ret, final_model) {
   names(object$coefficients) <- term.names
   names(object$edf) <- term.names
   names(object$sp) <- names(gobj$G$sp)
-
   object$gcv.ubre <- deviance(ret$mer)
-
-  if (!is.null(gobj$G$Xcentre)) object$Xcentre <- gobj$G$Xcentre
 
   object
 }
