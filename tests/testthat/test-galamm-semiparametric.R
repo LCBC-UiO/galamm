@@ -81,10 +81,9 @@ test_that("galamm reproduces gamm4", {
 
 test_that("Basic GAMM with factor structures works", {
   dat <- subset(cognition, domain == 1 & timepoint == 1)
-  dat$item <- factor(dat$item)
 
   mod <- galamm(
-    formula = y ~ 0 + item + s(x, load.var = "loading"),
+    formula = y ~ 0 + item + sl(x, load.var = "loading"),
     data = dat,
     load.var = "item",
     lambda = list(matrix(c(1, NA, NA), ncol = 1)),
@@ -136,14 +135,58 @@ test_that("Basic GAMM with factor structures works", {
       "lambda3"
     ), c("loading", "SE")))
   )
+
+  mod <- galamm(
+    formula = y ~ 0 + item + t2l(x, load.var = "loading"),
+    data = dat,
+    load.var = "item",
+    lambda = list(matrix(c(1, NA, NA), ncol = 1)),
+    factor = list("loading")
+  )
+
+  expect_equal(
+    coef(mod)[1:3],
+    c(item11 = 0.585985043619259, item12 = 0.821880314450475,
+      item13 = 0.169255594138125),
+    tolerance = .001
+  )
+
+  expect_equal(
+    predict(mod$gam)[3:9],
+    structure(c(`3` = 0.00564862054158604, `25` = 0.0151596217554541,
+                `26` = 0.251054892586669, `27` = -0.401569827725681,
+                `49` = -0.00924515260886517,
+                `50` = 0.22665011822235, `51` = -0.42597460209),
+              dim = 7L, dimnames = list(
+                  c("3", "25", "26", "27", "49", "50", "51"))),
+    tolerance = .0001
+  )
+
+  expect_equal(
+    vcov(mod),
+    structure(c(0.0083132054251711, 0.00355423354003251, 0.000728096111493452,
+                0.00610186781361705, 0.00355423354003251, 0.0107112518833507,
+                0.00101403521195143, 0.00959339564679258, 0.000728096111493452,
+                0.00101403521195143, 0.0059689273518403, 0.00196479761841795,
+                0.00610186781361705, 0.00959339564679258, 0.00196479761841795,
+                0.0246253221170968), dim = c(4L, 4L)),
+    tolerance = .0001
+  )
+
+  expect_equal(
+    factor_loadings(mod),
+    structure(c(1, 1.39530180832884, 0.286267927177228, NA, 0.212062073868377,
+                0.128493620433266), dim = 3:2,
+              dimnames = list(c("lambda1", "lambda2", "lambda3"),
+                              c("loading", "SE")))
+  )
 })
 
 test_that("GAMM with factor structures and random effects works", {
   dat <- subset(cognition, domain == 1 & id < 50 & timepoint %in% c(1, 4, 8))
-  dat$item <- factor(dat$item)
 
   mod <- galamm(
-    formula = y ~ 0 + item + s(x, load.var = "loading", k = 4) +
+    formula = y ~ 0 + item + sl(x, load.var = "loading", k = 4) +
       (0 + loading | id / timepoint),
     data = dat,
     load.var = "item",

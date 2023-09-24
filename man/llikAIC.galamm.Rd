@@ -2,7 +2,6 @@
 % Please edit documentation in R/summary.galamm.R
 \name{llikAIC.galamm}
 \alias{llikAIC.galamm}
-\alias{llikAIC}
 \title{Extract log likelihood, AIC, and related statistics from a GALAMM}
 \usage{
 \method{llikAIC}{galamm}(object)
@@ -48,3 +47,4 @@ Other details of model fit:
 \code{\link{vcov.galamm}()}
 }
 \concept{details of model fit}
+\keyword{internal}

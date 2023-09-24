@@ -362,8 +362,9 @@ gam.side <- function(sm, Xp, tol = .Machine$double.eps^.5) {
 #' \insertRef{woodGeneralizedAdditiveModels2017a}{galamm}
 #'
 interpret.gam0 <- function(gf) {
+
   p.env <- environment(gf)
-  tf <- stats::terms.formula(gf, specials = c("s", "t2"))
+  tf <- stats::terms.formula(gf, specials = c("s", "t2", "sl", "t2l"))
 
   terms <- attr(tf, "term.labels") # labels of the model terms
   nt <- length(terms) # how many terms?
@@ -373,8 +374,8 @@ interpret.gam0 <- function(gf) {
   } else {
     response <- NULL
   }
-  sp <- attr(tf, "specials")$s # array of indices of smooth terms
-  t2p <- attr(tf, "specials")$t2 # indices of type 2 tensor product terms
+  sp <- c(attr(tf, "specials")$s, attr(tf, "specials")$sl) # array of indices of smooth terms
+  t2p <- c(attr(tf, "specials")$t2, attr(tf, "specials")$t2l) # indices of type 2 tensor product terms
 
   vtab <- attr(tf, "factors") # cross tabulation of vars to terms
 

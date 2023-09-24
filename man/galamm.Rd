@@ -210,7 +210,7 @@ plot_smooth(mod, shade = TRUE)
 \seealso{
 Other modeling functions: 
 \code{\link{galamm_control}()},
-\code{\link{s}()},
-\code{\link{t2}()}
+\code{\link{sl}()},
+\code{\link{t2l}()}
 }
 \concept{modeling functions}

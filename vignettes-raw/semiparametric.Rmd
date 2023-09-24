@@ -209,11 +209,11 @@ We will use a varying-coefficient term, where $h(x)$ is being interpreted as a r
 (loading_matrix <- matrix(c(1, NA, NA), ncol = 1))
 ```
 
-We use the term "loading" to identify the factor loading, and set `load.var = "item"` to specify that the loadings to be applied are identified by the "item" variable. Using `mgcv`'s `by` variable would also work in this particular case, i.e., replacing `s(x, load.var = "loading")` with `s(x, by = loading)`. However, in most cases this would lead to identifiability issues due to the way varying-coefficient terms are set up by `mgcv`, so `galamm` provides an additional `load.var` arguments which alleviates most of these issues.
+We provide thin wrappers around the `s()` and `t2()` functions from `mgcv` to support factor loadings in smooth terms. The wrappers are named `sl()` and `t2l()` to avoid namespace conflicts with `mgcv` and `gamm4`, and the last letter "l" stands for "loading". In this example, we set `load.var = "item"` to specify that the loadings to be applied are identified by the "item" variable. Using `mgcv`'s `by` variable would also work in this particular case, i.e., replacing `sl(x, load.var = "loading")` with `s(x, by = loading)`. However, in most cases this would lead to identifiability issues due to the way varying-coefficient terms are set up by `mgcv`, so `galamm` provides an additional `load.var` arguments which alleviates most of these issues.
 
 ```{r}
 mod <- galamm(
-  formula = y ~ 0 + item + s(x, load.var = "loading") +
+  formula = y ~ 0 + item + sl(x, load.var = "loading") +
     (0 + loading | id / timepoint),
   data = dat,
   load.var = "item",
@@ -243,7 +243,7 @@ We can now move on to the part of the cognition data that is conditionally binom
 dat <- subset(cognition, domain == 2)
 
 mod <- galamm(
-  formula = y ~ 0 + item + s(x, load.var = "loading") +
+  formula = y ~ 0 + item + sl(x, load.var = "loading") +
     (0 + loading | id / timepoint),
   data = dat,
   family = binomial,
@@ -293,6 +293,12 @@ dat <- subset(cognition, domain %in% c(1, 3))
 ```
 
 
-At this point we are entering the bleeding edge of the development of this package. Currently, multiple smooth terms for different domains is not working. A low-level way of achieving this can be found in [this file](https://github.com/LCBC-UiO/galamm-scripts/blob/main/code/cognition_model/estimate_model.R). I'm currently wrapping my head around how to achieve the same through a formula interface.
+```{r}
+ggplot(dat, aes(x = x, y = y, group = id)) + 
+  geom_point(size = .1) + 
+  geom_line(linewidth = .1, alpha = .3) +
+  facet_wrap(vars(item), scales = "free_y")
+```
+
 
 # References

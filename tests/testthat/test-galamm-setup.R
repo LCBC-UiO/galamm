@@ -186,23 +186,23 @@ test_that("multiple factors in fixed effects works", {
   path <-
     system.file("testdata", "test_multiple_factors.rds", package = "galamm")
   dat <- readRDS(path)
-  if(identical(dim(dat), c(3000L, 8L))) {
-    lmat <- matrix(c(
-      1, NA, NA, 0, 0, 0,
-      0, 0, 0, 1, NA, NA
-    ), ncol = 2)
 
-    mod <- galamm(
-      formula = y ~ 0 + x:domain1:lambda1 + x:domain2:lambda2 +
-        (0 + 1 | id),
-      data = dat,
-      load.var = "item",
-      lambda = list(lmat),
-      factor = list(c("lambda1", "lambda2")),
-      start = list(theta = .565, beta = c(1.13, 2.77),
-                   lambda = c(c(0.97, 1.282, 0.141, 1.424)))
-    )
-    expect_equal(deviance(mod), 7891.36597569295, tolerance = .001)
-  }
+  lmat <- matrix(c(
+    1, NA, NA, 0, 0, 0,
+    0, 0, 0, 1, NA, NA
+  ), ncol = 2)
+
+  mod <- galamm(
+    formula = y ~ 0 + x:domain1:lambda1 + x:domain2:lambda2 +
+      (0 + 1 | id),
+    data = dat,
+    load.var = "item",
+    lambda = list(lmat),
+    factor = list(c("lambda1", "lambda2")),
+    start = list(theta = .565, beta = c(1.13, 2.77),
+                 lambda = c(c(0.97, 1.282, 0.141, 1.424)))
+  )
+  expect_equal(deviance(mod), 7891.36597569295, tolerance = .001)
+
 
 })

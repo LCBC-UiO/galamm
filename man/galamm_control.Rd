@@ -46,7 +46,7 @@ control <- galamm_control(optim_control = list(trace = 6, lmm = 20))
 
 Other modeling functions: 
 \code{\link{galamm}()},
-\code{\link{s}()},
-\code{\link{t2}()}
+\code{\link{sl}()},
+\code{\link{t2l}()}
 }
 \concept{modeling functions}
