@@ -25,8 +25,8 @@
 #' @param formula A formula specifying the model. Smooth terms are defined in
 #'   the style of the \code{mgcv} and \code{gamm4} packages, see
 #'   \insertCite{woodGeneralizedAdditiveModels2017a}{galamm} for an
-#'   introduction. Random effects are specified using \code{lme4} syntax,
-#'   which is described in detail in
+#'   introduction. Random effects are specified using \code{lme4} syntax, which
+#'   is described in detail in
 #'   \insertCite{batesFittingLinearMixedEffects2015}{galamm}. Factor loadings
 #'   will also be part of the model formula, and is based on the syntax of the
 #'   \code{PLmixed} package
@@ -47,33 +47,46 @@
 #'   can be one of \code{gaussian}, \code{binomial}, and \code{poisson}, and
 #'   only canonical link functions are supported.
 #'
-#' @param family_mapping A vector mapping from the elements of \code{family} to
-#'   rows of \code{data}. Defaults to \code{rep(1L, nrow(data))}, which means
-#'   that all observations are distributed according to the first element of
-#'   \code{family}.
+#' @param family_mapping Optional vector mapping from the elements of
+#'   \code{family} to rows of \code{data}. Defaults to \code{rep(1L,
+#'   nrow(data))}, which means that all observations are distributed according
+#'   to the first element of \code{family}.
 #'
-#' @param load.var Character specifying the name of the variable in \code{data}
-#'   identifying what the factors load onto. That is, each unique value of
-#'   \code{load.var} corresponds to a unique factor loading. Currently only a
-#'   single loading
+#' @param load.var Optional character specifying the name of the variable in
+#'   \code{data} identifying what the factors load onto. That is, each unique
+#'   value of \code{load.var} corresponds to a unique factor loading. Currently
+#'   only a single loading is supported. Default to \code{NULL}, which means
+#'   that there are no loading variables.
 #'
-#' @param lambda List of factor loading matrices. Numerical values indicate that
-#'   the given value is fixed, while \code{NA} means that the entry is a
-#'   parameter to be estimated.
+#' @param lambda Optional list of factor loading matrices. Numerical values
+#'   indicate that the given value is fixed, while \code{NA} means that the
+#'   entry is a parameter to be estimated. Defaults to \code{NULL}, which means
+#'   that there are no factor loading matrices.
 #'
-#' @param factor List of character vectors identical to the factor loadings
-#'   specified in \code{formula}. For each list element, the \eqn{j}th entry in
-#'   the character vector corresponds to the \eqn{j}th column of the
-#'   corresponding matrix in \code{lambda}.
+#' @param factor Optional list of character vectors identical to the factor
+#'   loadings specified in \code{formula}. For each list element, the \eqn{j}th
+#'   entry in the character vector corresponds to the \eqn{j}th column of the
+#'   corresponding matrix in \code{lambda}. Defaults to \code{NULL}, which means
+#'   that there are no factor loadings.
 #'
-#' @param start A named list of starting values for parameters. Possible names
-#'   of list elements are \code{"theta"}, \code{"beta"}, \code{"lambda"}, and
-#'   \code{"weights"}, all of should be numerical vectors with starting values.
-#'   Default to \code{NULL}, which means that some relatively sensible defaults
-#'   are used.
+#' @param factor_interactions Optional list of length equal to the list provided
+#'   in the \code{factor} argument. If provided, each element of the lists
+#'   should itself be a list of length equal to the number of columns in the
+#'   corresponding matrix provided to the \code{lambda} argument. Each list
+#'   element should be a \code{formula} object containing the write-hand side of
+#'   a regression model, of the form \code{~ x + z}. Defaults to \code{NULL},
+#'   which means that no factor interactions are used.
 #'
-#' @param control Control object for the optimization procedure of class
-#'   \code{galamm_control} resulting from calling \code{\link{galamm_control}}.
+#' @param start Optional named list of starting values for parameters. Possible
+#'   names of list elements are \code{"theta"}, \code{"beta"}, \code{"lambda"},
+#'   and \code{"weights"}, all of should be numerical vectors with starting
+#'   values. Default to \code{NULL}, which means that some relatively sensible
+#'   defaults are used.
+#'
+#' @param control Optional control object for the optimization procedure of
+#'   class \code{galamm_control} resulting from calling
+#'   \code{\link{galamm_control}}. Defaults to \code{NULL}, which means that the
+#'   defaults of \code{\link{galamm_control}} are used.
 #'
 #' @return A model object of class \code{galamm}, containing the following
 #'   elements:
@@ -88,6 +101,10 @@
 #'   * \code{df} degrees of freedom of model.
 #'   * \code{family} a list of one or more family objects, as specified in the
 #'   \code{family} arguments to \code{galamm}.
+#'   * \code{factor_interactions} List of formulas specifying interactions
+#'   between latent and observed variables, as provided to the argument
+#'   \code{factor_interactions} to \code{galamm}. If not provided, it is
+#'   \code{NULL}.
 #'   * \code{fit} a numeric vector with fitted values.
 #'   * \code{hessian} Hessian matrix of final model, i.e., the second
 #'   derivative of the log-likelihood with respect to all model parameters.
@@ -97,8 +114,8 @@
 #'   * \code{n} Number of observations.
 #'   * \code{pearson_residual} Pearson residuals of final model.
 #'   * \code{reduced_hessian} Logical specifying whether the full Hessian
-#'   matrix was computed, or a Hessian matrix with derivatives only with
-#'   respect to beta and lambda.
+#'   matrix was computed, or a Hessian matrix with derivatives only with respect
+#'   to beta and lambda.
 #'   * \code{response} A numeric vector containing the response values used when
 #'   fitting the model.
 #'   * \code{weights_object} Object with weights used in model fitting. Is
@@ -114,17 +131,20 @@
 #'   arguments.
 #'   * \code{lambda_inds} Integer vector specifying the indices of factor
 #'   loadings among the estimated model parameters.
+#'   * \code{lambda_interaction_inds} Integer vector specifying the indices
+#'   of regression coefficients for interactions between latent and observed
+#'   variables.
 #'   * \code{parameter_estimates} Numeric vector of final parameter estimates.
 #'   * \code{parameter_names} Names of all parameters estimates.
 #'   * \code{theta_inds} Integer vector specifying the indices of variance
 #'   components among the estimated model parameters. Technically these are the
 #'   entries of the Cholesky decomposition of the covariance matrix.
 #'   * \code{weights_inds} Integer vector specifying the indices of estimated
-#'   weights (used in heteroscedastic Gaussian models) among the estimated
-#'   model parameters.
+#'   weights (used in heteroscedastic Gaussian models) among the estimated model
+#'   parameters.
 #'  * \code{gam} List containing information about smooth terms in the model.
-#'  If no smooth terms are contained in the model, then it is a list of length
-#'  zero.
+#'   If no smooth terms are contained in the model, then it is a list of length
+#'   zero.
 #'
 #' @export
 #'
@@ -162,8 +182,10 @@
 #' # Residuals allowed to differ according to the item variable
 #' # We also set the initial value of the random intercept standard deviation
 #' # to 1
-#' mod <- galamm(formula = y ~ x + (1 | id), weights = ~ (1 | item),
-#'               data = hsced, start = list(theta = 1))
+#' mod <- galamm(
+#'   formula = y ~ x + (1 | id), weights = ~ (1 | item),
+#'   data = hsced, start = list(theta = 1)
+#' )
 #' summary(mod)
 #'
 #' # Generalized additive mixed model with factor structures -------------------
@@ -202,6 +224,7 @@
 galamm <- function(formula, weights = NULL, data, family = gaussian,
                    family_mapping = rep(1L, nrow(data)),
                    load.var = NULL, lambda = NULL, factor = NULL,
+                   factor_interactions = NULL,
                    start = NULL, control = galamm_control()) {
   data <- stats::na.omit(data)
   if (nrow(data) == 0) stop("No data, nothing to do.")
@@ -213,7 +236,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
 
   tmp <- setup_factor(load.var, lambda, factor, data)
   data <- tmp$data
-  lambda <- tmp$lambda
+  lambda_orig <- tmp$lambda
   rm(tmp)
 
   rf <- lme4::findbars(formula)
@@ -225,8 +248,11 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
 
   response_obj <-
     setup_response_object(family_list, family_mapping, data, gobj)
-  lambda_mappings <-
-    define_factor_mappings(gobj, load.var, lambda, factor, data)
+  lambda_mappings <- define_factor_mappings(
+    gobj, load.var, lambda_orig, factor, factor_interactions, data
+  )
+
+  lambda <- lambda_mappings$lambda
 
   theta_mapping <- gobj$lmod$reTrms$Lind - 1L
   theta_inds <- seq_along(gobj$lmod$reTrms$theta)
@@ -279,7 +305,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
       lambda_mapping_X = lambda_mappings$lambda_mapping_X,
       lambda_mapping_X_covs = integer(),
       lambda_mapping_Zt = lambda_mappings$lambda_mapping_Zt,
-      lambda_mapping_Zt_covs = integer(),
+      lambda_mapping_Zt_covs = lambda_mappings$lambda_mapping_Zt_covs,
       weights = par[weights_inds],
       weights_mapping = weights_mapping,
       family = family_txt,
@@ -324,8 +350,16 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   gobj$lmod$reTrms$Lambdat@x <- opt$par[theta_inds][gobj$lmod$reTrms$Lind]
   # Update Zt to include factor loadings (if there are factor loadings)
   if (length(lambda_inds) > 1) {
-    gobj$lmod$reTrms$Zt@x <-
-      c(1, opt$par[lambda_inds])[lambda_mappings$lambda_mapping_Zt + 2L]
+    pars <- c(1, opt$par[lambda_inds])
+
+    gobj$lmod$reTrms$Zt@x <- if (is.null(factor_interactions)) {
+      pars[lambda_mappings$lambda_mapping_Zt + 2L]
+    } else {
+      as.numeric(Map(function(l, x) sum(pars[l + 2L] * x),
+        l = lambda_mappings$lambda_mapping_Zt,
+        x = lambda_mappings$lambda_mapping_Zt_covs
+      ))
+    }
   }
 
   # Random effects in original parametrization
@@ -384,6 +418,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
     df = length(opt$par) +
       sum(vapply(family_list, function(x) is.na(x$dispersion), logical(1))),
     family = family_list,
+    factor_interactions = factor_interactions,
     fit = fit,
     hessian = final_model$hessian,
     lmod = gobj$lmod,
@@ -395,16 +430,38 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
     weights_obj = weights_obj
   )
 
+  # Distinguish lambda indicies from regression coefficients in interactions
+  # between observed and latent covariates
+  if (length(lambda_inds) > 0) {
+    lambda_standard_inds <- intersect(lambda[[1]], lambda_orig[[1]]) - 1L
+    lambda_standard_inds <- lambda_standard_inds[lambda_standard_inds > 0] +
+      min(lambda_inds) - 1
+
+    lambda_interaction_inds <- setdiff(lambda[[1]], lambda_orig[[1]]) - 1L
+    lambda_interaction_inds <-
+      lambda_interaction_inds[lambda_interaction_inds > 0] +
+      min(lambda_inds) - 1
+  } else {
+    lambda_interaction_inds <- lambda_standard_inds <- lambda_inds
+  }
+
+
+
   ret$parameters <- list(
     beta_inds = beta_inds,
     dispersion_parameter = final_model$phi,
-    lambda_dummy = lambda,
-    lambda_inds = lambda_inds,
+    lambda_dummy = lambda_orig,
+    lambda_inds = lambda_standard_inds,
+    lambda_interaction_inds = lambda_interaction_inds,
     parameter_estimates = opt$par,
     parameter_names = c(
       paste0("theta", seq_along(theta_inds), recycle0 = TRUE),
       colnames(gobj$lmod$X),
-      paste0("lambda", seq_along(lambda_inds), recycle0 = TRUE),
+      paste0("lambda", seq_along(lambda_standard_inds), recycle0 = TRUE),
+      paste0("lambda_interaction",
+        seq_along(lambda_interaction_inds),
+        recycle0 = TRUE
+      ),
       paste0("weights", seq_along(weights_inds), recycle0 = TRUE)
     ),
     theta_inds = theta_inds,

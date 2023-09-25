@@ -87,11 +87,11 @@ $$
 \end{pmatrix}
 \sim
 N_{3}\left(\mathbf{0},
-\begin{bmatrix}
+\begin{pmatrix}
 \psi_{m} & 0 & 0 \\
 0 & \psi_{h} & 0 \\
 0 & 0 & \psi_{s}
-\end{bmatrix}
+\end{pmatrix}
 \right),
 $$
 

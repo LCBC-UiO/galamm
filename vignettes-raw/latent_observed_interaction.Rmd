@@ -1,0 +1,167 @@
+---
+title: "Interactions Between Latent and Observed Variables"
+output:
+  rmarkdown::html_vignette:
+    fig_width: 6
+    fig_height: 4
+bibliography: ../inst/REFERENCES.bib
+link-citations: yes
+vignette: >
+  %\VignetteIndexEntry{Interactions Between Latent and Observed Variables}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = ""
+)
+```
+
+```{r setup}
+library(galamm)
+```
+
+This vignette describes how `galamm` can be used to model interactions between latent and observed variables. The models described here can be considered extensions of the covariate measurement error model described in the [vignette on mixed response types](https://lcbc-uio.github.io/galamm/articles/mixed_response.html#covariate-measurement-error-model), by allowing the latent variables to interaction with observed variables.
+
+## Linear Mixed Model with Latent Covariates
+
+For this example we use the simulated `latent_covariates` dataset, of which the first six rows are displayed below:
+
+```{r}
+head(latent_covariates)
+```
+
+### Model Formulation
+
+The response variable `y` contains both measurements of a latent variable and measurements of the response that we actually are interested in modeling, and the `type` variable distinguishes these responses. In this case we have complete observations for each subject ID, and for a given ID, the measurement model can be written as follows:
+
+$$
+\begin{pmatrix}
+y_{1} \\
+y_{2} \\
+y_{3}
+\end{pmatrix}
+=
+\boldsymbol{\beta}_{0} +
+\begin{pmatrix}
+1 & 0 & 0 & 0 \\
+0 & 1 & 0 & 0 \\
+0 & 0 & 1 & x
+\end{pmatrix}
+\begin{pmatrix}
+1 \\
+\lambda_{2} \\
+\lambda_{3} \\
+\lambda_{4}
+\end{pmatrix}
+\eta 
++
+\begin{pmatrix}
+0 \\
+0 \\
+x \beta
+\end{pmatrix}
++ \boldsymbol{\epsilon}.
+$$
+
+In this equation $\boldsymbol{\beta}_{0} \in \mathbb{R}^{3}$ is a vector of intercepts, $\eta$ is a latent variable, the loading of the latent variable onto the first measurement $y_{1}$ is fixed to 1 for identifiability, $\lambda_{2}$ is the loading of the latent variable onto the second measurement $y_{2}$, $\lambda_{3}$ is the main effect of the latent variable on the response of interest $y_{3}$, $\beta$ is the effect of the observed covariate $x$ on $y_{3}$, and $\lambda_{4}$ is the interaction effect of $x$ and $\eta$ on $y_{3}$. We assume that the residuals $\boldsymbol{\epsilon}$ are independently and identically normally distributed; this assumption is valid in this simulated case, but note that since the response $y_{3}$ is qualitatively different from the measurements $y_{1}$ and $y_{2}$, this assumption will in general not hold, and a [heteroscedastic measurement model](https://lcbc-uio.github.io/galamm/articles/lmm_heteroscedastic.html) should be used, or a [model with mixed response types](https://lcbc-uio.github.io/galamm/articles/mixed_response.html). For a more detailed explanation of this way of formulating latent variable models in matrix form we refer to the first four pages of @rockwoodEstimatingComplexMeasurement2019.
+
+The structural model is simply $\eta = \zeta \sim N(0, \psi)$, where $\psi$ is its variance.
+
+### Model Without Interaction
+
+It can be instructive to start by considering a model in which we fix $\\lambda_{4} = 0$. This type of model would be estimated with the following code:
+
+```{r}
+lambda <- list(matrix(c(1, NA, NA), ncol = 1))
+
+mod0 <- galamm(
+  formula = y ~ x:response + (0 + loading | id),
+  data = latent_covariates,
+  load.var = "type",
+  lambda = lambda,
+  factor = list("loading")
+)
+```
+
+In the data generating simulations, the true values were $\lambda_{1}=1$, $\lambda_{2} = 1.3$ and $\lambda_{3} = -0.3$. The former two are very well recovered, but the latter is too positive, which is likely due to us omitting the interaction $\lambda_{4}$, whose true value was 0.2.
+
+```{r}
+summary(mod0)
+```
+
+
+### The Full Model
+
+The measurement model can be equivalently written as
+
+$$
+\begin{pmatrix}
+y_{1} \\
+y_{2} \\
+y_{3}
+\end{pmatrix}
+=
+\boldsymbol{\beta}_{0} +
+\begin{pmatrix}
+1 \\
+\lambda_{2} \\
+\lambda_{3} + \lambda_{4} x
+\end{pmatrix}
+\eta 
++
+\begin{pmatrix}
+0 \\
+0 \\
+x \beta
+\end{pmatrix}
++ \boldsymbol{\epsilon}.
+$$
+
+This way of writing shows more explicitly which factor loadings are connected with which observation. In order to fit this model with `galamm`, we must provide formulas for the terms in the loading matrix
+
+$$
+\begin{pmatrix}
+1 \\
+\lambda_{2} \\
+\lambda_{3} + \lambda_{4} x
+\end{pmatrix}.
+$$
+
+We specify the factor interactions with a list of lists. The reason for this notation is that we need one list to hold the regression terms for each loading variable specified in `load.var`.
+
+```{r}
+factor_interactions <- list(list(~ 1, ~ 1, ~ x))
+```
+
+This specifies that for the first two rows, there are no covariates, but for the third row, we want a linear regression with $x$ as covariate. Next, we specify the loading matrix **without** the interaction parameter, i.e., we reuse the `lambda` object that was specified for `mod0` above. This lets us fit the model as follows:
+
+```{r}
+mod <- galamm(
+  formula = y ~ x:response + (0 + loading | id),
+  data = latent_covariates,
+  load.var = "type",
+  lambda = lambda,
+  factor = list("loading"),
+  factor_interactions = factor_interactions
+)
+```
+
+A model comparison shows overwhelming evidence in favor of this model, which is not surprising since this is how the data were simulated.
+
+```{r}
+anova(mod, mod0)
+```
+
+The summary also shows that the bias in $\lambda_{3}$ has basically disappeared, as it is up to -0.291 from -0.195, with the true value being -0.3. The interaction is estimated at 0.197, which is also very close to the true value 0.2. It should of course be noted here that the noise level in this simulated dataset was set unrealistically low, to let us confirm that the implementation itself is correct.
+
+```{r}
+summary(mod)
+```
+
+
+
+# References

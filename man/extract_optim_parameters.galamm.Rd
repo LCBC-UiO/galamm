@@ -12,7 +12,7 @@
 \code{\link{galamm}}.}
 }
 \value{
-A list containing the following elements:
+A \code{list} object containing the following elements:
 \itemize{
 \item \code{theta} Numerical vector of variance components, i.e., entries of
 the lower Cholesky form of the covariance matrix of random effects.
