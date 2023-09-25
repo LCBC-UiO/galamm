@@ -1,0 +1,66 @@
+---
+title: "Interactions Between Latent and Observed Variables"
+output:
+  rmarkdown::html_vignette:
+    fig_width: 6
+    fig_height: 4
+bibliography: ../inst/REFERENCES.bib
+link-citations: yes
+vignette: >
+  %\VignetteIndexEntry{Interactions Between Latent and Observed Variables}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = ""
+)
+```
+
+```{r setup}
+library(galamm)
+```
+
+This vignette describes how `galamm` can be used to model interactions between latent and observed variables. The models described here can be considered extensions of the covariate measurement error model described in the [vignette on mixed response types](https://lcbc-uio.github.io/galamm/articles/mixed_response.html#covariate-measurement-error-model), by allowing the latent variables to interaction with observed variables.
+
+## Linear Mixed Model with Latent Covariates
+
+For this example we use the simulated `latent_covariates` dataset, of which the first six rows are displayed below:
+
+```{r}
+head(latent_covariates)
+```
+
+The response variable `y` contains both measurements of a latent variable and measurements of the response that we actually are interested in modeling, and the `type` variable distinguishes these responses. In this case we have complete observations for each subject ID, and for a given ID, the measurement model can be written as follows:
+
+$$
+\begin{pmatrix}
+y_{1} \\
+y_{2} \\
+y_{3}
+\end{pmatrix}
+=
+\boldsymbol{\beta}_{0} +
+\begin{pmatrix}
+1 \\
+\lambda_{1} \\
+\lambda_{2} + \lambda_{3} x
+\end{pmatrix}
+\eta 
++
+\begin{pmatrix}
+0 \\
+0 \\
+x \beta
+\end{pmatrix}
++ \boldsymbol{\epsilon}.
+$$
+
+In this equation $\boldsymbol{\beta}_{0} \in \mathbb{R}^{3}$ is a vector of intercepts, $\eta$ is a latent variable, the loading of the latent variable onto the first measurement $y_{1}$ is fixed to 1 for identifiability, $\lambda_{1}$ is the loading of the latent variable onto the second measurement $y_{2}$, $\lambda_{2}$ is the main effect of the latent variable on the response of interest $y_{3}$, $\beta$ is the effect of the observed covariate $x$ on $y_{3}$, and $\lambda_{3}$ is the interaction effect of $x$ and $\eta$ on $y_{3}$. We assume that the residuals $\boldsymbol{\epsilon}$ are independently and identically normally distributed; this assumption is valid in this simulated case, but note that since the response $y_{3}$ is qualitatively different from the measurements $y_{1}$ and $y_{2}$, this assumption will in general not hold, and a [heteroscedastic measurement model](https://lcbc-uio.github.io/galamm/articles/lmm_heteroscedastic.html) should be used, or a [model with mixed response types](https://lcbc-uio.github.io/galamm/articles/mixed_response.html).
+
+The structural model is simply $\eta = \zeta \sim N(0, \psi)$, where $\psi$ is its variance.
+
+# References

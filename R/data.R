@@ -113,3 +113,24 @@
 #' @references \insertAllCited{}
 #'
 "cognition"
+
+#' Simulated Data with Latent and Observed Covariates Interaction
+#'
+#' Simulated dataset for use in examples and testing with a latent covariate
+#' interacting with an observed covariate.
+#'
+#' @format ## `cognition` A data frame with 600 rows and 4 columns:
+#' \describe{
+#'   \item{id}{Subject ID.}
+#'   \item{type}{Type of observation in the \code{y} variable.
+#'   If it equals \code{"measurement1"} or \code{"measurement2"} then the
+#'   observation is a measurement of the latent variable. If it equals
+#'   \code{"response"}, then the observation is the actual response.}
+#'   \item{x}{Explanatory variable.}
+#'   \item{y}{Observed response. Note, this includes both the actual response,
+#'   and the measurements of the latent variable, since mathematically they
+#'   are all treated as responses.}
+#' }
+#' @family datasets
+#'
+"latent_covariates"
