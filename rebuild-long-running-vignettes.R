@@ -7,6 +7,7 @@ knitr::knit("mixed_response.Rmd", output = "../vignettes/mixed_response.Rmd")
 knitr::knit("lmm_heteroscedastic.Rmd", output = "../vignettes/lmm_heteroscedastic.Rmd")
 knitr::knit("semiparametric.Rmd", output = "../vignettes/semiparametric.Rmd")
 knitr::knit("optimization.Rmd", output = "../vignettes/optimization.Rmd")
+knitr::knit("latent_observed_interaction.Rmd", output = "../vignettes/latent_observed_interaction.Rmd")
 
 imgs <- list.files(pattern = "\\.png$")
 imgs_new <- file.path("..", "vignettes", imgs)
