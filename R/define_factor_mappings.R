@@ -64,12 +64,13 @@ define_factor_mappings <- function(
         function(x) any(grepl(x, cnm)), TRUE
         )
     })
+    deltas <- lapply(gobj$lmod$reTrms$Ztlist, function(x) diff(x@p))
 
     if (factor_in_random[[f]]) {
       mappings <- lapply(seq_along(cnms), function(i) {
         cnm <- cnms[[i]]
         cnm_match <- cnms_match[[i]]
-        delta <- diff(gobj$lmod$reTrms$Ztlist[[i]]@p)
+        delta <- deltas[[i]]
         mapping_component <- rep(NA_integer_, length(delta))
 
         if (any(cnm_match)) {
