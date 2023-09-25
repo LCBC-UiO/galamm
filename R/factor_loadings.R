@@ -61,11 +61,36 @@ factor_loadings.galamm <- function(object) {
   lambda_tmp_se[!is.na(lambda_tmp_se)] <-
     sqrt(diag(vcov(object, parm = "lambda")))
 
-  matrix(rbind(lambda_tmp_est, lambda_tmp_se),
+  nn <- nrow(object$parameters$lambda_dummy[[1]])
+  ret <- matrix(rbind(lambda_tmp_est, lambda_tmp_se),
     nrow = nrow(lambda_tmp_est),
     dimnames = list(
-      paste0("lambda", seq_len(nrow(object$parameters$lambda_dummy[[1]]))),
+      paste0("lambda", seq_len(nn)),
       as.character(rbind(colnames(lambda_tmp_est), "SE"))
     )
   )
+
+  lix <- length(object$parameters$lambda_interaction_inds)
+  if (lix > 0) {
+    vars <- unlist(lapply(object$model$factor_interactions[[1]], function(x) {
+      attr(stats::terms(x), "term.labels")
+    }))
+
+    ret2 <- matrix(
+      c(
+        object$parameters$parameter_estimates[
+          object$parameters$lambda_interaction_inds
+        ],
+        sqrt(diag(vcov(object, parm = "lambda_interaction")))
+      ),
+      nrow = lix
+    )
+    rownames(ret2) <- paste0(
+      "lambda", seq(from = nn + 1, length.out = lix),
+      "_", vars
+    )
+
+    ret <- rbind(ret, ret2)
+  }
+  ret
 }

@@ -7,8 +7,7 @@ factor_finder <- function(factor, vars) {
 }
 
 define_factor_mappings <- function(
-    gobj, load.var, lambda, factor, factor_interactions, data
-    ) {
+    gobj, load.var, lambda, factor, factor_interactions, data) {
   vars_in_fixed <- all.vars(gobj$fake.formula[-2])
 
   # Add fixed part of smooth terms
@@ -55,7 +54,7 @@ define_factor_mappings <- function(
   } else {
     lambda_mapping_Zt <- integer()
   }
-  if(!is.null(factor_interactions)) {
+  if (!is.null(factor_interactions)) {
     lambda_mapping_Zt_covs <-
       vector(mode = "list", length = length(lambda_mapping_Zt))
   } else {
@@ -69,7 +68,7 @@ define_factor_mappings <- function(
       vapply(
         colnames(lambda[[f]]),
         function(x) any(grepl(x, cnm)), TRUE
-        )
+      )
     })
     deltas <- lapply(gobj$lmod$reTrms$Ztlist, function(x) diff(x@p))
 
@@ -87,8 +86,12 @@ define_factor_mappings <- function(
           mapping_component[delta != 0] <- -1L
           ret <- list(
             mapping_component = lapply(
-              mapping_component, function(x) { rep(x, each = max(delta)) }),
-            mapping_component_covs = mapping_component_covs)
+              mapping_component, function(x) {
+                rep(x, each = max(delta))
+              }
+            ),
+            mapping_component_covs = mapping_component_covs
+          )
           return(ret)
         }
 
@@ -100,16 +103,17 @@ define_factor_mappings <- function(
 
           inds <- which(data[, cn] != 0)
 
-          if(!is.null(fi)) {
-            if(j != 1 || i != 1) {
-              stop("Interaction with latent variables currently only ",
-                   "possible when the loading matrix has a single column.")
+          if (!is.null(fi)) {
+            if (j != 1 || i != 1) {
+              stop(
+                "Interaction with latent variables currently only ",
+                "possible when the loading matrix has a single column."
+              )
             }
 
             mapping_component_covs <- Map(function(x, y) {
-              as.numeric(model.matrix(fi[[y]], data = data[x, ]))
+              as.numeric(stats::model.matrix(fi[[y]], data = data[x, ]))
             }, x = inds, y = data[inds, load.var])
-
           }
 
           inds_expanded <- unlist(Map(function(x, y) {
@@ -122,8 +126,10 @@ define_factor_mappings <- function(
             )
         }
 
-        list(mapping_component = mapping_component,
-             mapping_component_covs = mapping_component_covs)
+        list(
+          mapping_component = mapping_component,
+          mapping_component_covs = mapping_component_covs
+        )
       })
 
       lambda_mapping_Zt <- unlist(do.call(function(...) {
@@ -135,16 +141,16 @@ define_factor_mappings <- function(
 
       lambda_mapping_Zt_covs <- mappings[[1]]$mapping_component_covs
 
-      if(!is.null(fi)) {
+      if (!is.null(fi)) {
         # Extra loadings needed
         extra_lambdas <- list()
-        for(k in seq_along(fi)) {
-          if(k == 1) {
+        for (k in seq_along(fi)) {
+          if (k == 1) {
             current_max <- 0
           } else {
             inds <- seq(from = 1, to = k - 1, by = 1)
             current_max <- max(vapply(extra_lambdas[inds], function(x) {
-              if(length(x) == 0) {
+              if (length(x) == 0) {
                 0
               } else {
                 max(x)
@@ -153,7 +159,7 @@ define_factor_mappings <- function(
           }
 
           extra_lambdas[[k]] <-
-            seq_along(attr(terms(fi[[k]]), "term.labels")) +
+            seq_along(attr(stats::terms(fi[[k]]), "term.labels")) +
             current_max
         }
 
@@ -166,10 +172,9 @@ define_factor_mappings <- function(
         # Add indices to lambda matrix
         lambda[[f]] <- rbind(
           lambda[[f]],
-          matrix(sort(unique(unlist(extra_lambdas)) + mlm), ncol = 1) + 2L)
-
+          matrix(sort(unique(unlist(extra_lambdas)) + mlm), ncol = 1) + 2L
+        )
       }
-
     }
   }
 

@@ -103,6 +103,10 @@ fit:
 \item \code{df} degrees of freedom of model.
 \item \code{family} a list of one or more family objects, as specified in the
 \code{family} arguments to \code{galamm}.
+\item \code{factor_interactions} List of formulas specifying interactions
+between latent and observed variables, as provided to the argument
+\code{factor_interactions} to \code{galamm}. If not provided, it is
+\code{NULL}.
 \item \code{fit} a numeric vector with fitted values.
 \item \code{hessian} Hessian matrix of final model, i.e., the second
 derivative of the log-likelihood with respect to all model parameters.
@@ -131,6 +135,9 @@ structure of the loading matrix that was supplied in the \code{lambda}
 arguments.
 \item \code{lambda_inds} Integer vector specifying the indices of factor
 loadings among the estimated model parameters.
+\item \code{lambda_interaction_inds} Integer vector specifying the indices
+of regression coefficients for interactions between latent and observed
+variables.
 \item \code{parameter_estimates} Numeric vector of final parameter estimates.
 \item \code{parameter_names} Names of all parameters estimates.
 \item \code{theta_inds} Integer vector specifying the indices of variance
@@ -200,8 +207,10 @@ summary(mod)
 # Residuals allowed to differ according to the item variable
 # We also set the initial value of the random intercept standard deviation
 # to 1
-mod <- galamm(formula = y ~ x + (1 | id), weights = ~ (1 | item),
-              data = hsced, start = list(theta = 1))
+mod <- galamm(
+  formula = y ~ x + (1 | id), weights = ~ (1 | item),
+  data = hsced, start = list(theta = 1)
+)
 summary(mod)
 
 # Generalized additive mixed model with factor structures -------------------

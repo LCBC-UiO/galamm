@@ -6,7 +6,7 @@ latent_covariates <- tibble(
   id = seq_len(n),
   type = list(c("measurement1", "measurement2", "response")),
   x = runif(n)
-  ) %>%
+) %>%
   mutate(eta = rnorm(nrow(.))) %>%
   unnest(cols = type) %>%
   mutate(

@@ -14,10 +14,3 @@ family_mapping = rep(1L, nrow(data))
 start = NULL
 control = galamm_control()
 
-mod <- galamm(
-  formula = formula,
-  data = latent_covariates,
-  load.var = load.var,
-  lambda = lambda,
-  factor = factor
-)

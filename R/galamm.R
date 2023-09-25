@@ -101,6 +101,10 @@
 #'   * \code{df} degrees of freedom of model.
 #'   * \code{family} a list of one or more family objects, as specified in the
 #'   \code{family} arguments to \code{galamm}.
+#'   * \code{factor_interactions} List of formulas specifying interactions
+#'   between latent and observed variables, as provided to the argument
+#'   \code{factor_interactions} to \code{galamm}. If not provided, it is
+#'   \code{NULL}.
 #'   * \code{fit} a numeric vector with fitted values.
 #'   * \code{hessian} Hessian matrix of final model, i.e., the second
 #'   derivative of the log-likelihood with respect to all model parameters.
@@ -127,6 +131,9 @@
 #'   arguments.
 #'   * \code{lambda_inds} Integer vector specifying the indices of factor
 #'   loadings among the estimated model parameters.
+#'   * \code{lambda_interaction_inds} Integer vector specifying the indices
+#'   of regression coefficients for interactions between latent and observed
+#'   variables.
 #'   * \code{parameter_estimates} Numeric vector of final parameter estimates.
 #'   * \code{parameter_names} Names of all parameters estimates.
 #'   * \code{theta_inds} Integer vector specifying the indices of variance
@@ -175,8 +182,10 @@
 #' # Residuals allowed to differ according to the item variable
 #' # We also set the initial value of the random intercept standard deviation
 #' # to 1
-#' mod <- galamm(formula = y ~ x + (1 | id), weights = ~ (1 | item),
-#'               data = hsced, start = list(theta = 1))
+#' mod <- galamm(
+#'   formula = y ~ x + (1 | id), weights = ~ (1 | item),
+#'   data = hsced, start = list(theta = 1)
+#' )
 #' summary(mod)
 #'
 #' # Generalized additive mixed model with factor structures -------------------
@@ -217,7 +226,6 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
                    load.var = NULL, lambda = NULL, factor = NULL,
                    factor_interactions = NULL,
                    start = NULL, control = galamm_control()) {
-
   data <- stats::na.omit(data)
   if (nrow(data) == 0) stop("No data, nothing to do.")
   data <- as.data.frame(data)
@@ -228,6 +236,8 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
 
   tmp <- setup_factor(load.var, lambda, factor, data)
   data <- tmp$data
+  lambda_orig <- tmp$lambda
+  rm(tmp)
 
   rf <- lme4::findbars(formula)
   rf <- if (!is.null(rf)) {
@@ -239,7 +249,9 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   response_obj <-
     setup_response_object(family_list, family_mapping, data, gobj)
   lambda_mappings <- define_factor_mappings(
-    gobj, load.var, tmp$lambda, factor, factor_interactions, data)
+    gobj, load.var, lambda_orig, factor, factor_interactions, data
+  )
+
   lambda <- lambda_mappings$lambda
 
   theta_mapping <- gobj$lmod$reTrms$Lind - 1L
@@ -340,14 +352,14 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   if (length(lambda_inds) > 1) {
     pars <- c(1, opt$par[lambda_inds])
 
-    gobj$lmod$reTrms$Zt@x <- if(is.null(factor_interactions)) {
+    gobj$lmod$reTrms$Zt@x <- if (is.null(factor_interactions)) {
       pars[lambda_mappings$lambda_mapping_Zt + 2L]
     } else {
       as.numeric(Map(function(l, x) sum(pars[l + 2L] * x),
-                     l = lambda_mappings$lambda_mapping_Zt,
-                     x = lambda_mappings$lambda_mapping_Zt_covs))
+        l = lambda_mappings$lambda_mapping_Zt,
+        x = lambda_mappings$lambda_mapping_Zt_covs
+      ))
     }
-
   }
 
   # Random effects in original parametrization
@@ -406,6 +418,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
     df = length(opt$par) +
       sum(vapply(family_list, function(x) is.na(x$dispersion), logical(1))),
     family = family_list,
+    factor_interactions = factor_interactions,
     fit = fit,
     hessian = final_model$hessian,
     lmod = gobj$lmod,
@@ -417,16 +430,38 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
     weights_obj = weights_obj
   )
 
+  # Distinguish lambda indicies from regression coefficients in interactions
+  # between observed and latent covariates
+  if (length(lambda_inds) > 0) {
+    lambda_standard_inds <- intersect(lambda[[1]], lambda_orig[[1]]) - 1L
+    lambda_standard_inds <- lambda_standard_inds[lambda_standard_inds > 0] +
+      min(lambda_inds) - 1
+
+    lambda_interaction_inds <- setdiff(lambda[[1]], lambda_orig[[1]]) - 1L
+    lambda_interaction_inds <-
+      lambda_interaction_inds[lambda_interaction_inds > 0] +
+      min(lambda_inds) - 1
+  } else {
+    lambda_interaction_inds <- lambda_standard_inds <- lambda_inds
+  }
+
+
+
   ret$parameters <- list(
     beta_inds = beta_inds,
     dispersion_parameter = final_model$phi,
-    lambda_dummy = lambda,
-    lambda_inds = lambda_inds,
+    lambda_dummy = lambda_orig,
+    lambda_inds = lambda_standard_inds,
+    lambda_interaction_inds = lambda_interaction_inds,
     parameter_estimates = opt$par,
     parameter_names = c(
       paste0("theta", seq_along(theta_inds), recycle0 = TRUE),
       colnames(gobj$lmod$X),
-      paste0("lambda", seq_along(lambda_inds), recycle0 = TRUE),
+      paste0("lambda", seq_along(lambda_standard_inds), recycle0 = TRUE),
+      paste0("lambda_interaction",
+        seq_along(lambda_interaction_inds),
+        recycle0 = TRUE
+      ),
       paste0("weights", seq_along(weights_inds), recycle0 = TRUE)
     ),
     theta_inds = theta_inds,
