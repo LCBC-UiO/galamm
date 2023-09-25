@@ -10,6 +10,7 @@ articles:
   - lmm_factor
   - glmm_factor
   - lmm_heteroscedastic
+  - latent_observed_interaction
   - mixed_response
   - semiparametric
 
