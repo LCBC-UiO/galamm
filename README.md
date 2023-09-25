@@ -259,11 +259,11 @@ these authors are listed as contributors in the `DESCRIPTION` file. If
 you are among these authors, and don’t want to be listed as a
 contributor to this package, please let me know, and I will remove you.
 
-## Code of Conduct
+## Contributing
 
-Please note that the galamm project is released with a [Contributor Code
-of Conduct](https://lcbc-uio.github.io/galamm/CODE_OF_CONDUCT.html). By
-contributing to this project, you agree to abide by its terms.
+Contributions are very welcome, see
+[CONTRIBUTING.md](https://github.com/LCBC-UiO/galamm/blob/main/.github/CONTRIBUTING.md)
+for general guidelines.
 
 ## References
 
