@@ -32,9 +32,8 @@ galamm estimates generalized additive latent and mixed models (GALAMMs). The mod
 
 Many applications, particularly in the social sciences, require modeling capabilities beyond what is easily supported and computationally feasible with popular R packages like [mgcv](https://cran.r-project.org/package=mgcv) [@woodGeneralizedAdditiveModels2017a], [lavaan](https://lavaan.ugent.be/) [@rosseelLavaanPackageStructural2012], [lme4](https://cran.r-project.org/package=lme4) [@batesFittingLinearMixedEffects2015], and [OpenMx](https://openmx.ssri.psu.edu/) [@nealeOpenMxExtendedStructural2016], as well as the Stata based [GLLAMM](http://www.gllamm.org/) software [@rabe-heskethGeneralizedMultilevelStructural2004;@rabe-heskethMaximumLikelihoodEstimation2005]. In particular, to maximally utilize large datasets available today, it is typically necessary to combine tools from latent variable modeling, hierarchical modeling, and semiparametric estimation. While this is possible with Bayesian hierarchical models and tools like [Stan](https://mc-stan.org/), it requires considerable expertise and may be beyond scope for a single data analysis project. 
 
-The goal of galamm is to enable estimation of models with any combination of the following features (click the links to go to the relevant vignette):
+The goal of galamm is to enable estimation of models with an arbitrary number of grouping levels, both crossed and hierarchical, and any combination of the following features (click the links to go to the relevant vignette):
 
-- Data with an arbitrary number of grouping levels, both crossed and hierarchical.
 - [Linear mixed models with factor structures](https://lcbc-uio.github.io/galamm/articles/lmm_factor.html).
 - [Generalized linear mixed models with factor structures](https://lcbc-uio.github.io/galamm/articles/glmm_factor.html).
 - [Linear mixed models with heteroscedastic residuals](https://lcbc-uio.github.io/galamm/articles/lmm_heteroscedastic.html).

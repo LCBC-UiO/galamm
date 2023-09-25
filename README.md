@@ -51,12 +51,11 @@ possible with Bayesian hierarchical models and tools like
 [Stan](https://mc-stan.org/), it requires considerable expertise and may
 be beyond scope for a single data analysis project.
 
-The goal of galamm is to enable estimation of models with any
+The goal of galamm is to enable estimation of models with an arbitrary
+number of grouping levels, both crossed and hierarchical, and any
 combination of the following features (click the links to go to the
 relevant vignette):
 
-- Data with an arbitrary number of grouping levels, both crossed and
-  hierarchical.
 - [Linear mixed models with factor
   structures](https://lcbc-uio.github.io/galamm/articles/lmm_factor.html).
 - [Generalized linear mixed models with factor
