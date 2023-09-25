@@ -293,7 +293,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
       lambda_mapping_X = lambda_mappings$lambda_mapping_X,
       lambda_mapping_X_covs = integer(),
       lambda_mapping_Zt = lambda_mappings$lambda_mapping_Zt,
-      lambda_mapping_Zt_covs = integer(),
+      lambda_mapping_Zt_covs = lambda_mappings$lambda_mapping_Zt_covs,
       weights = par[weights_inds],
       weights_mapping = weights_mapping,
       family = family_txt,
@@ -338,8 +338,16 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   gobj$lmod$reTrms$Lambdat@x <- opt$par[theta_inds][gobj$lmod$reTrms$Lind]
   # Update Zt to include factor loadings (if there are factor loadings)
   if (length(lambda_inds) > 1) {
-    gobj$lmod$reTrms$Zt@x <-
-      c(1, opt$par[lambda_inds])[lambda_mappings$lambda_mapping_Zt + 2L]
+    pars <- c(1, opt$par[lambda_inds])
+
+    gobj$lmod$reTrms$Zt@x <- if(is.null(factor_interactions)) {
+      pars[lambda_mappings$lambda_mapping_Zt + 2L]
+    } else {
+      as.numeric(Map(function(l, x) sum(pars[l + 2L] * x),
+                     l = lambda_mappings$lambda_mapping_Zt,
+                     x = lambda_mappings$lambda_mapping_Zt_covs))
+    }
+
   }
 
   # Random effects in original parametrization
