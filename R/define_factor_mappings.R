@@ -6,7 +6,9 @@ factor_finder <- function(factor, vars) {
   }, TRUE)
 }
 
-define_factor_mappings <- function(gobj, load.var, lambda, factor, data) {
+define_factor_mappings <- function(
+    gobj, load.var, lambda, factor, factor_interactions, data
+    ) {
   vars_in_fixed <- all.vars(gobj$fake.formula[-2])
 
   # Add fixed part of smooth terms
@@ -44,10 +46,8 @@ define_factor_mappings <- function(gobj, load.var, lambda, factor, data) {
     }
   }
 
-
   vars_in_random <- unique(unlist(gobj$lmod$reTrms$cnms))
   factor_in_random <- factor_finder(factor, vars_in_random)
-
   Zt <- gobj$lmod$reTrms$Zt
 
   if (any(factor_in_random)) {
@@ -57,19 +57,23 @@ define_factor_mappings <- function(gobj, load.var, lambda, factor, data) {
   }
 
   for (f in seq_along(factor_in_random)) {
-    if (factor_in_random[[f]]) {
-      mappings <- lapply(seq_along(gobj$lmod$reTrms$cnms), function(i) {
-        delta <- diff(gobj$lmod$reTrms$Ztlist[[i]]@p)
-        cnms <- gobj$lmod$reTrms$cnms[[i]]
+    cnms <- lapply(gobj$lmod$reTrms$cnms, function(x) x)
+    cnms_match <- lapply(cnms, function(cnm) {
+      vapply(
+        colnames(lambda[[f]]),
+        function(x) any(grepl(x, cnm)), TRUE
+        )
+    })
 
+    if (factor_in_random[[f]]) {
+      mappings <- lapply(seq_along(cnms), function(i) {
+        cnm <- cnms[[i]]
+        cnm_match <- cnms_match[[i]]
+        delta <- diff(gobj$lmod$reTrms$Ztlist[[i]]@p)
         mapping_component <- rep(NA_integer_, length(delta))
 
-        cnms_match <- vapply(
-          colnames(lambda[[f]]),
-          function(x) any(grepl(x, cnms)), TRUE
-        )
-        if (any(cnms_match)) {
-          ll <- lambda[[f]][, names(cnms_match[cnms_match]), drop = FALSE] - 2L
+        if (any(cnm_match)) {
+          ll <- lambda[[f]][, names(cnm_match[cnm_match]), drop = FALSE] - 2L
         } else {
           mapping_component[delta != 0] <- -1L
           return(lapply(mapping_component, function(x) {
@@ -77,10 +81,10 @@ define_factor_mappings <- function(gobj, load.var, lambda, factor, data) {
           }))
         }
 
-        for (j in seq_along(cnms)) {
+        for (j in seq_along(cnm)) {
           cn <- unlist(lapply(factor[[f]], function(x) {
-            m <- regexpr(x, cnms[[j]], fixed = TRUE)
-            regmatches(cnms[[j]], m)
+            m <- regexpr(x, cnm[[j]], fixed = TRUE)
+            regmatches(cnm[[j]], m)
           }))
 
           inds <- which(data[, cn] != 0)
@@ -103,6 +107,37 @@ define_factor_mappings <- function(gobj, load.var, lambda, factor, data) {
       lambda_mapping_Zt <- lambda_mapping_Zt[!is.na(lambda_mapping_Zt)]
 
       stopifnot(length(lambda_mapping_Zt) == sum(diff(Zt@p)))
+
+      fi <- factor_interactions[[f]]
+      if(!is.null(fi)) {
+
+        mlm <- max(lambda_mapping_Zt)
+        lambda_mapping_Zt <- lapply(lambda_mapping_Zt, function(x) {
+          current_formula <- fi[[x + 2L]]
+          tt <- terms(current_formula)
+          if(length(attr(tt, "factors")) == 0) {
+            x
+          } else {
+            c(x, seq(from = mlm + 1, length.out = ncol(attr(tt, "factors"))))
+          }
+        })
+        mlm <- max(vapply(lambda_mapping_Zt, max, numeric(1))) + 2L
+
+        # Add rows to lambda matrix
+        if(ncol(lambda[[f]]) > 1) {
+          stop("Currently latent covariates are only supported with ",
+               "lambda matrices having a single column.")
+        }
+
+        lambda[[f]] <- rbind(lambda[[f]],
+                             matrix(seq(from = max(lambda[[f]] + 1),
+                                        to = mlm, by = 1), ncol = 1))
+
+        lambda_mapping_Zt_covs <-
+          vector(mode = "list", length = length(lambda_mapping_Zt))
+
+
+      }
     }
   }
 

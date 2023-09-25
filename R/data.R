@@ -119,7 +119,7 @@
 #' Simulated dataset for use in examples and testing with a latent covariate
 #' interacting with an observed covariate.
 #'
-#' @format ## `cognition` A data frame with 600 rows and 4 columns:
+#' @format ## `cognition` A data frame with 600 rows and 5 columns:
 #' \describe{
 #'   \item{id}{Subject ID.}
 #'   \item{type}{Type of observation in the \code{y} variable.
@@ -130,6 +130,8 @@
 #'   \item{y}{Observed response. Note, this includes both the actual response,
 #'   and the measurements of the latent variable, since mathematically they
 #'   are all treated as responses.}
+#'   \item{response}{Dummy variable indicating whether the given row is a
+#'   response or not.}
 #' }
 #' @family datasets
 #'

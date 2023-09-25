@@ -5,7 +5,7 @@
 \alias{latent_covariates}
 \title{Simulated Data with Latent and Observed Covariates Interaction}
 \format{
-\subsection{\code{cognition} A data frame with 600 rows and 4 columns:}{
+\subsection{\code{cognition} A data frame with 600 rows and 5 columns:}{
 
 \describe{
 \item{id}{Subject ID.}
@@ -17,6 +17,8 @@ observation is a measurement of the latent variable. If it equals
 \item{y}{Observed response. Note, this includes both the actual response,
 and the measurements of the latent variable, since mathematically they
 are all treated as responses.}
+\item{response}{Dummy variable indicating whether the given row is a
+response or not.}
 }
 }
 }

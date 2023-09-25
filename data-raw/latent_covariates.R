@@ -14,7 +14,8 @@ latent_covariates <- tibble(
       type == "measurement1" ~ eta,
       type == "measurement2" ~ eta * 1.3,
       type == "response" ~ .5 * x + eta * (-.3 + .2 * x)
-    ) + rnorm(nrow(.), sd = .1)
+    ) + rnorm(nrow(.), sd = .1),
+    response = as.numeric(type == "response")
   ) %>%
   select(-eta) %>%
   as.data.frame()
