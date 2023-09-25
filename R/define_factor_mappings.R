@@ -55,8 +55,15 @@ define_factor_mappings <- function(
   } else {
     lambda_mapping_Zt <- integer()
   }
+  if(!is.null(factor_interactions)) {
+    lambda_mapping_Zt_covs <-
+      vector(mode = "list", length = length(lambda_mapping_Zt))
+  } else {
+    lambda_mapping_Zt_covs <- integer()
+  }
 
   for (f in seq_along(factor_in_random)) {
+    fi <- factor_interactions[[f]]
     cnms <- lapply(gobj$lmod$reTrms$cnms, function(x) x)
     cnms_match <- lapply(cnms, function(cnm) {
       vapply(
@@ -72,14 +79,17 @@ define_factor_mappings <- function(
         cnm_match <- cnms_match[[i]]
         delta <- deltas[[i]]
         mapping_component <- rep(NA_integer_, length(delta))
+        mapping_component_covs <- integer()
 
         if (any(cnm_match)) {
           ll <- lambda[[f]][, names(cnm_match[cnm_match]), drop = FALSE] - 2L
         } else {
           mapping_component[delta != 0] <- -1L
-          return(lapply(mapping_component, function(x) {
-            rep(x, each = max(delta))
-          }))
+          ret <- list(
+            mapping_component = lapply(
+              mapping_component, function(x) { rep(x, each = max(delta)) }),
+            mapping_component_covs = mapping_component_covs)
+          return(ret)
         }
 
         for (j in seq_along(cnm)) {
@@ -89,6 +99,19 @@ define_factor_mappings <- function(
           }))
 
           inds <- which(data[, cn] != 0)
+
+          if(!is.null(fi)) {
+            if(j != 1 || i != 1) {
+              stop("Interaction with latent variables currently only ",
+                   "possible when the loading matrix has a single column.")
+            }
+
+            mapping_component_covs <- Map(function(x, y) {
+              as.numeric(model.matrix(fi[[y]], data = data[x, ]))
+            }, x = inds, y = data[inds, load.var])
+
+          }
+
           inds_expanded <- unlist(Map(function(x, y) {
             rep(x, each = y)
           }, x = inds, y = pmin(1, delta[inds])))
@@ -99,51 +122,61 @@ define_factor_mappings <- function(
             )
         }
 
-        mapping_component
+        list(mapping_component = mapping_component,
+             mapping_component_covs = mapping_component_covs)
       })
 
       lambda_mapping_Zt <- unlist(do.call(function(...) {
         mapply(c, ..., SIMPLIFY = FALSE)
-      }, mappings))
+      }, lapply(mappings, function(x) x$mapping_component)))
       lambda_mapping_Zt <- lambda_mapping_Zt[!is.na(lambda_mapping_Zt)]
 
       stopifnot(length(lambda_mapping_Zt) == sum(diff(Zt@p)))
 
-      fi <- factor_interactions[[f]]
+      lambda_mapping_Zt_covs <- mappings[[1]]$mapping_component_covs
+
       if(!is.null(fi)) {
-
-        mlm <- max(lambda_mapping_Zt)
-        lambda_mapping_Zt <- lapply(lambda_mapping_Zt, function(x) {
-          current_formula <- fi[[x + 2L]]
-          tt <- terms(current_formula)
-          if(length(attr(tt, "factors")) == 0) {
-            x
+        # Extra loadings needed
+        extra_lambdas <- list()
+        for(k in seq_along(fi)) {
+          if(k == 1) {
+            current_max <- 0
           } else {
-            c(x, seq(from = mlm + 1, length.out = ncol(attr(tt, "factors"))))
+            inds <- seq(from = 1, to = k - 1, by = 1)
+            current_max <- max(vapply(extra_lambdas[inds], function(x) {
+              if(length(x) == 0) {
+                0
+              } else {
+                max(x)
+              }
+            }, numeric(1)))
           }
-        })
-        mlm <- max(vapply(lambda_mapping_Zt, max, numeric(1))) + 2L
 
-        # Add rows to lambda matrix
-        if(ncol(lambda[[f]]) > 1) {
-          stop("Currently latent covariates are only supported with ",
-               "lambda matrices having a single column.")
+          extra_lambdas[[k]] <-
+            seq_along(attr(terms(fi[[k]]), "term.labels")) +
+            current_max
         }
 
-        lambda[[f]] <- rbind(lambda[[f]],
-                             matrix(seq(from = max(lambda[[f]] + 1),
-                                        to = mlm, by = 1), ncol = 1))
+        # Add indices in the right place in lambda_mapping_Zt
+        mlm <- max(lambda_mapping_Zt)
+        lambda_mapping_Zt <- lapply(lambda_mapping_Zt, function(x) {
+          c(x, extra_lambdas[[x + 2L]] + mlm)
+        })
 
-        lambda_mapping_Zt_covs <-
-          vector(mode = "list", length = length(lambda_mapping_Zt))
-
+        # Add indices to lambda matrix
+        lambda[[f]] <- rbind(
+          lambda[[f]],
+          matrix(sort(unique(unlist(extra_lambdas)) + mlm), ncol = 1) + 2L)
 
       }
+
     }
   }
 
   list(
     lambda_mapping_X = lambda_mapping_X,
-    lambda_mapping_Zt = lambda_mapping_Zt
+    lambda_mapping_Zt = lambda_mapping_Zt,
+    lambda_mapping_Zt_covs = lambda_mapping_Zt_covs,
+    lambda = lambda
   )
 }

@@ -228,8 +228,6 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
 
   tmp <- setup_factor(load.var, lambda, factor, data)
   data <- tmp$data
-  lambda <- tmp$lambda
-  rm(tmp)
 
   rf <- lme4::findbars(formula)
   rf <- if (!is.null(rf)) {
@@ -241,7 +239,8 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   response_obj <-
     setup_response_object(family_list, family_mapping, data, gobj)
   lambda_mappings <- define_factor_mappings(
-    gobj, load.var, lambda, factor, factor_interactions, data)
+    gobj, load.var, tmp$lambda, factor, factor_interactions, data)
+  lambda <- lambda_mappings$lambda
 
   theta_mapping <- gobj$lmod$reTrms$Lind - 1L
   theta_inds <- seq_along(gobj$lmod$reTrms$theta)
