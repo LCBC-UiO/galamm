@@ -53,6 +53,23 @@ test_that("Mixed response works", {
   expect_equal(logLik(mod2), logLik(mod))
 })
 
+test_that("Mixed response works with multiple trials", {
+  set.seed(100)
+  dat <- subset(mresp, id < 100)
+  dat$trials <- sample(5, nrow(dat), replace = TRUE)
+  mod <- galamm(
+    formula = cbind(y, trials - y) ~ x + (0 + loading | id),
+    data = dat,
+    family = c(gaussian, binomial),
+    family_mapping = ifelse(dat$itemgroup == "a", 1L, 2L),
+    load.var = "itemgroup",
+    lambda = list(matrix(c(1, NA), ncol = 1)),
+    factor = list("loading")
+  )
+
+  expect_equal(deviance(mod), 885.73410657623)
+})
+
 test_that("Covariate measurement error model works", {
   lam <- matrix(c(1, 1, NA), ncol = 1)
   formula <- y ~ 0 + chd + (age * bus):chd + fiber +
