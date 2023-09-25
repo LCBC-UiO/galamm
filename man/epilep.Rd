@@ -40,6 +40,7 @@ Other datasets:
 \code{\link{cognition}},
 \code{\link{diet}},
 \code{\link{hsced}},
+\code{\link{latent_covariates}},
 \code{\link{mresp}}
 }
 \concept{datasets}

@@ -169,9 +169,12 @@ test_that("family can be defined in three different ways", {
 
   expect_equal(
     extract_optim_parameters(mod1),
-    list(theta = 0.882229439513062,
-         beta = c(-0.031119368224246, 0.412581926809024),
-         lambda = numeric(0), weights = numeric(0)))
+    list(
+      theta = 0.882229439513062,
+      beta = c(-0.031119368224246, 0.412581926809024),
+      lambda = numeric(0), weights = numeric(0)
+    )
+  )
 
   expect_equal(logLik(mod1), logLik(mod2))
   expect_equal(logLik(mod2), logLik(mod3))
@@ -265,16 +268,23 @@ test_that("multiple factors in fixed effects works", {
     load.var = "item",
     lambda = list(lmat),
     factor = list(c("lambda1", "lambda2")),
-    start = list(theta = 0.744468091602185,
-                 beta = c(1.03995169865897, 1.87422267819485),
-                 lambda = c(0.478791387562245, 1.94779433858618,
-                            0.466484983394861, 2.02985361769537),
-                 weights = numeric(0)),
+    start = list(
+      theta = 0.744468091602185,
+      beta = c(1.03995169865897, 1.87422267819485),
+      lambda = c(
+        0.478791387562245, 1.94779433858618,
+        0.466484983394861, 2.02985361769537
+      ),
+      weights = numeric(0)
+    ),
     control = galamm_control(
-      optim_control = list(FtolAbs = 1000,
-                           FtolRel = 1000, XtolRel = 1000,
-                           warnOnly = TRUE, xt = rep(1000, 7)),
-      method = "Nelder-Mead")
+      optim_control = list(
+        FtolAbs = 1000,
+        FtolRel = 1000, XtolRel = 1000,
+        warnOnly = TRUE, xt = rep(1000, 7)
+      ),
+      method = "Nelder-Mead"
+    )
   )
   expect_equal(deviance(mod), 7891.36597569292, tolerance = .001)
 })

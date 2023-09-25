@@ -5,10 +5,9 @@
 
 <!-- badges: start -->
 
-[![Lifecycle:
-experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
-[![Project status: active development but no stable release
-yet.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
+[![Project Status: Active – The project has reached a stable, usable
+state and is being actively
+developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 [![R-CMD-check](https://github.com/LCBC-UiO/galamm/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/LCBC-UiO/galamm/actions/workflows/R-CMD-check.yaml)
 [![Codecov test
 coverage](https://codecov.io/gh/LCBC-UiO/galamm/branch/main/graph/badge.svg)](https://app.codecov.io/gh/LCBC-UiO/galamm?branch=main)
@@ -52,12 +51,11 @@ possible with Bayesian hierarchical models and tools like
 [Stan](https://mc-stan.org/), it requires considerable expertise and may
 be beyond scope for a single data analysis project.
 
-The goal of galamm is to enable estimation of models with any
+The goal of galamm is to enable estimation of models with an arbitrary
+number of grouping levels, both crossed and hierarchical, and any
 combination of the following features (click the links to go to the
 relevant vignette):
 
-- Data with an arbitrary number of grouping levels, both crossed and
-  hierarchical.
 - [Linear mixed models with factor
   structures](https://lcbc-uio.github.io/galamm/articles/lmm_factor.html).
 - [Generalized linear mixed models with factor
@@ -260,11 +258,11 @@ these authors are listed as contributors in the `DESCRIPTION` file. If
 you are among these authors, and don’t want to be listed as a
 contributor to this package, please let me know, and I will remove you.
 
-## Code of Conduct
+## Contributing
 
-Please note that the galamm project is released with a [Contributor Code
-of Conduct](https://lcbc-uio.github.io/galamm/CODE_OF_CONDUCT.html). By
-contributing to this project, you agree to abide by its terms.
+Contributions are very welcome, see
+[CONTRIBUTING.md](https://github.com/LCBC-UiO/galamm/blob/main/.github/CONTRIBUTING.md)
+for general guidelines.
 
 ## References
 
