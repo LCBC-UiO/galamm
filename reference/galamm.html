@@ -154,6 +154,7 @@ Rockwood and Jeon (2019)
 <span>  load.var <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  lambda <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  factor <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  factor_interactions <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  start <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  control <span class="op">=</span> <span class="fu"><a href="galamm_control.html">galamm_control</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -166,8 +167,8 @@ Rockwood and Jeon (2019)
 the style of the <code>mgcv</code> and <code>gamm4</code> packages, see
 (Wood 2017)
  for an
-introduction. Random effects are specified using <code>lme4</code> syntax,
-which is described in detail in
+introduction. Random effects are specified using <code>lme4</code> syntax, which
+is described in detail in
 (Bates et al. 2015)
 . Factor loadings
 will also be part of the model formula, and is based on the syntax of the
@@ -198,43 +199,58 @@ only canonical link functions are supported.</p></dd>
 
 
 <dt>family_mapping</dt>
-<dd><p>A vector mapping from the elements of <code>family</code> to
-rows of <code>data</code>. Defaults to <code>rep(1L, nrow(data))</code>, which means
-that all observations are distributed according to the first element of
-<code>family</code>.</p></dd>
+<dd><p>Optional vector mapping from the elements of
+<code>family</code> to rows of <code>data</code>. Defaults to <code>rep(1L,
+  nrow(data))</code>, which means that all observations are distributed according
+to the first element of <code>family</code>.</p></dd>
 
 
 <dt>load.var</dt>
-<dd><p>Character specifying the name of the variable in <code>data</code>
-identifying what the factors load onto. That is, each unique value of
-<code>load.var</code> corresponds to a unique factor loading. Currently only a
-single loading</p></dd>
+<dd><p>Optional character specifying the name of the variable in
+<code>data</code> identifying what the factors load onto. That is, each unique
+value of <code>load.var</code> corresponds to a unique factor loading. Currently
+only a single loading is supported. Default to <code>NULL</code>, which means
+that there are no loading variables.</p></dd>
 
 
 <dt>lambda</dt>
-<dd><p>List of factor loading matrices. Numerical values indicate that
-the given value is fixed, while <code>NA</code> means that the entry is a
-parameter to be estimated.</p></dd>
+<dd><p>Optional list of factor loading matrices. Numerical values
+indicate that the given value is fixed, while <code>NA</code> means that the
+entry is a parameter to be estimated. Defaults to <code>NULL</code>, which means
+that there are no factor loading matrices.</p></dd>
 
 
 <dt>factor</dt>
-<dd><p>List of character vectors identical to the factor loadings
-specified in <code>formula</code>. For each list element, the \(j\)th entry in
-the character vector corresponds to the \(j\)th column of the
-corresponding matrix in <code>lambda</code>.</p></dd>
+<dd><p>Optional list of character vectors identical to the factor
+loadings specified in <code>formula</code>. For each list element, the \(j\)th
+entry in the character vector corresponds to the \(j\)th column of the
+corresponding matrix in <code>lambda</code>. Defaults to <code>NULL</code>, which means
+that there are no factor loadings.</p></dd>
+
+
+<dt>factor_interactions</dt>
+<dd><p>Optional list of length equal to the list provided
+in the <code>factor</code> argument. If provided, each element of the lists
+should itself be a list of length equal to the number of columns in the
+corresponding matrix provided to the <code>lambda</code> argument. Each list
+element should be a <code>formula</code> object containing the write-hand side of
+a regression model, of the form <code>~ x + z</code>. Defaults to <code>NULL</code>,
+which means that no factor interactions are used.</p></dd>
 
 
 <dt>start</dt>
-<dd><p>A named list of starting values for parameters. Possible names
-of list elements are <code>"theta"</code>, <code>"beta"</code>, <code>"lambda"</code>, and
-<code>"weights"</code>, all of should be numerical vectors with starting values.
-Default to <code>NULL</code>, which means that some relatively sensible defaults
-are used.</p></dd>
+<dd><p>Optional named list of starting values for parameters. Possible
+names of list elements are <code>"theta"</code>, <code>"beta"</code>, <code>"lambda"</code>,
+and <code>"weights"</code>, all of should be numerical vectors with starting
+values. Default to <code>NULL</code>, which means that some relatively sensible
+defaults are used.</p></dd>
 
 
 <dt>control</dt>
-<dd><p>Control object for the optimization procedure of class
-<code>galamm_control</code> resulting from calling <code><a href="galamm_control.html">galamm_control</a></code>.</p></dd>
+<dd><p>Optional control object for the optimization procedure of
+class <code>galamm_control</code> resulting from calling
+<code><a href="galamm_control.html">galamm_control</a></code>. Defaults to <code>NULL</code>, which means that the
+defaults of <code><a href="galamm_control.html">galamm_control</a></code> are used.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -252,6 +268,10 @@ fit:</p><ul><li><p><code>deviance</code> deviance of final model.</p></li>
 <li><p><code>df</code> degrees of freedom of model.</p></li>
 <li><p><code>family</code> a list of one or more family objects, as specified in the
 <code>family</code> arguments to <code>galamm</code>.</p></li>
+<li><p><code>factor_interactions</code> List of formulas specifying interactions
+between latent and observed variables, as provided to the argument
+<code>factor_interactions</code> to <code>galamm</code>. If not provided, it is
+<code>NULL</code>.</p></li>
 <li><p><code>fit</code> a numeric vector with fitted values.</p></li>
 <li><p><code>hessian</code> Hessian matrix of final model, i.e., the second
 derivative of the log-likelihood with respect to all model parameters.</p></li>
@@ -261,8 +281,8 @@ is used internally for setting up the models.</p></li>
 <li><p><code>n</code> Number of observations.</p></li>
 <li><p><code>pearson_residual</code> Pearson residuals of final model.</p></li>
 <li><p><code>reduced_hessian</code> Logical specifying whether the full Hessian
-matrix was computed, or a Hessian matrix with derivatives only with
-respect to beta and lambda.</p></li>
+matrix was computed, or a Hessian matrix with derivatives only with respect
+to beta and lambda.</p></li>
 <li><p><code>response</code> A numeric vector containing the response values used when
 fitting the model.</p></li>
 <li><p><code>weights_object</code> Object with weights used in model fitting. Is
@@ -278,14 +298,17 @@ structure of the loading matrix that was supplied in the <code>lambda</code>
 arguments.</p></li>
 <li><p><code>lambda_inds</code> Integer vector specifying the indices of factor
 loadings among the estimated model parameters.</p></li>
+<li><p><code>lambda_interaction_inds</code> Integer vector specifying the indices
+of regression coefficients for interactions between latent and observed
+variables.</p></li>
 <li><p><code>parameter_estimates</code> Numeric vector of final parameter estimates.</p></li>
 <li><p><code>parameter_names</code> Names of all parameters estimates.</p></li>
 <li><p><code>theta_inds</code> Integer vector specifying the indices of variance
 components among the estimated model parameters. Technically these are the
 entries of the Cholesky decomposition of the covariance matrix.</p></li>
 <li><p><code>weights_inds</code> Integer vector specifying the indices of estimated
-weights (used in heteroscedastic Gaussian models) among the estimated
-model parameters.</p></li>
+weights (used in heteroscedastic Gaussian models) among the estimated model
+parameters.</p></li>
 </ul></li>
 <li><p><code>gam</code> List containing information about smooth terms in the model.
 If no smooth terms are contained in the model, then it is a list of length
@@ -400,8 +423,10 @@ Chapman and Hall/CRC.</p>
 <span class="r-in"><span><span class="co"># Residuals allowed to differ according to the item variable</span></span></span>
 <span class="r-in"><span><span class="co"># We also set the initial value of the random intercept standard deviation</span></span></span>
 <span class="r-in"><span><span class="co"># to 1</span></span></span>
-<span class="r-in"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu">galamm</span><span class="op">(</span>formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">x</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span>, weights <span class="op">=</span> <span class="op">~</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">item</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>              data <span class="op">=</span> <span class="va">hsced</span>, start <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>theta <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu">galamm</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">x</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span>, weights <span class="op">=</span> <span class="op">~</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">item</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  data <span class="op">=</span> <span class="va">hsced</span>, start <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>theta <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> GALAMM fit by maximum marginal likelihood.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Formula: y ~ x + (1 | id)</span>

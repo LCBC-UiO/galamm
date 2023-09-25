@@ -96,7 +96,8 @@
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/LCBC-UiO/galamm" class="external-link">galamm</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/lme4/lme4/" class="external-link">lme4</a></span><span class="op">)</span></span></code></pre></div>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/lme4/lme4/" class="external-link">lme4</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Loading required package: Matrix</span></span></code></pre></div>
 <p>This vignette describes how <code>galamm</code> can be used to
 estimate models with mixed response types.</p>
 <div class="section level3">
@@ -232,8 +233,9 @@ family, which we do with a family mapping. The values in
 </h3>
 <p>This example is taken from Chapter 14.2 in <span class="citation">Skrondal and Rabe-Hesketh (<a href="#ref-skrondalGeneralizedLatentVariable2004" role="doc-biblioref">2004</a>)</span>, and follows the analyses in <span class="citation">(<a href="#ref-rabe-heskethCorrectingCovariateMeasurement2003" role="doc-biblioref">Rabe-Hesketh, Pickles, and Skrondal 2003</a>; <a href="#ref-rabe-heskethMaximumLikelihoodEstimation2003" role="doc-biblioref">Rabe-Hesketh, Skrondal, and Pickles
 2003</a>)</span>. No originality is claimed with respect to the
-analyses; but for the sake of understanding the galamm code, we explain
-it in quite some detail. The original dataset comes from <span class="citation">Morris, Marr, and Clayton (<a href="#ref-morrisDietHeartPostscript1977" role="doc-biblioref">1977</a>)</span>.</p>
+analyses; but for the sake of understanding the <code>galamm</code>
+code, we explain it in quite some detail. The original dataset comes
+from <span class="citation">Morris, Marr, and Clayton (<a href="#ref-morrisDietHeartPostscript1977" role="doc-biblioref">1977</a>)</span>.</p>
 <p>The scientific question concerns the impact of fiber intake on risk
 of coronary heat disease. 337 middle aged men were followed, all of whom
 either worked as bank staff or as London Transport staff (indicated by
@@ -296,9 +298,9 @@ allow for a drift term <span class="math inline">\(d_{ij}\beta_{0}\)</span>, whe
 equals one if the <span class="math inline">\(i\)</span>th row of the
 <span class="math inline">\(j\)</span>th person is a replicate fiber
 measurement, and zero otherwise. This allows for a drift in the
-measurements.</p>
+measurements, and the model becomes</p>
 <p><span class="math display">\[y_{ij} = d_{2ij} \beta_{0} + \eta_{j} +
-\epsilon_{ij}, \qquad \epsilon_{ij} = N(0, \theta)\]</span></p>
+\epsilon_{ij}, \qquad \epsilon_{ij} = N(0, \theta).\]</span></p>
 </div>
 <div class="section level4">
 <h4 id="disease-model">Disease Model<a class="anchor" aria-label="anchor" href="#disease-model"></a>
@@ -384,9 +386,9 @@ up.</p>
 <span><span class="co">#&gt; 6   1     0      0    8.78       1      0.00         0        8.78          0.00</span></span></code></pre></div>
 <p>Finally, the random effects part <code>(0 + loading | id)</code>
 specifies that for each <code>id</code> there should be a single random
-intercept, which corresponds to latent fiber intake <span class="math inline">\(\eta_{j}\)</span>. Write <code>0 + loading</code>
-means that <span class="math inline">\(\eta_{j}\)</span> should be
-multiplied by the factor loadings defined in the loading matrix.</p>
+intercept, which corresponds to latent fiber intake <span class="math inline">\(\eta_{j}\)</span>. Writing
+<code>0 + loading</code> means that <span class="math inline">\(\eta_{j}\)</span> should be multiplied by the
+factor loadings defined in the loading matrix.</p>
 <p>We are now ready to fit the model.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
@@ -510,10 +512,10 @@ argument.</p>
 <span><span class="co">#&gt; final  value 1372.160387 </span></span>
 <span><span class="co">#&gt; converged</span></span></code></pre></div>
 <p>The output printed is the negative log-likelihood, and since 1372.16
-is less than 1406.8, increase the initial value to 10 led us to a local
-optimum with higher likelihood value. Ideally we should have tried other
-initial values as well, but since <span class="citation">Skrondal and
-Rabe-Hesketh (<a href="#ref-skrondalGeneralizedLatentVariable2004" role="doc-biblioref">2004</a>)</span> obtained a negative log-likelihood
+is less than 1406.8, increasing the initial value to 10 led us to a
+local optimum with higher likelihood value. Ideally we should have tried
+other initial values as well, but since <span class="citation">Skrondal
+and Rabe-Hesketh (<a href="#ref-skrondalGeneralizedLatentVariable2004" role="doc-biblioref">2004</a>)</span> obtained a negative log-likelihood
 value of 1372.35 while using adaptive quadrature estimation, we are
 pretty happy about finding a value close to theirs.</p>
 <p>We can now use the summary method, where we find that our estimates

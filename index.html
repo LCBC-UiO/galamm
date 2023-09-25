@@ -117,9 +117,8 @@
 <h2 id="what-can-the-package-do">What Can the Package Do?<a class="anchor" aria-label="anchor" href="#what-can-the-package-do"></a>
 </h2>
 <p>Many applications, particularly in the social sciences, require modeling capabilities beyond what is easily supported and computationally feasible with popular R packages like <a href="https://cran.r-project.org/package=mgcv" class="external-link">mgcv</a> (<a href="#ref-woodGeneralizedAdditiveModels2017a">Wood 2017</a>), <a href="https://lavaan.ugent.be/" class="external-link">lavaan</a> (<a href="#ref-rosseelLavaanPackageStructural2012">Rosseel 2012</a>), <a href="https://cran.r-project.org/package=lme4" class="external-link">lme4</a> (<a href="#ref-batesFittingLinearMixedEffects2015">Bates et al. 2015</a>), and <a href="https://openmx.ssri.psu.edu/" class="external-link">OpenMx</a> (<a href="#ref-nealeOpenMxExtendedStructural2016">Neale et al. 2016</a>), as well as the Stata based <a href="http://www.gllamm.org/" class="external-link">GLLAMM</a> software (<a href="#ref-rabe-heskethGeneralizedMultilevelStructural2004">Rabe-Hesketh, Skrondal, and Pickles 2004</a>, <a href="#ref-rabe-heskethMaximumLikelihoodEstimation2005">2005</a>). In particular, to maximally utilize large datasets available today, it is typically necessary to combine tools from latent variable modeling, hierarchical modeling, and semiparametric estimation. While this is possible with Bayesian hierarchical models and tools like <a href="https://mc-stan.org/" class="external-link">Stan</a>, it requires considerable expertise and may be beyond scope for a single data analysis project.</p>
-<p>The goal of galamm is to enable estimation of models with any combination of the following features (click the links to go to the relevant vignette):</p>
+<p>The goal of galamm is to enable estimation of models with an arbitrary number of grouping levels, both crossed and hierarchical, and any combination of the following features (click the links to go to the relevant vignette):</p>
 <ul>
-<li>Data with an arbitrary number of grouping levels, both crossed and hierarchical.</li>
 <li>
 <a href="https://lcbc-uio.github.io/galamm/articles/lmm_factor.html">Linear mixed models with factor structures</a>.</li>
 <li>
@@ -264,9 +263,9 @@
 <p>Some parts of the code base for galamm has been derived from internal functions of the R packages, <a href="https://cran.r-project.org/package=gamm4" class="external-link">gamm4</a> (authors: Simon Wood and Fabian Scheipl), <a href="https://cran.r-project.org/package=lme4" class="external-link">lme4</a> (authors: Douglas Bates, Martin Maechler, Ben Bolker, and Steven Walker), and <a href="https://cran.r-project.org/package=mgcv" class="external-link">mgcv</a> (author: Simon Wood), as well the C++ library <a href="https://autodiff.github.io/" class="external-link">autodiff</a> (author: Allan Leal). In accordance with the <a href="https://cran.r-project.org/web/packages/policies.html" class="external-link">CRAN Repository Policy</a>, all these authors are listed as contributors in the <code>DESCRIPTION</code> file. If you are among these authors, and don’t want to be listed as a contributor to this package, please let me know, and I will remove you.</p>
 </div>
 <div class="section level2">
-<h2 id="code-of-conduct">Code of Conduct<a class="anchor" aria-label="anchor" href="#code-of-conduct"></a>
+<h2 id="contributing">Contributing<a class="anchor" aria-label="anchor" href="#contributing"></a>
 </h2>
-<p>Please note that the galamm project is released with a <a href="https://lcbc-uio.github.io/galamm/CODE_OF_CONDUCT.html">Contributor Code of Conduct</a>. By contributing to this project, you agree to abide by its terms.</p>
+<p>Contributions are very welcome, see <a href="https://github.com/LCBC-UiO/galamm/blob/main/.github/CONTRIBUTING.md" class="external-link">CONTRIBUTING.md</a> for general guidelines.</p>
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
@@ -350,8 +349,7 @@ Wood, Simon N. 2017. <em>Generalized Additive Models: An Introduction with R</em
 <div class="dev-status">
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" class="external-link"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></li>
-<li><a href="https://www.repostatus.org/#wip" class="external-link"><img src="https://www.repostatus.org/badges/latest/wip.svg" alt="Project status: active development but no stable release yet."></a></li>
+<li><a href="https://www.repostatus.org/#active" class="external-link"><img src="https://www.repostatus.org/badges/latest/active.svg" alt="Project Status: Active – The project has reached a stable, usable state and is being actively developed."></a></li>
 <li><a href="https://github.com/LCBC-UiO/galamm/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/LCBC-UiO/galamm/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
 <li><a href="https://app.codecov.io/gh/LCBC-UiO/galamm?branch=main" class="external-link"><img src="https://codecov.io/gh/LCBC-UiO/galamm/branch/main/graph/badge.svg" alt="Codecov test coverage"></a></li>
 </ul>
