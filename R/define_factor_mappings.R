@@ -138,7 +138,8 @@ define_factor_mappings <- function(
 
       lambda_mapping_Zt <- unlist(do.call(function(...) {
         mapply(c, ..., SIMPLIFY = FALSE)
-      }, lapply(mappings, function(x) x$mapping_component)))
+      }, lapply(mappings, function(x) x$mapping_component)),
+      use.names = FALSE)
 
       if (!is.null(fi)) {
         # Extra loadings needed
@@ -174,9 +175,12 @@ define_factor_mappings <- function(
           matrix(sort(unique(unlist(extra_lambdas)) + mlm), ncol = 1) + 2L
         )
 
-        lambda_mapping_Zt_covs <- do.call(function(...) {
-          mapply(c, ..., SIMPLIFY = FALSE)
-        }, lapply(mappings, function(x) x$mapping_component_covs))
+        lambda_mapping_Zt_covs <- unlist(
+          do.call(function(...) {
+            mapply(function(...) list(...), ..., SIMPLIFY = FALSE)
+          }, lapply(mappings, function(x) x$mapping_component_covs)),
+          recursive = FALSE, use.names = FALSE
+        )
 
         # Go through lambda_mapping_Zt_covs and make sure it matches
         # lambda_mapping_Zt
