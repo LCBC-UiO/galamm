@@ -187,4 +187,33 @@ summary(mod2)
 ```
 
 
+## ss
+
+```{r}
+head(latent_covariates_long)
+```
+
+
+```{r}
+factor_interactions <- list(list(~ 1, ~ 1, ~ x))
+```
+
+
+
+```{r}
+mod <- galamm(
+  formula = y ~ x:response + (0 + loading | id) + (0 + response | id),
+  data = latent_covariates_long,
+  load.var = "type",
+  lambda = lambda,
+  factor = list("loading"),
+  factor_interactions = factor_interactions
+)
+```
+
+```{r}
+summary(mod)
+```
+
+
 # References
