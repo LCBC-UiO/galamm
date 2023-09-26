@@ -5,7 +5,7 @@
 \alias{latent_covariates_long}
 \title{Simulated Longitudinal Data with Latent and Observed Covariates Interaction}
 \format{
-\subsection{\code{latent_covariates_long} A data frame with 7000 rows and 5}{
+\subsection{\code{latent_covariates_long} A data frame with 800 rows and 5}{
 
 columns:
 \describe{
@@ -29,7 +29,7 @@ latent_covariates_long
 \description{
 Simulated dataset for use in examples and testing with a latent covariate
 interacting with an observed covariate. In this data, each response has been
-measured five times for each subject.
+measured six times for each subject.
 }
 \seealso{
 Other datasets: 

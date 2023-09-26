@@ -24,26 +24,20 @@ latent_covariates <- tibble(
 usethis::use_data(latent_covariates, overwrite = TRUE)
 
 set.seed(3)
-n <- 1000
-latent_covariates_long <- tibble(
-  id = seq_len(n),
-  type = list(c("measurement1", "measurement2", "response"))
-) %>%
-  mutate(eta = rnorm(nrow(.)), b = rnorm(nrow(.), sd = 1)) %>%
-  unnest(cols = type) %>%
-  mutate(repeated = if_else(type == "response", 5, 1)) %>%
-  uncount(repeated, .id = "timepoint") %>%
+latent_covariates_long <- latent_covariates %>%
+  bind_rows(
+    filter(latent_covariates, response == 1),
+    filter(latent_covariates, response == 1),
+    filter(latent_covariates, response == 1),
+    filter(latent_covariates, response == 1),
+    filter(latent_covariates, response == 1)
+    ) %>%
+  arrange(id) %>%
   mutate(
-    x = runif(nrow(.)),
     y = case_when(
-      type == "measurement1" ~ eta,
-      type == "measurement2" ~ eta * 1.3,
-      type == "response" ~ eta * (-.3 + .2 * x)
-    ) + .5 * x + b + rnorm(nrow(.), sd = .1),
-    response = as.numeric(type == "response")
-  ) %>%
-  select(-eta, -b) %>%
-  select(id, type, x, y, response) %>%
-  as.data.frame()
+      response == 1 ~ y + rnorm(nrow(.), sd = .05),
+      TRUE ~ y
+    )
+  )
 
 usethis::use_data(latent_covariates_long, overwrite = TRUE)

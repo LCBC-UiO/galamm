@@ -88,3 +88,42 @@
       mod     9 138 178  -60.2      120                    
       modq   10 140 184  -60.1      120  0.05  1       0.83
 
+# Crossed latent-observed interaction models work
+
+    Code
+      print(summary(mod), digits = 2)
+    Output
+      GALAMM fit by maximum marginal likelihood.
+      Formula: formula
+         Data: data
+      
+           AIC      BIC   logLik deviance df.resid 
+          63.2    103.0    -21.6     43.2      386 
+      
+      Scaled residuals: 
+         Min     1Q Median     3Q    Max 
+       -3.27  -0.52  -0.04   0.50   3.80 
+      
+      Lambda:
+                loading    SE
+      lambda1      1.00     .
+      lambda2      1.31 0.024
+      lambda3     -0.37 0.023
+      lambda4_x    0.31 0.040
+      
+      Random effects:
+       Groups   Name     Variance Std.Dev.
+       id       loading  0.904    0.95    
+       id.1     response 0.000    0.00    
+       Residual          0.019    0.14    
+      Number of obs: 396, groups:  id, 99
+      
+      Fixed effects:
+                       Estimate Std. Error t value Pr(>|t|)
+      (Intercept)        -0.033      0.097   -0.34  7.3e-01
+      typemeasurement2   -0.012      0.036   -0.35  7.3e-01
+      typeresponse        0.073      0.134    0.55  5.8e-01
+      x:response          0.432      0.048    8.98  2.7e-19
+      
+      
+

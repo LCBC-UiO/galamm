@@ -141,9 +141,9 @@
 #'
 #' Simulated dataset for use in examples and testing with a latent covariate
 #' interacting with an observed covariate. In this data, each response has been
-#' measured five times for each subject.
+#' measured six times for each subject.
 #'
-#' @format ## `latent_covariates_long` A data frame with 7000 rows and 5
+#' @format ## `latent_covariates_long` A data frame with 800 rows and 5
 #' columns:
 #' \describe{
 #'   \item{id}{Subject ID.}

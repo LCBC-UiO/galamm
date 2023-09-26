@@ -94,7 +94,7 @@ summary(mod0)
 ```
 
 
-### The Full Model
+### Linear Interaction Between Observed and Latent Covariates
 
 The measurement model can be equivalently written as
 
@@ -162,12 +162,15 @@ The summary also shows that the bias in $\lambda_{3}$ has basically disappeared,
 summary(mod)
 ```
 
-We can also try to add interactions between the $x^{2}$ and $\eta$, as follows:
+### Interaction Between Latent Covariate and a Quadratic Term
+
+We can also try to add interactions between the $x^{2}$ and $\eta$. We first update the formula in `factor_interactions`:
 
 ```{r}
 factor_interactions <- list(list(~ 1, ~ 1, ~ x + I(x^2)))
 ```
 
+Then we fit the model as before:
 
 ```{r}
 mod2 <- galamm(
@@ -180,10 +183,54 @@ mod2 <- galamm(
 )
 ```
 
-Not as can be seen, the coefficient for this squared interaction is not significantly different from zero.
+As can be seen, the coefficient for this squared interaction is not significantly different from zero.
 
 ```{r}
 summary(mod2)
+```
+
+## Models with Additional Random Effects
+
+It is also straightforward to include additional random effects in models containing interactions between latent and observed covariates. The dataset `latent_covariates_long` is similar to `latent_covariates` that was used above, but it has six repeated measurements of the response for each subject. The first ten rows of the dataset are shown below.
+
+```{r}
+head(latent_covariates_long, 10)
+```
+
+For these data we add a random intercept for the response terms, in addition to the terms that were used above. We start by resetting the interaction models to a linear term:
+
+```{r}
+factor_interactions <- list(list(~ 1, ~ 1, ~ x))
+```
+
+Next we fit the model using `galamm`. The difference to notice here is that we added `(0 + response | id)` to the formula. This implies that for observations that are responses, for which `response = 1`, there should be a random intercept per subject.
+
+```{r}
+mod <- galamm(
+  formula = y ~ type + x:response + (0 + loading | id) + (0 + response | id),
+  data = latent_covariates_long,
+  load.var = "type",
+  lambda = lambda,
+  factor = list("loading"),
+  factor_interactions = factor_interactions
+)
+```
+
+From the summary, we see that also in this case the factor loadings are very well recovered.
+
+```{r}
+summary(mod)
+```
+
+
+```{r}
+# Impact of increasing latent factor by 1 sd
+# measurement 1
+1 * 1.4
+# measurement 2
+1.156 * 1.4
+
+
 ```
 
 
