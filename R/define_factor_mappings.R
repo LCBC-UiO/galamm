@@ -84,12 +84,16 @@ define_factor_mappings <- function(
           ll <- lambda[[f]][, names(cnm_match[cnm_match]), drop = FALSE] - 2L
         } else {
           mapping_component[delta != 0] <- -1L
+          mapping_component <- lapply(
+            mapping_component, function(x) {
+              rep(x, each = max(delta))
+            }
+          )
+          if(!is.null(fi)) {
+            mapping_component_covs <- mapping_component
+          }
           ret <- list(
-            mapping_component = lapply(
-              mapping_component, function(x) {
-                rep(x, each = max(delta))
-              }
-            ),
+            mapping_component = mapping_component,
             mapping_component_covs = mapping_component_covs
           )
           return(ret)
