@@ -66,6 +66,8 @@ relevant vignette):
   types](https://lcbc-uio.github.io/galamm/articles/mixed_response.html).
 - [Generalized additive mixed models with factor
   structures](https://lcbc-uio.github.io/galamm/articles/semiparametric.html).
+- [Interactions between latent and observed
+  covariates](https://lcbc-uio.github.io/galamm/articles/latent_observed_interaction.html).
 
 Random effects are defined using
 [lme4](https://cran.r-project.org/package=lme4) syntax, and the syntax
