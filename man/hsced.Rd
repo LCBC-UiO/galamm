@@ -31,6 +31,7 @@ Other datasets:
 \code{\link{cognition}},
 \code{\link{diet}},
 \code{\link{epilep}},
+\code{\link{latent_covariates_long}},
 \code{\link{latent_covariates}},
 \code{\link{mresp}}
 }

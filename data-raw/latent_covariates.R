@@ -2,6 +2,7 @@ library(tidyverse)
 
 n <- 200
 
+set.seed(1)
 latent_covariates <- tibble(
   id = seq_len(n),
   type = list(c("measurement1", "measurement2", "response")),
@@ -21,3 +22,22 @@ latent_covariates <- tibble(
   as.data.frame()
 
 usethis::use_data(latent_covariates, overwrite = TRUE)
+
+set.seed(3)
+latent_covariates_long <- latent_covariates %>%
+  bind_rows(
+    filter(latent_covariates, response == 1),
+    filter(latent_covariates, response == 1),
+    filter(latent_covariates, response == 1),
+    filter(latent_covariates, response == 1),
+    filter(latent_covariates, response == 1)
+  ) %>%
+  arrange(id) %>%
+  mutate(
+    y = case_when(
+      response == 1 ~ y + rnorm(nrow(.), sd = .05),
+      TRUE ~ y
+    )
+  )
+
+usethis::use_data(latent_covariates_long, overwrite = TRUE)

@@ -84,12 +84,16 @@ define_factor_mappings <- function(
           ll <- lambda[[f]][, names(cnm_match[cnm_match]), drop = FALSE] - 2L
         } else {
           mapping_component[delta != 0] <- -1L
+          mapping_component <- lapply(
+            mapping_component, function(x) {
+              rep(x, each = max(delta))
+            }
+          )
+          if (!is.null(fi)) {
+            mapping_component_covs <- mapping_component
+          }
           ret <- list(
-            mapping_component = lapply(
-              mapping_component, function(x) {
-                rep(x, each = max(delta))
-              }
-            ),
+            mapping_component = mapping_component,
             mapping_component_covs = mapping_component_covs
           )
           return(ret)
@@ -132,14 +136,12 @@ define_factor_mappings <- function(
         )
       })
 
-      lambda_mapping_Zt <- unlist(do.call(function(...) {
-        mapply(c, ..., SIMPLIFY = FALSE)
-      }, lapply(mappings, function(x) x$mapping_component)))
-      lambda_mapping_Zt <- lambda_mapping_Zt[!is.na(lambda_mapping_Zt)]
-
-      stopifnot(length(lambda_mapping_Zt) == sum(diff(Zt@p)))
-
-      lambda_mapping_Zt_covs <- mappings[[1]]$mapping_component_covs
+      lambda_mapping_Zt <- unlist(
+        do.call(function(...) {
+          mapply(c, ..., SIMPLIFY = FALSE)
+        }, lapply(mappings, function(x) x$mapping_component)),
+        use.names = FALSE
+      )
 
       if (!is.null(fi)) {
         # Extra loadings needed
@@ -164,16 +166,65 @@ define_factor_mappings <- function(
         }
 
         # Add indices in the right place in lambda_mapping_Zt
-        mlm <- max(lambda_mapping_Zt)
+        mlm <- max(lambda_mapping_Zt, na.rm = TRUE)
         lambda_mapping_Zt <- lapply(lambda_mapping_Zt, function(x) {
           c(x, extra_lambdas[[x + 2L]] + mlm)
         })
+
+        lambda_mapping_Zt_covs <- unlist(
+          do.call(function(...) {
+            mapply(function(...) list(...), ..., SIMPLIFY = FALSE)
+          }, lapply(mappings, function(x) x$mapping_component_covs)),
+          recursive = FALSE, use.names = FALSE
+        )
 
         # Add indices to lambda matrix
         lambda[[f]] <- rbind(
           lambda[[f]],
           matrix(sort(unique(unlist(extra_lambdas)) + mlm), ncol = 1) + 2L
         )
+
+        # Go through lambda_mapping_Zt_covs and make sure it matches
+        # lambda_mapping_Zt
+        ind <- 1L
+        security_counter <- 1L
+        while (TRUE) {
+          if (ind > length(lambda_mapping_Zt_covs)) break
+
+          lzt <- lambda_mapping_Zt[[ind]]
+          lztcov <- lambda_mapping_Zt_covs[[ind]]
+
+          if (all(is.na(lzt))) {
+            if (length(lzt) > 1) {
+              lambda_mapping_Zt[[ind]] <- lambda_mapping_Zt[[ind]][-1]
+            } else {
+              lambda_mapping_Zt <- lambda_mapping_Zt[-ind]
+            }
+            if (length(lztcov) > 1) {
+              lambda_mapping_Zt_covs[[ind]] <- lambda_mapping_Zt_covs[[ind]][-1]
+            } else {
+              lambda_mapping_Zt_covs <- lambda_mapping_Zt_covs[-ind]
+            }
+          } else if (length(lzt) != length(lztcov)) {
+            lambda_mapping_Zt_covs <- c(
+              lambda_mapping_Zt_covs[seq_len(ind - 1L)],
+              lztcov[[1]], lztcov[-1],
+              lambda_mapping_Zt_covs[
+                seq_len(length(lambda_mapping_Zt_covs) - ind) + ind
+              ]
+            )
+            ind <- ind + 1L
+          } else {
+            ind <- ind + 1L
+          }
+          security_counter <- security_counter + 1L
+          if (security_counter > 1e9) {
+            stop("Loop is probably too long")
+          }
+        }
+      } else {
+        lambda_mapping_Zt <- lambda_mapping_Zt[!is.na(lambda_mapping_Zt)]
+        stopifnot(length(lambda_mapping_Zt) == sum(diff(Zt@p)))
       }
     }
   }

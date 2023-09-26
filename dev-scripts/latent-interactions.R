@@ -6,11 +6,13 @@ lambda <- list(matrix(c(1, NA, NA)))
 factor <- list("loading")
 factor_interactions <- list(list(~ 1, ~ 1, ~ x))
 
-formula <- y ~ x:response + (0 + loading | id)
+formula <- y ~ x:response + (0 + loading | id) + (0 + response | id)
 weights <- NULL
-data <- latent_covariates
+data <- latent_covariates_long
 family <- gaussian
 family_mapping = rep(1L, nrow(data))
 start = NULL
 control = galamm_control()
+
+
 
