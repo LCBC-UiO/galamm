@@ -5,7 +5,7 @@
 \alias{latent_covariates_long}
 \title{Simulated Longitudinal Data with Latent and Observed Covariates Interaction}
 \format{
-\subsection{\code{latent_covariates_long} A data frame with 1400 rows and 5}{
+\subsection{\code{latent_covariates_long} A data frame with 7000 rows and 5}{
 
 columns:
 \describe{
@@ -20,7 +20,6 @@ and the measurements of the latent variable, since mathematically they
 are all treated as responses.}
 \item{response}{Dummy variable indicating whether the given row is a
 response or not.}
-\item{timepoint}{Timepoint of measurement for the response.}
 }
 }
 }

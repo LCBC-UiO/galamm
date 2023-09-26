@@ -28,13 +28,13 @@ For this example we use the simulated `latent_covariates` dataset, of which the 
 
 ```r
 head(latent_covariates)
-#>   id         type         x          y response
-#> 1  1 measurement1 0.8954758  0.7344445        0
-#> 2  1 measurement2 0.8954758  0.8776636        0
-#> 3  1     response 0.8954758  0.5012116        1
-#> 4  2 measurement1 0.2871962 -1.6300863        0
-#> 5  2 measurement2 0.2871962 -2.3726788        0
-#> 6  2     response 0.2871962  0.6161934        1
+#>   id         type         x            y response
+#> 1  1 measurement1 0.2655087 -0.530999307        0
+#> 2  1 measurement2 0.2655087 -0.911206495        0
+#> 3  1     response 0.2655087  0.483055528        1
+#> 4  2 measurement1 0.3721239  0.003752663        0
+#> 5  2 measurement2 0.3721239  0.220165165        0
+#> 6  2     response 0.3721239  0.327782922        1
 ```
 
 ### Model Formulation
@@ -83,7 +83,7 @@ It can be instructive to start by considering a model in which we fix $\\lambda_
 lambda <- list(matrix(c(1, NA, NA), ncol = 1))
 
 mod0 <- galamm(
-  formula = y ~ x:response + (0 + loading | id),
+  formula = y ~ type + x:response + (0 + loading | id),
   data = latent_covariates,
   load.var = "type",
   lambda = lambda,
@@ -97,32 +97,34 @@ In the data generating simulations, the true values were $\lambda_{1}=1$, $\lamb
 ```r
 summary(mod0)
 #> GALAMM fit by maximum marginal likelihood.
-#> Formula: y ~ x:response + (0 + loading | id)
+#> Formula: y ~ type + x:response + (0 + loading | id)
 #>    Data: latent_covariates
 #> 
 #>      AIC      BIC   logLik deviance df.resid 
-#>    133.6    159.9    -60.8    121.6      594 
+#>    197.5    232.7    -90.8    181.5      592 
 #> 
 #> Scaled residuals: 
-#>     Min      1Q  Median      3Q     Max 
-#> -3.4256 -0.5231 -0.0151  0.4851  3.2519 
+#>      Min       1Q   Median       3Q      Max 
+#> -2.92130 -0.52315 -0.01058  0.52532  3.01104 
 #> 
 #> Lambda:
 #>         loading       SE
 #> lambda1  1.0000        .
-#> lambda2  1.2915 0.012036
-#> lambda3 -0.1952 0.007513
+#> lambda2  1.3033 0.013687
+#> lambda3 -0.2063 0.008515
 #> 
 #> Random effects:
 #>  Groups   Name    Variance Std.Dev.
-#>  id       loading 1.05019  1.0248  
-#>  Residual         0.01137  0.1066  
+#>  id       loading 0.98112  0.9905  
+#>  Residual         0.01357  0.1165  
 #> Number of obs: 600, groups:  id, 200
 #> 
 #> Fixed effects:
-#>             Estimate Std. Error t value  Pr(>|t|)
-#> (Intercept) -0.01275    0.01249  -1.021 3.073e-01
-#> x:response   0.53475    0.02617  20.435 8.092e-93
+#>                   Estimate Std. Error  t value  Pr(>|t|)
+#> (Intercept)      -0.010588    0.07052 -0.15014 8.807e-01
+#> typemeasurement2 -0.002173    0.02423 -0.08968 9.285e-01
+#> typeresponse      0.029353    0.08678  0.33826 7.352e-01
+#> x:response        0.470444    0.03093 15.20943 3.062e-52
 ```
 
 
@@ -175,7 +177,7 @@ This specifies that for the first two rows, there are no covariates, but for the
 
 ```r
 mod <- galamm(
-  formula = y ~ x:response + (0 + loading | id),
+  formula = y ~ type + x:response + (0 + loading | id),
   data = latent_covariates,
   load.var = "type",
   lambda = lambda,
@@ -191,48 +193,50 @@ A model comparison shows overwhelming evidence in favor of this model, which is 
 anova(mod, mod0)
 #> Data: latent_covariates
 #> Models:
-#> mod0: y ~ x:response + (0 + loading | id)
-#> mod: y ~ x:response + (0 + loading | id)
-#>      npar     AIC    BIC  logLik deviance  Chisq Df Pr(>Chisq)    
-#> mod0    6 133.568 159.95 -60.784   59.173                         
-#> mod     7  73.173 103.95 -29.587   59.173 62.395  1   2.81e-15 ***
+#> mod0: y ~ type + x:response + (0 + loading | id)
+#> mod: y ~ type + x:response + (0 + loading | id)
+#>      npar    AIC    BIC  logLik deviance Chisq Df Pr(>Chisq)    
+#> mod0    8 197.52 232.70 -90.761   120.31                        
+#> mod     9 138.31 177.88 -60.155   120.31 61.21  1  5.129e-15 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ```
 
-The summary also shows that the bias in $\lambda_{3}$ has basically disappeared, as it is up to -0.291 from -0.195, with the true value being -0.3. The interaction is estimated at 0.197, which is also very close to the true value 0.2. It should of course be noted here that the noise level in this simulated dataset was set unrealistically low, to let us confirm that the implementation itself is correct.
+The summary also shows that the bias in $\lambda_{3}$ has basically disappeared, as it is up to -0.318 from -0.195, with the true value being -0.3. The interaction is estimated at 0.233, which is also very close to the true value 0.2. It should of course be noted here that the noise level in this simulated dataset was set unrealistically low, to let us confirm that the implementation itself is correct.
 
 
 ```r
 summary(mod)
 #> GALAMM fit by maximum marginal likelihood.
-#> Formula: y ~ x:response + (0 + loading | id)
+#> Formula: y ~ type + x:response + (0 + loading | id)
 #>    Data: latent_covariates
 #> 
 #>      AIC      BIC   logLik deviance df.resid 
-#>     73.2    104.0    -29.6     59.2      593 
+#>    138.3    177.9    -60.2    120.3      591 
 #> 
 #> Scaled residuals: 
-#>      Min       1Q   Median       3Q      Max 
-#> -2.68699 -0.55501  0.01071  0.50135  2.98197 
+#>     Min      1Q  Median      3Q     Max 
+#> -2.2033 -0.5251 -0.0273  0.5146  3.5029 
 #> 
 #> Lambda:
 #>           loading      SE
 #> lambda1    1.0000       .
-#> lambda2    1.2916 0.01113
-#> lambda3   -0.2907 0.01366
-#> lambda4_x  0.1970 0.02402
+#> lambda2    1.3034 0.01268
+#> lambda3   -0.3183 0.01604
+#> lambda4_x  0.2331 0.02873
 #> 
 #> Random effects:
 #>  Groups   Name    Variance Std.Dev.
-#>  id       loading 1.05077  1.02507 
-#>  Residual         0.00972  0.09859 
+#>  id       loading 0.98175  0.9908  
+#>  Residual         0.01164  0.1079  
 #> Number of obs: 600, groups:  id, 200
 #> 
 #> Fixed effects:
-#>              Estimate Std. Error t value   Pr(>|t|)
-#> (Intercept) -0.009083    0.01093 -0.8311  4.059e-01
-#> x:response   0.526535    0.02281 23.0804 7.284e-118
+#>                   Estimate Std. Error  t value  Pr(>|t|)
+#> (Intercept)      -0.010589    0.07048 -0.15024 8.806e-01
+#> typemeasurement2 -0.002173    0.02384 -0.09116 9.274e-01
+#> typeresponse      0.034005    0.09417  0.36109 7.180e-01
+#> x:response        0.462507    0.03300 14.01556 1.252e-44
 ```
 
 We can also try to add interactions between the $x^{2}$ and $\eta$, as follows:
@@ -246,7 +250,7 @@ factor_interactions <- list(list(~ 1, ~ 1, ~ x + I(x^2)))
 
 ```r
 mod2 <- galamm(
-  formula = y ~ x:response + (0 + loading | id),
+  formula = y ~ type + x:response + (0 + loading | id),
   data = latent_covariates,
   load.var = "type",
   lambda = lambda,
@@ -261,35 +265,38 @@ Not as can be seen, the coefficient for this squared interaction is not signific
 ```r
 summary(mod2)
 #> GALAMM fit by maximum marginal likelihood.
-#> Formula: y ~ x:response + (0 + loading | id)
+#> Formula: y ~ type + x:response + (0 + loading | id)
 #>    Data: latent_covariates
 #> 
 #>      AIC      BIC   logLik deviance df.resid 
-#>     74.9    110.1    -29.4     58.9      592 
+#>    140.3    184.2    -60.1    120.3      590 
 #> 
 #> Scaled residuals: 
-#>      Min       1Q   Median       3Q      Max 
-#> -2.68511 -0.54763  0.00713  0.49697  2.98856 
+#>     Min      1Q  Median      3Q     Max 
+#> -2.2012 -0.5212 -0.0228  0.5173  3.4968 
 #> 
 #> Lambda:
 #>                 loading      SE
 #> lambda1         1.00000       .
-#> lambda2         1.29158 0.01112
-#> lambda3        -0.28302 0.01977
-#> lambda4_x       0.14809 0.09475
-#> lambda5_I(x^2)  0.05069 0.09503
+#> lambda2         1.30340 0.01267
+#> lambda3        -0.31418 0.02446
+#> lambda4_x       0.20906 0.11252
+#> lambda5_I(x^2)  0.02453 0.11097
 #> 
 #> Random effects:
 #>  Groups   Name    Variance Std.Dev.
-#>  id       loading 1.050763 1.02507 
-#>  Residual         0.009713 0.09855 
+#>  id       loading 0.98175  0.9908  
+#>  Residual         0.01164  0.1079  
 #> Number of obs: 600, groups:  id, 200
 #> 
 #> Fixed effects:
-#>              Estimate Std. Error t value   Pr(>|t|)
-#> (Intercept) -0.009631    0.01097 -0.8783  3.798e-01
-#> x:response   0.527492    0.02286 23.0724 8.773e-118
+#>                   Estimate Std. Error  t value  Pr(>|t|)
+#> (Intercept)      -0.009919    0.07054 -0.14062 8.882e-01
+#> typemeasurement2 -0.001969    0.02385 -0.08256 9.342e-01
+#> typeresponse      0.033289    0.09426  0.35316 7.240e-01
+#> x:response        0.462228    0.03305 13.98397 1.953e-44
 ```
+
 
 
 # References

@@ -79,7 +79,7 @@ It can be instructive to start by considering a model in which we fix $\\lambda_
 lambda <- list(matrix(c(1, NA, NA), ncol = 1))
 
 mod0 <- galamm(
-  formula = y ~ x:response + (0 + loading | id),
+  formula = y ~ type + x:response + (0 + loading | id),
   data = latent_covariates,
   load.var = "type",
   lambda = lambda,
@@ -141,7 +141,7 @@ This specifies that for the first two rows, there are no covariates, but for the
 
 ```{r}
 mod <- galamm(
-  formula = y ~ x:response + (0 + loading | id),
+  formula = y ~ type + x:response + (0 + loading | id),
   data = latent_covariates,
   load.var = "type",
   lambda = lambda,
@@ -156,7 +156,7 @@ A model comparison shows overwhelming evidence in favor of this model, which is 
 anova(mod, mod0)
 ```
 
-The summary also shows that the bias in $\lambda_{3}$ has basically disappeared, as it is up to -0.291 from -0.195, with the true value being -0.3. The interaction is estimated at 0.197, which is also very close to the true value 0.2. It should of course be noted here that the noise level in this simulated dataset was set unrealistically low, to let us confirm that the implementation itself is correct.
+The summary also shows that the bias in $\lambda_{3}$ has basically disappeared, as it is up to -0.318 from -0.195, with the true value being -0.3. The interaction is estimated at 0.233, which is also very close to the true value 0.2. It should of course be noted here that the noise level in this simulated dataset was set unrealistically low, to let us confirm that the implementation itself is correct.
 
 ```{r}
 summary(mod)
@@ -171,7 +171,7 @@ factor_interactions <- list(list(~ 1, ~ 1, ~ x + I(x^2)))
 
 ```{r}
 mod2 <- galamm(
-  formula = y ~ x:response + (0 + loading | id),
+  formula = y ~ type + x:response + (0 + loading | id),
   data = latent_covariates,
   load.var = "type",
   lambda = lambda,
@@ -186,34 +186,6 @@ Not as can be seen, the coefficient for this squared interaction is not signific
 summary(mod2)
 ```
 
-
-## ss
-
-```{r}
-head(latent_covariates_long)
-```
-
-
-```{r}
-factor_interactions <- list(list(~ 1, ~ 1, ~ x))
-```
-
-
-
-```{r}
-mod <- galamm(
-  formula = y ~ x:response + (0 + loading | id) + (0 + response | id),
-  data = latent_covariates_long,
-  load.var = "type",
-  lambda = lambda,
-  factor = list("loading"),
-  factor_interactions = factor_interactions
-)
-```
-
-```{r}
-summary(mod)
-```
 
 
 # References

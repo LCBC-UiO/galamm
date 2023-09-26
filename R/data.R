@@ -143,7 +143,7 @@
 #' interacting with an observed covariate. In this data, each response has been
 #' measured five times for each subject.
 #'
-#' @format ## `latent_covariates_long` A data frame with 1400 rows and 5
+#' @format ## `latent_covariates_long` A data frame with 7000 rows and 5
 #' columns:
 #' \describe{
 #'   \item{id}{Subject ID.}
@@ -157,7 +157,6 @@
 #'   are all treated as responses.}
 #'   \item{response}{Dummy variable indicating whether the given row is a
 #'   response or not.}
-#'   \item{timepoint}{Timepoint of measurement for the response.}
 #' }
 #' @family datasets
 #'
