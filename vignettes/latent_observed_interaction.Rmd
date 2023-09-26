@@ -128,7 +128,7 @@ summary(mod0)
 ```
 
 
-### The Full Model
+### Linear Interaction Between Observed and Latent Covariates
 
 The measurement model can be equivalently written as
 
@@ -239,13 +239,16 @@ summary(mod)
 #> x:response        0.462507    0.03300 14.01556 1.252e-44
 ```
 
-We can also try to add interactions between the $x^{2}$ and $\eta$, as follows:
+### Interaction Between Latent Covariate and a Quadratic Term
+
+We can also try to add interactions between the $x^{2}$ and $\eta$. We first update the formula in `factor_interactions`:
 
 
 ```r
 factor_interactions <- list(list(~ 1, ~ 1, ~ x + I(x^2)))
 ```
 
+Then we fit the model as before:
 
 
 ```r
@@ -259,7 +262,7 @@ mod2 <- galamm(
 )
 ```
 
-Not as can be seen, the coefficient for this squared interaction is not significantly different from zero.
+As can be seen, the coefficient for this squared interaction is not significantly different from zero.
 
 
 ```r
@@ -295,6 +298,97 @@ summary(mod2)
 #> typemeasurement2 -0.001969    0.02385 -0.08256 9.342e-01
 #> typeresponse      0.033289    0.09426  0.35316 7.240e-01
 #> x:response        0.462228    0.03305 13.98397 1.953e-44
+```
+
+## Models with Additional Random Effects
+
+It is also straightforward to include additional random effects in models containing interactions between latent and observed covariates. The dataset `latent_covariates_long` is similar to `latent_covariates` that was used above, but it has six repeated measurements of the response for each subject. The first ten rows of the dataset are shown below.
+
+
+```r
+head(latent_covariates_long, 10)
+#>    id         type         x            y response
+#> 1   1 measurement1 0.2655087 -0.530999307        0
+#> 2   1 measurement2 0.2655087 -0.911206495        0
+#> 3   1     response 0.2655087  0.250414575        1
+#> 4   1     response 0.2655087  0.702355328        1
+#> 5   2 measurement1 0.3721239  0.003752663        0
+#> 6   2 measurement2 0.3721239  0.220165165        0
+#> 7   2     response 0.3721239  0.337374818        1
+#> 8   2     response 0.3721239  0.315766396        1
+#> 9   3 measurement1 0.5728534 -0.902625075        0
+#> 10  3 measurement2 0.5728534 -1.127476052        0
+```
+
+For these data we add a random intercept for the response terms, in addition to the terms that were used above. We start by resetting the interaction models to a linear term:
+
+
+```r
+factor_interactions <- list(list(~ 1, ~ 1, ~ x))
+```
+
+Next we fit the model using `galamm`. The difference to notice here is that we added `(0 + response | id)` to the formula. This implies that for observations that are responses, for which `response = 1`, there should be a random intercept per subject.
+
+
+```r
+mod <- galamm(
+  formula = y ~ type + x:response + (0 + loading | id) + (0 + response | id),
+  data = latent_covariates_long,
+  load.var = "type",
+  lambda = lambda,
+  factor = list("loading"),
+  factor_interactions = factor_interactions
+)
+```
+
+From the summary, we see that also in this case the factor loadings are very well recovered.
+
+
+```r
+summary(mod)
+#> GALAMM fit by maximum marginal likelihood.
+#> Formula: y ~ type + x:response + (0 + loading | id) + (0 + response |      id)
+#>    Data: latent_covariates_long
+#> 
+#>      AIC      BIC   logLik deviance df.resid 
+#>    150.6    197.5    -65.3    130.6      790 
+#> 
+#> Scaled residuals: 
+#>     Min      1Q  Median      3Q     Max 
+#> -3.3804 -0.5291 -0.0199  0.5126  3.5849 
+#> 
+#> Lambda:
+#>           loading      SE
+#> lambda1    1.0000       .
+#> lambda2    1.3036 0.01672
+#> lambda3   -0.3279 0.01539
+#> lambda4_x  0.2415 0.02730
+#> 
+#> Random effects:
+#>  Groups   Name     Variance Std.Dev.
+#>  id       loading  0.97824  0.9891  
+#>  id.1     response 0.00000  0.0000  
+#>  Residual          0.02018  0.1420  
+#> Number of obs: 800, groups:  id, 200
+#> 
+#> Fixed effects:
+#>                   Estimate Std. Error  t value  Pr(>|t|)
+#> (Intercept)      -0.010585    0.07065 -0.14981 8.809e-01
+#> typemeasurement2 -0.002171    0.02555 -0.08498 9.323e-01
+#> typeresponse      0.033712    0.09473  0.35590 7.219e-01
+#> x:response        0.474623    0.03178 14.93242 2.028e-50
+```
+
+
+
+```r
+# Impact of increasing latent factor by 1 sd
+# measurement 1
+1 * 1.4
+#> [1] 1.4
+# measurement 2
+1.156 * 1.4
+#> [1] 1.6184
 ```
 
 
