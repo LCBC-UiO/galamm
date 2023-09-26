@@ -381,16 +381,81 @@ summary(mod)
 
 
 
+## Model with Smooth Terms
+
+We can also include smooth terms in models containing interactions between latent and observed variables. In this example, we replace the linear term `x:response` with a smooth term `s(x, by = response)`. Since this smooth term also includes the main effect of `response`, which corresponds to an intercept for the response observations, we must remove the `type` term and instead insert two dummy variables, one for each measurement. We first create these dummy variables:
+
+
 ```r
-# Impact of increasing latent factor by 1 sd
-# measurement 1
-1 * 1.4
-#> [1] 1.4
-# measurement 2
-1.156 * 1.4
-#> [1] 1.6184
+dat <- latent_covariates
+dat$m1 <- as.numeric(dat$type == "measurement1")
+dat$m2 <- as.numeric(dat$type == "measurement2")
 ```
 
+We then fit the model:
+
+
+```r
+mod <- galamm(
+  formula = y ~ 0 + m1 + m2 + s(x, by = response) + (0 + loading | id),
+  data = dat,
+  load.var = "type",
+  lambda = lambda,
+  factor = list("loading"),
+  factor_interactions = factor_interactions
+)
+```
+
+The summary output again suggest that the factor loadings are very well recovered.
+
+
+```r
+summary(mod)
+#> GALAMM fit by maximum marginal likelihood.
+#> Formula: y ~ 0 + m1 + m2 + s(x, by = response) + (0 + loading | id)
+#>    Data: dat
+#> 
+#>      AIC      BIC   logLik deviance df.resid 
+#>    140.3    184.3    -60.2    120.3      590 
+#> 
+#> Scaled residuals: 
+#>     Min      1Q  Median      3Q     Max 
+#> -2.2032 -0.5251 -0.0273  0.5146  3.5029 
+#> 
+#> Lambda:
+#>           loading      SE
+#> lambda1    1.0000       .
+#> lambda2    1.3034 0.01268
+#> lambda3   -0.3183 0.01604
+#> lambda4_x  0.2331 0.02873
+#> 
+#> Random effects:
+#>  Groups   Name          Variance Std.Dev.
+#>  id       loading       0.98175  0.9908  
+#>  Xr       s(x):response 0.00000  0.0000  
+#>  Residual               0.01164  0.1079  
+#> Number of obs: 600, groups:  id, 200; Xr, 8
+#> 
+#> Fixed effects:
+#>                  Estimate Std. Error  t value  Pr(>|t|)
+#> m1               -0.01059   0.070477  -0.1503 8.805e-01
+#> m2               -0.01276   0.091638  -0.1393 8.892e-01
+#> s(x):responseFx1 -0.12412   0.008856 -14.0155 1.252e-44
+#> s(x):responseFx2 -0.26284   0.015809 -16.6255 4.558e-62
+#> 
+#> Approximate significance of smooth terms:
+#>               edf Ref.df     F p-value
+#> s(x):response   2      2 417.2  <2e-16
+```
+
+We can also plot the smooth term, which is linear. That is, in this case the smooth term was not necessary. Not that we can also see this from the zero variance estimate of the random effect named `s(x):response` in the summary above, which mean that the smoothing parameter for this term is infinite, and hence that the smooth term is exactly linear.
+
+
+```r
+plot_smooth(mod)
+```
+
+![Smooth term in model with interaction between latent and observed covariates.](latent-observed-smooth-1.png)
 
 
 # References

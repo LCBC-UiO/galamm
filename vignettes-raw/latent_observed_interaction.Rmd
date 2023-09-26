@@ -223,16 +223,41 @@ summary(mod)
 ```
 
 
+
+## Model with Smooth Terms
+
+We can also include smooth terms in models containing interactions between latent and observed variables. In this example, we replace the linear term `x:response` with a smooth term `s(x, by = response)`. Since this smooth term also includes the main effect of `response`, which corresponds to an intercept for the response observations, we must remove the `type` term and instead insert two dummy variables, one for each measurement. We first create these dummy variables:
+
 ```{r}
-# Impact of increasing latent factor by 1 sd
-# measurement 1
-1 * 1.4
-# measurement 2
-1.156 * 1.4
-
-
+dat <- latent_covariates
+dat$m1 <- as.numeric(dat$type == "measurement1")
+dat$m2 <- as.numeric(dat$type == "measurement2")
 ```
 
+We then fit the model:
+
+```{r}
+mod <- galamm(
+  formula = y ~ 0 + m1 + m2 + s(x, by = response) + (0 + loading | id),
+  data = dat,
+  load.var = "type",
+  lambda = lambda,
+  factor = list("loading"),
+  factor_interactions = factor_interactions
+)
+```
+
+The summary output again suggest that the factor loadings are very well recovered.
+
+```{r}
+summary(mod)
+```
+
+We can also plot the smooth term, which is linear. That is, in this case the smooth term was not necessary. Not that we can also see this from the zero variance estimate of the random effect named `s(x):response` in the summary above, which mean that the smoothing parameter for this term is infinite, and hence that the smooth term is exactly linear.
+
+```{r, latent-observed-smooth, fig.cap="Smooth term in model with interaction between latent and observed covariates."}
+plot_smooth(mod)
+```
 
 
 # References
