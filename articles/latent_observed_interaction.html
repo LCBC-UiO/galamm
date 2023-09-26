@@ -110,13 +110,13 @@ interaction with observed variables.</p>
 dataset, of which the first six rows are displayed below:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">latent_covariates</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   id         type         x          y response</span></span>
-<span><span class="co">#&gt; 1  1 measurement1 0.8954758  0.7344445        0</span></span>
-<span><span class="co">#&gt; 2  1 measurement2 0.8954758  0.8776636        0</span></span>
-<span><span class="co">#&gt; 3  1     response 0.8954758  0.5012116        1</span></span>
-<span><span class="co">#&gt; 4  2 measurement1 0.2871962 -1.6300863        0</span></span>
-<span><span class="co">#&gt; 5  2 measurement2 0.2871962 -2.3726788        0</span></span>
-<span><span class="co">#&gt; 6  2     response 0.2871962  0.6161934        1</span></span></code></pre></div>
+<span><span class="co">#&gt;   id         type         x            y response</span></span>
+<span><span class="co">#&gt; 1  1 measurement1 0.2655087 -0.530999307        0</span></span>
+<span><span class="co">#&gt; 2  1 measurement2 0.2655087 -0.911206495        0</span></span>
+<span><span class="co">#&gt; 3  1     response 0.2655087  0.483055528        1</span></span>
+<span><span class="co">#&gt; 4  2 measurement1 0.3721239  0.003752663        0</span></span>
+<span><span class="co">#&gt; 5  2 measurement2 0.3721239  0.220165165        0</span></span>
+<span><span class="co">#&gt; 6  2     response 0.3721239  0.327782922        1</span></span></code></pre></div>
 <div class="section level4">
 <h4 id="model-formulation">Model Formulation<a class="anchor" aria-label="anchor" href="#model-formulation"></a>
 </h4>
@@ -183,7 +183,7 @@ model would be estimated with the following code:</p>
 <code class="sourceCode R"><span><span class="va">lambda</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">mod0</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
-<span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">x</span><span class="op">:</span><span class="va">response</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">loading</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span>,</span>
+<span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">type</span> <span class="op">+</span> <span class="va">x</span><span class="op">:</span><span class="va">response</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">loading</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">latent_covariates</span>,</span>
 <span>  load.var <span class="op">=</span> <span class="st">"type"</span>,</span>
 <span>  lambda <span class="op">=</span> <span class="va">lambda</span>,</span>
@@ -196,35 +196,37 @@ to us omitting the interaction <span class="math inline">\(\lambda_{4}\)</span>,
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod0</span><span class="op">)</span></span>
 <span><span class="co">#&gt; GALAMM fit by maximum marginal likelihood.</span></span>
-<span><span class="co">#&gt; Formula: y ~ x:response + (0 + loading | id)</span></span>
+<span><span class="co">#&gt; Formula: y ~ type + x:response + (0 + loading | id)</span></span>
 <span><span class="co">#&gt;    Data: latent_covariates</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;      AIC      BIC   logLik deviance df.resid </span></span>
-<span><span class="co">#&gt;    133.6    159.9    -60.8    121.6      594 </span></span>
+<span><span class="co">#&gt;    197.5    232.7    -90.8    181.5      592 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Scaled residuals: </span></span>
-<span><span class="co">#&gt;     Min      1Q  Median      3Q     Max </span></span>
-<span><span class="co">#&gt; -3.4256 -0.5231 -0.0151  0.4851  3.2519 </span></span>
+<span><span class="co">#&gt;      Min       1Q   Median       3Q      Max </span></span>
+<span><span class="co">#&gt; -2.92130 -0.52315 -0.01058  0.52532  3.01104 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Lambda:</span></span>
 <span><span class="co">#&gt;         loading       SE</span></span>
 <span><span class="co">#&gt; lambda1  1.0000        .</span></span>
-<span><span class="co">#&gt; lambda2  1.2915 0.012036</span></span>
-<span><span class="co">#&gt; lambda3 -0.1952 0.007513</span></span>
+<span><span class="co">#&gt; lambda2  1.3033 0.013687</span></span>
+<span><span class="co">#&gt; lambda3 -0.2063 0.008515</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Random effects:</span></span>
 <span><span class="co">#&gt;  Groups   Name    Variance Std.Dev.</span></span>
-<span><span class="co">#&gt;  id       loading 1.05019  1.0248  </span></span>
-<span><span class="co">#&gt;  Residual         0.01137  0.1066  </span></span>
+<span><span class="co">#&gt;  id       loading 0.98112  0.9905  </span></span>
+<span><span class="co">#&gt;  Residual         0.01357  0.1165  </span></span>
 <span><span class="co">#&gt; Number of obs: 600, groups:  id, 200</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Fixed effects:</span></span>
-<span><span class="co">#&gt;             Estimate Std. Error t value  Pr(&gt;|t|)</span></span>
-<span><span class="co">#&gt; (Intercept) -0.01275    0.01249  -1.021 3.073e-01</span></span>
-<span><span class="co">#&gt; x:response   0.53475    0.02617  20.435 8.092e-93</span></span></code></pre></div>
+<span><span class="co">#&gt;                   Estimate Std. Error  t value  Pr(&gt;|t|)</span></span>
+<span><span class="co">#&gt; (Intercept)      -0.010588    0.07052 -0.15014 8.807e-01</span></span>
+<span><span class="co">#&gt; typemeasurement2 -0.002173    0.02423 -0.08968 9.285e-01</span></span>
+<span><span class="co">#&gt; typeresponse      0.029353    0.08678  0.33826 7.352e-01</span></span>
+<span><span class="co">#&gt; x:response        0.470444    0.03093 15.20943 3.062e-52</span></span></code></pre></div>
 </div>
 <div class="section level4">
-<h4 id="the-full-model">The Full Model<a class="anchor" aria-label="anchor" href="#the-full-model"></a>
+<h4 id="linear-interaction-between-observed-and-latent-covariates">Linear Interaction Between Observed and Latent Covariates<a class="anchor" aria-label="anchor" href="#linear-interaction-between-observed-and-latent-covariates"></a>
 </h4>
 <p>The measurement model can be equivalently written as</p>
 <p><span class="math display">\[
@@ -272,7 +274,7 @@ we reuse the <code>lambda</code> object that was specified for
 <code>mod0</code> above. This lets us fit the model as follows:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
-<span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">x</span><span class="op">:</span><span class="va">response</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">loading</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span>,</span>
+<span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">type</span> <span class="op">+</span> <span class="va">x</span><span class="op">:</span><span class="va">response</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">loading</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">latent_covariates</span>,</span>
 <span>  load.var <span class="op">=</span> <span class="st">"type"</span>,</span>
 <span>  lambda <span class="op">=</span> <span class="va">lambda</span>,</span>
@@ -286,94 +288,258 @@ simulated.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/anova.html" class="external-link">anova</a></span><span class="op">(</span><span class="va">mod</span>, <span class="va">mod0</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Data: latent_covariates</span></span>
 <span><span class="co">#&gt; Models:</span></span>
-<span><span class="co">#&gt; mod0: y ~ x:response + (0 + loading | id)</span></span>
-<span><span class="co">#&gt; mod: y ~ x:response + (0 + loading | id)</span></span>
-<span><span class="co">#&gt;      npar     AIC    BIC  logLik deviance  Chisq Df Pr(&gt;Chisq)    </span></span>
-<span><span class="co">#&gt; mod0    6 133.568 159.95 -60.784   59.173                         </span></span>
-<span><span class="co">#&gt; mod     7  73.173 103.95 -29.587   59.173 62.395  1   2.81e-15 ***</span></span>
+<span><span class="co">#&gt; mod0: y ~ type + x:response + (0 + loading | id)</span></span>
+<span><span class="co">#&gt; mod: y ~ type + x:response + (0 + loading | id)</span></span>
+<span><span class="co">#&gt;      npar    AIC    BIC  logLik deviance Chisq Df Pr(&gt;Chisq)    </span></span>
+<span><span class="co">#&gt; mod0    8 197.52 232.70 -90.761   120.31                        </span></span>
+<span><span class="co">#&gt; mod     9 138.31 177.88 -60.155   120.31 61.21  1  5.129e-15 ***</span></span>
 <span><span class="co">#&gt; ---</span></span>
 <span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span></code></pre></div>
 <p>The summary also shows that the bias in <span class="math inline">\(\lambda_{3}\)</span> has basically disappeared, as
-it is up to -0.291 from -0.195, with the true value being -0.3. The
-interaction is estimated at 0.197, which is also very close to the true
+it is up to -0.318 from -0.195, with the true value being -0.3. The
+interaction is estimated at 0.233, which is also very close to the true
 value 0.2. It should of course be noted here that the noise level in
 this simulated dataset was set unrealistically low, to let us confirm
 that the implementation itself is correct.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span>
 <span><span class="co">#&gt; GALAMM fit by maximum marginal likelihood.</span></span>
-<span><span class="co">#&gt; Formula: y ~ x:response + (0 + loading | id)</span></span>
+<span><span class="co">#&gt; Formula: y ~ type + x:response + (0 + loading | id)</span></span>
 <span><span class="co">#&gt;    Data: latent_covariates</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;      AIC      BIC   logLik deviance df.resid </span></span>
-<span><span class="co">#&gt;     73.2    104.0    -29.6     59.2      593 </span></span>
+<span><span class="co">#&gt;    138.3    177.9    -60.2    120.3      591 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Scaled residuals: </span></span>
-<span><span class="co">#&gt;      Min       1Q   Median       3Q      Max </span></span>
-<span><span class="co">#&gt; -2.68699 -0.55501  0.01071  0.50135  2.98197 </span></span>
+<span><span class="co">#&gt;     Min      1Q  Median      3Q     Max </span></span>
+<span><span class="co">#&gt; -2.2033 -0.5251 -0.0273  0.5146  3.5029 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Lambda:</span></span>
 <span><span class="co">#&gt;           loading      SE</span></span>
 <span><span class="co">#&gt; lambda1    1.0000       .</span></span>
-<span><span class="co">#&gt; lambda2    1.2916 0.01113</span></span>
-<span><span class="co">#&gt; lambda3   -0.2907 0.01366</span></span>
-<span><span class="co">#&gt; lambda4_x  0.1970 0.02402</span></span>
+<span><span class="co">#&gt; lambda2    1.3034 0.01268</span></span>
+<span><span class="co">#&gt; lambda3   -0.3183 0.01604</span></span>
+<span><span class="co">#&gt; lambda4_x  0.2331 0.02873</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Random effects:</span></span>
 <span><span class="co">#&gt;  Groups   Name    Variance Std.Dev.</span></span>
-<span><span class="co">#&gt;  id       loading 1.05077  1.02507 </span></span>
-<span><span class="co">#&gt;  Residual         0.00972  0.09859 </span></span>
+<span><span class="co">#&gt;  id       loading 0.98175  0.9908  </span></span>
+<span><span class="co">#&gt;  Residual         0.01164  0.1079  </span></span>
 <span><span class="co">#&gt; Number of obs: 600, groups:  id, 200</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Fixed effects:</span></span>
-<span><span class="co">#&gt;              Estimate Std. Error t value   Pr(&gt;|t|)</span></span>
-<span><span class="co">#&gt; (Intercept) -0.009083    0.01093 -0.8311  4.059e-01</span></span>
-<span><span class="co">#&gt; x:response   0.526535    0.02281 23.0804 7.284e-118</span></span></code></pre></div>
-<p>We can also try to add interactions between the <span class="math inline">\(x^{2}\)</span> and <span class="math inline">\(\eta\)</span>, as follows:</p>
+<span><span class="co">#&gt;                   Estimate Std. Error  t value  Pr(&gt;|t|)</span></span>
+<span><span class="co">#&gt; (Intercept)      -0.010589    0.07048 -0.15024 8.806e-01</span></span>
+<span><span class="co">#&gt; typemeasurement2 -0.002173    0.02384 -0.09116 9.274e-01</span></span>
+<span><span class="co">#&gt; typeresponse      0.034005    0.09417  0.36109 7.180e-01</span></span>
+<span><span class="co">#&gt; x:response        0.462507    0.03300 14.01556 1.252e-44</span></span></code></pre></div>
+</div>
+<div class="section level4">
+<h4 id="interaction-between-latent-covariate-and-a-quadratic-term">Interaction Between Latent Covariate and a Quadratic Term<a class="anchor" aria-label="anchor" href="#interaction-between-latent-covariate-and-a-quadratic-term"></a>
+</h4>
+<p>We can also try to add interactions between the <span class="math inline">\(x^{2}\)</span> and <span class="math inline">\(\eta\)</span>. We first update the formula in
+<code>factor_interactions</code>:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">factor_interactions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">~</span> <span class="fl">1</span>, <span class="op">~</span> <span class="fl">1</span>, <span class="op">~</span> <span class="va">x</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">x</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>Then we fit the model as before:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mod2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
-<span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">x</span><span class="op">:</span><span class="va">response</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">loading</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span>,</span>
+<span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">type</span> <span class="op">+</span> <span class="va">x</span><span class="op">:</span><span class="va">response</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">loading</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">latent_covariates</span>,</span>
 <span>  load.var <span class="op">=</span> <span class="st">"type"</span>,</span>
 <span>  lambda <span class="op">=</span> <span class="va">lambda</span>,</span>
 <span>  factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"loading"</span><span class="op">)</span>,</span>
 <span>  factor_interactions <span class="op">=</span> <span class="va">factor_interactions</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p>Not as can be seen, the coefficient for this squared interaction is
-not significantly different from zero.</p>
+<p>As can be seen, the coefficient for this squared interaction is not
+significantly different from zero.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod2</span><span class="op">)</span></span>
 <span><span class="co">#&gt; GALAMM fit by maximum marginal likelihood.</span></span>
-<span><span class="co">#&gt; Formula: y ~ x:response + (0 + loading | id)</span></span>
+<span><span class="co">#&gt; Formula: y ~ type + x:response + (0 + loading | id)</span></span>
 <span><span class="co">#&gt;    Data: latent_covariates</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;      AIC      BIC   logLik deviance df.resid </span></span>
-<span><span class="co">#&gt;     74.9    110.1    -29.4     58.9      592 </span></span>
+<span><span class="co">#&gt;    140.3    184.2    -60.1    120.3      590 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Scaled residuals: </span></span>
-<span><span class="co">#&gt;      Min       1Q   Median       3Q      Max </span></span>
-<span><span class="co">#&gt; -2.68511 -0.54763  0.00713  0.49697  2.98856 </span></span>
+<span><span class="co">#&gt;     Min      1Q  Median      3Q     Max </span></span>
+<span><span class="co">#&gt; -2.2012 -0.5212 -0.0228  0.5173  3.4968 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Lambda:</span></span>
 <span><span class="co">#&gt;                 loading      SE</span></span>
 <span><span class="co">#&gt; lambda1         1.00000       .</span></span>
-<span><span class="co">#&gt; lambda2         1.29158 0.01112</span></span>
-<span><span class="co">#&gt; lambda3        -0.28302 0.01977</span></span>
-<span><span class="co">#&gt; lambda4_x       0.14809 0.09475</span></span>
-<span><span class="co">#&gt; lambda5_I(x^2)  0.05069 0.09503</span></span>
+<span><span class="co">#&gt; lambda2         1.30340 0.01267</span></span>
+<span><span class="co">#&gt; lambda3        -0.31418 0.02446</span></span>
+<span><span class="co">#&gt; lambda4_x       0.20906 0.11252</span></span>
+<span><span class="co">#&gt; lambda5_I(x^2)  0.02453 0.11097</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Random effects:</span></span>
 <span><span class="co">#&gt;  Groups   Name    Variance Std.Dev.</span></span>
-<span><span class="co">#&gt;  id       loading 1.050763 1.02507 </span></span>
-<span><span class="co">#&gt;  Residual         0.009713 0.09855 </span></span>
+<span><span class="co">#&gt;  id       loading 0.98175  0.9908  </span></span>
+<span><span class="co">#&gt;  Residual         0.01164  0.1079  </span></span>
 <span><span class="co">#&gt; Number of obs: 600, groups:  id, 200</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Fixed effects:</span></span>
-<span><span class="co">#&gt;              Estimate Std. Error t value   Pr(&gt;|t|)</span></span>
-<span><span class="co">#&gt; (Intercept) -0.009631    0.01097 -0.8783  3.798e-01</span></span>
-<span><span class="co">#&gt; x:response   0.527492    0.02286 23.0724 8.773e-118</span></span></code></pre></div>
+<span><span class="co">#&gt;                   Estimate Std. Error  t value  Pr(&gt;|t|)</span></span>
+<span><span class="co">#&gt; (Intercept)      -0.009919    0.07054 -0.14062 8.882e-01</span></span>
+<span><span class="co">#&gt; typemeasurement2 -0.001969    0.02385 -0.08256 9.342e-01</span></span>
+<span><span class="co">#&gt; typeresponse      0.033289    0.09426  0.35316 7.240e-01</span></span>
+<span><span class="co">#&gt; x:response        0.462228    0.03305 13.98397 1.953e-44</span></span></code></pre></div>
+</div>
+</div>
+<div class="section level3">
+<h3 id="models-with-additional-random-effects">Models with Additional Random Effects<a class="anchor" aria-label="anchor" href="#models-with-additional-random-effects"></a>
+</h3>
+<p>It is also straightforward to include additional random effects in
+models containing interactions between latent and observed covariates.
+The dataset <code>latent_covariates_long</code> is similar to
+<code>latent_covariates</code> that was used above, but it has six
+repeated measurements of the response for each subject. The first ten
+rows of the dataset are shown below.</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">latent_covariates_long</span>, <span class="fl">10</span><span class="op">)</span></span>
+<span><span class="co">#&gt;    id         type         x            y response</span></span>
+<span><span class="co">#&gt; 1   1 measurement1 0.2655087 -0.530999307        0</span></span>
+<span><span class="co">#&gt; 2   1 measurement2 0.2655087 -0.911206495        0</span></span>
+<span><span class="co">#&gt; 3   1     response 0.2655087  0.250414575        1</span></span>
+<span><span class="co">#&gt; 4   1     response 0.2655087  0.702355328        1</span></span>
+<span><span class="co">#&gt; 5   2 measurement1 0.3721239  0.003752663        0</span></span>
+<span><span class="co">#&gt; 6   2 measurement2 0.3721239  0.220165165        0</span></span>
+<span><span class="co">#&gt; 7   2     response 0.3721239  0.337374818        1</span></span>
+<span><span class="co">#&gt; 8   2     response 0.3721239  0.315766396        1</span></span>
+<span><span class="co">#&gt; 9   3 measurement1 0.5728534 -0.902625075        0</span></span>
+<span><span class="co">#&gt; 10  3 measurement2 0.5728534 -1.127476052        0</span></span></code></pre></div>
+<p>For these data we add a random intercept for the response terms, in
+addition to the terms that were used above. We start by resetting the
+interaction models to a linear term:</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">factor_interactions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">~</span> <span class="fl">1</span>, <span class="op">~</span> <span class="fl">1</span>, <span class="op">~</span> <span class="va">x</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>Next we fit the model using <code>galamm</code>. The difference to
+notice here is that we added <code>(0 + response | id)</code> to the
+formula. This implies that for observations that are responses, for
+which <code>response = 1</code>, there should be a random intercept per
+subject.</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
+<span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">type</span> <span class="op">+</span> <span class="va">x</span><span class="op">:</span><span class="va">response</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">loading</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">response</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">latent_covariates_long</span>,</span>
+<span>  load.var <span class="op">=</span> <span class="st">"type"</span>,</span>
+<span>  lambda <span class="op">=</span> <span class="va">lambda</span>,</span>
+<span>  factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"loading"</span><span class="op">)</span>,</span>
+<span>  factor_interactions <span class="op">=</span> <span class="va">factor_interactions</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>From the summary, we see that also in this case the factor loadings
+are very well recovered.</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span>
+<span><span class="co">#&gt; GALAMM fit by maximum marginal likelihood.</span></span>
+<span><span class="co">#&gt; Formula: y ~ type + x:response + (0 + loading | id) + (0 + response |      id)</span></span>
+<span><span class="co">#&gt;    Data: latent_covariates_long</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;      AIC      BIC   logLik deviance df.resid </span></span>
+<span><span class="co">#&gt;    150.6    197.5    -65.3    130.6      790 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Scaled residuals: </span></span>
+<span><span class="co">#&gt;     Min      1Q  Median      3Q     Max </span></span>
+<span><span class="co">#&gt; -3.3804 -0.5291 -0.0199  0.5126  3.5849 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Lambda:</span></span>
+<span><span class="co">#&gt;           loading      SE</span></span>
+<span><span class="co">#&gt; lambda1    1.0000       .</span></span>
+<span><span class="co">#&gt; lambda2    1.3036 0.01672</span></span>
+<span><span class="co">#&gt; lambda3   -0.3279 0.01539</span></span>
+<span><span class="co">#&gt; lambda4_x  0.2415 0.02730</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Random effects:</span></span>
+<span><span class="co">#&gt;  Groups   Name     Variance Std.Dev.</span></span>
+<span><span class="co">#&gt;  id       loading  0.97824  0.9891  </span></span>
+<span><span class="co">#&gt;  id.1     response 0.00000  0.0000  </span></span>
+<span><span class="co">#&gt;  Residual          0.02018  0.1420  </span></span>
+<span><span class="co">#&gt; Number of obs: 800, groups:  id, 200</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Fixed effects:</span></span>
+<span><span class="co">#&gt;                   Estimate Std. Error  t value  Pr(&gt;|t|)</span></span>
+<span><span class="co">#&gt; (Intercept)      -0.010585    0.07065 -0.14981 8.809e-01</span></span>
+<span><span class="co">#&gt; typemeasurement2 -0.002171    0.02555 -0.08498 9.323e-01</span></span>
+<span><span class="co">#&gt; typeresponse      0.033712    0.09473  0.35590 7.219e-01</span></span>
+<span><span class="co">#&gt; x:response        0.474623    0.03178 14.93242 2.028e-50</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="model-with-smooth-terms">Model with Smooth Terms<a class="anchor" aria-label="anchor" href="#model-with-smooth-terms"></a>
+</h3>
+<p>We can also include smooth terms in models containing interactions
+between latent and observed variables. In this example, we replace the
+linear term <code>x:response</code> with a smooth term
+<code>s(x, by = response)</code>. Since this smooth term also includes
+the main effect of <code>response</code>, which corresponds to an
+intercept for the response observations, we must remove the
+<code>type</code> term and instead insert two dummy variables, one for
+each measurement. We first create these dummy variables:</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="va">latent_covariates</span></span>
+<span><span class="va">dat</span><span class="op">$</span><span class="va">m1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">dat</span><span class="op">$</span><span class="va">type</span> <span class="op">==</span> <span class="st">"measurement1"</span><span class="op">)</span></span>
+<span><span class="va">dat</span><span class="op">$</span><span class="va">m2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">dat</span><span class="op">$</span><span class="va">type</span> <span class="op">==</span> <span class="st">"measurement2"</span><span class="op">)</span></span></code></pre></div>
+<p>We then fit the model:</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
+<span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="fl">0</span> <span class="op">+</span> <span class="va">m1</span> <span class="op">+</span> <span class="va">m2</span> <span class="op">+</span> <span class="fu"><a href="../reference/sl.html">s</a></span><span class="op">(</span><span class="va">x</span>, by <span class="op">=</span> <span class="va">response</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">loading</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">dat</span>,</span>
+<span>  load.var <span class="op">=</span> <span class="st">"type"</span>,</span>
+<span>  lambda <span class="op">=</span> <span class="va">lambda</span>,</span>
+<span>  factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"loading"</span><span class="op">)</span>,</span>
+<span>  factor_interactions <span class="op">=</span> <span class="va">factor_interactions</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>The summary output again suggest that the factor loadings are very
+well recovered.</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span>
+<span><span class="co">#&gt; GALAMM fit by maximum marginal likelihood.</span></span>
+<span><span class="co">#&gt; Formula: y ~ 0 + m1 + m2 + s(x, by = response) + (0 + loading | id)</span></span>
+<span><span class="co">#&gt;    Data: dat</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;      AIC      BIC   logLik deviance df.resid </span></span>
+<span><span class="co">#&gt;    140.3    184.3    -60.2    120.3      590 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Scaled residuals: </span></span>
+<span><span class="co">#&gt;     Min      1Q  Median      3Q     Max </span></span>
+<span><span class="co">#&gt; -2.2032 -0.5251 -0.0273  0.5146  3.5029 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Lambda:</span></span>
+<span><span class="co">#&gt;           loading      SE</span></span>
+<span><span class="co">#&gt; lambda1    1.0000       .</span></span>
+<span><span class="co">#&gt; lambda2    1.3034 0.01268</span></span>
+<span><span class="co">#&gt; lambda3   -0.3183 0.01604</span></span>
+<span><span class="co">#&gt; lambda4_x  0.2331 0.02873</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Random effects:</span></span>
+<span><span class="co">#&gt;  Groups   Name          Variance Std.Dev.</span></span>
+<span><span class="co">#&gt;  id       loading       0.98175  0.9908  </span></span>
+<span><span class="co">#&gt;  Xr       s(x):response 0.00000  0.0000  </span></span>
+<span><span class="co">#&gt;  Residual               0.01164  0.1079  </span></span>
+<span><span class="co">#&gt; Number of obs: 600, groups:  id, 200; Xr, 8</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Fixed effects:</span></span>
+<span><span class="co">#&gt;                  Estimate Std. Error  t value  Pr(&gt;|t|)</span></span>
+<span><span class="co">#&gt; m1               -0.01059   0.070477  -0.1503 8.805e-01</span></span>
+<span><span class="co">#&gt; m2               -0.01276   0.091638  -0.1393 8.892e-01</span></span>
+<span><span class="co">#&gt; s(x):responseFx1 -0.12412   0.008856 -14.0155 1.252e-44</span></span>
+<span><span class="co">#&gt; s(x):responseFx2 -0.26284   0.015809 -16.6255 4.558e-62</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Approximate significance of smooth terms:</span></span>
+<span><span class="co">#&gt;               edf Ref.df     F p-value</span></span>
+<span><span class="co">#&gt; s(x):response   2      2 417.2  &lt;2e-16</span></span></code></pre></div>
+<p>We can also plot the smooth term, which is linear. That is, in this
+case the smooth term was not necessary. Not that we can also see this
+from the zero variance estimate of the random effect named
+<code>s(x):response</code> in the summary above, which mean that the
+smoothing parameter for this term is infinite, and hence that the smooth
+term is exactly linear.</p>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_smooth.galamm.html">plot_smooth</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span></code></pre></div>
+<div class="figure">
+<img src="latent-observed-smooth-1.png" alt=""><p class="caption">Smooth term in model with interaction between latent
+and observed covariates.</p>
 </div>
 </div>
 <div class="section level2">
