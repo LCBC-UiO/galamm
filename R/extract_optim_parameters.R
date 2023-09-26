@@ -53,7 +53,8 @@ extract_optim_parameters.galamm <- function(object) {
       object$parameters$beta_inds
     ],
     lambda = object$parameters$parameter_estimates[
-      object$parameters$lambda_inds
+      c(object$parameters$lambda_inds,
+        object$parameters$lambda_interaction_inds)
     ],
     weights = object$parameters$parameter_estimates[
       object$parameters$weights_inds
