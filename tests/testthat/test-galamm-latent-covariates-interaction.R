@@ -4,7 +4,7 @@ test_that("Interaction between latent and observed covariates works", {
   load.var <- "type"
   lambda <- list(matrix(c(1, NA, NA), ncol = 1))
   factor <- list("loading")
-  factor_interactions <- list(list(~ 1, ~ 1, ~ x))
+  factor_interactions <- list(list(~1, ~1, ~x))
 
   mod <- galamm(
     formula = formula,
@@ -23,7 +23,7 @@ test_that("Interaction between latent and observed covariates works", {
     load.var = load.var,
     lambda = lambda,
     factor = factor,
-    factor_interactions = list(list(~ 1, ~ 1, ~ 1))
+    factor_interactions = list(list(~1, ~1, ~1))
   )
 
   mod0b <- galamm(
@@ -42,12 +42,11 @@ test_that("Interaction between latent and observed covariates works", {
     load.var = load.var,
     lambda = lambda,
     factor = factor,
-    factor_interactions = list(list(~ 1, ~ 1, ~ x + I(x^2)))
+    factor_interactions = list(list(~1, ~1, ~ x + I(x^2)))
   )
 
   expect_snapshot(print(summary(modq), digits = 2))
   expect_snapshot(print(anova(modq, mod), digits = 3))
-
 })
 
 test_that("Crossed latent-observed interaction models work", {
@@ -56,7 +55,7 @@ test_that("Crossed latent-observed interaction models work", {
   load.var <- "type"
   lambda <- list(matrix(c(1, NA, NA), ncol = 1))
   factor <- list("loading")
-  factor_interactions <- list(list(~ 1, ~ 1, ~ x))
+  factor_interactions <- list(list(~1, ~1, ~x))
 
   mod <- galamm(
     formula = formula,
@@ -65,13 +64,13 @@ test_that("Crossed latent-observed interaction models work", {
     lambda = lambda,
     factor = factor,
     factor_interactions = factor_interactions,
-    start = list(theta = c(1.084, 1.46),
-                 beta = c(0.205, -0.013, -0.243, 0.496),
-                 lambda = c(2.176, 0.674, -0.014), weights = numeric(0)),
+    start = list(
+      theta = c(1.084, 1.46),
+      beta = c(0.205, -0.013, -0.243, 0.496),
+      lambda = c(2.176, 0.674, -0.014), weights = numeric(0)
+    ),
     control = galamm_control(optim_control = list(maxit = 0))
   )
 
   expect_equal(deviance(mod), 1840.38, tolerance = 1e-3)
-
-
 })

@@ -89,7 +89,7 @@ define_factor_mappings <- function(
               rep(x, each = max(delta))
             }
           )
-          if(!is.null(fi)) {
+          if (!is.null(fi)) {
             mapping_component_covs <- mapping_component
           }
           ret <- list(
@@ -185,9 +185,9 @@ define_factor_mappings <- function(
           do.call(c, lapply(mappings, function(x) x$mapping_component_covs))
 
         ind <- 1L
-        while(TRUE) {
-          if(ind > length(lambda_mapping_Zt_covs)) break
-          if(all(is.na(lambda_mapping_Zt_covs[[ind]]))) {
+        while (TRUE) {
+          if (ind > length(lambda_mapping_Zt_covs)) break
+          if (all(is.na(lambda_mapping_Zt_covs[[ind]]))) {
             lambda_mapping_Zt_covs <- lambda_mapping_Zt_covs[-ind]
           } else {
             ind <- ind + 1L
