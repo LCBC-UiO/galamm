@@ -136,10 +136,12 @@ define_factor_mappings <- function(
         )
       })
 
-      lambda_mapping_Zt <- unlist(do.call(function(...) {
-        mapply(c, ..., SIMPLIFY = FALSE)
-      }, lapply(mappings, function(x) x$mapping_component)),
-      use.names = FALSE)
+      lambda_mapping_Zt <- unlist(
+        do.call(function(...) {
+          mapply(c, ..., SIMPLIFY = FALSE)
+        }, lapply(mappings, function(x) x$mapping_component)),
+        use.names = FALSE
+      )
 
       if (!is.null(fi)) {
         # Extra loadings needed
@@ -193,12 +195,12 @@ define_factor_mappings <- function(
           lztcov <- lambda_mapping_Zt_covs[[ind]]
 
           if (all(is.na(lzt))) {
-            if(length(lzt) > 1) {
+            if (length(lzt) > 1) {
               lambda_mapping_Zt[[ind]] <- lambda_mapping_Zt[[ind]][-1]
             } else {
               lambda_mapping_Zt <- lambda_mapping_Zt[-ind]
             }
-            if(length(lztcov) > 1) {
+            if (length(lztcov) > 1) {
               lambda_mapping_Zt_covs[[ind]] <- lambda_mapping_Zt_covs[[ind]][-1]
             } else {
               lambda_mapping_Zt_covs <- lambda_mapping_Zt_covs[-ind]
@@ -208,13 +210,15 @@ define_factor_mappings <- function(
               lambda_mapping_Zt_covs[seq_len(ind - 1L)],
               lztcov[[1]], lztcov[-1],
               lambda_mapping_Zt_covs[
-                seq_len(length(lambda_mapping_Zt_covs) - ind) + ind])
+                seq_len(length(lambda_mapping_Zt_covs) - ind) + ind
+              ]
+            )
             ind <- ind + 1L
           } else {
             ind <- ind + 1L
           }
           security_counter <- security_counter + 1L
-          if(security_counter > 1e9) {
+          if (security_counter > 1e9) {
             stop("Loop is probably too long")
           }
         }

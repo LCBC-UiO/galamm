@@ -67,7 +67,6 @@ test_that("Crossed latent-observed interaction models work", {
   )
 
   expect_snapshot(print(summary(mod), digits = 2))
-
 })
 
 
@@ -94,10 +93,12 @@ test_that("Latent-observed interaction with smooths", {
 
   expect_equal(deviance(mod), 120.311, tolerance = 1e-3)
   expect_equal(mod$gam$edf,
-               c(m1 = 0.999999999999793, m2 = 1.00000000000022,
-                 `s(x):response.1` = 1.76038497918713e-10,
-                 `s(x):response.2` = 2.52273958510005e-11,
-                 `s(x):response.3` = 1, `s(x):response.4` = 1),
-               tolerance = .1)
+    c(
+      m1 = 0.999999999999793, m2 = 1.00000000000022,
+      `s(x):response.1` = 1.76038497918713e-10,
+      `s(x):response.2` = 2.52273958510005e-11,
+      `s(x):response.3` = 1, `s(x):response.4` = 1
+    ),
+    tolerance = .1
+  )
 })
-

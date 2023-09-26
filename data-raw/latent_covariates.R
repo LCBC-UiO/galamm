@@ -31,7 +31,7 @@ latent_covariates_long <- latent_covariates %>%
     filter(latent_covariates, response == 1),
     filter(latent_covariates, response == 1),
     filter(latent_covariates, response == 1)
-    ) %>%
+  ) %>%
   arrange(id) %>%
   mutate(
     y = case_when(
