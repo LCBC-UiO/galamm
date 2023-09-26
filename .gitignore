@@ -40,3 +40,6 @@ vignettes/*.pdf
 .Rproj.user
 inst/doc
 docs
+
+# Plots from tests
+tests/testthat/*.pdf

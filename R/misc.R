@@ -62,9 +62,12 @@ setup_response_object <- function(family_list, family_mapping, data, gobj) {
 
     if (f$family == "binomial" && !is.null(dim(mr))) {
       trials <- rowSums(mr)
-      response <- mr[, 1, drop = TRUE]
     } else {
       trials <- rep(1, sum(family_mapping == i))
+    }
+    if (is.matrix(mr)) {
+      response <- mr[, 1, drop = TRUE]
+    } else {
       response <- mr
     }
     response_obj[family_mapping == i, ] <-
