@@ -169,12 +169,6 @@ define_factor_mappings <- function(
           c(x, extra_lambdas[[x + 2L]] + mlm)
         })
 
-        # Add indices to lambda matrix
-        lambda[[f]] <- rbind(
-          lambda[[f]],
-          matrix(sort(unique(unlist(extra_lambdas)) + mlm), ncol = 1) + 2L
-        )
-
         lambda_mapping_Zt_covs <- unlist(
           do.call(function(...) {
             mapply(function(...) list(...), ..., SIMPLIFY = FALSE)
@@ -182,16 +176,46 @@ define_factor_mappings <- function(
           recursive = FALSE, use.names = FALSE
         )
 
+        # Add indices to lambda matrix
+        lambda[[f]] <- rbind(
+          lambda[[f]],
+          matrix(sort(unique(unlist(extra_lambdas)) + mlm), ncol = 1) + 2L
+        )
+
         # Go through lambda_mapping_Zt_covs and make sure it matches
         # lambda_mapping_Zt
         ind <- 1L
+        security_counter <- 1L
         while (TRUE) {
           if (ind > length(lambda_mapping_Zt_covs)) break
-          if (all(is.na(lambda_mapping_Zt[[ind]]))) {
-            lambda_mapping_Zt <- lambda_mapping_Zt[-ind]
-            lambda_mapping_Zt_covs <- lambda_mapping_Zt_covs[-ind]
+
+          lzt <- lambda_mapping_Zt[[ind]]
+          lztcov <- lambda_mapping_Zt_covs[[ind]]
+
+          if (all(is.na(lzt))) {
+            if(length(lzt) > 1) {
+              lambda_mapping_Zt[[ind]] <- lambda_mapping_Zt[[ind]][-1]
+            } else {
+              lambda_mapping_Zt <- lambda_mapping_Zt[-ind]
+            }
+            if(length(lztcov) > 1) {
+              lambda_mapping_Zt_covs[[ind]] <- lambda_mapping_Zt_covs[[ind]][-1]
+            } else {
+              lambda_mapping_Zt_covs <- lambda_mapping_Zt_covs[-ind]
+            }
+          } else if (length(lzt) != length(lztcov)) {
+            lambda_mapping_Zt_covs <- c(
+              lambda_mapping_Zt_covs[seq_len(ind - 1L)],
+              lztcov[[1]], lztcov[-1],
+              lambda_mapping_Zt_covs[
+                seq_len(length(lambda_mapping_Zt_covs) - ind) + ind])
+            ind <- ind + 1L
           } else {
             ind <- ind + 1L
+          }
+          security_counter <- security_counter + 1L
+          if(security_counter > 1e9) {
+            stop("Loop is probably too long")
           }
         }
       } else {
