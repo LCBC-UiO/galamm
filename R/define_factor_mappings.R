@@ -146,7 +146,6 @@ define_factor_mappings <- function(
 
 
       if (!is.null(fi)) {
-        lambda_mapping_Zt_covs <- mappings[[1]]$mapping_component_covs
         # Extra loadings needed
         extra_lambdas <- list()
         for (k in seq_along(fi)) {
@@ -179,6 +178,21 @@ define_factor_mappings <- function(
           lambda[[f]],
           matrix(sort(unique(unlist(extra_lambdas)) + mlm), ncol = 1) + 2L
         )
+
+        # Go through lambda_mapping_Zt_covs and make sure it matches
+        # lambda_mapping_Zt
+        lambda_mapping_Zt_covs <-
+          do.call(c, lapply(mappings, function(x) x$mapping_component_covs))
+
+        ind <- 1L
+        while(TRUE) {
+          if(ind > length(lambda_mapping_Zt_covs)) break
+          if(all(is.na(lambda_mapping_Zt_covs[[ind]]))) {
+            lambda_mapping_Zt_covs <- lambda_mapping_Zt_covs[-ind]
+          } else {
+            ind <- ind + 1L
+          }
+        }
       }
     }
   }
