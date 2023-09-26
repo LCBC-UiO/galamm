@@ -143,9 +143,10 @@ define_factor_mappings <- function(
 
       stopifnot(length(lambda_mapping_Zt) == sum(diff(Zt@p)))
 
-      lambda_mapping_Zt_covs <- mappings[[1]]$mapping_component_covs
+
 
       if (!is.null(fi)) {
+        lambda_mapping_Zt_covs <- mappings[[1]]$mapping_component_covs
         # Extra loadings needed
         extra_lambdas <- list()
         for (k in seq_along(fi)) {
