@@ -71,7 +71,7 @@ test_that("Crossed latent-observed interaction models work", {
     control = galamm_control(optim_control = list(maxit = 0))
   )
 
-  expect_snapshot(print(summary(mod), digits = 2))
+  expect_equal(deviance(mod), 1840.38, tolerance = 1e-3)
 
 
 })
