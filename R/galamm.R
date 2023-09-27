@@ -291,7 +291,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   )
 
   mlwrapper <- function(par, gradient = FALSE, hessian = FALSE) {
-    marginal_likelihood_cpp(
+    marginal_likelihood(
       y = y,
       trials = trials,
       X = gobj$lmod$X,

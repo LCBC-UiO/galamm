@@ -193,7 +193,7 @@ Rcpp::List wrapper(
 }
 
 // [[Rcpp::export]]
-Rcpp::List marginal_likelihood_cpp(
+Rcpp::List marginal_likelihood(
     const Eigen::Map<Eigen::VectorXd> y,
     const Eigen::Map<Eigen::VectorXd> trials,
     const Eigen::Map<Eigen::MatrixXd> X,
