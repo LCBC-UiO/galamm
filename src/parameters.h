@@ -15,7 +15,6 @@ struct parameters{
     const Eigen::VectorXd& u,
     const std::vector<int>& theta_mapping,
     const Rcpp::ListOf<Rcpp::IntegerVector>& lambda_mapping_X0,
-    const Rcpp::ListOf<Rcpp::NumericVector>& lambda_mapping_X_covs0,
     const Rcpp::ListOf<Rcpp::IntegerVector>& lambda_mapping_Zt0,
     const Rcpp::ListOf<Rcpp::NumericVector>& lambda_mapping_Zt_covs0,
     const Eigen::SparseMatrix<double>& Lambdat,
@@ -23,26 +22,25 @@ struct parameters{
     const std::vector<int>& weights_mapping,
     const Eigen::VectorXi& family_mapping,
     const int& maxit_conditional_modes,
-    const double& epsilon_u,
     const int& n
   ) :
-  theta { theta.cast<T>() }, beta { beta.cast<T>() }, lambda { lambda.cast<T>() },
-  u { u.cast<T>() }, theta_mapping { theta_mapping },
+  theta { theta.cast<T>() },
+  beta { beta.cast<T>() },
+  lambda { lambda.cast<T>() },
+  u { u.cast<T>() },
+  theta_mapping { theta_mapping },
   Lambdat { Lambdat.cast<T>() },
   weights { weights.cast<T>() },
   weights_mapping { weights_mapping },
   family_mapping { family_mapping },
   maxit_conditional_modes { maxit_conditional_modes },
-  epsilon_u { epsilon_u }, n { n }
+  n { n }
   {
     for(int i{}; i < lambda_mapping_X0.size(); i++){
       lambda_mapping_X.push_back(Rcpp::as<std::vector<int>>(lambda_mapping_X0[i]));
     }
     for(int i{}; i < lambda_mapping_Zt0.size(); i++){
       lambda_mapping_Zt.push_back(Rcpp::as<std::vector<int>>(lambda_mapping_Zt0[i]));
-    }
-    for(int i{}; i < lambda_mapping_X_covs0.size(); i++){
-      lambda_mapping_Zt_covs.push_back(Rcpp::as<std::vector<double>>(lambda_mapping_X_covs0[i]));
     }
     for(int i{}; i < lambda_mapping_Zt_covs0.size(); i++){
       lambda_mapping_Zt_covs.push_back(Rcpp::as<std::vector<double>>(lambda_mapping_Zt_covs0[i]));
@@ -58,7 +56,6 @@ struct parameters{
   Vdual<T> u;
   std::vector<int> theta_mapping;
   std::vector<std::vector<int>> lambda_mapping_X = {};
-  std::vector<std::vector<double>> lambda_mapping_X_covs = {};
   std::vector<std::vector<int>> lambda_mapping_Zt = {};
   std::vector<std::vector<double>> lambda_mapping_Zt_covs = {};
   Eigen::SparseMatrix<T> Lambdat;
@@ -67,7 +64,6 @@ struct parameters{
   Eigen::VectorXi family_mapping;
   Ddual<T> WSqrt;
   int maxit_conditional_modes;
-  double epsilon_u;
   double lossvalue_tol{.01};
   int n;
 };

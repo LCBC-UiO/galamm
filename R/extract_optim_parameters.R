@@ -22,7 +22,7 @@ extract_optim_parameters <- function(object) {
 #' * \code{weights} Weights for heteroscedastic residuals.
 #'
 #'
-#' @family modeling functions
+#' @family optimization functions
 #'
 #' @examples
 #' # Fit linear mixed model with heteroscedastic residuals

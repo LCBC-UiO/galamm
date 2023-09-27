@@ -101,4 +101,18 @@ test_that("Latent-observed interaction with smooths", {
     ),
     tolerance = .1
   )
+
+  data <- latent_covariates_long
+  formula <- y ~ s(x, by = response) + (0 + loading | id) + (0 + response | id)
+
+  mod <- galamm(
+    formula = formula,
+    data = data,
+    load.var = load.var,
+    lambda = lambda,
+    factor = factor,
+    factor_interactions = factor_interactions
+  )
+
+  expect_equal(deviance(mod), 130.6347, tolerance = 1e-3)
 })

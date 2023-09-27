@@ -1,3 +1,78 @@
+squeeze_mappings <- function(lambda_mapping_Zt, lambda_mapping_Zt_covs) {
+  ind <- 1L
+  security_counter <- 1L
+  while (TRUE) {
+    if (ind > length(lambda_mapping_Zt_covs)) break
+
+    lzt <- lambda_mapping_Zt[[ind]]
+    lztcov <- lambda_mapping_Zt_covs[[ind]]
+
+    if (all(is.na(lzt))) {
+      if (length(lzt) > 1) {
+        lambda_mapping_Zt[[ind]] <- lambda_mapping_Zt[[ind]][-1]
+      } else {
+        lambda_mapping_Zt <- lambda_mapping_Zt[-ind]
+      }
+      if (length(lztcov) > 1) {
+        lambda_mapping_Zt_covs[[ind]] <- lambda_mapping_Zt_covs[[ind]][-1]
+      } else {
+        lambda_mapping_Zt_covs <- lambda_mapping_Zt_covs[-ind]
+      }
+    } else if (length(lzt) != length(lztcov)) {
+      lambda_mapping_Zt_covs <- c(
+        lambda_mapping_Zt_covs[seq_len(ind - 1L)],
+        lztcov[[1]], lztcov[-1],
+        lambda_mapping_Zt_covs[
+          seq_len(length(lambda_mapping_Zt_covs) - ind) + ind
+        ]
+      )
+      ind <- ind + 1L
+    } else {
+      ind <- ind + 1L
+    }
+    security_counter <- security_counter + 1L
+    if (security_counter > 1e9) {
+      stop("Loop is probably too long")
+    }
+  }
+  list(
+    lambda_mapping_Zt = lambda_mapping_Zt,
+    lambda_mapping_Zt_covs = lambda_mapping_Zt_covs
+  )
+}
+
+mappingunwrapping <- function(input, element, fun = c, recursive = TRUE) {
+  unlist(
+    do.call(function(...) {
+      mapply(fun, ..., SIMPLIFY = FALSE)
+    }, lapply(input, function(x) x[[element]])),
+    recursive = recursive, use.names = FALSE
+  )
+}
+
+extend_lambda <- function(fi) {
+  extra_lambdas <- list()
+  for (k in seq_along(fi)) {
+    if (k == 1) {
+      current_max <- 0
+    } else {
+      inds <- seq(from = 1, to = k - 1, by = 1)
+      current_max <- max(vapply(extra_lambdas[inds], function(x) {
+        if (length(x) == 0) {
+          0
+        } else {
+          max(x)
+        }
+      }, numeric(1)))
+    }
+
+    extra_lambdas[[k]] <-
+      seq_along(attr(stats::terms(fi[[k]]), "term.labels")) +
+      current_max
+  }
+  extra_lambdas
+}
+
 factor_finder <- function(factor, vars) {
   vapply(factor, function(x) {
     any(vapply(vars, function(y) {
@@ -108,7 +183,7 @@ define_factor_mappings <- function(
           inds <- which(data[, cn] != 0)
 
           if (!is.null(fi)) {
-            if (j != 1 || i != 1) {
+            if (Reduce(sum, cnms_match) > 1) {
               stop(
                 "Interaction with latent variables currently only ",
                 "possible when the loading matrix has a single column."
@@ -136,34 +211,11 @@ define_factor_mappings <- function(
         )
       })
 
-      lambda_mapping_Zt <- unlist(
-        do.call(function(...) {
-          mapply(c, ..., SIMPLIFY = FALSE)
-        }, lapply(mappings, function(x) x$mapping_component)),
-        use.names = FALSE
-      )
+      lambda_mapping_Zt <- mappingunwrapping(mappings, "mapping_component")
 
       if (!is.null(fi)) {
         # Extra loadings needed
-        extra_lambdas <- list()
-        for (k in seq_along(fi)) {
-          if (k == 1) {
-            current_max <- 0
-          } else {
-            inds <- seq(from = 1, to = k - 1, by = 1)
-            current_max <- max(vapply(extra_lambdas[inds], function(x) {
-              if (length(x) == 0) {
-                0
-              } else {
-                max(x)
-              }
-            }, numeric(1)))
-          }
-
-          extra_lambdas[[k]] <-
-            seq_along(attr(stats::terms(fi[[k]]), "term.labels")) +
-            current_max
-        }
+        extra_lambdas <- extend_lambda(fi)
 
         # Add indices in the right place in lambda_mapping_Zt
         mlm <- max(lambda_mapping_Zt, na.rm = TRUE)
@@ -171,11 +223,10 @@ define_factor_mappings <- function(
           c(x, extra_lambdas[[x + 2L]] + mlm)
         })
 
-        lambda_mapping_Zt_covs <- unlist(
-          do.call(function(...) {
-            mapply(function(...) list(...), ..., SIMPLIFY = FALSE)
-          }, lapply(mappings, function(x) x$mapping_component_covs)),
-          recursive = FALSE, use.names = FALSE
+        lambda_mapping_Zt_covs <- mappingunwrapping(
+          mappings, "mapping_component_covs",
+          function(...) list(...),
+          recursive = FALSE
         )
 
         # Add indices to lambda matrix
@@ -186,42 +237,9 @@ define_factor_mappings <- function(
 
         # Go through lambda_mapping_Zt_covs and make sure it matches
         # lambda_mapping_Zt
-        ind <- 1L
-        security_counter <- 1L
-        while (TRUE) {
-          if (ind > length(lambda_mapping_Zt_covs)) break
-
-          lzt <- lambda_mapping_Zt[[ind]]
-          lztcov <- lambda_mapping_Zt_covs[[ind]]
-
-          if (all(is.na(lzt))) {
-            if (length(lzt) > 1) {
-              lambda_mapping_Zt[[ind]] <- lambda_mapping_Zt[[ind]][-1]
-            } else {
-              lambda_mapping_Zt <- lambda_mapping_Zt[-ind]
-            }
-            if (length(lztcov) > 1) {
-              lambda_mapping_Zt_covs[[ind]] <- lambda_mapping_Zt_covs[[ind]][-1]
-            } else {
-              lambda_mapping_Zt_covs <- lambda_mapping_Zt_covs[-ind]
-            }
-          } else if (length(lzt) != length(lztcov)) {
-            lambda_mapping_Zt_covs <- c(
-              lambda_mapping_Zt_covs[seq_len(ind - 1L)],
-              lztcov[[1]], lztcov[-1],
-              lambda_mapping_Zt_covs[
-                seq_len(length(lambda_mapping_Zt_covs) - ind) + ind
-              ]
-            )
-            ind <- ind + 1L
-          } else {
-            ind <- ind + 1L
-          }
-          security_counter <- security_counter + 1L
-          if (security_counter > 1e9) {
-            stop("Loop is probably too long")
-          }
-        }
+        mplist <- squeeze_mappings(lambda_mapping_Zt, lambda_mapping_Zt_covs)
+        lambda_mapping_Zt <- mplist$lambda_mapping_Zt
+        lambda_mapping_Zt_covs <- mplist$lambda_mapping_Zt_covs
       } else {
         lambda_mapping_Zt <- lambda_mapping_Zt[!is.na(lambda_mapping_Zt)]
         stopifnot(length(lambda_mapping_Zt) == sum(diff(Zt@p)))

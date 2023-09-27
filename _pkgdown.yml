@@ -40,3 +40,8 @@ reference:
   desc: Simulated and real example datasets.
   contents:
   - has_concept("datasets")
+
+- title: Optimization
+  desc: Functions to aid in optimization.
+  contents:
+  - has_concept("optimization functions")

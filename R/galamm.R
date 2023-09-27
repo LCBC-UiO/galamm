@@ -291,7 +291,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   )
 
   mlwrapper <- function(par, gradient = FALSE, hessian = FALSE) {
-    marginal_likelihood_cpp(
+    marginal_likelihood(
       y = y,
       trials = trials,
       X = gobj$lmod$X,
@@ -303,7 +303,6 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
       u_init = u_init,
       lambda = par[lambda_inds],
       lambda_mapping_X = lambda_mappings$lambda_mapping_X,
-      lambda_mapping_X_covs = integer(),
       lambda_mapping_Zt = lambda_mappings$lambda_mapping_Zt,
       lambda_mapping_Zt_covs = lambda_mappings$lambda_mapping_Zt_covs,
       weights = par[weights_inds],
@@ -314,7 +313,6 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
       maxit_conditional_modes = maxit_conditional_modes,
       gradient = gradient,
       hessian = hessian,
-      epsilon_u = 1e-10,
       reduced_hessian = control$reduced_hessian
     )
   }
