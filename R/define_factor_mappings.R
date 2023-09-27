@@ -1,3 +1,26 @@
+extend_lambda <- function(fi) {
+  extra_lambdas <- list()
+  for (k in seq_along(fi)) {
+    if (k == 1) {
+      current_max <- 0
+    } else {
+      inds <- seq(from = 1, to = k - 1, by = 1)
+      current_max <- max(vapply(extra_lambdas[inds], function(x) {
+        if (length(x) == 0) {
+          0
+        } else {
+          max(x)
+        }
+      }, numeric(1)))
+    }
+
+    extra_lambdas[[k]] <-
+      seq_along(attr(stats::terms(fi[[k]]), "term.labels")) +
+      current_max
+  }
+  extra_lambdas
+}
+
 factor_finder <- function(factor, vars) {
   vapply(factor, function(x) {
     any(vapply(vars, function(y) {
@@ -145,25 +168,7 @@ define_factor_mappings <- function(
 
       if (!is.null(fi)) {
         # Extra loadings needed
-        extra_lambdas <- list()
-        for (k in seq_along(fi)) {
-          if (k == 1) {
-            current_max <- 0
-          } else {
-            inds <- seq(from = 1, to = k - 1, by = 1)
-            current_max <- max(vapply(extra_lambdas[inds], function(x) {
-              if (length(x) == 0) {
-                0
-              } else {
-                max(x)
-              }
-            }, numeric(1)))
-          }
-
-          extra_lambdas[[k]] <-
-            seq_along(attr(stats::terms(fi[[k]]), "term.labels")) +
-            current_max
-        }
+        extra_lambdas <- extend_lambda(fi)
 
         # Add indices in the right place in lambda_mapping_Zt
         mlm <- max(lambda_mapping_Zt, na.rm = TRUE)
