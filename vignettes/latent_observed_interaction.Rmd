@@ -7,7 +7,7 @@ output:
 bibliography: ../inst/REFERENCES.bib
 link-citations: yes
 vignette: >
-  %\VignetteIndexEntry{Interactions Between Latent and Observed Variables}
+  %\VignetteIndexEntry{Interactions Between Latent and Observed Covariates}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
