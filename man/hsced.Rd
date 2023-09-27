@@ -33,6 +33,7 @@ Other datasets:
 \code{\link{epilep}},
 \code{\link{latent_covariates_long}},
 \code{\link{latent_covariates}},
+\code{\link{mresp_hsced}},
 \code{\link{mresp}}
 }
 \concept{datasets}
