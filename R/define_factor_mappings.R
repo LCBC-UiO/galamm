@@ -100,33 +100,44 @@ define_factor_mappings <- function(
   })))
   vars_in_fixed <- unique(vars_in_fixed)
   factor_in_fixed <- factor_finder(factor, vars_in_fixed)
-  if (!any(factor_in_fixed)) lambda_mapping_X <- integer()
+  if (!any(factor_in_fixed)) {
+    lambda_mapping_X <- integer()
+  } else {
+    lambda_mapping_X <- list()
+    X <- gobj$lmod$X
+    for (f in seq_along(factor_in_fixed)) {
+      if (factor_in_fixed[[f]]) {
+        lv <- load.var[[f]]
+        mappings <- lapply(seq_len(ncol(X)), function(i) {
+          mapping_component <- rep(-1L, nrow(X))
+          target_cnm <- colnames(X)[[i]]
+          cnms_match <- vapply(
+            colnames(lambda[[f]]),
+            function(x) grepl(x, target_cnm), logical(1)
+          )
+          if (any(cnms_match)) {
+            ll <- lambda[[f]][, cnms_match, drop = FALSE] - 2L
+          } else {
+            return(mapping_component)
+          }
 
-  X <- gobj$lmod$X
-  for (f in seq_along(factor_in_fixed)) {
-    if (factor_in_fixed[[f]]) {
-      lv <- load.var[[f]]
-      mappings <- lapply(seq_len(ncol(X)), function(i) {
-        mapping_component <- rep(-1L, nrow(X))
-        target_cnm <- colnames(X)[[i]]
-        cnms_match <- vapply(
-          colnames(lambda[[f]]),
-          function(x) grepl(x, target_cnm), logical(1)
-        )
-        if (any(cnms_match)) {
-          ll <- lambda[[f]][, cnms_match, drop = FALSE] - 2L
-        } else {
-          return(mapping_component)
-        }
+          ll[data[, lv]]
+        })
 
-        ll[data[, lv]]
-      })
+        lambda_mapping_X[[f]] <- do.call(c, mappings)
 
-      lambda_mapping_X <- do.call(c, mappings)
-
-      stopifnot(length(lambda_mapping_X) == length(X))
+        stopifnot(length(lambda_mapping_X[[f]]) == length(X))
+      } else {
+        lambda_mapping_X[[f]] <- rep(-1L, length(X))
+      }
     }
+    lambda_mapping_X <- unlist(do.call(function(...) {
+      mapply(function(...) max(...), ..., SIMPLIFY = FALSE)
+    }, lambda_mapping_X))
+    stopifnot(length(lambda_mapping_X) == length(X))
   }
+
+
 
   vars_in_random <- unique(unlist(gobj$lmod$reTrms$cnms))
   factor_in_random <- factor_finder(factor, vars_in_random)
