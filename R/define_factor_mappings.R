@@ -1,3 +1,12 @@
+mappingunwrapping <- function(input, element, fun = c, recursive = TRUE) {
+  unlist(
+    do.call(function(...) {
+      mapply(fun, ..., SIMPLIFY = FALSE)
+    }, lapply(input, function(x) x[[element]])),
+    recursive = recursive, use.names = FALSE
+  )
+}
+
 extend_lambda <- function(fi) {
   extra_lambdas <- list()
   for (k in seq_along(fi)) {
@@ -159,12 +168,7 @@ define_factor_mappings <- function(
         )
       })
 
-      lambda_mapping_Zt <- unlist(
-        do.call(function(...) {
-          mapply(c, ..., SIMPLIFY = FALSE)
-        }, lapply(mappings, function(x) x$mapping_component)),
-        use.names = FALSE
-      )
+      lambda_mapping_Zt <- mappingunwrapping(mappings, "mapping_component")
 
       if (!is.null(fi)) {
         # Extra loadings needed
@@ -176,11 +180,10 @@ define_factor_mappings <- function(
           c(x, extra_lambdas[[x + 2L]] + mlm)
         })
 
-        lambda_mapping_Zt_covs <- unlist(
-          do.call(function(...) {
-            mapply(function(...) list(...), ..., SIMPLIFY = FALSE)
-          }, lapply(mappings, function(x) x$mapping_component_covs)),
-          recursive = FALSE, use.names = FALSE
+        lambda_mapping_Zt_covs <- mappingunwrapping(
+          mappings, "mapping_component_covs",
+          function(...) list(...),
+          recursive = FALSE
         )
 
         # Add indices to lambda matrix
