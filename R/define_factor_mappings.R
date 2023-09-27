@@ -240,7 +240,6 @@ define_factor_mappings <- function(
         mplist <- squeeze_mappings(lambda_mapping_Zt, lambda_mapping_Zt_covs)
         lambda_mapping_Zt <- mplist$lambda_mapping_Zt
         lambda_mapping_Zt_covs <- mplist$lambda_mapping_Zt_covs
-
       } else {
         lambda_mapping_Zt <- lambda_mapping_Zt[!is.na(lambda_mapping_Zt)]
         stopifnot(length(lambda_mapping_Zt) == sum(diff(Zt@p)))
