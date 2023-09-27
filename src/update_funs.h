@@ -23,8 +23,7 @@ void update_Lambdat(SpMdual<T>& Lambdat, Vdual<T> theta,
 
 template <typename T>
 void update_X(Mdual<T>& X, const Vdual<T>& lambda,
-              const std::vector<std::vector<int>>& lambda_mapping_X,
-              const std::vector<std::vector<double>>& lambda_mapping_X_covs = {}){
+              const std::vector<std::vector<int>>& lambda_mapping_X){
   if(lambda_mapping_X.size() == 0) return;
   for(int i = 0; i < X.size(); i++){
     std::vector<int> newinds = lambda_mapping_X[i];
@@ -34,11 +33,7 @@ void update_X(Mdual<T>& X, const Vdual<T>& lambda,
 
     for(int newind : newinds){
       if(newind != -1){
-        double cov{1};
-        if(!lambda_mapping_X_covs.empty()){
-          cov = lambda_mapping_X_covs[i][j];
-        }
-        loading += lambda(newind) * cov;
+        loading += lambda(newind);
         update = true;
       }
       j++;

@@ -15,7 +15,6 @@ struct parameters{
     const Eigen::VectorXd& u,
     const std::vector<int>& theta_mapping,
     const Rcpp::ListOf<Rcpp::IntegerVector>& lambda_mapping_X0,
-    const Rcpp::ListOf<Rcpp::NumericVector>& lambda_mapping_X_covs0,
     const Rcpp::ListOf<Rcpp::IntegerVector>& lambda_mapping_Zt0,
     const Rcpp::ListOf<Rcpp::NumericVector>& lambda_mapping_Zt_covs0,
     const Eigen::SparseMatrix<double>& Lambdat,
@@ -41,9 +40,6 @@ struct parameters{
     for(int i{}; i < lambda_mapping_Zt0.size(); i++){
       lambda_mapping_Zt.push_back(Rcpp::as<std::vector<int>>(lambda_mapping_Zt0[i]));
     }
-    for(int i{}; i < lambda_mapping_X_covs0.size(); i++){
-      lambda_mapping_Zt_covs.push_back(Rcpp::as<std::vector<double>>(lambda_mapping_X_covs0[i]));
-    }
     for(int i{}; i < lambda_mapping_Zt_covs0.size(); i++){
       lambda_mapping_Zt_covs.push_back(Rcpp::as<std::vector<double>>(lambda_mapping_Zt_covs0[i]));
     }
@@ -58,7 +54,6 @@ struct parameters{
   Vdual<T> u;
   std::vector<int> theta_mapping;
   std::vector<std::vector<int>> lambda_mapping_X = {};
-  std::vector<std::vector<double>> lambda_mapping_X_covs = {};
   std::vector<std::vector<int>> lambda_mapping_Zt = {};
   std::vector<std::vector<double>> lambda_mapping_Zt_covs = {};
   Eigen::SparseMatrix<T> Lambdat;

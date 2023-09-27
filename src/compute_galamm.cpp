@@ -47,7 +47,7 @@ logLikObject<T> logLik(
     parameters<T> parlist, data<T> datlist, std::vector<std::unique_ptr<Model<T>>>& modvec){
 
   update_Zt(datlist.Zt, parlist.lambda, parlist.lambda_mapping_Zt, parlist.lambda_mapping_Zt_covs);
-  update_X(datlist.X, parlist.lambda, parlist.lambda_mapping_X, parlist.lambda_mapping_X_covs);
+  update_X(datlist.X, parlist.lambda, parlist.lambda_mapping_X);
   update_WSqrt(parlist.WSqrt, parlist.weights, parlist.weights_mapping);
 
   Vdual<T> lp = linpred(parlist, datlist);
@@ -141,7 +141,6 @@ Rcpp::List wrapper(
     const Eigen::VectorXd& u_init,
     const Eigen::VectorXd& lambda,
     const Rcpp::ListOf<Rcpp::IntegerVector>& lambda_mapping_X,
-    const Rcpp::ListOf<Rcpp::NumericVector>& lambda_mapping_X_covs,
     const Rcpp::ListOf<Rcpp::IntegerVector>& lambda_mapping_Zt,
     const Rcpp::ListOf<Rcpp::NumericVector>& lambda_mapping_Zt_covs,
     const Eigen::VectorXd& weights,
@@ -159,7 +158,6 @@ Rcpp::List wrapper(
   parameters<T> parlist{
       theta, beta, lambda, u_init, theta_mapping,
       lambda_mapping_X,
-      lambda_mapping_X_covs,
       lambda_mapping_Zt,
       lambda_mapping_Zt_covs,
       Lambdat,
@@ -205,7 +203,6 @@ Rcpp::List marginal_likelihood(
     const Eigen::Map<Eigen::VectorXd> u_init,
     const Eigen::Map<Eigen::VectorXd> lambda,
     Rcpp::ListOf<Rcpp::IntegerVector> lambda_mapping_X,
-    Rcpp::ListOf<Rcpp::IntegerVector> lambda_mapping_X_covs,
     Rcpp::ListOf<Rcpp::IntegerVector> lambda_mapping_Zt,
     Rcpp::ListOf<Rcpp::NumericVector> lambda_mapping_Zt_covs,
     const Eigen::Map<Eigen::VectorXd> weights,
@@ -223,19 +220,19 @@ Rcpp::List marginal_likelihood(
   if(hessian){
     return wrapper<dual2nd>(
       y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, u_init, lambda,
-      lambda_mapping_X, lambda_mapping_X_covs, lambda_mapping_Zt, lambda_mapping_Zt_covs,
+      lambda_mapping_X, lambda_mapping_Zt, lambda_mapping_Zt_covs,
       weights, weights_mapping, family, family_mapping, k,
       maxit_conditional_modes, epsilon_u, reduced_hessian);
   } else if(gradient){
     return wrapper<dual1st>(
       y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, u_init, lambda,
-      lambda_mapping_X, lambda_mapping_X_covs, lambda_mapping_Zt, lambda_mapping_Zt_covs,
+      lambda_mapping_X,lambda_mapping_Zt, lambda_mapping_Zt_covs,
       weights, weights_mapping, family, family_mapping, k,
       maxit_conditional_modes, epsilon_u);
   } else {
     return wrapper<double>(
       y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, u_init, lambda,
-      lambda_mapping_X, lambda_mapping_X_covs, lambda_mapping_Zt, lambda_mapping_Zt_covs,
+      lambda_mapping_X, lambda_mapping_Zt, lambda_mapping_Zt_covs,
       weights, weights_mapping, family, family_mapping, k,
       maxit_conditional_modes, epsilon_u);
   }
