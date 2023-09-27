@@ -264,7 +264,9 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
     if (length(weights_obj$flist) > 1) {
       stop("Multiple grouping terms in weights not yet implemented.")
     }
+    delta <- diff(weights_obj$Zt@p)
     weights_mapping <- as.integer(weights_obj$flist[[1]]) - 2L
+    weights_mapping[delta == 0] <- -1L
     weights_inds <- length(unique(weights_mapping)) +
       max(c(theta_inds, beta_inds, lambda_inds)) - 1L
   } else {
