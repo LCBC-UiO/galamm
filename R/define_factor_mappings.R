@@ -108,7 +108,7 @@ define_factor_mappings <- function(
           inds <- which(data[, cn] != 0)
 
           if (!is.null(fi)) {
-            if (j != 1 || i != 1) {
+            if (Reduce(sum, cnms_match) > 1) {
               stop(
                 "Interaction with latent variables currently only ",
                 "possible when the loading matrix has a single column."
