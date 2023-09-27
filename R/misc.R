@@ -1,38 +1,39 @@
 setup_factor <- function(load.var, lambda, factor, data) {
   parameter_index <- 2
-  if (!is.null(factor)) {
-    eval(parse(text = paste0(
-      "data$", load.var,
-      "<- factor(data$", load.var, ")"
-    )))
-    for (i in seq_along(factor)) {
-      lambda[[i]][is.na(lambda[[i]])] <-
-        seq(from = parameter_index, length.out = sum(is.na(lambda[[i]])))
-      colnames(lambda[[i]]) <- factor[[i]]
 
-      if (any(factor[[i]] %in% colnames(data))) {
-        stop("Factor already a column in data.")
-      }
-      for (j in seq_along(factor[[i]])) {
-        if (length(unique(data[, load.var])) != length(lambda[[i]][, j])) {
-          stop(
-            "lambda matrix must contain one row ",
-            "for each element in load.var"
-          )
-        }
-        eval(parse(text = paste("data$", factor[[i]][[j]], "<-1")))
-        rows_to_zero <-
-          data[, load.var] %in% levels(data[, load.var])[lambda[[i]][, j] == 0]
-        eval(
-          parse(
-            text =
-              paste("data$", factor[[i]][[j]], "[rows_to_zero] <- 0")
-          )
+  for (lv in load.var) {
+    eval(parse(text = paste0("data$", lv, "<- factor(data$", lv, ")")))
+  }
+
+  for (i in seq_along(factor)) {
+    lv <- load.var[[i]]
+    lambda[[i]][is.na(lambda[[i]])] <-
+      seq(from = parameter_index, length.out = sum(is.na(lambda[[i]])))
+    colnames(lambda[[i]]) <- factor[[i]]
+
+    if (any(factor[[i]] %in% colnames(data))) {
+      stop("Factor already a column in data.")
+    }
+    for (j in seq_along(factor[[i]])) {
+      if (length(unique(data[, lv])) != length(lambda[[i]][, j])) {
+        stop(
+          "lambda matrix must contain one row ",
+          "for each element in load.var"
         )
       }
-      parameter_index <- max(lambda[[i]]) + 1
+      eval(parse(text = paste("data$", factor[[i]][[j]], "<-1")))
+      rows_to_zero <-
+        data[, lv] %in% levels(data[, lv])[lambda[[i]][, j] == 0]
+      eval(
+        parse(
+          text =
+            paste("data$", factor[[i]][[j]], "[rows_to_zero] <- 0")
+        )
+      )
     }
+    parameter_index <- max(lambda[[i]]) + 1
   }
+
   list(data = data, lambda = lambda)
 }
 
