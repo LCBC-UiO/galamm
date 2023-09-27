@@ -149,7 +149,6 @@ Rcpp::List wrapper(
     const Eigen::VectorXi& family_mapping,
     const Eigen::VectorXd& k,
     const int& maxit_conditional_modes,
-    const double& epsilon_u,
     const bool reduced_hessian = false){
 
 
@@ -162,7 +161,7 @@ Rcpp::List wrapper(
       lambda_mapping_Zt_covs,
       Lambdat,
       weights, weights_mapping,
-      family_mapping, maxit_conditional_modes, epsilon_u, static_cast<int>(y.size())};
+      family_mapping, maxit_conditional_modes, static_cast<int>(y.size())};
 
   std::vector<std::unique_ptr<Model<T>>> mod;
 
@@ -213,7 +212,6 @@ Rcpp::List marginal_likelihood(
     const int maxit_conditional_modes,
     const bool gradient,
     const bool hessian,
-    double epsilon_u,
     bool reduced_hessian = false
 ){
 
@@ -222,19 +220,19 @@ Rcpp::List marginal_likelihood(
       y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, u_init, lambda,
       lambda_mapping_X, lambda_mapping_Zt, lambda_mapping_Zt_covs,
       weights, weights_mapping, family, family_mapping, k,
-      maxit_conditional_modes, epsilon_u, reduced_hessian);
+      maxit_conditional_modes, reduced_hessian);
   } else if(gradient){
     return wrapper<dual1st>(
       y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, u_init, lambda,
       lambda_mapping_X,lambda_mapping_Zt, lambda_mapping_Zt_covs,
       weights, weights_mapping, family, family_mapping, k,
-      maxit_conditional_modes, epsilon_u);
+      maxit_conditional_modes);
   } else {
     return wrapper<double>(
       y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, u_init, lambda,
       lambda_mapping_X, lambda_mapping_Zt, lambda_mapping_Zt_covs,
       weights, weights_mapping, family, family_mapping, k,
-      maxit_conditional_modes, epsilon_u);
+      maxit_conditional_modes);
   }
 
 }

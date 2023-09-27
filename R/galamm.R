@@ -313,7 +313,6 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
       maxit_conditional_modes = maxit_conditional_modes,
       gradient = gradient,
       hessian = hessian,
-      epsilon_u = 1e-10,
       reduced_hessian = control$reduced_hessian
     )
   }

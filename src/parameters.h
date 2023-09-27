@@ -22,17 +22,19 @@ struct parameters{
     const std::vector<int>& weights_mapping,
     const Eigen::VectorXi& family_mapping,
     const int& maxit_conditional_modes,
-    const double& epsilon_u,
     const int& n
   ) :
-  theta { theta.cast<T>() }, beta { beta.cast<T>() }, lambda { lambda.cast<T>() },
-  u { u.cast<T>() }, theta_mapping { theta_mapping },
+  theta { theta.cast<T>() },
+  beta { beta.cast<T>() },
+  lambda { lambda.cast<T>() },
+  u { u.cast<T>() },
+  theta_mapping { theta_mapping },
   Lambdat { Lambdat.cast<T>() },
   weights { weights.cast<T>() },
   weights_mapping { weights_mapping },
   family_mapping { family_mapping },
   maxit_conditional_modes { maxit_conditional_modes },
-  epsilon_u { epsilon_u }, n { n }
+  n { n }
   {
     for(int i{}; i < lambda_mapping_X0.size(); i++){
       lambda_mapping_X.push_back(Rcpp::as<std::vector<int>>(lambda_mapping_X0[i]));
@@ -62,7 +64,6 @@ struct parameters{
   Eigen::VectorXi family_mapping;
   Ddual<T> WSqrt;
   int maxit_conditional_modes;
-  double epsilon_u;
   double lossvalue_tol{.01};
   int n;
 };
