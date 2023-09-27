@@ -35,7 +35,7 @@
 #'
 #' @seealso [galamm()]
 #'
-#' @family modeling functions
+#' @family optimization functions
 #'
 #' @examples
 #' # Define control object with quite a high degree of verbosity (trace = 6)

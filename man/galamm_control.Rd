@@ -70,10 +70,7 @@ control <- galamm_control(optim_control = list(trace = 6, lmm = 20))
 \seealso{
 \code{\link[=galamm]{galamm()}}
 
-Other modeling functions: 
-\code{\link{extract_optim_parameters.galamm}()},
-\code{\link{galamm}()},
-\code{\link{s}()},
-\code{\link{t2}()}
+Other optimization functions: 
+\code{\link{extract_optim_parameters.galamm}()}
 }
-\concept{modeling functions}
+\concept{optimization functions}
