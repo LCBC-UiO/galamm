@@ -1,3 +1,46 @@
+squeeze_mappings <- function(lambda_mapping_Zt, lambda_mapping_Zt_covs) {
+  ind <- 1L
+  security_counter <- 1L
+  while (TRUE) {
+    if (ind > length(lambda_mapping_Zt_covs)) break
+
+    lzt <- lambda_mapping_Zt[[ind]]
+    lztcov <- lambda_mapping_Zt_covs[[ind]]
+
+    if (all(is.na(lzt))) {
+      if (length(lzt) > 1) {
+        lambda_mapping_Zt[[ind]] <- lambda_mapping_Zt[[ind]][-1]
+      } else {
+        lambda_mapping_Zt <- lambda_mapping_Zt[-ind]
+      }
+      if (length(lztcov) > 1) {
+        lambda_mapping_Zt_covs[[ind]] <- lambda_mapping_Zt_covs[[ind]][-1]
+      } else {
+        lambda_mapping_Zt_covs <- lambda_mapping_Zt_covs[-ind]
+      }
+    } else if (length(lzt) != length(lztcov)) {
+      lambda_mapping_Zt_covs <- c(
+        lambda_mapping_Zt_covs[seq_len(ind - 1L)],
+        lztcov[[1]], lztcov[-1],
+        lambda_mapping_Zt_covs[
+          seq_len(length(lambda_mapping_Zt_covs) - ind) + ind
+        ]
+      )
+      ind <- ind + 1L
+    } else {
+      ind <- ind + 1L
+    }
+    security_counter <- security_counter + 1L
+    if (security_counter > 1e9) {
+      stop("Loop is probably too long")
+    }
+  }
+  list(
+    lambda_mapping_Zt = lambda_mapping_Zt,
+    lambda_mapping_Zt_covs = lambda_mapping_Zt_covs
+  )
+}
+
 mappingunwrapping <- function(input, element, fun = c, recursive = TRUE) {
   unlist(
     do.call(function(...) {
@@ -194,42 +237,10 @@ define_factor_mappings <- function(
 
         # Go through lambda_mapping_Zt_covs and make sure it matches
         # lambda_mapping_Zt
-        ind <- 1L
-        security_counter <- 1L
-        while (TRUE) {
-          if (ind > length(lambda_mapping_Zt_covs)) break
+        mplist <- squeeze_mappings(lambda_mapping_Zt, lambda_mapping_Zt_covs)
+        lambda_mapping_Zt <- mplist$lambda_mapping_Zt
+        lambda_mapping_Zt_covs <- mplist$lambda_mapping_Zt_covs
 
-          lzt <- lambda_mapping_Zt[[ind]]
-          lztcov <- lambda_mapping_Zt_covs[[ind]]
-
-          if (all(is.na(lzt))) {
-            if (length(lzt) > 1) {
-              lambda_mapping_Zt[[ind]] <- lambda_mapping_Zt[[ind]][-1]
-            } else {
-              lambda_mapping_Zt <- lambda_mapping_Zt[-ind]
-            }
-            if (length(lztcov) > 1) {
-              lambda_mapping_Zt_covs[[ind]] <- lambda_mapping_Zt_covs[[ind]][-1]
-            } else {
-              lambda_mapping_Zt_covs <- lambda_mapping_Zt_covs[-ind]
-            }
-          } else if (length(lzt) != length(lztcov)) {
-            lambda_mapping_Zt_covs <- c(
-              lambda_mapping_Zt_covs[seq_len(ind - 1L)],
-              lztcov[[1]], lztcov[-1],
-              lambda_mapping_Zt_covs[
-                seq_len(length(lambda_mapping_Zt_covs) - ind) + ind
-              ]
-            )
-            ind <- ind + 1L
-          } else {
-            ind <- ind + 1L
-          }
-          security_counter <- security_counter + 1L
-          if (security_counter > 1e9) {
-            stop("Loop is probably too long")
-          }
-        }
       } else {
         lambda_mapping_Zt <- lambda_mapping_Zt[!is.na(lambda_mapping_Zt)]
         stopifnot(length(lambda_mapping_Zt) == sum(diff(Zt@p)))
