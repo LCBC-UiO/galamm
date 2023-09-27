@@ -99,6 +99,34 @@ We can also look at its summary output.
 summary(mixed_resp)
 ```
 
+### Mixed Response and Heteroscedastic Residuals
+
+Mixed response models can be combined with heteroscedastic residuals, which are described in the vignette on [linear mixed models with heteroscedastic residuals](https://lcbc-uio.github.io/galamm/articles/lmm_heteroscedastic.html). However, some care is needed in this case. We illustrate with the dataset `mresp_hsced`, whose first few lines are shown below:
+
+```{r}
+head(mresp_hsced)
+```
+
+This dataset has the same structure as `mresp`, except that the residual standard deviation of the normally distributed responses vary according to the variable `grp`, which has two levels. Two fit a model on this dataset with heteroscedastic residuals for the normally distributed variable, we must use the dummy variable `isgauss` when setting up the `weights`. This is illustrated below. By writing `~ (0 + isgauss | grp)` we specify that the heteroscedasticity is assumed between levels of `grp`, but that this only applies when `isgauss` is nonzero. Hence, the binomially distributed responses don't have any heteroscedastic residuals estimated, since for these observations the dispersion parameter $\phi$ is fixed to 1. We also ignore the factor loadings for simplicity.
+
+```{r}
+family_mapping <- ifelse(mresp$itemgroup == "a", 1L, 2L)
+mod <- galamm(
+  formula = y ~ x + (1 | id),
+  weights = ~ (0 + isgauss | grp),
+  family = c(gaussian, binomial),
+  family_mapping = family_mapping,
+  data = mresp_hsced
+)
+```
+
+
+The summary output now shows that we also have estimated a variance function.
+
+```{r}
+summary(mod)
+```
+
 
 ## Covariate Measurement Error Model
 

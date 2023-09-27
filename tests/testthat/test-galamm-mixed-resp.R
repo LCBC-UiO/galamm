@@ -118,11 +118,6 @@ test_that("Covariate measurement error model works", {
 
 
 test_that("Mixed response and heteroscedastic error works", {
-  set.seed(33)
-  mresp$grp <- sample(c("a", "b"), size = nrow(mresp), replace = TRUE)
-  mresp$isgauss <- as.numeric(mresp$itemgroup == "a")
-  mresp$y <- ifelse(mresp$itemgroup == "a" & mresp$grp == "a",
-                    mresp$y + rnorm(nrow(mresp), sd = 5), mresp$y)
 
   family_mapping <- ifelse(mresp$itemgroup == "a", 1L, 2L)
   mod <- galamm(
@@ -130,7 +125,7 @@ test_that("Mixed response and heteroscedastic error works", {
     weights = ~ (0 + isgauss | grp),
     family = c(gaussian, binomial),
     family_mapping = family_mapping,
-    data = mresp
+    data = mresp_hsced
   )
   expect_snapshot(print(summary(mod), digits = 2))
 

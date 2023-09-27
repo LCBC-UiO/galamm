@@ -40,6 +40,29 @@
 #' @family datasets
 "mresp"
 
+#' Simulated Mixed Response Data with Heteroscedastic Residuals
+#'
+#' Mixed response dataset with one set of normally distributed
+#' responses and one set of binomially distributed responses. The normally
+#' distributed response follow two different residual standard deviations.
+#'
+#' @format ## `mresp` A data frame with 4000 rows and 5 columns:
+#' \describe{
+#'   \item{id}{Subject ID.}
+#'   \item{x}{Predictor variable.}
+#'   \item{y}{Response.}
+#'   \item{itemgroup}{Factor variable which equals "a" for the normally
+#'   distributed responses and "b" for the binomially distributed response
+#'   (with 1 trial).}
+#'   \item{grp}{Grouping variable denoting which of the two residual standard
+#'   deviations apply. Only relevant for the normally distributed responses.}
+#'   \item{isgauss}{Dummy variable indicating whether the observation on the
+#'   given line is normally (Gaussian) distributed or not.}
+#' }
+#'
+#' @family datasets
+"mresp_hsced"
+
 #' Diet Data
 #'
 #' Longitudinal epilepsy data from

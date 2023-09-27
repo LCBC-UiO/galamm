@@ -18,7 +18,6 @@ vignette: >
 ```r
 library(galamm)
 library(lme4)
-#> Loading required package: Matrix
 ```
 
 This vignette describes how `galamm` can be used to estimate models with mixed response types.
@@ -134,6 +133,69 @@ summary(mixed_resp)
 #>             Estimate Std. Error z value  Pr(>|z|)
 #> (Intercept)    0.041    0.05803  0.7065 4.799e-01
 #> x              0.971    0.08594 11.2994 1.321e-29
+```
+
+### Mixed Response and Heteroscedastic Residuals
+
+Mixed response models can be combined with heteroscedastic residuals, which are described in the vignette on [linear mixed models with heteroscedastic residuals](https://lcbc-uio.github.io/galamm/articles/lmm_heteroscedastic.html). However, some care is needed in this case. We illustrate with the dataset `mresp_hsced`, whose first few lines are shown below:
+
+
+```r
+head(mresp_hsced)
+#>   id         x           y itemgroup grp isgauss
+#> 1  1 0.8638214   0.2866329         a   b       1
+#> 2  1 0.7676133   2.5647490         a   b       1
+#> 3  1 0.8812059   1.0000000         b   b       0
+#> 4  1 0.2239725   1.0000000         b   b       0
+#> 5  2 0.7215696 -11.0020148         a   a       1
+#> 6  2 0.6924851   1.1750286         a   b       1
+```
+
+This dataset has the same structure as `mresp`, except that the residual standard deviation of the normally distributed responses vary according to the variable `grp`, which has two levels. Two fit a model on this dataset with heteroscedastic residuals for the normally distributed variable, we must use the dummy variable `isgauss` when setting up the `weights`. This is illustrated below. By writing `~ (0 + isgauss | grp)` we specify that the heteroscedasticity is assumed between levels of `grp`, but that this only applies when `isgauss` is nonzero. Hence, the binomially distributed responses don't have any heteroscedastic residuals estimated, since for these observations the dispersion parameter $\phi$ is fixed to 1. We also ignore the factor loadings for simplicity.
+
+
+```r
+family_mapping <- ifelse(mresp$itemgroup == "a", 1L, 2L)
+mod <- galamm(
+  formula = y ~ x + (1 | id),
+  weights = ~ (0 + isgauss | grp),
+  family = c(gaussian, binomial),
+  family_mapping = family_mapping,
+  data = mresp_hsced
+)
+```
+
+
+The summary output now shows that we also have estimated a variance function.
+
+
+```r
+summary(mod)
+#> GALAMM fit by maximum marginal likelihood.
+#> Formula: y ~ x + (1 | id)
+#>    Data: mresp_hsced
+#> Weights: ~(0 + isgauss | grp)
+#> 
+#>      AIC      BIC   logLik deviance df.resid 
+#>  12356.9  12388.3  -6173.4  31426.4     3995 
+#> 
+#> Scaled residuals: 
+#>      Min       1Q   Median       3Q      Max 
+#> -15.2275  -0.4025   0.1262   0.6757  16.0284 
+#> 
+#> Random effects:
+#>  Groups Name        Variance Std.Dev.
+#>  id     (Intercept) 0        0       
+#> Number of obs: 4000, groups:  id, 1000
+#> 
+#> Variance function:
+#>       a       b 
+#> 1.00000 0.07756 
+#> 
+#> Fixed effects:
+#>             Estimate Std. Error z value  Pr(>|z|)
+#> (Intercept)  0.01523    0.06303  0.2416 8.091e-01
+#> x            0.99563    0.11153  8.9267 4.388e-19
 ```
 
 
