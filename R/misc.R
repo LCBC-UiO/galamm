@@ -1,13 +1,12 @@
 setup_factor <- function(load.var, lambda, factor, data) {
   parameter_index <- 2
 
-  for(lv in load.var) {
-    eval(parse(text = paste0("data$", lv,
-                             "<- factor(data$", lv, ")"
-    )))
+  for (lv in load.var) {
+    eval(parse(text = paste0("data$", lv, "<- factor(data$", lv, ")")))
   }
 
   for (i in seq_along(factor)) {
+    lv <- load.var[[i]]
     lambda[[i]][is.na(lambda[[i]])] <-
       seq(from = parameter_index, length.out = sum(is.na(lambda[[i]])))
     colnames(lambda[[i]]) <- factor[[i]]
@@ -16,7 +15,7 @@ setup_factor <- function(load.var, lambda, factor, data) {
       stop("Factor already a column in data.")
     }
     for (j in seq_along(factor[[i]])) {
-      if (length(unique(data[, load.var])) != length(lambda[[i]][, j])) {
+      if (length(unique(data[, lv])) != length(lambda[[i]][, j])) {
         stop(
           "lambda matrix must contain one row ",
           "for each element in load.var"
@@ -24,7 +23,7 @@ setup_factor <- function(load.var, lambda, factor, data) {
       }
       eval(parse(text = paste("data$", factor[[i]][[j]], "<-1")))
       rows_to_zero <-
-        data[, load.var] %in% levels(data[, load.var])[lambda[[i]][, j] == 0]
+        data[, lv] %in% levels(data[, lv])[lambda[[i]][, j] == 0]
       eval(
         parse(
           text =

@@ -98,6 +98,7 @@ define_factor_mappings <- function(
   X <- gobj$lmod$X
   for (f in seq_along(factor_in_fixed)) {
     if (factor_in_fixed[[f]]) {
+      lv <- load.var[[f]]
       mappings <- lapply(seq_len(ncol(X)), function(i) {
         mapping_component <- rep(-1L, nrow(X))
         target_cnm <- colnames(X)[[i]]
@@ -111,7 +112,7 @@ define_factor_mappings <- function(
           return(mapping_component)
         }
 
-        ll[data[, load.var]]
+        ll[data[, lv]]
       })
 
       lambda_mapping_X <- do.call(c, mappings)
@@ -148,6 +149,7 @@ define_factor_mappings <- function(
     deltas <- lapply(gobj$lmod$reTrms$Ztlist, function(x) diff(x@p))
 
     if (factor_in_random[[f]]) {
+      lv <- load.var[[f]]
       mappings <- lapply(seq_along(cnms), function(i) {
         cnm <- cnms[[i]]
         cnm_match <- cnms_match[[i]]
@@ -174,13 +176,18 @@ define_factor_mappings <- function(
           return(ret)
         }
 
+        dx <- ncol(Zt) / length(cnm)
         for (j in seq_along(cnm)) {
           cn <- unlist(lapply(factor[[f]], function(x) {
             m <- regexpr(x, cnm[[j]], fixed = TRUE)
             regmatches(cnm[[j]], m)
           }))
 
-          inds <- which(data[, cn] != 0)
+          inner_inds <- seq(from = (j - 1) * dx + 1, to = dx * j, by = 1)
+          inds <- unname(which(unname(Matrix::colSums(
+            gobj$lmod$reTrms$Ztlist[[i]]
+          ))[inner_inds] != 0)) +
+            min(inner_inds) - 1L
 
           if (!is.null(fi)) {
             if (Reduce(sum, cnms_match) > 1) {
@@ -201,7 +208,7 @@ define_factor_mappings <- function(
 
           mapping_component[inds_expanded] <-
             Map(function(x, y) rep(ll[x, cn], each = y),
-              x = data[inds, load.var], y = delta[inds]
+              x = data[inds, lv], y = delta[inds]
             )
         }
 
