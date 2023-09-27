@@ -1,5 +1,5 @@
 ---
-title: "Interactions Between Latent and Observed Variables"
+title: "Interactions Between Latent and Observed Covariates"
 output:
   rmarkdown::html_vignette:
     fig_width: 6
