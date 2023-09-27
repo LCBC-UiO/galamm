@@ -1,3 +1,10 @@
+extract_name <- function(ff, cnmf) {
+  unlist(lapply(ff, function(x) {
+    m <- regexpr(x, cnmf, fixed = TRUE)
+    regmatches(cnmf, m)
+  }))
+}
+
 squeeze_mappings <- function(lambda_mapping_Zt, lambda_mapping_Zt_covs) {
   ind <- 1L
   security_counter <- 1L
@@ -178,10 +185,7 @@ define_factor_mappings <- function(
 
         dx <- ncol(Zt) / length(cnm)
         for (j in seq_along(cnm)) {
-          cn <- unlist(lapply(factor[[f]], function(x) {
-            m <- regexpr(x, cnm[[j]], fixed = TRUE)
-            regmatches(cnm[[j]], m)
-          }))
+          cn <- extract_name(factor[[f]], cnm[[j]])
 
           inner_inds <- seq(from = (j - 1) * dx + 1, to = dx * j, by = 1)
           inds <- unname(which(unname(Matrix::colSums(
