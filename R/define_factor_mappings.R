@@ -137,21 +137,14 @@ define_factor_mappings <- function(
     stopifnot(length(lambda_mapping_X) == length(X))
   }
 
-
-
   vars_in_random <- unique(unlist(gobj$lmod$reTrms$cnms))
   factor_in_random <- factor_finder(factor, vars_in_random)
   Zt <- gobj$lmod$reTrms$Zt
 
-  if (any(factor_in_random)) {
-    lambda_mapping_Zt <- rep(-1L, sum(diff(Zt@p)))
-  } else {
+  if (!any(factor_in_random)) {
     lambda_mapping_Zt <- integer()
   }
-  if (!is.null(factor_interactions)) {
-    lambda_mapping_Zt_covs <-
-      vector(mode = "list", length = length(lambda_mapping_Zt))
-  } else {
+  if (is.null(factor_interactions)) {
     lambda_mapping_Zt_covs <- integer()
   }
 
