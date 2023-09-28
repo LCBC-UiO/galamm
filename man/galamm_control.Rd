@@ -8,6 +8,7 @@ galamm_control(
   optim_control = list(),
   method = c("L-BFGS-B", "Nelder-Mead"),
   maxit_conditional_modes = 10,
+  pwirls_tol_abs = 0.01,
   reduced_hessian = FALSE
 )
 }
@@ -30,6 +31,11 @@ box constraints implemented in \code{lme4::Nelder_Mead}.}
 iteratively reweighted least squares algorithm. Ignored if \code{family =
   "gaussian"} for all observations, since then a single step gives the exact
 answer.}
+
+\item{pwirls_tol_abs}{Absolute convergence criterion for penalized
+iteratively reweighted least squares algorithm. Defaults to 0.01, which
+means that when the reduction in marginal likelihood between two iterations
+is below 0.01, the iterations stop.}
 
 \item{reduced_hessian}{Logical value. Defaults to \code{TRUE}, which means
 that the full Hessian matrix at the maximum marginal likelihood solution is
