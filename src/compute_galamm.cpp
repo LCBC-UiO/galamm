@@ -112,7 +112,7 @@ logLikObject<T> logLik(
       }
     }
     // Cannot improve likelihood more in this PWIRLS iteration
-    if((lossvalue_prev - lossvalue_new) < parlist.lossvalue_tol){
+    if(abs(lossvalue_prev - lossvalue_new) < parlist.lossvalue_tol){
       break;
     }
     lossvalue_prev = lossvalue_new;
