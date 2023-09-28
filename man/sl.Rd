@@ -31,6 +31,7 @@ which stands for "loading", has been added to avoid namespace conflicts with
 dat <- subset(cognition, domain == 1 & timepoint == 1)
 loading_matrix <- matrix(c(1, NA, NA), ncol = 1)
 
+
 # Model with four thin-plate regression splines as basis functions
 mod <- galamm(
   formula = y ~ 0 + item + sl(x, k = 4, load.var = "loading"),
@@ -49,6 +50,10 @@ mod <- galamm(
   lambda = list(loading_matrix),
   factor = list("loading")
 )
+
+# The sl function will rarely be called directly, but if done, it returns
+# data needed to set up the smooth terms.
+a <- sl(x, load.var = "loading")
 
 }
 \references{

@@ -22,6 +22,7 @@ struct parameters{
     const std::vector<int>& weights_mapping,
     const Eigen::VectorXi& family_mapping,
     const int& maxit_conditional_modes,
+    const double& lossvalue_tol,
     const int& n
   ) :
   theta { theta.cast<T>() },
@@ -34,6 +35,7 @@ struct parameters{
   weights_mapping { weights_mapping },
   family_mapping { family_mapping },
   maxit_conditional_modes { maxit_conditional_modes },
+  lossvalue_tol { lossvalue_tol },
   n { n }
   {
     for(int i{}; i < lambda_mapping_X0.size(); i++){
@@ -64,7 +66,7 @@ struct parameters{
   Eigen::VectorXi family_mapping;
   Ddual<T> WSqrt;
   int maxit_conditional_modes;
-  double lossvalue_tol{.01};
+  double lossvalue_tol;
   int n;
 };
 

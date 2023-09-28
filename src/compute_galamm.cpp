@@ -112,7 +112,7 @@ logLikObject<T> logLik(
       }
     }
     // Cannot improve likelihood more in this PWIRLS iteration
-    if((lossvalue_prev - lossvalue_new) < parlist.lossvalue_tol){
+    if(abs(lossvalue_prev - lossvalue_new) < parlist.lossvalue_tol){
       break;
     }
     lossvalue_prev = lossvalue_new;
@@ -149,6 +149,7 @@ Rcpp::List wrapper(
     const Eigen::VectorXi& family_mapping,
     const Eigen::VectorXd& k,
     const int& maxit_conditional_modes,
+    const double& lossvalue_tol,
     const bool reduced_hessian = false){
 
 
@@ -161,7 +162,8 @@ Rcpp::List wrapper(
       lambda_mapping_Zt_covs,
       Lambdat,
       weights, weights_mapping,
-      family_mapping, maxit_conditional_modes, static_cast<int>(y.size())};
+      family_mapping, maxit_conditional_modes, lossvalue_tol,
+      static_cast<int>(y.size())};
 
   std::vector<std::unique_ptr<Model<T>>> mod;
 
@@ -210,6 +212,7 @@ Rcpp::List marginal_likelihood(
     const Eigen::Map<Eigen::VectorXi> family_mapping,
     const Eigen::Map<Eigen::VectorXd> k,
     const int maxit_conditional_modes,
+    const double lossvalue_tol,
     const bool gradient,
     const bool hessian,
     bool reduced_hessian = false
@@ -220,19 +223,19 @@ Rcpp::List marginal_likelihood(
       y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, u_init, lambda,
       lambda_mapping_X, lambda_mapping_Zt, lambda_mapping_Zt_covs,
       weights, weights_mapping, family, family_mapping, k,
-      maxit_conditional_modes, reduced_hessian);
+      maxit_conditional_modes, lossvalue_tol, reduced_hessian);
   } else if(gradient){
     return wrapper<dual1st>(
       y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, u_init, lambda,
       lambda_mapping_X,lambda_mapping_Zt, lambda_mapping_Zt_covs,
       weights, weights_mapping, family, family_mapping, k,
-      maxit_conditional_modes);
+      maxit_conditional_modes, lossvalue_tol);
   } else {
     return wrapper<double>(
       y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, u_init, lambda,
       lambda_mapping_X, lambda_mapping_Zt, lambda_mapping_Zt_covs,
       weights, weights_mapping, family, family_mapping, k,
-      maxit_conditional_modes);
+      maxit_conditional_modes, lossvalue_tol);
   }
 
 }

@@ -12,8 +12,8 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // marginal_likelihood
-Rcpp::List marginal_likelihood(const Eigen::Map<Eigen::VectorXd> y, const Eigen::Map<Eigen::VectorXd> trials, const Eigen::Map<Eigen::MatrixXd> X, const Eigen::MappedSparseMatrix<double> Zt, const Eigen::MappedSparseMatrix<double> Lambdat, const Eigen::Map<Eigen::VectorXd> beta, const Eigen::Map<Eigen::VectorXd> theta, const std::vector<int> theta_mapping, const Eigen::Map<Eigen::VectorXd> u_init, const Eigen::Map<Eigen::VectorXd> lambda, Rcpp::ListOf<Rcpp::IntegerVector> lambda_mapping_X, Rcpp::ListOf<Rcpp::IntegerVector> lambda_mapping_Zt, Rcpp::ListOf<Rcpp::NumericVector> lambda_mapping_Zt_covs, const Eigen::Map<Eigen::VectorXd> weights, const std::vector<int> weights_mapping, const std::vector<std::string> family, const Eigen::Map<Eigen::VectorXi> family_mapping, const Eigen::Map<Eigen::VectorXd> k, const int maxit_conditional_modes, const bool gradient, const bool hessian, bool reduced_hessian);
-RcppExport SEXP _galamm_marginal_likelihood(SEXP ySEXP, SEXP trialsSEXP, SEXP XSEXP, SEXP ZtSEXP, SEXP LambdatSEXP, SEXP betaSEXP, SEXP thetaSEXP, SEXP theta_mappingSEXP, SEXP u_initSEXP, SEXP lambdaSEXP, SEXP lambda_mapping_XSEXP, SEXP lambda_mapping_ZtSEXP, SEXP lambda_mapping_Zt_covsSEXP, SEXP weightsSEXP, SEXP weights_mappingSEXP, SEXP familySEXP, SEXP family_mappingSEXP, SEXP kSEXP, SEXP maxit_conditional_modesSEXP, SEXP gradientSEXP, SEXP hessianSEXP, SEXP reduced_hessianSEXP) {
+Rcpp::List marginal_likelihood(const Eigen::Map<Eigen::VectorXd> y, const Eigen::Map<Eigen::VectorXd> trials, const Eigen::Map<Eigen::MatrixXd> X, const Eigen::MappedSparseMatrix<double> Zt, const Eigen::MappedSparseMatrix<double> Lambdat, const Eigen::Map<Eigen::VectorXd> beta, const Eigen::Map<Eigen::VectorXd> theta, const std::vector<int> theta_mapping, const Eigen::Map<Eigen::VectorXd> u_init, const Eigen::Map<Eigen::VectorXd> lambda, Rcpp::ListOf<Rcpp::IntegerVector> lambda_mapping_X, Rcpp::ListOf<Rcpp::IntegerVector> lambda_mapping_Zt, Rcpp::ListOf<Rcpp::NumericVector> lambda_mapping_Zt_covs, const Eigen::Map<Eigen::VectorXd> weights, const std::vector<int> weights_mapping, const std::vector<std::string> family, const Eigen::Map<Eigen::VectorXi> family_mapping, const Eigen::Map<Eigen::VectorXd> k, const int maxit_conditional_modes, const double lossvalue_tol, const bool gradient, const bool hessian, bool reduced_hessian);
+RcppExport SEXP _galamm_marginal_likelihood(SEXP ySEXP, SEXP trialsSEXP, SEXP XSEXP, SEXP ZtSEXP, SEXP LambdatSEXP, SEXP betaSEXP, SEXP thetaSEXP, SEXP theta_mappingSEXP, SEXP u_initSEXP, SEXP lambdaSEXP, SEXP lambda_mapping_XSEXP, SEXP lambda_mapping_ZtSEXP, SEXP lambda_mapping_Zt_covsSEXP, SEXP weightsSEXP, SEXP weights_mappingSEXP, SEXP familySEXP, SEXP family_mappingSEXP, SEXP kSEXP, SEXP maxit_conditional_modesSEXP, SEXP lossvalue_tolSEXP, SEXP gradientSEXP, SEXP hessianSEXP, SEXP reduced_hessianSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -36,16 +36,17 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Eigen::Map<Eigen::VectorXi> >::type family_mapping(family_mappingSEXP);
     Rcpp::traits::input_parameter< const Eigen::Map<Eigen::VectorXd> >::type k(kSEXP);
     Rcpp::traits::input_parameter< const int >::type maxit_conditional_modes(maxit_conditional_modesSEXP);
+    Rcpp::traits::input_parameter< const double >::type lossvalue_tol(lossvalue_tolSEXP);
     Rcpp::traits::input_parameter< const bool >::type gradient(gradientSEXP);
     Rcpp::traits::input_parameter< const bool >::type hessian(hessianSEXP);
     Rcpp::traits::input_parameter< bool >::type reduced_hessian(reduced_hessianSEXP);
-    rcpp_result_gen = Rcpp::wrap(marginal_likelihood(y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, u_init, lambda, lambda_mapping_X, lambda_mapping_Zt, lambda_mapping_Zt_covs, weights, weights_mapping, family, family_mapping, k, maxit_conditional_modes, gradient, hessian, reduced_hessian));
+    rcpp_result_gen = Rcpp::wrap(marginal_likelihood(y, trials, X, Zt, Lambdat, beta, theta, theta_mapping, u_init, lambda, lambda_mapping_X, lambda_mapping_Zt, lambda_mapping_Zt_covs, weights, weights_mapping, family, family_mapping, k, maxit_conditional_modes, lossvalue_tol, gradient, hessian, reduced_hessian));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_galamm_marginal_likelihood", (DL_FUNC) &_galamm_marginal_likelihood, 22},
+    {"_galamm_marginal_likelihood", (DL_FUNC) &_galamm_marginal_likelihood, 23},
     {NULL, NULL, 0}
 };
 

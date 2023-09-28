@@ -218,6 +218,28 @@
 #' # We can plot the estimated smooth term
 #' plot_smooth(mod, shade = TRUE)
 #'
+#'
+#' # Interaction between observed and latent covariates ------------------------
+#' # Define the loading matrix
+#' lambda <- list(matrix(c(1, NA, NA), ncol = 1))
+#'
+#' # Define the regression functions, one for each row in the loading matrix
+#' factor_interactions <- list(list(~1, ~1, ~x))
+#'
+#' # Fit the model
+#' mod <- galamm(
+#'   formula = y ~ type + x:response + (0 + loading | id),
+#'   data = latent_covariates,
+#'   load.var = "type",
+#'   lambda = lambda,
+#'   factor = list("loading"),
+#'   factor_interactions = factor_interactions
+#' )
+#'
+#' # The summary output now include an interaction between the latent variable
+#' # and x, for predicting the third element in "type"
+#' summary(mod)
+#'
 #' @family modeling functions
 #'
 #' @md
@@ -313,6 +335,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
       family_mapping = as.integer(family_mapping) - 1L,
       k = k,
       maxit_conditional_modes = maxit_conditional_modes,
+      lossvalue_tol = control$pwirls_tol_abs,
       gradient = gradient,
       hessian = hessian,
       reduced_hessian = control$reduced_hessian

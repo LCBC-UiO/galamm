@@ -24,7 +24,8 @@ set.seed(33)
 mresp$grp <- sample(c("a", "b"), size = nrow(mresp), replace = TRUE)
 mresp$isgauss <- as.numeric(mresp$itemgroup == "a")
 mresp$y <- ifelse(mresp$itemgroup == "a" & mresp$grp == "a",
-                  mresp$y + rnorm(nrow(mresp), sd = 5), mresp$y)
+  mresp$y + rnorm(nrow(mresp), sd = 5), mresp$y
+)
 
 mresp_hsced <- mresp
 usethis::use_data(mresp_hsced, overwrite = TRUE)
