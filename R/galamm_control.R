@@ -73,15 +73,15 @@ galamm_control <- function(optim_control = list(),
     }
   }
 
-  if(length(reduced_hessian) != 1 || !is.logical(reduced_hessian)) {
+  if (length(reduced_hessian) != 1 || !is.logical(reduced_hessian)) {
     stop("reduced_hessian should be a logical of length one")
   }
 
-  if(pwirls_tol_abs <= 0) {
+  if (pwirls_tol_abs <= 0) {
     stop("pwirls_tol_abs should be a strictly positive number")
   }
 
-  if(length(maxit_conditional_modes) != 1 || maxit_conditional_modes <= 0) {
+  if (length(maxit_conditional_modes) != 1 || maxit_conditional_modes <= 0) {
     stop("maxit_conditional_modes should be a single positive integer")
   }
 

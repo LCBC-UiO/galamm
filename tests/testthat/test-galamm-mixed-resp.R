@@ -118,7 +118,6 @@ test_that("Covariate measurement error model works", {
 
 
 test_that("Mixed response and heteroscedastic error works", {
-
   family_mapping <- ifelse(mresp$itemgroup == "a", 1L, 2L)
   mod <- galamm(
     formula = y ~ x + (1 | id),
@@ -128,5 +127,4 @@ test_that("Mixed response and heteroscedastic error works", {
     data = mresp_hsced
   )
   expect_snapshot(print(summary(mod), digits = 2))
-
 })

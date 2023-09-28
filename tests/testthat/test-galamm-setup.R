@@ -151,41 +151,65 @@ test_that("wrong input is handled properly", {
     control = galamm_control(optim_control = list(trace = 1:4))
   ), "trace should be a non-negative integer of length one")
 
-  expect_error({
-    mod <- galamm(
-      formula = y ~ x + (1 | id), data = dat, family = gaussian,
-      control = galamm_control(pwirls_tol_abs = 0))
-  }, "pwirls_tol_abs should be a strictly positive number")
+  expect_error(
+    {
+      mod <- galamm(
+        formula = y ~ x + (1 | id), data = dat, family = gaussian,
+        control = galamm_control(pwirls_tol_abs = 0)
+      )
+    },
+    "pwirls_tol_abs should be a strictly positive number"
+  )
 
-  expect_error({
-    mod <- galamm(
-      formula = y ~ x + (1 | id), data = dat, family = gaussian,
-      control = galamm_control(pwirls_tol_abs = -.01))
-  }, "pwirls_tol_abs should be a strictly positive number")
+  expect_error(
+    {
+      mod <- galamm(
+        formula = y ~ x + (1 | id), data = dat, family = gaussian,
+        control = galamm_control(pwirls_tol_abs = -.01)
+      )
+    },
+    "pwirls_tol_abs should be a strictly positive number"
+  )
 
-  expect_error({
-    mod <- galamm(
-      formula = y ~ x + (1 | id), data = dat, family = gaussian,
-      control = galamm_control(maxit_conditional_modes = 0))
-  }, "maxit_conditional_modes should be a single positive integer")
+  expect_error(
+    {
+      mod <- galamm(
+        formula = y ~ x + (1 | id), data = dat, family = gaussian,
+        control = galamm_control(maxit_conditional_modes = 0)
+      )
+    },
+    "maxit_conditional_modes should be a single positive integer"
+  )
 
-  expect_error({
-    mod <- galamm(
-      formula = y ~ x + (1 | id), data = dat, family = gaussian,
-      control = galamm_control(maxit_conditional_modes = 1:3))
-  }, "maxit_conditional_modes should be a single positive integer")
+  expect_error(
+    {
+      mod <- galamm(
+        formula = y ~ x + (1 | id), data = dat, family = gaussian,
+        control = galamm_control(maxit_conditional_modes = 1:3)
+      )
+    },
+    "maxit_conditional_modes should be a single positive integer"
+  )
 
-  expect_error({
-    mod <- galamm(
-      formula = y ~ x + (1 | id), data = dat, family = gaussian,
-      control = galamm_control(reduced_hessian = "yes"))
-  }, "reduced_hessian should be a logical of length one")
+  expect_error(
+    {
+      mod <- galamm(
+        formula = y ~ x + (1 | id), data = dat, family = gaussian,
+        control = galamm_control(reduced_hessian = "yes")
+      )
+    },
+    "reduced_hessian should be a logical of length one"
+  )
 
-  expect_error({
-    mod <- galamm(
-      formula = y ~ x + (1 | id), data = dat, family = gaussian,
-      control = galamm_control(reduced_hessian = c(TRUE, FALSE)))
-  }, "reduced_hessian should be a logical of length one")
+  expect_error(
+    {
+      mod <- galamm(
+        formula = y ~ x + (1 | id), data = dat, family = gaussian,
+        control = galamm_control(reduced_hessian = c(TRUE, FALSE))
+      )
+    },
+    "reduced_hessian should be a logical of length one"
+  )
 })
 
 test_that("family can be defined in three different ways", {
