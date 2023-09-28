@@ -487,6 +487,59 @@ Chapman and Hall/CRC.</p>
 <span class="r-in"><span><span class="fu"><a href="plot_smooth.galamm.html">plot_smooth</a></span><span class="op">(</span><span class="va">mod</span>, shade <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="galamm-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Interaction between observed and latent covariates ------------------------</span></span></span>
+<span class="r-in"><span><span class="co"># Define the loading matrix</span></span></span>
+<span class="r-in"><span><span class="va">lambda</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Define the regression functions, one for each row in the loading matrix</span></span></span>
+<span class="r-in"><span><span class="va">factor_interactions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">~</span> <span class="fl">1</span>, <span class="op">~</span> <span class="fl">1</span>, <span class="op">~</span> <span class="va">x</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Fit the model</span></span></span>
+<span class="r-in"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu">galamm</span><span class="op">(</span></span></span>
+<span class="r-in"><span>            formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">type</span> <span class="op">+</span> <span class="va">x</span><span class="op">:</span><span class="va">response</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">loading</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>            data <span class="op">=</span> <span class="va">latent_covariates</span>,</span></span>
+<span class="r-in"><span>            load.var <span class="op">=</span> <span class="st">"type"</span>,</span></span>
+<span class="r-in"><span>            lambda <span class="op">=</span> <span class="va">lambda</span>,</span></span>
+<span class="r-in"><span>            factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"loading"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>            factor_interactions <span class="op">=</span> <span class="va">factor_interactions</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># The summary output now include an interaction between the latent variable</span></span></span>
+<span class="r-in"><span><span class="co"># and x, for predicting the third element in "type"</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> GALAMM fit by maximum marginal likelihood.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Formula: y ~ type + x:response + (0 + loading | id)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Data: latent_covariates</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      AIC      BIC   logLik deviance df.resid </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    138.3    177.9    -60.2    120.3      591 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Scaled residuals: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Min      1Q  Median      3Q     Max </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -2.2033 -0.5251 -0.0273  0.5146  3.5029 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Lambda:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           loading      SE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> lambda1    1.0000       .</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> lambda2    1.3034 0.01268</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> lambda3   -0.3183 0.01604</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> lambda4_x  0.2331 0.02873</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Random effects:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Groups   Name    Variance Std.Dev.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  id       loading 0.98175  0.9908  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Residual         0.01164  0.1079  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Number of obs: 600, groups:  id, 200</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Fixed effects:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                   Estimate Std. Error  t value  Pr(&gt;|t|)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)      -0.010589    0.07048 -0.15024 8.806e-01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> typemeasurement2 -0.002173    0.02384 -0.09116 9.274e-01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> typeresponse      0.034005    0.09417  0.36109 7.180e-01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x:response        0.462507    0.03300 14.01556 1.252e-44</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
