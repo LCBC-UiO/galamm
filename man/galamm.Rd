@@ -249,16 +249,17 @@ plot_smooth(mod, shade = TRUE)
 lambda <- list(matrix(c(1, NA, NA), ncol = 1))
 
 # Define the regression functions, one for each row in the loading matrix
-factor_interactions <- list(list(~ 1, ~ 1, ~ x))
+factor_interactions <- list(list(~1, ~1, ~x))
 
 # Fit the model
 mod <- galamm(
-            formula = y ~ type + x:response + (0 + loading | id),
-            data = latent_covariates,
-            load.var = "type",
-            lambda = lambda,
-            factor = list("loading"),
-            factor_interactions = factor_interactions)
+  formula = y ~ type + x:response + (0 + loading | id),
+  data = latent_covariates,
+  load.var = "type",
+  lambda = lambda,
+  factor = list("loading"),
+  factor_interactions = factor_interactions
+)
 
 # The summary output now include an interaction between the latent variable
 # and x, for predicting the third element in "type"

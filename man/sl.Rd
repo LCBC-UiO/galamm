@@ -51,9 +51,6 @@ mod <- galamm(
   factor = list("loading")
 )
 
-# The sl function will rarely be called directly, but if done, it returns
-# data needed to set up the smooth terms.
-a <- sl(x, load.var = "loading")
 
 }
 \references{
