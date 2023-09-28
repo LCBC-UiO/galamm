@@ -41,6 +41,7 @@ NULL
 #' dat <- subset(cognition, domain == 1 & timepoint == 1)
 #' loading_matrix <- matrix(c(1, NA, NA), ncol = 1)
 #'
+#'
 #' # Model with four thin-plate regression splines as basis functions
 #' mod <- galamm(
 #'   formula = y ~ 0 + item + sl(x, k = 4, load.var = "loading"),
@@ -59,6 +60,10 @@ NULL
 #'   lambda = list(loading_matrix),
 #'   factor = list("loading")
 #' )
+#'
+#' # The sl function will rarely be called directly, but if done, it returns
+#' # data needed to set up the smooth terms.
+#' a <- sl(x, load.var = "loading")
 #'
 sl <- function(..., load.var = NULL) {
   ret <- s(...)
@@ -109,12 +114,16 @@ sl <- function(..., load.var = NULL) {
 #' # Model with four thin-plate regression splines as basis functions
 #' mod <- galamm(
 #'   formula = y ~ 0 + item +
-#'     sl(x, bs = "tp", k = 4, load.var = "loading"),
+#'     t2l(x, bs = "tp", k = 4, load.var = "loading"),
 #'   data = dat,
 #'   load.var = "item",
 #'   lambda = list(loading_matrix),
 #'   factor = list("loading")
 #' )
+#'
+#' # The t2l function will rarely be called directly, but if done, it returns
+#' # data needed to set up the smooth terms.
+#' a <- t2l(x, load.var = "loading")
 #'
 t2l <- function(..., load.var = NULL) {
   ret <- t2(...)
