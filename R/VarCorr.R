@@ -5,7 +5,7 @@ NULL
 #' Extract variance and correlation components from model
 #'
 #' @param x An object of class \code{galamm} returned from \code{\link{galamm}}.
-#' @param sigma Numeric value used to multiple the standard deviations. Defaults
+#' @param sigma Numeric value used to multiply the standard deviations. Defaults
 #'   to 1.
 #' @param ... Other arguments passed onto other methods. Currently not used.
 #'

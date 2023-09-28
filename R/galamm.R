@@ -37,7 +37,7 @@
 #'   errors. The formula is defined in \code{lme4} style; see vignettes and
 #'   examples for details.
 #'
-#' @param data A dataset containing all the variables specified by the model
+#' @param data A data.frame containing all the variables specified by the model
 #'   formula, with the exception of factor loadings.
 #'
 #' @param family A vector containing one or more model families. For each
@@ -47,7 +47,7 @@
 #'   can be one of \code{gaussian}, \code{binomial}, and \code{poisson}, and
 #'   only canonical link functions are supported.
 #'
-#' @param family_mapping Optional vector mapping from the elements of
+#' @param family_mapping Optional integer vector mapping from the elements of
 #'   \code{family} to rows of \code{data}. Defaults to \code{rep(1L,
 #'   nrow(data))}, which means that all observations are distributed according
 #'   to the first element of \code{family}.
@@ -55,8 +55,9 @@
 #' @param load.var Optional character specifying the name of the variable in
 #'   \code{data} identifying what the factors load onto. That is, each unique
 #'   value of \code{load.var} corresponds to a unique factor loading. Currently
-#'   only a single loading is supported. Default to \code{NULL}, which means
-#'   that there are no loading variables.
+#'   only a single loading is supported, so \code{load.var} must have length
+#'   one. Default to \code{NULL}, which means that there are no loading
+#'   variables.
 #'
 #' @param lambda Optional list of factor loading matrices. Numerical values
 #'   indicate that the given value is fixed, while \code{NA} means that the
@@ -248,12 +249,20 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
                    load.var = NULL, lambda = NULL, factor = NULL,
                    factor_interactions = NULL,
                    start = NULL, control = galamm_control()) {
+
   data <- stats::na.omit(data)
   if (nrow(data) == 0) stop("No data, nothing to do.")
   data <- as.data.frame(data)
   mc <- match.call()
 
   family_list <- setup_family(family)
+  if(!is.vector(family_mapping)) {
+    stop("family_mapping must be a vector.")
+  }
+  if(is.numeric(family_mapping)) {
+    family_mapping <- as.integer(family_mapping)
+  }
+
   stopifnot(length(family_list) == length(unique(family_mapping)))
 
   tmp <- setup_factor(load.var, lambda, factor, data)
@@ -332,7 +341,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
       weights = par[weights_inds],
       weights_mapping = weights_mapping,
       family = family_txt,
-      family_mapping = as.integer(family_mapping) - 1L,
+      family_mapping = family_mapping - 1L,
       k = k,
       maxit_conditional_modes = maxit_conditional_modes,
       lossvalue_tol = control$pwirls_tol_abs,
