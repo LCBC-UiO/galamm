@@ -150,6 +150,18 @@ test_that("wrong input is handled properly", {
     formula = y ~ x + (1 | id), data = dat, family = gaussian,
     control = galamm_control(optim_control = list(trace = 1:4))
   ), "trace should be a non-negative integer of length one")
+
+  expect_error({
+    mod <- galamm(
+      formula = y ~ x + (1 | id), data = dat, family = gaussian,
+      control = galamm_control(pwirls_tol_abs = 0))
+  }, "pwirls_tol_abs should be a strictly positive number")
+
+  expect_error({
+    mod <- galamm(
+      formula = y ~ x + (1 | id), data = dat, family = gaussian,
+      control = galamm_control(pwirls_tol_abs = -.01))
+  }, "pwirls_tol_abs should be a strictly positive number")
 })
 
 test_that("family can be defined in three different ways", {
