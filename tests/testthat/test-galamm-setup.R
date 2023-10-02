@@ -211,20 +211,25 @@ test_that("wrong input is handled properly", {
     "reduced_hessian should be a logical of length one"
   )
 
-  expect_error({
+  expect_error(
+    {
       mod1 <- galamm(
         formula = y ~ x + (1 | id), data = dat, family = gaussian,
         load.var = 1
       )
-    }, "load.var must be a character of length one.")
+    },
+    "load.var must be a character of length one."
+  )
 
-  expect_error({
-    mod1 <- galamm(
-      formula = y ~ x + (0 + a | id), data = dat, family = gaussian,
-      load.var = letters
-    )
-  }, "load.var must be a character of length one.")
-
+  expect_error(
+    {
+      mod1 <- galamm(
+        formula = y ~ x + (0 + a | id), data = dat, family = gaussian,
+        load.var = letters
+      )
+    },
+    "load.var must be a character of length one."
+  )
 })
 
 test_that("family can be defined in three different ways", {

@@ -61,7 +61,6 @@ NULL
 #'   factor = list("loading")
 #' )
 #'
-#'
 sl <- function(..., load.var = NULL) {
   ret <- s(...)
   attr(ret, "load.var") <- load.var
@@ -117,7 +116,6 @@ sl <- function(..., load.var = NULL) {
 #'   lambda = list(loading_matrix),
 #'   factor = list("loading")
 #' )
-#'
 #'
 t2l <- function(..., load.var = NULL) {
   ret <- t2(...)
