@@ -11,7 +11,7 @@ NULL
 #' @param ... Optional parameters passed on to other functions. Currently
 #' not used.
 #'
-#' @return A matrix with the requested fixed effects.
+#' @return A named \code{numeric} vector containing the requested fixed effects.
 #'
 #' @name fixef
 #' @aliases fixef fixef.galamm

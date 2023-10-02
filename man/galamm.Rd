@@ -34,7 +34,7 @@ residual variance. Defaults to \code{NULL}, corresponding to homoscedastic
 errors. The formula is defined in \code{lme4} style; see vignettes and
 examples for details.}
 
-\item{data}{A dataset containing all the variables specified by the model
+\item{data}{A data.frame containing all the variables specified by the model
 formula, with the exception of factor loadings.}
 
 \item{family}{A vector containing one or more model families. For each
@@ -44,7 +44,7 @@ conditionally distributed according to the given family. Currently family
 can be one of \code{gaussian}, \code{binomial}, and \code{poisson}, and
 only canonical link functions are supported.}
 
-\item{family_mapping}{Optional vector mapping from the elements of
+\item{family_mapping}{Optional integer vector mapping from the elements of
 \code{family} to rows of \code{data}. Defaults to \code{rep(1L,
   nrow(data))}, which means that all observations are distributed according
 to the first element of \code{family}.}
@@ -52,8 +52,9 @@ to the first element of \code{family}.}
 \item{load.var}{Optional character specifying the name of the variable in
 \code{data} identifying what the factors load onto. That is, each unique
 value of \code{load.var} corresponds to a unique factor loading. Currently
-only a single loading is supported. Default to \code{NULL}, which means
-that there are no loading variables.}
+only a single loading is supported, so \code{load.var} must have length
+one. Default to \code{NULL}, which means that there are no loading
+variables.}
 
 \item{lambda}{Optional list of factor loading matrices. Numerical values
 indicate that the given value is fixed, while \code{NA} means that the
@@ -249,16 +250,17 @@ plot_smooth(mod, shade = TRUE)
 lambda <- list(matrix(c(1, NA, NA), ncol = 1))
 
 # Define the regression functions, one for each row in the loading matrix
-factor_interactions <- list(list(~ 1, ~ 1, ~ x))
+factor_interactions <- list(list(~1, ~1, ~x))
 
 # Fit the model
 mod <- galamm(
-            formula = y ~ type + x:response + (0 + loading | id),
-            data = latent_covariates,
-            load.var = "type",
-            lambda = lambda,
-            factor = list("loading"),
-            factor_interactions = factor_interactions)
+  formula = y ~ type + x:response + (0 + loading | id),
+  data = latent_covariates,
+  load.var = "type",
+  lambda = lambda,
+  factor = list("loading"),
+  factor_interactions = factor_interactions
+)
 
 # The summary output now include an interaction between the latent variable
 # and x, for predicting the third element in "type"

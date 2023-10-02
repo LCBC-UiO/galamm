@@ -15,7 +15,7 @@
 not used.}
 }
 \value{
-A matrix with the requested fixed effects.
+A named \code{numeric} vector containing the requested fixed effects.
 }
 \description{
 Extract the fixed regression coefficients.

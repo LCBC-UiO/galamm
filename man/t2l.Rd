@@ -50,9 +50,6 @@ mod <- galamm(
   factor = list("loading")
 )
 
-# The t2l function will rarely be called directly, but if done, it returns
-# data needed to set up the smooth terms.
-a <- t2l(x, load.var = "loading")
 
 }
 \references{

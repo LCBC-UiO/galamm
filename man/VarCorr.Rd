@@ -10,7 +10,7 @@
 \arguments{
 \item{x}{An object of class \code{galamm} returned from \code{\link{galamm}}.}
 
-\item{sigma}{Numeric value used to multiple the standard deviations. Defaults
+\item{sigma}{Numeric value used to multiply the standard deviations. Defaults
 to 1.}
 
 \item{...}{Other arguments passed onto other methods. Currently not used.}
