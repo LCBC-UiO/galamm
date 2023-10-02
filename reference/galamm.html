@@ -186,7 +186,7 @@ examples for details.</p></dd>
 
 
 <dt>data</dt>
-<dd><p>A dataset containing all the variables specified by the model
+<dd><p>A data.frame containing all the variables specified by the model
 formula, with the exception of factor loadings.</p></dd>
 
 
@@ -200,7 +200,7 @@ only canonical link functions are supported.</p></dd>
 
 
 <dt>family_mapping</dt>
-<dd><p>Optional vector mapping from the elements of
+<dd><p>Optional integer vector mapping from the elements of
 <code>family</code> to rows of <code>data</code>. Defaults to <code>rep(1L,
   nrow(data))</code>, which means that all observations are distributed according
 to the first element of <code>family</code>.</p></dd>
@@ -210,8 +210,9 @@ to the first element of <code>family</code>.</p></dd>
 <dd><p>Optional character specifying the name of the variable in
 <code>data</code> identifying what the factors load onto. That is, each unique
 value of <code>load.var</code> corresponds to a unique factor loading. Currently
-only a single loading is supported. Default to <code>NULL</code>, which means
-that there are no loading variables.</p></dd>
+only a single loading is supported, so <code>load.var</code> must have length
+one. Default to <code>NULL</code>, which means that there are no loading
+variables.</p></dd>
 
 
 <dt>lambda</dt>
@@ -493,16 +494,17 @@ Chapman and Hall/CRC.</p>
 <span class="r-in"><span><span class="va">lambda</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Define the regression functions, one for each row in the loading matrix</span></span></span>
-<span class="r-in"><span><span class="va">factor_interactions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">~</span> <span class="fl">1</span>, <span class="op">~</span> <span class="fl">1</span>, <span class="op">~</span> <span class="va">x</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">factor_interactions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">~</span><span class="fl">1</span>, <span class="op">~</span><span class="fl">1</span>, <span class="op">~</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Fit the model</span></span></span>
 <span class="r-in"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu">galamm</span><span class="op">(</span></span></span>
-<span class="r-in"><span>            formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">type</span> <span class="op">+</span> <span class="va">x</span><span class="op">:</span><span class="va">response</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">loading</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>            data <span class="op">=</span> <span class="va">latent_covariates</span>,</span></span>
-<span class="r-in"><span>            load.var <span class="op">=</span> <span class="st">"type"</span>,</span></span>
-<span class="r-in"><span>            lambda <span class="op">=</span> <span class="va">lambda</span>,</span></span>
-<span class="r-in"><span>            factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"loading"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>            factor_interactions <span class="op">=</span> <span class="va">factor_interactions</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">type</span> <span class="op">+</span> <span class="va">x</span><span class="op">:</span><span class="va">response</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">loading</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  data <span class="op">=</span> <span class="va">latent_covariates</span>,</span></span>
+<span class="r-in"><span>  load.var <span class="op">=</span> <span class="st">"type"</span>,</span></span>
+<span class="r-in"><span>  lambda <span class="op">=</span> <span class="va">lambda</span>,</span></span>
+<span class="r-in"><span>  factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"loading"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  factor_interactions <span class="op">=</span> <span class="va">factor_interactions</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># The summary output now include an interaction between the latent variable</span></span></span>
 <span class="r-in"><span><span class="co"># and x, for predicting the third element in "type"</span></span></span>
