@@ -188,7 +188,9 @@ In order to maximize the marginal likelihood, we currently rely on the `optim()`
 
 ## Future Improvements
 
-We also aim to perform also the outer optimization loop in C++, to avoid copying data back and forth between R and C++ during optimization. This requires finding an off-the-shelf optimization routine which is as good as the L-BFGS-B implementation provided by `optim()`, and which plays well with `autodiff`.
+We aim to perform also the outer optimization loop in C++, to avoid copying data back and forth between R and C++ during optimization. This requires finding an off-the-shelf optimization routine which is as good as the L-BFGS-B implementation provided by `optim()`, and which plays well with `autodiff`.
+
+In addition, the current implementation uses only forward mode automatic differentiation. In the future, we aim to add backward mode as an option, as this might turn out to be more efficient for problems with a large number of variables.
 
 
 # References
