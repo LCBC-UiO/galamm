@@ -1,7 +1,5 @@
 setup_factor <- function(load.var, lambda, factor, data) {
-
-
-  if(!is.null(load.var) && (!is.character(load.var) || length(load.var) != 1)) {
+  if (!is.null(load.var) && (!is.character(load.var) || length(load.var) != 1)) {
     stop("load.var must be a character of length one.")
   }
 

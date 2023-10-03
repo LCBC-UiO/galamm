@@ -249,17 +249,16 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
                    load.var = NULL, lambda = NULL, factor = NULL,
                    factor_interactions = NULL,
                    start = NULL, control = galamm_control()) {
-
   data <- stats::na.omit(data)
   if (nrow(data) == 0) stop("No data, nothing to do.")
   data <- as.data.frame(data)
   mc <- match.call()
 
   family_list <- setup_family(family)
-  if(!is.vector(family_mapping)) {
+  if (!is.vector(family_mapping)) {
     stop("family_mapping must be a vector.")
   }
-  if(is.numeric(family_mapping)) {
+  if (is.numeric(family_mapping)) {
     family_mapping <- as.integer(family_mapping)
   }
 
