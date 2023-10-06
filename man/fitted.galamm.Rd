@@ -16,7 +16,7 @@
 A numerical vector with fit values for each row in the input data.
 }
 \description{
-Extract model fitted values
+Extracts fitted values from a model including random effects.
 }
 \examples{
 # Linear mixed model with heteroscedastic residuals

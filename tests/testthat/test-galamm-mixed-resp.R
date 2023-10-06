@@ -10,6 +10,11 @@ test_that("Mixed response works", {
     factor = list("loading")
   )
 
+  expect_error(
+    predict(mod, type = "response"),
+    "For mixed response model, only type='link' works."
+  )
+
   expect_equal(logLik(mod), structure(-441.199885684125,
     nobs = 396L, df = 5L,
     class = "logLik"
@@ -33,6 +38,24 @@ test_that("Mixed response works", {
   expect_equal(
     residuals(mod)[c(4, 8, 11)],
     c(0.647057715636119, 1.00640920636177, -1.0876543193226)
+  )
+
+  expect_equal(
+    tail(predict(mod)),
+    c(
+      0.579766252831168, 0.650224364469182, 0.467589361633112,
+      0.104006021737622, 0.611398991366611, 0.619149621098952
+    ),
+    tolerance = 1e-4
+  )
+
+  expect_equal(
+    tail(fitted(mod)),
+    c(
+      0.564189106544179, 0.635617477751538, -0.38290827754476,
+      -0.74649161744025, 0.401960973148028, 0.409856827991987
+    ),
+    tolerance = 1e-4
   )
 
   # Now test using initial values

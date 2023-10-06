@@ -213,16 +213,16 @@ dat <- IRTsim
 dat$trials <- sample(1:10, nrow(dat), replace = TRUE)
 dat$y <- rbinom(
   n = nrow(dat), size = dat$trials,
-  prob = predict(mod, type = "response")
+  prob = plogis(fitted(mod))
 )
 head(dat)
 #>     sid school item y trials
 #> 1.1   1      1    1 8     10
-#> 1.2   1      1    2 6      6
+#> 1.2   1      1    2 5      6
 #> 1.3   1      1    3 5      5
-#> 1.4   1      1    4 6      9
+#> 1.4   1      1    4 5      9
 #> 1.5   1      1    5 3      5
-#> 2.1   2      1    1 0      6
+#> 2.1   2      1    1 5      6
 ```
 
 For binomial models with more than one trial, the response should be specified `cbind(successes, failures)`.
@@ -249,33 +249,33 @@ summary(galamm_mod_trials)
 #>    Data: dat
 #> 
 #>      AIC      BIC   logLik deviance df.resid 
-#>   7018.6   7082.6  -3498.3   2537.4     2489 
+#>   7149.8   7213.9  -3563.9   2974.8     2489 
 #> 
 #> Scaled residuals: 
 #>    Min     1Q Median     3Q    Max 
-#> -2.387  1.811  5.116 10.124 42.919 
+#> -1.573  2.830  5.003  9.183 20.222 
 #> 
 #> Lambda:
-#>         ability      SE
-#> lambda1  1.0000       .
-#> lambda2  0.7040 0.05234
-#> lambda3  0.8750 0.06257
-#> lambda4  0.5744 0.04613
-#> lambda5  0.6076 0.04829
+#>         ability     SE
+#> lambda1  1.0000      .
+#> lambda2  0.7013 0.2123
+#> lambda3  0.5007 0.1899
+#> lambda4  0.4265 0.1869
+#> lambda5  0.6326 0.2121
 #> 
 #> Random effects:
 #>  Groups     Name    Variance Std.Dev.
-#>  sid:school ability 0.6848   0.8275  
-#>  school     ability 1.1671   1.0803  
+#>  sid:school ability 0.00000  0.0000  
+#>  school     ability 0.06048  0.2459  
 #> Number of obs: 2500, groups:  sid:school, 500; school, 26
 #> 
 #> Fixed effects:
 #>             Estimate Std. Error z value  Pr(>|z|)
-#> (Intercept)   0.4768    0.22158   2.152 3.142e-02
-#> item2         0.3009    0.09257   3.251 1.151e-03
-#> item3        -0.5032    0.07100  -7.087 1.371e-12
-#> item4         0.3965    0.11423   3.471 5.186e-04
-#> item5         0.4823    0.10859   4.442 8.919e-06
+#> (Intercept)  0.57682    0.06436   8.962 3.191e-19
+#> item2        0.07417    0.05930   1.251 2.110e-01
+#> item3       -0.09932    0.06205  -1.601 1.095e-01
+#> item4        0.07328    0.06469   1.133 2.573e-01
+#> item5        0.19302    0.06098   3.165 1.548e-03
 ```
 
 
@@ -347,11 +347,6 @@ In this case we can confirm that the `galamm` function is correctly implemented 
 ```r
 library(lme4)
 #> Loading required package: Matrix
-#> 
-#> Attaching package: 'lme4'
-#> The following object is masked from 'package:galamm':
-#> 
-#>     llikAIC
 count_mod_lme4 <- glmer(
   formula = y ~ lbas * treat + lage + v4 + (1 | subj),
   data = epilep,

@@ -16,16 +16,18 @@ fit the model.}
 
 \item{type}{Type of prediction object to be returned.}
 
-\item{...}{Optional arguments passed on to other methods. Currently not used.}
+\item{...}{Optional arguments passed on to other methods. Currently used
+for models with smooth terms, for which these arguments are forwarded to
+\code{mgcv::predict.gam}.}
 }
 \value{
 A numeric vector of predicted values.
 }
 \description{
-Currently, predictions are given with all random effects set to zero. We will
-add the opportunity to specify the level of prediction in the future. This is
-particularly important for models containing smooth terms, for which the
-predictions currently don't make much sense.
+Predictions are given at the population level, i.e., with random effects set
+to zero. For fitted models including random effects, see
+\code{\link{fitted.galamm}}. For mixed response models, only predictions on
+the scale of the linear predictors is supported.
 }
 \examples{
 # Poisson GLMM
@@ -39,6 +41,11 @@ plot(
   predict(count_mod, type = "link"),
   predict(count_mod, type = "response")
 )
+
+# Predict on a new dataset
+nd <- data.frame(lbas = c(.3, .2), treat = c(0, 1), lage = 0.2, v4 = -.2)
+predict(count_mod, newdata = nd)
+predict(count_mod, newdata = nd, type = "response")
 
 }
 \seealso{

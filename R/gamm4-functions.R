@@ -411,8 +411,8 @@ gamm4.wrapup <- function(gobj, ret, final_model) {
     object$Ve <- gobj$G$P %*% object$Ve %*% t(gobj$G$P)
   }
 
-  object$linear.predictors <- predict(ret, type = "link")
-  object$fitted.values <- object$family$linkinv(object$linear.predictors)
+  object$linear.predictors <- object$family$linkfun(fitted(ret))
+  object$fitted.values <- fitted(ret)
 
   object$residuals <- residuals(ret$mer)
 

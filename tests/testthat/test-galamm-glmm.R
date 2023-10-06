@@ -66,25 +66,25 @@ test_that("Logistic GLMM with simple factor works", {
   )
   ## Test results are confirmed in comparison to this model
   # tmp <- lme4::glmer(
-  #   formula = cbind(y, trials - y) ~ item + (1 | sid) + (1 | school),
+  #   formula = cbind(y, trials - y) ~ item + (1 | school / sid),
   #   data = dat,
   #   family = binomial,
   # )
   expect_equal(
     logLik(galamm_mod_trials),
-    structure(-412.338459662577, nobs = 245L, df = 4L, class = "logLik")
+    structure(-389.886011265833, nobs = 245L, df = 4L, class = "logLik")
   )
   expect_equal(
     fixef(galamm_mod_trials),
-    c(`(Intercept)` = 0.643260564607128, item = 0.0277064975048341)
+    c(`(Intercept)` = 0.597623431596681, item = 0.0560576419151671)
   )
 
   expect_equal(
     llikAIC(galamm_mod_trials),
     c(
-      AIC = 832.676919325154, BIC = 846.681952167332,
-      logLik = -412.338459662577,
-      deviance = 388.350924875839, df.resid = 241
+      AIC = 787.772022531666, BIC = 801.777055373845,
+      logLik = -389.886011265833,
+      deviance = 418.428625884762, df.resid = 241
     )
   )
 })

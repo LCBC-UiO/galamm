@@ -1,5 +1,7 @@
 #' Extract model fitted values
 #'
+#' Extracts fitted values from a model including random effects.
+#'
 #' @param object An object of class \code{galamm} returned from
 #'   \code{\link{galamm}}.
 #' @param ... Optional arguments passed on to other methods. Currently not used.
