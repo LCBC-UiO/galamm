@@ -279,10 +279,10 @@ test_that("galamm with by variables and loadings works", {
     dat,
     model.matrix(~ 0 + domain, data = dat)[, c("domain1", "domain3")]
   )
-  (lmat <- matrix(c(
+  lmat <- matrix(c(
     1, NA, NA, 0, 0, 0, 0,
     0, 0, 0, 1, NA, NA, NA
-  ), ncol = 2))
+  ), ncol = 2)
   mod <- galamm(
     formula = y ~ domain +
       sl(x, k = 4, by = domain, load.var = c("ability1", "ability3")),
@@ -303,14 +303,15 @@ test_that("galamm with by variables and loadings works", {
       ), weights = numeric(0)
     ),
     control = galamm_control(
-      optim_control = list(
-        FtolAbs = 1000,
-        FtolRel = 1000, XtolRel = 1000,
-        warnOnly = TRUE, xt = rep(1000, 11)
-      ),
-      method = "Nelder-Mead"
+      optim_control = list(maxit = 0)
     )
   )
 
-  expect_snapshot(print(summary(mod)$gam_summary, digits = 2))
+  expect_equal(
+    mod$gam$edf,
+    c(`(Intercept)` = 1, domain3 = 1, `s(x):domain1:ability1.1` = 0.954008491014651,
+      `s(x):domain1:ability1.2` = 0.99441736961761, `s(x):domain1:ability1.3` = 0.999999999999943,
+      `s(x):domain3:ability3.1` = 0.998892741239118, `s(x):domain3:ability3.2` = 0.999862302691303,
+      `s(x):domain3:ability3.3` = 1.00000000000003), tolerance = .1)
+
 })

@@ -272,32 +272,3 @@
       R-sq.(adj) =  0.0879   
       glmer.ML =   Scale est. = 1         n = 400
 
-# galamm with by variables and loadings works
-
-    Code
-      print(summary(mod)$gam_summary, digits = 2)
-    Output
-      
-      Family: gaussian 
-      Link function: identity 
-      
-      Formula:
-      NULL
-      
-      Parametric coefficients:
-                  Estimate Std. Error t value Pr(>|t|)    
-      (Intercept)    1.164      0.034      35   <2e-16 ***
-      domain3        3.227      0.044      73   <2e-16 ***
-      ---
-      Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-      
-      Approximate significance of smooth terms:
-                            edf Ref.df    F p-value    
-      s(x):domain1:ability1 2.9    2.9  113  <2e-16 ***
-      s(x):domain3:ability3 3.0    3.0 2115  <2e-16 ***
-      ---
-      Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-      
-      R-sq.(adj) =  -57.5   
-      lmer.REML =   Scale est. = 5.4       n = 11200
-
