@@ -308,16 +308,16 @@ binomial samples with multiple trials.</p>
 <span><span class="va">dat</span><span class="op">$</span><span class="va">trials</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="va">dat</span><span class="op">$</span><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html" class="external-link">rbinom</a></span><span class="op">(</span></span>
 <span>  n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span>, size <span class="op">=</span> <span class="va">dat</span><span class="op">$</span><span class="va">trials</span>,</span>
-<span>  prob <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">mod</span>, type <span class="op">=</span> <span class="st">"response"</span><span class="op">)</span></span>
+<span>  prob <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Logistic.html" class="external-link">plogis</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/fitted.values.html" class="external-link">fitted</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span></span>
 <span><span class="co">#&gt;     sid school item y trials</span></span>
 <span><span class="co">#&gt; 1.1   1      1    1 8     10</span></span>
-<span><span class="co">#&gt; 1.2   1      1    2 6      6</span></span>
+<span><span class="co">#&gt; 1.2   1      1    2 5      6</span></span>
 <span><span class="co">#&gt; 1.3   1      1    3 5      5</span></span>
-<span><span class="co">#&gt; 1.4   1      1    4 6      9</span></span>
+<span><span class="co">#&gt; 1.4   1      1    4 5      9</span></span>
 <span><span class="co">#&gt; 1.5   1      1    5 3      5</span></span>
-<span><span class="co">#&gt; 2.1   2      1    1 0      6</span></span></code></pre></div>
+<span><span class="co">#&gt; 2.1   2      1    1 5      6</span></span></code></pre></div>
 <p>For binomial models with more than one trial, the response should be
 specified <code>cbind(successes, failures)</code>.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
@@ -338,33 +338,33 @@ its summary output here.</p>
 <span><span class="co">#&gt;    Data: dat</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;      AIC      BIC   logLik deviance df.resid </span></span>
-<span><span class="co">#&gt;   7018.6   7082.6  -3498.3   2537.4     2489 </span></span>
+<span><span class="co">#&gt;   7149.8   7213.9  -3563.9   2974.8     2489 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Scaled residuals: </span></span>
 <span><span class="co">#&gt;    Min     1Q Median     3Q    Max </span></span>
-<span><span class="co">#&gt; -2.387  1.811  5.116 10.124 42.919 </span></span>
+<span><span class="co">#&gt; -1.573  2.830  5.003  9.183 20.222 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Lambda:</span></span>
-<span><span class="co">#&gt;         ability      SE</span></span>
-<span><span class="co">#&gt; lambda1  1.0000       .</span></span>
-<span><span class="co">#&gt; lambda2  0.7040 0.05234</span></span>
-<span><span class="co">#&gt; lambda3  0.8750 0.06257</span></span>
-<span><span class="co">#&gt; lambda4  0.5744 0.04613</span></span>
-<span><span class="co">#&gt; lambda5  0.6076 0.04829</span></span>
+<span><span class="co">#&gt;         ability     SE</span></span>
+<span><span class="co">#&gt; lambda1  1.0000      .</span></span>
+<span><span class="co">#&gt; lambda2  0.7013 0.2123</span></span>
+<span><span class="co">#&gt; lambda3  0.5007 0.1899</span></span>
+<span><span class="co">#&gt; lambda4  0.4265 0.1869</span></span>
+<span><span class="co">#&gt; lambda5  0.6326 0.2121</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Random effects:</span></span>
 <span><span class="co">#&gt;  Groups     Name    Variance Std.Dev.</span></span>
-<span><span class="co">#&gt;  sid:school ability 0.6848   0.8275  </span></span>
-<span><span class="co">#&gt;  school     ability 1.1671   1.0803  </span></span>
+<span><span class="co">#&gt;  sid:school ability 0.00000  0.0000  </span></span>
+<span><span class="co">#&gt;  school     ability 0.06048  0.2459  </span></span>
 <span><span class="co">#&gt; Number of obs: 2500, groups:  sid:school, 500; school, 26</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Fixed effects:</span></span>
 <span><span class="co">#&gt;             Estimate Std. Error z value  Pr(&gt;|z|)</span></span>
-<span><span class="co">#&gt; (Intercept)   0.4768    0.22158   2.152 3.142e-02</span></span>
-<span><span class="co">#&gt; item2         0.3009    0.09257   3.251 1.151e-03</span></span>
-<span><span class="co">#&gt; item3        -0.5032    0.07100  -7.087 1.371e-12</span></span>
-<span><span class="co">#&gt; item4         0.3965    0.11423   3.471 5.186e-04</span></span>
-<span><span class="co">#&gt; item5         0.4823    0.10859   4.442 8.919e-06</span></span></code></pre></div>
+<span><span class="co">#&gt; (Intercept)  0.57682    0.06436   8.962 3.191e-19</span></span>
+<span><span class="co">#&gt; item2        0.07417    0.05930   1.251 2.110e-01</span></span>
+<span><span class="co">#&gt; item3       -0.09932    0.06205  -1.601 1.095e-01</span></span>
+<span><span class="co">#&gt; item4        0.07328    0.06469   1.133 2.573e-01</span></span>
+<span><span class="co">#&gt; item5        0.19302    0.06098   3.165 1.548e-03</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="model-with-poisson-distributed-responses">Model with Poisson Distributed Responses<a class="anchor" aria-label="anchor" href="#model-with-poisson-distributed-responses"></a>
@@ -425,11 +425,6 @@ need.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/lme4/lme4/" class="external-link">lme4</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; Loading required package: Matrix</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Attaching package: 'lme4'</span></span>
-<span><span class="co">#&gt; The following object is masked from 'package:galamm':</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     llikAIC</span></span>
 <span><span class="va">count_mod_lme4</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/lme4/man/glmer.html" class="external-link">glmer</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">lbas</span> <span class="op">*</span> <span class="va">treat</span> <span class="op">+</span> <span class="va">lage</span> <span class="op">+</span> <span class="va">v4</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">subj</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">epilep</span>,</span>
