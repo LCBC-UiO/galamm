@@ -289,9 +289,7 @@ gamm4.wrapup <- function(gobj, ret, final_model) {
     Xfp[, ind] <- gobj$G$Xf[, ind, drop = FALSE] %*% B[ind, ind, drop = FALSE]
   }
 
-
   object$coefficients <- p
-
   vr <- VarCorr(ret)
 
   scale <- as.numeric(attr(vr, "sc"))^2

@@ -8,7 +8,7 @@ latent variable models, often used in psychometrics.
 
 ## Test environments
 
-* Windows, r-devel, r-release, and r-oldrelease
+* Windows, r-devel and r-release
 * Local Apple Silicon M1, on R4.2.1
 * R-CMD-check via GitHub Actions on windows-latest, macOS-latest, ubuntu-20.04 (release), and ubuntu-20.04 (devel).
 
@@ -32,8 +32,3 @@ Possibly mis-spelled words in DESCRIPTION:
   et (11:42)
   nonlinearly (14:5)
 
-Found the following (possibly) invalid URLs:
-  URL: https://doi.org/10.3102/1076998611417628
-    From: inst/doc/galamm.html
-    Status: 503
-    Message: Service Unavailable
