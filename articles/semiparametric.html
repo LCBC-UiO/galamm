@@ -156,8 +156,7 @@ function to be estimated, <span class="math inline">\(\eta_{j} \sim N(0,
 residual term.</p>
 <p>This model can be estimated using <code>gamm4</code> as follows:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">mod_gamm4</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/gamm4/man/gamm4.html" class="external-link">gamm4</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="fu"><a href="../reference/sl.html">s</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, random <span class="op">=</span> <span class="op">~</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">dat</span>, REML <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Error in gamm4(y ~ s(x), random = ~(1 | id), data = dat, REML = FALSE): unused argument (REML = FALSE)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">mod_gamm4</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/gamm4/man/gamm4.html" class="external-link">gamm4</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="fu"><a href="../reference/sl.html">s</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, random <span class="op">=</span> <span class="op">~</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">dat</span>, REML <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <p>The package <code>gamm4</code> uses <code>lme4</code> to fit the
 underlying model, and the resulting model has two components.
 <code>mod_gamm4$mer</code> contains the mixed model representation,
@@ -166,54 +165,52 @@ corresponding to spline coefficients have been converted into single
 smooth terms. We can look at the model summary for each:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod_gamm4</span><span class="op">$</span><span class="va">mer</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']</span></span>
-<span><span class="co">#&gt;  Family: binomial  ( logit )</span></span>
+<span><span class="co">#&gt; Linear mixed model fit by maximum likelihood  ['lmerMod']</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;      AIC      BIC   logLik deviance df.resid </span></span>
-<span><span class="co">#&gt;    983.7   1005.2   -487.8    975.7     1596 </span></span>
+<span><span class="co">#&gt;   3025.2   3052.1  -1507.6   3015.2     1595 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Scaled residuals: </span></span>
-<span><span class="co">#&gt;     Min      1Q  Median      3Q     Max </span></span>
-<span><span class="co">#&gt; -8.2547  0.0786  0.1946  0.4248  0.8213 </span></span>
+<span><span class="co">#&gt;      Min       1Q   Median       3Q      Max </span></span>
+<span><span class="co">#&gt; -2.93755 -0.65215  0.00612  0.62654  3.14289 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Random effects:</span></span>
-<span><span class="co">#&gt;  Groups Name        Variance Std.Dev.</span></span>
-<span><span class="co">#&gt;  id     (Intercept) 0.2306   0.4802  </span></span>
-<span><span class="co">#&gt;  Xr     s(x)        0.9694   0.9846  </span></span>
+<span><span class="co">#&gt;  Groups   Name        Variance Std.Dev.</span></span>
+<span><span class="co">#&gt;  id       (Intercept) 0.8551   0.9247  </span></span>
+<span><span class="co">#&gt;  Xr       s(x)        2.0341   1.4262  </span></span>
+<span><span class="co">#&gt;  Residual             0.2501   0.5001  </span></span>
 <span><span class="co">#&gt; Number of obs: 1600, groups:  id, 200; Xr, 8</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Fixed effects:</span></span>
-<span><span class="co">#&gt;              Estimate Std. Error z value Pr(&gt;|z|)    </span></span>
-<span><span class="co">#&gt; X(Intercept)   2.8115     0.2034  13.824  &lt; 2e-16 ***</span></span>
-<span><span class="co">#&gt; Xs(x)Fx1      -1.4110     0.4242  -3.326  0.00088 ***</span></span>
-<span><span class="co">#&gt; ---</span></span>
-<span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
+<span><span class="co">#&gt;              Estimate Std. Error t value</span></span>
+<span><span class="co">#&gt; X(Intercept)  1.26938    0.06657  19.067</span></span>
+<span><span class="co">#&gt; Xs(x)Fx1     -0.15814    0.20156  -0.785</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Correlation of Fixed Effects:</span></span>
 <span><span class="co">#&gt;          X(Int)</span></span>
-<span><span class="co">#&gt; Xs(x)Fx1 -0.440</span></span>
+<span><span class="co">#&gt; Xs(x)Fx1 0.000</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod_gamm4</span><span class="op">$</span><span class="va">gam</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Family: binomial </span></span>
-<span><span class="co">#&gt; Link function: logit </span></span>
+<span><span class="co">#&gt; Family: gaussian </span></span>
+<span><span class="co">#&gt; Link function: identity </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Formula:</span></span>
 <span><span class="co">#&gt; y ~ s(x)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Parametric coefficients:</span></span>
-<span><span class="co">#&gt;             Estimate Std. Error z value Pr(&gt;|z|)    </span></span>
-<span><span class="co">#&gt; (Intercept)   2.8115     0.1662   16.91   &lt;2e-16 ***</span></span>
+<span><span class="co">#&gt;             Estimate Std. Error t value Pr(&gt;|t|)    </span></span>
+<span><span class="co">#&gt; (Intercept)  1.26938    0.06657   19.07   &lt;2e-16 ***</span></span>
 <span><span class="co">#&gt; ---</span></span>
 <span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Approximate significance of smooth terms:</span></span>
-<span><span class="co">#&gt;       edf Ref.df Chi.sq p-value    </span></span>
-<span><span class="co">#&gt; s(x) 2.14   2.14  113.9  &lt;2e-16 ***</span></span>
+<span><span class="co">#&gt;        edf Ref.df     F p-value    </span></span>
+<span><span class="co">#&gt; s(x) 6.681  6.681 324.9  &lt;2e-16 ***</span></span>
 <span><span class="co">#&gt; ---</span></span>
 <span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; R-sq.(adj) =  0.116   </span></span>
-<span><span class="co">#&gt; glmer.ML = 908.96  Scale est. = 1         n = 1600</span></span></code></pre></div>
+<span><span class="co">#&gt; R-sq.(adj) =  0.253   </span></span>
+<span><span class="co">#&gt; lmer.REML = 3015.2  Scale est. = 0.25012   n = 1600</span></span></code></pre></div>
 <p>We can also plot the estimated smooth term:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mod_gamm4</span><span class="op">$</span><span class="va">gam</span><span class="op">)</span></span></code></pre></div>
@@ -314,8 +311,7 @@ such data can be modeled.</p>
 <code class="sourceCode R"><span><span class="va">mod_gamm4</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/gamm4/man/gamm4.html" class="external-link">gamm4</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="fu"><a href="../reference/sl.html">s</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>,</span>
 <span>  random <span class="op">=</span> <span class="op">~</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">dat</span>, family <span class="op">=</span> <span class="va">binomial</span></span>
-<span><span class="op">)</span></span>
-<span><span class="co">#&gt; Error in gamm4(y ~ s(x), random = ~(1 | id), data = dat, family = binomial): unused argument (family = binomial)</span></span></code></pre></div>
+<span><span class="op">)</span></span></code></pre></div>
 <p>We can look at the summary output as before.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod_gamm4</span><span class="op">$</span><span class="va">mer</span><span class="op">)</span></span>
@@ -619,386 +615,6 @@ confidence limits.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint</a></span><span class="op">(</span><span class="va">mod</span>, parm <span class="op">=</span> <span class="st">"lambda"</span><span class="op">)</span></span>
 <span><span class="co">#&gt;            2.5 %   97.5 %</span></span>
 <span><span class="co">#&gt; lambda1 1.612341 2.791192</span></span></code></pre></div>
-</div>
-<div class="section level4">
-<h4 id="multivariate-gaussian-model">Multivariate Gaussian Model<a class="anchor" aria-label="anchor" href="#multivariate-gaussian-model"></a>
-</h4>
-<p>We now do a joint analysis of domain 1 and domain 3, for which all
-item responses are conditionally normally distributed.</p>
-<p>Letting <span class="math inline">\(\eta_{1}\)</span> denote latent
-ability in domain 1 and <span class="math inline">\(\eta_{3}\)</span>
-denote latent ability in domain 3, and <span class="math inline">\(\lambda_{i1}\)</span> and <span class="math inline">\(\lambda_{i3}\)</span> be corresponding factor
-loadings for the <span class="math inline">\(i\)</span>th item measuring
-each domain, the measurement model is now</p>
-<p><span class="math display">\[
-y_{i} = \beta_{ij} + \lambda_{ij} \eta_{j} + \epsilon_{ij} ~ j=1,3
-\]</span></p>
-<p>To avoid unnecessary complexity, we assume the residual standard
-deviation is the same for all responses. The <a href="https://lcbc-uio.github.io/galamm/articles/lmm_heteroscedastic.html">vignette
-on linear mixed models with heteroscedastic residuals</a> shows how this
-assumption can be relaxed. The data were also simulated with all
-residual standard deviations equal, so in this case the homoscedasticity
-assumption is satisfied.</p>
-<p>In the structural model, we have a smooth term for the relationship
-between the latent trait and x, and we have random intercepts for a
-given timepoint within subject <span class="math inline">\(\zeta^{(2)}\)</span>, and for a given subject
-across timepoints <span class="math inline">\(\zeta^{(3)}\)</span>.</p>
-<p><span class="math display">\[
-\eta_{j} = h_{j}(x) + \zeta_{j}^{(2)} + \zeta_{j}^{(3)} ~j=1,3.
-\]</span></p>
-<p>We first subset the cognition dataset to get the measurements of
-domain 1 and 3, which are conditionally normally distributed. We also
-create two dummy variable, <code>domain1</code> and
-<code>domain3</code>, which we need when defining the formulas
-below.</p>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">cognition</span>, <span class="va">domain</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span></span>
-<span>  <span class="va">dat</span>, </span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html" class="external-link">model.matrix</a></span><span class="op">(</span><span class="op">~</span> <span class="fl">0</span> <span class="op">+</span> <span class="va">domain</span>, data <span class="op">=</span> <span class="va">dat</span><span class="op">)</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"domain1"</span>, <span class="st">"domain3"</span><span class="op">)</span><span class="op">]</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-<p>Below is a plot of the data we are analyzing.</p>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">dat</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span>, y <span class="op">=</span> <span class="va">y</span>, group <span class="op">=</span> <span class="va">id</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">.1</span><span class="op">)</span> <span class="op">+</span> </span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span>linewidth <span class="op">=</span> <span class="fl">.1</span>, alpha <span class="op">=</span> <span class="fl">.3</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/vars.html" class="external-link">vars</a></span><span class="op">(</span><span class="va">item</span><span class="op">)</span>, scales <span class="op">=</span> <span class="st">"free_y"</span>,</span>
-<span>    labeller <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/as_labeller.html" class="external-link">as_labeller</a></span><span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Domain"</span>, <span class="fu"><a href="https://rdrr.io/r/base/substr.html" class="external-link">substr</a></span><span class="op">(</span><span class="va">x</span>, <span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span>, </span>
-<span>                                             <span class="st">"item"</span>, <span class="fu"><a href="https://rdrr.io/r/base/substr.html" class="external-link">substr</a></span><span class="op">(</span><span class="va">x</span>, <span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>strip.background <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_blank</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>        panel.grid <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_blank</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="semiparametric-multivariate-spaghetti-1.png" alt=""><p class="caption">Spaghetti plot of measurements of domain 1 and 3.</p>
-</div>
-<p>Mathematically, the factor loading matrix we want is</p>
-<p><span class="math display">\[
-\Lambda =
-\begin{pmatrix}
-1 &amp; 0 \\
-\lambda_{12} &amp; 0 \\
-\lambda_{13} &amp; 0 \\
-0 &amp; 1 \\
-0 &amp; \lambda_{22} \\
-0 &amp; \lambda_{23} \\
-0 &amp; \lambda_{24}
-\end{pmatrix}
-\]</span></p>
-<p>In code, that becomes:</p>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="op">(</span><span class="va">lmat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>,</span>
-<span>                 <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;      [,1] [,2]</span></span>
-<span><span class="co">#&gt; [1,]    1    0</span></span>
-<span><span class="co">#&gt; [2,]   NA    0</span></span>
-<span><span class="co">#&gt; [3,]   NA    0</span></span>
-<span><span class="co">#&gt; [4,]    0    1</span></span>
-<span><span class="co">#&gt; [5,]    0   NA</span></span>
-<span><span class="co">#&gt; [6,]    0   NA</span></span>
-<span><span class="co">#&gt; [7,]    0   NA</span></span></code></pre></div>
-<p>Below is the call to fit the model.</p>
-<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
-<span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">domain</span> <span class="op">+</span></span>
-<span>    <span class="fu"><a href="../reference/sl.html">sl</a></span><span class="op">(</span><span class="va">x</span>, k <span class="op">=</span> <span class="fl">6</span>, by <span class="op">=</span> <span class="va">domain</span>, load.var <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ability1"</span>, <span class="st">"ability3"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
-<span>    <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">domain1</span><span class="op">:</span><span class="va">ability1</span> <span class="op">+</span> <span class="va">domain3</span><span class="op">:</span><span class="va">ability3</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span> <span class="op">+</span> </span>
-<span>    <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">domain1</span><span class="op">:</span><span class="va">ability1</span> <span class="op">|</span> <span class="va">id</span><span class="op">:</span><span class="va">timepoint</span><span class="op">)</span> <span class="op">+</span> </span>
-<span>    <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">domain3</span><span class="op">:</span><span class="va">ability3</span> <span class="op">|</span> <span class="va">id</span><span class="op">:</span><span class="va">timepoint</span><span class="op">)</span>,</span>
-<span>  data <span class="op">=</span> <span class="va">dat</span>,</span>
-<span>  load.var <span class="op">=</span> <span class="st">"item"</span>,</span>
-<span>  lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">lmat</span><span class="op">)</span>,</span>
-<span>  factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ability1"</span>, <span class="st">"ability3"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-<p>Before showing the results, some comments are probably useful. In the
-<code>formula</code>, the first term <code>domain</code> represents an
-intercept per domain. Ideally we should have had an intercept per item,
-representing the item bias, but in this case all item biases were set to
-zero when simulating the data, and thus estimating an intercept for all
-of them is unnecessary. Next, the term
-<code>sl(x, k = 6, by = domain, load.var = c("ability1", "ability3"))</code>
-specifies that we want one smooth estimated independently for each level
-of the factor variable <code>domain</code>. For the two levels of the
-factor variable <code>domain</code>, the loadings <code>ability1</code>
-and <code>ability3</code> should be applied, respectively. These
-represent the two columns in the loading matrix above. Setting
-<code>k = 6</code> specifies that we want six basis functions for each
-of the smooth terms. The first random effects term
-<code>(0 + domain1:ability1 + domain3:ability3 | id)</code> corresponds
-to <span class="math inline">\(\lambda \zeta_{j}^{(3)}\)</span>, and by
-specifying them in a single term, we allow the level-3 random intercepts
-to be correlated. The next two random effect terms
-<code>(0 + domain1:ability1 | id:timepoint)</code> and
-<code>(0 + domain3:ability3 | id:timepoint)</code> correspond to <span class="math inline">\(\lambda \zeta_{j}^{(2)}\)</span>, and by
-specifying them independently we state that the level-2 random
-intercepts should be uncorrelated. The assumption of uncorrelated random
-intercepts at level 2 is reasonable here because we simulated the data
-this way. If correlations at both levels should be allowed, we could
-simply replace all the three random effects terms with the single term
-<code>(0 + domain1:ability1 + domain3:ability3 | id / timepoint)</code>.</p>
-<p>We can now look at the model output, which shows that the factor
-loadings are estimated very close to their true value, and that the
-level-3 random intercepts are estimated to have correlation of 0.61
-which is actually a reasonable approximation of the true value 0.4,
-since random effect correlations are notoriously hard to estimate.</p>
-<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span>
-<span><span class="co">#&gt; GALAMM fit by maximum marginal likelihood.</span></span>
-<span><span class="co">#&gt; Formula: y ~ domain + sl(x, k = 6, by = domain, load.var = c("ability1",  </span></span>
-<span><span class="co">#&gt;     "ability3")) + (0 + domain1:ability1 + domain3:ability3 |  </span></span>
-<span><span class="co">#&gt;     id) + (0 + domain1:ability1 | id:timepoint) + (0 + domain3:ability3 |      id:timepoint)</span></span>
-<span><span class="co">#&gt;    Data: dat</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;      AIC      BIC   logLik deviance df.resid </span></span>
-<span><span class="co">#&gt;  -1319.6  -1195.1    676.8  -1353.6    11183 </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Scaled residuals: </span></span>
-<span><span class="co">#&gt;     Min      1Q  Median      3Q     Max </span></span>
-<span><span class="co">#&gt;  -10.90    5.65 1015.94 1264.17 2490.17 </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Lambda:</span></span>
-<span><span class="co">#&gt;         ability1       SE ability3        SE</span></span>
-<span><span class="co">#&gt; lambda1    1.000        .        .         .</span></span>
-<span><span class="co">#&gt; lambda2    1.398 0.002568        .         .</span></span>
-<span><span class="co">#&gt; lambda3    0.302 0.002006        .         .</span></span>
-<span><span class="co">#&gt; lambda4        .        .   1.0000         .</span></span>
-<span><span class="co">#&gt; lambda5        .        .   0.9995 0.0007682</span></span>
-<span><span class="co">#&gt; lambda6        .        .   1.0009 0.0007690</span></span>
-<span><span class="co">#&gt; lambda7        .        .   2.0003 0.0015716</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Random effects:</span></span>
-<span><span class="co">#&gt;  Groups         Name                  Variance Std.Dev. Corr</span></span>
-<span><span class="co">#&gt;  id.timepoint   domain3:ability3       0.46249 0.6801       </span></span>
-<span><span class="co">#&gt;  id.timepoint.1 domain1:ability1       0.23946 0.4893       </span></span>
-<span><span class="co">#&gt;  id             domain1:ability1       8.70515 2.9504       </span></span>
-<span><span class="co">#&gt;                 domain3:ability3      18.80099 4.3360   0.61</span></span>
-<span><span class="co">#&gt;  Xr.0           s(x):domain3:ability3 13.89382 3.7274       </span></span>
-<span><span class="co">#&gt;  Xr             s(x):domain1:ability1 16.36177 4.0450       </span></span>
-<span><span class="co">#&gt;  Residual                              0.01007 0.1003       </span></span>
-<span><span class="co">#&gt; Number of obs: 11200, groups:  id:timepoint, 1600; id, 200; Xr.0, 4; Xr, 4</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Fixed effects:</span></span>
-<span><span class="co">#&gt;                           Estimate Std. Error  t value Pr(&gt;|t|)</span></span>
-<span><span class="co">#&gt; (Intercept)              -0.003987   0.004679  -0.8522   0.3941</span></span>
-<span><span class="co">#&gt; domain3                   0.002019   0.007608   0.2654   0.7907</span></span>
-<span><span class="co">#&gt; s(x):domain1:ability1Fx1  0.152050   0.118988   1.2779   0.2013</span></span>
-<span><span class="co">#&gt; s(x):domain3:ability3Fx1 -9.599527   0.171067 -56.1155   0.0000</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Approximate significance of smooth terms:</span></span>
-<span><span class="co">#&gt;                         edf Ref.df      F p-value</span></span>
-<span><span class="co">#&gt; s(x):domain1:ability1 4.998  4.998   7718  &lt;2e-16</span></span>
-<span><span class="co">#&gt; s(x):domain3:ability3 4.996  4.996 101282  &lt;2e-16</span></span></code></pre></div>
-<p>We now study the smooth terms. Since in this case we know the true
-values, we include these for comparison. First we look at the smooth for
-domain 1, and we see that the estimate very well captures the true
-value.</p>
-<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># x-values to plot the true function</span></span>
-<span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span>from <span class="op">=</span> <span class="fl">0</span>, to <span class="op">=</span> <span class="fl">1</span>, by <span class="op">=</span> <span class="fl">.01</span><span class="op">)</span></span>
-<span><span class="co"># True function</span></span>
-<span><span class="va">f0</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fl">2</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/Trig.html" class="external-link">sin</a></span><span class="op">(</span><span class="va">pi</span> <span class="op">*</span> <span class="va">x</span><span class="op">)</span></span>
-<span><span class="co"># Scale to mean zero across x</span></span>
-<span><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu">f0</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fu">f0</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Plot estimate</span></span>
-<span><span class="fu"><a href="../reference/plot_smooth.galamm.html">plot_smooth</a></span><span class="op">(</span><span class="va">mod</span>, select <span class="op">=</span> <span class="fl">1</span>, scale <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
-<span><span class="co"># Overlay true curve in red</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, col <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="semiparametric-multivariate-gaussian-smooth1-1.png" alt=""><p class="caption">Comparison of estimate to true value.</p>
-</div>
-<p>Next we look at domain 3. In this case we see that our estimate is
-oversmoothing the true value. This is probably because we the number of
-basis functions to only six, to avoid convergence issues. In any case,
-the overall shape of the true trajectory is clearly being captured.</p>
-<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># True function</span></span>
-<span><span class="va">f2</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="fl">0.2</span> <span class="op">*</span> <span class="va">x</span><span class="op">^</span><span class="fl">11</span> <span class="op">*</span> <span class="op">(</span><span class="fl">10</span> <span class="op">*</span> <span class="op">(</span><span class="fl">1</span> <span class="op">-</span> <span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">^</span><span class="fl">6</span> <span class="op">+</span> <span class="fl">10</span> <span class="op">*</span></span>
-<span>    <span class="op">(</span><span class="fl">10</span> <span class="op">*</span> <span class="va">x</span><span class="op">)</span><span class="op">^</span><span class="fl">3</span> <span class="op">*</span> <span class="op">(</span><span class="fl">1</span> <span class="op">-</span> <span class="va">x</span><span class="op">)</span><span class="op">^</span><span class="fl">10</span></span>
-<span><span class="op">}</span></span>
-<span><span class="co"># Scale to mean zero across x</span></span>
-<span><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu">f2</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fu">f2</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Plot estimate</span></span>
-<span><span class="fu"><a href="../reference/plot_smooth.galamm.html">plot_smooth</a></span><span class="op">(</span><span class="va">mod</span>, select <span class="op">=</span> <span class="fl">2</span>, scale <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
-<span><span class="co"># Overlay true curve in red</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, col <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="semiparametric-multivariate-gaussian-smooth2-1.png" alt=""><p class="caption">Comparison of estimate to true value.</p>
-</div>
-</div>
-<div class="section level4">
-<h4 id="multivariate-binomial-and-gaussian-model">Multivariate Binomial and Gaussian Model<a class="anchor" aria-label="anchor" href="#multivariate-binomial-and-gaussian-model"></a>
-</h4>
-<p>We now extend the model above to also include the items measuring
-domain 2, which are all binomially distributed with a single trial.</p>
-<p>We start by adding dummy variables for each domain, as before.</p>
-<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">mm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html" class="external-link">model.matrix</a></span><span class="op">(</span><span class="op">~</span> <span class="fl">0</span> <span class="op">+</span> <span class="va">domain</span>, data <span class="op">=</span> <span class="va">cognition</span><span class="op">)</span></span>
-<span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">cognition</span>, <span class="va">mm</span><span class="op">)</span></span></code></pre></div>
-<p>Next we define the factor loading matrix, which now has three
-columns.</p>
-<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="op">(</span><span class="va">lmat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>,</span>
-<span>    <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span>, <span class="cn">NA</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>,</span>
-<span>    <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span>,</span>
-<span>  ncol <span class="op">=</span> <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;       [,1] [,2] [,3]</span></span>
-<span><span class="co">#&gt;  [1,]    1    0    0</span></span>
-<span><span class="co">#&gt;  [2,]   NA    0    0</span></span>
-<span><span class="co">#&gt;  [3,]   NA    0    0</span></span>
-<span><span class="co">#&gt;  [4,]    0    1    0</span></span>
-<span><span class="co">#&gt;  [5,]    0   NA    0</span></span>
-<span><span class="co">#&gt;  [6,]    0    0    1</span></span>
-<span><span class="co">#&gt;  [7,]    0    0   NA</span></span>
-<span><span class="co">#&gt;  [8,]    0    0   NA</span></span>
-<span><span class="co">#&gt;  [9,]    0    0   NA</span></span></code></pre></div>
-<p>The responses are now either conditionally Gaussian or conditionally
-binomial, so we define the family object and family mapping as
-follows:</p>
-<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">family</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">gaussian</span>, <span class="va">binomial</span><span class="op">)</span></span>
-<span><span class="va">family_mapping</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">dat</span><span class="op">$</span><span class="va">domain</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span><span class="op">)</span>, <span class="fl">1L</span>, <span class="fl">2L</span><span class="op">)</span></span></code></pre></div>
-<p>Since this model will be computationally challenging, we need to
-think about the optimization. We define the control object as follows,
-where <code>trace = 3</code> means that we want the <code><a href="https://rdrr.io/r/stats/optim.html" class="external-link">optim()</a></code>
-function to be relatively verbose, <code>REPORT = 5</code> which means
-that we want it to report every fifth iteration, and
-<code>factr = 1e9</code> which means that when the reduction in marginal
-loglikelihood is within <span class="math inline">\(10^{9}\)</span>
-times machine precision, then convergence has occured. The default for
-<code>factr</code> is <code>1e7</code>, so we are less strict than
-default. Finally, <code>reduced_hessian = TRUE</code> means that at the
-maximum marginal likelihood solution that is found, the Hessian matrix
-should only contain partial derivatives with respect to the fixed
-regression coefficients and the factor loadings. That is, it should not
-contain derivatives with respect to the variance components, which for
-models of this complexity typically leads to non-positive definite
-Hessian matrices. This also means that Wald type confidence intervals
-based on this Hessian matrix are more approximate than usual, since they
-ignore the uncertainty in the variance components. However, the
-simulations in <span class="citation">Sørensen, Fjell, and Walhovd (<a href="#ref-sorensenLongitudinalModelingAgeDependent2023" role="doc-biblioref">2023</a>)</span> suggest that the results
-confidence intervals still are quite good for most parameters.</p>
-<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">control</span> <span class="op">&lt;-</span>  <span class="fu"><a href="../reference/galamm_control.html">galamm_control</a></span><span class="op">(</span></span>
-<span>  optim_control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>trace <span class="op">=</span> <span class="fl">3</span>, REPORT <span class="op">=</span> <span class="fl">5</span>, factr <span class="op">=</span> <span class="fl">1e9</span><span class="op">)</span>,</span>
-<span>  reduced_hessian <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p>For this example, we also remove the level-2 disturbances, as they
-lead to further computational challenges which are not directly relevant
-to this example. For real data analysis in the first example of <span class="citation">Sørensen, Fjell, and Walhovd (<a href="#ref-sorensenLongitudinalModelingAgeDependent2023" role="doc-biblioref">2023</a>)</span>, level-2 disturbances were
-included and the model did converge, so it is not necessary in general
-to drop this level.</p>
-<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
-<span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">domain</span> <span class="op">+</span> </span>
-<span>    <span class="fu"><a href="../reference/sl.html">sl</a></span><span class="op">(</span><span class="va">x</span>, k <span class="op">=</span> <span class="fl">6</span>, by <span class="op">=</span> <span class="va">domain</span>, </span>
-<span>       load.var <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ability1"</span>, <span class="st">"ability2"</span>, <span class="st">"ability3"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
-<span>    <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">domain1</span><span class="op">:</span><span class="va">ability1</span> <span class="op">+</span> <span class="va">domain2</span><span class="op">:</span><span class="va">ability2</span> <span class="op">+</span> <span class="va">domain3</span><span class="op">:</span><span class="va">ability3</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span>,</span>
-<span>  data <span class="op">=</span> <span class="va">dat</span>,</span>
-<span>  family <span class="op">=</span> <span class="va">family</span>,</span>
-<span>  family_mapping <span class="op">=</span> <span class="va">family_mapping</span>,</span>
-<span>  load.var <span class="op">=</span> <span class="st">"item"</span>,</span>
-<span>  lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">lmat</span><span class="op">)</span>,</span>
-<span>  factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ability1"</span>, <span class="st">"ability2"</span>, <span class="st">"ability3"</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  control <span class="op">=</span> <span class="va">control</span></span>
-<span><span class="op">)</span></span>
-<span><span class="co">#&gt; N = 21, M = 20 machine precision = 2.22045e-16</span></span>
-<span><span class="co">#&gt; At X0, 0 variables are exactly at the bounds</span></span>
-<span><span class="co">#&gt; At iterate     0  f=        25990  |proj g|=         6749</span></span>
-<span><span class="co">#&gt; At iterate     5  f =        19398  |proj g|=        780.41</span></span>
-<span><span class="co">#&gt; At iterate    10  f =        15323  |proj g|=        1141.7</span></span>
-<span><span class="co">#&gt; At iterate    15  f =        14627  |proj g|=        1576.5</span></span>
-<span><span class="co">#&gt; At iterate    20  f =        14483  |proj g|=        162.98</span></span>
-<span><span class="co">#&gt; At iterate    25  f =        14397  |proj g|=         37.08</span></span>
-<span><span class="co">#&gt; At iterate    30  f =        14329  |proj g|=        314.17</span></span>
-<span><span class="co">#&gt; At iterate    35  f =        14260  |proj g|=        191.23</span></span>
-<span><span class="co">#&gt; At iterate    40  f =        14247  |proj g|=         27.04</span></span>
-<span><span class="co">#&gt; At iterate    45  f =        14242  |proj g|=        30.921</span></span>
-<span><span class="co">#&gt; At iterate    50  f =        14239  |proj g|=        28.512</span></span>
-<span><span class="co">#&gt; At iterate    55  f =        14237  |proj g|=        48.242</span></span>
-<span><span class="co">#&gt; At iterate    60  f =        14237  |proj g|=        25.373</span></span>
-<span><span class="co">#&gt; At iterate    65  f =        14236  |proj g|=        150.72</span></span>
-<span><span class="co">#&gt; At iterate    70  f =        14231  |proj g|=        110.19</span></span>
-<span><span class="co">#&gt; At iterate    75  f =        14230  |proj g|=        57.963</span></span>
-<span><span class="co">#&gt; At iterate    80  f =        14225  |proj g|=        32.814</span></span>
-<span><span class="co">#&gt; At iterate    85  f =        14224  |proj g|=        23.879</span></span>
-<span><span class="co">#&gt; At iterate    90  f =        14223  |proj g|=        17.141</span></span>
-<span><span class="co">#&gt; At iterate    95  f =        14220  |proj g|=        13.796</span></span>
-<span><span class="co">#&gt; At iterate   100  f =        14219  |proj g|=        21.301</span></span>
-<span><span class="co">#&gt; final  value 14218.761356 </span></span>
-<span><span class="co">#&gt; stopped after 101 iterations</span></span></code></pre></div>
-<p>The summary output is shown below:</p>
-<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span>
-<span><span class="co">#&gt; GALAMM fit by maximum marginal likelihood.</span></span>
-<span><span class="co">#&gt; Formula: y ~ domain + sl(x, k = 6, by = domain, load.var = c("ability1",  </span></span>
-<span><span class="co">#&gt;     "ability2", "ability3")) + (0 + domain1:ability1 + domain2:ability2 +      domain3:ability3 | id)</span></span>
-<span><span class="co">#&gt;    Data: dat</span></span>
-<span><span class="co">#&gt; Control: control</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;        AIC        BIC     logLik   deviance   df.resid </span></span>
-<span><span class="co">#&gt;    28481.5    28648.2   -14218.8 35771641.8      14378 </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Scaled residuals: </span></span>
-<span><span class="co">#&gt;      Min       1Q   Median       3Q      Max </span></span>
-<span><span class="co">#&gt; -253.327   -2.731    0.058   70.749  133.839 </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Lambda:</span></span>
-<span><span class="co">#&gt;         ability1      SE ability2    SE ability3       SE</span></span>
-<span><span class="co">#&gt; lambda1   1.0000       .        .     .        .        .</span></span>
-<span><span class="co">#&gt; lambda2   1.4005 0.01851        .     .        .        .</span></span>
-<span><span class="co">#&gt; lambda3   0.2986 0.01512        .     .        .        .</span></span>
-<span><span class="co">#&gt; lambda4        .       .    1.000     .        .        .</span></span>
-<span><span class="co">#&gt; lambda5        .       .    1.725 0.147        .        .</span></span>
-<span><span class="co">#&gt; lambda6        .       .        .     .   1.0000        .</span></span>
-<span><span class="co">#&gt; lambda7        .       .        .     .   0.9999 0.005676</span></span>
-<span><span class="co">#&gt; lambda8        .       .        .     .   1.0007 0.005679</span></span>
-<span><span class="co">#&gt; lambda9        .       .        .     .   2.0111 0.011334</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Random effects:</span></span>
-<span><span class="co">#&gt;  Groups Name                  Variance Std.Dev. Corr     </span></span>
-<span><span class="co">#&gt;  id     domain1:ability1        2.452   1.566            </span></span>
-<span><span class="co">#&gt;         domain2:ability2        3.646   1.909   0.86     </span></span>
-<span><span class="co">#&gt;         domain3:ability3       11.898   3.449   0.82 1.00</span></span>
-<span><span class="co">#&gt;  Xr.1   s(x):domain3:ability3 223.339  14.945            </span></span>
-<span><span class="co">#&gt;  Xr.0   s(x):domain2:ability2   1.665   1.290            </span></span>
-<span><span class="co">#&gt;  Xr     s(x):domain1:ability1   7.465   2.732            </span></span>
-<span><span class="co">#&gt; Number of obs: 14400, groups:  id, 200; Xr.1, 4; Xr.0, 4; Xr, 4</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Fixed effects:</span></span>
-<span><span class="co">#&gt;                           Estimate Std. Error    z value  Pr(&gt;|z|)</span></span>
-<span><span class="co">#&gt; (Intercept)               0.001827    0.03152    0.05796 9.538e-01</span></span>
-<span><span class="co">#&gt; domain2                   0.811792    0.12790    6.34727 2.192e-10</span></span>
-<span><span class="co">#&gt; domain3                   0.056704    0.04989    1.13662 2.557e-01</span></span>
-<span><span class="co">#&gt; s(x):domain1:ability1Fx1  0.159995    0.10127    1.57989 1.141e-01</span></span>
-<span><span class="co">#&gt; s(x):domain2:ability2Fx1 -0.337532    0.33719   -1.00103 3.168e-01</span></span>
-<span><span class="co">#&gt; s(x):domain3:ability3Fx1 -9.803813    0.08146 -120.35373 0.000e+00</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Approximate significance of smooth terms:</span></span>
-<span><span class="co">#&gt;                         edf Ref.df       F p-value</span></span>
-<span><span class="co">#&gt; s(x):domain1:ability1 4.937  4.937   639.3  &lt;2e-16</span></span>
-<span><span class="co">#&gt; s(x):domain2:ability2 4.659  4.659  1714.5  &lt;2e-16</span></span>
-<span><span class="co">#&gt; s(x):domain3:ability3 4.998  4.998 16093.4  &lt;2e-16</span></span></code></pre></div>
-<p>The estimated smooth terms are shown in the plots below.</p>
-<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_smooth.galamm.html">plot_smooth</a></span><span class="op">(</span><span class="va">mod</span>, select <span class="op">=</span> <span class="fl">1</span>, scale <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="semiparametric-mixedresponse-smooths1-1.png" alt=""><p class="caption">First smooth term for semiparametric mixed response
-model.</p>
-</div>
-<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_smooth.galamm.html">plot_smooth</a></span><span class="op">(</span><span class="va">mod</span>, select <span class="op">=</span> <span class="fl">2</span>, scale <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="semiparametric-mixedresponse-smooths2-1.png" alt=""><p class="caption">Second smooth term for semiparametric mixed response
-model.</p>
-</div>
-<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_smooth.galamm.html">plot_smooth</a></span><span class="op">(</span><span class="va">mod</span>, select <span class="op">=</span> <span class="fl">3</span>, scale <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="semiparametric-mixedresponse-smooths3-1.png" alt=""><p class="caption">Third smooth term for semiparametric mixed response
-model.</p>
-</div>
 </div>
 </div>
 <div class="section level2">
