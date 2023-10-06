@@ -49,7 +49,9 @@ test_that("galamm reproduces gamm4", {
   expect_equal(predict(mod0$gam), predict(mod1), tolerance = .01)
   nd <- data.frame(fac = head(dat$fac, 6), x2 = runif(6))
   expect_equal(predict(mod0$gam, newdata = nd),
-               predict(mod1, newdata = nd), tolerance = .01)
+    predict(mod1, newdata = nd),
+    tolerance = .01
+  )
 
   mod0 <- gamm4::gamm4(y ~ s(x0, by = x2), data = dat, REML = FALSE)
   mod1 <- galamm(y ~ s(x0, by = x2), data = dat)
@@ -58,7 +60,9 @@ test_that("galamm reproduces gamm4", {
   expect_snapshot(print(summary(mod1$gam), digits = 2))
   nd <- data.frame(x0 = runif(6), x2 = runif(6))
   expect_equal(predict(mod0$gam, newdata = nd),
-               predict(mod1, newdata = nd), tolerance = .01)
+    predict(mod1, newdata = nd),
+    tolerance = .01
+  )
 
   mod0 <- gamm4::gamm4(y ~ t2(x0, by = x2), data = dat, REML = FALSE)
   mod1 <- galamm(y ~ t2(x0, by = x2), data = dat)
@@ -66,7 +70,9 @@ test_that("galamm reproduces gamm4", {
   expect_equal(deviance(mod0$mer), deviance(mod1), tolerance = .0001)
   expect_snapshot(print(summary(mod1$gam), digits = 2))
   expect_equal(predict(mod0$gam, newdata = nd),
-               predict(mod1, newdata = nd), tolerance = .01)
+    predict(mod1, newdata = nd),
+    tolerance = .01
+  )
 
   set.seed(1)
   dat <- mgcv::gamSim(1, verbose = FALSE, dist = "binary")
@@ -74,13 +80,17 @@ test_that("galamm reproduces gamm4", {
   mod1 <- galamm(y ~ s(x0), family = binomial, data = dat)
   expect_equal(deviance(mod0$mer), deviance(mod1), tolerance = .001)
   expect_equal(predict(mod0$gam, newdata = nd),
-               predict(mod1, newdata = nd), tolerance = .01)
+    predict(mod1, newdata = nd),
+    tolerance = .01
+  )
   expect_equal(predict(mod0$gam, newdata = nd, type = "response"),
-               predict(mod1, newdata = nd, type = "response"),
-               tolerance = .01)
+    predict(mod1, newdata = nd, type = "response"),
+    tolerance = .01
+  )
   expect_equal(predict(mod0$gam, type = "response"),
-               predict(mod1, type = "response"),
-               tolerance = .01)
+    predict(mod1, type = "response"),
+    tolerance = .01
+  )
 
   mod0 <- gamm4::gamm4(y ~ s(x0, by = x2), data = dat, family = binomial)
   mod1 <- galamm(y ~ s(x0, by = x2), data = dat, family = binomial)
@@ -88,11 +98,13 @@ test_that("galamm reproduces gamm4", {
   expect_equal(deviance(mod0$mer), deviance(mod1), tolerance = .001)
   expect_snapshot(print(summary(mod1$gam), digits = 2))
   expect_equal(predict(mod0$gam, newdata = nd, type = "response"),
-               predict(mod1, newdata = nd, type = "response"),
-               tolerance = .01)
+    predict(mod1, newdata = nd, type = "response"),
+    tolerance = .01
+  )
   expect_equal(predict(mod0$gam, type = "response"),
-               predict(mod1, type = "response"),
-               tolerance = .01)
+    predict(mod1, type = "response"),
+    tolerance = .01
+  )
 
   mod0 <- gamm4::gamm4(y ~ t2(x0, by = x2), data = dat, family = binomial)
   mod1 <- galamm(y ~ t2(x0, by = x2), data = dat, family = binomial)
@@ -100,8 +112,9 @@ test_that("galamm reproduces gamm4", {
   expect_equal(deviance(mod0$mer), deviance(mod1), tolerance = .001)
   expect_snapshot(print(summary(mod1$gam), digits = 2))
   expect_equal(predict(mod0$gam, type = "response"),
-               predict(mod1, type = "response"),
-               tolerance = .01)
+    predict(mod1, type = "response"),
+    tolerance = .01
+  )
 
   set.seed(1)
   dat <- mgcv::gamSim(1, scale = .1, verbose = FALSE, dist = "poisson")
@@ -112,13 +125,17 @@ test_that("galamm reproduces gamm4", {
   expect_equal(mod0$gam$edf, mod1$gam$edf, tolerance = .1)
   expect_snapshot(print(summary(mod1$gam), digits = 2))
   expect_equal(predict(mod0$gam, newdata = nd),
-               predict(mod1, newdata = nd), tolerance = .01)
+    predict(mod1, newdata = nd),
+    tolerance = .01
+  )
   expect_equal(predict(mod0$gam, newdata = nd, type = "response"),
-               predict(mod1, newdata = nd, type = "response"),
-               tolerance = .01)
+    predict(mod1, newdata = nd, type = "response"),
+    tolerance = .01
+  )
   expect_equal(predict(mod0$gam, type = "response"),
-               predict(mod1, type = "response"),
-               tolerance = .01)
+    predict(mod1, type = "response"),
+    tolerance = .01
+  )
 
   mod0 <- gamm4::gamm4(y ~ t2(x2, by = x0), data = dat, family = poisson)
   mod1 <- galamm(y ~ t2(x2, by = x0), data = dat, family = poisson)
@@ -126,13 +143,17 @@ test_that("galamm reproduces gamm4", {
   expect_equal(mod0$gam$edf, mod1$gam$edf, tolerance = .1)
   expect_snapshot(print(summary(mod1$gam), digits = 2))
   expect_equal(predict(mod0$gam, newdata = nd),
-               predict(mod1, newdata = nd), tolerance = .01)
+    predict(mod1, newdata = nd),
+    tolerance = .01
+  )
   expect_equal(predict(mod0$gam, newdata = nd, type = "response"),
-               predict(mod1, newdata = nd, type = "response"),
-               tolerance = .01)
+    predict(mod1, newdata = nd, type = "response"),
+    tolerance = .01
+  )
   expect_equal(predict(mod0$gam, type = "response"),
-               predict(mod1, type = "response"),
-               tolerance = .01)
+    predict(mod1, type = "response"),
+    tolerance = .01
+  )
 })
 
 test_that("Basic GAMM with factor structures works", {
@@ -356,9 +377,12 @@ test_that("galamm with by variables and loadings works", {
 
   expect_equal(
     mod$gam$edf,
-    c(`(Intercept)` = 1, domain3 = 1, `s(x):domain1:ability1.1` = 0.954008491014651,
+    c(
+      `(Intercept)` = 1, domain3 = 1, `s(x):domain1:ability1.1` = 0.954008491014651,
       `s(x):domain1:ability1.2` = 0.99441736961761, `s(x):domain1:ability1.3` = 0.999999999999943,
       `s(x):domain3:ability3.1` = 0.998892741239118, `s(x):domain3:ability3.2` = 0.999862302691303,
-      `s(x):domain3:ability3.3` = 1.00000000000003), tolerance = .1)
-
+      `s(x):domain3:ability3.3` = 1.00000000000003
+    ),
+    tolerance = .1
+  )
 })

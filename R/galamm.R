@@ -411,7 +411,9 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
 
   fit <- vapply(seq_along(family_mapping), extractor, numeric(1))
   fit_population <- vapply(seq_along(family_mapping), extractor,
-                           numeric(1), inc_random = FALSE)
+    numeric(1),
+    inc_random = FALSE
+  )
 
   pearson_residuals <- (response_obj[, 1] - fit) /
     unlist(Map(function(x, y) sqrt(family_list[[x]]$variance(y)),

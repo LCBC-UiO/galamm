@@ -47,7 +47,7 @@ predict.galamm <- function(object, newdata = NULL,
   type <- match.arg(type)
 
   if (!is.null(newdata)) {
-    if(!is.null(object$gam) && length(object$gam) > 0) {
+    if (!is.null(object$gam) && length(object$gam) > 0) {
       return(predict(object$gam, newdata = newdata, type = type, ...))
     }
     newform <- stats::update(lme4::nobars(eval(object$call[[2]])), NULL ~ .)
@@ -57,12 +57,12 @@ predict.galamm <- function(object, newdata = NULL,
 
     linear_predictor <- X %*% beta_hat
   } else {
-    if(!is.null(object$gam) && length(object$gam) > 0) {
+    if (!is.null(object$gam) && length(object$gam) > 0) {
       return(predict(object$gam, type = type, ...))
     }
     linear_predictor <- family(object)[[1]]$linkfun(object$model$fit_population)
   }
-  if(length(object$model$family) > 1 && type == "response") {
+  if (length(object$model$family) > 1 && type == "response") {
     stop("For mixed response model, only type='link' works.")
   }
 

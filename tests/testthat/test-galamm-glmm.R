@@ -81,9 +81,11 @@ test_that("Logistic GLMM with simple factor works", {
 
   expect_equal(
     llikAIC(galamm_mod_trials),
-    c(AIC = 787.772022531666, BIC = 801.777055373845,
+    c(
+      AIC = 787.772022531666, BIC = 801.777055373845,
       logLik = -389.886011265833,
-      deviance = 418.428625884762, df.resid = 241)
+      deviance = 418.428625884762, df.resid = 241
+    )
   )
 })
 
