@@ -2,7 +2,7 @@
 #'
 #' Predictions are given at the population level, i.e., with random effects set
 #' to zero. For mixed response models, only predictions on the scale of the
-#' linear predictiors is supported.
+#' linear predictors is supported.
 #'
 #' @param object An object of class \code{galamm} returned from
 #'   \code{\link{galamm}}.

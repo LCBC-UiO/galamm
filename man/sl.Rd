@@ -51,7 +51,6 @@ mod <- galamm(
   factor = list("loading")
 )
 
-
 }
 \references{
 \insertRef{woodThinPlateRegression2003}{galamm}

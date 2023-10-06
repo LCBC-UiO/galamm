@@ -22,10 +22,9 @@ fit the model.}
 A numeric vector of predicted values.
 }
 \description{
-Currently, predictions are given with all random effects set to zero. We will
-add the opportunity to specify the level of prediction in the future. This is
-particularly important for models containing smooth terms, for which the
-predictions currently don't make much sense.
+Predictions are given at the population level, i.e., with random effects set
+to zero. For mixed response models, only predictions on the scale of the
+linear predictors is supported.
 }
 \examples{
 # Poisson GLMM
