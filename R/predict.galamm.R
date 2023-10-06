@@ -1,9 +1,8 @@
 #' Predictions from a model at new data values
 #'
-#' Currently, predictions are given with all random effects set to zero. We will
-#' add the opportunity to specify the level of prediction in the future. This is
-#' particularly important for models containing smooth terms, for which the
-#' predictions currently don't make much sense.
+#' Predictions are given at the population level, i.e., with random effects set
+#' to zero. For mixed response models, only predictions on the scale of the
+#' linear predictiors is supported.
 #'
 #' @param object An object of class \code{galamm} returned from
 #'   \code{\link{galamm}}.
@@ -40,6 +39,9 @@ predict.galamm <- function(object, newdata = NULL,
   type <- match.arg(type)
   if (!is.null(newdata)) {
     stop("Not implemented yet")
+  }
+  if(length(object$model$family) > 1 && type == "response") {
+    stop("For mixed response model, only type='link' works.")
   }
 
   if (type == "response") {
