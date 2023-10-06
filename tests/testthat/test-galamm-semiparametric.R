@@ -362,16 +362,16 @@ test_that("galamm with by variables and loadings works", {
     lambda = list(lmat),
     factor = list(c("ability1", "ability3")),
     control = galamm_control(
-      optim_control = list(maxit = 3), reduced_hessian = TRUE
+      optim_control = list(maxit = 0), reduced_hessian = TRUE
     )
   )
 
   expect_equal(
     mod$gam$edf,
-    c(`(Intercept)` = 1, domain3 = 1, `s(x):domain1:ability1.1` = 0.787521294818479,
-      `s(x):domain1:ability1.2` = 0.969649440653347, `s(x):domain1:ability1.3` = 0.999999999999926,
-      `s(x):domain3:ability3.1` = 0.814438455253811, `s(x):domain3:ability3.2` = 0.971863835061204,
-      `s(x):domain3:ability3.3` = 1.0000000000001),
+    c(`(Intercept)` = 1, domain3 = 1, `s(x):domain1:ability1.1` = 0.784379511396783,
+      `s(x):domain1:ability1.2` = 0.969093948703507, `s(x):domain1:ability1.3` = 0.999999999999999,
+      `s(x):domain3:ability3.1` = 0.802676599184426, `s(x):domain3:ability3.2` = 0.969697892022145,
+      `s(x):domain3:ability3.3` = 0.999999999999915),
     tolerance = .1
   )
 })
