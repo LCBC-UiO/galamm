@@ -107,6 +107,8 @@
 #'   \code{factor_interactions} to \code{galamm}. If not provided, it is
 #'   \code{NULL}.
 #'   * \code{fit} a numeric vector with fitted values.
+#'   * \code{fit_population} a numeric vector with fitted values excluding
+#'   random effects.
 #'   * \code{hessian} Hessian matrix of final model, i.e., the second
 #'   derivative of the log-likelihood with respect to all model parameters.
 #'   * \code{lmod} Linear model object returned by \code{lme4::lFormula}, which
@@ -396,17 +398,20 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   # Random effects in original parametrization
   b <- Matrix::t(gobj$lmod$reTrms$Lambdat) %*% final_model$u
 
-  # Compute prediction
-  preds <- vapply(family_list, function(fam) {
-    fam$linkinv(
-      as.numeric(gobj$lmod$X %*% opt$par[beta_inds] +
-        Matrix::t(gobj$lmod$reTrms$Zt) %*% b)
-    )
-  }, numeric(nrow(gobj$lmod$X)))
+  # Compute prediction including random effects
+  linear_predictor_fixed <- as.numeric(gobj$lmod$X %*% opt$par[beta_inds])
+  linear_predictor_random <- as.numeric(Matrix::t(gobj$lmod$reTrms$Zt) %*% b)
 
-  fit <- unlist(Map(function(i, j) {
-    preds[i, j]
-  }, i = seq_len(nrow(preds)), j = family_mapping))
+  extractor <- function(i, inc_random = TRUE) {
+    family_list[[family_mapping[[i]]]]$linkinv(
+      linear_predictor_fixed[[i]] +
+        ifelse(inc_random, linear_predictor_random[[i]], 0)
+    )
+  }
+
+  fit <- vapply(seq_along(family_mapping), extractor, numeric(1))
+  fit_population <- vapply(seq_along(family_mapping), extractor,
+                           numeric(1), inc_random = FALSE)
 
   pearson_residuals <- (response_obj[, 1] - fit) /
     unlist(Map(function(x, y) sqrt(family_list[[x]]$variance(y)),
@@ -451,6 +456,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
     family = family_list,
     factor_interactions = factor_interactions,
     fit = fit,
+    fit_population = fit_population,
     hessian = final_model$hessian,
     lmod = gobj$lmod,
     loglik = opt$value,

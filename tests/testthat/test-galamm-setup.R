@@ -260,11 +260,6 @@ test_that("family can be defined in three different ways", {
   expect_equal(logLik(mod2), logLik(mod3))
 
   expect_error(
-    predict(mod1, newdata = dat),
-    "Not implemented yet"
-  )
-
-  expect_error(
     vcov(mod1, list(1:10)),
     "parm must be an integer or character vector"
   )

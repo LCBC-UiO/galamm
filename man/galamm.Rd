@@ -109,6 +109,8 @@ between latent and observed variables, as provided to the argument
 \code{factor_interactions} to \code{galamm}. If not provided, it is
 \code{NULL}.
 \item \code{fit} a numeric vector with fitted values.
+\item \code{fit_population} a numeric vector with fitted values excluding
+random effects.
 \item \code{hessian} Hessian matrix of final model, i.e., the second
 derivative of the log-likelihood with respect to all model parameters.
 \item \code{lmod} Linear model object returned by \code{lme4::lFormula}, which

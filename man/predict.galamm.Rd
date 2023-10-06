@@ -23,8 +23,9 @@ A numeric vector of predicted values.
 }
 \description{
 Predictions are given at the population level, i.e., with random effects set
-to zero. For mixed response models, only predictions on the scale of the
-linear predictors is supported.
+to zero. For fitted models including random effects, see
+\code{\link{fitted.galamm}}. For mixed response models, only predictions on
+the scale of the linear predictors is supported.
 }
 \examples{
 # Poisson GLMM

@@ -137,7 +137,7 @@ dat <- IRTsim
 dat$trials <- sample(1:10, nrow(dat), replace = TRUE)
 dat$y <- rbinom(
   n = nrow(dat), size = dat$trials,
-  prob = predict(mod, type = "response")
+  prob = plogis(fitted(mod))
 )
 head(dat)
 ```

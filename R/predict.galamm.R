@@ -1,8 +1,9 @@
 #' Predictions from a model at new data values
 #'
 #' Predictions are given at the population level, i.e., with random effects set
-#' to zero. For mixed response models, only predictions on the scale of the
-#' linear predictors is supported.
+#' to zero. For fitted models including random effects, see
+#' \code{\link{fitted.galamm}}. For mixed response models, only predictions on
+#' the scale of the linear predictors is supported.
 #'
 #' @param object An object of class \code{galamm} returned from
 #'   \code{\link{galamm}}.
@@ -38,15 +39,21 @@ predict.galamm <- function(object, newdata = NULL,
                            ...) {
   type <- match.arg(type)
   if (!is.null(newdata)) {
-    stop("Not implemented yet")
+    X <- model.matrix(lme4::nobars(eval(object$call[[2]])), data = newdata)
+    beta_hat <-
+      object$parameters$parameter_estimates[object$parameters$beta_inds]
+
+    linear_predictor <- X %*% beta_hat
+  } else {
+    linear_predictor <- family(object)[[1]]$linkfun(object$model$fit_population)
   }
   if(length(object$model$family) > 1 && type == "response") {
     stop("For mixed response model, only type='link' works.")
   }
 
   if (type == "response") {
-    fitted(object)
+    family(object)[[1]]$linkinv(linear_predictor)
   } else {
-    family(object)[[1]]$linkfun(fitted(object))
+    linear_predictor
   }
 }
