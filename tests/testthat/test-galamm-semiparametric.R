@@ -342,47 +342,36 @@ test_that("GAMM with factor structures and random effects works", {
 })
 
 test_that("galamm with by variables and loadings works", {
-  dat <- subset(cognition, domain %in% c(1, 3))
+  dat <- subset(
+    cognition,
+    domain %in% c(1, 3) & item %in% c("11", "12", "31", "32"))
   dat <- cbind(
     dat,
     model.matrix(~ 0 + domain, data = dat)[, c("domain1", "domain3")]
   )
   lmat <- matrix(c(
-    1, NA, NA, 0, 0, 0, 0,
-    0, 0, 0, 1, NA, NA, NA
+    1, NA, 0, 0,
+    0, 0, 1, NA
   ), ncol = 2)
   mod <- galamm(
-    formula = y ~ domain +
-      sl(x, k = 4, by = domain, load.var = c("ability1", "ability3")),
+    formula = y ~
+      domain + sl(x, k = 4, by = domain, load.var = c("ability1", "ability3")) +
+      (0 + domain1:ability1 + domain3:ability3 | id),
     data = dat,
     load.var = "item",
     lambda = list(lmat),
     factor = list(c("ability1", "ability3")),
-    start = list(
-      theta = c(1.86060251453083, 10.6974913428391),
-      beta = c(
-        1.16424901777261, 3.22670248431575,
-        -0.0552124127841526, 3.83474675492947
-      ),
-      lambda = c(
-        1.37110153581825, 0.353915876208296,
-        0.998005578395084, 0.997303204102401,
-        2.02367492572651
-      ), weights = numeric(0)
-    ),
     control = galamm_control(
-      optim_control = list(maxit = 0)
+      optim_control = list(maxit = 0), reduced_hessian = TRUE
     )
   )
 
   expect_equal(
     mod$gam$edf,
-    c(
-      `(Intercept)` = 1, domain3 = 1, `s(x):domain1:ability1.1` = 0.954008491014651,
-      `s(x):domain1:ability1.2` = 0.99441736961761, `s(x):domain1:ability1.3` = 0.999999999999943,
-      `s(x):domain3:ability3.1` = 0.998892741239118, `s(x):domain3:ability3.2` = 0.999862302691303,
-      `s(x):domain3:ability3.3` = 1.00000000000003
-    ),
+    c(`(Intercept)` = 1, domain3 = 1, `s(x):domain1:ability1.1` = 0.784379511396783,
+      `s(x):domain1:ability1.2` = 0.969093948703507, `s(x):domain1:ability1.3` = 0.999999999999999,
+      `s(x):domain3:ability3.1` = 0.802676599184426, `s(x):domain3:ability3.2` = 0.969697892022145,
+      `s(x):domain3:ability3.3` = 0.999999999999915),
     tolerance = .1
   )
 })

@@ -312,7 +312,7 @@ gamm4.wrapup <- function(gobj, ret, final_model) {
       ind <- c(ind, seq(from = (Gp[i] + 1), to = Gp[i + 1], by = 1))
     } else if (!is.null(sn)) {
       k <- (1:gobj$n.sr)[rn[i] == sn]
-      if (as.numeric(vr[[i]] > 0)) {
+      if (as.numeric(vr[[i]]) > 0) {
         sp[k] <- scale / as.numeric(vr[[i]])
       } else {
         sp[k] <- 1e10
