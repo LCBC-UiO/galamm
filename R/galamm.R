@@ -385,13 +385,17 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   if (length(lambda_inds) > 1) {
     pars <- c(1, opt$par[lambda_inds])
 
-    gobj$lmod$reTrms$Zt@x <- if (is.null(factor_interactions)) {
-      pars[lambda_mappings$lambda_mapping_Zt + 2L]
+    if (is.null(factor_interactions)) {
+      # Must take into account the possible existence of zero
+      inds <- lambda_mappings$lambda_mapping_Zt + 2L
+      gobj$lmod$reTrms$Zt@x[inds == 0] <- 0
+      gobj$lmod$reTrms$Zt@x[inds != 0] <- pars[inds]
     } else {
-      as.numeric(Map(function(l, x) sum(pars[l + 2L] * x),
-        l = lambda_mappings$lambda_mapping_Zt,
-        x = lambda_mappings$lambda_mapping_Zt_covs
-      ))
+      gobj$lmod$reTrms$Zt@x <-
+        as.numeric(Map(function(l, x) sum(pars[l + 2L] * x),
+                       l = lambda_mappings$lambda_mapping_Zt,
+                       x = lambda_mappings$lambda_mapping_Zt_covs
+                       ))
     }
   }
 
@@ -484,8 +488,6 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
     lambda_interaction_inds <- lambda_standard_inds <- lambda_inds
   }
 
-
-
   ret$parameters <- list(
     beta_inds = beta_inds,
     dispersion_parameter = final_model$phi,
@@ -510,7 +512,6 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   class(ret) <- "galamm"
 
   ret$gam <- gamm4.wrapup(gobj, ret, final_model)
-
 
   ret
 }
