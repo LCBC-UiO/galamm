@@ -51,12 +51,19 @@ To get started, take a look at the [introductory vignette](https://lcbc-uio.gith
 
 ## Installation
 
+Install the package from CRAN using
+
+``` r
+install.packages("galamm")
+```
+
 You can install the development version of galamm from [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("remotes")
 remotes::install_github("LCBC-UiO/galamm")
 ```
+
 ## Examples
 
 ```{r}

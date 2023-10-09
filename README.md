@@ -97,6 +97,12 @@ vignette](https://lcbc-uio.github.io/galamm/articles/galamm.html).
 
 ## Installation
 
+Install the package from CRAN using
+
+``` r
+install.packages("galamm")
+```
+
 You can install the development version of galamm from
 [GitHub](https://github.com/) with:
 
