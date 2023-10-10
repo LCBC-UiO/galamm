@@ -12,5 +12,5 @@ cp -r autodiff/autodiff/reverse ../inst/include/autodiff
 cd ..
 rm -rf tmp/
 
-R CMD BATCH dev-scripts/insert_sparse_autodiff.R
+R CMD BATCH insert_sparse_autodiff.R
 rm insert_sparse_autodiff.Rout

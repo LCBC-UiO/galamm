@@ -45,3 +45,7 @@ See our guide on [how to create a great issue](https://code-review.tidyverse.org
 Please note that the galamm project is released with a
 [Contributor Code of Conduct](CODE_OF_CONDUCT.md). By contributing to this
 project you agree to abide by its terms.
+
+## Roadmap
+
+This package is in a stable state of development, with some degree of active subsequent development as envisioned by the primary authors.

@@ -165,15 +165,15 @@ Rcpp::List wrapper(
       family_mapping, maxit_conditional_modes, lossvalue_tol,
       static_cast<int>(y.size())};
 
-  std::vector<std::unique_ptr<Model<T>>> mod;
+  auto mod = std::vector<std::unique_ptr<Model<T>>>{};
 
   for(size_t i{}; i < family.size(); i++){
     if(family[i] == "gaussian") {
-      mod.push_back(std::unique_ptr<Model<T>>{new Gaussian<T>});
+      mod.push_back(std::make_unique<Gaussian<T>>());
     } else if(family[i] == "binomial"){
-      mod.push_back(std::unique_ptr<Model<T>>{new Binomial<T>{k(i)}});
+      mod.push_back(std::make_unique<Binomial<T>>(k(i)));
     } else if(family[i] == "poisson"){
-      mod.push_back(std::unique_ptr<Model<T>>{new Poisson<T>{k(i)}});
+      mod.push_back(std::make_unique<Poisson<T>>(k(i)));
     } else {
       Rcpp::stop("Unknown family.");
     }

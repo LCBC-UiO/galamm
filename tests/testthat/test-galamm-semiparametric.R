@@ -353,8 +353,8 @@ test_that("galamm with by variables and loadings works", {
     1, NA, 0, 0,
     0, 0, 1, NA
   ), ncol = 2)
-  dev <- tryCatch({
-    mod <- galamm(
+
+  mod <- galamm(
     formula = y ~
       domain + sl(x, k = 4, by = domain, load.var = c("ability1", "ability3")) +
       (0 + domain1:ability1 + domain3:ability3 | id),
@@ -366,12 +366,9 @@ test_that("galamm with by variables and loadings works", {
       optim_control = list(maxit = 0), reduced_hessian = TRUE
     )
   )
-    deviance(mod)
-  },
-  error = function(e) 23732.65) # occasionally crashes on Windows, and this is a trick to overcome it
 
   expect_equal(
-    dev,
+    deviance(mod),
     23732.65,
     tolerance = .001
   )
