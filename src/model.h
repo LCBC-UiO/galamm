@@ -68,7 +68,7 @@ struct Binomial : Model<T> {
 
 template <typename T>
 struct Gaussian : Model<T> {
-  using Model<T>::Model;
+
   T cumulant(const Vdual<T>& linpred, const Vdual<T>& trials,
              const Ddual<T>& WSqrt) override {
     return (WSqrt * linpred).squaredNorm() / 2;
