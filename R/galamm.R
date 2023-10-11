@@ -393,9 +393,9 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
     } else {
       gobj$lmod$reTrms$Zt@x <-
         as.numeric(Map(function(l, x) sum(pars[l + 2L] * x),
-                       l = lambda_mappings$lambda_mapping_Zt,
-                       x = lambda_mappings$lambda_mapping_Zt_covs
-                       ))
+          l = lambda_mappings$lambda_mapping_Zt,
+          x = lambda_mappings$lambda_mapping_Zt_covs
+        ))
     }
   }
 
@@ -458,7 +458,10 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
     deviance = deviance,
     deviance_residuals = deviance_residuals,
     df = length(opt$par) +
-      sum(vapply(family_list, function(x) is.na(x$dispersion), logical(1))),
+      sum(vapply(
+        family_list,
+        function(x) !x$family %in% c("binomial", "poisson"),
+        logical(1))),
     family = family_list,
     factor_interactions = factor_interactions,
     fit = fit,

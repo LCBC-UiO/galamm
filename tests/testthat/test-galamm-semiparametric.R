@@ -344,7 +344,8 @@ test_that("GAMM with factor structures and random effects works", {
 test_that("galamm with by variables and loadings works", {
   dat <- subset(
     cognition,
-    domain %in% c(1, 3) & item %in% c("11", "12", "31", "32"))
+    domain %in% c(1, 3) & item %in% c("11", "12", "31", "32")
+  )
   dat <- cbind(
     dat,
     model.matrix(~ 0 + domain, data = dat)[, c("domain1", "domain3")]

@@ -25,22 +25,29 @@ template <typename T>
 void update_X(Mdual<T>& X, const Vdual<T>& lambda,
               const std::vector<std::vector<int>>& lambda_mapping_X){
   if(lambda_mapping_X.size() == 0) return;
-  for(int i = 0; i < X.size(); i++){
+  if(lambda_mapping_X.size() != X.size()) Rcpp::stop("Mismatch in lambda_mapping_X size.");
+
+  for(size_t i{}; i < lambda_mapping_X.size(); i++){
     std::vector<int> newinds = lambda_mapping_X[i];
     T loading{0};
     bool update{false};
     int j{0};
 
     for(int newind : newinds){
-      if(newind != -1){
+      if(newind == -2){
+        loading = 0;
+        update = true;
+      } else if(newind != -1){
         loading += lambda(newind);
         update = true;
       }
       j++;
     }
+
     if(update){
       *(X.data() + i) *= loading;
     }
+
 
   }
 };
