@@ -458,7 +458,10 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
     deviance = deviance,
     deviance_residuals = deviance_residuals,
     df = length(opt$par) +
-      sum(vapply(family_list, function(x) is.na(x$dispersion), logical(1))),
+      sum(vapply(
+        family_list,
+        function(x) !x$family %in% c("binomial", "poisson"),
+        logical(1))),
     family = family_list,
     factor_interactions = factor_interactions,
     fit = fit,
