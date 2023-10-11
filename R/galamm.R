@@ -393,9 +393,9 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
     } else {
       gobj$lmod$reTrms$Zt@x <-
         as.numeric(Map(function(l, x) sum(pars[l + 2L] * x),
-                       l = lambda_mappings$lambda_mapping_Zt,
-                       x = lambda_mappings$lambda_mapping_Zt_covs
-                       ))
+          l = lambda_mappings$lambda_mapping_Zt,
+          x = lambda_mappings$lambda_mapping_Zt_covs
+        ))
     }
   }
 

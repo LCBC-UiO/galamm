@@ -141,4 +141,4 @@ gr <- function(par, gradient, hessian = FALSE) {
 par_init <-
   set_initial_values(gobj, start, beta_inds, lambda_inds, weights_inds)
 
-fn(par_init, F)
+fn(par_init, T)
