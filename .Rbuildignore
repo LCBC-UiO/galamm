@@ -20,6 +20,7 @@
 rebuild-long-running-vignettes.R
 update_autodiff.sh
 insert_sparse_autodiff.R
+docker-sanitize.sh
 
 vignettes/lmm_factor.Rmd.orig
 vignettes/glmm_factor.Rmd.orig
