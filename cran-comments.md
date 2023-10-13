@@ -13,10 +13,12 @@ described in more detail here: https://github.com/LCBC-UiO/galamm/issues/165.
 
 ### 2. Errors on r-oldrelease
 
-Failed because of the following test, where 'fam' is some model family, e.g.,
-'fam <- binomial()' or 'fam <- gaussian()'. I tested 'is.na(fam$dispersion)', 
-but in R4.2.3 these 'fam' would not have an element named 'dispersion', and
-hence the test failed. In R4.3.1 'fam' does have a 'dispersion' element, and
+I here explain why the failure happened, and how it has been fixed.
+
+Letting 'fam' be some model family, e.g., 'fam <- binomial()' or 
+'fam <- gaussian()', I had a test 'is.na(fam$dispersion)'. In R4.2.3 these 
+'fam' objects would not have an element named 'dispersion', and would cause a
+fail. In R4.3.1 'fam' does have a 'dispersion' element, and
 hence the test passed here. I have rewritten the code so it does not rely on
 this element, and verified it using devtools::test_win_oldrelease(). The fix
 is described in more detail here: https://github.com/LCBC-UiO/galamm/issues/167.
@@ -57,8 +59,14 @@ R Mac Builder (test outputs provided below).
     doc    1.9Mb
     libs  21.1Mb
 
-
 ### Windows, r-release, r-oldrelease, r-devel
+
+0 ERRORs, 0 WARNINGs, 1 NOTE:
+
+* checking CRAN incoming feasibility ... [15s] NOTE
+Maintainer: 'Øystein Sørensen <oystein.sorensen@psykologi.uio.no>'
+
+Days since last update: 4
 
 ### Local Apple M1 Max in debug model (R -d lldb)
 
