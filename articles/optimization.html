@@ -119,7 +119,7 @@ storing and multiplying zero, we use sparse matrix methods.</p></li>
 <li><p>In the outer loop, we try to find the parameters that maximize
 the marginal likelihood. For each new set of parameters, the whole
 procedure in the inner loop has to be repeated. By default, we use the
-limited memory Broyden-Fletcher-Goldfard-Shanno algorithm with box
+limited memory Broyden-Fletcher-Goldfarb-Shanno algorithm with box
 constraints <span class="citation">(<a href="#ref-byrdLimitedMemoryAlgorithm1995" role="doc-biblioref">Byrd et
 al. 1995</a>)</span>, abbreviated L-BFGS-B. In particular, we use the
 implementation in R’s <code><a href="https://rdrr.io/r/stats/optim.html" class="external-link">optim()</a></code> function, which is obtained
@@ -379,7 +379,7 @@ default, the initial value equals 1.</p>
 <span><span class="co">#&gt; segments explored during Cauchy searches 61</span></span>
 <span><span class="co">#&gt; BFGS updates skipped 0</span></span>
 <span><span class="co">#&gt; active bounds at final generalized Cauchy point 0</span></span>
-<span><span class="co">#&gt; norm of the final projected gradient 0.00165415</span></span>
+<span><span class="co">#&gt; norm of the final projected gradient 0.00165414</span></span>
 <span><span class="co">#&gt; final function value 1372.16</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; F = 1372.16</span></span>
@@ -473,9 +473,9 @@ initial values. For this we can use the convenience function
 <span><span class="co">#&gt; (NM) 320: f = 1372.16 at    1.84246   -1.91525    17.9485   0.224017   0.066146 -0.0289499  -0.212035   -1.68303 -0.0499864   0.168178  -0.133909</span></span>
 <span><span class="co">#&gt; (NM) 340: f = 1372.16 at    1.84246   -1.91525    17.9485   0.224017   0.066146 -0.0289499  -0.212035   -1.68303 -0.0499864   0.168178  -0.133909</span></span>
 <span><span class="co">#&gt; (NM) 360: f = 1372.16 at    1.84247   -1.91525    17.9485   0.223968  0.0661412  -0.028921   -0.21203   -1.68308 -0.0499804   0.168172  -0.133908</span></span>
-<span><span class="co">#&gt; (NM) 380: f = 1372.16 at    1.84247   -1.91525    17.9485    0.22398  0.0661421 -0.0289289  -0.212034   -1.68304 -0.0499816   0.168174  -0.133909</span></span>
-<span><span class="co">#&gt; (NM) 400: f = 1372.16 at    1.84247   -1.91525    17.9485   0.223986  0.0661415 -0.0289274  -0.212031   -1.68305 -0.0499811   0.168171  -0.133909</span></span>
-<span><span class="co">#&gt; (NM) 420: f = 1372.16 at    1.84247   -1.91525    17.9485   0.223985  0.0661434 -0.0289358  -0.212032   -1.68304 -0.0499824   0.168172  -0.133908</span></span></code></pre></div>
+<span><span class="co">#&gt; (NM) 380: f = 1372.16 at    1.84247   -1.91525    17.9485   0.223979  0.0661419 -0.0289297  -0.212034   -1.68304 -0.0499815   0.168174  -0.133909</span></span>
+<span><span class="co">#&gt; (NM) 400: f = 1372.16 at    1.84247   -1.91525    17.9485   0.223972   0.066143 -0.0289282  -0.212032   -1.68306 -0.0499827   0.168173  -0.133909</span></span>
+<span><span class="co">#&gt; (NM) 420: f = 1372.16 at    1.84246   -1.91525    17.9485   0.223982  0.0661428 -0.0289291   -0.21203   -1.68305 -0.0499825    0.16817   -0.13391</span></span></code></pre></div>
 <p>The summary output shows that Nelder-Mead found exactly the same
 optimum in this particular case, which is not surprising given the
 intial values that we provided.</p>
@@ -491,7 +491,7 @@ intial values that we provided.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Scaled residuals: </span></span>
 <span><span class="co">#&gt;     Min      1Q  Median      3Q     Max </span></span>
-<span><span class="co">#&gt; -258524      -1       0       0      66 </span></span>
+<span><span class="co">#&gt; -258526      -1       0       0      66 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Lambda:</span></span>
 <span><span class="co">#&gt;         loading      SE</span></span>
@@ -506,14 +506,14 @@ intial values that we provided.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Fixed effects:</span></span>
 <span><span class="co">#&gt;               Estimate Std. Error  z value   Pr(&gt;|z|)</span></span>
-<span><span class="co">#&gt; chd           -1.91525    0.27229 -7.03373  2.011e-12</span></span>
-<span><span class="co">#&gt; fiber         17.94851    0.48686 36.86604 1.618e-297</span></span>
-<span><span class="co">#&gt; fiber2         0.22398    0.41783  0.53604  5.919e-01</span></span>
+<span><span class="co">#&gt; chd           -1.91525    0.27229 -7.03374  2.011e-12</span></span>
+<span><span class="co">#&gt; fiber         17.94850    0.48686 36.86601 1.620e-297</span></span>
+<span><span class="co">#&gt; fiber2         0.22398    0.41783  0.53606  5.919e-01</span></span>
 <span><span class="co">#&gt; chd:age        0.06614    0.05931  1.11527  2.647e-01</span></span>
-<span><span class="co">#&gt; chd:bus       -0.02893    0.34355 -0.08421  9.329e-01</span></span>
-<span><span class="co">#&gt; fiber:age     -0.21203    0.10090 -2.10130  3.561e-02</span></span>
-<span><span class="co">#&gt; fiber:bus     -1.68305    0.63721 -2.64126  8.260e-03</span></span>
-<span><span class="co">#&gt; chd:age:bus   -0.04998    0.06507 -0.76815  4.424e-01</span></span>
+<span><span class="co">#&gt; chd:bus       -0.02893    0.34355 -0.08422  9.329e-01</span></span>
+<span><span class="co">#&gt; fiber:age     -0.21203    0.10090 -2.10131  3.561e-02</span></span>
+<span><span class="co">#&gt; fiber:bus     -1.68304    0.63721 -2.64124  8.260e-03</span></span>
+<span><span class="co">#&gt; chd:age:bus   -0.04998    0.06507 -0.76814  4.424e-01</span></span>
 <span><span class="co">#&gt; fiber:age:bus  0.16817    0.11223  1.49847  1.340e-01</span></span></code></pre></div>
 </div>
 <div class="section level3">
