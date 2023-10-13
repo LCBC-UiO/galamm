@@ -27,7 +27,7 @@ The optimization procedure used by `galamm` is described in Section 3 of @sorens
 
 - In the inner loop, the marginal likelihood is evaluated at a given set of parameters. The marginal likelihood is what you obtain by integrating out the random effects, and this integration is done with the Laplace approximation. The Laplace approximation yields a large system of equations that needs to be solved iteratively, except in the case with conditionally Gaussian responses and unit link function, for which a single step is sufficient to solve the system. When written in matrix-vector form, this system of equations will in most cases have an overwhelming majority of zeros, and to avoid wasting memory and time on storing and multiplying zero, we use sparse matrix methods.
 
-- In the outer loop, we try to find the parameters that maximize the marginal likelihood. For each new set of parameters, the whole procedure in the inner loop has to be repeated. By default, we use the limited memory Broyden-Fletcher-Goldfard-Shanno algorithm with box constraints [@byrdLimitedMemoryAlgorithm1995], abbreviated L-BFGS-B. In particular, we use the implementation in R's `optim()` function, which is obtained by setting `method = "L-BFGS-B"`. L-BFGS-B requires first derivatives, and these are obtained by automatic differentiation [@skaugAutomaticDifferentiationFacilitate2002]. In most use cases of `galamm`, we also use constraints on some of the parameters, e.g., to ensure that variances are non-negative. As an alternative, the Nelder-Mead algorithm with box constraints [@batesFittingLinearMixedEffects2015;@nelderSimplexMethodFunction1965] from `lme4` is also available. Since the Nelder-Mead algorithm is derivative free, automatic differentiation is not used in this case, except for computing the Hessian matrix at the final step.
+- In the outer loop, we try to find the parameters that maximize the marginal likelihood. For each new set of parameters, the whole procedure in the inner loop has to be repeated. By default, we use the limited memory Broyden-Fletcher-Goldfarb-Shanno algorithm with box constraints [@byrdLimitedMemoryAlgorithm1995], abbreviated L-BFGS-B. In particular, we use the implementation in R's `optim()` function, which is obtained by setting `method = "L-BFGS-B"`. L-BFGS-B requires first derivatives, and these are obtained by automatic differentiation [@skaugAutomaticDifferentiationFacilitate2002]. In most use cases of `galamm`, we also use constraints on some of the parameters, e.g., to ensure that variances are non-negative. As an alternative, the Nelder-Mead algorithm with box constraints [@batesFittingLinearMixedEffects2015;@nelderSimplexMethodFunction1965] from `lme4` is also available. Since the Nelder-Mead algorithm is derivative free, automatic differentiation is not used in this case, except for computing the Hessian matrix at the final step.
 
 At convergence, the Hessian matrix of second derivatives is computed exactly, again using automatic differentiation. The inverse of this matrix is the covariance matrix of the parameter estimates, and is used to compute Wald type confidence intervals.
 
@@ -271,7 +271,7 @@ mod <- galamm(
 #> segments explored during Cauchy searches 61
 #> BFGS updates skipped 0
 #> active bounds at final generalized Cauchy point 0
-#> norm of the final projected gradient 0.00165415
+#> norm of the final projected gradient 0.00165414
 #> final function value 1372.16
 #> 
 #> F = 1372.16
@@ -372,9 +372,9 @@ mod_nm <- galamm(
 #> (NM) 320: f = 1372.16 at    1.84246   -1.91525    17.9485   0.224017   0.066146 -0.0289499  -0.212035   -1.68303 -0.0499864   0.168178  -0.133909
 #> (NM) 340: f = 1372.16 at    1.84246   -1.91525    17.9485   0.224017   0.066146 -0.0289499  -0.212035   -1.68303 -0.0499864   0.168178  -0.133909
 #> (NM) 360: f = 1372.16 at    1.84247   -1.91525    17.9485   0.223968  0.0661412  -0.028921   -0.21203   -1.68308 -0.0499804   0.168172  -0.133908
-#> (NM) 380: f = 1372.16 at    1.84247   -1.91525    17.9485    0.22398  0.0661421 -0.0289289  -0.212034   -1.68304 -0.0499816   0.168174  -0.133909
-#> (NM) 400: f = 1372.16 at    1.84247   -1.91525    17.9485   0.223986  0.0661415 -0.0289274  -0.212031   -1.68305 -0.0499811   0.168171  -0.133909
-#> (NM) 420: f = 1372.16 at    1.84247   -1.91525    17.9485   0.223985  0.0661434 -0.0289358  -0.212032   -1.68304 -0.0499824   0.168172  -0.133908
+#> (NM) 380: f = 1372.16 at    1.84247   -1.91525    17.9485   0.223979  0.0661419 -0.0289297  -0.212034   -1.68304 -0.0499815   0.168174  -0.133909
+#> (NM) 400: f = 1372.16 at    1.84247   -1.91525    17.9485   0.223972   0.066143 -0.0289282  -0.212032   -1.68306 -0.0499827   0.168173  -0.133909
+#> (NM) 420: f = 1372.16 at    1.84246   -1.91525    17.9485   0.223982  0.0661428 -0.0289291   -0.21203   -1.68305 -0.0499825    0.16817   -0.13391
 ```
 
 
@@ -393,7 +393,7 @@ summary(mod_nm)
 #> 
 #> Scaled residuals: 
 #>     Min      1Q  Median      3Q     Max 
-#> -258524      -1       0       0      66 
+#> -258526      -1       0       0      66 
 #> 
 #> Lambda:
 #>         loading      SE
@@ -408,14 +408,14 @@ summary(mod_nm)
 #> 
 #> Fixed effects:
 #>               Estimate Std. Error  z value   Pr(>|z|)
-#> chd           -1.91525    0.27229 -7.03373  2.011e-12
-#> fiber         17.94851    0.48686 36.86604 1.618e-297
-#> fiber2         0.22398    0.41783  0.53604  5.919e-01
+#> chd           -1.91525    0.27229 -7.03374  2.011e-12
+#> fiber         17.94850    0.48686 36.86601 1.620e-297
+#> fiber2         0.22398    0.41783  0.53606  5.919e-01
 #> chd:age        0.06614    0.05931  1.11527  2.647e-01
-#> chd:bus       -0.02893    0.34355 -0.08421  9.329e-01
-#> fiber:age     -0.21203    0.10090 -2.10130  3.561e-02
-#> fiber:bus     -1.68305    0.63721 -2.64126  8.260e-03
-#> chd:age:bus   -0.04998    0.06507 -0.76815  4.424e-01
+#> chd:bus       -0.02893    0.34355 -0.08422  9.329e-01
+#> fiber:age     -0.21203    0.10090 -2.10131  3.561e-02
+#> fiber:bus     -1.68304    0.63721 -2.64124  8.260e-03
+#> chd:age:bus   -0.04998    0.06507 -0.76814  4.424e-01
 #> fiber:age:bus  0.16817    0.11223  1.49847  1.340e-01
 ```
 
