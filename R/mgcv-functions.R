@@ -59,7 +59,7 @@ gam.setup <- function(formula, pterms, mf) {
     )
 
     for (k in seq_along(sml)) {
-      load_label <- attr(formula$smooth.spec[[i]], "load.var")[[k]]
+      load_label <- attr(formula$smooth.spec[[i]], "factor")[[k]]
       if (!is.null(load_label)) {
         sml[[k]]$label <- paste(sml[[k]]$label, load_label, sep = ":")
       }

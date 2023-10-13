@@ -5,18 +5,18 @@
 \alias{t2l}
 \title{Set up smooth term with factor loading}
 \usage{
-t2l(..., load.var = NULL)
+t2l(..., factor = NULL)
 }
 \arguments{
 \item{...}{Arguments passed on to \code{mgcv::t2}.}
 
-\item{load.var}{Optional character argument specifying the loading variable.}
+\item{factor}{Optional character argument specifying the loading variable.}
 }
 \value{
 An object of class \code{xx.smooth.spec}, where \code{xx} is a basis
 identifying code given by the \code{bs} argument of \code{t2}.
 It differs from the smooth returned by \code{mgcv::s} in
-that it has an additional attribute named \code{"load.var"} which specifies
+that it has an additional attribute named \code{"factor"} which specifies
 any factor loading which this smooth term should be multiplied with in
 order to produce the observed outcome.
 }
@@ -33,7 +33,7 @@ loading_matrix <- matrix(c(1, NA, NA), ncol = 1)
 
 # Model with four cubic regression splines as basis functions
 mod <- galamm(
-  formula = y ~ 0 + item + t2l(x, k = 4, load.var = "loading"),
+  formula = y ~ 0 + item + t2l(x, k = 4, factor = "loading"),
   data = dat,
   load.var = "item",
   lambda = list(loading_matrix),
@@ -43,7 +43,7 @@ mod <- galamm(
 # Model with four thin-plate regression splines as basis functions
 mod <- galamm(
   formula = y ~ 0 + item +
-    t2l(x, bs = "tp", k = 4, load.var = "loading"),
+    t2l(x, bs = "tp", k = 4, factor = "loading"),
   data = dat,
   load.var = "item",
   lambda = list(loading_matrix),

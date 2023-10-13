@@ -14,7 +14,7 @@ lmat <- matrix(c(
 
 
 formula = y ~
-  domain + sl(x, k = 4, by = domain, load.var = c("ability1", "ability3")) +
+  domain + sl(x, k = 4, by = domain, factor = c("ability1", "ability3")) +
   (0 + domain1:ability1 + domain3:ability3 | id)
 weights=NULL
 data = dat
