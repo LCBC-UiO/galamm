@@ -36,7 +36,7 @@ R Mac Builder (test outputs provided below).
 * Local Apple Silicon M1, on R4.3.1 and R4.2.3.
 * R-CMD-check via GitHub Actions on windows-latest, macOS-latest, ubuntu-20.04 (release), and ubuntu-20.04 (devel).
 
-
+„
 ## R CMD check results
 
 0 errors | 0 warnings | 1 note
