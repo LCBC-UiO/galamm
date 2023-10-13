@@ -187,15 +187,10 @@ define_factor_mappings <- function(
           return(ret)
         }
 
-        dx <- ncol(Zt) / length(cnm)
         for (j in seq_along(cnm)) {
           cn <- extract_name(factor[[f]], cnm[[j]])
 
-          inner_inds <- seq(from = (j - 1) * dx + 1, to = dx * j, by = 1)
-          inds <- unname(which(unname(Matrix::colSums(
-            gobj$lmod$reTrms$Ztlist[[i]]
-          ))[inner_inds] != 0)) +
-            min(inner_inds) - 1L
+          inds <- which(data[, cn] != 0)
 
           if (!is.null(fi)) {
             if (Reduce(sum, cnms_match) > 1) {

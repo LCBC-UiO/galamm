@@ -209,7 +209,7 @@ the latent ability and random intercept for subject and timepoints.
 
 ``` r
 mod <- galamm(
-  formula = y ~ 0 + item + sl(x, load.var = "loading") +
+  formula = y ~ 0 + item + sl(x, factor = "loading") +
     (0 + loading | id / timepoint),
   data = dat,
   load.var = "item",

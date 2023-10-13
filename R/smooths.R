@@ -18,12 +18,12 @@ NULL
 #' \code{mgcv} and \code{gamm4}.
 #'
 #' @param ... Arguments passed on to \code{mgcv::s}.
-#' @param load.var Optional character argument specifying the loading variable.
+#' @param factor Optional character argument specifying the loading variable.
 #'
 #' @return An object of class \code{xx.smooth.spec}, where \code{xx} is a basis
 #'   identifying code given by the \code{bs} argument of \code{s}. It differs
 #'   from the smooth returned by \code{mgcv::s} in that it has an additional
-#'   attribute named \code{"load.var"} which specifies any factor loading which
+#'   attribute named \code{"factor"} which specifies any factor loading which
 #'   this smooth term should be multiplied with in order to produce the observed
 #'   outcome.
 #'
@@ -44,7 +44,7 @@ NULL
 #'
 #' # Model with four thin-plate regression splines as basis functions
 #' mod <- galamm(
-#'   formula = y ~ 0 + item + sl(x, k = 4, load.var = "loading"),
+#'   formula = y ~ 0 + item + sl(x, k = 4, factor = "loading"),
 #'   data = dat,
 #'   load.var = "item",
 #'   lambda = list(loading_matrix),
@@ -54,16 +54,16 @@ NULL
 #' # Model with four cubic regression splines as basis functions
 #' mod <- galamm(
 #'   formula = y ~ 0 + item +
-#'     sl(x, bs = "cr", k = 4, load.var = "loading"),
+#'     sl(x, bs = "cr", k = 4, factor = "loading"),
 #'   data = dat,
 #'   load.var = "item",
 #'   lambda = list(loading_matrix),
 #'   factor = list("loading")
 #' )
 #'
-sl <- function(..., load.var = NULL) {
+sl <- function(..., factor = NULL) {
   ret <- s(...)
-  attr(ret, "load.var") <- load.var
+  attr(ret, "factor") <- factor
   ret
 }
 
@@ -75,12 +75,12 @@ sl <- function(..., load.var = NULL) {
 #' with \code{mgcv} and \code{gamm4}.
 #'
 #' @param ... Arguments passed on to \code{mgcv::t2}.
-#' @param load.var Optional character argument specifying the loading variable.
+#' @param factor Optional character argument specifying the loading variable.
 #'
 #' @return An object of class \code{xx.smooth.spec}, where \code{xx} is a basis
 #'   identifying code given by the \code{bs} argument of \code{t2}.
 #'   It differs from the smooth returned by \code{mgcv::s} in
-#'   that it has an additional attribute named \code{"load.var"} which specifies
+#'   that it has an additional attribute named \code{"factor"} which specifies
 #'   any factor loading which this smooth term should be multiplied with in
 #'   order to produce the observed outcome.
 #'
@@ -100,7 +100,7 @@ sl <- function(..., load.var = NULL) {
 #'
 #' # Model with four cubic regression splines as basis functions
 #' mod <- galamm(
-#'   formula = y ~ 0 + item + t2l(x, k = 4, load.var = "loading"),
+#'   formula = y ~ 0 + item + t2l(x, k = 4, factor = "loading"),
 #'   data = dat,
 #'   load.var = "item",
 #'   lambda = list(loading_matrix),
@@ -110,15 +110,15 @@ sl <- function(..., load.var = NULL) {
 #' # Model with four thin-plate regression splines as basis functions
 #' mod <- galamm(
 #'   formula = y ~ 0 + item +
-#'     t2l(x, bs = "tp", k = 4, load.var = "loading"),
+#'     t2l(x, bs = "tp", k = 4, factor = "loading"),
 #'   data = dat,
 #'   load.var = "item",
 #'   lambda = list(loading_matrix),
 #'   factor = list("loading")
 #' )
 #'
-t2l <- function(..., load.var = NULL) {
+t2l <- function(..., factor = NULL) {
   ret <- t2(...)
-  attr(ret, "load.var") <- load.var
+  attr(ret, "factor") <- factor
   ret
 }

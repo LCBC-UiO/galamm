@@ -43,7 +43,7 @@ plot_smooth <- function(object, ...) {
 #'
 #' # We can now estimate the model.
 #' mod <- galamm(
-#'   formula = y ~ 0 + item + sl(x, load.var = "loading") +
+#'   formula = y ~ 0 + item + sl(x, factor = "loading") +
 #'     (0 + loading | id),
 #'   data = dat,
 #'   load.var = "item",

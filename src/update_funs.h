@@ -37,7 +37,7 @@ void update_X(Mdual<T>& X, const Vdual<T>& lambda,
       if(newind == -2){
         loading = 0;
         update = true;
-      } else if(newind != -1){
+      } else if(newind >= 0){
         loading += lambda(newind);
         update = true;
       }
@@ -58,7 +58,7 @@ void update_Zt(SpMdual<T>& Zt, const Vdual<T>& lambda,
                const std::vector<std::vector<double>>& lambda_mapping_Zt_covs = {}){
   if(lambda_mapping_Zt.empty()) return;
   int counter{0};
-  for(int k{}; k < Zt.outerSize(); ++k){
+  for(size_t k{}; k < Zt.outerSize(); ++k){
     for(typename SpMdual<T>::InnerIterator it(Zt, k); it; ++it){
       std::vector<int> newinds = lambda_mapping_Zt[counter];
       T loading{0};
@@ -66,7 +66,7 @@ void update_Zt(SpMdual<T>& Zt, const Vdual<T>& lambda,
       int inner_counter{0};
 
       for(int newind : newinds){
-        if(newind != -1){
+        if(newind >= 0){
           double cov{1};
           if(!lambda_mapping_Zt_covs.empty()){
             cov = lambda_mapping_Zt_covs[counter][inner_counter];
@@ -89,9 +89,9 @@ template <typename T>
 void update_WSqrt(Ddual<T>& WSqrt, const Vdual<T>& weights,
                   const std::vector<int>& weights_mapping){
   if(weights_mapping.size() == 0) return;
-  for(int i = 0; i < weights_mapping.size(); i++){
+  for(size_t i{}; i < weights_mapping.size(); i++){
     int newind = weights_mapping[i];
-    if(newind != -1){
+    if(newind >= 0){
       WSqrt.diagonal()(i) = sqrt(weights(newind));
     }
   }

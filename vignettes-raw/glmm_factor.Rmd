@@ -144,7 +144,7 @@ head(dat)
 
 For binomial models with more than one trial, the response should be specified `cbind(successes, failures)`.
 
-```{r, eval}
+```{r}
 galamm_mod_trials <- galamm(
   formula = cbind(y, trials - y) ~ item + (0 + ability | school / sid),
   data = dat,

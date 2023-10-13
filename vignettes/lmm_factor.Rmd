@@ -571,19 +571,32 @@ summary(judge_galamm)
 #> -3.8407 -0.6439  0.0017  0.6474  3.9799 
 #> 
 #> Lambda:
-#>          teacher1      SE teacher2      SE trait1.t      SE trait2.t      SE trait1.s      SE trait2.s      SE
-#> lambda1    1.0000       .        .       .    1.000       .        .       .        .       .        .       .
-#> lambda2    1.1278 0.03584        .       .    1.092 0.02172        .       .        .       .        .       .
-#> lambda3    0.9986 0.03345        .       .    1.066 0.02144        .       .        .       .        .       .
-#> lambda4         .       .   1.0000       .        .       .   1.0000       .        .       .        .       .
-#> lambda5         .       .   0.9725 0.03036        .       .   1.0536 0.02576        .       .        .       .
-#> lambda6         .       .   1.2191 0.03436        .       .   0.9581 0.02460        .       .        .       .
-#> lambda7         .       .        .       .        .       .        .       .    1.000       .        .       .
-#> lambda8         .       .        .       .        .       .        .       .    1.322 0.06109        .       .
-#> lambda9         .       .        .       .        .       .        .       .    1.145 0.05633        .       .
-#> lambda10        .       .        .       .        .       .        .       .        .       .    1.000       .
-#> lambda11        .       .        .       .        .       .        .       .        .       .    0.874 0.04417
-#> lambda12        .       .        .       .        .       .        .       .        .       .    1.096 0.04874
+#>          teacher1      SE teacher2      SE trait1.t      SE trait2.t      SE trait1.s
+#> lambda1    1.0000       .        .       .    1.000       .        .       .        .
+#> lambda2    1.1278 0.03584        .       .    1.092 0.02172        .       .        .
+#> lambda3    0.9986 0.03345        .       .    1.066 0.02144        .       .        .
+#> lambda4         .       .   1.0000       .        .       .   1.0000       .        .
+#> lambda5         .       .   0.9725 0.03036        .       .   1.0536 0.02576        .
+#> lambda6         .       .   1.2191 0.03436        .       .   0.9581 0.02460        .
+#> lambda7         .       .        .       .        .       .        .       .    1.000
+#> lambda8         .       .        .       .        .       .        .       .    1.322
+#> lambda9         .       .        .       .        .       .        .       .    1.145
+#> lambda10        .       .        .       .        .       .        .       .        .
+#> lambda11        .       .        .       .        .       .        .       .        .
+#> lambda12        .       .        .       .        .       .        .       .        .
+#>               SE trait2.s      SE
+#> lambda1        .        .       .
+#> lambda2        .        .       .
+#> lambda3        .        .       .
+#> lambda4        .        .       .
+#> lambda5        .        .       .
+#> lambda6        .        .       .
+#> lambda7        .        .       .
+#> lambda8  0.06109        .       .
+#> lambda9  0.05633        .       .
+#> lambda10       .    1.000       .
+#> lambda11       .    0.874 0.04417
+#> lambda12       .    1.096 0.04874
 #> 
 #> Random effects:
 #>  Groups   Name        Variance Std.Dev. Corr          
