@@ -1,13 +1,14 @@
 ## Submission note
 
 This is a resubmission aimed at fixing current issues. There are three types of 
-issues, which are described under each header below:
+issues, and the respective fixes are described under each header below:
 
 ### 1. Memory issues (clang-ASAN, gcc-ASAN, valgrind)
 
-I was able to reproduce the error using debug mode locally with 'R -d lldb'. 
-It was caused by attempting to access a vector element with a an index '-2', 
-which clearly does not work. This case has now been fixed, and the fix is 
+I was able to reproduce the error both using debug mode locally with 'R -d lldb'
+and using the Docker image rocker/r-devel-san. 
+The issue was caused by attempting to access a vector element at a an index 
+'-2', which clearly does not work. This case has now been fixed, and the fix is 
 described in more detail here: https://github.com/LCBC-UiO/galamm/issues/165.
 
 ### 2. Errors on r-oldrelease
@@ -31,25 +32,42 @@ R Mac Builder (test outputs provided below).
 
 ## Test environments
 
-* Windows, r-release, r-oldrelease, r-devel
-* Local Apple Silicon M1 in debug mode (R -d lldb) on r-devel.
-* Local Apple Silicon M1, on R4.3.1 and R4.2.3.
-* R-CMD-check via GitHub Actions on windows-latest, macOS-latest, ubuntu-20.04 (release), and ubuntu-20.04 (devel).
+* R development version with sanitizer support via rocker/r-devel-san.
+* R Mac Builder (https://mac.r-project.org/macbuilder/submit.html)
+* Windows, r-release, r-oldrelease, r-devel.
+* Local Apple M1 Max in debug mode (R -d lldb) on R4.3.1.
+* Local Apple M1 Max, on R4.3.1 and R4.2.3.
+* R-CMD-check via GitHub Actions on windows-latest, macOS-latest, 
+  ubuntu-20.04 (release), and ubuntu-20.04 (devel).
 
-„
+
 ## R CMD check results
 
-0 errors | 0 warnings | 1 note
+### r-devel-san
 
-* checking CRAN incoming feasibility ... NOTE
-Maintainer: '�ystein S�rensen <oystein.sorensen@psykologi.uio.no>'
+0 ERRORs, 0 WARNINGs, 0 NOTEs
 
-Possibly mis-spelled words in DESCRIPTION:
-  Hesketh (17:52)
-  Jeon (17:38)
-  Rabe (17:47)
-  Sorensen (11:33)
-  al (11:45)
-  et (11:42)
-  nonlinearly (14:5)
+### R Mac Builder
 
+0 ERRORs, 0 WARNINGs, 1 NOTE:
+
+* checking installed package size ... NOTE
+  installed size is 24.1Mb
+  sub-directories of 1Mb or more:
+    doc    1.9Mb
+    libs  21.1Mb
+
+
+### Windows, r-release, r-oldrelease, r-devel
+
+### Local Apple M1 Max in debug model (R -d lldb)
+
+0 ERRORs, 0 WARNINGs, 0 NOTEs
+
+### Local Apple M1 Max, on R4.3.1 and R4.2.3.
+
+0 ERRORs, 0 WARNINGs, 0 NOTEs
+
+### GitHub Actions
+
+0 ERRORs, 0 WARNINGs, 0 NOTEs
