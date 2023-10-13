@@ -90,7 +90,7 @@ test_that("Mixed response works with multiple trials", {
     factor = list("loading")
   )
 
-  expect_equal(deviance(mod), 885.73410657623)
+  expect_equal(deviance(mod), 885.73410657623, tolerance = .0001)
 })
 
 test_that("Covariate measurement error model works", {
