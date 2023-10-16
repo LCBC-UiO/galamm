@@ -18,7 +18,8 @@ test_that("LMM with simple factor works", {
   expect_equal(nobs(mod), 300L)
   expect_equal(
     as.character(formula(mod)),
-    c("~", "y", "0 + as.factor(item) + (0 + abil.sid | school/sid)"))
+    c("~", "y", "0 + as.factor(item) + (0 + abil.sid | school/sid)")
+  )
 
   pdf(NULL)
   expect_invisible(plot(mod))

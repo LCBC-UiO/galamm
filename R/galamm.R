@@ -290,7 +290,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   if (methods::is(data, "data.table")) {
     message("Converting data.table 'data' to data.frame")
   }
-  if(!inherits(data, "data.frame")) {
+  if (!inherits(data, "data.frame")) {
     stop("data must be a data.frame")
   }
   data <- as.data.frame(data)
