@@ -252,11 +252,17 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
                    load.var = NULL, lambda = NULL, factor = NULL,
                    factor_interactions = NULL,
                    start = NULL, control = galamm_control()) {
-
   data <- stats::na.omit(data)
   if (nrow(data) == 0) stop("No data, nothing to do.")
   data <- as.data.frame(data)
   mc <- match.call()
+
+  if (!methods::is(formula, "formula")) {
+    stop("formula must be a formula")
+  }
+  if (!is.null(weights) && !methods::is(weights, "formula")) {
+    stop("weights must be a formula")
+  }
 
   if (!is.vector(family_mapping)) {
     stop("family_mapping must be a vector.")
@@ -265,13 +271,23 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
     family_mapping <- as.integer(family_mapping)
   }
 
-  if(nrow(data) != length(family_mapping)) {
+  if (nrow(data) != length(family_mapping)) {
     stop("family_mapping must contain one index per row in data")
   }
 
   family_list <- setup_family(family)
 
-  stopifnot(length(family_list) == length(unique(family_mapping)))
+  if (length(family_list) != length(unique(family_mapping))) {
+    stop(
+      "family_mapping must contain a unique index for each element ",
+      "in family_list."
+    )
+  }
+
+  if (!(length(load.var) == length(factor) &&
+    length(load.var) == length(lambda))) {
+    stop("load.var, lambda, and factor must have the same length.")
+  }
 
   tmp <- setup_factor(load.var, lambda, factor, data)
   data <- tmp$data

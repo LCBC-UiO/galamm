@@ -218,7 +218,7 @@ test_that("wrong input is handled properly", {
         load.var = 1
       )
     },
-    "load.var must be a character of length one."
+    "must have the same length"
   )
 
   expect_error(
@@ -228,7 +228,7 @@ test_that("wrong input is handled properly", {
         load.var = letters
       )
     },
-    "load.var must be a character of length one."
+    "must have the same length"
   )
 })
 
