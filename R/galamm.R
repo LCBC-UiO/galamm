@@ -271,6 +271,13 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
                    start = NULL, control = galamm_control()) {
 
   # Deal with potential missing values
+  if(any(vapply(data, function(x) any(is.infinite(x)), logical(1)))) {
+    stop("Infinite values in 'data'. galamm cannot handle this.")
+  }
+  if(any(vapply(data, function(x) any(is.nan(x)), logical(1)))) {
+    stop("NaN in 'data'. galamm cannot handle this.")
+  }
+
   if(!is.character(na.action)) {
     stop("na.action must be character")
   }

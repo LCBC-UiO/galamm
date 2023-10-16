@@ -421,4 +421,44 @@ test_that("missing values are handled appropriately", {
 
   expect_equal(mod$model$deviance, mod2$model$deviance)
 
+  IRTsub$y[1] <- -Inf
+
+  expect_error({
+    mod <- galamm(
+      formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
+      data = IRTsub,
+      load.var = c("item"),
+      factor = list(c("abil.sid")),
+      lambda = list(irt.lam)
+    )
+  },
+  "Infinite values")
+
+  IRTsub$y[1] <- 1
+  IRTsub$y[13] <- Inf
+
+  expect_error({
+    mod <- galamm(
+      formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
+      data = IRTsub,
+      load.var = c("item"),
+      factor = list(c("abil.sid")),
+      lambda = list(irt.lam)
+    )
+  },
+  "Infinite values")
+
+  IRTsub$y[13] <- NaN
+
+  expect_error({
+    mod <- galamm(
+      formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
+      data = IRTsub,
+      load.var = c("item"),
+      factor = list(c("abil.sid")),
+      lambda = list(irt.lam)
+    )
+  },
+  "NaN in")
+
 })
