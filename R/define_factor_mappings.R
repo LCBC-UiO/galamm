@@ -22,8 +22,10 @@ extract_name <- function(ff, cnmf) {
 #' Make sure mappings to loadings and to covariates have same size
 #'
 #' This function adjust the mappings \code{lambda_mapping_Zt} and
-#' \code{lambda_mapping_Zt_covs} so they match exactly in size and shape. See
-#' the documentation to the function \code{define_factor_mappings} for more
+#' \code{lambda_mapping_Zt_covs} so they match exactly in size and shape. In
+#' particular, it flattens \code{lambda_mapping_Zt_covs} wherever its i-th
+#' element has more elements than the i-th element of \code{lambda_mapping_Zt}.
+#' See the documentation to the function \code{define_factor_mappings} for more
 #' details on what the mappings represent.
 #'
 #' @param lambda_mapping_Zt Mapping between factor loadings and elements of the
@@ -35,6 +37,17 @@ extract_name <- function(ff, cnmf) {
 #' @return List of adjusted mappings \code{lambda_mapping_Zt} and
 #'   \code{lambda_mapping_Zt_covs}.
 #' @noRd
+#'
+#' @examples
+#' # List of length 6
+#' lambda_mapping_Zt <- list(0L, 1L, 2L, 0L, 1L, 2L)
+#' length(lambda_mapping_Zt)
+#' # List of length 4
+#' lambda_mapping_Zt_covs <- list(0L, list(3L, 4L), 1L, list(3L, 4L))
+#' length(lambda_mapping_Zt_covs)
+#' # Squeeze them to got two lists of length 6
+#' ret <- squeeze_mappings(lambda_mapping_Zt, lambda_mapping_Zt_covs)
+#' vapply(ret, length, integer(1))
 #'
 squeeze_mappings <- function(lambda_mapping_Zt, lambda_mapping_Zt_covs) {
   ind <- 1L
