@@ -363,3 +363,62 @@ test_that("multiple factors in fixed effects works", {
   )
   expect_equal(deviance(mod), 7891.36597569292, tolerance = .001)
 })
+
+
+data("IRTsim", package = "PLmixed")
+test_that("missing values are handled appropriately", {
+  IRTsub <- IRTsim[IRTsim$item < 4, ] # Select items 1-3
+  set.seed(12345)
+  IRTsub <- IRTsub[sample(nrow(IRTsub), 300), ] # Randomly sample 300 responses
+
+  IRTsub <- IRTsub[order(IRTsub$item), ] # Order by item
+  irt.lam <- matrix(c(1, NA, NA), ncol = 1) # Specify the lambda matrix
+
+  IRTsub$y[1] <- NA_real_
+
+  expect_error({
+    mod <- galamm(
+      formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
+      data = IRTsub,
+      load.var = c("item"),
+      factor = list(c("abil.sid")),
+      lambda = list(irt.lam),
+      na.action = "na.fail"
+    )
+  },
+  "missing values in object")
+
+  options(na.action = "na.fail")
+
+  expect_error({
+    mod <- galamm(
+      formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
+      data = IRTsub,
+      load.var = c("item"),
+      factor = list(c("abil.sid")),
+      lambda = list(irt.lam)
+    )
+  },
+  "missing values in object")
+
+  # Explicit argument vs relying on default
+  mod <- galamm(
+    formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
+    data = IRTsub,
+    load.var = c("item"),
+    factor = list(c("abil.sid")),
+    lambda = list(irt.lam),
+    na.action = "na.omit"
+  )
+  options("na.action" = "na.omit")
+  mod2 <- galamm(
+    formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
+    data = IRTsub,
+    load.var = c("item"),
+    factor = list(c("abil.sid")),
+    lambda = list(irt.lam)
+  )
+
+  expect_equal(mod$model$deviance, mod2$model$deviance)
+
+})

@@ -88,6 +88,13 @@
 #'   a regression model, of the form \code{~ x + z}. Defaults to \code{NULL},
 #'   which means that no factor interactions are used.
 #'
+#' @param na.action Character of length one specifying a function which
+#'   indicates what should happen when the data contains \code{NA}s. The
+#'   defaults is set to the \code{na.action} setting of \code{options}, which
+#'   can be seen with \code{options("na.action")}. The other alternative is
+#'   \code{"na.fail"}, which means that the function fails if there as
+#'   \code{NA}s in \code{data}.
+#'
 #' @param start Optional named list of starting values for parameters. Possible
 #'   names of list elements are \code{"theta"}, \code{"beta"}, \code{"lambda"},
 #'   and \code{"weights"}, all of should be numerical vectors with starting
@@ -260,8 +267,15 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
                    family_mapping = rep(1L, nrow(data)),
                    load.var = NULL, lambda = NULL, factor = NULL,
                    factor_interactions = NULL,
+                   na.action = getOption("na.action"),
                    start = NULL, control = galamm_control()) {
-  data <- stats::na.omit(data)
+
+  # Deal with potential missing values
+  if(!is.character(na.action)) {
+    stop("na.action must be character")
+  }
+  data <- eval(parse(text = paste0(na.action, "(data)")))
+
   if (nrow(data) == 0) stop("No data, nothing to do.")
 
   if(methods::is(data, "tbl_df")) {
