@@ -111,7 +111,8 @@ anova.galamm <- function(object, ...) {
 #' @return A number
 #' @export
 #'
-#' @keywords internal
+#' @family details of model fit
+#'
 nobs.galamm <- function(object, ...) {
   object$model$n
 }

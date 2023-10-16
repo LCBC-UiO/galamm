@@ -1,4 +1,5 @@
 data("IRTsim", package = "PLmixed")
+
 test_that("LMM with simple factor works", {
   IRTsub <- IRTsim[IRTsim$item < 4, ] # Select items 1-3
   set.seed(12345)
@@ -13,6 +14,12 @@ test_that("LMM with simple factor works", {
     load.var = c("item"),
     factor = list(c("abil.sid")),
     lambda = list(irt.lam)
+  )
+
+  expect_equal(nobs(mod), 300L)
+  expect_equal(
+    as.character(formula(mod)),
+    c("~", "y", "0 + as.factor(item) + (0 + abil.sid | school/sid)")
   )
 
   pdf(NULL)

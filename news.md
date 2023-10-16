@@ -1,5 +1,12 @@
 # galamm (development versions)
 
+- formula.galamm() method has been added, inheriting from stats::formula().
+- nobs.galamm() function is now exported.
+- na.action argument has been added to galamm().
+- input validation has been extended.
+- all internal functions have been documented, using the @noRd tag to suppress
+  generation of markdown.
+
 # galamm version 0.1.1
 
 - Fixed bug causing galamm to fail on R4.2.3.
