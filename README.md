@@ -90,7 +90,9 @@ supported by [RcppEigen](https://cran.r-project.org/package=RcppEigen)
 ([Bates and Eddelbuettel 2013](#ref-batesFastElegantNumerical2013)) and
 automatic differentiation using the C++ library
 [autodiff](https://autodiff.github.io/) ([Leal
-2018](#ref-lealAutodiffModernFast2018)).
+2018](#ref-lealAutodiffModernFast2018)). Scaling of the algorithm is
+investigated further in [the vignette on computational
+scaling](https://lcbc-uio.github.io/galamm/articles/scaling.html).
 
 ## Where Do I Start?
 

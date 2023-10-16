@@ -1,5 +1,6 @@
 # galamm (development versions)
 
+- A vignette investigating computational scalability has been added.
 - formula.galamm() method has been added, inheriting from stats::formula().
 - nobs.galamm() function is now exported.
 - na.action argument has been added to galamm().

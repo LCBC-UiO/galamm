@@ -17,6 +17,7 @@ articles:
 - title: Advanced topics
   navbar: Advanced topics
   contents:
+  - scaling
   - optimization
 
 reference:
