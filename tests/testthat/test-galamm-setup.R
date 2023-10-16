@@ -366,13 +366,16 @@ test_that("multiple factors in fixed effects works", {
 
 
 data("IRTsim", package = "PLmixed")
-test_that("missing values are handled appropriately", {
-  IRTsub <- IRTsim[IRTsim$item < 4, ] # Select items 1-3
-  set.seed(12345)
-  IRTsub <- IRTsub[sample(nrow(IRTsub), 300), ] # Randomly sample 300 responses
+IRTsub <- IRTsim[IRTsim$item < 4, ] # Select items 1-3
+set.seed(12345)
+IRTsub <- IRTsub[sample(nrow(IRTsub), 300), ] # Randomly sample 300 responses
 
-  IRTsub <- IRTsub[order(IRTsub$item), ] # Order by item
-  irt.lam <- matrix(c(1, NA, NA), ncol = 1) # Specify the lambda matrix
+IRTsub <- IRTsub[order(IRTsub$item), ] # Order by item
+irt.lam <- matrix(c(1, NA, NA), ncol = 1) # Specify the lambda matrix
+
+
+test_that("missing values are handled appropriately", {
+
 
   IRTsub$y[1] <- NA_real_
 
@@ -460,5 +463,41 @@ test_that("missing values are handled appropriately", {
     )
   },
   "NaN in")
+
+})
+
+
+test_that("edge conditions tests for data", {
+
+
+  expect_error({mod <- galamm(
+    formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
+    data = IRTsub[0, ],
+    load.var = c("item"),
+    factor = list(c("abil.sid")),
+    lambda = list(irt.lam)
+  )}, "No data, nothing to do.")
+
+  expect_error({mod <- galamm(
+    formula = y ~ 0 + as.factor(item) + (1 | school / sid),
+    data = IRTsub[c(1, 94), ]
+  )},
+  "number of levels of each grouping factor must be < number of observations")
+
+  dat <- IRTsub
+  dat$item <- rep(dat$item[[1]], length(dat$item))
+
+  expect_error({mod <- galamm(
+    formula = y ~ 0 + as.factor(item) + (1 | school),
+    data = dat
+  )}, "contrasts can be applied only to factors with 2 or more levels")
+
+  dat <- IRTsub
+  dat$y <- complex(dat$y)
+
+  expect_error({mod <- galamm(
+    formula = y ~ 0 + as.factor(item) + (1 | school),
+    data = dat
+  )}, "Wrong R type for mapped vector")
 
 })
