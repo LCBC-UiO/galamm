@@ -1,3 +1,30 @@
+#' Add factor variables as data columns
+#'
+#' @param load.var The \code{load.var} argument provided to
+#'   \code{\link{galamm}}.
+#' @param lambda The \code{lambda} argument provided to \code{\link{galamm}}.
+#' @param factor The \code{factor} argument provided to \code{\link{galamm}}.
+#' @param data The \code{data} argument provided to \code{\link{galamm}}, after
+#'   some tests have been applied to validate the input data.
+#'
+#' @return A list with the following two elements:
+#' * A modified version of \code{data} with one extra column for each
+#'   \code{factor}.
+#' * An updated version of the \code{lambda} list of matrices, with \code{NA}s
+#'   replaced by \code{1}s.
+#' @noRd
+#'
+#' @examples
+#' data(KYPSsim, package = "PLmixed")
+#' loading_matrix <- list(rbind(c(1, 0), c(NA, 0), c(NA, 1), c(NA, NA)))
+#' factors <- list(c("ms", "hs"))
+#' load.var <- "time"
+#' res <- setup_factor(load.var, loading_matrix, factors, KYPSsim)
+#'
+#' # Columns "ms" and "hs" have now been added:
+#' head(res$data)
+#' # NA's in the original formulation have been replaced by 1's:
+#' res$lambda
 setup_factor <- function(load.var, lambda, factor, data) {
   if (!is.null(load.var) && (!is.character(load.var) || length(load.var) != 1)) {
     stop("load.var must be a character of length one.")
