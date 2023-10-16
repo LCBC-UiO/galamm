@@ -15,6 +15,10 @@ test_that("LMM with simple factor works", {
     lambda = list(irt.lam)
   )
 
+  expect_equal(
+    as.character(formula(mod)),
+    c("~", "y", "0 + as.factor(item) + (0 + abil.sid | school/sid)"))
+
   pdf(NULL)
   expect_invisible(plot(mod))
   dev.off()
