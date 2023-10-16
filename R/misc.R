@@ -248,6 +248,13 @@ set_initial_values <- function(
   c(theta_init, beta_init, lambda_init, weights_init)
 }
 
+#' Manually added release questions
+#'
+#' When running \code{devtools::release()} for submitting to CRAN, questions
+#' here are asked.
+#'
+#' @noRd
+#'
 release_questions <- function() {
   "Did you re-build the vignettes using `rebuild-long-running-vignette.R`?"
 }
