@@ -329,7 +329,7 @@ test_that("functions fail when they should", {
 test_that("multiple factors in fixed effects works", {
   path <-
     system.file("testdata", "test_multiple_factors.rds", package = "galamm")
-  dat <- readRDS(path)
+  dat <- as.data.frame(readRDS(path))
 
   lmat <- matrix(c(
     1, NA, NA, 0, 0, 0,

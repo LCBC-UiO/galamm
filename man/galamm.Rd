@@ -37,12 +37,20 @@ examples for details.}
 \item{data}{A data.frame containing all the variables specified by the model
 formula, with the exception of factor loadings.}
 
-\item{family}{A vector containing one or more model families. For each
-element in \code{family} there should be a corresponding element in
-\code{family_mapping} specifying which elements of the response are
-conditionally distributed according to the given family. Currently family
-can be one of \code{gaussian}, \code{binomial}, and \code{poisson}, and
-only canonical link functions are supported.}
+\item{family}{A a list or character vector containing one or more model
+families. For each element in \code{family} there should be a corresponding
+element in \code{family_mapping} specifying which elements of the response
+are conditionally distributed according to the given family. Currently
+family can be one of \code{gaussian}, \code{binomial}, and \code{poisson},
+and only canonical link functions are supported. The family arguments can
+either be provided as character values, e.g., \code{c("gaussian",
+  "poisson")} or \code{list("gaussian", "poisson")}, as function names, e.g.,
+\code{c(gaussian, poisson)} or \code{list(gaussian, poisson)}, or as
+function calls, e.g., \code{list(gaussian(), poisson())}. In the latter
+case, they must be provided in a list, and bot as a vector. Mixing the
+different ways of describing the family also works, e.g.,
+\code{list("gaussian", poisson())}, but in this case they must be provided
+in a list.}
 
 \item{family_mapping}{Optional integer vector mapping from the elements of
 \code{family} to rows of \code{data}. Defaults to \code{rep(1L,

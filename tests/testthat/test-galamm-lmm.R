@@ -21,18 +21,25 @@ test_that("LMM with simple factor works", {
 
   # Must test that it works also with tibbles
   class(IRTsub) <- c("tbl_df", "tbl", "data.frame")
-  mod1 <- galamm(
-    y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
-    data = IRTsub, load.var = c("item"),
-    factor = list(c("abil.sid")), lambda = list(irt.lam)
-  )
+  expect_message({
+    mod1 <- galamm(
+      y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
+      data = IRTsub, load.var = c("item"),
+      factor = list(c("abil.sid")), lambda = list(irt.lam)
+    )},
+    "Converting tibble"
+    )
+
 
   class(IRTsub) <- c("data.table", "data.frame")
-  mod2 <- galamm(
-    y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
-    data = IRTsub, load.var = c("item"),
-    factor = list(c("abil.sid")), lambda = list(irt.lam)
-  )
+  expect_message({
+    mod2 <- galamm(
+      y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
+      data = IRTsub, load.var = c("item"),
+      factor = list(c("abil.sid")), lambda = list(irt.lam)
+    )
+  }, "Converting data.table")
+  IRTsub <- as.data.frame(IRTsub)
 
   expect_equal(mod$hessian, mod1$hessian)
   expect_equal(mod$hessian, mod2$hessian)

@@ -40,12 +40,21 @@
 #' @param data A data.frame containing all the variables specified by the model
 #'   formula, with the exception of factor loadings.
 #'
-#' @param family A vector containing one or more model families. For each
-#'   element in \code{family} there should be a corresponding element in
-#'   \code{family_mapping} specifying which elements of the response are
-#'   conditionally distributed according to the given family. Currently family
-#'   can be one of \code{gaussian}, \code{binomial}, and \code{poisson}, and
-#'   only canonical link functions are supported.
+#' @param family A a list or character vector containing one or more model
+#'   families. For each element in \code{family} there should be a corresponding
+#'   element in \code{family_mapping} specifying which elements of the response
+#'   are conditionally distributed according to the given family. Currently
+#'   family can be one of \code{gaussian}, \code{binomial}, and \code{poisson},
+#'   and only canonical link functions are supported. The family arguments can
+#'   either be provided as character values, e.g., \code{c("gaussian",
+#'   "poisson")} or \code{list("gaussian", "poisson")}, as function names, e.g.,
+#'   \code{c(gaussian, poisson)} or \code{list(gaussian, poisson)}, or as
+#'   function calls, e.g., \code{list(gaussian(), poisson())}. In the latter
+#'   case, they must be provided in a list, and bot as a vector. Mixing the
+#'   different ways of describing the family also works, e.g.,
+#'   \code{list("gaussian", poisson())}, but in this case they must be provided
+#'   in a list.
+#'
 #'
 #' @param family_mapping Optional integer vector mapping from the elements of
 #'   \code{family} to rows of \code{data}. Defaults to \code{rep(1L,
@@ -254,6 +263,13 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
                    start = NULL, control = galamm_control()) {
   data <- stats::na.omit(data)
   if (nrow(data) == 0) stop("No data, nothing to do.")
+
+  if(methods::is(data, "tbl_df")) {
+    message("Converting tibble 'data' to data.frame.")
+  }
+  if(methods::is(data, "data.table")) {
+    message("Converting data.table 'data' to data.frame")
+  }
   data <- as.data.frame(data)
   mc <- match.call()
 
