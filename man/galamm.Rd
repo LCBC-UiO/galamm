@@ -14,6 +14,7 @@ galamm(
   lambda = NULL,
   factor = NULL,
   factor_interactions = NULL,
+  na.action = getOption("na.action"),
   start = NULL,
   control = galamm_control()
 )
@@ -83,6 +84,13 @@ corresponding matrix provided to the \code{lambda} argument. Each list
 element should be a \code{formula} object containing the write-hand side of
 a regression model, of the form \code{~ x + z}. Defaults to \code{NULL},
 which means that no factor interactions are used.}
+
+\item{na.action}{Character of length one specifying a function which
+indicates what should happen when the data contains \code{NA}s. The
+defaults is set to the \code{na.action} setting of \code{options}, which
+can be seen with \code{options("na.action")}. The other alternative is
+\code{"na.fail"}, which means that the function fails if there as
+\code{NA}s in \code{data}.}
 
 \item{start}{Optional named list of starting values for parameters. Possible
 names of list elements are \code{"theta"}, \code{"beta"}, \code{"lambda"},
