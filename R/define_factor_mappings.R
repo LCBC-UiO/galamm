@@ -80,6 +80,17 @@ extend_lambda <- function(fi) {
   extra_lambdas
 }
 
+#' Convenience function for figuring out whether a given factor is among a set
+#' of variables
+#'
+#' @param factor A character vector, element of \code{factor} provided to
+#'   \code{\link{galamm}}.
+#' @param vars A set of variables, typically column headers.
+#'
+#' @return A logical, indicating whether any of the names in \code{factor} can
+#' be found among \code{vars}.
+#'
+#' @noRd
 factor_finder <- function(factor, vars) {
   vapply(factor, function(x) {
     any(vapply(vars, function(y) {
