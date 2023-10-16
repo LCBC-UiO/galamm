@@ -43,6 +43,7 @@ Other details of model fit:
 \code{\link{fitted.galamm}()},
 \code{\link{fixef}()},
 \code{\link{llikAIC}()},
+\code{\link{nobs.galamm}()},
 \code{\link{predict.galamm}()},
 \code{\link{print.VarCorr.galamm}()},
 \code{\link{ranef.galamm}()},

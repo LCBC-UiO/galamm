@@ -63,6 +63,7 @@ Other details of model fit:
 \code{\link{fixef}()},
 \code{\link{llikAIC}()},
 \code{\link{logLik.galamm}()},
+\code{\link{nobs.galamm}()},
 \code{\link{print.VarCorr.galamm}()},
 \code{\link{ranef.galamm}()},
 \code{\link{residuals.galamm}()},
