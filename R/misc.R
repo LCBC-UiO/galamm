@@ -142,7 +142,40 @@ setup_response_object <- function(family_list, family_mapping, data, gobj) {
   response_obj
 }
 
+#' Find constant term in log-likelihood
+#'
+#' Likelihood functions may have a constant term not involving parameters,
+#' which is required in the final value, but does not need to be computed at
+#' each iteration. This function hence precomputes this constant term.
+#'
+#' @param family_txt Character vector defining the families. Each element should
+#' be one \code{"gaussian"}, \code{"binomial"}, or \code{"poisson"}.
+#' @param family_mapping Argument \code{family_mapping} provided to
+#'   \code{\link{galamm}}.
+#' @param y A numeric vector giving the response.
+#' @param trials Number of trials. When irrelevant, should be given as a vector
+#' of ones.
+#'
+#' @return The constant term in the loglikelihood function, one for each family.
+#' @noRd
+#'
+#' @examples
+#' # Binomial
+#' y1 <- rbinom(10, size = 3, prob = .5)
+#' find_k("binomial", rep(1, 10), y1, rep(3, 10))
+#'
+#' # Poisson
+#' y2 <- rpois(10, lambda = 1)
+#' find_k("poisson", rep(1, 10), y2, rep(1, 10))
+#'
+#' # Binomial and Poisson
+#' find_k(c("binomial", "poisson"), c(rep(1, 10), rep(2, 10)),
+#'        c(y1, y2), c(rep(3, 10), rep(1, 10)))
+#'
+#' # For Gaussian, the constant is always zero
+#' find_k("gaussian", rep(1, 10), rnorm(10), rep(1, 10))
 find_k <- function(family_txt, family_mapping, y, trials) {
+
   k <- numeric(length(family_txt))
   for (i in seq_along(k)) {
     if (family_txt[[i]] == "gaussian") {
