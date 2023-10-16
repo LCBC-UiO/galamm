@@ -88,6 +88,46 @@ factor_finder <- function(factor, vars) {
   }, TRUE)
 }
 
+#' Low-level mappings to factor loadings
+#'
+#' This function defines the low-level mappings between factor loadings given in
+#' the \code{lambda} argument to \code{\link{galamm}} and the underlying dense
+#' matrix elements in \eqn{X} and sparse matrix elements in \eqn{Z'}. In these
+#' mappings, a value \code{-2} means that the corresponding elements should be
+#' multiplied be zero, a value \code{-1} means that the corresponding elements
+#' should be multiplied be one, and non-negative integers mean that the
+#' corresponding elements should be multiplied by the corresponding element
+#' of \code{lambda}, with zero-order indexing as in \code{C++}.
+#'
+#' @param gobj A list element returned from the internal function \code{gamm4}.
+#' @param load.var The argument \code{load.var} argument provided to
+#'   \code{\link{galamm}}.
+#' @param lambda The argument \code{lambda} argument provided to
+#'   \code{\link{galamm}}.
+#' @param factor The argument \code{factor} argument provided to
+#'   \code{\link{galamm}}.
+#' @param factor_interactions The argument \code{factor_interactions} argument
+#'   provided to \code{\link{galamm}}.
+#' @param data A dataframe, which is a modified version of the \code{data}
+#'   argument provided to \code{\link{galamm}}.
+#'
+#' @return A list object with the following elements:
+#' * \code{lambda_mapping_X} A list with mappings between factor loadings in
+#'   \code{lambda} and elements of the fixed effect model matrix \eqn{X},
+#'   in row-major ordering.
+#' * \code{lambda_mapping_Zt} A list with mappings between factor loadings in
+#'   \code{lambda} and elements of the random effect model matrix \eqn{Z'}.
+#'   The i-th element of \code{lambda_mapping_Zt} corresponds to the i-th
+#'   element of \code{Zt@x}.
+#' * \code{lambda_mapping_Zt_covs} A list with mappings between covariates
+#'   and elements of the random effect model matrix \eqn{Z'}.
+#'   The i-th element of \code{lambda_mapping_Zt_covs} corresponds to the i-th
+#'   element of \code{Zt@x}, and contains the covariates that the i-th element
+#'   of \code{lambda_mapping_Zt} should be multiplied with.
+#' * \code{lambda} The factor loadings \code{lambda} with updated indices,
+#'   corresponding to the values in the mappings.
+#'
+#' @noRd
 define_factor_mappings <- function(
     gobj, load.var, lambda, factor, factor_interactions, data) {
   vars_in_fixed <- all.vars(gobj$fake.formula[-2])
