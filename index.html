@@ -83,6 +83,7 @@
     <a class="dropdown-item" href="articles/semiparametric.html">Semiparametric Latent Variable Modeling</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Advanced topics</h6>
+    <a class="dropdown-item" href="articles/scaling.html">Computational Scaling</a>
     <a class="dropdown-item" href="articles/optimization.html">Optimization</a>
   </div>
 </li>
@@ -134,7 +135,7 @@
 <a href="https://lcbc-uio.github.io/galamm/articles/latent_observed_interaction.html">Interactions between latent and observed covariates</a>.</li>
 </ul>
 <p>Random effects are defined using <a href="https://cran.r-project.org/package=lme4" class="external-link">lme4</a> syntax, and the syntax for factor structures are close to that of <a href="https://cran.r-project.org/package=PLmixed" class="external-link">PLmixed</a> (<a href="#ref-rockwoodEstimatingComplexMeasurement2019">Rockwood and Jeon 2019</a>). However, for the types of models supported by both PLmixed and galamm, galamm is usually considerably faster. Smooth terms, as in generalized additive mixed models, use the same syntax as <a href="https://cran.r-project.org/package=mgcv" class="external-link">mgcv</a>.</p>
-<p>For most users, it should not be necessary to think about how the actual computations are performed, although they are detailed in the <a href="https://lcbc-uio.github.io/galamm/articles/optimization.html">optimization vignette</a>. In short, the core computations are done using sparse matrix methods supported by <a href="https://cran.r-project.org/package=RcppEigen" class="external-link">RcppEigen</a> (<a href="#ref-batesFastElegantNumerical2013">Bates and Eddelbuettel 2013</a>) and automatic differentiation using the C++ library <a href="https://autodiff.github.io/" class="external-link">autodiff</a> (<a href="#ref-lealAutodiffModernFast2018">Leal 2018</a>).</p>
+<p>For most users, it should not be necessary to think about how the actual computations are performed, although they are detailed in the <a href="https://lcbc-uio.github.io/galamm/articles/optimization.html">optimization vignette</a>. In short, the core computations are done using sparse matrix methods supported by <a href="https://cran.r-project.org/package=RcppEigen" class="external-link">RcppEigen</a> (<a href="#ref-batesFastElegantNumerical2013">Bates and Eddelbuettel 2013</a>) and automatic differentiation using the C++ library <a href="https://autodiff.github.io/" class="external-link">autodiff</a> (<a href="#ref-lealAutodiffModernFast2018">Leal 2018</a>). Scaling of the algorithm is investigated further in <a href="https://lcbc-uio.github.io/galamm/articles/scaling.html">the vignette on computational scaling</a>.</p>
 </div>
 <div class="section level2">
 <h2 id="where-do-i-start">Where Do I Start?<a class="anchor" aria-label="anchor" href="#where-do-i-start"></a>
