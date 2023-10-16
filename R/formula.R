@@ -6,6 +6,8 @@
 #' @return The formula used to fit the model.
 #' @export
 #'
+#' @family details of model fit
+#'
 #' @examples
 #' # Mixed response model ------------------------------------------------------
 #'

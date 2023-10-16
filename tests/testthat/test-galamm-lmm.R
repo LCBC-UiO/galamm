@@ -1,4 +1,5 @@
 data("IRTsim", package = "PLmixed")
+
 test_that("LMM with simple factor works", {
   IRTsub <- IRTsim[IRTsim$item < 4, ] # Select items 1-3
   set.seed(12345)

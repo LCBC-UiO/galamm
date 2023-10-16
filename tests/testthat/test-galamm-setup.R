@@ -524,3 +524,17 @@ test_that("edge conditions tests for data", {
     "Wrong R type for mapped vector"
   )
 })
+
+
+test_that("galamm rejects perfectly noiseless input data", {
+  data("IRTsim", package = "PLmixed")
+  dat <- IRTsim
+  dat$y <- as.integer(dat$item)
+
+  expect_error({
+    mod <- galamm(
+      formula = y ~ 0 + as.factor(item) + (1 | school),
+      data = dat
+    )
+  }, "Deterministic relationship between response and fixed effects.")
+})

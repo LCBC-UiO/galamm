@@ -316,6 +316,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
 
   family_list <- setup_family(family)
 
+  family_mapping <- as.integer(family_mapping)
   if (length(family_list) != length(unique(family_mapping))) {
     stop(
       "family_mapping must contain a unique index for each element ",
@@ -342,6 +343,15 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
 
   response_obj <-
     setup_response_object(family_list, family_mapping, data, gobj)
+
+  check_matrix <- as.matrix(cbind(response_obj[, 1], gobj$lmod$X))
+  rank_check_covs <- qr(check_matrix[, -1, drop = FALSE])$rank
+  rank_check_response <- qr(check_matrix)$rank
+
+  if(rank_check_covs == rank_check_response) {
+    stop("Deterministic relationship between response and fixed effects.")
+  }
+
   lambda_mappings <- define_factor_mappings(
     gobj, load.var, lambda_orig, factor, factor_interactions, data
   )

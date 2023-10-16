@@ -43,6 +43,7 @@ Other details of model fit:
 \code{\link{factor_loadings.galamm}()},
 \code{\link{family.galamm}()},
 \code{\link{fitted.galamm}()},
+\code{\link{formula.galamm}()},
 \code{\link{llikAIC}()},
 \code{\link{logLik.galamm}()},
 \code{\link{nobs.galamm}()},
