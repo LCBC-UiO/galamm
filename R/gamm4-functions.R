@@ -8,7 +8,7 @@
 #' @param pterms Parametric terms in the model.
 #' @param mf Model frame.
 #'
-#' @return model
+#' @return A list with data required to set up a model.
 #' @author Simon N Wood, with some modifications by Oystein Sorensen.
 #' @noRd
 #'
@@ -211,6 +211,19 @@ gamm4 <- function(fixed, random = NULL, data) {
 }
 
 
+#' Convert smooth terms in mixed effect form back to original parametrization
+#'
+#' This function is derived from \code{gamm4::gamm4}.
+#'
+#' @param gobj A list with information about the model fit.
+#' @param ret A list with all information about the galamm fit.
+#' @param final_model The result from the final evaluation of the model, with
+#'   second-order derivatives to compute the Hessian.
+#'
+#' @return A list containing information about smooth terms.
+#' @author Simon Wood, with modifications by Oystein Sorensen.
+#' @noRd
+#'
 gamm4.wrapup <- function(gobj, ret, final_model) {
   if (length(gobj$G$smooth) == 0) {
     return(list())
