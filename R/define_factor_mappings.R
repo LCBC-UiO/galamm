@@ -168,6 +168,11 @@ extend_lambda <- function(fi) {
 #' be found among \code{vars}.
 #'
 #' @noRd
+#' @examples
+#'
+#' factor_finder("f1", letters[1:3])
+#' factor_finder(c("f1", "ax", "b"), letters[1:3])
+#'
 factor_finder <- function(factor, vars) {
   vapply(factor, function(x) {
     any(vapply(vars, function(y) {
