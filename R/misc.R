@@ -194,6 +194,18 @@ find_k <- function(family_txt, family_mapping, y, trials) {
   k
 }
 
+#' Set initial values for galamm parameters
+#'
+#' @param gobj List object with model information
+#' @param start Argument \code{start} provided to \code{\link{galamm}}
+#'   containing user-defined initial values.
+#' @param beta_inds Indices of fixed effect regression coefficients.
+#' @param lambda_inds Indices of factor loadings.
+#' @param weights_inds Indices of weights.
+#'
+#' @return A numeric vector with initial values for all parameters.
+#' @noRd
+#'
 set_initial_values <- function(
     gobj, start, beta_inds, lambda_inds, weights_inds) {
   if (length(start) > 0 &&
