@@ -1,3 +1,17 @@
+#' Extract names of factor among column names
+#'
+#' @param ff Character vector with names of candidate factors.
+#' @param cnmf Column name, a single character.
+#'
+#' @return A character vector containing names of the factors which could be
+#' found among the column names.
+#'
+#' @noRd
+#'
+#' @examples
+#' # Column is an interaction a:b:x, so both "a" and "b" should be returned.
+#' extract_name(c("a", "b", "c"), "a:b:x")
+#'
 extract_name <- function(ff, cnmf) {
   unlist(lapply(ff, function(x) {
     m <- regexpr(x, cnmf, fixed = TRUE)
@@ -5,6 +19,23 @@ extract_name <- function(ff, cnmf) {
   }))
 }
 
+#' Make sure mappings to loadings and to covariates have same size
+#'
+#' This function adjust the mappings \code{lambda_mapping_Zt} and
+#' \code{lambda_mapping_Zt_covs} so they match exactly in size and shape. See
+#' the documentation to the function \code{define_factor_mappings} for more
+#' details on what the mappings represent.
+#'
+#' @param lambda_mapping_Zt Mapping between factor loadings and elements of the
+#'   sparse matrix representing the random effect covariates.
+#' @param lambda_mapping_Zt_covs Mapping between covariates entering in latent
+#'   interactions and elements of the sparse metrix representing the random
+#'   effect covariates.
+#'
+#' @return List of adjusted mappings \code{lambda_mapping_Zt} and
+#'   \code{lambda_mapping_Zt_covs}.
+#' @noRd
+#'
 squeeze_mappings <- function(lambda_mapping_Zt, lambda_mapping_Zt_covs) {
   ind <- 1L
   security_counter <- 1L
@@ -48,6 +79,19 @@ squeeze_mappings <- function(lambda_mapping_Zt, lambda_mapping_Zt_covs) {
   )
 }
 
+#' Convenience function for extracting list elements
+#'
+#' @param input A list of lists.
+#' @param element Name of the list element to be extracted.
+#' @param fun Function used to merge the extracted list elements. Defaults to
+#'   \code{c}.
+#' @param recursive Logical passed on to \code{unlist}, indicating whether the
+#'   unlisting done to the final result should be recursive or not. Defaults to
+#'   \code{TRUE}.
+#'
+#' @return A list of unwrapped mappings.
+#' @noRd
+#'
 mappingunwrapping <- function(input, element, fun = c, recursive = TRUE) {
   unlist(
     do.call(function(...) {
@@ -57,6 +101,21 @@ mappingunwrapping <- function(input, element, fun = c, recursive = TRUE) {
   )
 }
 
+#' Extend mapping between factor loadings and random effect matrix
+#'
+#' When there are latent factor interactions, the mapping
+#' \code{lambda_mapping_Zt} in the list returned by
+#' \code{define_factor_mappings} needs to be extended, to incorporate both the
+#' traditional loadings and the loadings that multiple provided covariates. This
+#' function achieves that.
+#'
+#' @param fi An element of the list \code{factor_interactions} given to
+#'   \code{\link{galamm}}.
+#'
+#' @return A list of lists, elements of which have been extended to correspond
+#' to the number of covariates multiplying the element.
+#' @noRd
+#'
 extend_lambda <- function(fi) {
   extra_lambdas <- list()
   for (k in seq_along(fi)) {
