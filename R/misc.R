@@ -169,13 +169,14 @@ setup_response_object <- function(family_list, family_mapping, data, gobj) {
 #' find_k("poisson", rep(1, 10), y2, rep(1, 10))
 #'
 #' # Binomial and Poisson
-#' find_k(c("binomial", "poisson"), c(rep(1, 10), rep(2, 10)),
-#'        c(y1, y2), c(rep(3, 10), rep(1, 10)))
+#' find_k(
+#'   c("binomial", "poisson"), c(rep(1, 10), rep(2, 10)),
+#'   c(y1, y2), c(rep(3, 10), rep(1, 10))
+#' )
 #'
 #' # For Gaussian, the constant is always zero
 #' find_k("gaussian", rep(1, 10), rnorm(10), rep(1, 10))
 find_k <- function(family_txt, family_mapping, y, trials) {
-
   k <- numeric(length(family_txt))
   for (i in seq_along(k)) {
     if (family_txt[[i]] == "gaussian") {
