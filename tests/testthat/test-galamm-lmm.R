@@ -21,24 +21,29 @@ test_that("LMM with simple factor works", {
 
   # Must test that it works also with tibbles
   class(IRTsub) <- c("tbl_df", "tbl", "data.frame")
-  expect_message({
-    mod1 <- galamm(
-      y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
-      data = IRTsub, load.var = c("item"),
-      factor = list(c("abil.sid")), lambda = list(irt.lam)
-    )},
+  expect_message(
+    {
+      mod1 <- galamm(
+        y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
+        data = IRTsub, load.var = c("item"),
+        factor = list(c("abil.sid")), lambda = list(irt.lam)
+      )
+    },
     "Converting tibble"
-    )
+  )
 
 
   class(IRTsub) <- c("data.table", "data.frame")
-  expect_message({
-    mod2 <- galamm(
-      y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
-      data = IRTsub, load.var = c("item"),
-      factor = list(c("abil.sid")), lambda = list(irt.lam)
-    )
-  }, "Converting data.table")
+  expect_message(
+    {
+      mod2 <- galamm(
+        y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
+        data = IRTsub, load.var = c("item"),
+        factor = list(c("abil.sid")), lambda = list(irt.lam)
+      )
+    },
+    "Converting data.table"
+  )
   IRTsub <- as.data.frame(IRTsub)
 
   expect_equal(mod$hessian, mod1$hessian)
@@ -302,93 +307,90 @@ test_that("LMM with two raters works", {
   )
 })
 
-# Commented out because it takes 5-10 minutes to run.
+test_that("Complex LMM works", {
+  skip_extended()
+  data(JUDGEsim, package = "PLmixed")
+  JUDGEsim$item <- factor(JUDGEsim$item)
+  judge.lam <- rbind(
+    c(1, 0, 1, 0, 0, 0),
+    c(NA, 0, NA, 0, 0, 0),
+    c(NA, 0, NA, 0, 0, 0),
+    c(0, 1, 0, 1, 0, 0),
+    c(0, NA, 0, NA, 0, 0),
+    c(0, NA, 0, NA, 0, 0),
+    c(0, 0, 0, 0, 1, 0),
+    c(0, 0, 0, 0, NA, 0),
+    c(0, 0, 0, 0, NA, 0),
+    c(0, 0, 0, 0, 0, 1),
+    c(0, 0, 0, 0, 0, NA),
+    c(0, 0, 0, 0, 0, NA)
+  )
 
-# test_that("Complex LMM works", {
-#   JUDGEsim$item <- factor(JUDGEsim$item)
-#   judge.lam <- rbind(
-#     c(1, 0, 1, 0, 0, 0),
-#     c(NA, 0, NA, 0, 0, 0),
-#     c(NA, 0, NA, 0, 0, 0),
-#     c(0, 1, 0, 1, 0, 0),
-#     c(0, NA, 0, NA, 0, 0),
-#     c(0, NA, 0, NA, 0, 0),
-#     c(0, 0, 0, 0, 1, 0),
-#     c(0, 0, 0, 0, NA, 0),
-#     c(0, 0, 0, 0, NA, 0),
-#     c(0, 0, 0, 0, 0, 1),
-#     c(0, 0, 0, 0, 0, NA),
-#     c(0, 0, 0, 0, 0, NA)
-#   )
-#
-#   judge_galamm <- galamm(
-#     formula = response ~ 0 + item + (1 | class) +
-#       (0 + trait1.t + trait2.t + trait1.s + trait2.s | stu) +
-#       (0 + teacher1 + teacher2 | tch),
-#     data = JUDGEsim,
-#     lambda = list(judge.lam),
-#     load.var = "item",
-#     factor = list(c(
-#       "teacher1", "teacher2", "trait1.t",
-#       "trait2.t", "trait1.s", "trait2.s"
-#     ))
-#   )
-#
-#   expect_equal(judge_galamm$model$loglik, -56553.2785661794)
-#   expect_equal(judge_galamm$parameters$parameter_estimates,
-#     c(
-#       0.784430334881896, 0.566133764367859, 0.398568132799786,
-#       0.200370294453492,
-#       0.334085183988745, 0.00647882691731993, 0.235677264194959,
-#       0.773891841821503,
-#       0.337997663719164, 0.869131637864806, 0.498543199885178,
-#       0.239475682251201,
-#       0.482285028560489, 0, 3.39914518474943, 3.36263585640721,
-#       3.36210081563546,
-#       2.81984223040228, 2.93869388713431, 2.8771346729679,
-#       3.4260794096106,
-#       3.55223187960471, 3.59726951301179, 2.33415461561759,
-#       2.90902811819496,
-#       2.47043867252208, 1.12783179637647, 0.998580402300312,
-#       0.972482963140881,
-#       1.2190594859786, 1.09151685852923, 1.06570210817052,
-#       1.05362302739479,
-#       0.958118368867656, 1.32218004851917, 1.14483478564702,
-#       0.873958594688374,
-#       1.09623955388905
-#     ),
-#     tolerance = 1e-4
-#   )
-#
-#   tmp <- summary(judge_galamm)
-#   expect_equal(tmp$Lambda,
-#     structure(c(
-#       1, 1.12783179425509, 0.998580401925909, 0, 0, 0,
-#       0, 0, 0, 0, 0, 0, NA, 0.035838597834991, 0.0334494645321601,
-#       NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, 0, 1, 0.972482962774902,
-#       1.21905948534512, 0, 0, 0, 0, 0, 0, NA, NA, NA, NA,
-#       0.0303605948678942,
-#       0.0343626808329717, NA, NA, NA, NA, NA, NA, 1, 1.09151685865203,
-#       1.06570210905939, 0, 0, 0, 0, 0, 0, 0, 0, 0, NA, 0.0217214373201995,
-#       0.0214398508325773, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0,
-#       0, 1, 1.05362303061733, 0.958118371374549, 0, 0, 0, 0, 0, 0,
-#       NA, NA, NA, NA, 0.0257563813063262, 0.024602749572987, NA, NA,
-#       NA, NA, NA, NA, 0, 0, 0, 0, 0, 0, 1, 1.32218004297408, 1.1448347803669,
-#       0, 0, 0, NA, NA, NA, NA, NA, NA, NA, 0.0610912379818294,
-#       0.0563316297031143,
-#       NA, NA, NA, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0.873958595211964,
-#       1.09623955372973, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,
-#       0.044174939624668,
-#       0.0487381242507442
-#     ), dim = c(12L, 12L), dimnames = list(c(
-#       "1",
-#       "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"
-#     ), c(
-#       "teacher1",
-#       "SE", "teacher2", "SE", "trait1.t", "SE", "trait2.t",
-#       "SE", "trait1.s",
-#       "SE", "trait2.s", "SE"
-#     ))),
-#     tolerance = 1e-4
-#   )
-# })
+  judge_galamm <- galamm(
+    formula = response ~ 0 + item + (1 | class) +
+      (0 + trait1.t + trait2.t + trait1.s + trait2.s | stu) +
+      (0 + teacher1 + teacher2 | tch),
+    data = JUDGEsim,
+    lambda = list(judge.lam),
+    load.var = "item",
+    factor = list(c(
+      "teacher1", "teacher2", "trait1.t",
+      "trait2.t", "trait1.s", "trait2.s"
+    ))
+  )
+
+  expect_equal(judge_galamm$model$loglik, -56553.2785661794)
+  expect_equal(judge_galamm$parameters$parameter_estimates,
+    c(
+      0.784430334881896, 0.566133764367859, 0.398568132799786,
+      0.200370294453492,
+      0.334085183988745, 0.00647882691731993, 0.235677264194959,
+      0.773891841821503,
+      0.337997663719164, 0.869131637864806, 0.498543199885178,
+      0.239475682251201,
+      0.482285028560489, 0, 3.39914518474943, 3.36263585640721,
+      3.36210081563546,
+      2.81984223040228, 2.93869388713431, 2.8771346729679,
+      3.4260794096106,
+      3.55223187960471, 3.59726951301179, 2.33415461561759,
+      2.90902811819496,
+      2.47043867252208, 1.12783179637647, 0.998580402300312,
+      0.972482963140881,
+      1.2190594859786, 1.09151685852923, 1.06570210817052,
+      1.05362302739479,
+      0.958118368867656, 1.32218004851917, 1.14483478564702,
+      0.873958594688374,
+      1.09623955388905
+    ),
+    tolerance = 1e-4
+  )
+
+  tmp <- summary(judge_galamm)
+  expect_equal(tmp$Lambda,
+    structure(c(
+      1, 1.12783179637647, 0.998580402300312, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, NA, 0.0358385979432342, 0.0334494645747354,
+      NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0, 0, 1, 0.972482963140881,
+      1.2190594859786, 0, 0, 0, 0, 0, 0, NA, NA, NA, NA, 0.0303605948898014,
+      0.0343626808674974, NA, NA, NA, NA, NA, NA, 1, 1.09151685852923,
+      1.06570210817052, 0, 0, 0, 0, 0, 0, 0, 0, 0, NA, 0.0217214373104262,
+      0.0214398508062957, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0, 0,
+      0, 1, 1.05362302739479, 0.958118368867656, 0, 0, 0, 0, 0, 0,
+      NA, NA, NA, NA, 0.0257563811709945, 0.0246027494628801, NA, NA,
+      NA, NA, NA, NA, 0, 0, 0, 0, 0, 0, 1, 1.32218004851917, 1.14483478564702,
+      0, 0, 0, NA, NA, NA, NA, NA, NA, NA, 0.0610912384587967, 0.0563316301466295,
+      NA, NA, NA, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0.873958594688374,
+      1.09623955388905, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 0.0441749396116879,
+      0.0487381242824818
+    ), dim = c(12L, 12L), dimnames = list(c(
+      "lambda1",
+      "lambda2", "lambda3", "lambda4", "lambda5", "lambda6", "lambda7",
+      "lambda8", "lambda9", "lambda10", "lambda11", "lambda12"
+    ), c(
+      "teacher1",
+      "SE", "teacher2", "SE", "trait1.t", "SE", "trait2.t", "SE", "trait1.s",
+      "SE", "trait2.s", "SE"
+    ))),
+    tolerance = 1e-4
+  )
+})

@@ -375,34 +375,36 @@ irt.lam <- matrix(c(1, NA, NA), ncol = 1) # Specify the lambda matrix
 
 
 test_that("missing values are handled appropriately", {
-
-
   IRTsub$y[1] <- NA_real_
 
-  expect_error({
-    mod <- galamm(
-      formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
-      data = IRTsub,
-      load.var = c("item"),
-      factor = list(c("abil.sid")),
-      lambda = list(irt.lam),
-      na.action = "na.fail"
-    )
-  },
-  "missing values in object")
+  expect_error(
+    {
+      mod <- galamm(
+        formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
+        data = IRTsub,
+        load.var = c("item"),
+        factor = list(c("abil.sid")),
+        lambda = list(irt.lam),
+        na.action = "na.fail"
+      )
+    },
+    "missing values in object"
+  )
 
   options(na.action = "na.fail")
 
-  expect_error({
-    mod <- galamm(
-      formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
-      data = IRTsub,
-      load.var = c("item"),
-      factor = list(c("abil.sid")),
-      lambda = list(irt.lam)
-    )
-  },
-  "missing values in object")
+  expect_error(
+    {
+      mod <- galamm(
+        formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
+        data = IRTsub,
+        load.var = c("item"),
+        factor = list(c("abil.sid")),
+        lambda = list(irt.lam)
+      )
+    },
+    "missing values in object"
+  )
 
   # Explicit argument vs relying on default
   mod <- galamm(
@@ -426,78 +428,99 @@ test_that("missing values are handled appropriately", {
 
   IRTsub$y[1] <- -Inf
 
-  expect_error({
-    mod <- galamm(
-      formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
-      data = IRTsub,
-      load.var = c("item"),
-      factor = list(c("abil.sid")),
-      lambda = list(irt.lam)
-    )
-  },
-  "Infinite values")
+  expect_error(
+    {
+      mod <- galamm(
+        formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
+        data = IRTsub,
+        load.var = c("item"),
+        factor = list(c("abil.sid")),
+        lambda = list(irt.lam)
+      )
+    },
+    "Infinite values"
+  )
 
   IRTsub$y[1] <- 1
   IRTsub$y[13] <- Inf
 
-  expect_error({
-    mod <- galamm(
-      formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
-      data = IRTsub,
-      load.var = c("item"),
-      factor = list(c("abil.sid")),
-      lambda = list(irt.lam)
-    )
-  },
-  "Infinite values")
+  expect_error(
+    {
+      mod <- galamm(
+        formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
+        data = IRTsub,
+        load.var = c("item"),
+        factor = list(c("abil.sid")),
+        lambda = list(irt.lam)
+      )
+    },
+    "Infinite values"
+  )
 
   IRTsub$y[13] <- NaN
 
-  expect_error({
-    mod <- galamm(
-      formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
-      data = IRTsub,
-      load.var = c("item"),
-      factor = list(c("abil.sid")),
-      lambda = list(irt.lam)
-    )
-  },
-  "NaN in")
-
+  expect_error(
+    {
+      mod <- galamm(
+        formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
+        data = IRTsub,
+        load.var = c("item"),
+        factor = list(c("abil.sid")),
+        lambda = list(irt.lam)
+      )
+    },
+    "NaN in"
+  )
 })
 
 
 test_that("edge conditions tests for data", {
+  expect_error(
+    {
+      mod <- galamm(
+        formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
+        data = IRTsub[0, ],
+        load.var = c("item"),
+        factor = list(c("abil.sid")),
+        lambda = list(irt.lam)
+      )
+    },
+    "No data, nothing to do."
+  )
 
-
-  expect_error({mod <- galamm(
-    formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
-    data = IRTsub[0, ],
-    load.var = c("item"),
-    factor = list(c("abil.sid")),
-    lambda = list(irt.lam)
-  )}, "No data, nothing to do.")
-
-  expect_error({mod <- galamm(
-    formula = y ~ 0 + as.factor(item) + (1 | school / sid),
-    data = IRTsub[c(1, 94), ]
-  )},
-  "number of levels of each grouping factor must be < number of observations")
+  expect_error(
+    {
+      mod <- galamm(
+        formula = y ~ 0 + as.factor(item) + (1 | school / sid),
+        data = IRTsub[c(1, 94), ]
+      )
+    },
+    "number of levels of each grouping factor must be < number of observations"
+  )
 
   dat <- IRTsub
   dat$item <- rep(dat$item[[1]], length(dat$item))
 
-  expect_error({mod <- galamm(
-    formula = y ~ 0 + as.factor(item) + (1 | school),
-    data = dat
-  )}, "contrasts can be applied only to factors with 2 or more levels")
+  expect_error(
+    {
+      mod <- galamm(
+        formula = y ~ 0 + as.factor(item) + (1 | school),
+        data = dat
+      )
+    },
+    "contrasts can be applied only to factors with 2 or more levels"
+  )
 
   dat <- IRTsub
   dat$y <- complex(dat$y)
 
-  expect_error({mod <- galamm(
-    formula = y ~ 0 + as.factor(item) + (1 | school),
-    data = dat
-  )}, "Wrong R type for mapped vector")
-
+  expect_error(
+    {
+      mod <- galamm(
+        formula = y ~ 0 + as.factor(item) + (1 | school),
+        data = dat
+      )
+    },
+    "Wrong R type for mapped vector"
+  )
 })

@@ -269,26 +269,25 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
                    factor_interactions = NULL,
                    na.action = getOption("na.action"),
                    start = NULL, control = galamm_control()) {
-
   # Deal with potential missing values
-  if(any(vapply(data, function(x) any(is.infinite(x)), logical(1)))) {
+  if (any(vapply(data, function(x) any(is.infinite(x)), logical(1)))) {
     stop("Infinite values in 'data'. galamm cannot handle this.")
   }
-  if(any(vapply(data, function(x) any(is.nan(x)), logical(1)))) {
+  if (any(vapply(data, function(x) any(is.nan(x)), logical(1)))) {
     stop("NaN in 'data'. galamm cannot handle this.")
   }
 
-  if(!is.character(na.action)) {
+  if (!is.character(na.action)) {
     stop("na.action must be character")
   }
   data <- eval(parse(text = paste0(na.action, "(data)")))
 
   if (nrow(data) == 0) stop("No data, nothing to do.")
 
-  if(methods::is(data, "tbl_df")) {
+  if (methods::is(data, "tbl_df")) {
     message("Converting tibble 'data' to data.frame.")
   }
-  if(methods::is(data, "data.table")) {
+  if (methods::is(data, "data.table")) {
     message("Converting data.table 'data' to data.frame")
   }
   data <- as.data.frame(data)

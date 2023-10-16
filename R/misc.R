@@ -259,3 +259,22 @@ set_initial_values <- function(
 release_questions <- function() {
   "Did you re-build the vignettes using `rebuild-long-running-vignette.R`?"
 }
+
+#' Skip an extended test, depending on value of environmental variable
+#' GALAMM_EXTENDED_TESTS
+#'
+#' @return Invisibly return TRUE if environmental variable
+#'   GALAMM_EXTENDED_TESTS is 'true' (test not skipped); otherwise, returns
+#'   `testthat::skip()`
+#' @noRd
+#'
+#' @author This function comes from the canaper package, written by Joel Nitta.
+#'
+skip_extended <- function() {
+  if (identical(Sys.getenv("GALAMM_EXTENDED_TESTS"), "true")) {
+    return(invisible(TRUE)) # don't skip if GALAMM_EXTENDED_TESTS is 'true'
+  }
+  testthat::skip(
+    "Skipping extended tests"
+  )
+}
