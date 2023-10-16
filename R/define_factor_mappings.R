@@ -131,8 +131,16 @@ mappingunwrapping <- function(input, element, fun = c, recursive = TRUE) {
 #'   \code{\link{galamm}}.
 #'
 #' @return A list of lists, elements of which have been extended to correspond
-#' to the number of covariates multiplying the element.
+#'   to the number of covariates multiplying the element.
 #' @noRd
+#'
+#' @examples
+#' # Example argument providing interaction between latent and observed
+#' # covariates
+#' fi <- list(~ 1, ~ x, ~ x + I(x^2))
+#' # Three new covariates are required, and we here also get which regression
+#' # each of them belongs to.
+#' extend_lambda(fi)
 #'
 extend_lambda <- function(fi) {
   extra_lambdas <- list()
