@@ -14,6 +14,7 @@ galamm(
   lambda = NULL,
   factor = NULL,
   factor_interactions = NULL,
+  na.action = getOption("na.action"),
   start = NULL,
   control = galamm_control()
 )
@@ -37,17 +38,26 @@ examples for details.}
 \item{data}{A data.frame containing all the variables specified by the model
 formula, with the exception of factor loadings.}
 
-\item{family}{A vector containing one or more model families. For each
-element in \code{family} there should be a corresponding element in
-\code{family_mapping} specifying which elements of the response are
-conditionally distributed according to the given family. Currently family
-can be one of \code{gaussian}, \code{binomial}, and \code{poisson}, and
-only canonical link functions are supported.}
+\item{family}{A a list or character vector containing one or more model
+families. For each element in \code{family} there should be a corresponding
+element in \code{family_mapping} specifying which elements of the response
+are conditionally distributed according to the given family. Currently
+family can be one of \code{gaussian}, \code{binomial}, and \code{poisson},
+and only canonical link functions are supported. The family arguments can
+either be provided as character values, e.g., \code{c("gaussian",
+  "poisson")} or \code{list("gaussian", "poisson")}, as function names, e.g.,
+\code{c(gaussian, poisson)} or \code{list(gaussian, poisson)}, or as
+function calls, e.g., \code{list(gaussian(), poisson())}. In the latter
+case, they must be provided in a list, and bot as a vector. Mixing the
+different ways of describing the family also works, e.g.,
+\code{list("gaussian", poisson())}, but in this case they must be provided
+in a list.}
 
 \item{family_mapping}{Optional integer vector mapping from the elements of
 \code{family} to rows of \code{data}. Defaults to \code{rep(1L,
   nrow(data))}, which means that all observations are distributed according
-to the first element of \code{family}.}
+to the first element of \code{family}. The length of \code{family_mapping}
+must be identical to the number of observations, \code{nrow(data)}.}
 
 \item{load.var}{Optional character specifying the name of the variable in
 \code{data} identifying what the factors load onto. That is, each unique
@@ -74,6 +84,13 @@ corresponding matrix provided to the \code{lambda} argument. Each list
 element should be a \code{formula} object containing the write-hand side of
 a regression model, of the form \code{~ x + z}. Defaults to \code{NULL},
 which means that no factor interactions are used.}
+
+\item{na.action}{Character of length one specifying a function which
+indicates what should happen when the data contains \code{NA}s. The
+defaults is set to the \code{na.action} setting of \code{options}, which
+can be seen with \code{options("na.action")}. The other alternative is
+\code{"na.fail"}, which means that the function fails if there as
+\code{NA}s in \code{data}.}
 
 \item{start}{Optional named list of starting values for parameters. Possible
 names of list elements are \code{"theta"}, \code{"beta"}, \code{"lambda"},

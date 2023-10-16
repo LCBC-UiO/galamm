@@ -1,3 +1,30 @@
+#' Add factor variables as data columns
+#'
+#' @param load.var The \code{load.var} argument provided to
+#'   \code{\link{galamm}}.
+#' @param lambda The \code{lambda} argument provided to \code{\link{galamm}}.
+#' @param factor The \code{factor} argument provided to \code{\link{galamm}}.
+#' @param data The \code{data} argument provided to \code{\link{galamm}}, after
+#'   some tests have been applied to validate the input data.
+#'
+#' @return A list with the following two elements:
+#' * A modified version of \code{data} with one extra column for each
+#'   \code{factor}.
+#' * An updated version of the \code{lambda} list of matrices, with \code{NA}s
+#'   replaced by \code{1}s.
+#' @noRd
+#'
+#' @examples
+#' data(KYPSsim, package = "PLmixed")
+#' loading_matrix <- list(rbind(c(1, 0), c(NA, 0), c(NA, 1), c(NA, NA)))
+#' factors <- list(c("ms", "hs"))
+#' load.var <- "time"
+#' res <- setup_factor(load.var, loading_matrix, factors, KYPSsim)
+#'
+#' # Columns "ms" and "hs" have now been added:
+#' head(res$data)
+#' # NA's in the original formulation have been replaced by 1's:
+#' res$lambda
 setup_factor <- function(load.var, lambda, factor, data) {
   if (!is.null(load.var) && (!is.character(load.var) || length(load.var) != 1)) {
     stop("load.var must be a character of length one.")
@@ -41,6 +68,29 @@ setup_factor <- function(load.var, lambda, factor, data) {
   list(data = data, lambda = lambda)
 }
 
+#' Create list of family objects
+#'
+#' Takes the \code{family} argument returns it in function call form.
+#'
+#' @param family Argument \code{family} provided to \code{\link{galamm}}.
+#'
+#' @return A list of family objects.
+#' @noRd
+#'
+#' @examples
+#' # Providing a character returns a function call
+#' setup_family("binomial")
+#'
+#' # Providing a function name returns a function call
+#' setup_family(binomial)
+#'
+#' # Providing a function call returns a function call
+#' setup_family(binomial())
+#'
+#' # The same logic extends to lists, as are relevant in mixed response models
+#' setup_family(c("gaussian", "binomial"))
+#' setup_family(list("gaussian", binomial))
+#' setup_family(list(gaussian(), binomial))
 setup_family <- function(family) {
   if (length(family) == 1 || inherits(family, "family")) family <- list(family)
 
@@ -55,6 +105,17 @@ setup_family <- function(family) {
   })
 }
 
+#' Create the response object
+#'
+#' @param family_list A list of families returned from \code{setup_family}.
+#' @param family_mapping The argument \code{family_mapping} provided to
+#'   \code{\link{galamm}}.
+#' @param data A data frame.
+#' @param gobj A list object returned from the internal function \code{gamm4}.
+#'
+#' @return A matrix with responses and number of trials.
+#' @noRd
+#'
 setup_response_object <- function(family_list, family_mapping, data, gobj) {
   response_obj <- matrix(nrow = nrow(gobj$lmod$X), ncol = 2)
 
@@ -81,6 +142,40 @@ setup_response_object <- function(family_list, family_mapping, data, gobj) {
   response_obj
 }
 
+#' Find constant term in log-likelihood
+#'
+#' Likelihood functions may have a constant term not involving parameters,
+#' which is required in the final value, but does not need to be computed at
+#' each iteration. This function hence precomputes this constant term.
+#'
+#' @param family_txt Character vector defining the families. Each element should
+#' be one \code{"gaussian"}, \code{"binomial"}, or \code{"poisson"}.
+#' @param family_mapping Argument \code{family_mapping} provided to
+#'   \code{\link{galamm}}.
+#' @param y A numeric vector giving the response.
+#' @param trials Number of trials. When irrelevant, should be given as a vector
+#' of ones.
+#'
+#' @return The constant term in the loglikelihood function, one for each family.
+#' @noRd
+#'
+#' @examples
+#' # Binomial
+#' y1 <- rbinom(10, size = 3, prob = .5)
+#' find_k("binomial", rep(1, 10), y1, rep(3, 10))
+#'
+#' # Poisson
+#' y2 <- rpois(10, lambda = 1)
+#' find_k("poisson", rep(1, 10), y2, rep(1, 10))
+#'
+#' # Binomial and Poisson
+#' find_k(
+#'   c("binomial", "poisson"), c(rep(1, 10), rep(2, 10)),
+#'   c(y1, y2), c(rep(3, 10), rep(1, 10))
+#' )
+#'
+#' # For Gaussian, the constant is always zero
+#' find_k("gaussian", rep(1, 10), rnorm(10), rep(1, 10))
 find_k <- function(family_txt, family_mapping, y, trials) {
   k <- numeric(length(family_txt))
   for (i in seq_along(k)) {
@@ -100,6 +195,18 @@ find_k <- function(family_txt, family_mapping, y, trials) {
   k
 }
 
+#' Set initial values for galamm parameters
+#'
+#' @param gobj List object with model information
+#' @param start Argument \code{start} provided to \code{\link{galamm}}
+#'   containing user-defined initial values.
+#' @param beta_inds Indices of fixed effect regression coefficients.
+#' @param lambda_inds Indices of factor loadings.
+#' @param weights_inds Indices of weights.
+#'
+#' @return A numeric vector with initial values for all parameters.
+#' @noRd
+#'
 set_initial_values <- function(
     gobj, start, beta_inds, lambda_inds, weights_inds) {
   if (length(start) > 0 &&
@@ -142,6 +249,32 @@ set_initial_values <- function(
   c(theta_init, beta_init, lambda_init, weights_init)
 }
 
+#' Manually added release questions
+#'
+#' When running \code{devtools::release()} for submitting to CRAN, questions
+#' here are asked.
+#'
+#' @noRd
+#'
 release_questions <- function() {
   "Did you re-build the vignettes using `rebuild-long-running-vignette.R`?"
+}
+
+#' Skip an extended test, depending on value of environmental variable
+#' GALAMM_EXTENDED_TESTS
+#'
+#' @return Invisibly return TRUE if environmental variable
+#'   GALAMM_EXTENDED_TESTS is 'true' (test not skipped); otherwise, returns
+#'   `testthat::skip()`
+#' @noRd
+#'
+#' @author This function comes from the canaper package, written by Joel Nitta.
+#'
+skip_extended <- function() {
+  if (identical(Sys.getenv("GALAMM_EXTENDED_TESTS"), "true")) {
+    return(invisible(TRUE)) # don't skip if GALAMM_EXTENDED_TESTS is 'true'
+  }
+  testthat::skip(
+    "Skipping extended tests"
+  )
 }

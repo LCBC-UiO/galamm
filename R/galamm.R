@@ -40,17 +40,27 @@
 #' @param data A data.frame containing all the variables specified by the model
 #'   formula, with the exception of factor loadings.
 #'
-#' @param family A vector containing one or more model families. For each
-#'   element in \code{family} there should be a corresponding element in
-#'   \code{family_mapping} specifying which elements of the response are
-#'   conditionally distributed according to the given family. Currently family
-#'   can be one of \code{gaussian}, \code{binomial}, and \code{poisson}, and
-#'   only canonical link functions are supported.
+#' @param family A a list or character vector containing one or more model
+#'   families. For each element in \code{family} there should be a corresponding
+#'   element in \code{family_mapping} specifying which elements of the response
+#'   are conditionally distributed according to the given family. Currently
+#'   family can be one of \code{gaussian}, \code{binomial}, and \code{poisson},
+#'   and only canonical link functions are supported. The family arguments can
+#'   either be provided as character values, e.g., \code{c("gaussian",
+#'   "poisson")} or \code{list("gaussian", "poisson")}, as function names, e.g.,
+#'   \code{c(gaussian, poisson)} or \code{list(gaussian, poisson)}, or as
+#'   function calls, e.g., \code{list(gaussian(), poisson())}. In the latter
+#'   case, they must be provided in a list, and bot as a vector. Mixing the
+#'   different ways of describing the family also works, e.g.,
+#'   \code{list("gaussian", poisson())}, but in this case they must be provided
+#'   in a list.
+#'
 #'
 #' @param family_mapping Optional integer vector mapping from the elements of
 #'   \code{family} to rows of \code{data}. Defaults to \code{rep(1L,
 #'   nrow(data))}, which means that all observations are distributed according
-#'   to the first element of \code{family}.
+#'   to the first element of \code{family}. The length of \code{family_mapping}
+#'   must be identical to the number of observations, \code{nrow(data)}.
 #'
 #' @param load.var Optional character specifying the name of the variable in
 #'   \code{data} identifying what the factors load onto. That is, each unique
@@ -77,6 +87,13 @@
 #'   element should be a \code{formula} object containing the write-hand side of
 #'   a regression model, of the form \code{~ x + z}. Defaults to \code{NULL},
 #'   which means that no factor interactions are used.
+#'
+#' @param na.action Character of length one specifying a function which
+#'   indicates what should happen when the data contains \code{NA}s. The
+#'   defaults is set to the \code{na.action} setting of \code{options}, which
+#'   can be seen with \code{options("na.action")}. The other alternative is
+#'   \code{"na.fail"}, which means that the function fails if there as
+#'   \code{NA}s in \code{data}.
 #'
 #' @param start Optional named list of starting values for parameters. Possible
 #'   names of list elements are \code{"theta"}, \code{"beta"}, \code{"lambda"},
@@ -250,13 +267,39 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
                    family_mapping = rep(1L, nrow(data)),
                    load.var = NULL, lambda = NULL, factor = NULL,
                    factor_interactions = NULL,
+                   na.action = getOption("na.action"),
                    start = NULL, control = galamm_control()) {
-  data <- stats::na.omit(data)
+  # Deal with potential missing values
+  if (any(vapply(data, function(x) any(is.infinite(x)), logical(1)))) {
+    stop("Infinite values in 'data'. galamm cannot handle this.")
+  }
+  if (any(vapply(data, function(x) any(is.nan(x)), logical(1)))) {
+    stop("NaN in 'data'. galamm cannot handle this.")
+  }
+
+  if (!is.character(na.action)) {
+    stop("na.action must be character")
+  }
+  data <- eval(parse(text = paste0(na.action, "(data)")))
+
   if (nrow(data) == 0) stop("No data, nothing to do.")
+
+  if (methods::is(data, "tbl_df")) {
+    message("Converting tibble 'data' to data.frame.")
+  }
+  if (methods::is(data, "data.table")) {
+    message("Converting data.table 'data' to data.frame")
+  }
   data <- as.data.frame(data)
   mc <- match.call()
 
-  family_list <- setup_family(family)
+  if (!methods::is(formula, "formula")) {
+    stop("formula must be a formula")
+  }
+  if (!is.null(weights) && !methods::is(weights, "formula")) {
+    stop("weights must be a formula")
+  }
+
   if (!is.vector(family_mapping)) {
     stop("family_mapping must be a vector.")
   }
@@ -264,7 +307,23 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
     family_mapping <- as.integer(family_mapping)
   }
 
-  stopifnot(length(family_list) == length(unique(family_mapping)))
+  if (nrow(data) != length(family_mapping)) {
+    stop("family_mapping must contain one index per row in data")
+  }
+
+  family_list <- setup_family(family)
+
+  if (length(family_list) != length(unique(family_mapping))) {
+    stop(
+      "family_mapping must contain a unique index for each element ",
+      "in family_list."
+    )
+  }
+
+  if (!(length(load.var) == length(factor) &&
+    length(load.var) == length(lambda))) {
+    stop("load.var, lambda, and factor must have the same length.")
+  }
 
   tmp <- setup_factor(load.var, lambda, factor, data)
   data <- tmp$data

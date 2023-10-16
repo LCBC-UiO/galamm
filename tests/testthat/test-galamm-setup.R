@@ -218,7 +218,7 @@ test_that("wrong input is handled properly", {
         load.var = 1
       )
     },
-    "load.var must be a character of length one."
+    "must have the same length"
   )
 
   expect_error(
@@ -228,7 +228,7 @@ test_that("wrong input is handled properly", {
         load.var = letters
       )
     },
-    "load.var must be a character of length one."
+    "must have the same length"
   )
 })
 
@@ -329,7 +329,7 @@ test_that("functions fail when they should", {
 test_that("multiple factors in fixed effects works", {
   path <-
     system.file("testdata", "test_multiple_factors.rds", package = "galamm")
-  dat <- readRDS(path)
+  dat <- as.data.frame(readRDS(path))
 
   lmat <- matrix(c(
     1, NA, NA, 0, 0, 0,
@@ -362,4 +362,165 @@ test_that("multiple factors in fixed effects works", {
     )
   )
   expect_equal(deviance(mod), 7891.36597569292, tolerance = .001)
+})
+
+
+data("IRTsim", package = "PLmixed")
+IRTsub <- IRTsim[IRTsim$item < 4, ] # Select items 1-3
+set.seed(12345)
+IRTsub <- IRTsub[sample(nrow(IRTsub), 300), ] # Randomly sample 300 responses
+
+IRTsub <- IRTsub[order(IRTsub$item), ] # Order by item
+irt.lam <- matrix(c(1, NA, NA), ncol = 1) # Specify the lambda matrix
+
+
+test_that("missing values are handled appropriately", {
+  IRTsub$y[1] <- NA_real_
+
+  expect_error(
+    {
+      mod <- galamm(
+        formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
+        data = IRTsub,
+        load.var = c("item"),
+        factor = list(c("abil.sid")),
+        lambda = list(irt.lam),
+        na.action = "na.fail"
+      )
+    },
+    "missing values in object"
+  )
+
+  options(na.action = "na.fail")
+
+  expect_error(
+    {
+      mod <- galamm(
+        formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
+        data = IRTsub,
+        load.var = c("item"),
+        factor = list(c("abil.sid")),
+        lambda = list(irt.lam)
+      )
+    },
+    "missing values in object"
+  )
+
+  # Explicit argument vs relying on default
+  mod <- galamm(
+    formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
+    data = IRTsub,
+    load.var = c("item"),
+    factor = list(c("abil.sid")),
+    lambda = list(irt.lam),
+    na.action = "na.omit"
+  )
+  options("na.action" = "na.omit")
+  mod2 <- galamm(
+    formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
+    data = IRTsub,
+    load.var = c("item"),
+    factor = list(c("abil.sid")),
+    lambda = list(irt.lam)
+  )
+
+  expect_equal(mod$model$deviance, mod2$model$deviance)
+
+  IRTsub$y[1] <- -Inf
+
+  expect_error(
+    {
+      mod <- galamm(
+        formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
+        data = IRTsub,
+        load.var = c("item"),
+        factor = list(c("abil.sid")),
+        lambda = list(irt.lam)
+      )
+    },
+    "Infinite values"
+  )
+
+  IRTsub$y[1] <- 1
+  IRTsub$y[13] <- Inf
+
+  expect_error(
+    {
+      mod <- galamm(
+        formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
+        data = IRTsub,
+        load.var = c("item"),
+        factor = list(c("abil.sid")),
+        lambda = list(irt.lam)
+      )
+    },
+    "Infinite values"
+  )
+
+  IRTsub$y[13] <- NaN
+
+  expect_error(
+    {
+      mod <- galamm(
+        formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
+        data = IRTsub,
+        load.var = c("item"),
+        factor = list(c("abil.sid")),
+        lambda = list(irt.lam)
+      )
+    },
+    "NaN in"
+  )
+})
+
+
+test_that("edge conditions tests for data", {
+  expect_error(
+    {
+      mod <- galamm(
+        formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
+        data = IRTsub[0, ],
+        load.var = c("item"),
+        factor = list(c("abil.sid")),
+        lambda = list(irt.lam)
+      )
+    },
+    "No data, nothing to do."
+  )
+
+  expect_error(
+    {
+      mod <- galamm(
+        formula = y ~ 0 + as.factor(item) + (1 | school / sid),
+        data = IRTsub[c(1, 94), ]
+      )
+    },
+    "number of levels of each grouping factor must be < number of observations"
+  )
+
+  dat <- IRTsub
+  dat$item <- rep(dat$item[[1]], length(dat$item))
+
+  expect_error(
+    {
+      mod <- galamm(
+        formula = y ~ 0 + as.factor(item) + (1 | school),
+        data = dat
+      )
+    },
+    "contrasts can be applied only to factors with 2 or more levels"
+  )
+
+  dat <- IRTsub
+  dat$y <- complex(dat$y)
+
+  expect_error(
+    {
+      mod <- galamm(
+        formula = y ~ 0 + as.factor(item) + (1 | school),
+        data = dat
+      )
+    },
+    "Wrong R type for mapped vector"
+  )
 })

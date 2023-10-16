@@ -50,6 +50,35 @@ vcov.galamm <- function(object, parm = "beta", ...) {
 }
 
 
+#' Find vector indices corresponding to parameter type
+#'
+#' @param object An object of class \code{galamm} returned from
+#'   \code{\link{galamm}}.
+#' @param parm Either an integer vector, in which it is simply returned, or
+#'   a character vector with one or more of the elements \code{"theta"},
+#'   \code{"beta"}, \code{"lambda"}, and \code{"weights"}.
+#'
+#' @return A numeric vector of indices for the parameters.
+#' @noRd
+#'
+#' @examples
+#' mod <- galamm(
+#'   formula = y ~ x + (1 | id),
+#'   weights = ~ (1 | item),
+#'   data = hsced
+#' )
+#'
+#' # The single Cholesky factor parameter is at the first location
+#' find_parm_inds(mod, "theta")
+#'
+#' # Regression coefficients are at location 2 and 3
+#' find_parm_inds(mod, "beta")
+#'
+#' # Lambda is empty since there are no factor loadings
+#' find_parm_inds(mod, "lambda")
+#'
+#' # Weight index is at location 4
+#' find_parm_inds(mod, "weights")
 find_parm_inds <- function(object, parm) {
   if (is.integer(parm)) {
     parm

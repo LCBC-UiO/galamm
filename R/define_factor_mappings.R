@@ -1,3 +1,17 @@
+#' Extract names of factor among column names
+#'
+#' @param ff Character vector with names of candidate factors.
+#' @param cnmf Column name, a single character.
+#'
+#' @return A character vector containing names of the factors which could be
+#' found among the column names.
+#'
+#' @noRd
+#'
+#' @examples
+#' # Column is an interaction a:b:x, so both "a" and "b" should be returned.
+#' extract_name(c("a", "b", "c"), "a:b:x")
+#'
 extract_name <- function(ff, cnmf) {
   unlist(lapply(ff, function(x) {
     m <- regexpr(x, cnmf, fixed = TRUE)
@@ -5,6 +19,36 @@ extract_name <- function(ff, cnmf) {
   }))
 }
 
+#' Make sure mappings to loadings and to covariates have same size
+#'
+#' This function adjust the mappings \code{lambda_mapping_Zt} and
+#' \code{lambda_mapping_Zt_covs} so they match exactly in size and shape. In
+#' particular, it flattens \code{lambda_mapping_Zt_covs} wherever its i-th
+#' element has more elements than the i-th element of \code{lambda_mapping_Zt}.
+#' See the documentation to the function \code{define_factor_mappings} for more
+#' details on what the mappings represent.
+#'
+#' @param lambda_mapping_Zt Mapping between factor loadings and elements of the
+#'   sparse matrix representing the random effect covariates.
+#' @param lambda_mapping_Zt_covs Mapping between covariates entering in latent
+#'   interactions and elements of the sparse metrix representing the random
+#'   effect covariates.
+#'
+#' @return List of adjusted mappings \code{lambda_mapping_Zt} and
+#'   \code{lambda_mapping_Zt_covs}.
+#' @noRd
+#'
+#' @examples
+#' # List of length 6
+#' lambda_mapping_Zt <- list(0L, 1L, 2L, 0L, 1L, 2L)
+#' length(lambda_mapping_Zt)
+#' # List of length 4
+#' lambda_mapping_Zt_covs <- list(0L, list(3L, 4L), 1L, list(3L, 4L))
+#' length(lambda_mapping_Zt_covs)
+#' # Squeeze them to got two lists of length 6
+#' ret <- squeeze_mappings(lambda_mapping_Zt, lambda_mapping_Zt_covs)
+#' vapply(ret, length, integer(1))
+#'
 squeeze_mappings <- function(lambda_mapping_Zt, lambda_mapping_Zt_covs) {
   ind <- 1L
   security_counter <- 1L
@@ -48,6 +92,26 @@ squeeze_mappings <- function(lambda_mapping_Zt, lambda_mapping_Zt_covs) {
   )
 }
 
+#' Convenience function for extracting list elements
+#'
+#' @param input A list of lists.
+#' @param element Name of the list element to be extracted.
+#' @param fun Function used to merge the extracted list elements. Defaults to
+#'   \code{c}.
+#' @param recursive Logical passed on to \code{unlist}, indicating whether the
+#'   unlisting done to the final result should be recursive or not. Defaults to
+#'   \code{TRUE}.
+#'
+#' @return A list of unwrapped mappings.
+#' @noRd
+#' @examples
+#' input <- list(
+#'   l1 = list(a = runif(8), b = runif(1)),
+#'   l2 = list(a = runif(10), b = runif(3))
+#' )
+#' element <- "b"
+#' mappingunwrapping(input, "b")
+#'
 mappingunwrapping <- function(input, element, fun = c, recursive = TRUE) {
   unlist(
     do.call(function(...) {
@@ -57,6 +121,29 @@ mappingunwrapping <- function(input, element, fun = c, recursive = TRUE) {
   )
 }
 
+#' Extend mapping between factor loadings and random effect matrix
+#'
+#' When there are latent factor interactions, the mapping
+#' \code{lambda_mapping_Zt} in the list returned by
+#' \code{define_factor_mappings} needs to be extended, to incorporate both the
+#' traditional loadings and the loadings that multiple provided covariates. This
+#' function achieves that.
+#'
+#' @param fi An element of the list \code{factor_interactions} given to
+#'   \code{\link{galamm}}.
+#'
+#' @return A list of lists, elements of which have been extended to correspond
+#'   to the number of covariates multiplying the element.
+#' @noRd
+#'
+#' @examples
+#' # Example argument providing interaction between latent and observed
+#' # covariates
+#' fi <- list(~1, ~x, ~ x + I(x^2))
+#' # Three new covariates are required, and we here also get which regression
+#' # each of them belongs to.
+#' extend_lambda(fi)
+#'
 extend_lambda <- function(fi) {
   extra_lambdas <- list()
   for (k in seq_along(fi)) {
@@ -80,6 +167,22 @@ extend_lambda <- function(fi) {
   extra_lambdas
 }
 
+#' Convenience function for figuring out whether a given factor is among a set
+#' of variables
+#'
+#' @param factor A character vector, element of \code{factor} provided to
+#'   \code{\link{galamm}}.
+#' @param vars A set of variables, typically column headers.
+#'
+#' @return A logical, indicating whether any of the names in \code{factor} can
+#' be found among \code{vars}.
+#'
+#' @noRd
+#' @examples
+#'
+#' factor_finder("f1", letters[1:3])
+#' factor_finder(c("f1", "ax", "b"), letters[1:3])
+#'
 factor_finder <- function(factor, vars) {
   vapply(factor, function(x) {
     any(vapply(vars, function(y) {
@@ -88,6 +191,46 @@ factor_finder <- function(factor, vars) {
   }, TRUE)
 }
 
+#' Low-level mappings to factor loadings
+#'
+#' This function defines the low-level mappings between factor loadings given in
+#' the \code{lambda} argument to \code{\link{galamm}} and the underlying dense
+#' matrix elements in \eqn{X} and sparse matrix elements in \eqn{Z'}. In these
+#' mappings, a value \code{-2} means that the corresponding elements should be
+#' multiplied be zero, a value \code{-1} means that the corresponding elements
+#' should be multiplied be one, and non-negative integers mean that the
+#' corresponding elements should be multiplied by the corresponding element
+#' of \code{lambda}, with zero-order indexing as in \code{C++}.
+#'
+#' @param gobj A list element returned from the internal function \code{gamm4}.
+#' @param load.var The argument \code{load.var} argument provided to
+#'   \code{\link{galamm}}.
+#' @param lambda The argument \code{lambda} argument provided to
+#'   \code{\link{galamm}}.
+#' @param factor The argument \code{factor} argument provided to
+#'   \code{\link{galamm}}.
+#' @param factor_interactions The argument \code{factor_interactions} argument
+#'   provided to \code{\link{galamm}}.
+#' @param data A dataframe, which is a modified version of the \code{data}
+#'   argument provided to \code{\link{galamm}}.
+#'
+#' @return A list object with the following elements:
+#' * \code{lambda_mapping_X} A list with mappings between factor loadings in
+#'   \code{lambda} and elements of the fixed effect model matrix \eqn{X},
+#'   in row-major ordering.
+#' * \code{lambda_mapping_Zt} A list with mappings between factor loadings in
+#'   \code{lambda} and elements of the random effect model matrix \eqn{Z'}.
+#'   The i-th element of \code{lambda_mapping_Zt} corresponds to the i-th
+#'   element of \code{Zt@x}.
+#' * \code{lambda_mapping_Zt_covs} A list with mappings between covariates
+#'   and elements of the random effect model matrix \eqn{Z'}.
+#'   The i-th element of \code{lambda_mapping_Zt_covs} corresponds to the i-th
+#'   element of \code{Zt@x}, and contains the covariates that the i-th element
+#'   of \code{lambda_mapping_Zt} should be multiplied with.
+#' * \code{lambda} The factor loadings \code{lambda} with updated indices,
+#'   corresponding to the values in the mappings.
+#'
+#' @noRd
 define_factor_mappings <- function(
     gobj, load.var, lambda, factor, factor_interactions, data) {
   vars_in_fixed <- all.vars(gobj$fake.formula[-2])
