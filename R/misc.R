@@ -68,6 +68,29 @@ setup_factor <- function(load.var, lambda, factor, data) {
   list(data = data, lambda = lambda)
 }
 
+#' Create list of family objects
+#'
+#' Takes the \code{family} argument returns it in function call form.
+#'
+#' @param family Argument \code{family} provided to \code{\link{galamm}}.
+#'
+#' @return A list of family objects.
+#' @noRd
+#'
+#' @examples
+#' # Providing a character returns a function call
+#' setup_family("binomial")
+#'
+#' # Providing a function name returns a function call
+#' setup_family(binomial)
+#'
+#' # Providing a function call returns a function call
+#' setup_family(binomial())
+#'
+#' # The same logic extends to lists, as are relevant in mixed response models
+#' setup_family(c("gaussian", "binomial"))
+#' setup_family(list("gaussian", binomial))
+#' setup_family(list(gaussian(), binomial))
 setup_family <- function(family) {
   if (length(family) == 1 || inherits(family, "family")) family <- list(family)
 
