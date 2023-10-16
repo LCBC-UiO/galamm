@@ -47,7 +47,8 @@ only canonical link functions are supported.}
 \item{family_mapping}{Optional integer vector mapping from the elements of
 \code{family} to rows of \code{data}. Defaults to \code{rep(1L,
   nrow(data))}, which means that all observations are distributed according
-to the first element of \code{family}.}
+to the first element of \code{family}. The length of \code{family_mapping}
+must be identical to the number of observations, \code{nrow(data)}.}
 
 \item{load.var}{Optional character specifying the name of the variable in
 \code{data} identifying what the factors load onto. That is, each unique
