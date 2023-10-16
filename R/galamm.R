@@ -348,7 +348,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   rank_check_covs <- qr(check_matrix[, -1, drop = FALSE])$rank
   rank_check_response <- qr(check_matrix)$rank
 
-  if(rank_check_covs == rank_check_response) {
+  if (rank_check_covs == rank_check_response) {
     stop("Deterministic relationship between response and fixed effects.")
   }
 

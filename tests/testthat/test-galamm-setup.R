@@ -531,19 +531,25 @@ test_that("galamm rejects perfectly noiseless input data", {
   dat <- IRTsim
   dat$y <- as.integer(dat$item)
 
-  expect_error({
-    mod <- galamm(
-      formula = y ~ 0 + as.factor(item) + (1 | school),
-      data = dat
-    )
-  }, "Deterministic relationship between response and fixed effects.")
+  expect_error(
+    {
+      mod <- galamm(
+        formula = y ~ 0 + as.factor(item) + (1 | school),
+        data = dat
+      )
+    },
+    "Deterministic relationship between response and fixed effects."
+  )
 
   dat <- IRTsim
   dat$item2 <- as.factor(dat$item)
-  expect_message({
-    mod <- galamm(
-      formula = y ~ 0 + as.factor(item) + as.factor(item2) + (1 | school),
-      data = dat
-    )
-  }, "fixed-effect model matrix is rank deficient so dropping 4 columns / coefficients")
+  expect_message(
+    {
+      mod <- galamm(
+        formula = y ~ 0 + as.factor(item) + as.factor(item2) + (1 | school),
+        data = dat
+      )
+    },
+    "fixed-effect model matrix is rank deficient so dropping 4 columns / coefficients"
+  )
 })
