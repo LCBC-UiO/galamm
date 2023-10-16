@@ -91,6 +91,11 @@ squeeze_mappings <- function(lambda_mapping_Zt, lambda_mapping_Zt_covs) {
 #'
 #' @return A list of unwrapped mappings.
 #' @noRd
+#' @examples
+#' input <- list(l1 = list(a = runif(8), b = runif(1)),
+#'               l2 = list(a = runif(10), b = runif(3)))
+#' element <- "b"
+#' mappingunwrapping(input, "b")
 #'
 mappingunwrapping <- function(input, element, fun = c, recursive = TRUE) {
   unlist(
