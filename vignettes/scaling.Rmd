@@ -376,35 +376,58 @@ set.seed(11)
 times_to_convergence <- Map(function(n, r) {
   ids <- sample(all_ids, size = n)
   dat <- dat[dat$id %in% ids, ]
-  t1 <- Sys.time()
-  mod <- galamm(
-    formula = y ~ 0 + item + sl(x, factor = "loading") +
-      (0 + loading | id / timepoint),
-    data = dat,
-    family = binomial,
-    load.var = "item",
-    lambda = list(matrix(c(1, NA), ncol = 1)),
-    factor = list("loading")
-  )
-  t2 <- Sys.time()
+  
+  dt <- tryCatch({
+    t1 <- Sys.time()
+    mod <- galamm(
+      formula = y ~ 0 + item + sl(x, factor = "loading") +
+        (0 + loading | id / timepoint),
+      data = dat,
+      family = binomial,
+      load.var = "item",
+      lambda = list(matrix(c(1, NA), ncol = 1)),
+      factor = list("loading")
+    )
+    t2 <- Sys.time()
+    t2 - t1
+  },
+  error = function(e) {
+    NA
+  })
+  
   
   data.frame(
     n = n,
     nrow = nrow(dat),
-    time = t2 - t1
+    time = dt
   )
   },
   n = sim_params$n_ids,
   r = sim_params$replicate
   )
-#> Error in stats::optim(par_init, fn = fn, gr = gr, gradient = TRUE, method = "L-BFGS-B", : L-BFGS-B needs finite values of 'fn'
 ```
+
+
+
+
+```r
+plot_dat <- do.call(rbind, times_to_convergence)
+```
+
+We check how many models failed to converge, and then remove those rows:
+
+
+```r
+sum(is.na(plot_dat))
+#> [1] 1
+plot_dat <- na.omit(plot_dat)
+```
+
 
 The plot below suggests that for this model, the algorithm scales linearly in the number of IDs.
 
 
 ```r
-plot_dat <- do.call(rbind, times_to_convergence)
 fit <- lm(time ~ n, data = plot_dat)
 plot(plot_dat$n, plot_dat$time, xlab = "Number of IDs",
      ylab = "Time until convergence")

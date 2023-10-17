@@ -53,7 +53,6 @@ RoxygenNote: 7.2.3
 Suggests:
     covr,
     gamm4,
-    ggplot2,
     knitr,
     PLmixed,
     rmarkdown,

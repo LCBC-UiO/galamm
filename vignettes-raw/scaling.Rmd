@@ -347,22 +347,30 @@ set.seed(11)
 times_to_convergence <- Map(function(n, r) {
   ids <- sample(all_ids, size = n)
   dat <- dat[dat$id %in% ids, ]
-  t1 <- Sys.time()
-  mod <- galamm(
-    formula = y ~ 0 + item + sl(x, factor = "loading") +
-      (0 + loading | id / timepoint),
-    data = dat,
-    family = binomial,
-    load.var = "item",
-    lambda = list(matrix(c(1, NA), ncol = 1)),
-    factor = list("loading")
-  )
-  t2 <- Sys.time()
+  
+  dt <- tryCatch({
+    t1 <- Sys.time()
+    mod <- galamm(
+      formula = y ~ 0 + item + sl(x, factor = "loading") +
+        (0 + loading | id / timepoint),
+      data = dat,
+      family = binomial,
+      load.var = "item",
+      lambda = list(matrix(c(1, NA), ncol = 1)),
+      factor = list("loading")
+    )
+    t2 <- Sys.time()
+    t2 - t1
+  },
+  error = function(e) {
+    NA
+  })
+  
   
   data.frame(
     n = n,
     nrow = nrow(dat),
-    time = t2 - t1
+    time = dt
   )
   },
   n = sim_params$n_ids,
@@ -370,10 +378,23 @@ times_to_convergence <- Map(function(n, r) {
   )
 ```
 
+
+
+```{r}
+plot_dat <- do.call(rbind, times_to_convergence)
+```
+
+We check how many models failed to converge, and then remove those rows:
+
+```{r}
+sum(is.na(plot_dat))
+plot_dat <- na.omit(plot_dat)
+```
+
+
 The plot below suggests that for this model, the algorithm scales linearly in the number of IDs.
 
 ```{r, scaling-semiparametric-binomial-plot, fig.cap="Time until convergence for different model sizes of semiparametric model with factor structures. Black line shows linear model fit to the data."}
-plot_dat <- do.call(rbind, times_to_convergence)
 fit <- lm(time ~ n, data = plot_dat)
 plot(plot_dat$n, plot_dat$time, xlab = "Number of IDs",
      ylab = "Time until convergence")
