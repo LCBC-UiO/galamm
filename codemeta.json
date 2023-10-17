@@ -4,17 +4,23 @@
   "identifier": "galamm",
   "description": "Estimates generalized additive latent and mixed models using maximum marginal likelihood, as defined in Sorensen et al. (2023) <doi:10.1007/s11336-023-09910-z>, which is an extension of Rabe-Hesketh and Skrondal (2004)'s unifying framework for multilevel latent variable modeling <doi:10.1007/BF02295939>. Efficient computation is done using sparse matrix methods, Laplace approximation, and automatic differentiation. The framework includes generalized multilevel models with heteroscedastic residuals, mixed response types, factor loadings, smoothing splines, crossed random effects, and combinations thereof. Syntax for model formulation is close to 'lme4' (Bates et al. (2015) <doi:10.18637/jss.v067.i01>) and 'PLmixed' (Rockwood and Jeon (2019) <doi:10.1080/00273171.2018.1516541>).",
   "name": "galamm: Generalized Additive Latent and Mixed Models",
-  "relatedLink": "https://lcbc-uio.github.io/galamm/",
+  "relatedLink": ["https://lcbc-uio.github.io/galamm/", "https://CRAN.R-project.org/package=galamm"],
   "codeRepository": "https://github.com/LCBC-UiO/galamm",
   "issueTracker": "https://github.com/LCBC-UiO/galamm/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.1.0",
+  "version": "0.1.1.9000",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
     "url": "https://r-project.org"
   },
   "runtimePlatform": "R version 4.3.1 (2023-06-16)",
+  "provider": {
+    "@id": "https://cran.r-project.org",
+    "@type": "Organization",
+    "name": "Comprehensive R Archive Network (CRAN)",
+    "url": "https://cran.r-project.org"
+  },
   "author": [
     {
       "@type": "Person",
@@ -22,6 +28,43 @@
       "familyName": "Sørensen",
       "email": "oystein.sorensen@psykologi.uio.no",
       "@id": "https://orcid.org/0000-0003-0724-3542"
+    }
+  ],
+  "contributor": [
+    {
+      "@type": "Person",
+      "givenName": "Douglas",
+      "familyName": "Bates"
+    },
+    {
+      "@type": "Person",
+      "givenName": "Ben",
+      "familyName": "Bolker"
+    },
+    {
+      "@type": "Person",
+      "givenName": "Martin",
+      "familyName": "Maechler"
+    },
+    {
+      "@type": "Person",
+      "givenName": "Allan",
+      "familyName": "Leal"
+    },
+    {
+      "@type": "Person",
+      "givenName": "Fabian",
+      "familyName": "Scheipl"
+    },
+    {
+      "@type": "Person",
+      "givenName": "Steven",
+      "familyName": "Walker"
+    },
+    {
+      "@type": "Person",
+      "givenName": "Simon",
+      "familyName": "Wood"
     }
   ],
   "maintainer": [
@@ -57,18 +100,6 @@
         "url": "https://cran.r-project.org"
       },
       "sameAs": "https://CRAN.R-project.org/package=gamm4"
-    },
-    {
-      "@type": "SoftwareApplication",
-      "identifier": "ggplot2",
-      "name": "ggplot2",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=ggplot2"
     },
     {
       "@type": "SoftwareApplication",
@@ -223,7 +254,7 @@
     },
     "SystemRequirements": "C++17"
   },
-  "fileSize": "25447.507KB",
+  "fileSize": "33790.879KB",
   "citation": [
     {
       "@type": "ScholarlyArticle",
@@ -265,6 +296,6 @@
   "releaseNotes": "https://github.com/LCBC-UiO/galamm/blob/master/NEWS.md",
   "readme": "https://github.com/LCBC-UiO/galamm/blob/main/README.md",
   "contIntegration": ["https://github.com/LCBC-UiO/galamm/actions/workflows/R-CMD-check.yaml", "https://app.codecov.io/gh/LCBC-UiO/galamm?branch=main"],
-  "developmentStatus": ["https://lifecycle.r-lib.org/articles/stages.html#experimental", "https://www.repostatus.org/#wip"],
+  "developmentStatus": "https://www.repostatus.org/#active",
   "keywords": ["structural-equation-models", "generalized-additive-models", "item-response-theory", "hierarchical-models", "latent-variable-models"]
 }
