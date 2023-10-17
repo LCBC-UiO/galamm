@@ -17,6 +17,16 @@ A number
 \description{
 Extract the Number of Observations from a galamm Fit
 }
+\examples{
+# Example model from lme4
+data(sleepstudy, package = "lme4")
+fm1 <- galamm(Reaction ~ Days + (Days | Subject), data = sleepstudy)
+
+# There are 180 observations, which matches the number of rows in sleepstudy
+nobs(fm1)
+nrow(sleepstudy)
+
+}
 \seealso{
 Other details of model fit: 
 \code{\link{VarCorr}()},
