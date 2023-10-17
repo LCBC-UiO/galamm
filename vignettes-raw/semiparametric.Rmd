@@ -23,8 +23,6 @@ knitr::opts_chunk$set(
 ```{r setup, message=FALSE}
 library(galamm)
 library(gamm4)
-library(ggplot2)
-theme_set(theme_bw())
 ```
 
 This vignette describes how to use `galamm` to estimate latent variable models with smooth terms, or equivalently, generalized additive mixed models with factor structures. The examples are based on Section 4 and 5 in @sorensenLongitudinalModelingAgeDependent2023, but as we cannot share the data, we have instead simulated somewhat simpler datasets that will be used. We will gradually add complexity, starting with a simple generalized additive mixed model. Please refer to the [introductory vignette](https://lcbc-uio.github.io/galamm/articles/galamm.html) for an overview of the statistical models.
@@ -50,9 +48,12 @@ dat <- subset(cognition, domain == 1 & item == "11")
 Each subject in this dataset has been measured eight times, and we can plot the measurements as follows:
 
 ```{r, semiparametric-spaghetti-plot, fig.cap="Plot of data for domain 1 and item 11."}
-ggplot(dat, aes(x = x, y = y, group = id)) +
-  geom_point(size = .1) +
-  geom_line(alpha = .3)
+plot(dat$x, dat$y, type = "n", xlab = "x", ylab = "y")
+for(i in unique(dat$id)) {
+  dd <- dat[dat$id == i, ]
+  lines(dd$x, dd$y, col = "gray")
+}
+points(dat$x, dat$y, pch = 20, lwd = .05)
 ```
 
 We use a generalized additive mixed model with random intercepts per subject to estimate the function relating $x$ to $y$. In terms of the model framework outlined in the [introductory vignette](https://lcbc-uio.github.io/galamm/articles/galamm.html), we model the $i$th response from the $j$th subject with

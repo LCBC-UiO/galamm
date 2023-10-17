@@ -113,6 +113,15 @@ anova.galamm <- function(object, ...) {
 #'
 #' @family details of model fit
 #'
+#' @examples
+#' # Example model from lme4
+#' data(sleepstudy, package = "lme4")
+#' fm1 <- galamm(Reaction ~ Days + (Days | Subject), data = sleepstudy)
+#'
+#' # There are 180 observations, which matches the number of rows in sleepstudy
+#' nobs(fm1)
+#' nrow(sleepstudy)
+#'
 nobs.galamm <- function(object, ...) {
   object$model$n
 }
