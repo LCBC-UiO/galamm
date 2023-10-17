@@ -28,6 +28,7 @@ load.var = c("time", "item")
 factor_interactions <- NULL
 start <- NULL
 control <- galamm_control()
+na.action <- "na.omit"
 
 # kyps.item.model <- galamm(
 #   formula = formula,

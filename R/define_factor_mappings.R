@@ -270,13 +270,12 @@ define_factor_mappings <- function(
         lambda_mapping_X[[f]] <- do.call(c, mappings)
 
         stopifnot(length(lambda_mapping_X[[f]]) == length(X))
+
       } else {
         lambda_mapping_X[[f]] <- rep(-1L, length(X))
       }
     }
-    lambda_mapping_X <- unlist(do.call(function(...) {
-      mapply(function(...) max(...), ..., SIMPLIFY = FALSE)
-    }, lambda_mapping_X))
+    lambda_mapping_X <- lambda_mapping_X[[1]]
     stopifnot(length(lambda_mapping_X) == length(X))
   }
 
