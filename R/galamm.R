@@ -324,10 +324,10 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
     )
   }
 
-  if (!(length(load.var) == length(factor) &&
-    length(load.var) == length(lambda))) {
-    stop("load.var, lambda, and factor must have the same length.")
+  if(!is.null(load.var) && (length(load.var) > 1 || !is.character(load.var))) {
+    stop("load.var must be a character of length one")
   }
+
 
   tmp <- setup_factor(load.var, lambda, factor, data)
   data <- tmp$data

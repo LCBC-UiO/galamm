@@ -184,11 +184,9 @@ extend_lambda <- function(fi) {
 #' factor_finder(c("f1", "ax", "b"), letters[1:3])
 #'
 factor_finder <- function(factor, vars) {
-  vapply(factor, function(x) {
-    any(vapply(vars, function(y) {
-      any(vapply(x, function(z) grepl(z, y), TRUE))
-    }, TRUE))
-  }, TRUE)
+  any(vapply(vars, function(y) {
+    any(vapply(factor, function(z) grepl(z, y), TRUE))
+  }, TRUE))
 }
 
 #' Low-level mappings to factor loadings
@@ -254,69 +252,53 @@ define_factor_mappings <- function(
     }
   })))
   vars_in_fixed <- unique(vars_in_fixed)
-  factor_in_fixed <- factor_finder(factor, vars_in_fixed)
+  factor_in_fixed <- factor_finder(factor[[1]], vars_in_fixed)
   X <- gobj$lmod$X
 
-  if (!any(factor_in_fixed)) {
+  if (!factor_in_fixed) {
     lambda_mapping_X <- integer()
   } else {
-    lambda_mapping_X <- list()
-
-    for (f in seq_along(factor_in_fixed)) {
-      if (factor_in_fixed[[f]]) {
-        lv <- load.var[[f]]
-        mappings <- lapply(seq_len(ncol(X)), function(i) {
-          mapping_component <- rep(-1L, nrow(X))
-          target_cnm <- colnames(X)[[i]]
-          cnms_match <- vapply(
-            colnames(lambda[[f]]),
-            function(x) grepl(x, target_cnm), logical(1)
-          )
-          if (any(cnms_match)) {
-            ll <- lambda[[f]][, cnms_match, drop = FALSE] - 2L
-          } else {
-            return(mapping_component)
-          }
-
-          ll[data[, lv]]
-        })
-
-        lambda_mapping_X[[f]] <- do.call(c, mappings)
-
-        stopifnot(length(lambda_mapping_X[[f]]) == length(X))
-
+    mappings <- lapply(seq_len(ncol(X)), function(i) {
+      mapping_component <- rep(-1L, nrow(X))
+      target_cnm <- colnames(X)[[i]]
+      cnms_match <- vapply(
+        colnames(lambda[[1]]),
+        function(x) grepl(x, target_cnm), logical(1)
+      )
+      if (any(cnms_match)) {
+        ll <- lambda[[1]][, cnms_match, drop = FALSE] - 2L
       } else {
-        lambda_mapping_X[[f]] <- rep(-1L, length(X))
+        return(mapping_component)
       }
-    }
-    lambda_mapping_X <- lambda_mapping_X[[1]]
+      ll[data[, load.var]]
+    })
+    lambda_mapping_X <- do.call(c, mappings)
     stopifnot(length(lambda_mapping_X) == length(X))
   }
 
   vars_in_random <- unique(unlist(gobj$lmod$reTrms$cnms))
-  factor_in_random <- factor_finder(factor, vars_in_random)
+  factor_in_random <- factor_finder(factor[[1]], vars_in_random)
   Zt <- gobj$lmod$reTrms$Zt
 
-  if (!any(factor_in_random)) {
-    lambda_mapping_Zt <- integer()
-  }
   if (is.null(factor_interactions)) {
     lambda_mapping_Zt_covs <- integer()
   }
 
-  for (f in seq_along(factor_in_random)) {
-    fi <- factor_interactions[[f]]
+  if (!factor_in_random) {
+    lambda_mapping_Zt <- integer()
+  } else {
+    fi <- factor_interactions[[1]]
     cnms <- lapply(gobj$lmod$reTrms$cnms, function(x) x)
     cnms_match <- lapply(cnms, function(cnm) {
       vapply(
-        colnames(lambda[[f]]),
+        colnames(lambda[[1]]),
         function(x) any(grepl(x, cnm)), TRUE
       )
     })
     deltas <- lapply(gobj$lmod$reTrms$Ztlist, function(x) diff(x@p))
 
-    if (factor_in_random[[f]]) {
-      lv <- load.var[[f]]
+    if (factor_in_random[[1]]) {
+      lv <- load.var[[1]]
       mappings <- lapply(seq_along(cnms), function(i) {
         cnm <- cnms[[i]]
         cnm_match <- cnms_match[[i]]
@@ -325,7 +307,7 @@ define_factor_mappings <- function(
         mapping_component_covs <- integer()
 
         if (any(cnm_match)) {
-          ll <- lambda[[f]][, names(cnm_match[cnm_match]), drop = FALSE] - 2L
+          ll <- lambda[[1]][, names(cnm_match[cnm_match]), drop = FALSE] - 2L
         } else {
           mapping_component[delta != 0] <- -1L
           mapping_component <- lapply(
@@ -344,7 +326,7 @@ define_factor_mappings <- function(
         }
 
         for (j in seq_along(cnm)) {
-          cn <- extract_name(factor[[f]], cnm[[j]])
+          cn <- extract_name(factor[[1]], cnm[[j]])
 
           inds <- which(data[, cn] != 0)
 
@@ -367,7 +349,7 @@ define_factor_mappings <- function(
 
           mapping_component[inds_expanded] <-
             Map(function(x, y) rep(ll[x, cn], each = y),
-              x = data[inds, lv], y = delta[inds]
+                x = data[inds, lv], y = delta[inds]
             )
         }
 
@@ -396,8 +378,8 @@ define_factor_mappings <- function(
         )
 
         # Add indices to lambda matrix
-        lambda[[f]] <- rbind(
-          lambda[[f]],
+        lambda[[1]] <- rbind(
+          lambda[[1]],
           matrix(sort(unique(unlist(extra_lambdas)) + mlm), ncol = 1) + 2L
         )
 
@@ -412,6 +394,9 @@ define_factor_mappings <- function(
       }
     }
   }
+
+
+
 
   list(
     lambda_mapping_X = lambda_mapping_X,
