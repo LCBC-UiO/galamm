@@ -82,15 +82,18 @@
 get all variance parameters, <code>"beta"</code> to get all fixed regression
 coefficients, <code>"lambda"</code> to get all factor loadings, and
 <code>"weights"</code> to get all weights. The parameter can also be given as a
-numeric vector with indices specifying the parameters.</p></dd>
+numeric vector with indices specifying the parameters. When given as
+characters, the arguments are case sensitive.</p></dd>
 
 
 <dt>level</dt>
-<dd><p>Confidence level. Defaults to 0.95.</p></dd>
+<dd><p>Decimal number specifying the confidence level. Defaults to 0.95.</p></dd>
 
 
 <dt>method</dt>
-<dd><p>Currently only "Wald" is available.</p></dd>
+<dd><p>Character of length one specifying the type of confidence
+interval. Currently only "Wald" is available. The argument is case
+sensitive.</p></dd>
 
 
 <dt>...</dt>
@@ -105,9 +108,9 @@ numeric vector with indices specifying the parameters.</p></dd>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="fixef.html">fixef.galamm()</a></code> for fixed effects, <code><a href="coef.galamm.html">coef.galamm()</a></code> for
-coefficients more generally, and <code><a href="vcov.galamm.html">vcov.galamm()</a></code> for the variance-covariance
-matrix. <code><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint()</a></code> is the generic function.</p>
+    <div class="dont-index"><p><code><a href="fixef.html">fixef.galamm()</a></code> for fixed effects, <code><a href="coef.galamm.html">coef.galamm()</a></code> for coefficients
+more generally, and <code><a href="vcov.galamm.html">vcov.galamm()</a></code> for the variance-covariance matrix.
+<code><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint()</a></code> is the generic function.</p>
 <p>Other details of model fit: 
 <code><a href="VarCorr.html">VarCorr</a>()</code>,
 <code><a href="coef.galamm.html">coef.galamm</a>()</code>,

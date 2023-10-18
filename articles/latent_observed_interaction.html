@@ -181,14 +181,14 @@ first four pages of <span class="citation">Rockwood and Jeon (<a href="#ref-rock
 <span class="math inline">\(\\lambda_{4} = 0\)</span>. This type of
 model would be estimated with the following code:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">lambda</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">lambda</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">mod0</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">type</span> <span class="op">+</span> <span class="va">x</span><span class="op">:</span><span class="va">response</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">loading</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">latent_covariates</span>,</span>
 <span>  load.var <span class="op">=</span> <span class="st">"type"</span>,</span>
 <span>  lambda <span class="op">=</span> <span class="va">lambda</span>,</span>
-<span>  factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"loading"</span><span class="op">)</span></span>
+<span>  factor <span class="op">=</span> <span class="st">"loading"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>In the data generating simulations, the true values were <span class="math inline">\(\lambda_{1}=1\)</span>, <span class="math inline">\(\lambda_{2} = 1.3\)</span> and <span class="math inline">\(\lambda_{3} = -0.3\)</span>. The former two are
 very well recovered, but the latter is too positive, which is likely due
@@ -267,7 +267,7 @@ loading matrix</p>
 for this notation is that we need one list to hold the regression terms
 for each loading variable specified in <code>load.var</code>.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">factor_interactions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">~</span> <span class="fl">1</span>, <span class="op">~</span> <span class="fl">1</span>, <span class="op">~</span> <span class="va">x</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">factor_interactions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">~</span> <span class="fl">1</span>, <span class="op">~</span> <span class="fl">1</span>, <span class="op">~</span> <span class="va">x</span><span class="op">)</span></span></code></pre></div>
 <p>This specifies that for the first two rows, there are no covariates,
 but for the third row, we want a linear regression with <span class="math inline">\(x\)</span> as covariate. Next, we specify the
 loading matrix <strong>without</strong> the interaction parameter, i.e.,
@@ -279,7 +279,7 @@ we reuse the <code>lambda</code> object that was specified for
 <span>  data <span class="op">=</span> <span class="va">latent_covariates</span>,</span>
 <span>  load.var <span class="op">=</span> <span class="st">"type"</span>,</span>
 <span>  lambda <span class="op">=</span> <span class="va">lambda</span>,</span>
-<span>  factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"loading"</span><span class="op">)</span>,</span>
+<span>  factor <span class="op">=</span> <span class="st">"loading"</span>,</span>
 <span>  factor_interactions <span class="op">=</span> <span class="va">factor_interactions</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>A model comparison shows overwhelming evidence in favor of this
@@ -341,7 +341,7 @@ that the implementation itself is correct.</p>
 <p>We can also try to add interactions between the <span class="math inline">\(x^{2}\)</span> and <span class="math inline">\(\eta\)</span>. We first update the formula in
 <code>factor_interactions</code>:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">factor_interactions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">~</span> <span class="fl">1</span>, <span class="op">~</span> <span class="fl">1</span>, <span class="op">~</span> <span class="va">x</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">x</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">factor_interactions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">~</span> <span class="fl">1</span>, <span class="op">~</span> <span class="fl">1</span>, <span class="op">~</span> <span class="va">x</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">x</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Then we fit the model as before:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mod2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
@@ -349,7 +349,7 @@ that the implementation itself is correct.</p>
 <span>  data <span class="op">=</span> <span class="va">latent_covariates</span>,</span>
 <span>  load.var <span class="op">=</span> <span class="st">"type"</span>,</span>
 <span>  lambda <span class="op">=</span> <span class="va">lambda</span>,</span>
-<span>  factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"loading"</span><span class="op">)</span>,</span>
+<span>  factor <span class="op">=</span> <span class="st">"loading"</span>,</span>
 <span>  factor_interactions <span class="op">=</span> <span class="va">factor_interactions</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>As can be seen, the coefficient for this squared interaction is not
@@ -415,7 +415,7 @@ rows of the dataset are shown below.</p>
 addition to the terms that were used above. We start by resetting the
 interaction models to a linear term:</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">factor_interactions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">~</span> <span class="fl">1</span>, <span class="op">~</span> <span class="fl">1</span>, <span class="op">~</span> <span class="va">x</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">factor_interactions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">~</span> <span class="fl">1</span>, <span class="op">~</span> <span class="fl">1</span>, <span class="op">~</span> <span class="va">x</span><span class="op">)</span></span></code></pre></div>
 <p>Next we fit the model using <code>galamm</code>. The difference to
 notice here is that we added <code>(0 + response | id)</code> to the
 formula. This implies that for observations that are responses, for
@@ -427,7 +427,7 @@ subject.</p>
 <span>  data <span class="op">=</span> <span class="va">latent_covariates_long</span>,</span>
 <span>  load.var <span class="op">=</span> <span class="st">"type"</span>,</span>
 <span>  lambda <span class="op">=</span> <span class="va">lambda</span>,</span>
-<span>  factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"loading"</span><span class="op">)</span>,</span>
+<span>  factor <span class="op">=</span> <span class="st">"loading"</span>,</span>
 <span>  factor_interactions <span class="op">=</span> <span class="va">factor_interactions</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>From the summary, we see that also in this case the factor loadings
@@ -488,7 +488,7 @@ each measurement. We first create these dummy variables:</p>
 <span>  data <span class="op">=</span> <span class="va">dat</span>,</span>
 <span>  load.var <span class="op">=</span> <span class="st">"type"</span>,</span>
 <span>  lambda <span class="op">=</span> <span class="va">lambda</span>,</span>
-<span>  factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"loading"</span><span class="op">)</span>,</span>
+<span>  factor <span class="op">=</span> <span class="st">"loading"</span>,</span>
 <span>  factor_interactions <span class="op">=</span> <span class="va">factor_interactions</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>The summary output again suggest that the factor loadings are very

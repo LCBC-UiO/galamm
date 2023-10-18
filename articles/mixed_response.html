@@ -197,8 +197,8 @@ family, which we do with a family mapping. The values in
 <span>  family <span class="op">=</span> <span class="va">families</span>,</span>
 <span>  family_mapping <span class="op">=</span> <span class="va">family_mapping</span>,</span>
 <span>  load.var <span class="op">=</span> <span class="st">"itemgroup"</span>,</span>
-<span>  lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">loading_matrix</span><span class="op">)</span>,</span>
-<span>  factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"level"</span><span class="op">)</span></span>
+<span>  lambda <span class="op">=</span> <span class="va">loading_matrix</span>,</span>
+<span>  factor <span class="op">=</span> <span class="st">"level"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>We can also look at its summary output.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
@@ -466,9 +466,9 @@ factor loadings defined in the loading matrix.</p>
 <span>  data <span class="op">=</span> <span class="va">diet</span>,</span>
 <span>  family <span class="op">=</span> <span class="va">families</span>,</span>
 <span>  family_mapping <span class="op">=</span> <span class="va">family_mapping</span>,</span>
-<span>  factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"loading"</span><span class="op">)</span>,</span>
+<span>  factor <span class="op">=</span> <span class="st">"loading"</span>,</span>
 <span>  load.var <span class="op">=</span> <span class="st">"item"</span>,</span>
-<span>  lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">loading_matrix</span><span class="op">)</span></span>
+<span>  lambda <span class="op">=</span> <span class="va">loading_matrix</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>Looking at the summary output, however, we see a warning that the
 Hessian matrix is rank deficient.</p>
@@ -518,9 +518,9 @@ argument <code>trace = 3</code> is passed onto <code>optim</code>.</p>
 <span>  data <span class="op">=</span> <span class="va">diet</span>,</span>
 <span>  family <span class="op">=</span> <span class="va">families</span>,</span>
 <span>  family_mapping <span class="op">=</span> <span class="va">family_mapping</span>,</span>
-<span>  factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"loading"</span><span class="op">)</span>,</span>
+<span>  factor <span class="op">=</span> <span class="st">"loading"</span>,</span>
 <span>  load.var <span class="op">=</span> <span class="st">"item"</span>,</span>
-<span>  lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">loading_matrix</span><span class="op">)</span>,</span>
+<span>  lambda <span class="op">=</span> <span class="va">loading_matrix</span>,</span>
 <span>  control <span class="op">=</span> <span class="fu"><a href="../reference/galamm_control.html">galamm_control</a></span><span class="op">(</span>optim_control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>trace <span class="op">=</span> <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; N = 11, M = 20 machine precision = 2.22045e-16</span></span>
@@ -555,9 +555,9 @@ argument.</p>
 <span>  data <span class="op">=</span> <span class="va">diet</span>,</span>
 <span>  family <span class="op">=</span> <span class="va">families</span>,</span>
 <span>  family_mapping <span class="op">=</span> <span class="va">family_mapping</span>,</span>
-<span>  factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"loading"</span><span class="op">)</span>,</span>
+<span>  factor <span class="op">=</span> <span class="st">"loading"</span>,</span>
 <span>  load.var <span class="op">=</span> <span class="st">"item"</span>,</span>
-<span>  lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">loading_matrix</span><span class="op">)</span>,</span>
+<span>  lambda <span class="op">=</span> <span class="va">loading_matrix</span>,</span>
 <span>  start <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>theta <span class="op">=</span> <span class="fl">10</span><span class="op">)</span>,</span>
 <span>  control <span class="op">=</span> <span class="fu"><a href="../reference/galamm_control.html">galamm_control</a></span><span class="op">(</span>optim_control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>trace <span class="op">=</span> <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
@@ -653,9 +653,9 @@ with</p>
 <span>  data <span class="op">=</span> <span class="va">diet</span>,</span>
 <span>  family <span class="op">=</span> <span class="va">families</span>,</span>
 <span>  family_mapping <span class="op">=</span> <span class="va">family_mapping</span>,</span>
-<span>  factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"loading"</span><span class="op">)</span>,</span>
+<span>  factor <span class="op">=</span> <span class="st">"loading"</span>,</span>
 <span>  load.var <span class="op">=</span> <span class="st">"item"</span>,</span>
-<span>  lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">loading_matrix</span><span class="op">)</span>,</span>
+<span>  lambda <span class="op">=</span> <span class="va">loading_matrix</span>,</span>
 <span>  start <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>theta <span class="op">=</span> <span class="fl">10</span><span class="op">)</span>,</span>
 <span>  control <span class="op">=</span> <span class="fu"><a href="../reference/galamm_control.html">galamm_control</a></span><span class="op">(</span>optim_control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>trace <span class="op">=</span> <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>

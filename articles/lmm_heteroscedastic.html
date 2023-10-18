@@ -182,6 +182,11 @@ so since <span class="math inline">\(1.412369^2 = 1.995\)</span>, the
 results are identical.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://svn.r-project.org/R-packages/trunk/nlme/" class="external-link">nlme</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Attaching package: 'nlme'</span></span>
+<span><span class="co">#&gt; The following object is masked from 'package:lme4':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     lmList</span></span>
 <span><span class="va">mod_nlme</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/nlme/man/lme.html" class="external-link">lme</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="va">x</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">hsced</span>, random <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>id <span class="op">=</span> <span class="op">~</span><span class="fl">1</span><span class="op">)</span>,</span>
 <span>  weights <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/nlme/man/varIdent.html" class="external-link">varIdent</a></span><span class="op">(</span>form <span class="op">=</span> <span class="op">~</span> <span class="fl">1</span> <span class="op">|</span> <span class="va">item</span><span class="op">)</span>, method <span class="op">=</span> <span class="st">"ML"</span></span>

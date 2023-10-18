@@ -487,8 +487,8 @@ issues.</p>
 <span>    <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">loading</span> <span class="op">|</span> <span class="va">id</span> <span class="op">/</span> <span class="va">timepoint</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">dat</span>,</span>
 <span>  load.var <span class="op">=</span> <span class="st">"item"</span>,</span>
-<span>  lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">loading_matrix</span><span class="op">)</span>,</span>
-<span>  factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"loading"</span><span class="op">)</span></span>
+<span>  lambda <span class="op">=</span> <span class="va">loading_matrix</span>,</span>
+<span>  factor <span class="op">=</span> <span class="st">"loading"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>We print the model summary below. In the data simulation, the factor
 loadings were set to 1, 1.4, and 0.3, respectively, and this is very
@@ -561,8 +561,8 @@ is the same as before.</p>
 <span>  data <span class="op">=</span> <span class="va">dat</span>,</span>
 <span>  family <span class="op">=</span> <span class="va">binomial</span>,</span>
 <span>  load.var <span class="op">=</span> <span class="st">"item"</span>,</span>
-<span>  lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="cn">NA</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"loading"</span><span class="op">)</span></span>
+<span>  lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="cn">NA</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,</span>
+<span>  factor <span class="op">=</span> <span class="st">"loading"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>The summary is shown below. The factor loading <span class="math inline">\(\lambda_{2} = 2\)</span> was used when simulating
 the data, and including the uncertainty, our estimate covers the true
@@ -662,8 +662,8 @@ model is hard to estimate.</p>
 <span>    <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">domain1</span><span class="op">:</span><span class="va">ability1</span> <span class="op">+</span> <span class="va">domain3</span><span class="op">:</span><span class="va">ability3</span> <span class="op">|</span> <span class="va">id</span> <span class="op">/</span> <span class="va">timepoint</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">dat</span>,</span>
 <span>  load.var <span class="op">=</span> <span class="st">"item"</span>,</span>
-<span>  lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">lmat</span><span class="op">)</span>,</span>
-<span>  factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ability1"</span>, <span class="st">"ability3"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  lambda <span class="op">=</span> <span class="va">lmat</span>,</span>
+<span>  factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ability1"</span>, <span class="st">"ability3"</span><span class="op">)</span>,</span>
 <span>  control <span class="op">=</span> <span class="fu"><a href="../reference/galamm_control.html">galamm_control</a></span><span class="op">(</span></span>
 <span>    optim_control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>factr <span class="op">=</span> <span class="fl">1e9</span>, trace <span class="op">=</span> <span class="fl">3</span>, </span>
 <span>                         REPORT <span class="op">=</span> <span class="fl">50</span>, maxit <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span>
@@ -695,7 +695,8 @@ factor loadings well.</p>
 <div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod_byvar</span><span class="op">)</span></span>
 <span><span class="co">#&gt; GALAMM fit by maximum marginal likelihood.</span></span>
-<span><span class="co">#&gt; Formula: y ~ domain + sl(x, by = domain, factor = c("ability1", "ability3")) +      (0 + domain1:ability1 + domain3:ability3 | id/timepoint)</span></span>
+<span><span class="co">#&gt; Formula: y ~ domain + sl(x, by = domain, factor = c("ability1", "ability3")) +  </span></span>
+<span><span class="co">#&gt;     (0 + domain1:ability1 + domain3:ability3 | id/timepoint)</span></span>
 <span><span class="co">#&gt;    Data: dat</span></span>
 <span><span class="co">#&gt; Control: galamm_control(optim_control = list(factr = 1e+09, trace = 3,      REPORT = 50, maxit = 1000))</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -795,8 +796,8 @@ this example.</p>
 <span>  family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">gaussian</span>, <span class="va">binomial</span><span class="op">)</span>,</span>
 <span>  family_mapping <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">dat</span><span class="op">$</span><span class="va">domain</span> <span class="op">==</span> <span class="fl">1</span>, <span class="fl">1L</span>, <span class="fl">2L</span><span class="op">)</span>,</span>
 <span>  load.var <span class="op">=</span> <span class="st">"item"</span>,</span>
-<span>  lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">lmat</span><span class="op">)</span>,</span>
-<span>  factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ability1"</span>, <span class="st">"ability2"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  lambda <span class="op">=</span> <span class="va">lmat</span>,</span>
+<span>  factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ability1"</span>, <span class="st">"ability2"</span><span class="op">)</span>,</span>
 <span>  control <span class="op">=</span> <span class="fu"><a href="../reference/galamm_control.html">galamm_control</a></span><span class="op">(</span></span>
 <span>    optim_control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>factr <span class="op">=</span> <span class="fl">1e9</span>, trace <span class="op">=</span> <span class="fl">3</span>, </span>
 <span>                         REPORT <span class="op">=</span> <span class="fl">30</span>, maxit <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span>

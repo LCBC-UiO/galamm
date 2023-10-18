@@ -114,7 +114,7 @@
 </div>
 <!-- badges: start -->
 
-<p>galamm estimates generalized additive latent and mixed models (GALAMMs). The model framework and the computational algorithms were introduced in Sørensen, Fjell, and Walhovd (<a href="#ref-sorensenLongitudinalModelingAgeDependent2023">2023</a>), which is <a href="https://doi.org/10.1007/s11336-023-09910-z" class="external-link">freely available from Psychometrika</a>. It is an extension of the GLLAMM framework for multilevel latent variable modeling detailed in Rabe-Hesketh, Skrondal, and Pickles (<a href="#ref-rabe-heskethGeneralizedMultilevelStructural2004">2004</a>) and Skrondal and Rabe-Hesketh (<a href="#ref-skrondalGeneralizedLatentVariable2004">2004</a>), in particular by efficiently handling crossed random effects and semiparametric estimation.</p>
+<p>galamm estimates generalized additive latent and mixed models (GALAMMs). This is the first package implementing the model framework and the computational algorithms introduced in Sørensen, Fjell, and Walhovd (<a href="#ref-sorensenLongitudinalModelingAgeDependent2023">2023</a>). It is an extension of the GLLAMM framework for multilevel latent variable modeling detailed in Rabe-Hesketh, Skrondal, and Pickles (<a href="#ref-rabe-heskethGeneralizedMultilevelStructural2004">2004</a>) and Skrondal and Rabe-Hesketh (<a href="#ref-skrondalGeneralizedLatentVariable2004">2004</a>), in particular by efficiently handling crossed random effects and semiparametric estimation.</p>
 <div class="section level2">
 <h2 id="what-can-the-package-do">What Can the Package Do?<a class="anchor" aria-label="anchor" href="#what-can-the-package-do"></a>
 </h2>
@@ -179,8 +179,8 @@
 <span>  family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">gaussian</span>, <span class="va">binomial</span><span class="op">)</span>,</span>
 <span>  family_mapping <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">mresp</span><span class="op">$</span><span class="va">itemgroup</span> <span class="op">==</span> <span class="st">"a"</span>, <span class="fl">1L</span>, <span class="fl">2L</span><span class="op">)</span>,</span>
 <span>  load.var <span class="op">=</span> <span class="st">"itemgroup"</span>,</span>
-<span>  lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="cn">NA</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"loading"</span><span class="op">)</span></span>
+<span>  lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="cn">NA</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,</span>
+<span>  factor <span class="op">=</span> <span class="st">"loading"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>The summary function gives some information about the model fit.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
@@ -229,13 +229,13 @@
 <span>    <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">loading</span> <span class="op">|</span> <span class="va">id</span> <span class="op">/</span> <span class="va">timepoint</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">dat</span>,</span>
 <span>  load.var <span class="op">=</span> <span class="st">"item"</span>,</span>
-<span>  lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">loading_matrix</span><span class="op">)</span>,</span>
-<span>  factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"loading"</span><span class="op">)</span></span>
+<span>  lambda <span class="op">=</span> <span class="va">loading_matrix</span>,</span>
+<span>  factor <span class="op">=</span> <span class="st">"loading"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>We finally plot the estimated smooth term.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/plot_smooth.galamm.html">plot_smooth</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-9-1.png" width="100%"></p>
+<p><img src="reference/figures/README-unnamed-chunk-10-1.png" width="100%"></p>
 </div>
 </div>
 <div class="section level2">
