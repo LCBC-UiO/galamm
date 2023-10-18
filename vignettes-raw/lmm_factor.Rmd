@@ -426,8 +426,6 @@ judge_galamm <- galamm(
 summary(judge_galamm)
 ```
 
-## Model with a Product of Factor Loadings
 
-Finally, in their Example 2, @rockwoodEstimatingComplexMeasurement2019 consider a model which contains products of factor loadings. At the moment, such a model cannot be estimated using galamm, although we will work on adding it in the future.
 
 # References

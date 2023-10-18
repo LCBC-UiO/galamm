@@ -287,7 +287,7 @@ define_factor_mappings <- function(
   if (!factor_in_random) {
     lambda_mapping_Zt <- integer()
   } else {
-    fi <- factor_interactions[[1]]
+
     cnms <- lapply(gobj$lmod$reTrms$cnms, function(x) x)
     cnms_match <- lapply(cnms, function(cnm) {
       vapply(
@@ -315,7 +315,7 @@ define_factor_mappings <- function(
               rep(x, each = max(delta))
             }
           )
-          if (!is.null(fi)) {
+          if (!is.null(factor_interactions[[1]])) {
             mapping_component_covs <- mapping_component
           }
           ret <- list(
@@ -330,7 +330,7 @@ define_factor_mappings <- function(
 
           inds <- which(data[, cn] != 0)
 
-          if (!is.null(fi)) {
+          if (!is.null(factor_interactions[[1]])) {
             if (Reduce(sum, cnms_match) > 1) {
               stop(
                 "Interaction with latent variables currently only ",
@@ -339,7 +339,7 @@ define_factor_mappings <- function(
             }
 
             mapping_component_covs <- Map(function(x, y) {
-              as.numeric(stats::model.matrix(fi[[y]], data = data[x, ]))
+              as.numeric(stats::model.matrix(factor_interactions[[1]][[y]], data = data[x, ]))
             }, x = inds, y = data[inds, load.var])
           }
 
@@ -361,9 +361,9 @@ define_factor_mappings <- function(
 
       lambda_mapping_Zt <- mappingunwrapping(mappings, "mapping_component")
 
-      if (!is.null(fi)) {
+      if (!is.null(factor_interactions[[1]])) {
         # Extra loadings needed
-        extra_lambdas <- extend_lambda(fi)
+        extra_lambdas <- extend_lambda(factor_interactions[[1]])
 
         # Add indices in the right place in lambda_mapping_Zt
         mlm <- max(lambda_mapping_Zt, na.rm = TRUE)
