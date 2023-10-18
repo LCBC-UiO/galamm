@@ -2,8 +2,12 @@ plot_smooth <- function(object, ...) {
   UseMethod("plot_smooth")
 }
 
-#' Plot smooth terms for galamm fits
+#' @title Plot smooth terms for galamm fits
 #'
+#' @srrstats {G1.4} Function documented with roxygen2.
+#' @srrstats {G2.1a} Expected data types provided for all inputs.
+#'
+#' @description
 #' Plots smooth terms of a fitted \code{galamm} object. This function is a thin
 #' wrapper around \code{mgcv::plot.gam}
 #' \insertCite{woodGeneralizedAdditiveModels2017a}{galamm}.

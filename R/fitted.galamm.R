@@ -1,5 +1,8 @@
-#' Extract model fitted values
+#' @title Extract model fitted values
 #'
+#' @srrstats {G1.4} Function documented with roxygen2.
+#' @srrstats {G2.1a} Expected data types provided for all inputs.
+#' @description
 #' Extracts fitted values from a model including random effects.
 #'
 #' @param object An object of class \code{galamm} returned from

@@ -1,4 +1,9 @@
-#' Confidence intervals for model parameters
+#' @title Confidence intervals for model parameters
+#'
+#' @srrstats {G1.4} Function documented with roxygen2.
+#' @srrstats {G2.3b} Arguments parm and method are case sensitive, as stated in
+#'   their documentation.
+#' @srrstats {G2.1a} Expected data types provided for all inputs.
 #'
 #' @param object An object of class \code{galamm} returned from
 #'   \code{\link{galamm}}.
@@ -6,18 +11,21 @@
 #'   get all variance parameters, \code{"beta"} to get all fixed regression
 #'   coefficients, \code{"lambda"} to get all factor loadings, and
 #'   \code{"weights"} to get all weights. The parameter can also be given as a
-#'   numeric vector with indices specifying the parameters.
-#' @param level Confidence level. Defaults to 0.95.
-#' @param method Currently only "Wald" is available.
+#'   numeric vector with indices specifying the parameters. When given as
+#'   characters, the arguments are case sensitive.
+#' @param level Decimal number specifying the confidence level. Defaults to 0.95.
+#' @param method Character of length one specifying the type of confidence
+#'   interval. Currently only "Wald" is available. The argument is case
+#'   sensitive.
 #' @param ... Other arguments passed on to other methods. Currently not used.
 #'
 #' @return A matrix with the requested confidence intervals.
 #' @export
 #'
 #'
-#' @seealso [fixef.galamm()] for fixed effects, [coef.galamm()] for
-#' coefficients more generally, and [vcov.galamm()] for the variance-covariance
-#' matrix. [confint()] is the generic function.
+#' @seealso [fixef.galamm()] for fixed effects, [coef.galamm()] for coefficients
+#'   more generally, and [vcov.galamm()] for the variance-covariance matrix.
+#'   [confint()] is the generic function.
 #'
 #' @family details of model fit
 #'

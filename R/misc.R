@@ -14,6 +14,8 @@
 #'   replaced by \code{1}s.
 #' @noRd
 #'
+#' @srrstats {G1.4a} Internal function documented.
+#'
 #' @examples
 #' data(KYPSsim, package = "PLmixed")
 #' loading_matrix <- rbind(c(1, 0), c(NA, 0), c(NA, 1), c(NA, NA))
@@ -76,6 +78,8 @@ setup_factor <- function(load.var, lambda, factor, data) {
 #' @return A list of family objects.
 #' @noRd
 #'
+#' @srrstats {G1.4a} Internal function documented.
+#'
 #' @examples
 #' # Providing a character returns a function call
 #' setup_family("binomial")
@@ -111,6 +115,8 @@ setup_family <- function(family) {
 #'   \code{\link{galamm}}.
 #' @param data A data frame.
 #' @param gobj A list object returned from the internal function \code{gamm4}.
+#'
+#' @srrstats {G1.4a} Internal function documented.
 #'
 #' @return A matrix with responses and number of trials.
 #' @noRd
@@ -157,6 +163,8 @@ setup_response_object <- function(family_list, family_mapping, data, gobj) {
 #'
 #' @return The constant term in the loglikelihood function, one for each family.
 #' @noRd
+#'
+#' @srrstats {G1.4a} Internal function documented.
 #'
 #' @examples
 #' # Binomial
@@ -206,6 +214,8 @@ find_k <- function(family_txt, family_mapping, y, trials) {
 #' @return A numeric vector with initial values for all parameters.
 #' @noRd
 #'
+#' @srrstats {G1.4a} Internal function documented.
+#'
 set_initial_values <- function(
     gobj, start, beta_inds, lambda_inds, weights_inds) {
   if (length(start) > 0 &&
@@ -253,6 +263,8 @@ set_initial_values <- function(
 #' When running \code{devtools::release()} for submitting to CRAN, questions
 #' here are asked.
 #'
+#' @srrstats {G1.4a} Internal function documented.
+#'
 #' @noRd
 #'
 release_questions <- function() {
@@ -266,6 +278,8 @@ release_questions <- function() {
 #'   GALAMM_EXTENDED_TESTS is 'true' (test not skipped); otherwise, returns
 #'   `testthat::skip()`
 #' @noRd
+#'
+#' @srrstats {G1.4a} Internal function documented.
 #'
 #' @author This function comes from the canaper package, written by Joel Nitta.
 #'

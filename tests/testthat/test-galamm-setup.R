@@ -156,20 +156,20 @@ test_that("wrong input is handled properly", {
     {
       mod <- galamm(
         formula = y ~ x + (1 | id), data = dat, family = gaussian,
-        control = galamm_control(pwirls_tol_abs = 0)
+        control = galamm_control(pirls_tol_abs = 0)
       )
     },
-    "pwirls_tol_abs should be a strictly positive number"
+    "pirls_tol_abs should be a strictly positive number"
   )
 
   expect_error(
     {
       mod <- galamm(
         formula = y ~ x + (1 | id), data = dat, family = gaussian,
-        control = galamm_control(pwirls_tol_abs = -.01)
+        control = galamm_control(pirls_tol_abs = -.01)
       )
     },
-    "pwirls_tol_abs should be a strictly positive number"
+    "pirls_tol_abs should be a strictly positive number"
   )
 
   expect_error(

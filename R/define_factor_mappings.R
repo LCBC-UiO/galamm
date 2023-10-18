@@ -1,5 +1,7 @@
 #' Extract names of factor among column names
 #'
+#' @srrstats {G1.4a} Internal function documented.
+#'
 #' @param ff Character vector with names of candidate factors.
 #' @param cnmf Column name, a single character.
 #'
@@ -27,6 +29,8 @@ extract_name <- function(ff, cnmf) {
 #' element has more elements than the i-th element of \code{lambda_mapping_Zt}.
 #' See the documentation to the function \code{define_factor_mappings} for more
 #' details on what the mappings represent.
+#'
+#' @srrstats {G1.4a} Internal function documented.
 #'
 #' @param lambda_mapping_Zt Mapping between factor loadings and elements of the
 #'   sparse matrix representing the random effect covariates.
@@ -102,6 +106,8 @@ squeeze_mappings <- function(lambda_mapping_Zt, lambda_mapping_Zt_covs) {
 #'   unlisting done to the final result should be recursive or not. Defaults to
 #'   \code{TRUE}.
 #'
+#' @srrstats {G1.4a} Internal function documented.
+#'
 #' @return A list of unwrapped mappings.
 #' @noRd
 #' @examples
@@ -131,6 +137,8 @@ mappingunwrapping <- function(input, element, fun = c, recursive = TRUE) {
 #'
 #' @param fi An element of the list \code{factor_interactions} given to
 #'   \code{\link{galamm}}.
+#'
+#' @srrstats {G1.4a} Internal function documented.
 #'
 #' @return A list of lists, elements of which have been extended to correspond
 #'   to the number of covariates multiplying the element.
@@ -176,6 +184,8 @@ extend_lambda <- function(fi) {
 #'
 #' @return A logical, indicating whether any of the names in \code{factor} can
 #' be found among \code{vars}.
+#'
+#' @srrstats {G1.4a} Internal function documented.
 #'
 #' @noRd
 #' @examples
@@ -227,6 +237,8 @@ factor_finder <- function(factor, vars) {
 #'   of \code{lambda_mapping_Zt} should be multiplied with.
 #' * \code{lambda} The factor loadings \code{lambda} with updated indices,
 #'   corresponding to the values in the mappings.
+#'
+#' @srrstats {G1.4a} Internal function documented.
 #'
 #' @noRd
 define_factor_mappings <- function(

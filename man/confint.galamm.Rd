@@ -14,11 +14,14 @@
 get all variance parameters, \code{"beta"} to get all fixed regression
 coefficients, \code{"lambda"} to get all factor loadings, and
 \code{"weights"} to get all weights. The parameter can also be given as a
-numeric vector with indices specifying the parameters.}
+numeric vector with indices specifying the parameters. When given as
+characters, the arguments are case sensitive.}
 
-\item{level}{Confidence level. Defaults to 0.95.}
+\item{level}{Decimal number specifying the confidence level. Defaults to 0.95.}
 
-\item{method}{Currently only "Wald" is available.}
+\item{method}{Character of length one specifying the type of confidence
+interval. Currently only "Wald" is available. The argument is case
+sensitive.}
 
 \item{...}{Other arguments passed on to other methods. Currently not used.}
 }
@@ -39,9 +42,9 @@ confint(count_mod, parm = "beta", level = .99)
 
 }
 \seealso{
-\code{\link[=fixef.galamm]{fixef.galamm()}} for fixed effects, \code{\link[=coef.galamm]{coef.galamm()}} for
-coefficients more generally, and \code{\link[=vcov.galamm]{vcov.galamm()}} for the variance-covariance
-matrix. \code{\link[=confint]{confint()}} is the generic function.
+\code{\link[=fixef.galamm]{fixef.galamm()}} for fixed effects, \code{\link[=coef.galamm]{coef.galamm()}} for coefficients
+more generally, and \code{\link[=vcov.galamm]{vcov.galamm()}} for the variance-covariance matrix.
+\code{\link[=confint]{confint()}} is the generic function.
 
 Other details of model fit: 
 \code{\link{VarCorr}()},

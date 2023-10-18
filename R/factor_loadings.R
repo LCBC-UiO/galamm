@@ -2,7 +2,10 @@ factor_loadings <- function(object) {
   UseMethod("factor_loadings")
 }
 
-#' Extract factor loadings from galamm object
+#' @title Extract factor loadings from galamm object
+#'
+#' @srrstats {G1.4} Function documented with roxygen2.
+#' @srrstats {G2.1a} Expected data types provided for all inputs.
 #'
 #' @aliases factor_loadings factor_loadings.galamm
 #' @export factor_loadings

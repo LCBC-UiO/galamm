@@ -10,7 +10,8 @@ sl(..., factor = NULL)
 \arguments{
 \item{...}{Arguments passed on to \code{mgcv::s}.}
 
-\item{factor}{Optional character argument specifying the loading variable.}
+\item{factor}{Optional character argument specifying the loading variable.
+Case sensitive.}
 }
 \value{
 An object of class \code{xx.smooth.spec}, where \code{xx} is a basis
@@ -21,8 +22,8 @@ this smooth term should be multiplied with in order to produce the observed
 outcome.
 }
 \description{
-This is a very thin wrapper around \code{mgcv::s}. It enables the
-specification of loading variables for smooth terms. The last letter "l",
+This is a very thin wrapper around \code{mgcv::s}. It enables
+the specification of loading variables for smooth terms. The last letter "l",
 which stands for "loading", has been added to avoid namespace conflicts with
 \code{mgcv} and \code{gamm4}.
 }

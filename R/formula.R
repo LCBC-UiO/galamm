@@ -1,5 +1,6 @@
-#' Extract formula from fitted galamm object
+#' @title Extract formula from fitted galamm object
 #'
+#' @srrstats {G1.4} Function documented with roxygen2.
 #' @param x Object of class \code{galamm} returned from \code{\link{galamm}}.
 #'
 #' @return The formula used to fit the model.

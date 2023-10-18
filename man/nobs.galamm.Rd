@@ -7,9 +7,10 @@
 \method{nobs}{galamm}(object, ...)
 }
 \arguments{
-\item{object}{galamm object}
+\item{object}{An object of class \code{galamm} returned from
+\code{\link{galamm}}.}
 
-\item{...}{other arguments}
+\item{...}{Optional arguments passed on to other methods. Currently not used.}
 }
 \value{
 A number

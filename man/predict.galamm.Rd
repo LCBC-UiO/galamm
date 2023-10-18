@@ -10,22 +10,23 @@
 \item{object}{An object of class \code{galamm} returned from
 \code{\link{galamm}}.}
 
-\item{newdata}{Data from for which to evaluate predictions. Defaults to
-"NULL", which means that the predictions are evaluate at the data used to
-fit the model.}
+\item{newdata}{Data from for which to evaluate predictions, in a
+\code{data.frame}. Defaults to "NULL", which means that the predictions are
+evaluate at the data used to fit the model.}
 
-\item{type}{Type of prediction object to be returned.}
+\item{type}{Character argument specifying the type of prediction object to be
+returned. Case sensitive.}
 
-\item{...}{Optional arguments passed on to other methods. Currently used
-for models with smooth terms, for which these arguments are forwarded to
+\item{...}{Optional arguments passed on to other methods. Currently used for
+models with smooth terms, for which these arguments are forwarded to
 \code{mgcv::predict.gam}.}
 }
 \value{
 A numeric vector of predicted values.
 }
 \description{
-Predictions are given at the population level, i.e., with random effects set
-to zero. For fitted models including random effects, see
+Predictions are given at the population level, i.e., with random
+effects set to zero. For fitted models including random effects, see
 \code{\link{fitted.galamm}}. For mixed response models, only predictions on
 the scale of the linear predictors is supported.
 }

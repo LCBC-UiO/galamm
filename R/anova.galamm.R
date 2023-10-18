@@ -1,5 +1,9 @@
-#' Compare likelihoods of galamm objects
+#' @title Compare likelihoods of galamm objects
 #'
+#' @srrstats {G1.4} Function documented with roxygen2.
+#' @srrstats {G2.1a} Expected data types provided for all inputs.
+#'
+#' @description
 #' Anova function for comparing different GALAMMs fitted on the same data.
 #'
 #' @param object An object of class \code{galamm} returned from
@@ -103,10 +107,14 @@ anova.galamm <- function(object, ...) {
   }
 }
 
-#' Extract the Number of Observations from a galamm Fit
+#' @title Extract the Number of Observations from a galamm Fit
 #'
-#' @param object galamm object
-#' @param ... other arguments
+#' @srrstats {G1.4} Function documented with roxygen2.
+#' @srrstats {G2.1a} Expected data types provided for all inputs.
+#'
+#' @param object An object of class \code{galamm} returned from
+#'   \code{\link{galamm}}.
+#' @param ... Optional arguments passed on to other methods. Currently not used.
 #'
 #' @return A number
 #' @export

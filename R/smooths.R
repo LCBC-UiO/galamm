@@ -10,15 +10,19 @@ NULL
 ##' @rdname t2l
 NULL
 
-#' Set up smooth term with factor loading
+#' @title Set up smooth term with factor loading
 #'
-#' This is a very thin wrapper around \code{mgcv::s}. It enables the
-#' specification of loading variables for smooth terms. The last letter "l",
+#' @srrstats {G1.4} Function documented with roxygen2.
+#' @srrstats {G2.3b} Argument "factor" is case sensitive, as is documented here.
+#'
+#' @description This is a very thin wrapper around \code{mgcv::s}. It enables
+#' the specification of loading variables for smooth terms. The last letter "l",
 #' which stands for "loading", has been added to avoid namespace conflicts with
 #' \code{mgcv} and \code{gamm4}.
 #'
 #' @param ... Arguments passed on to \code{mgcv::s}.
 #' @param factor Optional character argument specifying the loading variable.
+#'   Case sensitive.
 #'
 #' @return An object of class \code{xx.smooth.spec}, where \code{xx} is a basis
 #'   identifying code given by the \code{bs} argument of \code{s}. It differs
@@ -67,22 +71,27 @@ sl <- function(..., factor = NULL) {
   ret
 }
 
-#' Set up smooth term with factor loading
+#' @title Set up smooth term with factor loading
 #'
-#' This is a very thin wrapper around \code{mgcv::t2}. It enables the
-#' specification of loading variables for smooth terms. The last letter "l",
-#' which stands for "loading", has been added to avoid namespace conflicts
-#' with \code{mgcv} and \code{gamm4}.
+#' @srrstats {G1.4} Function documented with roxygen2.
+#' @srrstats {G2.3b} Argument "factor" is case sensitive, as is documented here.
+#' @srrstats {G2.1a} Expected data types provided for all inputs.
+#'
+#' @description This is a very thin wrapper around \code{mgcv::t2}. It enables
+#'   the specification of loading variables for smooth terms. The last letter
+#'   "l", which stands for "loading", has been added to avoid namespace
+#'   conflicts with \code{mgcv} and \code{gamm4}.
 #'
 #' @param ... Arguments passed on to \code{mgcv::t2}.
-#' @param factor Optional character argument specifying the loading variable.
+#' @param factor Optional character of length one specifying the loading
+#'   variable. Case sensitive.
 #'
 #' @return An object of class \code{xx.smooth.spec}, where \code{xx} is a basis
-#'   identifying code given by the \code{bs} argument of \code{t2}.
-#'   It differs from the smooth returned by \code{mgcv::s} in
-#'   that it has an additional attribute named \code{"factor"} which specifies
-#'   any factor loading which this smooth term should be multiplied with in
-#'   order to produce the observed outcome.
+#'   identifying code given by the \code{bs} argument of \code{t2}. It differs
+#'   from the smooth returned by \code{mgcv::s} in that it has an additional
+#'   attribute named \code{"factor"} which specifies any factor loading which
+#'   this smooth term should be multiplied with in order to produce the observed
+#'   outcome.
 #'
 #' @export
 #' @family modeling functions

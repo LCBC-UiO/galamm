@@ -12,7 +12,8 @@
 
 \item{parm}{The parameters for which the variance-covariance matrix should be
 calculated. Character vector with one or more of the elements "theta",
-"beta", "lambda", and "weights". Can also be an integer vector.}
+"beta", "lambda", and "weights". Can also be an integer vector. When given
+as a character, it must be in only lowercase letters.}
 
 \item{...}{Further arguments passed on to other methods. Currently not used.}
 }

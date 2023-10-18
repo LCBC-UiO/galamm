@@ -1,13 +1,19 @@
-#' Extract square root of dispersion parameter from galamm object
+#' @title Extract square root of dispersion parameter from galamm object
 #'
+#' @srrstats {G1.4} Function documented with roxygen2.
+#' @srrstats {G2.1a} Expected data types provided for all inputs.
+#'
+#' @description
 #' Extracts the square root of the dispersion parameter(s) from an object of
 #' class \code{galamm}, returned from \code{\link{galamm}}. In the case of
 #' conditionally Gaussian responses, this is the residual standard deviation.
 #' When there are multiple dispersion parameters, e.g., with mixed response
 #' type models, the square root of all of them are returned in a numeric vector.
 #'
-#' @param object An object of class \code{galamm}.
-#' @param ... Other optional arguments. Currently not used.
+#' @param object An object of class \code{galamm}, returned from
+#'   \code{\link{galamm}}.
+#' @param ... Optional parameters passed on to other methods. Currently not
+#'   used.
 #'
 #' @return The square root of one or more dispersion parameters.
 #'

@@ -14,6 +14,8 @@
 #'
 #' @seealso [gamm4()] and [gam.setup()].
 #'
+#' @srrstats {G1.4a} Internal function documented.
+#'
 #' @references \insertRef{woodStraightforwardIntermediateRank2013}{galamm}
 #'
 #' \insertRef{woodGeneralizedAdditiveModels2017a}{galamm}
@@ -109,6 +111,8 @@ gamm4.setup <- function(formula, pterms, mf) {
 #' \insertRef{woodStraightforwardIntermediateRank2013}{galamm}
 #'
 #' \insertRef{woodGeneralizedAdditiveModels2017a}{galamm}
+#'
+#' @srrstats {G1.4a} Internal function documented.
 #'
 #' @examples
 #' # To run the match.call(expand.dots = FALSE) interactively, do:
@@ -219,6 +223,8 @@ gamm4 <- function(fixed, random = NULL, data) {
 #' @param ret A list with all information about the galamm fit.
 #' @param final_model The result from the final evaluation of the model, with
 #'   second-order derivatives to compute the Hessian.
+#'
+#' @srrstats {G1.4a} Internal function documented.
 #'
 #' @return A list containing information about smooth terms.
 #' @author Simon Wood, with modifications by Oystein Sorensen.

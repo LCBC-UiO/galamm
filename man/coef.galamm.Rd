@@ -9,8 +9,7 @@
 \arguments{
 \item{object}{An object of class \code{galamm}, from \code{\link{galamm}}.}
 
-\item{...}{Additional parameters passed on to other methods. Currently not
-used.}
+\item{...}{Optional arguments passed on to other methods. Currently not used.}
 }
 \value{
 A matrix with the requested coefficients.

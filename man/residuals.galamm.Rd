@@ -10,8 +10,9 @@
 \item{object}{An object of class \code{galamm} returned from
 \code{\link{galamm}}.}
 
-\item{type}{Type of residuals to be returned. One of \code{"pearson"} and
-\code{"deviance"}.}
+\item{type}{Character of length one describing the type of residuals to be
+returned. One of \code{"pearson"} and \code{"deviance"}. Argument is case
+sensitive.}
 
 \item{...}{Optional arguments passed on to other methods. Currently not used.}
 }

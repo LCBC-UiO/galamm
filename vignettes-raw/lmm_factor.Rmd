@@ -141,13 +141,18 @@ mod <- galamm(
 
 The model could be fit with `PLmixed` using the following call with exactly the same arguments as to `galamm`. The reader is encouraged to try, and confirm that the results are essentially equivalent, but we won't run it in this vignette as it takes 5-10 minutes.
 
+```{r, echo=FALSE, eval=FALSE}
+#' @srrstats {G1.6} Users can run the code below and compare the time required.
+```
+
+
 ```{r, eval=FALSE}
 kyps_plmixed <- PLmixed(
   formula = form,
   data = KYPSsim,
-  factor = factors,
+  factor = list(factors),
   load.var = load.var,
-  lambda = loading_matrix
+  lambda = list(loading_matrix)
 )
 ```
 
@@ -402,13 +407,18 @@ form <- response ~ 0 + item + (0 + teacher1 + teacher2 | tch) +
 
 Using `PLmixed`, we could have estimated the model as follows, and doing it would confirm that the results are the same as with galamm.
 
+```{r, echo=FALSE, eval=FALSE}
+#' @srrstats {G1.6} Users can run the code below and compare the time required.
+```
+
+
 ```{r, eval=FALSE}
 judge_plmixed <- PLmixed(
   formula = form,
   data = JUDGEsim,
-  lambda = loading_matrix,
+  lambda = list(loading_matrix),
   load.var = "item",
-  factor = factors
+  factor = list(factors)
 )
 ```
 

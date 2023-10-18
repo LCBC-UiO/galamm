@@ -12,6 +12,8 @@
 #'
 #' @noRd
 #'
+#' @srrstats {G1.4a} Internal function documented.
+#'
 #' @seealso [gamm4.setup()] and [gamm4()].
 #'
 #' @references
@@ -255,6 +257,8 @@ gam.setup <- function(formula, pterms, mf) {
 #' @author Simon Wood with modifications by Oystein Sorensen
 #' @noRd
 #'
+#' @srrstats {G1.4a} Internal function documented.
+#'
 #' @references
 #' \insertRef{woodGeneralizedAdditiveModels2017a}{galamm}
 
@@ -314,6 +318,8 @@ variable.summary <- function(pf, dl, n) {
 #'
 #' @noRd
 #'
+#' @srrstats {G1.4a} Internal function documented.
+#'
 #' @references
 #' \insertRef{woodGeneralizedAdditiveModels2017a}{galamm}
 #'
@@ -348,6 +354,8 @@ gam.side <- function(sm, Xp, tol = .Machine$double.eps^.5) {
 #'     parametric components.
 #' @noRd
 #' @author Simon Wood with modifications by Oystein Sorensen.
+#'
+#' @srrstats {G1.4a} Internal function documented.
 #'
 #' @references
 #' \insertRef{woodGeneralizedAdditiveModels2017a}{galamm}

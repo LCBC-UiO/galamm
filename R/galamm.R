@@ -1,26 +1,33 @@
-#' Fit a generalized additive latent and mixed model
+#' @title Fit a generalized additive latent and mixed model
 #'
-#' This function fits a generalized additive latent and mixed model (GALAMMs),
-#' as described in
-#' \insertCite{sorensenLongitudinalModelingAgeDependent2023;textual}{galamm}.
-#' The building blocks of these models are generalized additive mixed models
-#' (GAMMs) \insertCite{woodGeneralizedAdditiveModels2017a}{galamm}, of which
-#' generalized linear mixed models
-#' \insertCite{breslowApproximateInferenceGeneralized1993,harvilleMaximumLikelihoodApproaches1977,hendersonBestLinearUnbiased1975,lairdRandomEffectsModelsLongitudinal1982}{galamm}
-#' are special cases. GALAMMs extend upon GAMMs by allowing factor structures,
-#' as commonly used to model hypothesized latent traits underlying observed
-#' measurements. In this sense, GALAMMs are an extension of generalized linear
-#' latent and mixed models (GLLAMMs)
-#' \insertCite{skrondalGeneralizedLatentVariable2004,rabe-heskethGeneralizedMultilevelStructural2004}{galamm}
-#' which allows semiparametric estimation. The implemented algorithm used to
-#' compute model estimates is described in
-#' \insertCite{sorensenLongitudinalModelingAgeDependent2023;textual}{galamm},
-#' and is an extension of the algorithm used for fitting generalized linear
-#' mixed models by the \code{lme4} package
-#' \insertCite{batesFittingLinearMixedEffects2015}{galamm}. The syntax used to
-#' define factor structures is based on that used by the \code{PLmixed} package,
-#' which is detailed in
-#' \insertCite{rockwoodEstimatingComplexMeasurement2019;textual}{galamm}.
+#' @srrstats {G1.4} Function documented with roxygen2.
+#' @srrstats {G1.0} Primary references shown in the description.
+#' @description This function fits a generalized additive latent and mixed model
+#'   (GALAMMs), as described in
+#'   \insertCite{sorensenLongitudinalModelingAgeDependent2023;textual}{galamm}.
+#'   The building blocks of these models are generalized additive mixed models
+#'   (GAMMs) \insertCite{woodGeneralizedAdditiveModels2017a}{galamm}, of which
+#'   generalized linear mixed models
+#'   \insertCite{breslowApproximateInferenceGeneralized1993,harvilleMaximumLikelihoodApproaches1977,hendersonBestLinearUnbiased1975,lairdRandomEffectsModelsLongitudinal1982}{galamm}
+#'   are special cases. GALAMMs extend upon GAMMs by allowing factor structures,
+#'   as commonly used to model hypothesized latent traits underlying observed
+#'   measurements. In this sense, GALAMMs are an extension of generalized linear
+#'   latent and mixed models (GLLAMMs)
+#'   \insertCite{skrondalGeneralizedLatentVariable2004,rabe-heskethGeneralizedMultilevelStructural2004}{galamm}
+#'   which allows semiparametric estimation. The implemented algorithm used to
+#'   compute model estimates is described in
+#'   \insertCite{sorensenLongitudinalModelingAgeDependent2023;textual}{galamm},
+#'   and is an extension of the algorithm used for fitting generalized linear
+#'   mixed models by the \code{lme4} package
+#'   \insertCite{batesFittingLinearMixedEffects2015}{galamm}. The syntax used to
+#'   define factor structures is based on that used by the \code{PLmixed}
+#'   package, which is detailed in
+#'   \insertCite{rockwoodEstimatingComplexMeasurement2019;textual}{galamm}.
+#'
+#' @srrstats {G2.3b} Arguments "family", "load.var", "factor", and the
+#'   elements of the "start" argument are case sensitive. This is stated in the
+#'   documentation below.
+#' @srrstats {G2.1a} Expected data types provided for all inputs.
 #'
 #' @param formula A formula specifying the model. Smooth terms are defined in
 #'   the style of the \code{mgcv} and \code{gamm4} packages, see
@@ -53,18 +60,20 @@
 #'   case, they must be provided in a list, and bot as a vector. Mixing the
 #'   different ways of describing the family also works, e.g.,
 #'   \code{list("gaussian", poisson())}, but in this case they must be provided
-#'   in a list.
+#'   in a list. When provided as character values, the argument is case
+#'   sensitive.
 #'
 #'
-#' @param family_mapping Optional integer vector mapping from the elements of
-#'   \code{family} to rows of \code{data}. Defaults to \code{rep(1L,
+#' @param family_mapping Optional vector mapping from the elements of
+#'   \code{family} to rows of \code{data}. Defaults to \code{rep(1,
 #'   nrow(data))}, which means that all observations are distributed according
 #'   to the first element of \code{family}. The length of \code{family_mapping}
 #'   must be identical to the number of observations, \code{nrow(data)}.
 #'
 #' @param load.var Optional character specifying the name of the variable in
 #'   \code{data} identifying what the factors load onto. Default to \code{NULL},
-#'   which means that there are no loading variables.
+#'   which means that there are no loading variables. Argument is case
+#'   sensitive.
 #'
 #' @param lambda Optional factor loading matrix. Numerical values indicate that
 #'   the given value is fixed, while \code{NA} means that the entry is a
@@ -73,7 +82,8 @@
 #'
 #' @param factor Optional character vector whose \eqn{j}th entry corresponds to
 #'   the \eqn{j}th column of the corresponding matrix in \code{lambda}. Defaults
-#'   to \code{NULL}, which means that there are no factor loadings.
+#'   to \code{NULL}, which means that there are no factor loadings. Argument is
+#'   case sensitive.
 #'
 #' @param factor_interactions Optional list of length equal to the number of
 #'   columns in \code{lambda}. Each list element should be a \code{formula}
@@ -92,7 +102,7 @@
 #'   names of list elements are \code{"theta"}, \code{"beta"}, \code{"lambda"},
 #'   and \code{"weights"}, all of should be numerical vectors with starting
 #'   values. Default to \code{NULL}, which means that some relatively sensible
-#'   defaults are used.
+#'   defaults are used. Names of parameters must be given in all lower case.
 #'
 #' @param control Optional control object for the optimization procedure of
 #'   class \code{galamm_control} resulting from calling
@@ -257,12 +267,15 @@
 #'
 #' @md
 galamm <- function(formula, weights = NULL, data, family = gaussian,
-                   family_mapping = rep(1L, nrow(data)),
+                   family_mapping = rep(1, nrow(data)),
                    load.var = NULL, lambda = NULL, factor = NULL,
                    factor_interactions = NULL,
                    na.action = getOption("na.action"),
                    start = NULL, control = galamm_control()) {
   # Deal with potential missing values
+
+  #' @srrstats {G2.1} Assertions on inputs implemented here.
+  #'
   if (any(vapply(data, function(x) any(is.infinite(x)), logical(1)))) {
     stop("Infinite values in 'data'. galamm cannot handle this.")
   }
@@ -415,7 +428,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
       family_mapping = family_mapping - 1L,
       k = k,
       maxit_conditional_modes = maxit_conditional_modes,
-      lossvalue_tol = control$pwirls_tol_abs,
+      lossvalue_tol = control$pirls_tol_abs,
       gradient = gradient,
       hessian = hessian,
       reduced_hessian = control$reduced_hessian

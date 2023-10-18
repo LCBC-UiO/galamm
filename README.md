@@ -16,11 +16,9 @@ coverage](https://codecov.io/gh/LCBC-UiO/galamm/branch/main/graph/badge.svg)](ht
 <!-- badges: end -->
 
 galamm estimates generalized additive latent and mixed models (GALAMMs).
-The model framework and the computational algorithms were introduced in
-Sørensen, Fjell, and Walhovd
-([2023](#ref-sorensenLongitudinalModelingAgeDependent2023)), which is
-[freely available from
-Psychometrika](https://doi.org/10.1007/s11336-023-09910-z). It is an
+This is the first package implementing the model framework and the
+computational algorithms introduced in Sørensen, Fjell, and Walhovd
+([2023](#ref-sorensenLongitudinalModelingAgeDependent2023)). It is an
 extension of the GLLAMM framework for multilevel latent variable
 modeling detailed in Rabe-Hesketh, Skrondal, and Pickles
 ([2004](#ref-rabe-heskethGeneralizedMultilevelStructural2004)) and
@@ -149,8 +147,8 @@ mixed_resp <- galamm(
   family = c(gaussian, binomial),
   family_mapping = ifelse(mresp$itemgroup == "a", 1L, 2L),
   load.var = "itemgroup",
-  lambda = list(matrix(c(1, NA), ncol = 1)),
-  factor = list("loading")
+  lambda = matrix(c(1, NA), ncol = 1),
+  factor = "loading"
 )
 ```
 
@@ -215,8 +213,8 @@ mod <- galamm(
     (0 + loading | id / timepoint),
   data = dat,
   load.var = "item",
-  lambda = list(loading_matrix),
-  factor = list("loading")
+  lambda = loading_matrix,
+  factor = "loading"
 )
 ```
 
@@ -226,7 +224,7 @@ We finally plot the estimated smooth term.
 plot_smooth(mod)
 ```
 
-<img src="man/figures/README-unnamed-chunk-9-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-10-1.png" width="100%" />
 
 ## How to cite this package
 

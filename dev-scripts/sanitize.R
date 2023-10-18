@@ -123,7 +123,7 @@ mlwrapper <- function(par, gradient = FALSE, hessian = FALSE) {
     family_mapping = family_mapping - 1L,
     k = k,
     maxit_conditional_modes = maxit_conditional_modes,
-    lossvalue_tol = control$pwirls_tol_abs,
+    lossvalue_tol = control$pirls_tol_abs,
     gradient = gradient,
     hessian = hessian,
     reduced_hessian = control$reduced_hessian

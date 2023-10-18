@@ -27,7 +27,14 @@ knitr::opts_chunk$set(
 [![Codecov test coverage](https://codecov.io/gh/LCBC-UiO/galamm/branch/main/graph/badge.svg)](https://app.codecov.io/gh/LCBC-UiO/galamm?branch=main)
 <!-- badges: end -->
 
-galamm estimates generalized additive latent and mixed models (GALAMMs). The model framework and the computational algorithms were introduced in @sorensenLongitudinalModelingAgeDependent2023, which is  [freely available from Psychometrika](https://doi.org/10.1007/s11336-023-09910-z). It is an extension of the GLLAMM framework for multilevel latent variable modeling detailed in @rabe-heskethGeneralizedMultilevelStructural2004 and @skrondalGeneralizedLatentVariable2004, in particular by efficiently handling crossed random effects and semiparametric estimation.
+```{r, eval=FALSE, echo=FALSE}
+#' @srrstats {G1.0} Key references introduced below.
+#' @srrstats {G1.1} The paragraph below states that this is the first place where the algorithm is implemented.
+#' @srrstats {G1.2} Contains repo status badge.
+#' @srrstats {G1.3} All statistical terminology clarified and defined in vignettes, as well as in more detail in the open access Psychometrika paper (Sørensen, Fjell, and Walhovd, 2023) which is the key reference.
+```
+
+galamm estimates generalized additive latent and mixed models (GALAMMs). This is the first package implementing the model framework and the computational algorithms introduced in @sorensenLongitudinalModelingAgeDependent2023. It is an extension of the GLLAMM framework for multilevel latent variable modeling detailed in @rabe-heskethGeneralizedMultilevelStructural2004 and @skrondalGeneralizedLatentVariable2004, in particular by efficiently handling crossed random effects and semiparametric estimation.
 
 ## What Can the Package Do?
 
@@ -90,8 +97,8 @@ mixed_resp <- galamm(
   family = c(gaussian, binomial),
   family_mapping = ifelse(mresp$itemgroup == "a", 1L, 2L),
   load.var = "itemgroup",
-  lambda = list(matrix(c(1, NA), ncol = 1)),
-  factor = list("loading")
+  lambda = matrix(c(1, NA), ncol = 1),
+  factor = "loading"
 )
 ```
 
@@ -127,8 +134,8 @@ mod <- galamm(
     (0 + loading | id / timepoint),
   data = dat,
   load.var = "item",
-  lambda = list(loading_matrix),
-  factor = list("loading")
+  lambda = loading_matrix,
+  factor = "loading"
 )
 ```
 

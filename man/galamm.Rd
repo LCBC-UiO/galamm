@@ -9,7 +9,7 @@ galamm(
   weights = NULL,
   data,
   family = gaussian,
-  family_mapping = rep(1L, nrow(data)),
+  family_mapping = rep(1, nrow(data)),
   load.var = NULL,
   lambda = NULL,
   factor = NULL,
@@ -51,17 +51,19 @@ function calls, e.g., \code{list(gaussian(), poisson())}. In the latter
 case, they must be provided in a list, and bot as a vector. Mixing the
 different ways of describing the family also works, e.g.,
 \code{list("gaussian", poisson())}, but in this case they must be provided
-in a list.}
+in a list. When provided as character values, the argument is case
+sensitive.}
 
-\item{family_mapping}{Optional integer vector mapping from the elements of
-\code{family} to rows of \code{data}. Defaults to \code{rep(1L,
+\item{family_mapping}{Optional vector mapping from the elements of
+\code{family} to rows of \code{data}. Defaults to \code{rep(1,
   nrow(data))}, which means that all observations are distributed according
 to the first element of \code{family}. The length of \code{family_mapping}
 must be identical to the number of observations, \code{nrow(data)}.}
 
 \item{load.var}{Optional character specifying the name of the variable in
 \code{data} identifying what the factors load onto. Default to \code{NULL},
-which means that there are no loading variables.}
+which means that there are no loading variables. Argument is case
+sensitive.}
 
 \item{lambda}{Optional factor loading matrix. Numerical values indicate that
 the given value is fixed, while \code{NA} means that the entry is a
@@ -70,7 +72,8 @@ is no factor loading matrix.}
 
 \item{factor}{Optional character vector whose \eqn{j}th entry corresponds to
 the \eqn{j}th column of the corresponding matrix in \code{lambda}. Defaults
-to \code{NULL}, which means that there are no factor loadings.}
+to \code{NULL}, which means that there are no factor loadings. Argument is
+case sensitive.}
 
 \item{factor_interactions}{Optional list of length equal to the number of
 columns in \code{lambda}. Each list element should be a \code{formula}
@@ -89,7 +92,7 @@ can be seen with \code{options("na.action")}. The other alternative is
 names of list elements are \code{"theta"}, \code{"beta"}, \code{"lambda"},
 and \code{"weights"}, all of should be numerical vectors with starting
 values. Default to \code{NULL}, which means that some relatively sensible
-defaults are used.}
+defaults are used. Names of parameters must be given in all lower case.}
 
 \item{control}{Optional control object for the optimization procedure of
 class \code{galamm_control} resulting from calling
@@ -166,8 +169,8 @@ zero.
 }
 }
 \description{
-This function fits a generalized additive latent and mixed model (GALAMMs),
-as described in
+This function fits a generalized additive latent and mixed model
+(GALAMMs), as described in
 \insertCite{sorensenLongitudinalModelingAgeDependent2023;textual}{galamm}.
 The building blocks of these models are generalized additive mixed models
 (GAMMs) \insertCite{woodGeneralizedAdditiveModels2017a}{galamm}, of which
@@ -184,8 +187,8 @@ compute model estimates is described in
 and is an extension of the algorithm used for fitting generalized linear
 mixed models by the \code{lme4} package
 \insertCite{batesFittingLinearMixedEffects2015}{galamm}. The syntax used to
-define factor structures is based on that used by the \code{PLmixed} package,
-which is detailed in
+define factor structures is based on that used by the \code{PLmixed}
+package, which is detailed in
 \insertCite{rockwoodEstimatingComplexMeasurement2019;textual}{galamm}.
 }
 \examples{

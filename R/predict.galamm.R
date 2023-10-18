@@ -1,18 +1,23 @@
-#' Predictions from a model at new data values
+#' @title Predictions from a model at new data values
 #'
-#' Predictions are given at the population level, i.e., with random effects set
-#' to zero. For fitted models including random effects, see
-#' \code{\link{fitted.galamm}}. For mixed response models, only predictions on
-#' the scale of the linear predictors is supported.
+#' @srrstats {G1.4} Function documented with roxygen2.
+#' @srrstats {G2.3b} Argument "type" is case sensitive, which is documented.
+#' @srrstats {G2.1a} Expected data types provided for all inputs.
+#'
+#' @description Predictions are given at the population level, i.e., with random
+#'   effects set to zero. For fitted models including random effects, see
+#'   \code{\link{fitted.galamm}}. For mixed response models, only predictions on
+#'   the scale of the linear predictors is supported.
 #'
 #' @param object An object of class \code{galamm} returned from
 #'   \code{\link{galamm}}.
-#' @param newdata Data from for which to evaluate predictions. Defaults to
-#'   "NULL", which means that the predictions are evaluate at the data used to
-#'   fit the model.
-#' @param type Type of prediction object to be returned.
-#' @param ... Optional arguments passed on to other methods. Currently used
-#'   for models with smooth terms, for which these arguments are forwarded to
+#' @param newdata Data from for which to evaluate predictions, in a
+#'   \code{data.frame}. Defaults to "NULL", which means that the predictions are
+#'   evaluate at the data used to fit the model.
+#' @param type Character argument specifying the type of prediction object to be
+#'   returned. Case sensitive.
+#' @param ... Optional arguments passed on to other methods. Currently used for
+#'   models with smooth terms, for which these arguments are forwarded to
 #'   \code{mgcv::predict.gam}.
 #'
 #' @return A numeric vector of predicted values.
