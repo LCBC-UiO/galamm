@@ -298,7 +298,7 @@ define_factor_mappings <- function(
     deltas <- lapply(gobj$lmod$reTrms$Ztlist, function(x) diff(x@p))
 
     if (factor_in_random[[1]]) {
-      lv <- load.var[[1]]
+
       mappings <- lapply(seq_along(cnms), function(i) {
         cnm <- cnms[[i]]
         cnm_match <- cnms_match[[i]]
@@ -349,7 +349,7 @@ define_factor_mappings <- function(
 
           mapping_component[inds_expanded] <-
             Map(function(x, y) rep(ll[x, cn], each = y),
-                x = data[inds, lv], y = delta[inds]
+                x = data[inds, load.var], y = delta[inds]
             )
         }
 
