@@ -16,7 +16,8 @@ vignette: >
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.path = ""
+  fig.path = "",
+  error = FALSE
 )
 ```
 
@@ -92,21 +93,22 @@ $$
 
 where $N_{3}(a, b)$ denotes a trivariate normal distribution with mean $a$ and covariance $b$.
 
-In order to fit the model with galamm, we use the same syntax as PLmixed, and start by defining the loading matrix. The first column contains $\boldsymbol{\lambda}_{m}$ and the second column contains $\boldsymbol{\lambda}_{h}$. Numerical values in this matrix means that the entry is fixed to the given value, whereas `NA` means that the value is unknown, and should be estimated. We enclose the matrix in a list, because potentially there can be multiple matrices, and then each should be a list element.
+In order to fit the model with galamm, we use the same syntax as PLmixed, and start by defining the loading matrix. The first column contains $\boldsymbol{\lambda}_{m}$ and the second column contains $\boldsymbol{\lambda}_{h}$. Numerical values in this matrix means that the entry is fixed to the given value, whereas `NA` means that the value is unknown, and should be estimated.
+
 
 ```{r}
-(loading_matrix <- list(rbind(
+(loading_matrix <- rbind(
   c(1, 0),
   c(NA, 0),
   c(NA, 1),
   c(NA, NA)
-)))
+))
 ```
 
-We connect the loading matrix to variables in the dataframe with the following list of factors. Since the list of loading matrices has only a single element, also the list of factors has only a single element, which is one character vector for each column in the loading matrix.
+We connect the loading matrix to variables in the dataframe with the following factors. 
 
 ```{r}
-factors <- list(c("ms", "hs"))
+factors <- c("ms", "hs")
 ```
 
 
@@ -139,13 +141,18 @@ mod <- galamm(
 
 The model could be fit with `PLmixed` using the following call with exactly the same arguments as to `galamm`. The reader is encouraged to try, and confirm that the results are essentially equivalent, but we won't run it in this vignette as it takes 5-10 minutes.
 
+```{r, echo=FALSE, eval=FALSE}
+#' @srrstats {G1.6} Users can run the code below and compare the time required.
+```
+
+
 ```{r, eval=FALSE}
 kyps_plmixed <- PLmixed(
   formula = form,
   data = KYPSsim,
-  factor = factors,
+  factor = list(factors),
   load.var = load.var,
-  lambda = loading_matrix
+  lambda = list(loading_matrix)
 )
 ```
 
@@ -170,12 +177,12 @@ plot(mod)
 We can also compare the estimated model to a model with constrained factor loadings. In particular, we could assume that the teacher effect in middle school has no effect on self esteem measured during high school, by setting the last two elements of $\boldsymbol{\lambda}_{m}$ to zero. We would then have the following loading matrix.
 
 ```{r}
-(loading_matrix_constr1 <- list(rbind(
+(loading_matrix_constr1 <- rbind(
   c(1, 0),
   c(NA, 0),
   c(0, 1),
   c(0, NA)
-)))
+))
 ```
 
 ```{r}
@@ -191,12 +198,12 @@ mod_constr1 <- galamm(
 We could further assume that the factor loadings at timepoints 1 and 2 for middle school and at timepoints 3 and 4 for high schools are identical, which in practice would lead to a linear mixed model with no factors. One way of estimating this model is to define a new loading matrix:
 
 ```{r}
-(loading_matrix_constr2 <- list(rbind(
+(loading_matrix_constr2 <- rbind(
   c(1, 0),
   c(1, 0),
   c(0, 1),
   c(0, 1)
-)))
+))
 ```
 
 ```{r}
@@ -365,7 +372,7 @@ $$
 We specify the loading matrix as follows. In comparison with the mathematical model formulation just above, note that we don't need to add the last column of only ones, since this column contains no parameters to be estimated.
 
 ```{r}
-(loading_matrix <- list(rbind(
+(loading_matrix <- rbind(
   c(1, 0, 1, 0, 0, 0),
   c(NA, 0, NA, 0, 0, 0),
   c(NA, 0, NA, 0, 0, 0),
@@ -378,16 +385,16 @@ We specify the loading matrix as follows. In comparison with the mathematical mo
   c(0, 0, 0, 0, 0, 1),
   c(0, 0, 0, 0, 0, NA),
   c(0, 0, 0, 0, 0, NA)
-)))
+))
 ```
 
 Next, we specify the factors in the order they appear in the columns of the loading matrix. We can choose whichever names we like for the factors, except for names of existing variables in the dataset, but we must make sure they match the names used in the formula.
 
 ```{r}
-factors <- list(c(
+factors <- c(
   "teacher1", "teacher2", "trait1.t",
   "trait2.t", "trait1.s", "trait2.s"
-))
+)
 ```
 
 The formula is defined as follows, where have have placed the terms in the same order as they appear in the mathematical model in matrix-vector form specified above.
@@ -400,13 +407,18 @@ form <- response ~ 0 + item + (0 + teacher1 + teacher2 | tch) +
 
 Using `PLmixed`, we could have estimated the model as follows, and doing it would confirm that the results are the same as with galamm.
 
+```{r, echo=FALSE, eval=FALSE}
+#' @srrstats {G1.6} Users can run the code below and compare the time required.
+```
+
+
 ```{r, eval=FALSE}
 judge_plmixed <- PLmixed(
   formula = form,
   data = JUDGEsim,
-  lambda = loading_matrix,
+  lambda = list(loading_matrix),
   load.var = "item",
-  factor = factors
+  factor = list(factors)
 )
 ```
 
@@ -426,8 +438,6 @@ judge_galamm <- galamm(
 summary(judge_galamm)
 ```
 
-## Model with a Product of Factor Loadings
 
-Finally, in their Example 2, @rockwoodEstimatingComplexMeasurement2019 consider a model which contains products of factor loadings. At the moment, such a model cannot be estimated using galamm, although we will work on adding it in the future.
 
 # References

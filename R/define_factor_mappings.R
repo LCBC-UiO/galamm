@@ -1,5 +1,7 @@
 #' Extract names of factor among column names
 #'
+#' @srrstats {G1.4a} Internal function documented.
+#'
 #' @param ff Character vector with names of candidate factors.
 #' @param cnmf Column name, a single character.
 #'
@@ -27,6 +29,8 @@ extract_name <- function(ff, cnmf) {
 #' element has more elements than the i-th element of \code{lambda_mapping_Zt}.
 #' See the documentation to the function \code{define_factor_mappings} for more
 #' details on what the mappings represent.
+#'
+#' @srrstats {G1.4a} Internal function documented.
 #'
 #' @param lambda_mapping_Zt Mapping between factor loadings and elements of the
 #'   sparse matrix representing the random effect covariates.
@@ -102,6 +106,8 @@ squeeze_mappings <- function(lambda_mapping_Zt, lambda_mapping_Zt_covs) {
 #'   unlisting done to the final result should be recursive or not. Defaults to
 #'   \code{TRUE}.
 #'
+#' @srrstats {G1.4a} Internal function documented.
+#'
 #' @return A list of unwrapped mappings.
 #' @noRd
 #' @examples
@@ -131,6 +137,8 @@ mappingunwrapping <- function(input, element, fun = c, recursive = TRUE) {
 #'
 #' @param fi An element of the list \code{factor_interactions} given to
 #'   \code{\link{galamm}}.
+#'
+#' @srrstats {G1.4a} Internal function documented.
 #'
 #' @return A list of lists, elements of which have been extended to correspond
 #'   to the number of covariates multiplying the element.
@@ -177,6 +185,8 @@ extend_lambda <- function(fi) {
 #' @return A logical, indicating whether any of the names in \code{factor} can
 #' be found among \code{vars}.
 #'
+#' @srrstats {G1.4a} Internal function documented.
+#'
 #' @noRd
 #' @examples
 #'
@@ -184,11 +194,9 @@ extend_lambda <- function(fi) {
 #' factor_finder(c("f1", "ax", "b"), letters[1:3])
 #'
 factor_finder <- function(factor, vars) {
-  vapply(factor, function(x) {
-    any(vapply(vars, function(y) {
-      any(vapply(x, function(z) grepl(z, y), TRUE))
-    }, TRUE))
-  }, TRUE)
+  any(vapply(vars, function(y) {
+    any(vapply(factor, function(z) grepl(z, y), TRUE))
+  }, TRUE))
 }
 
 #' Low-level mappings to factor loadings
@@ -230,10 +238,11 @@ factor_finder <- function(factor, vars) {
 #' * \code{lambda} The factor loadings \code{lambda} with updated indices,
 #'   corresponding to the values in the mappings.
 #'
+#' @srrstats {G1.4a} Internal function documented.
+#'
 #' @noRd
 define_factor_mappings <- function(
     gobj, load.var, lambda, factor, factor_interactions, data) {
-
   if (is.null(factor)) {
     return(
       list(
@@ -257,39 +266,24 @@ define_factor_mappings <- function(
   factor_in_fixed <- factor_finder(factor, vars_in_fixed)
   X <- gobj$lmod$X
 
-  if (!any(factor_in_fixed)) {
+  if (!factor_in_fixed) {
     lambda_mapping_X <- integer()
   } else {
-    lambda_mapping_X <- list()
-
-    for (f in seq_along(factor_in_fixed)) {
-      if (factor_in_fixed[[f]]) {
-        lv <- load.var[[f]]
-        mappings <- lapply(seq_len(ncol(X)), function(i) {
-          mapping_component <- rep(-1L, nrow(X))
-          target_cnm <- colnames(X)[[i]]
-          cnms_match <- vapply(
-            colnames(lambda[[f]]),
-            function(x) grepl(x, target_cnm), logical(1)
-          )
-          if (any(cnms_match)) {
-            ll <- lambda[[f]][, cnms_match, drop = FALSE] - 2L
-          } else {
-            return(mapping_component)
-          }
-
-          ll[data[, lv]]
-        })
-
-        lambda_mapping_X[[f]] <- do.call(c, mappings)
-
-        stopifnot(length(lambda_mapping_X[[f]]) == length(X))
-
+    mappings <- lapply(seq_len(ncol(X)), function(i) {
+      mapping_component <- rep(-1L, nrow(X))
+      target_cnm <- colnames(X)[[i]]
+      cnms_match <- vapply(
+        colnames(lambda),
+        function(x) grepl(x, target_cnm), logical(1)
+      )
+      if (any(cnms_match)) {
+        ll <- lambda[, cnms_match, drop = FALSE] - 2L
       } else {
-        lambda_mapping_X[[f]] <- rep(-1L, length(X))
+        return(mapping_component)
       }
-    }
-    lambda_mapping_X <- lambda_mapping_X[[1]]
+      ll[data[, load.var]]
+    })
+    lambda_mapping_X <- do.call(c, mappings)
     stopifnot(length(lambda_mapping_X) == length(X))
   }
 
@@ -297,121 +291,119 @@ define_factor_mappings <- function(
   factor_in_random <- factor_finder(factor, vars_in_random)
   Zt <- gobj$lmod$reTrms$Zt
 
-  if (!any(factor_in_random)) {
-    lambda_mapping_Zt <- integer()
-  }
   if (is.null(factor_interactions)) {
     lambda_mapping_Zt_covs <- integer()
   }
 
-  for (f in seq_along(factor_in_random)) {
-    fi <- factor_interactions[[f]]
+  if (!factor_in_random) {
+    lambda_mapping_Zt <- integer()
+  } else {
     cnms <- lapply(gobj$lmod$reTrms$cnms, function(x) x)
     cnms_match <- lapply(cnms, function(cnm) {
       vapply(
-        colnames(lambda[[f]]),
+        colnames(lambda),
         function(x) any(grepl(x, cnm)), TRUE
       )
     })
     deltas <- lapply(gobj$lmod$reTrms$Ztlist, function(x) diff(x@p))
 
-    if (factor_in_random[[f]]) {
-      lv <- load.var[[f]]
-      mappings <- lapply(seq_along(cnms), function(i) {
-        cnm <- cnms[[i]]
-        cnm_match <- cnms_match[[i]]
-        delta <- deltas[[i]]
-        mapping_component <- rep(NA_integer_, length(delta))
-        mapping_component_covs <- integer()
+    mappings <- lapply(seq_along(cnms), function(i) {
+      cnm <- cnms[[i]]
+      cnm_match <- cnms_match[[i]]
+      delta <- deltas[[i]]
+      mapping_component <- rep(NA_integer_, length(delta))
+      mapping_component_covs <- integer()
 
-        if (any(cnm_match)) {
-          ll <- lambda[[f]][, names(cnm_match[cnm_match]), drop = FALSE] - 2L
-        } else {
-          mapping_component[delta != 0] <- -1L
-          mapping_component <- lapply(
-            mapping_component, function(x) {
-              rep(x, each = max(delta))
-            }
-          )
-          if (!is.null(fi)) {
-            mapping_component_covs <- mapping_component
+      if (any(cnm_match)) {
+        ll <- lambda[, names(cnm_match[cnm_match]), drop = FALSE] - 2L
+      } else {
+        mapping_component[delta != 0] <- -1L
+        mapping_component <- lapply(
+          mapping_component, function(x) {
+            rep(x, each = max(delta))
           }
-          ret <- list(
-            mapping_component = mapping_component,
-            mapping_component_covs = mapping_component_covs
-          )
-          return(ret)
+        )
+        if (!is.null(factor_interactions)) {
+          mapping_component_covs <- mapping_component
         }
-
-        for (j in seq_along(cnm)) {
-          cn <- extract_name(factor[[f]], cnm[[j]])
-
-          inds <- which(data[, cn] != 0)
-
-          if (!is.null(fi)) {
-            if (Reduce(sum, cnms_match) > 1) {
-              stop(
-                "Interaction with latent variables currently only ",
-                "possible when the loading matrix has a single column."
-              )
-            }
-
-            mapping_component_covs <- Map(function(x, y) {
-              as.numeric(stats::model.matrix(fi[[y]], data = data[x, ]))
-            }, x = inds, y = data[inds, load.var])
-          }
-
-          inds_expanded <- unlist(Map(function(x, y) {
-            rep(x, each = y)
-          }, x = inds, y = pmin(1, delta[inds])))
-
-          mapping_component[inds_expanded] <-
-            Map(function(x, y) rep(ll[x, cn], each = y),
-              x = data[inds, lv], y = delta[inds]
-            )
-        }
-
-        list(
+        ret <- list(
           mapping_component = mapping_component,
           mapping_component_covs = mapping_component_covs
         )
+        return(ret)
+      }
+
+      for (j in seq_along(cnm)) {
+        cn <- extract_name(factor, cnm[[j]])
+
+        inds <- which(data[, cn] != 0)
+
+        if (!is.null(factor_interactions)) {
+          if (Reduce(sum, cnms_match) > 1) {
+            stop(
+              "Interaction with latent variables currently only ",
+              "possible when the loading matrix has a single column."
+            )
+          }
+
+          mapping_component_covs <- Map(function(x, y) {
+            as.numeric(stats::model.matrix(factor_interactions[[y]], data = data[x, ]))
+          }, x = inds, y = data[inds, load.var])
+        }
+
+        inds_expanded <- unlist(Map(function(x, y) {
+          rep(x, each = y)
+        }, x = inds, y = pmin(1, delta[inds])))
+
+        mapping_component[inds_expanded] <-
+          Map(function(x, y) rep(ll[x, cn], each = y),
+            x = data[inds, load.var], y = delta[inds]
+          )
+      }
+
+      list(
+        mapping_component = mapping_component,
+        mapping_component_covs = mapping_component_covs
+      )
+    })
+
+    lambda_mapping_Zt <- mappingunwrapping(mappings, "mapping_component")
+
+    if (!is.null(factor_interactions)) {
+      # Extra loadings needed
+      extra_lambdas <- extend_lambda(factor_interactions)
+
+      # Add indices in the right place in lambda_mapping_Zt
+      mlm <- max(lambda_mapping_Zt, na.rm = TRUE)
+      lambda_mapping_Zt <- lapply(lambda_mapping_Zt, function(x) {
+        c(x, extra_lambdas[[x + 2L]] + mlm)
       })
 
-      lambda_mapping_Zt <- mappingunwrapping(mappings, "mapping_component")
+      lambda_mapping_Zt_covs <- mappingunwrapping(
+        mappings, "mapping_component_covs",
+        function(...) list(...),
+        recursive = FALSE
+      )
 
-      if (!is.null(fi)) {
-        # Extra loadings needed
-        extra_lambdas <- extend_lambda(fi)
+      # Add indices to lambda matrix
+      lambda <- rbind(
+        lambda,
+        matrix(sort(unique(unlist(extra_lambdas)) + mlm), ncol = 1) + 2L
+      )
 
-        # Add indices in the right place in lambda_mapping_Zt
-        mlm <- max(lambda_mapping_Zt, na.rm = TRUE)
-        lambda_mapping_Zt <- lapply(lambda_mapping_Zt, function(x) {
-          c(x, extra_lambdas[[x + 2L]] + mlm)
-        })
-
-        lambda_mapping_Zt_covs <- mappingunwrapping(
-          mappings, "mapping_component_covs",
-          function(...) list(...),
-          recursive = FALSE
-        )
-
-        # Add indices to lambda matrix
-        lambda[[f]] <- rbind(
-          lambda[[f]],
-          matrix(sort(unique(unlist(extra_lambdas)) + mlm), ncol = 1) + 2L
-        )
-
-        # Go through lambda_mapping_Zt_covs and make sure it matches
-        # lambda_mapping_Zt
-        mplist <- squeeze_mappings(lambda_mapping_Zt, lambda_mapping_Zt_covs)
-        lambda_mapping_Zt <- mplist$lambda_mapping_Zt
-        lambda_mapping_Zt_covs <- mplist$lambda_mapping_Zt_covs
-      } else {
-        lambda_mapping_Zt <- lambda_mapping_Zt[!is.na(lambda_mapping_Zt)]
-        stopifnot(length(lambda_mapping_Zt) == sum(diff(Zt@p)))
-      }
+      # Go through lambda_mapping_Zt_covs and make sure it matches
+      # lambda_mapping_Zt
+      mplist <- squeeze_mappings(lambda_mapping_Zt, lambda_mapping_Zt_covs)
+      lambda_mapping_Zt <- mplist$lambda_mapping_Zt
+      lambda_mapping_Zt_covs <- mplist$lambda_mapping_Zt_covs
+    } else {
+      lambda_mapping_Zt <- lambda_mapping_Zt[!is.na(lambda_mapping_Zt)]
+      stopifnot(length(lambda_mapping_Zt) == sum(diff(Zt@p)))
     }
   }
+
+
+
 
   list(
     lambda_mapping_X = lambda_mapping_X,

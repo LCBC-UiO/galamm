@@ -2,9 +2,12 @@ extract_optim_parameters <- function(object) {
   UseMethod("extract_optim_parameters")
 }
 
-#' Extract parameters from fitted model for use as initial values
+#' @title Extract parameters from fitted model for use as initial values
 #'
-#' This function extracts parameter values from a fitted model object in a form
+#' @srrstats {G1.4} Function documented with roxygen2.
+#' @srrstats {G2.1a} Expected data types provided for all inputs.
+#'
+#' @description This function extracts parameter values from a fitted model object in a form
 #' that can be directly provided as initial values for a new model fit.
 #'
 #' @aliases extract_optim_parameters extract_optim_parameters.galamm

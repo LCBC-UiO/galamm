@@ -1,7 +1,11 @@
-#' Control values for galamm fit
+#' @title Control values for galamm fit
 #'
-#' This function can be called for controling the optimization procedure used
-#' when fitting GALAMMs using \code{\link{galamm}}.
+#' @srrstats {G1.4} Function documented with roxygen2.
+#' @description This function can be called for controling the optimization
+#' procedure used when fitting GALAMMs using \code{\link{galamm}}.
+#'
+#' @srrstats {G2.3b} Argument "method" is case sensitive, as documented
+#'   below.
 #'
 #' @param optim_control List containing optimization parameters. If \code{method
 #'   = "L-BFGS-B"} it is passed on to \code{stats::optim}'s \code{control}
@@ -15,14 +19,15 @@
 #'   which uses the limited memory Broyden-Fletcher-Goldfarb-Shanno algorithm
 #'   with box constrained as implemented in \code{stats::optim}. The other
 #'   options is \code{"Nelder-Mead"}, which calls the Nelder-Mead algorithm with
-#'   box constraints implemented in \code{lme4::Nelder_Mead}.
+#'   box constraints implemented in \code{lme4::Nelder_Mead}. The argument is
+#'   case sensitive.
 #'
 #' @param maxit_conditional_modes Maximum number of iterations in penalized
 #'   iteratively reweighted least squares algorithm. Ignored if \code{family =
 #'   "gaussian"} for all observations, since then a single step gives the exact
 #'   answer.
 #'
-#' @param pwirls_tol_abs Absolute convergence criterion for penalized
+#' @param pirls_tol_abs Absolute convergence criterion for penalized
 #'   iteratively reweighted least squares algorithm. Defaults to 0.01, which
 #'   means that when the reduction in marginal likelihood between two iterations
 #'   is below 0.01, the iterations stop.
@@ -65,7 +70,7 @@
 galamm_control <- function(optim_control = list(),
                            method = c("L-BFGS-B", "Nelder-Mead"),
                            maxit_conditional_modes = 10,
-                           pwirls_tol_abs = .01,
+                           pirls_tol_abs = .01,
                            reduced_hessian = FALSE) {
   if ("trace" %in% names(optim_control)) {
     if (length(optim_control$trace) != 1L || any(optim_control$trace < 0)) {
@@ -77,8 +82,8 @@ galamm_control <- function(optim_control = list(),
     stop("reduced_hessian should be a logical of length one")
   }
 
-  if (pwirls_tol_abs <= 0) {
-    stop("pwirls_tol_abs should be a strictly positive number")
+  if (pirls_tol_abs <= 0) {
+    stop("pirls_tol_abs should be a strictly positive number")
   }
 
   if (length(maxit_conditional_modes) != 1 || maxit_conditional_modes <= 0) {
@@ -118,7 +123,7 @@ galamm_control <- function(optim_control = list(),
     optim_control = optim_control,
     method = method,
     maxit_conditional_modes = maxit_conditional_modes,
-    pwirls_tol_abs = pwirls_tol_abs,
+    pirls_tol_abs = pirls_tol_abs,
     reduced_hessian = reduced_hessian
   )
 }
@@ -126,10 +131,20 @@ galamm_control <- function(optim_control = list(),
 
 #' Constructor method for galamm_control objects
 #'
-#' @inherit galamm_control
+#' @param optim_control List of control values passed on to optimization
+#'   method.
+#' @param method Character specifying the optimization method.
+#' @param pirls_tol_abs Decimal number specifying the absolute tolerance
+#'   of penalized iteratively reweighted least squares algorithm.
+#' @param maxit_conditional_modes Integer specifying the maximum number of
+#'   iterations to find conditional modes of random effect.
+#' @param reduced_hessian Logical specifying whether to compute the full or
+#'   reduced Hessian matrix.
+#'
+#' @srrstats {G1.4a} Internal function documented.
+#'
 #' @noRd
-#' @seealso [galamm_control()]
-new_galamm_control <- function(optim_control, method, pwirls_tol_abs,
+new_galamm_control <- function(optim_control, method, pirls_tol_abs,
                                maxit_conditional_modes,
                                reduced_hessian) {
   if (method == "L-BFGS-B") {
@@ -146,7 +161,7 @@ new_galamm_control <- function(optim_control, method, pwirls_tol_abs,
   ret <- list(
     method = method,
     maxit_conditional_modes = maxit_conditional_modes,
-    pwirls_tol_abs = pwirls_tol_abs,
+    pirls_tol_abs = pirls_tol_abs,
     reduced_hessian = reduced_hessian,
     optim_control = optim_control
   )

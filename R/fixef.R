@@ -2,14 +2,17 @@
 ##' @export fixef
 NULL
 
-#' Extract fixed effects from galamm objects
+#' @title Extract fixed effects from galamm objects
+#' @srrstats {G1.4} Function documented with roxygen2.
+#' @srrstats {G2.1a} Expected data types provided for all inputs.
 #'
+#' @description
 #' Extract the fixed regression coefficients.
 #'
 #' @param object An object of class \code{galamm}, returned from
 #'   \code{\link{galamm}}.
-#' @param ... Optional parameters passed on to other functions. Currently
-#' not used.
+#' @param ... Optional arguments passed on to other methods. Currently not used.
+#'
 #'
 #' @return A named \code{numeric} vector containing the requested fixed effects.
 #'

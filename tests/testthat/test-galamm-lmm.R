@@ -11,9 +11,9 @@ test_that("LMM with simple factor works", {
   mod <- galamm(
     formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
     data = IRTsub,
-    load.var = c("item"),
-    factor = list(c("abil.sid")),
-    lambda = list(irt.lam)
+    load.var = "item",
+    factor = "abil.sid",
+    lambda = irt.lam
   )
 
   expect_equal(nobs(mod), 300L)
@@ -32,21 +32,20 @@ test_that("LMM with simple factor works", {
     {
       mod1 <- galamm(
         y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
-        data = IRTsub, load.var = c("item"),
-        factor = list(c("abil.sid")), lambda = list(irt.lam)
+        data = IRTsub, load.var = "item",
+        factor = "abil.sid", lambda = irt.lam
       )
     },
     "Converting tibble"
   )
-
 
   class(IRTsub) <- c("data.table", "data.frame")
   expect_message(
     {
       mod2 <- galamm(
         y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
-        data = IRTsub, load.var = c("item"),
-        factor = list(c("abil.sid")), lambda = list(irt.lam)
+        data = IRTsub, , load.var = "item",
+        factor = "abil.sid", lambda = irt.lam
       )
     },
     "Converting data.table"
@@ -101,9 +100,9 @@ test_that("LMM with simple factor works", {
   mod2 <- galamm(
     formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
     data = IRTsub,
-    load.var = c("item"),
-    factor = list(c("abil.sid")),
-    lambda = list(irt.lam),
+    load.var = "item",
+    factor = "abil.sid",
+    lambda = irt.lam,
     start = list(
       theta = mod$parameters$parameter_estimates[mod$parameters$theta_inds],
       beta = mod$parameters$parameter_estimates[mod$parameters$beta_inds],
@@ -126,9 +125,9 @@ test_that("LMM with simple factor works with Nelder-Mead", {
   mod <- galamm(
     formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
     data = IRTsub,
-    load.var = c("item"),
-    factor = list(c("abil.sid")),
-    lambda = list(irt.lam),
+    load.var = "item",
+    factor = "abil.sid",
+    lambda = irt.lam,
     control = galamm_control(method = "Nelder-Mead")
   )
 
@@ -180,9 +179,9 @@ test_that("LMM with simple factor works with Nelder-Mead", {
   mod2 <- galamm(
     formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
     data = IRTsub,
-    load.var = c("item"),
-    factor = list(c("abil.sid")),
-    lambda = list(irt.lam),
+    load.var = "item",
+    factor = "abil.sid",
+    lambda = irt.lam,
     start = list(
       theta = mod$parameters$parameter_estimates[mod$parameters$theta_inds],
       beta = mod$parameters$parameter_estimates[mod$parameters$beta_inds],
@@ -210,9 +209,9 @@ test_that("LMM with two factors works", {
   kyps_model <- galamm(
     formula = form,
     data = dat,
-    factor = list(c("ms", "hs")),
+    factor = c("ms", "hs"),
     load.var = "time",
-    lambda = list(kyps.lam)
+    lambda = kyps.lam
   )
 
   expect_equal(kyps_model$model$loglik, -33.7792632108483)
@@ -269,9 +268,9 @@ test_that("LMM with two raters works", {
     formula = response ~ 0 + item + (1 | class) +
       (0 + teacher1 + teacher2 | tch),
     data = dat,
-    lambda = list(judge.lam),
+    lambda = judge.lam,
     load.var = "item",
-    factor = list(c("teacher1", "teacher2"))
+    factor = c("teacher1", "teacher2")
   )
 
   expect_equal(deviance(judge_galamm), 2158.16155409666)
@@ -338,12 +337,12 @@ test_that("Complex LMM works", {
       (0 + trait1.t + trait2.t + trait1.s + trait2.s | stu) +
       (0 + teacher1 + teacher2 | tch),
     data = JUDGEsim,
-    lambda = list(judge.lam),
+    lambda = judge.lam,
     load.var = "item",
-    factor = list(c(
+    factor = c(
       "teacher1", "teacher2", "trait1.t",
       "trait2.t", "trait1.s", "trait2.s"
-    ))
+    )
   )
 
   expect_equal(judge_galamm$model$loglik, -56553.2785661794)

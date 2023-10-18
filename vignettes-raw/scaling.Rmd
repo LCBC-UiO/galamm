@@ -16,7 +16,8 @@ vignette: >
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.path = ""
+  fig.path = "",
+  error = FALSE
 )
 ```
 
@@ -44,13 +45,13 @@ data(KYPSsim, package = "PLmixed")
 We start by defining the necessary arguments to provide to galamm.
 
 ```{r}
-loading_matrix <- list(rbind(
+loading_matrix <- rbind(
   c(1, 0),
   c(NA, 0),
   c(NA, 1),
   c(NA, NA)
-))
-factors <- list(c("ms", "hs"))
+)
+factors <- c("ms", "hs")
 load.var <- "time"
 form <- esteem ~ time + (0 + ms | mid) + (0 + hs | hid) + (1 | sid)
 ```
@@ -219,8 +220,8 @@ times_to_convergence <- Map(function(n, r) {
     data = IRTsim,
     family = binomial,
     load.var = "item",
-    factor = list("ability"),
-    lambda = list(matrix(c(1, NA, NA, NA, NA), ncol = 1))
+    factor = "ability",
+    lambda = matrix(c(1, NA, NA, NA, NA), ncol = 1)
   )
   t2 <- Sys.time()
   
@@ -287,8 +288,8 @@ times_to_convergence <- Map(function(n, r) {
       (0 + loading | id / timepoint),
     data = dat,
     load.var = "item",
-    lambda = list(matrix(c(1, NA, NA), ncol = 1)),
-    factor = list("loading")
+    lambda = matrix(c(1, NA, NA), ncol = 1),
+    factor = "loading"
   )
   t2 <- Sys.time()
   
@@ -356,8 +357,8 @@ times_to_convergence <- Map(function(n, r) {
       data = dat,
       family = binomial,
       load.var = "item",
-      lambda = list(matrix(c(1, NA), ncol = 1)),
-      factor = list("loading")
+      lambda = matrix(c(1, NA), ncol = 1),
+      factor = "loading"
     )
     t2 <- Sys.time()
     t2 - t1

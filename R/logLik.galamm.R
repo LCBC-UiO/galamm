@@ -1,5 +1,5 @@
-#' Extract Log-Likelihood of galamm Object
-#'
+#' @title Extract Log-Likelihood of galamm Object
+#' @srrstats {G1.4} Function documented with roxygen2.
 #' @param object Object
 #' @param ... Other arguments
 #'
@@ -33,7 +33,10 @@ logLik.galamm <- function(object, ...) {
 }
 
 
-#' Extract deviance of galamm object
+#' @title Extract deviance of galamm object
+#'
+#' @srrstats {G1.4} Function documented with roxygen2.
+#' @srrstats {G2.1a} Expected data types provided for all inputs.
 #'
 #' @param object Object of class \code{galamm}, returned from
 #'   \code{\link{galamm}}.

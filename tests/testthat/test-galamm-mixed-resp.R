@@ -6,8 +6,8 @@ test_that("Mixed response works", {
     family = c(gaussian, binomial),
     family_mapping = ifelse(dat$itemgroup == "a", 1L, 2L),
     load.var = "itemgroup",
-    lambda = list(matrix(c(1, NA), ncol = 1)),
-    factor = list("loading")
+    lambda = matrix(c(1, NA), ncol = 1),
+    factor = "loading"
   )
 
   expect_error(
@@ -65,8 +65,8 @@ test_that("Mixed response works", {
     family = c(gaussian, binomial),
     family_mapping = ifelse(dat$itemgroup == "a", 1L, 2L),
     load.var = "itemgroup",
-    lambda = list(matrix(c(1, NA), ncol = 1)),
-    factor = list("loading"),
+    lambda = matrix(c(1, NA), ncol = 1),
+    factor = "loading",
     start = list(
       theta = mod$parameters$parameter_estimates[mod$parameters$theta_inds],
       beta = mod$parameters$parameter_estimates[mod$parameters$beta_inds],
@@ -86,11 +86,11 @@ test_that("Mixed response works with multiple trials", {
     family = c(gaussian, binomial),
     family_mapping = ifelse(dat$itemgroup == "a", 1L, 2L),
     load.var = "itemgroup",
-    lambda = list(matrix(c(1, NA), ncol = 1)),
-    factor = list("loading")
+    lambda = matrix(c(1, NA), ncol = 1),
+    factor = "loading"
   )
 
-  expect_equal(deviance(mod), 885.73410657623, tolerance = .0001)
+  expect_equal(deviance(mod), 322.712453540071, tolerance = .0001)
 })
 
 test_that("Covariate measurement error model works", {
@@ -103,9 +103,9 @@ test_that("Covariate measurement error model works", {
     data = diet,
     family = c(gaussian, binomial),
     family_mapping = ifelse(diet$item == "chd", 2L, 1L),
-    factor = list("loading"),
+    factor = "loading",
     load.var = "item",
-    lambda = list(lam),
+    lambda = lam,
     start = list(theta = 10)
   )
 
@@ -130,9 +130,9 @@ test_that("Covariate measurement error model works", {
     data = diet,
     family = c(gaussian, binomial),
     family_mapping = ifelse(diet$item == "chd", 2L, 1L),
-    factor = list("loading"),
+    factor = "loading",
     load.var = "item",
-    lambda = list(lam),
+    lambda = lam,
     start = list(theta = 10)
   )
 

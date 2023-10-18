@@ -116,6 +116,7 @@ To see how galamm is used in practice, take a look at the vignettes describing m
 - [Linear mixed models with factor structures](https://lcbc-uio.github.io/galamm/articles/lmm_factor.html).
 - [Generalized linear mixed models with factor structures](https://lcbc-uio.github.io/galamm/articles/glmm_factor.html).
 - [Linear mixed models with heteroscedastic residuals](https://lcbc-uio.github.io/galamm/articles/lmm_heteroscedastic.html).
+- [Models with interactions between latent and observed covariates](https://lcbc-uio.github.io/galamm/articles/latent_observed_interaction.html).
 - [Mixed models with mixed response types](https://lcbc-uio.github.io/galamm/articles/mixed_response.html).
 - [Generalized additive mixed models with factor structures](https://lcbc-uio.github.io/galamm/articles/semiparametric.html).
 

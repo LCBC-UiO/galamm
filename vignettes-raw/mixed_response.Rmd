@@ -16,7 +16,8 @@ vignette: >
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.path = ""
+  fig.path = "",
+  error = FALSE
 )
 ```
 
@@ -87,8 +88,8 @@ mixed_resp <- galamm(
   family = families,
   family_mapping = family_mapping,
   load.var = "itemgroup",
-  lambda = list(loading_matrix),
-  factor = list("level")
+  lambda = loading_matrix,
+  factor = "level"
 )
 ```
 
@@ -225,9 +226,9 @@ mod <- galamm(
   data = diet,
   family = families,
   family_mapping = family_mapping,
-  factor = list("loading"),
+  factor = "loading",
   load.var = "item",
-  lambda = list(loading_matrix)
+  lambda = loading_matrix
 )
 ```
 
@@ -247,9 +248,9 @@ mod <- galamm(
   data = diet,
   family = families,
   family_mapping = family_mapping,
-  factor = list("loading"),
+  factor = "loading",
   load.var = "item",
-  lambda = list(loading_matrix),
+  lambda = loading_matrix,
   control = galamm_control(optim_control = list(trace = 3))
 )
 ```
@@ -263,9 +264,9 @@ mod <- galamm(
   data = diet,
   family = families,
   family_mapping = family_mapping,
-  factor = list("loading"),
+  factor = "loading",
   load.var = "item",
-  lambda = list(loading_matrix),
+  lambda = loading_matrix,
   start = list(theta = 10),
   control = galamm_control(optim_control = list(trace = 3))
 )
@@ -306,9 +307,9 @@ mod0 <- galamm(
   data = diet,
   family = families,
   family_mapping = family_mapping,
-  factor = list("loading"),
+  factor = "loading",
   load.var = "item",
-  lambda = list(loading_matrix),
+  lambda = loading_matrix,
   start = list(theta = 10),
   control = galamm_control(optim_control = list(trace = 3))
 )

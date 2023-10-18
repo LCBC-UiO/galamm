@@ -4,7 +4,7 @@
 \alias{formula.galamm}
 \title{Extract formula from fitted galamm object}
 \usage{
-formula.galamm(x)
+\method{formula}{galamm}(x)
 }
 \arguments{
 \item{x}{Object of class \code{galamm} returned from \code{\link{galamm}}.}
@@ -34,9 +34,9 @@ mod <- galamm(
   data = mresp,
   family = families,
   family_mapping = family_mapping,
-  factor = list("level"),
+  factor = "level",
   load.var = "itemgroup",
-  lambda = list(loading_matrix)
+  lambda = loading_matrix
 )
 
 # Formula

@@ -1,5 +1,7 @@
 # galamm (development versions)
 
+- BREAKING CHANGE: argument "factor", "factor_interaction" and "lambda" to 
+  galamm should no longer be enclosed in a list.
 - A vignette investigating computational scalability has been added.
 - formula.galamm() method has been added, inheriting from stats::formula().
 - nobs.galamm() function is now exported.

@@ -7,9 +7,11 @@
 \method{sigma}{galamm}(object, ...)
 }
 \arguments{
-\item{object}{An object of class \code{galamm}.}
+\item{object}{An object of class \code{galamm}, returned from
+\code{\link{galamm}}.}
 
-\item{...}{Other optional arguments. Currently not used.}
+\item{...}{Optional parameters passed on to other methods. Currently not
+used.}
 }
 \value{
 The square root of one or more dispersion parameters.

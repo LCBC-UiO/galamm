@@ -8,7 +8,7 @@ galamm_control(
   optim_control = list(),
   method = c("L-BFGS-B", "Nelder-Mead"),
   maxit_conditional_modes = 10,
-  pwirls_tol_abs = 0.01,
+  pirls_tol_abs = 0.01,
   reduced_hessian = FALSE
 )
 }
@@ -25,14 +25,15 @@ maximizing the marginal log-likelihood. The default is \code{"L-BFGS-B"},
 which uses the limited memory Broyden-Fletcher-Goldfarb-Shanno algorithm
 with box constrained as implemented in \code{stats::optim}. The other
 options is \code{"Nelder-Mead"}, which calls the Nelder-Mead algorithm with
-box constraints implemented in \code{lme4::Nelder_Mead}.}
+box constraints implemented in \code{lme4::Nelder_Mead}. The argument is
+case sensitive.}
 
 \item{maxit_conditional_modes}{Maximum number of iterations in penalized
 iteratively reweighted least squares algorithm. Ignored if \code{family =
   "gaussian"} for all observations, since then a single step gives the exact
 answer.}
 
-\item{pwirls_tol_abs}{Absolute convergence criterion for penalized
+\item{pirls_tol_abs}{Absolute convergence criterion for penalized
 iteratively reweighted least squares algorithm. Defaults to 0.01, which
 means that when the reduction in marginal likelihood between two iterations
 is below 0.01, the iterations stop.}
@@ -49,8 +50,8 @@ Object of class \code{galamm_control}, which typically will be
 provided as an argument to \code{\link{galamm}}.
 }
 \description{
-This function can be called for controling the optimization procedure used
-when fitting GALAMMs using \code{\link{galamm}}.
+This function can be called for controling the optimization
+procedure used when fitting GALAMMs using \code{\link{galamm}}.
 }
 \examples{
 # Define control object with quite a high degree of verbosity (trace = 6)

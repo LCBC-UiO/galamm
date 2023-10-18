@@ -10,8 +10,8 @@ test_that("Logistic GLMM with simple factor works", {
     data = dat,
     family = binomial,
     load.var = "item",
-    factor = list("abil.sid"),
-    lambda = list(irt.lam)
+    factor = "abil.sid",
+    lambda = irt.lam
   )
 
   expect_snapshot(summary(mod))

@@ -111,7 +111,7 @@ logLikObject<T> logLik(
         goto jump; // go all the way down to after the loop
       }
     }
-    // Cannot improve likelihood more in this PWIRLS iteration
+    // Cannot improve likelihood more in this PIRLS iteration
     if(abs(lossvalue_prev - lossvalue_new) < parlist.lossvalue_tol){
       break;
     }

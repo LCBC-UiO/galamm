@@ -1,10 +1,15 @@
-#' Calculate variance-covariance matrix for GALAMM fit
+#' @title Calculate variance-covariance matrix for GALAMM fit
+#'
+#' @srrstats {G1.4} Function documented with roxygen2.
+#' @srrstats {G2.3b} Argument "parm" is case sensitive, as is documented here.
+#' @srrstats {G2.1a} Expected data types provided for all inputs.
 #'
 #' @param object Object of class \code{galamm} returned from
 #'   \code{\link{galamm}}.
 #' @param parm The parameters for which the variance-covariance matrix should be
 #'   calculated. Character vector with one or more of the elements "theta",
-#'   "beta", "lambda", and "weights". Can also be an integer vector.
+#'   "beta", "lambda", and "weights". Can also be an integer vector. When given
+#'   as a character, it must be in only lowercase letters.
 #' @param ... Further arguments passed on to other methods. Currently not used.
 #'
 #' @return A variance-covariance matrix.
@@ -57,6 +62,8 @@ vcov.galamm <- function(object, parm = "beta", ...) {
 #' @param parm Either an integer vector, in which it is simply returned, or
 #'   a character vector with one or more of the elements \code{"theta"},
 #'   \code{"beta"}, \code{"lambda"}, and \code{"weights"}.
+#'
+#' @srrstats {G1.4a} Internal function documented.
 #'
 #' @return A numeric vector of indices for the parameters.
 #' @noRd

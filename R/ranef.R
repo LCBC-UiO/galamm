@@ -2,7 +2,10 @@
 ##' @export ranef
 NULL
 
-#' Extract random effects from galamm object.
+#' @title Extract random effects from galamm object.
+#'
+#' @srrstats {G1.4} Function documented with roxygen2.
+#' @srrstats {G2.1a} Expected data types provided for all inputs.
 #'
 #' @param object An object of class \code{galamm}, returned from
 #'   \code{\link{galamm}}.

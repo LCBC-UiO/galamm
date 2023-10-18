@@ -14,10 +14,12 @@
 #'   replaced by \code{1}s.
 #' @noRd
 #'
+#' @srrstats {G1.4a} Internal function documented.
+#'
 #' @examples
 #' data(KYPSsim, package = "PLmixed")
-#' loading_matrix <- list(rbind(c(1, 0), c(NA, 0), c(NA, 1), c(NA, NA)))
-#' factors <- list(c("ms", "hs"))
+#' loading_matrix <- rbind(c(1, 0), c(NA, 0), c(NA, 1), c(NA, NA))
+#' factors <- c("ms", "hs")
 #' load.var <- "time"
 #' res <- setup_factor(load.var, loading_matrix, factors, KYPSsim)
 #'
@@ -26,43 +28,42 @@
 #' # NA's in the original formulation have been replaced by 1's:
 #' res$lambda
 setup_factor <- function(load.var, lambda, factor, data) {
-  if (!is.null(load.var) && (!is.character(load.var))) {
+  if (!is.null(load.var) && (!is.character(load.var)) || length(load.var) > 1) {
     stop("load.var must be a character of length one.")
   }
 
-  parameter_index <- 2
-
-  for (lv in load.var) {
-    eval(parse(text = paste0("data$", lv, "<- factor(data$", lv, ")")))
+  if (is.null(factor)) {
+    return(list(data = data, lambda = lambda))
   }
 
-  for (i in seq_along(factor)) {
-    lv <- load.var[[i]]
-    lambda[[i]][is.na(lambda[[i]])] <-
-      seq(from = parameter_index, length.out = sum(is.na(lambda[[i]])))
-    colnames(lambda[[i]]) <- factor[[i]]
+  eval(parse(text = paste0(
+    "data$", load.var,
+    "<- factor(data$", load.var, ")"
+  )))
 
-    if (any(factor[[i]] %in% colnames(data))) {
-      stop("Factor already a column in data.")
-    }
-    for (j in seq_along(factor[[i]])) {
-      if (length(unique(data[, lv])) != length(lambda[[i]][, j])) {
-        stop(
-          "lambda matrix must contain one row ",
-          "for each element in load.var"
-        )
-      }
-      eval(parse(text = paste("data$", factor[[i]][[j]], "<-1")))
-      rows_to_zero <-
-        data[, lv] %in% levels(data[, lv])[lambda[[i]][, j] == 0]
-      eval(
-        parse(
-          text =
-            paste("data$", factor[[i]][[j]], "[rows_to_zero] <- 0")
-        )
+  lambda[is.na(lambda)] <-
+    seq(from = 2, length.out = sum(is.na(lambda)))
+  colnames(lambda) <- factor
+
+  if (any(factor %in% colnames(data))) {
+    stop("Factor already a column in data.")
+  }
+  for (j in seq_along(factor)) {
+    if (length(unique(data[, load.var])) != length(lambda[, j])) {
+      stop(
+        "lambda matrix must contain one row ",
+        "for each element in load.var"
       )
     }
-    parameter_index <- max(lambda[[i]]) + 1
+    eval(parse(text = paste("data$", factor[[j]], "<-1")))
+    rows_to_zero <-
+      data[, load.var] %in% levels(data[, load.var])[lambda[, j] == 0]
+    eval(
+      parse(
+        text =
+          paste("data$", factor[[j]], "[rows_to_zero] <- 0")
+      )
+    )
   }
 
   list(data = data, lambda = lambda)
@@ -76,6 +77,8 @@ setup_factor <- function(load.var, lambda, factor, data) {
 #'
 #' @return A list of family objects.
 #' @noRd
+#'
+#' @srrstats {G1.4a} Internal function documented.
 #'
 #' @examples
 #' # Providing a character returns a function call
@@ -113,6 +116,8 @@ setup_family <- function(family) {
 #' @param data A data frame.
 #' @param gobj A list object returned from the internal function \code{gamm4}.
 #'
+#' @srrstats {G1.4a} Internal function documented.
+#'
 #' @return A matrix with responses and number of trials.
 #' @noRd
 #'
@@ -120,7 +125,7 @@ setup_response_object <- function(family_list, family_mapping, data, gobj) {
   response_obj <- matrix(nrow = nrow(gobj$lmod$X), ncol = 2)
 
   for (i in seq_along(family_list)) {
-    f <- family_list[[i]]
+    f <- family_list[[1]]
     mf <- stats::model.frame(lme4::nobars(gobj$fake.formula),
       data = data[family_mapping == i, ]
     )
@@ -159,6 +164,8 @@ setup_response_object <- function(family_list, family_mapping, data, gobj) {
 #' @return The constant term in the loglikelihood function, one for each family.
 #' @noRd
 #'
+#' @srrstats {G1.4a} Internal function documented.
+#'
 #' @examples
 #' # Binomial
 #' y1 <- rbinom(10, size = 3, prob = .5)
@@ -179,17 +186,17 @@ setup_response_object <- function(family_list, family_mapping, data, gobj) {
 find_k <- function(family_txt, family_mapping, y, trials) {
   k <- numeric(length(family_txt))
   for (i in seq_along(k)) {
-    if (family_txt[[i]] == "gaussian") {
-      k[[i]] <- 0
-    } else if (family_txt[[i]] == "binomial") {
+    if (family_txt[[1]] == "gaussian") {
+      k[[1]] <- 0
+    } else if (family_txt[[1]] == "binomial") {
       trials0 <- trials[family_mapping == i]
       y0 <- y[family_mapping == i]
-      k[[i]] <-
+      k[[1]] <-
         sum(lgamma(trials0 + 1) - lgamma(y0 + 1) - lgamma(trials0 - y0 + 1))
-    } else if (family_txt[[i]] == "poisson") {
+    } else if (family_txt[[1]] == "poisson") {
       trials0 <- trials[family_mapping == i]
       y0 <- y[family_mapping == i]
-      k[[i]] <- -sum(lgamma(y0 + 1))
+      k[[1]] <- -sum(lgamma(y0 + 1))
     }
   }
   k
@@ -206,6 +213,8 @@ find_k <- function(family_txt, family_mapping, y, trials) {
 #'
 #' @return A numeric vector with initial values for all parameters.
 #' @noRd
+#'
+#' @srrstats {G1.4a} Internal function documented.
 #'
 set_initial_values <- function(
     gobj, start, beta_inds, lambda_inds, weights_inds) {
@@ -254,6 +263,8 @@ set_initial_values <- function(
 #' When running \code{devtools::release()} for submitting to CRAN, questions
 #' here are asked.
 #'
+#' @srrstats {G1.4a} Internal function documented.
+#'
 #' @noRd
 #'
 release_questions <- function() {
@@ -267,6 +278,8 @@ release_questions <- function() {
 #'   GALAMM_EXTENDED_TESTS is 'true' (test not skipped); otherwise, returns
 #'   `testthat::skip()`
 #' @noRd
+#'
+#' @srrstats {G1.4a} Internal function documented.
 #'
 #' @author This function comes from the canaper package, written by Joel Nitta.
 #'

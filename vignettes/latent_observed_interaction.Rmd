@@ -80,14 +80,14 @@ It can be instructive to start by considering a model in which we fix $\\lambda_
 
 
 ```r
-lambda <- list(matrix(c(1, NA, NA), ncol = 1))
+lambda <- matrix(c(1, NA, NA), ncol = 1)
 
 mod0 <- galamm(
   formula = y ~ type + x:response + (0 + loading | id),
   data = latent_covariates,
   load.var = "type",
   lambda = lambda,
-  factor = list("loading")
+  factor = "loading"
 )
 ```
 
@@ -169,7 +169,7 @@ We specify the factor interactions with a list of lists. The reason for this not
 
 
 ```r
-factor_interactions <- list(list(~ 1, ~ 1, ~ x))
+factor_interactions <- list(~ 1, ~ 1, ~ x)
 ```
 
 This specifies that for the first two rows, there are no covariates, but for the third row, we want a linear regression with $x$ as covariate. Next, we specify the loading matrix **without** the interaction parameter, i.e., we reuse the `lambda` object that was specified for `mod0` above. This lets us fit the model as follows:
@@ -181,7 +181,7 @@ mod <- galamm(
   data = latent_covariates,
   load.var = "type",
   lambda = lambda,
-  factor = list("loading"),
+  factor = "loading",
   factor_interactions = factor_interactions
 )
 ```
@@ -245,7 +245,7 @@ We can also try to add interactions between the $x^{2}$ and $\eta$. We first upd
 
 
 ```r
-factor_interactions <- list(list(~ 1, ~ 1, ~ x + I(x^2)))
+factor_interactions <- list(~ 1, ~ 1, ~ x + I(x^2))
 ```
 
 Then we fit the model as before:
@@ -257,7 +257,7 @@ mod2 <- galamm(
   data = latent_covariates,
   load.var = "type",
   lambda = lambda,
-  factor = list("loading"),
+  factor = "loading",
   factor_interactions = factor_interactions
 )
 ```
@@ -324,7 +324,7 @@ For these data we add a random intercept for the response terms, in addition to 
 
 
 ```r
-factor_interactions <- list(list(~ 1, ~ 1, ~ x))
+factor_interactions <- list(~ 1, ~ 1, ~ x)
 ```
 
 Next we fit the model using `galamm`. The difference to notice here is that we added `(0 + response | id)` to the formula. This implies that for observations that are responses, for which `response = 1`, there should be a random intercept per subject.
@@ -336,7 +336,7 @@ mod <- galamm(
   data = latent_covariates_long,
   load.var = "type",
   lambda = lambda,
-  factor = list("loading"),
+  factor = "loading",
   factor_interactions = factor_interactions
 )
 ```
@@ -401,7 +401,7 @@ mod <- galamm(
   data = dat,
   load.var = "type",
   lambda = lambda,
-  factor = list("loading"),
+  factor = "loading",
   factor_interactions = factor_interactions
 )
 ```

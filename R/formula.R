@@ -1,5 +1,6 @@
-#' Extract formula from fitted galamm object
+#' @title Extract formula from fitted galamm object
 #'
+#' @srrstats {G1.4} Function documented with roxygen2.
 #' @param x Object of class \code{galamm} returned from \code{\link{galamm}}.
 #'
 #' @return The formula used to fit the model.
@@ -26,9 +27,9 @@
 #'   data = mresp,
 #'   family = families,
 #'   family_mapping = family_mapping,
-#'   factor = list("level"),
+#'   factor = "level",
 #'   load.var = "itemgroup",
-#'   lambda = list(loading_matrix)
+#'   lambda = loading_matrix
 #' )
 #'
 #' # Formula

@@ -8,9 +8,10 @@ test_that("wrong input is handled properly", {
       data = dat,
       family = binomial,
       load.var = "item",
-      lambda = list(matrix(c(1, NA, NA), ncol = 1)),
-      factor = list("loading")
-    )
+      lambda = matrix(c(1, NA, NA), ncol = 1),
+      factor = "loading"
+    ),
+    "lambda matrix must contain one row for each element in load.var"
   )
 
   expect_error(
@@ -20,8 +21,8 @@ test_that("wrong input is handled properly", {
       data = dat,
       family = binomial,
       load.var = "item",
-      lambda = list(matrix(c(1, NA), ncol = 1)),
-      factor = list("loading"),
+      lambda = matrix(c(1, NA), ncol = 1),
+      factor = "loading",
       start = list(phi = 1)
     ),
     "Unknown names in initial value list"
@@ -34,8 +35,8 @@ test_that("wrong input is handled properly", {
       data = dat,
       family = binomial,
       load.var = "item",
-      lambda = list(matrix(c(1, NA), ncol = 1)),
-      factor = list("loading"),
+      lambda = matrix(c(1, NA), ncol = 1),
+      factor = "loading",
       start = list(theta = 1)
     ),
     "Wrong number of elements"
@@ -48,8 +49,8 @@ test_that("wrong input is handled properly", {
       data = dat,
       family = binomial,
       load.var = "item",
-      lambda = list(matrix(c(1, NA), ncol = 1)),
-      factor = list("loading"),
+      lambda = matrix(c(1, NA), ncol = 1),
+      factor = "loading",
       start = list(beta = rep(1, 10))
     ),
     "Wrong number of elements"
@@ -62,8 +63,8 @@ test_that("wrong input is handled properly", {
       data = dat,
       family = binomial,
       load.var = "item",
-      lambda = list(matrix(c(1, NA), ncol = 1)),
-      factor = list("loading"),
+      lambda = matrix(c(1, NA), ncol = 1),
+      factor = "loading",
       start = list(lambda = rep(1, 5))
     ),
     "Wrong number of elements"
@@ -76,8 +77,8 @@ test_that("wrong input is handled properly", {
       data = dat,
       family = binomial,
       load.var = "item",
-      lambda = list(matrix(c(1, NA), ncol = 1)),
-      factor = list("loading"),
+      lambda = matrix(c(1, NA), ncol = 1),
+      factor = "loading",
       start = list(weights = rep(1, 5))
     ),
     "Wrong number of elements"
@@ -92,7 +93,6 @@ test_that("wrong input is handled properly", {
     "Multiple grouping terms in weights not yet implemented."
   )
 
-
   newdat <- dat
   newdat$loading <- 1
   expect_error(
@@ -102,14 +102,15 @@ test_that("wrong input is handled properly", {
       data = newdat,
       family = binomial,
       load.var = "item",
-      lambda = list(matrix(c(1, NA, NA), ncol = 1)),
-      factor = list("loading")
+      lambda = matrix(c(1, NA, NA), ncol = 1),
+      factor = "loading"
     ),
     "Factor already a column in data"
   )
 
   expect_error(
-    mod <- galamm(formula = y ~ (1 | id), data = subset(dat, FALSE))
+    mod <- galamm(formula = y ~ (1 | id), data = subset(dat, FALSE)),
+    "No data, nothing to do."
   )
 
   expect_error(
@@ -155,20 +156,20 @@ test_that("wrong input is handled properly", {
     {
       mod <- galamm(
         formula = y ~ x + (1 | id), data = dat, family = gaussian,
-        control = galamm_control(pwirls_tol_abs = 0)
+        control = galamm_control(pirls_tol_abs = 0)
       )
     },
-    "pwirls_tol_abs should be a strictly positive number"
+    "pirls_tol_abs should be a strictly positive number"
   )
 
   expect_error(
     {
       mod <- galamm(
         formula = y ~ x + (1 | id), data = dat, family = gaussian,
-        control = galamm_control(pwirls_tol_abs = -.01)
+        control = galamm_control(pirls_tol_abs = -.01)
       )
     },
-    "pwirls_tol_abs should be a strictly positive number"
+    "pirls_tol_abs should be a strictly positive number"
   )
 
   expect_error(
@@ -218,7 +219,7 @@ test_that("wrong input is handled properly", {
         load.var = 1
       )
     },
-    "must have the same length"
+    "load.var must be NULL or a character of length one"
   )
 
   expect_error(
@@ -228,7 +229,7 @@ test_that("wrong input is handled properly", {
         load.var = letters
       )
     },
-    "must have the same length"
+    "load.var must be NULL or a character of length one"
   )
 })
 
@@ -284,8 +285,9 @@ test_that("multiple factors and factors in fixed effects are allowed", {
     esteem ~ as.factor(time) + (0 + hs | hid)
       + (0 + ms | mid),
     data = KYPSsim,
-    factor = list(c("ms", "hs")), load.var = c("time"),
-    lambda = list(kyps.lam),
+    factor = c("ms", "hs"),
+    load.var = c("time"),
+    lambda = kyps.lam,
     control = galamm_control(
       optim_control = list(maxit = 1),
       maxit_conditional_modes = 1
@@ -299,8 +301,8 @@ test_that("multiple factors and factors in fixed effects are allowed", {
   KYPSsim$time2 <- as.numeric(KYPSsim$time == 2)
   kyps.model <- galamm(esteem ~ 1 + ms:time2 + (1 | sid),
     data = subset(KYPSsim, time %in% c(1, 2)),
-    factor = list("ms"), load.var = c("time"),
-    lambda = list(matrix(c(1, NA))),
+    factor = "ms", load.var = "time",
+    lambda = matrix(c(1, NA)),
     control = galamm_control(
       optim_control = list(maxit = 1),
       maxit_conditional_modes = 1
@@ -341,8 +343,8 @@ test_that("multiple factors in fixed effects works", {
       (0 + 1 | id),
     data = dat,
     load.var = "item",
-    lambda = list(lmat),
-    factor = list(c("lambda1", "lambda2")),
+    lambda = lmat,
+    factor = c("lambda1", "lambda2"),
     start = list(
       theta = 0.744468091602185,
       beta = c(1.03995169865897, 1.87422267819485),
@@ -383,8 +385,8 @@ test_that("missing values are handled appropriately", {
         formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
         data = IRTsub,
         load.var = c("item"),
-        factor = list(c("abil.sid")),
-        lambda = list(irt.lam),
+        factor = c("abil.sid"),
+        lambda = irt.lam,
         na.action = "na.fail"
       )
     },
@@ -399,8 +401,8 @@ test_that("missing values are handled appropriately", {
         formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
         data = IRTsub,
         load.var = c("item"),
-        factor = list(c("abil.sid")),
-        lambda = list(irt.lam)
+        factor = c("abil.sid"),
+        lambda = irt.lam
       )
     },
     "missing values in object"
@@ -410,18 +412,18 @@ test_that("missing values are handled appropriately", {
   mod <- galamm(
     formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
     data = IRTsub,
-    load.var = c("item"),
-    factor = list(c("abil.sid")),
-    lambda = list(irt.lam),
+    load.var = "item",
+    factor = "abil.sid",
+    lambda = irt.lam,
     na.action = "na.omit"
   )
   options("na.action" = "na.omit")
   mod2 <- galamm(
     formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
     data = IRTsub,
-    load.var = c("item"),
-    factor = list(c("abil.sid")),
-    lambda = list(irt.lam)
+    load.var = "item",
+    factor = "abil.sid",
+    lambda = irt.lam
   )
 
   expect_equal(mod$model$deviance, mod2$model$deviance)
@@ -433,9 +435,9 @@ test_that("missing values are handled appropriately", {
       mod <- galamm(
         formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
         data = IRTsub,
-        load.var = c("item"),
-        factor = list(c("abil.sid")),
-        lambda = list(irt.lam)
+        load.var = "item",
+        factor = "abil.sid",
+        lambda = irt.lam,
       )
     },
     "Infinite values"
@@ -449,9 +451,9 @@ test_that("missing values are handled appropriately", {
       mod <- galamm(
         formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
         data = IRTsub,
-        load.var = c("item"),
-        factor = list(c("abil.sid")),
-        lambda = list(irt.lam)
+        load.var = "item",
+        factor = "abil.sid",
+        lambda = irt.lam,
       )
     },
     "Infinite values"
@@ -464,9 +466,9 @@ test_that("missing values are handled appropriately", {
       mod <- galamm(
         formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
         data = IRTsub,
-        load.var = c("item"),
-        factor = list(c("abil.sid")),
-        lambda = list(irt.lam)
+        load.var = "item",
+        factor = "abil.sid",
+        lambda = irt.lam,
       )
     },
     "NaN in"
@@ -480,9 +482,9 @@ test_that("edge conditions tests for data", {
       mod <- galamm(
         formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
         data = IRTsub[0, ],
-        load.var = c("item"),
-        factor = list(c("abil.sid")),
-        lambda = list(irt.lam)
+        load.var = "item",
+        factor = "abil.sid",
+        lambda = irt.lam,
       )
     },
     "No data, nothing to do."
