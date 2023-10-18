@@ -25,8 +25,8 @@
 #'   family = families,
 #'   family_mapping = family_mapping,
 #'   load.var = "itemgroup",
-#'   lambda = list(loading_matrix),
-#'   factor = list("level")
+#'   lambda = loading_matrix,
+#'   factor = "level"
 #' )
 #'
 #' # This model has two family objects

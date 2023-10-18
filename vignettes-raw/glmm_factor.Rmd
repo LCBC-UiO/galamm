@@ -16,7 +16,8 @@ vignette: >
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.path = ""
+  fig.path = "",
+  error = FALSE
 )
 ```
 
@@ -83,8 +84,8 @@ mod <- galamm(
   data = IRTsim,
   family = binomial,
   load.var = "item",
-  factor = list("ability"),
-  lambda = list(loading_matrix)
+  factor = "ability",
+  lambda = loading_matrix
 )
 ```
 
@@ -150,8 +151,8 @@ galamm_mod_trials <- galamm(
   data = dat,
   family = binomial,
   load.var = "item",
-  factor = list("ability"),
-  lambda = list(loading_matrix)
+  factor = "ability",
+  lambda = loading_matrix
 )
 ```
 

@@ -16,8 +16,8 @@
 #'
 #' @examples
 #' data(KYPSsim, package = "PLmixed")
-#' loading_matrix <- list(rbind(c(1, 0), c(NA, 0), c(NA, 1), c(NA, NA)))
-#' factors <- list(c("ms", "hs"))
+#' loading_matrix <- rbind(c(1, 0), c(NA, 0), c(NA, 1), c(NA, NA))
+#' factors <- c("ms", "hs")
 #' load.var <- "time"
 #' res <- setup_factor(load.var, loading_matrix, factors, KYPSsim)
 #'

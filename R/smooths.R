@@ -47,8 +47,8 @@ NULL
 #'   formula = y ~ 0 + item + sl(x, k = 4, factor = "loading"),
 #'   data = dat,
 #'   load.var = "item",
-#'   lambda = list(loading_matrix),
-#'   factor = list("loading")
+#'   lambda = loading_matrix,
+#'   factor = "loading"
 #' )
 #'
 #' # Model with four cubic regression splines as basis functions
@@ -57,8 +57,8 @@ NULL
 #'     sl(x, bs = "cr", k = 4, factor = "loading"),
 #'   data = dat,
 #'   load.var = "item",
-#'   lambda = list(loading_matrix),
-#'   factor = list("loading")
+#'   lambda = loading_matrix,
+#'   factor = "loading"
 #' )
 #'
 sl <- function(..., factor = NULL) {
@@ -103,8 +103,8 @@ sl <- function(..., factor = NULL) {
 #'   formula = y ~ 0 + item + t2l(x, k = 4, factor = "loading"),
 #'   data = dat,
 #'   load.var = "item",
-#'   lambda = list(loading_matrix),
-#'   factor = list("loading")
+#'   lambda = loading_matrix,
+#'   factor = "loading"
 #' )
 #'
 #' # Model with four thin-plate regression splines as basis functions
@@ -113,8 +113,8 @@ sl <- function(..., factor = NULL) {
 #'     t2l(x, bs = "tp", k = 4, factor = "loading"),
 #'   data = dat,
 #'   load.var = "item",
-#'   lambda = list(loading_matrix),
-#'   factor = list("loading")
+#'   lambda = loading_matrix,
+#'   factor = "loading"
 #' )
 #'
 t2l <- function(..., factor = NULL) {

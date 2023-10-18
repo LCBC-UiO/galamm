@@ -207,9 +207,9 @@ mod <- galamm(
   data = mresp,
   family = families,
   family_mapping = family_mapping,
-  factor = list("level"),
+  factor = "level",
   load.var = "itemgroup",
-  lambda = list(loading_matrix)
+  lambda = loading_matrix
 )
 
 # Summary information
@@ -249,8 +249,8 @@ mod <- galamm(
     (0 + loading | id),
   data = dat,
   load.var = "item",
-  lambda = list(loading_matrix),
-  factor = list("loading")
+  lambda = loading_matrix,
+  factor = "loading"
 )
 
 # We can plot the estimated smooth term
@@ -259,10 +259,10 @@ plot_smooth(mod, shade = TRUE)
 
 # Interaction between observed and latent covariates ------------------------
 # Define the loading matrix
-lambda <- list(matrix(c(1, NA, NA), ncol = 1))
+lambda <- matrix(c(1, NA, NA), ncol = 1)
 
 # Define the regression functions, one for each row in the loading matrix
-factor_interactions <- list(list(~1, ~1, ~x))
+factor_interactions <- list(~1, ~1, ~x)
 
 # Fit the model
 mod <- galamm(
@@ -270,7 +270,7 @@ mod <- galamm(
   data = latent_covariates,
   load.var = "type",
   lambda = lambda,
-  factor = list("loading"),
+  factor = "loading",
   factor_interactions = factor_interactions
 )
 

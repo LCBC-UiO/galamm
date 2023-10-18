@@ -36,8 +36,8 @@ mod <- galamm(
   formula = y ~ 0 + item + t2l(x, k = 4, factor = "loading"),
   data = dat,
   load.var = "item",
-  lambda = list(loading_matrix),
-  factor = list("loading")
+  lambda = loading_matrix,
+  factor = "loading"
 )
 
 # Model with four thin-plate regression splines as basis functions
@@ -46,8 +46,8 @@ mod <- galamm(
     t2l(x, bs = "tp", k = 4, factor = "loading"),
   data = dat,
   load.var = "item",
-  lambda = list(loading_matrix),
-  factor = list("loading")
+  lambda = loading_matrix,
+  factor = "loading"
 )
 
 }

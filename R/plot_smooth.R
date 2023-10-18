@@ -47,8 +47,8 @@ plot_smooth <- function(object, ...) {
 #'     (0 + loading | id),
 #'   data = dat,
 #'   load.var = "item",
-#'   lambda = list(loading_matrix),
-#'   factor = list("loading")
+#'   lambda = loading_matrix,
+#'   factor = "loading"
 #' )
 #'
 #' # We can plot the estimated smooth term

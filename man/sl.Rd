@@ -37,8 +37,8 @@ mod <- galamm(
   formula = y ~ 0 + item + sl(x, k = 4, factor = "loading"),
   data = dat,
   load.var = "item",
-  lambda = list(loading_matrix),
-  factor = list("loading")
+  lambda = loading_matrix,
+  factor = "loading"
 )
 
 # Model with four cubic regression splines as basis functions
@@ -47,8 +47,8 @@ mod <- galamm(
     sl(x, bs = "cr", k = 4, factor = "loading"),
   data = dat,
   load.var = "item",
-  lambda = list(loading_matrix),
-  factor = list("loading")
+  lambda = loading_matrix,
+  factor = "loading"
 )
 
 }

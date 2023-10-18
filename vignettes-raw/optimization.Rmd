@@ -16,7 +16,8 @@ vignette: >
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.path = ""
+  fig.path = "",
+  error = FALSE
 )
 ```
 
@@ -56,9 +57,9 @@ mod <- galamm(
   data = diet,
   family = families,
   family_mapping = family_mapping,
-  factor = list("loading"),
+  factor = "loading",
   load.var = "item",
-  lambda = list(loading_matrix)
+  lambda = loading_matrix
 )
 
 summary(mod)
@@ -79,9 +80,9 @@ mod <- galamm(
   data = diet,
   family = families,
   family_mapping = family_mapping,
-  factor = list("loading"),
+  factor = "loading",
   load.var = "item",
-  lambda = list(loading_matrix),
+  lambda = loading_matrix,
   control = control
 )
 vcov(mod)
@@ -103,9 +104,9 @@ mod <- galamm(
   data = diet,
   family = families,
   family_mapping = family_mapping,
-  factor = list("loading"),
+  factor = "loading",
   load.var = "item",
-  lambda = list(loading_matrix),
+  lambda = loading_matrix,
   control = control
 )
 vcov(mod)
@@ -125,9 +126,9 @@ mod <- galamm(
   data = diet,
   family = families,
   family_mapping = family_mapping,
-  factor = list("loading"),
+  factor = "loading",
   load.var = "item",
-  lambda = list(loading_matrix),
+  lambda = loading_matrix,
   start = list(theta = 10),
   control = control
 )
@@ -164,9 +165,9 @@ mod_nm <- galamm(
   data = diet,
   family = families,
   family_mapping = family_mapping,
-  factor = list("loading"),
+  factor = "loading",
   load.var = "item",
-  lambda = list(loading_matrix),
+  lambda = loading_matrix,
   control = control,
   start = start
 )

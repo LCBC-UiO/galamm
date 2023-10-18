@@ -417,8 +417,8 @@ mod <- galamm(
     (0 + loading | id / timepoint),
   data = dat,
   load.var = "item",
-  lambda = list(loading_matrix),
-  factor = list("loading")
+  lambda = loading_matrix,
+  factor = "loading"
 )
 ```
 
@@ -488,8 +488,8 @@ mod <- galamm(
   data = dat,
   family = binomial,
   load.var = "item",
-  lambda = list(matrix(c(1, NA), ncol = 1)),
-  factor = list("loading")
+  lambda = matrix(c(1, NA), ncol = 1),
+  factor = "loading"
 )
 ```
 
@@ -592,8 +592,8 @@ mod_byvar <- galamm(
     (0 + domain1:ability1 + domain3:ability3 | id / timepoint),
   data = dat,
   load.var = "item",
-  lambda = list(lmat),
-  factor = list(c("ability1", "ability3")),
+  lambda = lmat,
+  factor = c("ability1", "ability3"),
   control = galamm_control(
     optim_control = list(factr = 1e9, trace = 3, 
                          REPORT = 50, maxit = 1000)
@@ -628,7 +628,8 @@ The summary shows that we have recovered the true values of the factor loadings 
 ```r
 summary(mod_byvar)
 #> GALAMM fit by maximum marginal likelihood.
-#> Formula: y ~ domain + sl(x, by = domain, factor = c("ability1", "ability3")) +      (0 + domain1:ability1 + domain3:ability3 | id/timepoint)
+#> Formula: y ~ domain + sl(x, by = domain, factor = c("ability1", "ability3")) +  
+#>     (0 + domain1:ability1 + domain3:ability3 | id/timepoint)
 #>    Data: dat
 #> Control: galamm_control(optim_control = list(factr = 1e+09, trace = 3,      REPORT = 50, maxit = 1000))
 #> 
@@ -739,8 +740,8 @@ mod_byvar_mixed <- galamm(
   family = c(gaussian, binomial),
   family_mapping = ifelse(dat$domain == 1, 1L, 2L),
   load.var = "item",
-  lambda = list(lmat),
-  factor = list(c("ability1", "ability2")),
+  lambda = lmat,
+  factor = c("ability1", "ability2"),
   control = galamm_control(
     optim_control = list(factr = 1e9, trace = 3, 
                          REPORT = 30, maxit = 1000)

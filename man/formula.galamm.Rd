@@ -34,9 +34,9 @@ mod <- galamm(
   data = mresp,
   family = families,
   family_mapping = family_mapping,
-  factor = list("level"),
+  factor = "level",
   load.var = "itemgroup",
-  lambda = list(loading_matrix)
+  lambda = loading_matrix
 )
 
 # Formula
