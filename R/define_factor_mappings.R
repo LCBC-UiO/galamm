@@ -234,7 +234,7 @@ factor_finder <- function(factor, vars) {
 define_factor_mappings <- function(
     gobj, load.var, lambda, factor, factor_interactions, data) {
 
-  if(is.null(factor)) {
+  if (is.null(factor)) {
     return(
       list(
         lambda_mapping_X = integer(),
