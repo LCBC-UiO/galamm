@@ -677,8 +677,8 @@ test_that("Basic GAMM with factor structures works", {
     formula = y ~ 0 + item + sl(x, factor = "loading"),
     data = dat,
     load.var = "item",
-    lambda = list(matrix(c(1, NA, NA), ncol = 1)),
-    factor = list("loading")
+    lambda = matrix(c(1, NA, NA), ncol = 1),
+    factor = "loading"
   )
 
   expect_equal(
@@ -731,8 +731,8 @@ test_that("Basic GAMM with factor structures works", {
     formula = y ~ 0 + item + t2l(x, factor = "loading"),
     data = dat,
     load.var = "item",
-    lambda = list(matrix(c(1, NA, NA), ncol = 1)),
-    factor = list("loading")
+    lambda = matrix(c(1, NA, NA), ncol = 1),
+    factor = "loading"
   )
 
   expect_equal(
@@ -797,8 +797,8 @@ test_that("GAMM with factor structures and random effects works", {
       (0 + loading | id / timepoint),
     data = dat,
     load.var = "item",
-    lambda = list(matrix(c(1, NA, NA), ncol = 1)),
-    factor = list("loading")
+    lambda = matrix(c(1, NA, NA), ncol = 1),
+    factor = "loading"
   )
 
   expect_equal(
@@ -875,8 +875,8 @@ test_that("galamm with by variables and loadings works", {
       (0 + domain1:ability1 + domain3:ability3 | id),
     data = dat,
     load.var = "item",
-    lambda = list(lmat),
-    factor = list(c("ability1", "ability3")),
+    lambda = lmat,
+    factor = c("ability1", "ability3"),
     control = galamm_control(
       optim_control = list(maxit = 0), reduced_hessian = TRUE
     )

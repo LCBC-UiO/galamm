@@ -4,7 +4,7 @@
 \alias{formula.galamm}
 \title{Extract formula from fitted galamm object}
 \usage{
-formula.galamm(x)
+\method{formula}{galamm}(x)
 }
 \arguments{
 \item{x}{Object of class \code{galamm} returned from \code{\link{galamm}}.}

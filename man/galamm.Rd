@@ -60,30 +60,23 @@ to the first element of \code{family}. The length of \code{family_mapping}
 must be identical to the number of observations, \code{nrow(data)}.}
 
 \item{load.var}{Optional character specifying the name of the variable in
-\code{data} identifying what the factors load onto. That is, each unique
-value of \code{load.var} corresponds to a unique factor loading. Currently
-only a single loading is supported, so \code{load.var} must have length
-one. Default to \code{NULL}, which means that there are no loading
-variables.}
+\code{data} identifying what the factors load onto. Default to \code{NULL},
+which means that there are no loading variables.}
 
-\item{lambda}{Optional list of factor loading matrices. Numerical values
-indicate that the given value is fixed, while \code{NA} means that the
-entry is a parameter to be estimated. Defaults to \code{NULL}, which means
-that there are no factor loading matrices.}
+\item{lambda}{Optional factor loading matrix. Numerical values indicate that
+the given value is fixed, while \code{NA} means that the entry is a
+parameter to be estimated. Defaults to \code{NULL}, which means that there
+is no factor loading matrix.}
 
-\item{factor}{Optional list of character vectors identical to the factor
-loadings specified in \code{formula}. For each list element, the \eqn{j}th
-entry in the character vector corresponds to the \eqn{j}th column of the
-corresponding matrix in \code{lambda}. Defaults to \code{NULL}, which means
-that there are no factor loadings.}
+\item{factor}{Optional character vector whose \eqn{j}th entry corresponds to
+the \eqn{j}th column of the corresponding matrix in \code{lambda}. Defaults
+to \code{NULL}, which means that there are no factor loadings.}
 
-\item{factor_interactions}{Optional list of length equal to the list provided
-in the \code{factor} argument. If provided, each element of the lists
-should itself be a list of length equal to the number of columns in the
-corresponding matrix provided to the \code{lambda} argument. Each list
-element should be a \code{formula} object containing the write-hand side of
-a regression model, of the form \code{~ x + z}. Defaults to \code{NULL},
-which means that no factor interactions are used.}
+\item{factor_interactions}{Optional list of length equal to the number of
+columns in \code{lambda}. Each list element should be a \code{formula}
+object containing the write-hand side of a regression model, of the form
+\code{~ x + z}. Defaults to \code{NULL}, which means that no factor
+interactions are used.}
 
 \item{na.action}{Character of length one specifying a function which
 indicates what should happen when the data contains \code{NA}s. The

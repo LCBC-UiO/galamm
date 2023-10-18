@@ -63,30 +63,23 @@
 #'   must be identical to the number of observations, \code{nrow(data)}.
 #'
 #' @param load.var Optional character specifying the name of the variable in
-#'   \code{data} identifying what the factors load onto. That is, each unique
-#'   value of \code{load.var} corresponds to a unique factor loading. Currently
-#'   only a single loading is supported, so \code{load.var} must have length
-#'   one. Default to \code{NULL}, which means that there are no loading
-#'   variables.
+#'   \code{data} identifying what the factors load onto. Default to \code{NULL},
+#'   which means that there are no loading variables.
 #'
-#' @param lambda Optional list of factor loading matrices. Numerical values
-#'   indicate that the given value is fixed, while \code{NA} means that the
-#'   entry is a parameter to be estimated. Defaults to \code{NULL}, which means
-#'   that there are no factor loading matrices.
+#' @param lambda Optional factor loading matrix. Numerical values indicate that
+#'   the given value is fixed, while \code{NA} means that the entry is a
+#'   parameter to be estimated. Defaults to \code{NULL}, which means that there
+#'   is no factor loading matrix.
 #'
-#' @param factor Optional list of character vectors identical to the factor
-#'   loadings specified in \code{formula}. For each list element, the \eqn{j}th
-#'   entry in the character vector corresponds to the \eqn{j}th column of the
-#'   corresponding matrix in \code{lambda}. Defaults to \code{NULL}, which means
-#'   that there are no factor loadings.
+#' @param factor Optional character vector whose \eqn{j}th entry corresponds to
+#'   the \eqn{j}th column of the corresponding matrix in \code{lambda}. Defaults
+#'   to \code{NULL}, which means that there are no factor loadings.
 #'
-#' @param factor_interactions Optional list of length equal to the list provided
-#'   in the \code{factor} argument. If provided, each element of the lists
-#'   should itself be a list of length equal to the number of columns in the
-#'   corresponding matrix provided to the \code{lambda} argument. Each list
-#'   element should be a \code{formula} object containing the write-hand side of
-#'   a regression model, of the form \code{~ x + z}. Defaults to \code{NULL},
-#'   which means that no factor interactions are used.
+#' @param factor_interactions Optional list of length equal to the number of
+#'   columns in \code{lambda}. Each list element should be a \code{formula}
+#'   object containing the write-hand side of a regression model, of the form
+#'   \code{~ x + z}. Defaults to \code{NULL}, which means that no factor
+#'   interactions are used.
 #'
 #' @param na.action Character of length one specifying a function which
 #'   indicates what should happen when the data contains \code{NA}s. The
@@ -325,9 +318,14 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   }
 
   if(!is.null(load.var) && (length(load.var) > 1 || !is.character(load.var))) {
-    stop("load.var must be a character of length one")
+    stop("load.var must be NULL or a character of length one")
   }
-
+  if(!is.null(factor) && !is.character(factor)) {
+    stop("factor must be NULL or a character vector")
+  }
+  if(!is.null(lambda) && !is.matrix(lambda)) {
+    stop("lambda must be NULL or a matrix")
+  }
 
   tmp <- setup_factor(load.var, lambda, factor, data)
   data <- tmp$data
@@ -361,7 +359,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   theta_mapping <- gobj$lmod$reTrms$Lind - 1L
   theta_inds <- seq_along(gobj$lmod$reTrms$theta)
   beta_inds <- max(theta_inds) + seq_along(colnames(gobj$lmod$X))
-  lambda_inds <- max(beta_inds) + seq_along(lambda[[1]][lambda[[1]] >= 2])
+  lambda_inds <- max(beta_inds) + seq_along(lambda[lambda >= 2])
 
   if (!is.null(weights)) {
     weights_obj <- lme4::mkReTrms(lme4::findbars(weights), fr = data)
@@ -552,11 +550,11 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   # Distinguish lambda indicies from regression coefficients in interactions
   # between observed and latent covariates
   if (length(lambda_inds) > 0) {
-    lambda_standard_inds <- intersect(lambda[[1]], lambda_orig[[1]]) - 1L
+    lambda_standard_inds <- intersect(lambda, lambda_orig) - 1L
     lambda_standard_inds <- lambda_standard_inds[lambda_standard_inds > 0] +
       min(lambda_inds) - 1
 
-    lambda_interaction_inds <- setdiff(lambda[[1]], lambda_orig[[1]]) - 1L
+    lambda_interaction_inds <- setdiff(lambda, lambda_orig) - 1L
     lambda_interaction_inds <-
       lambda_interaction_inds[lambda_interaction_inds > 0] +
       min(lambda_inds) - 1

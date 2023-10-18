@@ -34,39 +34,33 @@ setup_factor <- function(load.var, lambda, factor, data) {
     return(list(data = data, lambda = lambda))
   }
 
-  parameter_index <- 2
   eval(parse(text = paste0("data$", load.var,
                            "<- factor(data$", load.var, ")")))
 
+  lambda[is.na(lambda)] <-
+    seq(from = 2, length.out = sum(is.na(lambda)))
+  colnames(lambda) <- factor
 
-
-  lv <- load.var[[1]]
-  lambda[[1]][is.na(lambda[[1]])] <-
-    seq(from = parameter_index, length.out = sum(is.na(lambda[[1]])))
-  colnames(lambda[[1]]) <- factor[[1]]
-
-  if (any(factor[[1]] %in% colnames(data))) {
+  if (any(factor %in% colnames(data))) {
     stop("Factor already a column in data.")
   }
-  for (j in seq_along(factor[[1]])) {
-    if (length(unique(data[, lv])) != length(lambda[[1]][, j])) {
+  for (j in seq_along(factor)) {
+    if (length(unique(data[, load.var])) != length(lambda[, j])) {
       stop(
         "lambda matrix must contain one row ",
         "for each element in load.var"
       )
     }
-    eval(parse(text = paste("data$", factor[[1]][[j]], "<-1")))
+    eval(parse(text = paste("data$", factor[[j]], "<-1")))
     rows_to_zero <-
-      data[, lv] %in% levels(data[, lv])[lambda[[1]][, j] == 0]
+      data[, load.var] %in% levels(data[, load.var])[lambda[, j] == 0]
     eval(
       parse(
         text =
-          paste("data$", factor[[1]][[j]], "[rows_to_zero] <- 0")
+          paste("data$", factor[[j]], "[rows_to_zero] <- 0")
       )
     )
   }
-  parameter_index <- max(lambda[[1]]) + 1
-
 
   list(data = data, lambda = lambda)
 }
