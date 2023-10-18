@@ -1,5 +1,11 @@
 rm(list=ls())
 devtools::load_all()
+
+formula = response ~ 0 + item + lat.var:time2 + lat.var:time3 +
+  lat.var:time4 + (0 + hs:lat.var | hid) + (0 + ms:lat.var | mid) +
+  (0 + lat.var:time | id)
+
+
 data("KYPSitemsim", package = "PLmixed")
 
 time.lam <- rbind(c( 1,  0),  # Specify time lambda matrix
@@ -15,9 +21,6 @@ KYPSitemsim$time4 <- (KYPSitemsim$time == 4) * 1
 KYPSitemsim$item <- as.factor(KYPSitemsim$item)
 KYPSitemsim$time <- as.factor(KYPSitemsim$time)
 
-formula = response ~ 0 + item + lat.var:time2 + lat.var:time3 +
-  lat.var:time4 + (0 + hs:lat.var | hid) + (0 + ms:lat.var | mid) +
-  (0 + lat.var:time | id)
 weights <- NULL
 data <- KYPSitemsim
 family <- gaussian
