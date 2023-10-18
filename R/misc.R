@@ -31,9 +31,7 @@ setup_factor <- function(load.var, lambda, factor, data) {
   }
 
   if(is.null(factor)) {
-    return(
-      list(data = data, lambda = lambda)
-    )
+    return(list(data = data, lambda = lambda))
   }
 
   parameter_index <- 2
@@ -41,34 +39,34 @@ setup_factor <- function(load.var, lambda, factor, data) {
                            "<- factor(data$", load.var, ")")))
 
 
-  for (i in seq_along(factor)) {
-    lv <- load.var[[i]]
-    lambda[[i]][is.na(lambda[[i]])] <-
-      seq(from = parameter_index, length.out = sum(is.na(lambda[[i]])))
-    colnames(lambda[[i]]) <- factor[[i]]
 
-    if (any(factor[[i]] %in% colnames(data))) {
-      stop("Factor already a column in data.")
-    }
-    for (j in seq_along(factor[[i]])) {
-      if (length(unique(data[, lv])) != length(lambda[[i]][, j])) {
-        stop(
-          "lambda matrix must contain one row ",
-          "for each element in load.var"
-        )
-      }
-      eval(parse(text = paste("data$", factor[[i]][[j]], "<-1")))
-      rows_to_zero <-
-        data[, lv] %in% levels(data[, lv])[lambda[[i]][, j] == 0]
-      eval(
-        parse(
-          text =
-            paste("data$", factor[[i]][[j]], "[rows_to_zero] <- 0")
-        )
+  lv <- load.var[[1]]
+  lambda[[1]][is.na(lambda[[1]])] <-
+    seq(from = parameter_index, length.out = sum(is.na(lambda[[1]])))
+  colnames(lambda[[1]]) <- factor[[1]]
+
+  if (any(factor[[1]] %in% colnames(data))) {
+    stop("Factor already a column in data.")
+  }
+  for (j in seq_along(factor[[1]])) {
+    if (length(unique(data[, lv])) != length(lambda[[1]][, j])) {
+      stop(
+        "lambda matrix must contain one row ",
+        "for each element in load.var"
       )
     }
-    parameter_index <- max(lambda[[i]]) + 1
+    eval(parse(text = paste("data$", factor[[1]][[j]], "<-1")))
+    rows_to_zero <-
+      data[, lv] %in% levels(data[, lv])[lambda[[1]][, j] == 0]
+    eval(
+      parse(
+        text =
+          paste("data$", factor[[1]][[j]], "[rows_to_zero] <- 0")
+      )
+    )
   }
+  parameter_index <- max(lambda[[1]]) + 1
+
 
   list(data = data, lambda = lambda)
 }
@@ -125,7 +123,7 @@ setup_response_object <- function(family_list, family_mapping, data, gobj) {
   response_obj <- matrix(nrow = nrow(gobj$lmod$X), ncol = 2)
 
   for (i in seq_along(family_list)) {
-    f <- family_list[[i]]
+    f <- family_list[[1]]
     mf <- stats::model.frame(lme4::nobars(gobj$fake.formula),
       data = data[family_mapping == i, ]
     )
@@ -184,17 +182,17 @@ setup_response_object <- function(family_list, family_mapping, data, gobj) {
 find_k <- function(family_txt, family_mapping, y, trials) {
   k <- numeric(length(family_txt))
   for (i in seq_along(k)) {
-    if (family_txt[[i]] == "gaussian") {
-      k[[i]] <- 0
-    } else if (family_txt[[i]] == "binomial") {
+    if (family_txt[[1]] == "gaussian") {
+      k[[1]] <- 0
+    } else if (family_txt[[1]] == "binomial") {
       trials0 <- trials[family_mapping == i]
       y0 <- y[family_mapping == i]
-      k[[i]] <-
+      k[[1]] <-
         sum(lgamma(trials0 + 1) - lgamma(y0 + 1) - lgamma(trials0 - y0 + 1))
-    } else if (family_txt[[i]] == "poisson") {
+    } else if (family_txt[[1]] == "poisson") {
       trials0 <- trials[family_mapping == i]
       y0 <- y[family_mapping == i]
-      k[[i]] <- -sum(lgamma(y0 + 1))
+      k[[1]] <- -sum(lgamma(y0 + 1))
     }
   }
   k

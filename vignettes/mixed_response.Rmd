@@ -18,6 +18,7 @@ vignette: >
 ```r
 library(galamm)
 library(lme4)
+#> Loading required package: Matrix
 ```
 
 This vignette describes how `galamm` can be used to estimate models with mixed response types.
