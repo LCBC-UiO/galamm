@@ -233,6 +233,18 @@ factor_finder <- function(factor, vars) {
 #' @noRd
 define_factor_mappings <- function(
     gobj, load.var, lambda, factor, factor_interactions, data) {
+
+  if (is.null(factor)) {
+    return(
+      list(
+        lambda_mapping_X = integer(),
+        lambda_mapping_Zt = integer(),
+        lambda_mapping_Zt_covs = integer(),
+        lambda = lambda
+      )
+    )
+  }
+
   vars_in_fixed <- all.vars(gobj$fake.formula[-2])
 
   # Add fixed part of smooth terms
@@ -243,11 +255,13 @@ define_factor_mappings <- function(
   })))
   vars_in_fixed <- unique(vars_in_fixed)
   factor_in_fixed <- factor_finder(factor, vars_in_fixed)
+  X <- gobj$lmod$X
+
   if (!any(factor_in_fixed)) {
     lambda_mapping_X <- integer()
   } else {
     lambda_mapping_X <- list()
-    X <- gobj$lmod$X
+
     for (f in seq_along(factor_in_fixed)) {
       if (factor_in_fixed[[f]]) {
         lv <- load.var[[f]]
@@ -270,13 +284,12 @@ define_factor_mappings <- function(
         lambda_mapping_X[[f]] <- do.call(c, mappings)
 
         stopifnot(length(lambda_mapping_X[[f]]) == length(X))
+
       } else {
         lambda_mapping_X[[f]] <- rep(-1L, length(X))
       }
     }
-    lambda_mapping_X <- unlist(do.call(function(...) {
-      mapply(function(...) max(...), ..., SIMPLIFY = FALSE)
-    }, lambda_mapping_X))
+    lambda_mapping_X <- lambda_mapping_X[[1]]
     stopifnot(length(lambda_mapping_X) == length(X))
   }
 

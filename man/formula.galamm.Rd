@@ -4,12 +4,10 @@
 \alias{formula.galamm}
 \title{Extract formula from fitted galamm object}
 \usage{
-\method{formula}{galamm}(x, ...)
+formula.galamm(x)
 }
 \arguments{
 \item{x}{Object of class \code{galamm} returned from \code{\link{galamm}}.}
-
-\item{...}{Optional arguments passed on to other methods. Currently not used.}
 }
 \value{
 The formula used to fit the model.
