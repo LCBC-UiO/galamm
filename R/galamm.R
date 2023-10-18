@@ -317,13 +317,13 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
     )
   }
 
-  if(!is.null(load.var) && (length(load.var) > 1 || !is.character(load.var))) {
+  if (!is.null(load.var) && (length(load.var) > 1 || !is.character(load.var))) {
     stop("load.var must be NULL or a character of length one")
   }
-  if(!is.null(factor) && !is.character(factor)) {
+  if (!is.null(factor) && !is.character(factor)) {
     stop("factor must be NULL or a character vector")
   }
-  if(!is.null(lambda) && !is.matrix(lambda)) {
+  if (!is.null(lambda) && !is.matrix(lambda)) {
     stop("lambda must be NULL or a matrix")
   }
 

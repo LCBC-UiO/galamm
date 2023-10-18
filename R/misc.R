@@ -30,12 +30,14 @@ setup_factor <- function(load.var, lambda, factor, data) {
     stop("load.var must be a character of length one.")
   }
 
-  if(is.null(factor)) {
+  if (is.null(factor)) {
     return(list(data = data, lambda = lambda))
   }
 
-  eval(parse(text = paste0("data$", load.var,
-                           "<- factor(data$", load.var, ")")))
+  eval(parse(text = paste0(
+    "data$", load.var,
+    "<- factor(data$", load.var, ")"
+  )))
 
   lambda[is.na(lambda)] <-
     seq(from = 2, length.out = sum(is.na(lambda)))

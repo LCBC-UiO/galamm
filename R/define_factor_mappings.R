@@ -231,7 +231,6 @@ factor_finder <- function(factor, vars) {
 #' @noRd
 define_factor_mappings <- function(
     gobj, load.var, lambda, factor, factor_interactions, data) {
-
   if (is.null(factor)) {
     return(
       list(
@@ -287,7 +286,6 @@ define_factor_mappings <- function(
   if (!factor_in_random) {
     lambda_mapping_Zt <- integer()
   } else {
-
     cnms <- lapply(gobj$lmod$reTrms$cnms, function(x) x)
     cnms_match <- lapply(cnms, function(cnm) {
       vapply(
@@ -347,7 +345,7 @@ define_factor_mappings <- function(
 
         mapping_component[inds_expanded] <-
           Map(function(x, y) rep(ll[x, cn], each = y),
-              x = data[inds, load.var], y = delta[inds]
+            x = data[inds, load.var], y = delta[inds]
           )
       }
 
@@ -390,7 +388,6 @@ define_factor_mappings <- function(
       lambda_mapping_Zt <- lambda_mapping_Zt[!is.na(lambda_mapping_Zt)]
       stopifnot(length(lambda_mapping_Zt) == sum(diff(Zt@p)))
     }
-
   }
 
 
