@@ -26,15 +26,20 @@
 #' # NA's in the original formulation have been replaced by 1's:
 #' res$lambda
 setup_factor <- function(load.var, lambda, factor, data) {
-  if (!is.null(load.var) && (!is.character(load.var))) {
+  if (!is.null(load.var) && (!is.character(load.var)) || length(load.var) > 1) {
     stop("load.var must be a character of length one.")
   }
 
-  parameter_index <- 2
-
-  for (lv in load.var) {
-    eval(parse(text = paste0("data$", lv, "<- factor(data$", lv, ")")))
+  if(is.null(factor)) {
+    return(
+      list(data = data, lambda = lambda)
+    )
   }
+
+  parameter_index <- 2
+  eval(parse(text = paste0("data$", load.var,
+                           "<- factor(data$", load.var, ")")))
+
 
   for (i in seq_along(factor)) {
     lv <- load.var[[i]]
