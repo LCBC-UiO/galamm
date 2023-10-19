@@ -13,8 +13,8 @@
 )
 }
 \arguments{
-\item{x}{An object of class \code{VarCorr.galamm}, returned from
-\code{\link{VarCorr.galamm}}.}
+\item{x}{An object of class \code{c("VarCorr.galamm", "VarCorr.merMod")},
+returned from \code{\link{VarCorr.galamm}}.}
 
 \item{digits}{Optional arguments specifying number of digits to use when
 printing.}

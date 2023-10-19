@@ -1,6 +1,8 @@
 #' @srrstats {G5.0} Datasets from PLmixed package are used for testing, and
 #'   results from the functions in this package are precomputed for comparison,
 #'   in cases where PLmixed and galamm support the same models.
+#' @srrstats {G5.4} It has been confirmed that PLmixed returns the same results.
+#'   PLmixed is not run inside the tests, because it is too slow for that.
 #' @noRd
 NULL
 
@@ -437,3 +439,60 @@ test_that("multiple factors in fixed effects works", {
   )
   expect_equal(deviance(mod), 7891.36597569292, tolerance = .001)
 })
+
+
+#' @srrstats {G5.9b} Algorithms are determinstic, so changing random seeds does
+#'   not affect the results. This is tested here.
+#' @srrstats {G5.9} Noise susceptibility tests here.
+#' @srrstats {G5.9a} Adding trivial noise and testing here.
+#' @noRd
+NULL
+
+test_that(
+  "Algorithm is robust to trivial noise", {
+    IRTsub <- IRTsim[IRTsim$item < 4, ] # Select items 1-3
+    set.seed(12345)
+    IRTsub <- IRTsub[sample(nrow(IRTsub), 300), ] # Randomly sample 300 responses
+
+    IRTsub <- IRTsub[order(IRTsub$item), ] # Order by item
+    irt.lam <- matrix(c(1, NA, NA), ncol = 1) # Specify the lambda matrix
+
+    set.seed(1)
+    mod <- galamm(
+      formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
+      data = IRTsub,
+      load.var = "item",
+      factor = "abil.sid",
+      lambda = irt.lam
+    )
+    set.seed(2)
+    mod0 <- galamm(
+      formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
+      data = IRTsub,
+      load.var = "item",
+      factor = "abil.sid",
+      lambda = irt.lam
+    )
+
+    expect_equal(deviance(mod), deviance(mod0))
+    expect_equal(coef(mod), coef(mod0))
+    expect_equal(vcov(mod), vcov(mod0))
+    expect_equal(factor_loadings(mod), factor_loadings(mod0))
+
+    # Add trivial noise
+    dat <- IRTsub
+    dat$y <- dat$y + rnorm(nrow(dat), sd = .Machine$double.eps)
+    mod0 <- galamm(
+      formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
+      data = IRTsub,
+      load.var = "item",
+      factor = "abil.sid",
+      lambda = irt.lam
+    )
+
+    expect_equal(deviance(mod), deviance(mod0), tolerance = 1e-8)
+    expect_equal(coef(mod), coef(mod0), tolerance = 1e-8)
+    expect_equal(vcov(mod), vcov(mod0), tolerance = 1e-8)
+    expect_equal(factor_loadings(mod), factor_loadings(mod0), tolerance = 1e-8)
+  }
+)

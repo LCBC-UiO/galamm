@@ -1,6 +1,8 @@
 #' @srrstats {G5.0} Datasets from PLmixed package are used for testing, and
 #'   results from the functions in this package are precomputed for comparison,
 #'   in cases where PLmixed and galamm support the same models.
+#' @srrstats {G5.4} It has been confirmed that PLmixed returns the same results.
+#'   PLmixed is not run inside the tests, because it is too slow for that.
 #' @noRd
 NULL
 
@@ -112,3 +114,42 @@ test_that("Poisson GLMM works", {
     )
   )
 })
+
+#' @srrstats {G5.9b} Algorithms are determinstic, so changing random seeds does
+#'   not affect the results. This is tested here.
+#' @srrstats {G5.9} Noise susceptibility tests here.
+#' @noRd
+NULL
+
+test_that(
+  "Algorithm is robust to trivial noise", {
+    dat <- subset(IRTsim, sid < 50)
+    dat$item <- factor(dat$item)
+    irt.lam <- matrix(c(1, NA, NA, NA, NA), ncol = 1)
+
+    form <- y ~ item + (0 + abil.sid | school / sid)
+    set.seed(1)
+    mod <- galamm(
+      formula = form,
+      data = dat,
+      family = binomial,
+      load.var = "item",
+      factor = "abil.sid",
+      lambda = irt.lam
+    )
+    set.seed(2)
+    mod0 <- galamm(
+      formula = form,
+      data = dat,
+      family = binomial,
+      load.var = "item",
+      factor = "abil.sid",
+      lambda = irt.lam
+    )
+
+    expect_equal(deviance(mod), deviance(mod0))
+    expect_equal(coef(mod), coef(mod0))
+    expect_equal(vcov(mod), vcov(mod0))
+    expect_equal(factor_loadings(mod), factor_loadings(mod0))
+  }
+)

@@ -16,7 +16,7 @@ to 1.}
 \item{...}{Other arguments passed onto other methods. Currently not used.}
 }
 \value{
-An object of class \code{VarCorr.galamm}.
+An object of class \code{c("VarCorr.galamm", "VarCorr.merMod")}.
 }
 \description{
 Extract variance and correlation components from model
@@ -31,6 +31,10 @@ mod <- galamm(
 
 # Extract information on variance and covariance
 VarCorr(mod)
+
+# Convert to data frame
+# (this invokes lme4's function as.data.frame.VarCorr.merMod)
+as.data.frame(VarCorr(mod))
 
 }
 \seealso{

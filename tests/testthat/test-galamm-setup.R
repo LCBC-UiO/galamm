@@ -2,6 +2,15 @@
 #'   results from the functions in this package are precomputed for comparison,
 #'   in cases where PLmixed and galamm support the same models. In addition,
 #'   dataset "sleepstudy" from lme4 package is also used here.
+#' @srrstats {G5.4} It has been confirmed that PLmixed returns the same results.
+#'   PLmixed is not run inside the tests, because it is too slow for that.
+#' @srrstats {G5.8} Edge condition tests implemented here.
+#' @srrstats {G5.8a} Tested below.
+#' @srrstats {G5.8b} Data of wrong type is being tested.
+#' @srrstats {G5.8c} All-NA fields will cause an error, since there will be no
+#'   data.
+#' @srrstats {G5.8d} Data with more columns than rows will cause failure,
+#'   because the design matrix will be rank deficient. This is tested here.
 #' @noRd
 NULL
 
@@ -542,6 +551,8 @@ test_that("missing values are handled appropriately", {
     "NaN in"
   )
 })
+
+
 
 
 test_that("edge conditions tests for data", {

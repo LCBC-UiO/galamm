@@ -11,7 +11,6 @@ using namespace autodiff;
 
 //' Evaluate the deviance at given values of random effects
 //'
-//' @srrstats {G1.4a} Internal function documented.
 //'
 //' @param parlist An object of class \code{parameters<T>} containing the
 //'   parameters at which to evaluate the marginal log-likelihood.
@@ -70,7 +69,6 @@ T loss(const parameters<T>& parlist, const data<T>& datlist,
 //' log-likelihood. The template \code{T} will typically be one of
 //' \code{double}, \code{autodiff:dual1st}, or \code{autodiff::dual2nd}.
 //'
-//' @srrstats {G1.4a} Internal function documented.
 //'
 //' @param parlist An object of class \code{parameters<T>} containing the
 //'   parameters at which to evaluate the marginal log-likelihood.
@@ -177,7 +175,6 @@ logLikObject<T> logLik(
 //' be one of \code{double}, \code{autodiff::dual1st}, and
 //' \code{autodiff::dual2nd}.
 //'
-//' @srrstats {G1.4a} Internal function documented.
 //'
 //' @param y Double precision vector of response values.
 //' @param trials Double precision vector with number of trials. When trials

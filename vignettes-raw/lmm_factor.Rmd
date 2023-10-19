@@ -93,7 +93,7 @@ $$
 
 where $N_{3}(a, b)$ denotes a trivariate normal distribution with mean $a$ and covariance $b$.
 
-In order to fit the model with galamm, we use the same syntax as PLmixed, and start by defining the loading matrix. The first column contains $\boldsymbol{\lambda}_{m}$ and the second column contains $\boldsymbol{\lambda}_{h}$. Numerical values in this matrix means that the entry is fixed to the given value, whereas `NA` means that the value is unknown, and should be estimated.
+In order to fit the model with galamm, we use syntax similar to PLmixed, and start by defining the loading matrix. The first column contains $\boldsymbol{\lambda}_{m}$ and the second column contains $\boldsymbol{\lambda}_{h}$. Numerical values in this matrix means that the entry is fixed to the given value, whereas `NA` means that the value is unknown, and should be estimated.
 
 
 ```{r}
@@ -139,7 +139,7 @@ mod <- galamm(
 )
 ```
 
-The model could be fit with `PLmixed` using the following call with exactly the same arguments as to `galamm`. The reader is encouraged to try, and confirm that the results are essentially equivalent, but we won't run it in this vignette as it takes 5-10 minutes.
+The model could be fit with `PLmixed` using the following call, which differs from the call to `galamm` in that `factor` and `lambda` must be put inside lists. The reader is encouraged to try, and confirm that the results are essentially equivalent, but we won't run it in this vignette as it takes 5-10 minutes.
 
 
 ```{r, eval=FALSE}
@@ -403,7 +403,6 @@ form <- response ~ 0 + item + (0 + teacher1 + teacher2 | tch) +
 
 Using `PLmixed`, we could have estimated the model as follows, and doing it would confirm that the results are the same as with galamm.
 
-
 ```{r, eval=FALSE}
 judge_plmixed <- PLmixed(
   formula = form,
@@ -414,7 +413,7 @@ judge_plmixed <- PLmixed(
 )
 ```
 
-We get identical results using `galamm` in less than five minutes.
+We get identical results using `galamm`, and it takes less than five minutes.
 
 ```{r}
 judge_galamm <- galamm(
