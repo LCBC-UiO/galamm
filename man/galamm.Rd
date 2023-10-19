@@ -67,13 +67,19 @@ sensitive.}
 
 \item{lambda}{Optional factor loading matrix. Numerical values indicate that
 the given value is fixed, while \code{NA} means that the entry is a
-parameter to be estimated. Defaults to \code{NULL}, which means that there
-is no factor loading matrix.}
+parameter to be estimated. Numerical values can only take the values 0 or
+\enumerate{
+\item The number of columns of \code{lambda} must be identical to the number
+of elements in \code{factor}. Defaults to \code{NULL}, which means that
+there is no factor loading matrix. If \code{lambda} is provided as a
+vector, it will be converted to a \code{matrix} with a single column.
+}}
 
 \item{factor}{Optional character vector whose \eqn{j}th entry corresponds to
-the \eqn{j}th column of the corresponding matrix in \code{lambda}. Defaults
-to \code{NULL}, which means that there are no factor loadings. Argument is
-case sensitive.}
+the \eqn{j}th column of the corresponding matrix in \code{lambda}. The
+number of elements in \code{factor} must be equal to the number of columns
+in \code{lambda}. Defaults to \code{NULL}, which means that there are no
+factor loadings. Argument is case sensitive.}
 
 \item{factor_interactions}{Optional list of length equal to the number of
 columns in \code{lambda}. Each list element should be a \code{formula}
@@ -84,9 +90,9 @@ interactions are used.}
 \item{na.action}{Character of length one specifying a function which
 indicates what should happen when the data contains \code{NA}s. The
 defaults is set to the \code{na.action} setting of \code{options}, which
-can be seen with \code{options("na.action")}. The other alternative is
-\code{"na.fail"}, which means that the function fails if there as
-\code{NA}s in \code{data}.}
+can be seen with \code{options("na.action")}. The other alternatives are
+\code{"na.fail"} or \code{"na.exclude"}, which means that the function
+fails if there as \code{NA}s in \code{data}.}
 
 \item{start}{Optional named list of starting values for parameters. Possible
 names of list elements are \code{"theta"}, \code{"beta"}, \code{"lambda"},

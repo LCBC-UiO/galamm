@@ -258,6 +258,7 @@ gam.setup <- function(formula, pterms, mf) {
 #' @noRd
 #'
 #' @srrstats {G1.4a} Internal function documented.
+#' @srrstats {G2.4d} explicit conversion to factor via `as.factor()`
 #'
 #' @references
 #' \insertRef{woodGeneralizedAdditiveModels2017a}{galamm}
@@ -283,8 +284,6 @@ variable.summary <- function(pf, dl, n) {
     if (v.name[i] %in% p.name) para <- TRUE else para <- FALSE
 
     x <- dl[[v.name[i]]]
-    #' @srrstats {G2.4d} *explicit conversion to factor via `as.factor()`*
-    #' @noRd
     if (is.character(x)) x <- as.factor(x)
     if (is.factor(x)) {
       x <- x[!is.na(x)]

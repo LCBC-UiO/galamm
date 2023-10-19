@@ -54,8 +54,9 @@ VarCorr.galamm <- function(x, sigma = 1, ...) {
 #' @title Print method for variance-covariance objects
 #'
 #' @srrstats {G1.4} Function documented with roxygen2.
-#' @srrstats {G2.3b} Argument "comp" is case sensitive, as is documented here.
 #' @srrstats {G2.1a} Expected data types provided for all inputs.
+#' @srrstats {G2.3a} match.arg() used on "comp" argument.
+#' @srrstats {G2.3b} Argument "comp" is case sensitive, as is documented here.
 #'
 #' @param x An object of class \code{VarCorr.galamm}, returned from
 #'   \code{\link{VarCorr.galamm}}.

@@ -1,3 +1,9 @@
+#' @srrstats {G5.0} Datasets from PLmixed package are used for testing, and
+#'   results from the functions in this package are precomputed for comparison,
+#'   in cases where PLmixed and galamm support the same models.
+#' @noRd
+NULL
+
 data("IRTsim", package = "PLmixed")
 test_that("Logistic GLMM with simple factor works", {
   dat <- subset(IRTsim, sid < 50)

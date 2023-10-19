@@ -10,7 +10,8 @@ factor_loadings <- function(object) {
 #'
 #' @srrstats {G1.4} Function documented with roxygen2.
 #' @srrstats {G2.1a} Expected data types provided for all inputs.
-#'
+#' @srrstats {G2.4c} as.character() used to define dimnames of the returned
+#'   object.
 #'
 #' @param object Object of class \code{galamm} returned from
 #'   \code{\link{galamm}}.
@@ -25,8 +26,8 @@ factor_loadings <- function(object) {
 #'   [confint.galamm()] for confidence intervals, and [coef.galamm()] for
 #'   coefficients more generally.
 #'
-#' @author The example for this function comes from \code{PLmixed}, with
-#'   authors Nicholas Rockwood and Minjeong Jeon
+#' @author The example for this function comes from \code{PLmixed}, with authors
+#'   Nicholas Rockwood and Minjeong Jeon
 #'   \insertCite{rockwoodEstimatingComplexMeasurement2019}{galamm}.
 #'
 #' @family details of model fit

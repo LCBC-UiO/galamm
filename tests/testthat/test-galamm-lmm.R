@@ -1,3 +1,9 @@
+#' @srrstats {G5.0} Datasets from PLmixed package are used for testing, and
+#'   results from the functions in this package are precomputed for comparison,
+#'   in cases where PLmixed and galamm support the same models.
+#' @noRd
+NULL
+
 data("IRTsim", package = "PLmixed")
 
 test_that("LMM with simple factor works", {
@@ -26,30 +32,22 @@ test_that("LMM with simple factor works", {
   expect_invisible(plot(mod))
   dev.off()
 
-  # Must test that it works also with tibbles
   class(IRTsub) <- c("tbl_df", "tbl", "data.frame")
-  expect_message(
-    {
-      mod1 <- galamm(
-        y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
-        data = IRTsub, load.var = "item",
-        factor = "abil.sid", lambda = irt.lam
-      )
-    },
-    "Converting tibble"
+  mod1 <- galamm(
+    y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
+    data = IRTsub, load.var = "item",
+    factor = "abil.sid", lambda = irt.lam
   )
+  expect_equal(deviance(mod1), deviance(mod))
 
   class(IRTsub) <- c("data.table", "data.frame")
-  expect_message(
-    {
-      mod2 <- galamm(
-        y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
-        data = IRTsub, , load.var = "item",
-        factor = "abil.sid", lambda = irt.lam
-      )
-    },
-    "Converting data.table"
+  mod2 <- galamm(
+    y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
+    data = IRTsub, , load.var = "item",
+    factor = "abil.sid", lambda = irt.lam
   )
+  expect_equal(deviance(mod2), deviance(mod))
+
   IRTsub <- as.data.frame(IRTsub)
 
   expect_equal(mod$hessian, mod1$hessian)

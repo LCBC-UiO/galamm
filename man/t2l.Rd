@@ -27,6 +27,13 @@ the specification of loading variables for smooth terms. The last letter
 "l", which stands for "loading", has been added to avoid namespace
 conflicts with \code{mgcv} and \code{gamm4}.
 }
+\details{
+The documentation of the function \code{mgcv::t2} should be consulted
+for details on how to properly set up smooth terms. In particular, note
+that these terms distinguish between ordered and unordered factor terms
+in the \code{by} variable, which can be provided in \code{...} and is
+forwarded to \code{mgcv::t2}.
+}
 \examples{
 # Linear mixed model with factor structures
 dat <- subset(cognition, domain == 1 & timepoint == 1)
