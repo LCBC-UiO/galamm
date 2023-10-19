@@ -281,7 +281,6 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   if (any(vapply(data, function(x) any(is.nan(x)), logical(1)))) {
     stop("NaN in 'data'. galamm cannot handle this.")
   }
-
   if (!is.character(na.action)) {
     stop("na.action must be character")
   }
@@ -307,11 +306,9 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   if (!is.null(weights) && !methods::is(weights, "formula")) {
     stop("weights must be a formula")
   }
-
   if (!is.vector(family_mapping)) {
     stop("family_mapping must be a vector.")
   }
-
   if (nrow(data) != length(family_mapping)) {
     stop("family_mapping must contain one index per row in data")
   }

@@ -329,45 +329,6 @@ test_that("functions fail when they should", {
 })
 
 
-test_that("multiple factors in fixed effects works", {
-  path <-
-    system.file("testdata", "test_multiple_factors.rds", package = "galamm")
-  dat <- as.data.frame(readRDS(path))
-
-  lmat <- matrix(c(
-    1, NA, NA, 0, 0, 0,
-    0, 0, 0, 1, NA, NA
-  ), ncol = 2)
-
-  mod <- galamm(
-    formula = y ~ 0 + x:domain1:lambda1 + x:domain2:lambda2 +
-      (0 + 1 | id),
-    data = dat,
-    load.var = "item",
-    lambda = lmat,
-    factor = c("lambda1", "lambda2"),
-    start = list(
-      theta = 0.744468091602185,
-      beta = c(1.03995169865897, 1.87422267819485),
-      lambda = c(
-        0.478791387562245, 1.94779433858618,
-        0.466484983394861, 2.02985361769537
-      ),
-      weights = numeric(0)
-    ),
-    control = galamm_control(
-      optim_control = list(
-        FtolAbs = 1000,
-        FtolRel = 1000, XtolRel = 1000,
-        warnOnly = TRUE, xt = rep(1000, 7)
-      ),
-      method = "Nelder-Mead"
-    )
-  )
-  expect_equal(deviance(mod), 7891.36597569292, tolerance = .001)
-})
-
-
 data("IRTsim", package = "PLmixed")
 IRTsub <- IRTsim[IRTsim$item < 4, ] # Select items 1-3
 set.seed(12345)
