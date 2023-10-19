@@ -9,9 +9,29 @@ using namespace autodiff;
 
 // [[Rcpp::depends(RcppEigen)]]
 
+//' Evaluate the deviance at given values of random effects
+//'
+//' @srrstats {G1.4a} Internal function documented.
+//'
+//' @param parlist An object of class \code{parameters<T>} containing the
+//'   parameters at which to evaluate the marginal log-likelihood.
+//' @param datlist An object of class \code{data<T>} containing the data with
+//'   which to evaluate the marginal log-likelihood.
+//' @param lp Vector with linear predictor values, with arguments of same
+//'   type as the template \code{T}.
+//' @param modvec Reference to a vector of pointers to objects of class
+//'   \code{Model<T>}, containing the necessary functions specific to the
+//'   exponential families used in the model.
+//' @param solver A solver for sparse linear systems of type
+//'   \code{Eigen::SimplicialLDLT<Eigen::SparseMatrix<T> >}.
+//' @param phi Vector of dispersion parameters, one for each model family.
+//' @return Model deviance, after integrating out the random effects. This
+//'   corresponds to \eqn{-2} times the marginal loglikelihood.
+//' @noRd
 template <typename T>
-T loss(const parameters<T>& parlist, const data<T>& datlist, const Vdual<T>& lp,
-       std::vector<std::unique_ptr<Model<T>>>& modvec, ldlt<T>& solver, Vdual<T>& phi){
+T loss(const parameters<T>& parlist, const data<T>& datlist,
+       const Vdual<T>& lp, std::vector<std::unique_ptr<Model<T>>>& modvec,
+       ldlt<T>& solver, Vdual<T>& phi){
 
   T ret{};
   for(int k{}; k < modvec.size(); k++){
@@ -42,6 +62,27 @@ T loss(const parameters<T>& parlist, const data<T>& datlist, const Vdual<T>& lp,
 
 }
 
+//' @title Evaluate marginal log-likelihood
+//'
+//' @description
+//' Implements penalized iteratively reweighted least squares for finding
+//' conditional modes of random effects, and returns the resulting marginal
+//' log-likelihood. The template \code{T} will typically be one of
+//' \code{double}, \code{autodiff:dual1st}, or \code{autodiff::dual2nd}.
+//'
+//' @srrstats {G1.4a} Internal function documented.
+//'
+//' @param parlist An object of class \code{parameters<T>} containing the
+//'   parameters at which to evaluate the marginal log-likelihood.
+//' @param datlist An object of class \code{data<T>} containing the data with
+//'   which to evaluate the marginal log-likelihood.
+//' @param modvec Reference to a vector of pointers to objects of class
+//'   \code{Model<T>}, containing the necessary functions specific to the
+//'   exponential families used in the model.
+//' @return An object of class \code{logLikObject<T>}. See its definition for
+//'   details.
+//'
+//' @noRd
 template <typename T>
 logLikObject<T> logLik(
     parameters<T> parlist, data<T> datlist, std::vector<std::unique_ptr<Model<T>>>& modvec){
@@ -205,7 +246,7 @@ logLikObject<T> logLik(
 //'     modes of the standardized random effects are provided as a double
 //'     precision vector in this element.
 //'   * \code{V} If \code{T} is \code{autodiff::dual2nd}, the diagonal matrix
-//'     \eqn{V} with \eqn{b''(v_{i}) / \phi_{g(i)}} on the diagonal is
+//'     \eqn{V} with \eqn{b''(\nu_{i}) / \phi_{g(i)}} on the diagonal is
 //'     included in this element. See the paragraph below equation (13) in
 //'     \insertCite{sorensenLongitudinalModelingAgeDependent2023}{galamm} for
 //'     details.
@@ -367,8 +408,8 @@ Rcpp::List wrapper(
 //'     element. See the paragraph below equation (13) in
 //'     \insertCite{sorensenLongitudinalModelingAgeDependent2023}{galamm} for
 //'     details.
-//'   * \code{phi} If \code{hessian = TRUE}, double precision scalar containing
-//'     the dispersion parameter of the model.
+//'   * \code{phi} If \code{hessian = TRUE}, double precision vector containing
+//'     the dispersion parameter of the model, for each model family.
 //'
 //' @details
 //' For many models, not all parameters exists. For example, without

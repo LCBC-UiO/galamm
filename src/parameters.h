@@ -6,6 +6,14 @@
 #include <autodiff/forward/dual/eigen.hpp>
 #include "model.h"
 
+//' @name parameters
+//' @title Structure for keeping track of parameters
+//' @description See the documentation of other functions, e.g.,
+//'   \code{marginal_likelihood}, for an explanation of what the different
+//'   parameters represent.
+//' @field new Constructor, which takes parameters as arguments, and then
+//'   if necessary converts them to the template type \code{T}.
+//' @noRd
 template <typename T>
 struct parameters{
   parameters(
@@ -68,6 +76,9 @@ struct parameters{
   int n;
 };
 
+//' @name logLikObject
+//' @title Structure containing values to be returned to R
+//' @noRd
 template <typename T>
 struct logLikObject {
   T logLikValue;
