@@ -28,7 +28,7 @@ knitr::opts_chunk$set(
 <!-- badges: end -->
 
 ```{r srr-tags1, eval = FALSE, echo = FALSE}
-#' @srrstats {G1.0} Primary and secondary references to literature in the paragraph below. 
+#' @srrstats {G1.0} Primary and secondary references to literature in the paragraph below.
 #' @srrstats {G1.1} It is stated in the paragraph below that this is the first implementation of the algorithm developed in Sørensen, Fjell, and Walhovd (2023).
 #' @srrstats {G1.3} Statistical terminology defined in detail in the references in the paragraph below. The main paper, Sørensen, FJell, and Walhovd (2023) is open access.
 ```

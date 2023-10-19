@@ -54,6 +54,8 @@
 #' @srrstats {G2.13} Checks for missing data implemented in the preprocessing
 #'   steps of galamm. Note that in the argument \code{lambda}, \code{NA} values
 #'   mean that the matrix element is an unknown parameter.
+#' @srrstats {G2.14} Users can set options for handling missing values through
+#'   the argument \code{na.action}.
 #' @srrstats {G2.14a} Users can set \code{na.action = "na.fail"}.
 #' @srrstats {G2.15} If \code{na.action = "na.omit"} or \code{na.action =
 #'   "na.exclude"}, missing values in \code{data} are explicitly removed.
@@ -310,6 +312,9 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
                    factor_interactions = NULL,
                    na.action = getOption("na.action"),
                    start = NULL, control = galamm_control()) {
+  if (!inherits(data, "data.frame")) {
+    stop("data must be a data.frame")
+  }
 
   na.action <- match.arg(na.action, c("na.omit", "na.fail", "na.exclude"))
   # Deal with potential missing values
@@ -319,16 +324,10 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   if (any(vapply(data, function(x) any(is.nan(x)), logical(1)))) {
     stop("NaN in 'data'. galamm cannot handle this.")
   }
-  if (!is.character(na.action)) {
-    stop("na.action must be character")
-  }
   data <- eval(parse(text = paste0(na.action, "(data)")))
 
   if (nrow(data) == 0) stop("No data, nothing to do.")
 
-  if (!inherits(data, "data.frame")) {
-    stop("data must be a data.frame")
-  }
   data <- as.data.frame(data)
   mc <- match.call()
 
@@ -364,23 +363,27 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   if (!is.null(lambda) && !is.numeric(lambda)) {
     stop("lambda must either be NULL or a matrix or numeric vector")
   }
-  if(!is.null(lambda) && !is.matrix(lambda)) {
+  if (!is.null(lambda) && !is.matrix(lambda)) {
     lambda <- matrix(lambda, ncol = 1)
     message("lambda converted to matrix with one column")
   }
-  if(!is.null(lambda)) {
-    if(any(is.nan(lambda)) || any(is.infinite(lambda))) {
+  if (!is.null(lambda)) {
+    if (any(is.nan(lambda)) || any(is.infinite(lambda))) {
       stop("elements of lambda can be either 0, 1, or NA")
     }
-    if(!all(lambda[!is.na(lambda)] %in% c(0, 1))) {
+    if (!all(lambda[!is.na(lambda)] %in% c(0, 1))) {
       stop("all non-NA values in lambda must be either 0 or 1")
     }
   }
   if (any(vapply(list(load.var, lambda, factor), is.null, logical(1))) &&
-      any(vapply(list(load.var, lambda, factor),
-                 function(x) !is.null(x), logical(1)))) {
-    stop("load.var, lambda, and factor must either all have values or ",
-         "all be NULL.")
+    any(vapply(
+      list(load.var, lambda, factor),
+      function(x) !is.null(x), logical(1)
+    ))) {
+    stop(
+      "load.var, lambda, and factor must either all have values or ",
+      "all be NULL."
+    )
   }
 
   tmp <- setup_factor(load.var, lambda, factor, data)

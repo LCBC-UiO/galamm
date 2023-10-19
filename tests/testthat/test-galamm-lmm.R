@@ -437,4 +437,3 @@ test_that("multiple factors in fixed effects works", {
   )
   expect_equal(deviance(mod), 7891.36597569292, tolerance = .001)
 })
-

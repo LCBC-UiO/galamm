@@ -35,7 +35,7 @@ setup_factor <- function(load.var, lambda, factor, data) {
   if (is.null(factor)) {
     return(list(data = data, lambda = lambda))
   }
-  if(ncol(lambda) != length(factor)) {
+  if (ncol(lambda) != length(factor)) {
     stop("lambda matrix must have one column for each element in factor.")
   }
 

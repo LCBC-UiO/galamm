@@ -23,6 +23,19 @@ test_that("wrong input is handled properly", {
 
   expect_error(
     mod <- galamm(
+      formula = as.character(y ~ 0 + item + s(x, by = loading) +
+        (0 + loading | id / timepoint)),
+      data = dat,
+      family = binomial,
+      load.var = "item",
+      lambda = matrix(c(1, NA, NA), ncol = 1),
+      factor = "loading"
+    ),
+    "formula must be a formula"
+  )
+
+  expect_error(
+    mod <- galamm(
       formula = y ~ 0 + item + s(x, by = loading) +
         (0 + loading | id / timepoint),
       data = dat,
@@ -101,7 +114,7 @@ test_that("wrong input is handled properly", {
   )
 
   newdat <- dat
-  newdat$loading <- 1
+
   expect_error(
     mod <- galamm(
       formula = y ~ 0 + item + s(x, by = loading) +
@@ -110,9 +123,23 @@ test_that("wrong input is handled properly", {
       family = binomial,
       load.var = "item",
       lambda = matrix(c(1, NA, NA), ncol = 1),
+      factor = 1L
+    ),
+    "factor must be NULL or a character vector"
+  )
+
+  newdat$loading <- 1
+  expect_error(
+    mod <- galamm(
+      formula = y ~ 0 + item + s(x, by = loading) +
+        (0 + loading | id / timepoint),
+      data = newdat,
+      family = binomial,
+      load.var = "item",
+      lambda = list(matrix(c(1, NA), ncol = 1)),
       factor = "loading"
     ),
-    "Factor already a column in data"
+    "lambda must either be NULL or a matrix or numeric vector"
   )
 
   expect_error(
@@ -346,6 +373,19 @@ irt.lam <- matrix(c(1, NA, NA), ncol = 1) # Specify the lambda matrix
 
 
 test_that("missing values are handled appropriately", {
+  expect_error(
+    galamm(
+      formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
+      data = IRTsub,
+      load.var = c("item"),
+      factor = c("abil.sid"),
+      lambda = irt.lam,
+      na.action = na.fail
+    ),
+    "'arg' must be NULL or a character vector"
+  )
+
+
   IRTsub$y[1] <- NA_real_
 
   expect_error(
@@ -587,52 +627,58 @@ test_that("galamm rejects perfectly noiseless input data", {
 test_that("loading and factor dimensions have to be correct", {
   data("IRTsim", package = "PLmixed")
 
-  irt.lam = matrix(c(1, NA, NA, NA, NA), ncol = 1)
+  irt.lam <- matrix(c(1, NA, NA, NA, NA), ncol = 1)
 
   expect_error(
     galamm(
-      formula = y ~ 0 + as.factor(item) + (0 + abil.sid |sid) +
-        (0 + abil.sid |school),
+      formula = y ~ 0 + as.factor(item) + (0 + abil.sid | sid) +
+        (0 + abil.sid | school),
       data = IRTsim,
       load.var = "item",
       factor = "abil.sid",
-      lambda = irt.lam[1:4, , drop = FALSE]),
+      lambda = irt.lam[1:4, , drop = FALSE]
+    ),
     "lambda matrix must contain one row for each element in load.var"
   )
   expect_error(
     galamm(
-      formula = y ~ 0 + as.factor(item) + (0 + abil.sid |sid) +
-        (0 + abil.sid |school),
+      formula = y ~ 0 + as.factor(item) + (0 + abil.sid | sid) +
+        (0 + abil.sid | school),
       data = IRTsim,
       load.var = "item",
       lambda = irt.lam
-      ),
+    ),
     "load.var, lambda, and factor must either all have values or all be NULL."
   )
 
   expect_message(
     galamm(
-      formula = y ~ 0 + as.factor(item) + (0 + abil.sid |sid) +
-        (0 + abil.sid |school),
+      formula = y ~ 0 + as.factor(item) + (0 + abil.sid | sid) +
+        (0 + abil.sid | school),
       data = IRTsim,
       load.var = "item",
       factor = "abil.sid",
       lambda = as.numeric(irt.lam),
-      control = galamm_control(optim_control = list(maxit = 1),
-                               maxit_conditional_modes = 1)
+      control = galamm_control(
+        optim_control = list(maxit = 1),
+        maxit_conditional_modes = 1
+      )
     ),
-    "lambda converted to matrix with one column")
+    "lambda converted to matrix with one column"
+  )
 
   data("KYPSsim", package = "PLmixed")
 
-  kyps.lam <- rbind(c( 1,  0),
-                    c(NA,  0),
-                    c(NA,  1),
-                    c(NA, NA))
+  kyps.lam <- rbind(
+    c(1, 0),
+    c(NA, 0),
+    c(NA, 1),
+    c(NA, NA)
+  )
 
   expect_error(
     galamm(
-      formula = esteem ~ as.factor(time) +  (0 + hs | hid) +
+      formula = esteem ~ as.factor(time) + (0 + hs | hid) +
         (0 + ms | mid) + (1 | sid),
       data = KYPSsim,
       factor = c("ms", "hs"),
@@ -641,5 +687,4 @@ test_that("loading and factor dimensions have to be correct", {
     ),
     "lambda matrix must have one column for each element in factor"
   )
-
 })
