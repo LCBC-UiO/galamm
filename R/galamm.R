@@ -1,8 +1,7 @@
 #' @title Fit a generalized additive latent and mixed model
 #'
-#' @srrstats {G1.4} Function documented with roxygen2.
-#' @srrstats {G1.0} Primary references shown in the description.
-#' @description This function fits a generalized additive latent and mixed model
+#' @description
+#' This function fits a generalized additive latent and mixed model
 #'   (GALAMMs), as described in
 #'   \insertCite{sorensenLongitudinalModelingAgeDependent2023;textual}{galamm}.
 #'   The building blocks of these models are generalized additive mixed models
@@ -24,6 +23,9 @@
 #'   package, which is detailed in
 #'   \insertCite{rockwoodEstimatingComplexMeasurement2019;textual}{galamm}.
 #'
+#' @srrstats {G1.0} Primary references shown in the description.
+#' @srrstats {G1.3} Statistical terminology defined in detail in the references.
+#' @srrstats {G1.4} Function documented with roxygen2.
 #' @srrstats {G2.3b} Arguments "family", "load.var", "factor", and the
 #'   elements of the "start" argument are case sensitive. This is stated in the
 #'   documentation below.
@@ -273,9 +275,6 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
                    na.action = getOption("na.action"),
                    start = NULL, control = galamm_control()) {
   # Deal with potential missing values
-
-  #' @srrstats {G2.1} Assertions on inputs implemented here.
-  #'
   if (any(vapply(data, function(x) any(is.infinite(x)), logical(1)))) {
     stop("Infinite values in 'data'. galamm cannot handle this.")
   }
@@ -311,9 +310,6 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
 
   if (!is.vector(family_mapping)) {
     stop("family_mapping must be a vector.")
-  }
-  if (is.numeric(family_mapping)) {
-    family_mapping <- as.integer(family_mapping)
   }
 
   if (nrow(data) != length(family_mapping)) {
@@ -419,7 +415,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
       theta_mapping = theta_mapping,
       u_init = u_init,
       lambda = par[lambda_inds],
-      lambda_mapping_X = lambda_mappings$lambda_mapping_X,
+      lambda_mapping_X = as.integer(lambda_mappings$lambda_mapping_X),
       lambda_mapping_Zt = lambda_mappings$lambda_mapping_Zt,
       lambda_mapping_Zt_covs = lambda_mappings$lambda_mapping_Zt_covs,
       weights = par[weights_inds],

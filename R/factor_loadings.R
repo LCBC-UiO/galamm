@@ -4,12 +4,13 @@ factor_loadings <- function(object) {
 
 #' @title Extract factor loadings from galamm object
 #'
-#' @srrstats {G1.4} Function documented with roxygen2.
-#' @srrstats {G2.1a} Expected data types provided for all inputs.
-#'
 #' @aliases factor_loadings factor_loadings.galamm
 #' @export factor_loadings
 #' @export
+#'
+#' @srrstats {G1.4} Function documented with roxygen2.
+#' @srrstats {G2.1a} Expected data types provided for all inputs.
+#'
 #'
 #' @param object Object of class \code{galamm} returned from
 #'   \code{\link{galamm}}.

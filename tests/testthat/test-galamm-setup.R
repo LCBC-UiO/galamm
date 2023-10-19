@@ -282,7 +282,7 @@ test_that("multiple factors and factors in fixed effects are allowed", {
   )
 
   kyps.model <- galamm(
-    esteem ~ as.factor(time) + (0 + hs | hid)
+    formula = esteem ~ as.factor(time) + (0 + hs | hid)
       + (0 + ms | mid),
     data = KYPSsim,
     factor = c("ms", "hs"),
@@ -299,7 +299,8 @@ test_that("multiple factors and factors in fixed effects are allowed", {
 
   # Model with factor loading on fixed effect
   KYPSsim$time2 <- as.numeric(KYPSsim$time == 2)
-  kyps.model <- galamm(esteem ~ 1 + ms:time2 + (1 | sid),
+  kyps.model <- galamm(
+    formula = esteem ~ 1 + ms:time2 + (1 | sid),
     data = subset(KYPSsim, time %in% c(1, 2)),
     factor = "ms", load.var = "time",
     lambda = matrix(c(1, NA)),

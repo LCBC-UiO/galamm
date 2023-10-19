@@ -36,6 +36,7 @@ setup_factor <- function(load.var, lambda, factor, data) {
     return(list(data = data, lambda = lambda))
   }
 
+
   eval(parse(text = paste0(
     "data$", load.var,
     "<- factor(data$", load.var, ")"

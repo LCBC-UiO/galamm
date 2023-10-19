@@ -2,6 +2,7 @@
 #'
 #' @srrstats {G1.4} Function documented with roxygen2.
 #' @param x Object of class \code{galamm} returned from \code{\link{galamm}}.
+#' @param ... Optional arguments passed on to other methods. Currently not used.
 #'
 #' @return The formula used to fit the model.
 #' @export
@@ -35,6 +36,6 @@
 #' # Formula
 #' formula(mod)
 #'
-formula.galamm <- function(x) {
+formula.galamm <- function(x, ...) {
   x$call$formula
 }
