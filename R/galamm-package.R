@@ -14,8 +14,8 @@ NULL
 
 ## usethis namespace: start
 #' @importFrom Rcpp sourceCpp
-#' @importFrom stats anova coef deviance family fitted gaussian logLik nobs
-#' predict residuals sigma vcov
+#' @importFrom stats anova coef deviance family fitted formula gaussian logLik
+#' nobs predict residuals sigma vcov
 #' @importFrom Rdpack reprompt
 ## usethis namespace: end
 NULL
