@@ -11,7 +11,7 @@
 #' @srrstats {G1.2} Life cycle statement is in the file .github/CONTRIBUTING.md
 #' @srrstats {G1.5} No performance claims made in associated publication. Might
 #'   be added in the future, if a publication is made based on this package.
-#' @srrstats {G2.4e} No explicit conversion from factor to other types is done.
+#' @srrstats {G2.4,G2.4e} No explicit conversion from factor to other types is done.
 #' @srrstats {G2.8} Not directly relevant.
 #' @srrstats {G2.9} I'm not aware of any conversions in which information is
 #'   lost.
@@ -34,6 +34,13 @@
 #'   covariance matrices are not within scope.
 #' @srrstats {G3.1a} No alternative covariance methods are supported.
 #' @srrstats {G4.0} Output written to local files is not supported.
+#' @srrstats {G5.4c} Code for original implementation in published paper is
+#'   available at https://github.com/LCBC-UiO/galamm-scripts. The paper
+#'   \insertCite{sorensenLongitudinalModelingAgeDependent2023;textual}{galamm}
+#'   included extensive simulation experiments which suggested that the
+#'   implementation was correct for the models considered there, and this code
+#'   is available in the linked repository, including commit tag which can be
+#'   used to install the galamm package as it was at the time of publication.
 #' @srrstats {G5.10} Environment variable GALAMM_EXTENDED_TESTS used. It
 #'   can be triggered by adding "run-extended" in the Git commit message, in
 #'   case of which it will be run on GitHub Actions.
@@ -45,8 +52,6 @@ NULL
 
 #' NA_standards
 #'
-#' @srrstatsNA {G5.4c} Published paper based on data which cannot be shared,
-#'   for privacy reasons.
 #'
 #' Any non-applicable standards can have their tags changed from `@srrstatsTODO`
 #' to `@srrstatsNA`, and placed together in this block, along with explanations

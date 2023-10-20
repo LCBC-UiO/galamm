@@ -449,7 +449,8 @@ test_that("multiple factors in fixed effects works", {
 NULL
 
 test_that(
-  "Algorithm is robust to trivial noise", {
+  "Algorithm is robust to trivial noise",
+  {
     IRTsub <- IRTsim[IRTsim$item < 4, ] # Select items 1-3
     set.seed(12345)
     IRTsub <- IRTsub[sample(nrow(IRTsub), 300), ] # Randomly sample 300 responses

@@ -2,8 +2,8 @@
 #'
 #' @srrstats {G1.4} Function documented with roxygen2.
 #' @srrstats {G2.1a} Expected data types provided for all inputs.
-#' @srrstats {G2.3a} match.arg() used on "type" argument.
-#' @srrstats {G2.3b} Argument "type" is case sensitive, which is documented.
+#' @srrstats {G2.3,G2.3a} match.arg() used on "type" argument.
+#' @srrstats {G2.3,G2.3b} Argument "type" is case sensitive, which is documented.
 #'
 #' @description Predictions are given at the population level, i.e., with random
 #'   effects set to zero. For fitted models including random effects, see

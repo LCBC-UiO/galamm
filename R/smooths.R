@@ -13,7 +13,7 @@ NULL
 #' @title Set up smooth term with factor loading
 #'
 #' @srrstats {G1.4} Function documented with roxygen2.
-#' @srrstats {G2.3b} Argument "factor" is case sensitive, as is documented here.
+#' @srrstats {G2.3,G2.3b} Argument "factor" is case sensitive, as is documented here.
 #' @srrstats {G2.5} No inputs are explicitly expected to be of factor type in
 #'   this function, but such expectations exist for arguments forwarded to
 #'   \code{mgcv::s}. This is elaborated under the "Details" heading in the
@@ -84,7 +84,7 @@ sl <- function(..., factor = NULL) {
 #' @title Set up smooth term with factor loading
 #'
 #' @srrstats {G1.4} Function documented with roxygen2.
-#' @srrstats {G2.3b} Argument "factor" is case sensitive, as is documented here.
+#' @srrstats {G2.3,G2.3b} Argument "factor" is case sensitive, as is documented here.
 #' @srrstats {G2.1a} Expected data types provided for all inputs.
 #' @srrstats {G2.5} No inputs are explicitly expected to be of factor type in
 #'   this function, but such expectations exist for arguments forwarded to

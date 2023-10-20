@@ -4,8 +4,8 @@
 #' procedure used when fitting GALAMMs using \code{\link{galamm}}.
 #'
 #' @srrstats {G1.4} Function documented with roxygen2.
-#' @srrstats {G2.3a} match.arg() used on "method" argument.
-#' @srrstats {G2.3b} Argument "method" is case sensitive, as documented
+#' @srrstats {G2.3,G2.3a} match.arg() used on "method" argument.
+#' @srrstats {G2.3,G2.3b} Argument "method" is case sensitive, as documented
 #'   below.
 #'
 #' @param optim_control List containing optimization parameters. If \code{method

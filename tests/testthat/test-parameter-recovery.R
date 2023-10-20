@@ -47,7 +47,7 @@ test_that("LMM parameters are within a tolerance of their generated value", {
 test_that(
   "LMM parameters are recovered with increasing precision",
   {
-    #skip_extended()
+    # skip_extended()
 
     # Simulate data with repeated measurements
     set.seed(10)
@@ -56,8 +56,10 @@ test_that(
       repetition = 1:10
     )
 
-    simres_list <- Map(lmm_simulator_function, n_ids = sim_params$n_ids,
-                       repetition = sim_params$repetition)
+    simres_list <- Map(lmm_simulator_function,
+      n_ids = sim_params$n_ids,
+      repetition = sim_params$repetition
+    )
 
     simres <- do.call(rbind, simres_list)
     # True value is 1 for both beta and random intercept standard deviation
@@ -65,14 +67,15 @@ test_that(
       x = cbind(beta_estimate, theta_estimate) ~ n_ids,
       data = simres,
       FUN = function(x) mean((x - 1)^2)
-      )
+    )
 
     simres_rmse <- simres_rmse[order(simres_rmse$n_ids), , drop = FALSE]
 
     # Expect decreasing RMSE with increasing sample size
     expect_true(all(diff(simres_rmse$beta_estimate) < 0))
     expect_true(all(diff(simres_rmse$theta_estimate) < 0))
-})
+  }
+)
 
 lmm_factor_simulator_function <- function(n_ids, repetition) {
   dat <- merge(
@@ -91,10 +94,12 @@ lmm_factor_simulator_function <- function(n_ids, repetition) {
   dat$y <- dat$x + lambda_true[dat$timepoint] * dat$random_intercept +
     rnorm(nrow(dat), sd = 1)
 
-  mod <- galamm(formula = y ~ x + (0 + loading | id), data = dat,
-                load.var = "timepoint",
-                lambda = matrix(c(1, NA, NA), ncol = 1),
-                factor = "loading")
+  mod <- galamm(
+    formula = y ~ x + (0 + loading | id), data = dat,
+    load.var = "timepoint",
+    lambda = matrix(c(1, NA, NA), ncol = 1),
+    factor = "loading"
+  )
   vc <- as.data.frame(VarCorr(mod))
   fl <- factor_loadings(mod)[, 1]
 
@@ -134,15 +139,19 @@ test_that(
       repetition = 1:10
     )
 
-    simres_list <- Map(lmm_factor_simulator_function, n_ids = sim_params$n_ids,
-                       repetition = sim_params$repetition)
+    simres_list <- Map(lmm_factor_simulator_function,
+      n_ids = sim_params$n_ids,
+      repetition = sim_params$repetition
+    )
 
     simres <- do.call(rbind, simres_list)
     # True value is 1 for both beta and random intercept standard deviation
     simres_rmse <- aggregate(
-      x = cbind(beta = beta_estimate - 1, theta = theta_estimate - 1,
-                lambda2 = lambda2_estimate - .8,
-                lambda3 = lambda3_estimate - 1.2) ~ n_ids,
+      x = cbind(
+        beta = beta_estimate - 1, theta = theta_estimate - 1,
+        lambda2 = lambda2_estimate - .8,
+        lambda3 = lambda3_estimate - 1.2
+      ) ~ n_ids,
       data = simres,
       FUN = function(x) mean(x^2)
     )
@@ -154,4 +163,5 @@ test_that(
     expect_true(all(diff(simres_rmse$theta) < 0))
     expect_true(all(diff(simres_rmse$lambda2) < 0))
     expect_true(all(diff(simres_rmse$lambda3) < 0))
-  })
+  }
+)

@@ -122,7 +122,8 @@ test_that("Poisson GLMM works", {
 NULL
 
 test_that(
-  "Algorithm is robust to trivial noise", {
+  "Algorithm is robust to trivial noise",
+  {
     dat <- subset(IRTsim, sid < 50)
     dat$item <- factor(dat$item)
     irt.lam <- matrix(c(1, NA, NA, NA, NA), ncol = 1)
