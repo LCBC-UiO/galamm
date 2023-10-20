@@ -258,7 +258,7 @@ gam.setup <- function(formula, pterms, mf) {
 #' @noRd
 #'
 #' @srrstats {G1.4a} Internal function documented.
-#' @srrstats {G2.4d} explicit conversion to factor via `as.factor()`
+#' @srrstats {G2.4,G2.4d} explicit conversion to factor via `as.factor()`
 #'
 #' @references
 #' \insertRef{woodGeneralizedAdditiveModels2017a}{galamm}

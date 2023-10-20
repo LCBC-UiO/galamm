@@ -11,7 +11,7 @@
 #' @srrstats {G1.2} Life cycle statement is in the file .github/CONTRIBUTING.md
 #' @srrstats {G1.5} No performance claims made in associated publication. Might
 #'   be added in the future, if a publication is made based on this package.
-#' @srrstats {G2.4e} No explicit conversion from factor to other types is done.
+#' @srrstats {G2.4,G2.4e} No explicit conversion from factor to other types is done.
 #' @srrstats {G2.8} Not directly relevant.
 #' @srrstats {G2.9} I'm not aware of any conversions in which information is
 #'   lost.

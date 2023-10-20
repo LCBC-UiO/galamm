@@ -10,7 +10,7 @@ factor_loadings <- function(object) {
 #'
 #' @srrstats {G1.4} Function documented with roxygen2.
 #' @srrstats {G2.1a} Expected data types provided for all inputs.
-#' @srrstats {G2.4c} as.character() used to define dimnames of the returned
+#' @srrstats {G2.4,G2.4c} as.character() used to define dimnames of the returned
 #'   object.
 #'
 #' @param object Object of class \code{galamm} returned from

@@ -1,8 +1,8 @@
 #' @title Confidence intervals for model parameters
 #'
 #' @srrstats {G1.4} Function documented with roxygen2.
-#' @srrstats {G2.3a} match.arg() used on "method" argument.
-#' @srrstats {G2.3b} Arguments parm and method are case sensitive, as stated in
+#' @srrstats {G2.3,G2.3a} match.arg() used on "method" argument.
+#' @srrstats {G2.3,G2.3b} Arguments parm and method are case sensitive, as stated in
 #'   their documentation.
 #' @srrstats {G2.1a} Expected data types provided for all inputs.
 #'

@@ -1,7 +1,7 @@
 #' @title Calculate variance-covariance matrix for GALAMM fit
 #'
 #' @srrstats {G1.4} Function documented with roxygen2.
-#' @srrstats {G2.3b} Argument "parm" is case sensitive, as is documented here.
+#' @srrstats {G2.3,G2.3b} Argument "parm" is case sensitive, as is documented here.
 #' @srrstats {G2.1a} Expected data types provided for all inputs.
 #'
 #' @param object Object of class \code{galamm} returned from

@@ -1,8 +1,8 @@
 #' @title Residuals of galamm objects
 #'
 #' @srrstats {G1.4} Function documented with roxygen2.
-#' @srrstats {G2.3a} match.arg() used on "type" argument.
-#' @srrstats {G2.3b} Argument type is case sensitive, as stated in their
+#' @srrstats {G2.3,G2.3a} match.arg() used on "type" argument.
+#' @srrstats {G2.3,G2.3b} Argument type is case sensitive, as stated in their
 #'   documentation.
 #' @srrstats {G2.1a} Expected data types provided for all inputs.
 #'

@@ -37,13 +37,13 @@
 #'   inputs in the documentation below.
 #' @srrstats {G2.2} Assertions on the lengths of arguments are implemented in
 #'   galamm.
-#' @srrstats {G2.3a} match.arg() used on "na.action" argument.
-#' @srrstats {G2.3b} Arguments "family", "load.var", "factor", and the elements
+#' @srrstats {G2.3,G2.3a} match.arg() used on "na.action" argument.
+#' @srrstats {G2.3,G2.3b} Arguments "family", "load.var", "factor", and the elements
 #'   of the "start" argument are case sensitive. This is stated in the
 #'   documentation below.
-#' @srrstats {G2.4a} Internally, objects family_mapping, weights_mapping and
+#' @srrstats {G2.4,G2.4a} Internally, objects family_mapping, weights_mapping and
 #'   lambda_mapping_X are explicitly converted to integer using as.integer().
-#' @srrstats {G2.4b} as.numeric() used multiple places throughout the code for
+#' @srrstats {G2.4,G2.4b} as.numeric() used multiple places throughout the code for
 #'   explicitly converting to continuous.
 #' @srrstats {G2.6} If \code{lambda} is provided as a vector, it will be
 #'   converted to a matrix with a single column, and a message will be printed.
