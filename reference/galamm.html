@@ -228,15 +228,19 @@ sensitive.</p></dd>
 <dt>lambda</dt>
 <dd><p>Optional factor loading matrix. Numerical values indicate that
 the given value is fixed, while <code>NA</code> means that the entry is a
-parameter to be estimated. Defaults to <code>NULL</code>, which means that there
-is no factor loading matrix.</p></dd>
+parameter to be estimated. Numerical values can only take the values 0 or</p><ol><li><p>The number of columns of <code>lambda</code> must be identical to the number
+of elements in <code>factor</code>. Defaults to <code>NULL</code>, which means that
+there is no factor loading matrix. If <code>lambda</code> is provided as a
+vector, it will be converted to a <code>matrix</code> with a single column.</p></li>
+</ol></dd>
 
 
 <dt>factor</dt>
 <dd><p>Optional character vector whose \(j\)th entry corresponds to
-the \(j\)th column of the corresponding matrix in <code>lambda</code>. Defaults
-to <code>NULL</code>, which means that there are no factor loadings. Argument is
-case sensitive.</p></dd>
+the \(j\)th column of the corresponding matrix in <code>lambda</code>. The
+number of elements in <code>factor</code> must be equal to the number of columns
+in <code>lambda</code>. Defaults to <code>NULL</code>, which means that there are no
+factor loadings. Argument is case sensitive.</p></dd>
 
 
 <dt>factor_interactions</dt>
@@ -251,9 +255,9 @@ interactions are used.</p></dd>
 <dd><p>Character of length one specifying a function which
 indicates what should happen when the data contains <code>NA</code>s. The
 defaults is set to the <code>na.action</code> setting of <code>options</code>, which
-can be seen with <code>options("na.action")</code>. The other alternative is
-<code>"na.fail"</code>, which means that the function fails if there as
-<code>NA</code>s in <code>data</code>.</p></dd>
+can be seen with <code>options("na.action")</code>. The other alternatives are
+<code>"na.fail"</code> or <code>"na.exclude"</code>, which means that the function
+fails if there as <code>NA</code>s in <code>data</code>.</p></dd>
 
 
 <dt>start</dt>

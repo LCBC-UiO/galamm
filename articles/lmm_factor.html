@@ -123,13 +123,13 @@ comes from <a href="https://cran.r-project.org/package=PLmixed" class="external-
 simulated version of the Korea Youth Panel Survey (KYPS) data.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">KYPSsim</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   mid hid sid time   esteem time12 time34</span></span>
-<span><span class="co">#&gt; 1   1   1   1    1 2.759234      1      0</span></span>
-<span><span class="co">#&gt; 2   1   1   1    2 2.980368      1      0</span></span>
-<span><span class="co">#&gt; 3   1   1   1    3 3.130784      0      1</span></span>
-<span><span class="co">#&gt; 4   1   1   1    4 3.310306      0      1</span></span>
-<span><span class="co">#&gt; 5   2   1   2    1 2.924520      1      0</span></span>
-<span><span class="co">#&gt; 6   2   1   2    2 2.997440      1      0</span></span></code></pre></div>
+<span><span class="co">#&gt;   mid hid sid time   esteem</span></span>
+<span><span class="co">#&gt; 1   1   1   1    1 2.759234</span></span>
+<span><span class="co">#&gt; 2   1   1   1    2 2.980368</span></span>
+<span><span class="co">#&gt; 3   1   1   1    3 3.130784</span></span>
+<span><span class="co">#&gt; 4   1   1   1    4 3.310306</span></span>
+<span><span class="co">#&gt; 5   2   1   2    1 2.924520</span></span>
+<span><span class="co">#&gt; 6   2   1   2    2 2.997440</span></span></code></pre></div>
 <p>Student self esteem (variable <code>esteem</code>) was assessed at
 four timepoints, the first two while the student attended middle school,
 and the second two while the student attended high school. The variables
@@ -210,7 +210,7 @@ N_{3}\left(\mathbf{0},
 \]</span></p>
 <p>where <span class="math inline">\(N_{3}(a, b)\)</span> denotes a
 trivariate normal distribution with mean <span class="math inline">\(a\)</span> and covariance <span class="math inline">\(b\)</span>.</p>
-<p>In order to fit the model with galamm, we use the same syntax as
+<p>In order to fit the model with galamm, we use syntax similar to
 PLmixed, and start by defining the loading matrix. The first column
 contains <span class="math inline">\(\boldsymbol{\lambda}_{m}\)</span>
 and the second column contains <span class="math inline">\(\boldsymbol{\lambda}_{h}\)</span>. Numerical
@@ -262,17 +262,18 @@ call.</p>
 <span>  lambda <span class="op">=</span> <span class="va">loading_matrix</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>The model could be fit with <code>PLmixed</code> using the following
-call with exactly the same arguments as to <code>galamm</code>. The
-reader is encouraged to try, and confirm that the results are
+call, which differs from the call to <code>galamm</code> in that
+<code>factor</code> and <code>lambda</code> must be put inside lists.
+The reader is encouraged to try, and confirm that the results are
 essentially equivalent, but we won’t run it in this vignette as it takes
 5-10 minutes.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">kyps_plmixed</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/PLmixed/man/PLmixed.html" class="external-link">PLmixed</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">form</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">KYPSsim</span>,</span>
-<span>  factor <span class="op">=</span> <span class="va">factors</span>,</span>
+<span>  factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">factors</span><span class="op">)</span>,</span>
 <span>  load.var <span class="op">=</span> <span class="va">load.var</span>,</span>
-<span>  lambda <span class="op">=</span> <span class="va">loading_matrix</span></span>
+<span>  lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">loading_matrix</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>Using galamm’s summary method, we can study the model output.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
@@ -628,12 +629,12 @@ with galamm.</p>
 <code class="sourceCode R"><span><span class="va">judge_plmixed</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/PLmixed/man/PLmixed.html" class="external-link">PLmixed</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">form</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">JUDGEsim</span>,</span>
-<span>  lambda <span class="op">=</span> <span class="va">loading_matrix</span>,</span>
+<span>  lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">loading_matrix</span><span class="op">)</span>,</span>
 <span>  load.var <span class="op">=</span> <span class="st">"item"</span>,</span>
-<span>  factor <span class="op">=</span> <span class="va">factors</span></span>
+<span>  factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">factors</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p>We get identical results using <code>galamm</code> in less than five
-minutes.</p>
+<p>We get identical results using <code>galamm</code>, and it takes less
+than five minutes.</p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">judge_galamm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">form</span>,</span>

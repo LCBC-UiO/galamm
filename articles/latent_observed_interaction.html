@@ -263,9 +263,8 @@ loading matrix</p>
 \lambda_{3} + \lambda_{4} x
 \end{pmatrix}.
 \]</span></p>
-<p>We specify the factor interactions with a list of lists. The reason
-for this notation is that we need one list to hold the regression terms
-for each loading variable specified in <code>load.var</code>.</p>
+<p>We specify the factor interactions with a list, one for each row of
+<code>lambda</code>:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">factor_interactions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">~</span> <span class="fl">1</span>, <span class="op">~</span> <span class="fl">1</span>, <span class="op">~</span> <span class="va">x</span><span class="op">)</span></span></code></pre></div>
 <p>This specifies that for the first two rows, there are no covariates,

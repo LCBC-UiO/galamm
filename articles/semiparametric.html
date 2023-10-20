@@ -823,7 +823,8 @@ this example.</p>
 <div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod_byvar_mixed</span><span class="op">)</span></span>
 <span><span class="co">#&gt; GALAMM fit by maximum marginal likelihood.</span></span>
-<span><span class="co">#&gt; Formula: y ~ domain + sl(x, by = domain, factor = c("ability1", "ability2")) +      (0 + domain1:ability1 + domain2:ability2 | id)</span></span>
+<span><span class="co">#&gt; Formula: y ~ domain + sl(x, by = domain, factor = c("ability1", "ability2")) +  </span></span>
+<span><span class="co">#&gt;     (0 + domain1:ability1 + domain2:ability2 | id)</span></span>
 <span><span class="co">#&gt;    Data: dat</span></span>
 <span><span class="co">#&gt; Control: galamm_control(optim_control = list(factr = 1e+09, trace = 3,      REPORT = 30, maxit = 1000))</span></span>
 <span><span class="co">#&gt; </span></span>

@@ -208,11 +208,11 @@ It corresponds to the term <span class="math inline">\(\mathbf{x}_{ijk}^{T}\bold
 + \eta_{jk})\)</span> in the mathematical specification of the model.
 The variable <code>ability</code> is not part of the <code>IRTsim</code>
 dataframe, but is instead specified in the argument
-<code>factor = list("ability")</code>. The argument
+<code>factor = "ability"</code>. The argument
 <code>load.var = "item"</code> specifies that all rows in the dataframe
 with the same value of “item” should get the same element of <span class="math inline">\(\boldsymbol{\lambda}\)</span>, and hence it
 defines the dummy variable <span class="math inline">\(\mathbf{x}_{ijk}\)</span>. Finally,
-<code>lambda = list(loading_matrix)</code> provides the matrix of factor
+<code>lambda = loading_matrix</code> provides the matrix of factor
 loadings. Note that we must explicitly add a zero in
 <code>(0 + ability | school / sid)</code> to avoid having a random
 intercept estimated in addition to the effect for each value of “item”;

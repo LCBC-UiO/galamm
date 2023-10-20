@@ -89,7 +89,7 @@ to 1.</p></dd>
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>An object of class <code>VarCorr.galamm</code>.</p>
+<p>An object of class <code>c("VarCorr.galamm", "VarCorr.merMod")</code>.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -128,6 +128,13 @@ to 1.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Groups   Name        Std.Dev. Variance</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  id       (Intercept) 0.99400  0.98804 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Residual             0.97964  0.95970 </span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Convert to data frame</span></span></span>
+<span class="r-in"><span><span class="co"># (this invokes lme4's function as.data.frame.VarCorr.merMod)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="fu">VarCorr</span><span class="op">(</span><span class="va">mod</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        grp        var1 var2      vcov     sdcor</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1       id (Intercept) &lt;NA&gt; 0.9880425 0.9940033</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 Residual        &lt;NA&gt; &lt;NA&gt; 0.9596999 0.9796427</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
