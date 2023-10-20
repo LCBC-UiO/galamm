@@ -14,6 +14,10 @@ NULL
 #'
 #' @srrstats {G1.4} Function documented with roxygen2.
 #' @srrstats {G2.3b} Argument "factor" is case sensitive, as is documented here.
+#' @srrstats {G2.5} No inputs are explicitly expected to be of factor type in
+#'   this function, but such expectations exist for arguments forwarded to
+#'   \code{mgcv::s}. This is elaborated under the "Details" heading in the
+#'   documentation.
 #'
 #' @description This is a very thin wrapper around \code{mgcv::s}. It enables
 #' the specification of loading variables for smooth terms. The last letter "l",
@@ -30,6 +34,12 @@ NULL
 #'   attribute named \code{"factor"} which specifies any factor loading which
 #'   this smooth term should be multiplied with in order to produce the observed
 #'   outcome.
+#'
+#' @details The documentation of the function \code{mgcv::s} should be consulted
+#'   for details on how to properly set up smooth terms. In particular, note
+#'   that these terms distinguish between ordered and unordered factor terms
+#'   in the \code{by} variable, which can be provided in \code{...} and is
+#'   forwarded to \code{mgcv::s}.
 #'
 #' @export
 #' @family modeling functions
@@ -76,6 +86,10 @@ sl <- function(..., factor = NULL) {
 #' @srrstats {G1.4} Function documented with roxygen2.
 #' @srrstats {G2.3b} Argument "factor" is case sensitive, as is documented here.
 #' @srrstats {G2.1a} Expected data types provided for all inputs.
+#' @srrstats {G2.5} No inputs are explicitly expected to be of factor type in
+#'   this function, but such expectations exist for arguments forwarded to
+#'   \code{mgcv::t2}. This is elaborated under the "Details" heading in the
+#'   documentation.
 #'
 #' @description This is a very thin wrapper around \code{mgcv::t2}. It enables
 #'   the specification of loading variables for smooth terms. The last letter
@@ -95,6 +109,12 @@ sl <- function(..., factor = NULL) {
 #'
 #' @export
 #' @family modeling functions
+#'
+#' @details The documentation of the function \code{mgcv::t2} should be consulted
+#'   for details on how to properly set up smooth terms. In particular, note
+#'   that these terms distinguish between ordered and unordered factor terms
+#'   in the \code{by} variable, which can be provided in \code{...} and is
+#'   forwarded to \code{mgcv::t2}.
 #'
 #' @references
 #'

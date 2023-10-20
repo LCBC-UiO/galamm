@@ -1,7 +1,5 @@
 #' @title Fit a generalized additive latent and mixed model
 #'
-#' @srrstats {G1.4} Function documented with roxygen2.
-#' @srrstats {G1.0} Primary references shown in the description.
 #' @description This function fits a generalized additive latent and mixed model
 #'   (GALAMMs), as described in
 #'   \insertCite{sorensenLongitudinalModelingAgeDependent2023;textual}{galamm}.
@@ -24,10 +22,48 @@
 #'   package, which is detailed in
 #'   \insertCite{rockwoodEstimatingComplexMeasurement2019;textual}{galamm}.
 #'
-#' @srrstats {G2.3b} Arguments "family", "load.var", "factor", and the
-#'   elements of the "start" argument are case sensitive. This is stated in the
+#' @srrstats {G1.0} Primary references shown in the description.
+#' @srrstats {G1.3} Statistical terminology defined in detail in the references.
+#' @srrstats {G1.4} Function documented with roxygen2.
+#' @srrstats {G2.0} Assertions on length of inputs are made in the beginning of
+#'   the galamm() function.
+#' @srrstats {G2.0a} Secondary documentation of expectations on lengths of
+#'   inputs provided for the parameters in the descriptions below. This applies
+#'   in particular to \code{lambda}, \code{factor}, \code{load.var}, and
+#'   \code{factor_interactions}, as well as \code{family} and
+#'   \code{family_mapping}.
+#' @srrstats {G2.1} Assertions on types of input implemented in galamm function.
+#' @srrstats {G2.1a} Documentation on expected data types provided for all
+#'   inputs in the documentation below.
+#' @srrstats {G2.2} Assertions on the lengths of arguments are implemented in
+#'   galamm.
+#' @srrstats {G2.3a} match.arg() used on "na.action" argument.
+#' @srrstats {G2.3b} Arguments "family", "load.var", "factor", and the elements
+#'   of the "start" argument are case sensitive. This is stated in the
 #'   documentation below.
-#' @srrstats {G2.1a} Expected data types provided for all inputs.
+#' @srrstats {G2.4a} Internally, objects family_mapping, weights_mapping and
+#'   lambda_mapping_X are explicitly converted to integer using as.integer().
+#' @srrstats {G2.4b} as.numeric() used multiple places throughout the code for
+#'   explicitly converting to continuous.
+#' @srrstats {G2.6} If \code{lambda} is provided as a vector, it will be
+#'   converted to a matrix with a single column, and a message will be printed.
+#' @srrstats {G2.7} Both \code{tibble}s and \code{data.table}s are accepted in
+#'   the \code{data} argument.
+#' @srrstats {G2.10} \code{drop = FALSE} is used regularly in the code, when
+#'   extract columns from \code{data.frame}s or \code{matrix}.
+#' @srrstats {G2.13} Checks for missing data implemented in the preprocessing
+#'   steps of galamm. Note that in the argument \code{lambda}, \code{NA} values
+#'   mean that the matrix element is an unknown parameter.
+#' @srrstats {G2.14} Users can set options for handling missing values through
+#'   the argument \code{na.action}.
+#' @srrstats {G2.14a} Users can set \code{na.action = "na.fail"}.
+#' @srrstats {G2.15} If \code{na.action = "na.omit"} or \code{na.action =
+#'   "na.exclude"}, missing values in \code{data} are explicitly removed.
+#'   Otherwise, if \code{na.action = "na.fail"}, missing values in \code{data}
+#'   cause an error. In any case, data with potential missingness are never
+#'   provided to any base R functions.
+#' @srrstats {G2.16} \code{NaN}, \code{Inf}, or \code{-Inf} in \code{data}
+#'   causes an error. The same happens with such values in \code{lambda}.
 #'
 #' @param formula A formula specifying the model. Smooth terms are defined in
 #'   the style of the \code{mgcv} and \code{gamm4} packages, see
@@ -77,13 +113,17 @@
 #'
 #' @param lambda Optional factor loading matrix. Numerical values indicate that
 #'   the given value is fixed, while \code{NA} means that the entry is a
-#'   parameter to be estimated. Defaults to \code{NULL}, which means that there
-#'   is no factor loading matrix.
+#'   parameter to be estimated. Numerical values can only take the values 0 or
+#'   1. The number of columns of \code{lambda} must be identical to the number
+#'   of elements in \code{factor}. Defaults to \code{NULL}, which means that
+#'   there is no factor loading matrix. If \code{lambda} is provided as a
+#'   vector, it will be converted to a \code{matrix} with a single column.
 #'
 #' @param factor Optional character vector whose \eqn{j}th entry corresponds to
-#'   the \eqn{j}th column of the corresponding matrix in \code{lambda}. Defaults
-#'   to \code{NULL}, which means that there are no factor loadings. Argument is
-#'   case sensitive.
+#'   the \eqn{j}th column of the corresponding matrix in \code{lambda}. The
+#'   number of elements in \code{factor} must be equal to the number of columns
+#'   in \code{lambda}. Defaults to \code{NULL}, which means that there are no
+#'   factor loadings. Argument is case sensitive.
 #'
 #' @param factor_interactions Optional list of length equal to the number of
 #'   columns in \code{lambda}. Each list element should be a \code{formula}
@@ -94,9 +134,9 @@
 #' @param na.action Character of length one specifying a function which
 #'   indicates what should happen when the data contains \code{NA}s. The
 #'   defaults is set to the \code{na.action} setting of \code{options}, which
-#'   can be seen with \code{options("na.action")}. The other alternative is
-#'   \code{"na.fail"}, which means that the function fails if there as
-#'   \code{NA}s in \code{data}.
+#'   can be seen with \code{options("na.action")}. The other alternatives are
+#'   \code{"na.fail"} or \code{"na.exclude"}, which means that the function
+#'   fails if there as \code{NA}s in \code{data}.
 #'
 #' @param start Optional named list of starting values for parameters. Possible
 #'   names of list elements are \code{"theta"}, \code{"beta"}, \code{"lambda"},
@@ -272,33 +312,22 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
                    factor_interactions = NULL,
                    na.action = getOption("na.action"),
                    start = NULL, control = galamm_control()) {
-  # Deal with potential missing values
+  if (!inherits(data, "data.frame")) {
+    stop("data must be a data.frame")
+  }
 
-  #' @srrstats {G2.1} Assertions on inputs implemented here.
-  #'
+  na.action <- match.arg(na.action, c("na.omit", "na.fail", "na.exclude"))
+  # Deal with potential missing values
   if (any(vapply(data, function(x) any(is.infinite(x)), logical(1)))) {
     stop("Infinite values in 'data'. galamm cannot handle this.")
   }
   if (any(vapply(data, function(x) any(is.nan(x)), logical(1)))) {
     stop("NaN in 'data'. galamm cannot handle this.")
   }
-
-  if (!is.character(na.action)) {
-    stop("na.action must be character")
-  }
   data <- eval(parse(text = paste0(na.action, "(data)")))
 
   if (nrow(data) == 0) stop("No data, nothing to do.")
 
-  if (methods::is(data, "tbl_df")) {
-    message("Converting tibble 'data' to data.frame.")
-  }
-  if (methods::is(data, "data.table")) {
-    message("Converting data.table 'data' to data.frame")
-  }
-  if (!inherits(data, "data.frame")) {
-    stop("data must be a data.frame")
-  }
   data <- as.data.frame(data)
   mc <- match.call()
 
@@ -308,14 +337,9 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   if (!is.null(weights) && !methods::is(weights, "formula")) {
     stop("weights must be a formula")
   }
-
   if (!is.vector(family_mapping)) {
     stop("family_mapping must be a vector.")
   }
-  if (is.numeric(family_mapping)) {
-    family_mapping <- as.integer(family_mapping)
-  }
-
   if (nrow(data) != length(family_mapping)) {
     stop("family_mapping must contain one index per row in data")
   }
@@ -336,8 +360,30 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   if (!is.null(factor) && !is.character(factor)) {
     stop("factor must be NULL or a character vector")
   }
+  if (!is.null(lambda) && !is.numeric(lambda)) {
+    stop("lambda must either be NULL or a matrix or numeric vector")
+  }
   if (!is.null(lambda) && !is.matrix(lambda)) {
-    stop("lambda must be NULL or a matrix")
+    lambda <- matrix(lambda, ncol = 1)
+    message("lambda converted to matrix with one column")
+  }
+  if (!is.null(lambda)) {
+    if (any(is.nan(lambda)) || any(is.infinite(lambda))) {
+      stop("elements of lambda can be either 0, 1, or NA")
+    }
+    if (!all(lambda[!is.na(lambda)] %in% c(0, 1))) {
+      stop("all non-NA values in lambda must be either 0 or 1")
+    }
+  }
+  if (any(vapply(list(load.var, lambda, factor), is.null, logical(1))) &&
+    any(vapply(
+      list(load.var, lambda, factor),
+      function(x) !is.null(x), logical(1)
+    ))) {
+    stop(
+      "load.var, lambda, and factor must either all have values or ",
+      "all be NULL."
+    )
   }
 
   tmp <- setup_factor(load.var, lambda, factor, data)
@@ -419,7 +465,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
       theta_mapping = theta_mapping,
       u_init = u_init,
       lambda = par[lambda_inds],
-      lambda_mapping_X = lambda_mappings$lambda_mapping_X,
+      lambda_mapping_X = as.integer(lambda_mappings$lambda_mapping_X),
       lambda_mapping_Zt = lambda_mappings$lambda_mapping_Zt,
       lambda_mapping_Zt_covs = lambda_mappings$lambda_mapping_Zt_covs,
       weights = par[weights_inds],

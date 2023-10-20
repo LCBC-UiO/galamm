@@ -65,7 +65,7 @@ We define the loading matrix as follows, where the value `1` indicates that the 
 (loading_matrix <- matrix(c(1, NA), ncol = 1))
 ```
 
-We set `load.var = "itemgroup"` because all rows of the data with the same value of `itemgroup` will receive the same factor loading. In `formula`, we state `(0 + level | id)` to specify that each subject, identified by `id`, has a given level. `level` is not an element of the `mresp` data, but is instead the factor onto which the loading matrix loads. We identify this with the argument `factor = list("level")`. We could have chosen any other name for `"level"`, except for names that are already columns in `mresp`.
+We set `load.var = "itemgroup"` because all rows of the data with the same value of `itemgroup` will receive the same factor loading. In `formula`, we state `(0 + level | id)` to specify that each subject, identified by `id`, has a given level. `level` is not an element of the `mresp` data, but is instead the factor onto which the loading matrix loads. We identify this with the argument `factor = "level"`. We could have chosen any other name for `"level"`, except for names that are already columns in `mresp`.
 
 We also need to define the response families, with the vector
 

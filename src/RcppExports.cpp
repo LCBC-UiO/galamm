@@ -12,7 +12,7 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // marginal_likelihood
-Rcpp::List marginal_likelihood(const Eigen::Map<Eigen::VectorXd> y, const Eigen::Map<Eigen::VectorXd> trials, const Eigen::Map<Eigen::MatrixXd> X, const Eigen::MappedSparseMatrix<double> Zt, const Eigen::MappedSparseMatrix<double> Lambdat, const Eigen::Map<Eigen::VectorXd> beta, const Eigen::Map<Eigen::VectorXd> theta, const std::vector<int> theta_mapping, const Eigen::Map<Eigen::VectorXd> u_init, const Eigen::Map<Eigen::VectorXd> lambda, Rcpp::ListOf<Rcpp::IntegerVector> lambda_mapping_X, Rcpp::ListOf<Rcpp::IntegerVector> lambda_mapping_Zt, Rcpp::ListOf<Rcpp::NumericVector> lambda_mapping_Zt_covs, const Eigen::Map<Eigen::VectorXd> weights, const std::vector<int> weights_mapping, const std::vector<std::string> family, const Eigen::Map<Eigen::VectorXi> family_mapping, const Eigen::Map<Eigen::VectorXd> k, const int maxit_conditional_modes, const double lossvalue_tol, const bool gradient, const bool hessian, bool reduced_hessian);
+Rcpp::List marginal_likelihood(const Eigen::Map<Eigen::VectorXd> y, const Eigen::Map<Eigen::VectorXd> trials, const Eigen::Map<Eigen::MatrixXd> X, const Eigen::MappedSparseMatrix<double> Zt, const Eigen::MappedSparseMatrix<double> Lambdat, const Eigen::Map<Eigen::VectorXd> beta, const Eigen::Map<Eigen::VectorXd> theta, const std::vector<int> theta_mapping, const Eigen::Map<Eigen::VectorXd> u_init, const Eigen::Map<Eigen::VectorXd> lambda, const Eigen::Map<Eigen::VectorXi> lambda_mapping_X, Rcpp::ListOf<Rcpp::IntegerVector> lambda_mapping_Zt, Rcpp::ListOf<Rcpp::NumericVector> lambda_mapping_Zt_covs, const Eigen::Map<Eigen::VectorXd> weights, const std::vector<int> weights_mapping, const std::vector<std::string> family, const Eigen::Map<Eigen::VectorXi> family_mapping, const Eigen::Map<Eigen::VectorXd> k, const int maxit_conditional_modes, const double lossvalue_tol, const bool gradient, const bool hessian, bool reduced_hessian);
 RcppExport SEXP _galamm_marginal_likelihood(SEXP ySEXP, SEXP trialsSEXP, SEXP XSEXP, SEXP ZtSEXP, SEXP LambdatSEXP, SEXP betaSEXP, SEXP thetaSEXP, SEXP theta_mappingSEXP, SEXP u_initSEXP, SEXP lambdaSEXP, SEXP lambda_mapping_XSEXP, SEXP lambda_mapping_ZtSEXP, SEXP lambda_mapping_Zt_covsSEXP, SEXP weightsSEXP, SEXP weights_mappingSEXP, SEXP familySEXP, SEXP family_mappingSEXP, SEXP kSEXP, SEXP maxit_conditional_modesSEXP, SEXP lossvalue_tolSEXP, SEXP gradientSEXP, SEXP hessianSEXP, SEXP reduced_hessianSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -27,7 +27,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const std::vector<int> >::type theta_mapping(theta_mappingSEXP);
     Rcpp::traits::input_parameter< const Eigen::Map<Eigen::VectorXd> >::type u_init(u_initSEXP);
     Rcpp::traits::input_parameter< const Eigen::Map<Eigen::VectorXd> >::type lambda(lambdaSEXP);
-    Rcpp::traits::input_parameter< Rcpp::ListOf<Rcpp::IntegerVector> >::type lambda_mapping_X(lambda_mapping_XSEXP);
+    Rcpp::traits::input_parameter< const Eigen::Map<Eigen::VectorXi> >::type lambda_mapping_X(lambda_mapping_XSEXP);
     Rcpp::traits::input_parameter< Rcpp::ListOf<Rcpp::IntegerVector> >::type lambda_mapping_Zt(lambda_mapping_ZtSEXP);
     Rcpp::traits::input_parameter< Rcpp::ListOf<Rcpp::NumericVector> >::type lambda_mapping_Zt_covs(lambda_mapping_Zt_covsSEXP);
     Rcpp::traits::input_parameter< const Eigen::Map<Eigen::VectorXd> >::type weights(weightsSEXP);

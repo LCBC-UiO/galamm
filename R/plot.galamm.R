@@ -1,13 +1,13 @@
 #' @title Diagnostic plots for galamm objects
 #'
-#' @srrstats {G1.4} Function documented with roxygen2.
-#' @srrstats {G2.1a} Expected data types provided for all inputs.
-#'
 #' @param x An object of class \code{galamm} returned from \code{\link{galamm}}.
 #' @param ... Optional arguments passed on to the \code{plot} function.
 #'
 #' @return A plot is displayed.
 #' @export
+#'
+#' @srrstats {G1.4} Function documented with roxygen2.
+#' @srrstats {G2.1a} Expected data types provided for all inputs.
 #'
 #' @seealso [residuals.galamm()] for extracting residuals and [plot()] for the
 #'   generic function.

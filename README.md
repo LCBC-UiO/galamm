@@ -224,7 +224,7 @@ We finally plot the estimated smooth term.
 plot_smooth(mod)
 ```
 
-<img src="man/figures/README-unnamed-chunk-10-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-9-1.png" width="100%" />
 
 ## How to cite this package
 

@@ -1,9 +1,10 @@
 #' @title Control values for galamm fit
 #'
-#' @srrstats {G1.4} Function documented with roxygen2.
 #' @description This function can be called for controling the optimization
 #' procedure used when fitting GALAMMs using \code{\link{galamm}}.
 #'
+#' @srrstats {G1.4} Function documented with roxygen2.
+#' @srrstats {G2.3a} match.arg() used on "method" argument.
 #' @srrstats {G2.3b} Argument "method" is case sensitive, as documented
 #'   below.
 #'

@@ -69,8 +69,8 @@ Other details of model fit:
 \code{\link{vcov.galamm}()}
 }
 \author{
-The example for this function comes from \code{PLmixed}, with
-authors Nicholas Rockwood and Minjeong Jeon
+The example for this function comes from \code{PLmixed}, with authors
+Nicholas Rockwood and Minjeong Jeon
 \insertCite{rockwoodEstimatingComplexMeasurement2019}{galamm}.
 }
 \concept{details of model fit}

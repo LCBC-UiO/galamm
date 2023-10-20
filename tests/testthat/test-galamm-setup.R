@@ -1,3 +1,19 @@
+#' @srrstats {G5.0} Datasets from PLmixed package are used for testing, and
+#'   results from the functions in this package are precomputed for comparison,
+#'   in cases where PLmixed and galamm support the same models. In addition,
+#'   dataset "sleepstudy" from lme4 package is also used here.
+#' @srrstats {G5.4} It has been confirmed that PLmixed returns the same results.
+#'   PLmixed is not run inside the tests, because it is too slow for that.
+#' @srrstats {G5.8} Edge condition tests implemented here.
+#' @srrstats {G5.8a} Tested below.
+#' @srrstats {G5.8b} Data of wrong type is being tested.
+#' @srrstats {G5.8c} All-NA fields will cause an error, since there will be no
+#'   data.
+#' @srrstats {G5.8d} Data with more columns than rows will cause failure,
+#'   because the design matrix will be rank deficient. This is tested here.
+#' @noRd
+NULL
+
 test_that("wrong input is handled properly", {
   dat <- subset(cognition, domain == 2)
 
@@ -12,6 +28,19 @@ test_that("wrong input is handled properly", {
       factor = "loading"
     ),
     "lambda matrix must contain one row for each element in load.var"
+  )
+
+  expect_error(
+    mod <- galamm(
+      formula = as.character(y ~ 0 + item + s(x, by = loading) +
+        (0 + loading | id / timepoint)),
+      data = dat,
+      family = binomial,
+      load.var = "item",
+      lambda = matrix(c(1, NA, NA), ncol = 1),
+      factor = "loading"
+    ),
+    "formula must be a formula"
   )
 
   expect_error(
@@ -94,7 +123,7 @@ test_that("wrong input is handled properly", {
   )
 
   newdat <- dat
-  newdat$loading <- 1
+
   expect_error(
     mod <- galamm(
       formula = y ~ 0 + item + s(x, by = loading) +
@@ -103,9 +132,23 @@ test_that("wrong input is handled properly", {
       family = binomial,
       load.var = "item",
       lambda = matrix(c(1, NA, NA), ncol = 1),
+      factor = 1L
+    ),
+    "factor must be NULL or a character vector"
+  )
+
+  newdat$loading <- 1
+  expect_error(
+    mod <- galamm(
+      formula = y ~ 0 + item + s(x, by = loading) +
+        (0 + loading | id / timepoint),
+      data = newdat,
+      family = binomial,
+      load.var = "item",
+      lambda = list(matrix(c(1, NA), ncol = 1)),
       factor = "loading"
     ),
-    "Factor already a column in data"
+    "lambda must either be NULL or a matrix or numeric vector"
   )
 
   expect_error(
@@ -282,7 +325,7 @@ test_that("multiple factors and factors in fixed effects are allowed", {
   )
 
   kyps.model <- galamm(
-    esteem ~ as.factor(time) + (0 + hs | hid)
+    formula = esteem ~ as.factor(time) + (0 + hs | hid)
       + (0 + ms | mid),
     data = KYPSsim,
     factor = c("ms", "hs"),
@@ -299,7 +342,8 @@ test_that("multiple factors and factors in fixed effects are allowed", {
 
   # Model with factor loading on fixed effect
   KYPSsim$time2 <- as.numeric(KYPSsim$time == 2)
-  kyps.model <- galamm(esteem ~ 1 + ms:time2 + (1 | sid),
+  kyps.model <- galamm(
+    formula = esteem ~ 1 + ms:time2 + (1 | sid),
     data = subset(KYPSsim, time %in% c(1, 2)),
     factor = "ms", load.var = "time",
     lambda = matrix(c(1, NA)),
@@ -328,45 +372,6 @@ test_that("functions fail when they should", {
 })
 
 
-test_that("multiple factors in fixed effects works", {
-  path <-
-    system.file("testdata", "test_multiple_factors.rds", package = "galamm")
-  dat <- as.data.frame(readRDS(path))
-
-  lmat <- matrix(c(
-    1, NA, NA, 0, 0, 0,
-    0, 0, 0, 1, NA, NA
-  ), ncol = 2)
-
-  mod <- galamm(
-    formula = y ~ 0 + x:domain1:lambda1 + x:domain2:lambda2 +
-      (0 + 1 | id),
-    data = dat,
-    load.var = "item",
-    lambda = lmat,
-    factor = c("lambda1", "lambda2"),
-    start = list(
-      theta = 0.744468091602185,
-      beta = c(1.03995169865897, 1.87422267819485),
-      lambda = c(
-        0.478791387562245, 1.94779433858618,
-        0.466484983394861, 2.02985361769537
-      ),
-      weights = numeric(0)
-    ),
-    control = galamm_control(
-      optim_control = list(
-        FtolAbs = 1000,
-        FtolRel = 1000, XtolRel = 1000,
-        warnOnly = TRUE, xt = rep(1000, 7)
-      ),
-      method = "Nelder-Mead"
-    )
-  )
-  expect_equal(deviance(mod), 7891.36597569292, tolerance = .001)
-})
-
-
 data("IRTsim", package = "PLmixed")
 IRTsub <- IRTsim[IRTsim$item < 4, ] # Select items 1-3
 set.seed(12345)
@@ -377,6 +382,19 @@ irt.lam <- matrix(c(1, NA, NA), ncol = 1) # Specify the lambda matrix
 
 
 test_that("missing values are handled appropriately", {
+  expect_error(
+    galamm(
+      formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
+      data = IRTsub,
+      load.var = c("item"),
+      factor = c("abil.sid"),
+      lambda = irt.lam,
+      na.action = na.fail
+    ),
+    "'arg' must be NULL or a character vector"
+  )
+
+
   IRTsub$y[1] <- NA_real_
 
   expect_error(
@@ -408,6 +426,20 @@ test_that("missing values are handled appropriately", {
     "missing values in object"
   )
 
+  options(na.action = "na.pass")
+
+  expect_error(
+    galamm(
+      formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
+      data = IRTsub,
+      load.var = c("item"),
+      factor = c("abil.sid"),
+      lambda = irt.lam
+    ),
+    "'arg' should be one of"
+  )
+
+
   # Explicit argument vs relying on default
   mod <- galamm(
     formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
@@ -425,8 +457,53 @@ test_that("missing values are handled appropriately", {
     factor = "abil.sid",
     lambda = irt.lam
   )
+  options("na.action" = "na.exclude")
+  mod3 <- galamm(
+    formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
+    data = IRTsub,
+    load.var = "item",
+    factor = "abil.sid",
+    lambda = irt.lam
+  )
 
   expect_equal(mod$model$deviance, mod2$model$deviance)
+  expect_equal(mod$model$deviance, mod3$model$deviance)
+
+  irt.lamInf <- irt.lam
+  irt.lamInf[[1]] <- Inf
+  expect_error(
+    galamm(
+      formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
+      data = IRTsub,
+      load.var = "item",
+      factor = "abil.sid",
+      lambda = irt.lamInf
+    ),
+    "elements of lambda can be either 0, 1, or NA"
+  )
+  irt.lamInf[[1]] <- NaN
+  expect_error(
+    galamm(
+      formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
+      data = IRTsub,
+      load.var = "item",
+      factor = "abil.sid",
+      lambda = irt.lamInf
+    ),
+    "elements of lambda can be either 0, 1, or NA"
+  )
+
+  irt.lamInf[[1]] <- 2
+  expect_error(
+    galamm(
+      formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
+      data = IRTsub,
+      load.var = "item",
+      factor = "abil.sid",
+      lambda = irt.lamInf
+    ),
+    "all non-NA values in lambda must be either 0 or 1"
+  )
 
   IRTsub$y[1] <- -Inf
 
@@ -474,6 +551,8 @@ test_that("missing values are handled appropriately", {
     "NaN in"
   )
 })
+
+
 
 
 test_that("edge conditions tests for data", {
@@ -553,5 +632,70 @@ test_that("galamm rejects perfectly noiseless input data", {
       )
     },
     "fixed-effect model matrix is rank deficient so dropping 4 columns / coefficients"
+  )
+})
+
+test_that("loading and factor dimensions have to be correct", {
+  data("IRTsim", package = "PLmixed")
+
+  irt.lam <- matrix(c(1, NA, NA, NA, NA), ncol = 1)
+
+  expect_error(
+    galamm(
+      formula = y ~ 0 + as.factor(item) + (0 + abil.sid | sid) +
+        (0 + abil.sid | school),
+      data = IRTsim,
+      load.var = "item",
+      factor = "abil.sid",
+      lambda = irt.lam[1:4, , drop = FALSE]
+    ),
+    "lambda matrix must contain one row for each element in load.var"
+  )
+  expect_error(
+    galamm(
+      formula = y ~ 0 + as.factor(item) + (0 + abil.sid | sid) +
+        (0 + abil.sid | school),
+      data = IRTsim,
+      load.var = "item",
+      lambda = irt.lam
+    ),
+    "load.var, lambda, and factor must either all have values or all be NULL."
+  )
+
+  expect_message(
+    galamm(
+      formula = y ~ 0 + as.factor(item) + (0 + abil.sid | sid) +
+        (0 + abil.sid | school),
+      data = IRTsim,
+      load.var = "item",
+      factor = "abil.sid",
+      lambda = as.numeric(irt.lam),
+      control = galamm_control(
+        optim_control = list(maxit = 1),
+        maxit_conditional_modes = 1
+      )
+    ),
+    "lambda converted to matrix with one column"
+  )
+
+  data("KYPSsim", package = "PLmixed")
+
+  kyps.lam <- rbind(
+    c(1, 0),
+    c(NA, 0),
+    c(NA, 1),
+    c(NA, NA)
+  )
+
+  expect_error(
+    galamm(
+      formula = esteem ~ as.factor(time) + (0 + hs | hid) +
+        (0 + ms | mid) + (1 | sid),
+      data = KYPSsim,
+      factor = c("ms", "hs"),
+      load.var = "time",
+      lambda = kyps.lam[, 1, drop = FALSE]
+    ),
+    "lambda matrix must have one column for each element in factor"
   )
 })

@@ -50,12 +50,76 @@ test_that("Mixed response works", {
   )
 
   expect_equal(
+    predict(mod, newdata = subset(mresp, id %in% c(101, 103))),
+    structure(c(
+      0.850193554899423, 0.825301206439717, 0.289802812104655,
+      0.525192181355719, 0.237374173176289, 0.466804927622163, 0.507503457053694,
+      0.272927548669085
+    ), dim = c(8L, 1L), dimnames = list(c(
+      "401",
+      "402", "403", "404", "409", "410", "411", "412"
+    ), NULL))
+  )
+
+  expect_equal(
     tail(fitted(mod)),
     c(
       0.564189106544179, 0.635617477751538, -0.38290827754476,
       -0.74649161744025, 0.401960973148028, 0.409856827991987
     ),
     tolerance = 1e-4
+  )
+
+  expect_error(
+    mod <- galamm(
+      formula = y ~ x + (0 + loading | id),
+      data = dat,
+      family = c(gaussian, binomial),
+      family_mapping = ifelse(dat$itemgroup == "a", 1L, 2L)[1:3],
+      load.var = "itemgroup",
+      lambda = matrix(c(1, NA), ncol = 1),
+      factor = "loading"
+    ),
+    "family_mapping must contain one index per row in data"
+  )
+
+  expect_error(
+    mod <- galamm(
+      formula = y ~ x + (0 + loading | id),
+      data = dat,
+      family = c(gaussian, binomial),
+      family_mapping = matrix(ifelse(dat$itemgroup == "a", 1L, 2L), ncol = 2),
+      load.var = "itemgroup",
+      lambda = matrix(c(1, NA), ncol = 1),
+      factor = "loading"
+    ),
+    "family_mapping must be a vector"
+  )
+
+  expect_error(
+    mod <- galamm(
+      formula = y ~ x + (0 + loading | id),
+      data = dat,
+      family = c(gaussian, binomial),
+      family_mapping = sample(1:4, nrow(dat), replace = TRUE),
+      load.var = "itemgroup",
+      lambda = matrix(c(1, NA), ncol = 1),
+      factor = "loading"
+    ),
+    "family_mapping must contain a unique index for each element in family_list"
+  )
+
+  expect_error(
+    mod <- galamm(
+      formula = y ~ x + (0 + loading | id),
+      data = dat,
+      family = c(gaussian, binomial),
+      family_mapping = rep(1, nrow(dat)),
+      load.var = "itemgroup",
+      lambda = matrix(c(1, NA), ncol = 1),
+      factor = "loading"
+    ),
+    "family_mapping must contain a unique index for each element in family_list"
   )
 
   # Now test using initial values

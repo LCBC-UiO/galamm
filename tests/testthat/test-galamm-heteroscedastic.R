@@ -35,6 +35,16 @@ test_that("Heteroscedastic model works", {
   expect_error(vcov(mod, parm = 5L), "out of bounds")
   expect_error(vcov(mod, parm = "phi"), "Parameter not found")
 
+  expect_error(
+    galamm(
+      formula = y ~ x + (1 | id),
+      weights = list(~ (1 | item)),
+      data = hsced
+    ),
+    "weights must be a formula"
+  )
+
+
   # Now use initial values
   mod_start <- galamm(
     formula = y ~ x + (1 | id),

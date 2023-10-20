@@ -6,6 +6,14 @@
 #include <autodiff/forward/dual/eigen.hpp>
 #include "model.h"
 
+//' @name parameters
+//' @title Structure for keeping track of parameters
+//' @description See the documentation of other functions, e.g.,
+//'   \code{marginal_likelihood}, for an explanation of what the different
+//'   parameters represent.
+//' @field new Constructor, which takes parameters as arguments, and then
+//'   if necessary converts them to the template type \code{T}.
+//' @noRd
 template <typename T>
 struct parameters{
   parameters(
@@ -14,7 +22,7 @@ struct parameters{
     const Eigen::VectorXd& lambda,
     const Eigen::VectorXd& u,
     const std::vector<int>& theta_mapping,
-    const Rcpp::ListOf<Rcpp::IntegerVector>& lambda_mapping_X0,
+    const Eigen::VectorXi& lambda_mapping_X,
     const Rcpp::ListOf<Rcpp::IntegerVector>& lambda_mapping_Zt0,
     const Rcpp::ListOf<Rcpp::NumericVector>& lambda_mapping_Zt_covs0,
     const Eigen::SparseMatrix<double>& Lambdat,
@@ -30,6 +38,7 @@ struct parameters{
   lambda { lambda.cast<T>() },
   u { u.cast<T>() },
   theta_mapping { theta_mapping },
+  lambda_mapping_X { lambda_mapping_X },
   Lambdat { Lambdat.cast<T>() },
   weights { weights.cast<T>() },
   weights_mapping { weights_mapping },
@@ -38,9 +47,6 @@ struct parameters{
   lossvalue_tol { lossvalue_tol },
   n { n }
   {
-    for(int i{}; i < lambda_mapping_X0.size(); i++){
-      lambda_mapping_X.push_back(Rcpp::as<std::vector<int>>(lambda_mapping_X0[i]));
-    }
     for(int i{}; i < lambda_mapping_Zt0.size(); i++){
       lambda_mapping_Zt.push_back(Rcpp::as<std::vector<int>>(lambda_mapping_Zt0[i]));
     }
@@ -57,7 +63,7 @@ struct parameters{
   Vdual<T> lambda;
   Vdual<T> u;
   std::vector<int> theta_mapping;
-  std::vector<std::vector<int>> lambda_mapping_X = {};
+  Eigen::VectorXi lambda_mapping_X = {};
   std::vector<std::vector<int>> lambda_mapping_Zt = {};
   std::vector<std::vector<double>> lambda_mapping_Zt_covs = {};
   Eigen::SparseMatrix<T> Lambdat;
@@ -70,6 +76,9 @@ struct parameters{
   int n;
 };
 
+//' @name logLikObject
+//' @title Structure containing values to be returned to R
+//' @noRd
 template <typename T>
 struct logLikObject {
   T logLikValue;

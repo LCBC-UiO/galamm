@@ -1,3 +1,8 @@
+#' @srrstats {G5.4} These tests compare the output of galamm() to output from
+#'   gamm4(), whenever gamm4() supports the type of model.
+#' @noRd
+NULL
+
 test_that("galamm reproduces gamm4", {
   dat <- subset(cognition, domain == 1 & item == "11" & id < 50)
 

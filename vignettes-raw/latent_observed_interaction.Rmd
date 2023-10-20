@@ -132,7 +132,7 @@ $$
 \end{pmatrix}.
 $$
 
-We specify the factor interactions with a list of lists. The reason for this notation is that we need one list to hold the regression terms for each loading variable specified in `load.var`.
+We specify the factor interactions with a list, one for each row of `lambda`:
 
 ```{r}
 factor_interactions <- list(~ 1, ~ 1, ~ x)

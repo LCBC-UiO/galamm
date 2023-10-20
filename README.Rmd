@@ -27,12 +27,12 @@ knitr::opts_chunk$set(
 [![Codecov test coverage](https://codecov.io/gh/LCBC-UiO/galamm/branch/main/graph/badge.svg)](https://app.codecov.io/gh/LCBC-UiO/galamm?branch=main)
 <!-- badges: end -->
 
-```{r, eval=FALSE, echo=FALSE}
-#' @srrstats {G1.0} Key references introduced below.
-#' @srrstats {G1.1} The paragraph below states that this is the first place where the algorithm is implemented.
-#' @srrstats {G1.2} Contains repo status badge.
-#' @srrstats {G1.3} All statistical terminology clarified and defined in vignettes, as well as in more detail in the open access Psychometrika paper (Sørensen, Fjell, and Walhovd, 2023) which is the key reference.
+```{r srr-tags1, eval = FALSE, echo = FALSE}
+#' @srrstats {G1.0} Primary and secondary references to literature in the paragraph below.
+#' @srrstats {G1.1} It is stated in the paragraph below that this is the first implementation of the algorithm developed in Sørensen, Fjell, and Walhovd (2023).
+#' @srrstats {G1.3} Statistical terminology defined in detail in the references in the paragraph below. The main paper, Sørensen, FJell, and Walhovd (2023) is open access.
 ```
+
 
 galamm estimates generalized additive latent and mixed models (GALAMMs). This is the first package implementing the model framework and the computational algorithms introduced in @sorensenLongitudinalModelingAgeDependent2023. It is an extension of the GLLAMM framework for multilevel latent variable modeling detailed in @rabe-heskethGeneralizedMultilevelStructural2004 and @skrondalGeneralizedLatentVariable2004, in particular by efficiently handling crossed random effects and semiparametric estimation.
 
@@ -49,11 +49,21 @@ The goal of galamm is to enable estimation of models with an arbitrary number of
 - [Generalized additive mixed models with factor structures](https://lcbc-uio.github.io/galamm/articles/semiparametric.html).
 - [Interactions between latent and observed covariates](https://lcbc-uio.github.io/galamm/articles/latent_observed_interaction.html).
 
+```{r srr-tags2, eval = FALSE, echo = FALSE}
+#' @srrstats {G1.6} Code for comparing the performance of galamm to the of PLmixed for example models is provided in the vignette on linear mixed models with factor structures.
+```
+
+
 Random effects are defined using [lme4](https://cran.r-project.org/package=lme4) syntax, and the syntax for factor structures are close to that of [PLmixed](https://cran.r-project.org/package=PLmixed) [@rockwoodEstimatingComplexMeasurement2019]. However, for the types of models supported by both PLmixed and galamm, galamm is usually considerably faster. Smooth terms, as in generalized additive mixed models, use the same syntax as [mgcv](https://cran.r-project.org/package=mgcv).
 
 For most users, it should not be necessary to think about how the actual computations are performed, although they are detailed in the [optimization vignette](https://lcbc-uio.github.io/galamm/articles/optimization.html). In short, the core computations are done using sparse matrix methods supported by [RcppEigen](https://cran.r-project.org/package=RcppEigen) [@batesFastElegantNumerical2013] and automatic differentiation using the C++ library [autodiff](https://autodiff.github.io/) [@lealAutodiffModernFast2018]. Scaling of the algorithm is investigated further in [the vignette on computational scaling](https://lcbc-uio.github.io/galamm/articles/scaling.html).
 
 ## Where Do I Start?
+
+```{r srr-tags3, eval = FALSE, echo = FALSE}
+#' @srrstats {G1.3} Statistical terminology defined in the introductory vignette.
+```
+
 
 To get started, take a look at the [introductory vignette](https://lcbc-uio.github.io/galamm/articles/galamm.html).
 
