@@ -26,8 +26,11 @@ mod <- galamm(
   load.var = "test",
   lambda = lmat,
   factor = c("epmem_ability", "wmem_ability", "execfun_ability"),
+  start = list(
+    theta = mod_init$parameters$parameter_estimates[mod_init$parameters$theta_inds]
+  ),
   control = galamm_control(
-    optim_control = list(REPORT = 2, factr = 1e9, trace = 3, maxit = 10))
+    optim_control = list(REPORT = 2, factr = 1e8, trace = 3, maxit = 10))
 )
 beepr::beep()
 summary(mod)
