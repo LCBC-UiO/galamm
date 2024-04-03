@@ -49,7 +49,7 @@ LinkingTo:
     RcppEigen
 LazyData: true
 Roxygen: list(markdown = TRUE, roclets = c ("namespace", "rd", "srr::srr_stats_roclet"))
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
 Suggests:
     covr,
     gamm4,

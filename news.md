@@ -1,5 +1,7 @@
 # galamm (development versions)
 
+- Fixed bug causing galamm() to fail with mixed response types, when the first 
+  argument to "family" was not "gaussian".
 - BREAKING CHANGE: argument "factor", "factor_interaction" and "lambda" to 
   galamm should no longer be enclosed in a list.
 - A vignette investigating computational scalability has been added.

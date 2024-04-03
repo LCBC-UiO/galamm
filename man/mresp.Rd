@@ -30,8 +30,9 @@ Other datasets:
 \code{\link{diet}},
 \code{\link{epilep}},
 \code{\link{hsced}},
-\code{\link{latent_covariates_long}},
 \code{\link{latent_covariates}},
+\code{\link{latent_covariates_long}},
+\code{\link{lifespan}},
 \code{\link{mresp_hsced}}
 }
 \concept{datasets}

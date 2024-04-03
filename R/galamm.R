@@ -593,6 +593,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
         logical(1)
       )),
     family = family_list,
+    family_mapping = family_mapping,
     factor_interactions = factor_interactions,
     fit = fit,
     fit_population = fit_population,
