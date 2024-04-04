@@ -258,7 +258,7 @@ gamm4.wrapup <- function(gobj, ret, final_model) {
   sn <- names(gobj$G$random)
 
   if (length(object$family) == 1 &&
-      object$family[[1]]$family == "gaussian" && object$family[[1]]$link == "identity") {
+    object$family[[1]]$family == "gaussian" && object$family[[1]]$link == "identity") {
     linear <- TRUE
   } else {
     linear <- FALSE

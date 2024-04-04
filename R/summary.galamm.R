@@ -147,7 +147,7 @@ print.summary.galamm <- function(
   cat("\n")
   lme4::.prt.aictab(x$AICtab)
   cat("\n")
-  if(length(x$model$family) == 1) {
+  if (length(x$model$family) == 1) {
     lme4::.prt.resids(residuals(x) / sigma(x), digits = digits)
   }
 

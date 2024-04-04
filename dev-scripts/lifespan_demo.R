@@ -4,16 +4,6 @@ lmat <- matrix(c(
   rep(0, 7), 1, NA, rep(0, 4),
   rep(0, 9), 1, NA, NA, NA), ncol = 3)
 
-mod_init <- galamm(
-  formula = cbind(y, 16 - y) ~ 0 + retest:domain + test +
-    sl(age, by = domain) + (0 + domain | id),
-  data = lifespan,
-  family = c(binomial, gaussian),
-  family_mapping = ifelse(lifespan$domain == "execfun", 2, 1),
-  control = galamm_control(
-    optim_control = list(REPORT = 2, factr = 1e9, trace = 3, maxit = 2))
-)
-
 mod <- galamm(
   formula = cbind(y, 16 - y) ~ 0 + retest:domain + test +
     sl(age, by = domain,
@@ -30,8 +20,8 @@ mod <- galamm(
     theta = mod_init$parameters$parameter_estimates[mod_init$parameters$theta_inds]
   ),
   control = galamm_control(
-    optim_control = list(REPORT = 2, factr = 1e8, trace = 3, maxit = 10))
+    optim_control = list(REPORT = 1, trace = 3))
 )
-beepr::beep()
+
 summary(mod)
 plot_smooth(mod, scale = 0, pages = 1)

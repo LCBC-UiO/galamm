@@ -5,21 +5,28 @@ set.seed(3)
 trajectories <- readRDS("data-raw/trajectories.rds")
 epmem_fun <- approxfun(
   trajectories$age,
-  trajectories$epmem_trajectory)
+  trajectories$epmem_trajectory
+)
 wmem_fun <- approxfun(
-  trajectories$age, trajectories$wmem_trajectory)
+  trajectories$age, trajectories$wmem_trajectory
+)
 execfun_fun <- approxfun(
-  trajectories$age, trajectories$execfun_trajectory)
+  trajectories$age, trajectories$execfun_trajectory
+)
 
 n_ids <- 1000
-Psi3 <- matrix(c(.08, .05, .05,
-                 .05, .12, .06,
-                 .05, .06, .24), ncol = 3)
+Psi3 <- matrix(c(
+  .08, .05, .05,
+  .05, .12, .06,
+  .05, .06, .24
+), ncol = 3)
 Psi2 <- diag(c(.06, .8, .18))
 
 domains <- c("epmem", "wmem", "execfun")
-epmem_tests <- c("CVLTA1", "CVLTA2", "CVLTA3", "CVLTA4", "CVLTA5",
-                 "CVLT5min", "CVLT30min")
+epmem_tests <- c(
+  "CVLTA1", "CVLTA2", "CVLTA3", "CVLTA4", "CVLTA5",
+  "CVLT5min", "CVLT30min"
+)
 wmem_tests <- c("DspanBwd", "DspanFwd")
 execfun_tests <- c("Stroop1", "Stroop2", "Stroop3", "Stroop4")
 
@@ -43,8 +50,10 @@ names(loadings) <- names(item_bias)
 
 lifespan <- tibble(
   id = seq_len(n_ids),
-  age_at_baseline = runif(n_ids, min = min(trajectories$age),
-                          max = max(trajectories$age) - 10),
+  age_at_baseline = runif(n_ids,
+    min = min(trajectories$age),
+    max = max(trajectories$age) - 10
+  ),
   timepoints = sample(6, n_ids, replace = TRUE, prob = c(.2, .4, .2, .1, .1, 1))
 ) %>%
   mutate(domain = list(domains)) %>%
@@ -112,7 +121,7 @@ lifespan <- tibble(
   mutate(
     retest = as.integer(timepoint > 1),
     y = case_when(
-      domain == "execfun" ~ (y - mean(y)) / sd(y),
+      domain == "execfun" ~ -(y - mean(y)) / sd(y),
       TRUE ~ y
     )
   ) %>%
@@ -124,4 +133,3 @@ mm <- model.matrix(~ 0 + domain, data = lifespan)
 lifespan <- cbind(lifespan, mm)
 
 usethis::use_data(lifespan, overwrite = TRUE)
-
