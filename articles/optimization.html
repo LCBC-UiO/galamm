@@ -14,8 +14,8 @@
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Optimization">
 <meta property="og:description" content="galamm">
@@ -105,7 +105,8 @@ use in the case of convergence issues.</p>
 <h3 id="high-level-overview">High-Level Overview<a class="anchor" aria-label="anchor" href="#high-level-overview"></a>
 </h3>
 <p>The optimization procedure used by <code>galamm</code> is described
-in Section 3 of <span class="citation">Sørensen, Fjell, and Walhovd (<a href="#ref-sorensenLongitudinalModelingAgeDependent2023" role="doc-biblioref">2023</a>)</span>. It consists of two steps:</p>
+in Section 3 of <span class="citation">Sørensen, Fjell, and Walhovd (<a href="#ref-sorensenLongitudinalModelingAgeDependent2023">2023</a>)</span>.
+It consists of two steps:</p>
 <ul>
 <li><p>In the inner loop, the marginal likelihood is evaluated at a
 given set of parameters. The marginal likelihood is what you obtain by
@@ -121,18 +122,19 @@ storing and multiplying zero, we use sparse matrix methods.</p></li>
 the marginal likelihood. For each new set of parameters, the whole
 procedure in the inner loop has to be repeated. By default, we use the
 limited memory Broyden-Fletcher-Goldfarb-Shanno algorithm with box
-constraints <span class="citation">(<a href="#ref-byrdLimitedMemoryAlgorithm1995" role="doc-biblioref">Byrd et
-al. 1995</a>)</span>, abbreviated L-BFGS-B. In particular, we use the
-implementation in R’s <code><a href="https://rdrr.io/r/stats/optim.html" class="external-link">optim()</a></code> function, which is obtained
-by setting <code>method = "L-BFGS-B"</code>. L-BFGS-B requires first
-derivatives, and these are obtained by automatic differentiation <span class="citation">(<a href="#ref-skaugAutomaticDifferentiationFacilitate2002" role="doc-biblioref">Skaug 2002</a>)</span>. In most use cases of
-<code>galamm</code>, we also use constraints on some of the parameters,
-e.g., to ensure that variances are non-negative. As an alternative, the
-Nelder-Mead algorithm with box constraints <span class="citation">(<a href="#ref-batesFittingLinearMixedEffects2015" role="doc-biblioref">Bates et al. 2015</a>; <a href="#ref-nelderSimplexMethodFunction1965" role="doc-biblioref">Nelder
-and Mead 1965</a>)</span> from <code>lme4</code> is also available.
-Since the Nelder-Mead algorithm is derivative free, automatic
-differentiation is not used in this case, except for computing the
-Hessian matrix at the final step.</p></li>
+constraints <span class="citation">(<a href="#ref-byrdLimitedMemoryAlgorithm1995">Byrd et al. 1995</a>)</span>,
+abbreviated L-BFGS-B. In particular, we use the implementation in R’s
+<code><a href="https://rdrr.io/r/stats/optim.html" class="external-link">optim()</a></code> function, which is obtained by setting
+<code>method = "L-BFGS-B"</code>. L-BFGS-B requires first derivatives,
+and these are obtained by automatic differentiation <span class="citation">(<a href="#ref-skaugAutomaticDifferentiationFacilitate2002">Skaug
+2002</a>)</span>. In most use cases of <code>galamm</code>, we also use
+constraints on some of the parameters, e.g., to ensure that variances
+are non-negative. As an alternative, the Nelder-Mead algorithm with box
+constraints <span class="citation">(<a href="#ref-batesFittingLinearMixedEffects2015">Bates et al. 2015</a>; <a href="#ref-nelderSimplexMethodFunction1965">Nelder and Mead
+1965</a>)</span> from <code>lme4</code> is also available. Since the
+Nelder-Mead algorithm is derivative free, automatic differentiation is
+not used in this case, except for computing the Hessian matrix at the
+final step.</p></li>
 </ul>
 <p>At convergence, the Hessian matrix of second derivatives is computed
 exactly, again using automatic differentiation. The inverse of this
@@ -344,15 +346,15 @@ variance is estimated to be exactly zero.</p>
 <span><span class="co">#&gt; chd:age:bus   -0.04937         NA      NA       NA</span></span>
 <span><span class="co">#&gt; fiber:age:bus  0.16092         NA      NA       NA</span></span></code></pre></div>
 <p>These types of obviously wrong zero variance estimates are well-known
-for users of mixed models <span class="citation">(<a href="#ref-hodgesRichlyParameterizedLinear2013" role="doc-biblioref">Hodges 2013</a>)</span>. We see if increasing the
-initial value for the variance parameter solves the issue. This is done
-with the <code>start</code> argument to <code>galamm</code>. The start
-argument requires a named list, with optional arguments
-<code>theta</code>, <code>beta</code>, <code>lambda</code>, and
-<code>weights</code>, giving initial values for each of these groups of
-parameters. In this case <code>theta</code> is the standard deviation of
-the random effect, and we increase it to 10 to see what happens. By
-default, the initial value equals 1.</p>
+for users of mixed models <span class="citation">(<a href="#ref-hodgesRichlyParameterizedLinear2013">Hodges 2013</a>)</span>.
+We see if increasing the initial value for the variance parameter solves
+the issue. This is done with the <code>start</code> argument to
+<code>galamm</code>. The start argument requires a named list, with
+optional arguments <code>theta</code>, <code>beta</code>,
+<code>lambda</code>, and <code>weights</code>, giving initial values for
+each of these groups of parameters. In this case <code>theta</code> is
+the standard deviation of the random effect, and we increase it to 10 to
+see what happens. By default, the initial value equals 1.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">formula</span>,</span>
@@ -524,25 +526,25 @@ intial values that we provided.</p>
 completely in C++. For solving the penalized iteratively reweighted
 least squares problem arising due to the Laplace approximation, we use
 sparse matrix methods from the <a href="https://eigen.tuxfamily.org/index.php?title=Main_Page" class="external-link">Eigen C++
-template library</a> through the <code>RcppEigen</code> package <span class="citation">(<a href="#ref-batesFastElegantNumerical2013" role="doc-biblioref">Bates and Eddelbuettel 2013</a>)</span>. In order
-to keep track of the derivatives throughout this iterative process, we
-use the <a href="https://autodiff.github.io/" class="external-link">autodiff library</a> <span class="citation">(<a href="#ref-lealAutodiffModernFast2018" role="doc-biblioref">Leal 2018</a>)</span>. However, since
-<code>autodiff</code> natively only supports dense matrix operations
-with <code>Eigen</code>, we have extended this library so that it also
-supports sparse matrix operations. This modified version of the
-<code>autodiff</code> library can be found at
-<code>inst/include/autodiff/</code>.</p>
+template library</a> through the <code>RcppEigen</code> package <span class="citation">(<a href="#ref-batesFastElegantNumerical2013">Bates and
+Eddelbuettel 2013</a>)</span>. In order to keep track of the derivatives
+throughout this iterative process, we use the <a href="https://autodiff.github.io/" class="external-link">autodiff library</a> <span class="citation">(<a href="#ref-lealAutodiffModernFast2018">Leal
+2018</a>)</span>. However, since <code>autodiff</code> natively only
+supports dense matrix operations with <code>Eigen</code>, we have
+extended this library so that it also supports sparse matrix operations.
+This modified version of the <code>autodiff</code> library can be found
+at <code>inst/include/autodiff/</code>.</p>
 <p>In order to maximize the marginal likelihood, we currently rely on
 the <code><a href="https://rdrr.io/r/stats/optim.html" class="external-link">optim()</a></code> function in R. To make use of the fact that
 both the marginal likelihood value itself and first derivatives are
 returned from the C++ function, we use memoisation, provided by the
-<code>memoise</code> package <span class="citation">(<a href="#ref-wickhamMemoiseMemoisationFunctions2021" role="doc-biblioref">Wickham et al. 2021</a>)</span>. However, the
-optimization process still involves copying all model data between R and
-C++ for each new set of parameters. This is potentially an efficiency
-bottleneck with large datasets, although with the limited profiling that
-has been done so far, it seems like the vast majority of the computation
-time is spent actually solving the penalized iteratively reweighted
-least squares problem in C++.</p>
+<code>memoise</code> package <span class="citation">(<a href="#ref-wickhamMemoiseMemoisationFunctions2021">Wickham et al.
+2021</a>)</span>. However, the optimization process still involves
+copying all model data between R and C++ for each new set of parameters.
+This is potentially an efficiency bottleneck with large datasets,
+although with the limited profiling that has been done so far, it seems
+like the vast majority of the computation time is spent actually solving
+the penalized iteratively reweighted least squares problem in C++.</p>
 </div>
 <div class="section level3">
 <h3 id="future-improvements">Future Improvements<a class="anchor" aria-label="anchor" href="#future-improvements"></a>
@@ -560,7 +562,7 @@ a large number of variables.</p>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
 <div id="ref-batesFastElegantNumerical2013" class="csl-entry">
 Bates, Douglas M, and Dirk Eddelbuettel. 2013. <span>“Fast and
 <span>Elegant Numerical Linear Algebra Using</span> the <span>RcppEigen
@@ -583,7 +585,7 @@ Hodges, James S. 2013. <em>Richly <span>Parameterized Linear Models
 Additive</span>, <span>Time Series</span>, and <span>Spatial Models
 Using Random Effects</span></em>. 1st ed. Chapman &amp;
 <span>Hall</span>/<span>CRC Texts</span> in <span>Statistical
-Science</span>. <span>Chapman &amp; Hall</span>.
+Science</span>. Chapman &amp; Hall.
 </div>
 <div id="ref-lealAutodiffModernFast2018" class="csl-entry">
 Leal, Allan M. M. 2018. <span>“Autodiff, a Modern, Fast and Expressive

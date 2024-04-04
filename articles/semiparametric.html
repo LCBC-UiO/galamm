@@ -14,8 +14,8 @@
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Semiparametric Latent Variable Modeling">
 <meta property="og:description" content="galamm">
@@ -103,10 +103,11 @@
 latent variable models with smooth terms, or equivalently, generalized
 additive mixed models with factor structures. The examples are based on
 Section 4 and 5 in <span class="citation">Sørensen, Fjell, and Walhovd
-(<a href="#ref-sorensenLongitudinalModelingAgeDependent2023" role="doc-biblioref">2023</a>)</span>, but as we cannot share the data,
-we have instead simulated somewhat simpler datasets that will be used.
-We will gradually add complexity, starting with a simple generalized
-additive mixed model. Please refer to the <a href="https://lcbc-uio.github.io/galamm/articles/galamm.html">introductory
+(<a href="#ref-sorensenLongitudinalModelingAgeDependent2023">2023</a>)</span>,
+but as we cannot share the data, we have instead simulated somewhat
+simpler datasets that will be used. We will gradually add complexity,
+starting with a simple generalized additive mixed model. Please refer to
+the <a href="https://lcbc-uio.github.io/galamm/articles/galamm.html">introductory
 vignette</a> for an overview of the statistical models.</p>
 <div class="section level3">
 <h3 id="generalized-additive-mixed-models">Generalized Additive Mixed Models<a class="anchor" aria-label="anchor" href="#generalized-additive-mixed-models"></a>
@@ -140,8 +141,8 @@ can plot the measurements as follows:</p>
 <span>  <span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="va">dd</span><span class="op">$</span><span class="va">x</span>, <span class="va">dd</span><span class="op">$</span><span class="va">y</span>, col <span class="op">=</span> <span class="st">"gray"</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span><span class="va">dat</span><span class="op">$</span><span class="va">x</span>, <span class="va">dat</span><span class="op">$</span><span class="va">y</span>, pch <span class="op">=</span> <span class="fl">20</span>, lwd <span class="op">=</span> <span class="fl">.05</span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="semiparametric-spaghetti-plot-1.png" alt=""><p class="caption">Plot of data for domain 1 and item 11.</p>
+<div class="float">
+<img src="semiparametric-spaghetti-plot-1.png" alt="Plot of data for domain 1 and item 11."><div class="figcaption">Plot of data for domain 1 and item 11.</div>
 </div>
 <p>We use a generalized additive mixed model with random intercepts per
 subject to estimate the function relating <span class="math inline">\(x\)</span> to <span class="math inline">\(y\)</span>. In terms of the model framework
@@ -216,15 +217,15 @@ smooth terms. We can look at the model summary for each:</p>
 <p>We can also plot the estimated smooth term:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mod_gamm4</span><span class="op">$</span><span class="va">gam</span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="semiparametric-gaussian-gamm4-smooth-1.png" alt=""><p class="caption">Smooth term estimated by gamm4.</p>
+<div class="float">
+<img src="semiparametric-gaussian-gamm4-smooth-1.png" alt="Smooth term estimated by gamm4."><div class="figcaption">Smooth term estimated by gamm4.</div>
 </div>
 <p>In contrast, invoking the <code>plot</code> function on the mixed
 model part gives us a diagnostic plot.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mod_gamm4</span><span class="op">$</span><span class="va">mer</span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="semiparametric-gaussian-gamm4-diagnostic-1.png" alt=""><p class="caption">Diagnostic plot for gamm4 model.</p>
+<div class="float">
+<img src="semiparametric-gaussian-gamm4-diagnostic-1.png" alt="Diagnostic plot for gamm4 model."><div class="figcaption">Diagnostic plot for gamm4 model.</div>
 </div>
 <p>With <code>galamm</code> we use similar argument, but the
 <code>random</code> specification is now part of the model formula.</p>
@@ -270,34 +271,36 @@ by inspection can be seen to be almost identical to the plot produced
 from the mixed model part of the <code>gamm4</code> model.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="semiparametric-gaussian-gamm-diagnostic-1.png" alt=""><p class="caption">Diagnostic plot for model fitted with galamm.</p>
+<div class="float">
+<img src="semiparametric-gaussian-gamm-diagnostic-1.png" alt="Diagnostic plot for model fitted with galamm."><div class="figcaption">Diagnostic plot for model fitted with
+galamm.</div>
 </div>
 <p>In order to plot the smooth term, we use
 <code>plot_smooth</code>.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_smooth.galamm.html">plot_smooth</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="semiparametric-gaussian-gamm-smooth1-1.png" alt=""><p class="caption">Smooth term estimated with galamm.</p>
+<div class="float">
+<img src="semiparametric-gaussian-gamm-smooth1-1.png" alt="Smooth term estimated with galamm."><div class="figcaption">Smooth term estimated with galamm.</div>
 </div>
 <p>The <code>plot_smooth</code> function is a thin wrapper around the
 <code>plot.gam</code> function provided by the <code>mgcv</code> package
-<span class="citation">(<a href="#ref-woodGeneralizedAdditiveModels2017a" role="doc-biblioref">Wood
-2017</a>)</span>. This means that the arguments used by
-<code>plot.gam</code> can be used also here, as see with the examples
-below:</p>
+<span class="citation">(<a href="#ref-woodGeneralizedAdditiveModels2017a">Wood 2017</a>)</span>.
+This means that the arguments used by <code>plot.gam</code> can be used
+also here, as see with the examples below:</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_smooth.galamm.html">plot_smooth</a></span><span class="op">(</span><span class="va">mod</span>,</span>
 <span>  shade <span class="op">=</span> <span class="cn">TRUE</span>, rug <span class="op">=</span> <span class="cn">FALSE</span>, seWithMean <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  shift <span class="op">=</span> <span class="op">+</span><span class="fl">2</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="semiparametric-gaussian-gamm-smooth2-1.png" alt=""><p class="caption">Alternative ways of visualizing the smooth term.</p>
+<div class="float">
+<img src="semiparametric-gaussian-gamm-smooth2-1.png" alt="Alternative ways of visualizing the smooth term."><div class="figcaption">Alternative ways of visualizing the smooth
+term.</div>
 </div>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_smooth.galamm.html">plot_smooth</a></span><span class="op">(</span><span class="va">mod</span>, se <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="semiparametric-gaussian-gamm-smooth2-2.png" alt=""><p class="caption">Alternative ways of visualizing the smooth term.</p>
+<div class="float">
+<img src="semiparametric-gaussian-gamm-smooth2-2.png" alt="Alternative ways of visualizing the smooth term."><div class="figcaption">Alternative ways of visualizing the smooth
+term.</div>
 </div>
 </div>
 <div class="section level4">
@@ -369,8 +372,8 @@ such data can be modeled.</p>
 useful in the binomial case, so we omit it.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mod_gamm4</span><span class="op">$</span><span class="va">gam</span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="semiparametric-gamm4-binomial-1.png" alt=""><p class="caption">Smooth term estimated by gamm4.</p>
+<div class="float">
+<img src="semiparametric-gamm4-binomial-1.png" alt="Smooth term estimated by gamm4."><div class="figcaption">Smooth term estimated by gamm4.</div>
 </div>
 <p>Again the <code>galamm</code> syntax is similar, but it puts the
 random effect specification into the model formula.</p>
@@ -409,8 +412,8 @@ value as in the summary for the model fitted with galamm.</p>
 <span><span class="co">#&gt; s(x) 2.124  2.124    114  &lt;2e-16</span></span></code></pre></div>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_smooth.galamm.html">plot_smooth</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="semiparametric-gamm-binomial-1.png" alt=""><p class="caption">Smooth term estimated with galamm.</p>
+<div class="float">
+<img src="semiparametric-gamm-binomial-1.png" alt="Smooth term estimated with galamm."><div class="figcaption">Smooth term estimated with galamm.</div>
 </div>
 </div>
 </div>
@@ -456,11 +459,11 @@ y_{i} = \beta_{i} + \lambda_{i} \left\{ h(x) + \zeta^{(2)} + \zeta^{(3)}
 \]</span></p>
 <p>We will use a varying-coefficient term, where <span class="math inline">\(h(x)\)</span> is being interpreted as a regression
 coefficient for the effect of <span class="math inline">\(\lambda_{i}\)</span> on <span class="math inline">\(y_{i}\)</span>, and the regression term varies
-with <span class="math inline">\(x\)</span>. In contrast to <span class="citation">Hastie and Tibshirani (<a href="#ref-hastieVaryingCoefficientModels1993" role="doc-biblioref">1993</a>)</span> and other uses of
-varying-coefficient terms, however, in this case the predictor <span class="math inline">\(\lambda_{i}\)</span> is a model parameter. We have
-three items loading in <span class="math inline">\(\eta\)</span> and fix
-the first loading to 1 for identifiability, so the loading matrix is as
-follows:</p>
+with <span class="math inline">\(x\)</span>. In contrast to <span class="citation">Hastie and Tibshirani (<a href="#ref-hastieVaryingCoefficientModels1993">1993</a>)</span> and
+other uses of varying-coefficient terms, however, in this case the
+predictor <span class="math inline">\(\lambda_{i}\)</span> is a model
+parameter. We have three items loading in <span class="math inline">\(\eta\)</span> and fix the first loading to 1 for
+identifiability, so the loading matrix is as follows:</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="op">(</span><span class="va">loading_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;      [,1]</span></span>
@@ -539,8 +542,9 @@ the model is implemented incorrectly.</p>
 data, there is essentially no uncertainty about the estimate.</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_smooth.galamm.html">plot_smooth</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="semiparametric-gaussian-factor-1.png" alt=""><p class="caption">Smooth term for GAMM with factor structure.</p>
+<div class="float">
+<img src="semiparametric-gaussian-factor-1.png" alt="Smooth term for GAMM with factor structure."><div class="figcaption">Smooth term for GAMM with factor
+structure.</div>
 </div>
 </div>
 <div class="section level4">
@@ -571,11 +575,13 @@ value well. Also note that the variation between individuals (group
 (group <code>timepoint:id</code>) gets lumped together at the
 <code>id</code> level. The estimated variation at the
 <code>timepoint:id</code> level is zero. This is a well-known phenomenon
-when fitting mixed models, given book-length treatment in <span class="citation">Hodges (<a href="#ref-hodgesRichlyParameterizedLinear2013" role="doc-biblioref">2013</a>)</span>. In this case, it is likely due to
-the fact that we only have two measurements at each timepoint, and also
-the fact that we use the Laplace approximation to integrate over the
-random effects, and this approximation may be inaccurate for binomial
-data with a low number of repeated observations <span class="citation">(<a href="#ref-joeAccuracyLaplaceApproximation2008" role="doc-biblioref">Joe 2008</a>)</span>.</p>
+when fitting mixed models, given book-length treatment in <span class="citation">Hodges (<a href="#ref-hodgesRichlyParameterizedLinear2013">2013</a>)</span>. In
+this case, it is likely due to the fact that we only have two
+measurements at each timepoint, and also the fact that we use the
+Laplace approximation to integrate over the random effects, and this
+approximation may be inaccurate for binomial data with a low number of
+repeated observations <span class="citation">(<a href="#ref-joeAccuracyLaplaceApproximation2008">Joe
+2008</a>)</span>.</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span>
 <span><span class="co">#&gt; GALAMM fit by maximum marginal likelihood.</span></span>
@@ -743,15 +749,15 @@ factor loadings well.</p>
 ground truth very well.</p>
 <div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_smooth.galamm.html">plot_smooth</a></span><span class="op">(</span><span class="va">mod_byvar</span>, scale <span class="op">=</span> <span class="fl">0</span>, select <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="semiparametric-gaussian-by-factor1-1.png" alt=""><p class="caption">Estimated smooth term for domain 1 in model with
-domain 1 and domain 3.</p>
+<div class="float">
+<img src="semiparametric-gaussian-by-factor1-1.png" alt="Estimated smooth term for domain 1 in model with domain 1 and domain 3."><div class="figcaption">Estimated smooth term for domain 1 in model with
+domain 1 and domain 3.</div>
 </div>
 <div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_smooth.galamm.html">plot_smooth</a></span><span class="op">(</span><span class="va">mod_byvar</span>, scale <span class="op">=</span> <span class="fl">0</span>, select <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="semiparametric-gaussian-by-factor2-1.png" alt=""><p class="caption">Estimated smooth term for domain 3 in model with
-domain 1 and domain 3.</p>
+<div class="float">
+<img src="semiparametric-gaussian-by-factor2-1.png" alt="Estimated smooth term for domain 3 in model with domain 1 and domain 3."><div class="figcaption">Estimated smooth term for domain 3 in model with
+domain 1 and domain 3.</div>
 </div>
 </div>
 <div class="section level4">
@@ -865,22 +871,22 @@ this example.</p>
 <p>We can plot the estimated smooth terms:</p>
 <div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_smooth.galamm.html">plot_smooth</a></span><span class="op">(</span><span class="va">mod_byvar_mixed</span>, scale <span class="op">=</span> <span class="fl">0</span>, select <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="semiparametric-mixed-by-factor1-1.png" alt=""><p class="caption">Estimated smooth term for domain 1 in mixed response
-model with domain 1 and domain 2.</p>
+<div class="float">
+<img src="semiparametric-mixed-by-factor1-1.png" alt="Estimated smooth term for domain 1 in mixed response model with domain 1 and domain 2."><div class="figcaption">Estimated smooth term for domain 1 in mixed
+response model with domain 1 and domain 2.</div>
 </div>
 <div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_smooth.galamm.html">plot_smooth</a></span><span class="op">(</span><span class="va">mod_byvar_mixed</span>, scale <span class="op">=</span> <span class="fl">0</span>, select <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="semiparametric-mixed-by-factor2-1.png" alt=""><p class="caption">Estimated smooth term for domain 1 in mixed response
-model with domain 1 and domain 2.</p>
+<div class="float">
+<img src="semiparametric-mixed-by-factor2-1.png" alt="Estimated smooth term for domain 1 in mixed response model with domain 1 and domain 2."><div class="figcaption">Estimated smooth term for domain 1 in mixed
+response model with domain 1 and domain 2.</div>
 </div>
 </div>
 </div>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
 <div id="ref-hastieVaryingCoefficientModels1993" class="csl-entry">
 Hastie, Trevor, and Robert Tibshirani. 1993.
 <span>“Varying-<span>Coefficient Models</span>.”</span> <em>Journal of
@@ -892,7 +898,7 @@ Hodges, James S. 2013. <em>Richly <span>Parameterized Linear Models
 Additive</span>, <span>Time Series</span>, and <span>Spatial Models
 Using Random Effects</span></em>. 1st ed. Chapman &amp;
 <span>Hall</span>/<span>CRC Texts</span> in <span>Statistical
-Science</span>. <span>Chapman &amp; Hall</span>.
+Science</span>. Chapman &amp; Hall.
 </div>
 <div id="ref-joeAccuracyLaplaceApproximation2008" class="csl-entry">
 Joe, Harry. 2008. <span>“Accuracy of <span>Laplace</span> Approximation

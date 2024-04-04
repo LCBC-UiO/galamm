@@ -14,8 +14,8 @@
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Introduction">
 <meta property="og:description" content="galamm">
@@ -104,16 +104,18 @@ vignettes where you can find more information.</p>
 <div class="section level3">
 <h3 id="generalized-additive-latent-and-mixed-models">Generalized Additive Latent and Mixed Models<a class="anchor" aria-label="anchor" href="#generalized-additive-latent-and-mixed-models"></a>
 </h3>
-<p>Generalized additive latent and mixed models (GALAMMs) <span class="citation">(<a href="#ref-sorensenLongitudinalModelingAgeDependent2023" role="doc-biblioref">Sørensen, Fjell, and Walhovd 2023</a>)</span> is an
-extension of generalized linear latent and mixed models (GLLAMMs) <span class="citation">(<a href="#ref-rabe-heskethGeneralizedMultilevelStructural2004" role="doc-biblioref">Rabe-Hesketh, Skrondal, and Pickles 2004</a>; <a href="#ref-skrondalGeneralizedLatentVariable2004" role="doc-biblioref">Skrondal and Rabe-Hesketh 2004</a>)</span> which
-allows both observed responses and latent variables to depend smoothly
-on observed variables. <em>Smoothly</em> here means that the
-relationship is not assumed to follow a particular parametric form,
-e.g., as specified by a linear model. Instead, an <em>a priori</em>
-assumption is made that the relationship is smooth, and the model then
-attempts to learn the relationship from the data. GALAMM uses smoothing
-splines to obtain this, identically to how generalized additive models
-(GAMs) <span class="citation">(<a href="#ref-woodGeneralizedAdditiveModels2017a" role="doc-biblioref">Wood
+<p>Generalized additive latent and mixed models (GALAMMs) <span class="citation">(<a href="#ref-sorensenLongitudinalModelingAgeDependent2023">Sørensen,
+Fjell, and Walhovd 2023</a>)</span> is an extension of generalized
+linear latent and mixed models (GLLAMMs) <span class="citation">(<a href="#ref-rabe-heskethGeneralizedMultilevelStructural2004">Rabe-Hesketh,
+Skrondal, and Pickles 2004</a>; <a href="#ref-skrondalGeneralizedLatentVariable2004">Skrondal and
+Rabe-Hesketh 2004</a>)</span> which allows both observed responses and
+latent variables to depend smoothly on observed variables.
+<em>Smoothly</em> here means that the relationship is not assumed to
+follow a particular parametric form, e.g., as specified by a linear
+model. Instead, an <em>a priori</em> assumption is made that the
+relationship is smooth, and the model then attempts to learn the
+relationship from the data. GALAMM uses smoothing splines to obtain
+this, identically to how generalized additive models (GAMs) <span class="citation">(<a href="#ref-woodGeneralizedAdditiveModels2017a">Wood
 2017</a>)</span> are estimated.</p>
 <p>The GLLAMM framework contains many elements which are currently not
 implemented in the galamm package. This includes both nonparametric
@@ -136,7 +138,8 @@ b\left(\theta(\mu)\right)}{\phi} + c\left(y, \phi\right) \right)
 <p>here <span class="math inline">\(\mu = g^{-1}(\nu)\)</span> is the
 mean, <span class="math inline">\(g^{-1}(\cdot)\)</span> is the inverse
 of link function <span class="math inline">\(g(\cdot)\)</span>, <span class="math inline">\(\nu\)</span> is a “nonlinear predictor”, <span class="math inline">\(\phi\)</span> is a dispersion parameter, and <span class="math inline">\(b(\cdot)\)</span> and <span class="math inline">\(c(\cdot)\)</span> are known functions. In contrast
-to what is assumed, e.g., by <a href="https://cran.r-project.org/package=lme4" class="external-link">lme4</a> <span class="citation">(<a href="#ref-batesFittingLinearMixedEffects2015" role="doc-biblioref">Bates et al. 2015</a>)</span>, the functions <span class="math inline">\(b(\cdot)\)</span>, <span class="math inline">\(c(\cdot)\)</span>, and <span class="math inline">\(g(\cdot)\)</span> are allowed to vary between
+to what is assumed, e.g., by <a href="https://cran.r-project.org/package=lme4" class="external-link">lme4</a> <span class="citation">(<a href="#ref-batesFittingLinearMixedEffects2015">Bates et al.
+2015</a>)</span>, the functions <span class="math inline">\(b(\cdot)\)</span>, <span class="math inline">\(c(\cdot)\)</span>, and <span class="math inline">\(g(\cdot)\)</span> are allowed to vary between
 observations. That is, the observations can come from different members
 of the exponential family. The vignette on <a href="https://lcbc-uio.github.io/galamm/articles/mixed_response.html">models
 with mixed response types</a> describes this in detail.</p>
@@ -206,10 +209,11 @@ level <span class="math inline">\(l\)</span>. Defining the <span class="math inl
 <div class="section level3">
 <h3 id="mixed-model-representation">Mixed Model Representation<a class="anchor" aria-label="anchor" href="#mixed-model-representation"></a>
 </h3>
-<p>In <span class="citation">Sørensen, Fjell, and Walhovd (<a href="#ref-sorensenLongitudinalModelingAgeDependent2023" role="doc-biblioref">2023</a>)</span> we show that any model specified
-as above can be transformed to a GLLAMM, which is essentially a
-generalized nonlinear mixed model. This transformation is rather
-complex, so we won’t spell it out here, but the key steps are:</p>
+<p>In <span class="citation">Sørensen, Fjell, and Walhovd (<a href="#ref-sorensenLongitudinalModelingAgeDependent2023">2023</a>)</span>
+we show that any model specified as above can be transformed to a
+GLLAMM, which is essentially a generalized nonlinear mixed model. This
+transformation is rather complex, so we won’t spell it out here, but the
+key steps are:</p>
 <ol style="list-style-type: decimal">
 <li>Converting smooth terms to their mixed model form.</li>
 <li>Estimate the resulting GLLAMM.</li>
@@ -257,8 +261,8 @@ g\left(\boldsymbol{\beta}, \boldsymbol{\Lambda}, \boldsymbol{\Gamma},
 standardized version of <span class="math inline">\(\boldsymbol{\zeta}\)</span>. In order to evaluate
 the marginal likelihood at a given set of parameter values, we use the
 Laplace approximation combined with sparse matrix operations, extending
-<span class="citation">Bates et al. (<a href="#ref-batesFittingLinearMixedEffects2015" role="doc-biblioref">2015</a>)</span>’s algorithm for linear mixed
-models.</p>
+<span class="citation">Bates et al. (<a href="#ref-batesFittingLinearMixedEffects2015">2015</a>)</span>’s
+algorithm for linear mixed models.</p>
 </div>
 <div class="section level4">
 <h4 id="maximizing-the-marginal-likelihood">Maximizing the Marginal Likelihood<a class="anchor" aria-label="anchor" href="#maximizing-the-marginal-likelihood"></a>
@@ -301,7 +305,7 @@ additive mixed models with factor structures</a>.</li>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
 <div id="ref-batesFittingLinearMixedEffects2015" class="csl-entry">
 Bates, Douglas M, Martin Mächler, Ben Bolker, and Steve Walker. 2015.
 <span>“Fitting <span>Linear Mixed-Effects Models Using</span>
@@ -315,8 +319,7 @@ Rabe-Hesketh, Sophia, Anders Skrondal, and Andrew Pickles. 2004.
 <div id="ref-skrondalGeneralizedLatentVariable2004" class="csl-entry">
 Skrondal, Anders, and Sophia Rabe-Hesketh. 2004. <em>Generalized Latent
 Variable Modeling</em>. Interdisciplinary <span>Statistics
-Series</span>. <span>Boca Raton, Florida</span>: <span>Chapman and
-Hall/CRC</span>.
+Series</span>. Boca Raton, Florida: <span>Chapman and Hall/CRC</span>.
 </div>
 <div id="ref-sorensenLongitudinalModelingAgeDependent2023" class="csl-entry">
 Sørensen, Øystein, Anders M. Fjell, and Kristine B. Walhovd. 2023.

@@ -14,8 +14,8 @@
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Models with Mixed Response Types">
 <meta property="og:description" content="galamm">
@@ -301,11 +301,14 @@ function.</p>
 <div class="section level3">
 <h3 id="covariate-measurement-error-model">Covariate Measurement Error Model<a class="anchor" aria-label="anchor" href="#covariate-measurement-error-model"></a>
 </h3>
-<p>This example is taken from Chapter 14.2 in <span class="citation">Skrondal and Rabe-Hesketh (<a href="#ref-skrondalGeneralizedLatentVariable2004" role="doc-biblioref">2004</a>)</span>, and follows the analyses in <span class="citation">(<a href="#ref-rabe-heskethCorrectingCovariateMeasurement2003" role="doc-biblioref">Rabe-Hesketh, Pickles, and Skrondal 2003</a>; <a href="#ref-rabe-heskethMaximumLikelihoodEstimation2003" role="doc-biblioref">Rabe-Hesketh, Skrondal, and Pickles
-2003</a>)</span>. No originality is claimed with respect to the
-analyses; but for the sake of understanding the <code>galamm</code>
-code, we explain it in quite some detail. The original dataset comes
-from <span class="citation">Morris, Marr, and Clayton (<a href="#ref-morrisDietHeartPostscript1977" role="doc-biblioref">1977</a>)</span>.</p>
+<p>This example is taken from Chapter 14.2 in <span class="citation">Skrondal and Rabe-Hesketh (<a href="#ref-skrondalGeneralizedLatentVariable2004">2004</a>)</span>, and
+follows the analyses in <span class="citation">(<a href="#ref-rabe-heskethCorrectingCovariateMeasurement2003">Rabe-Hesketh,
+Pickles, and Skrondal 2003</a>; <a href="#ref-rabe-heskethMaximumLikelihoodEstimation2003">Rabe-Hesketh,
+Skrondal, and Pickles 2003</a>)</span>. No originality is claimed with
+respect to the analyses; but for the sake of understanding the
+<code>galamm</code> code, we explain it in quite some detail. The
+original dataset comes from <span class="citation">Morris, Marr, and
+Clayton (<a href="#ref-morrisDietHeartPostscript1977">1977</a>)</span>.</p>
 <p>The scientific question concerns the impact of fiber intake on risk
 of coronary heat disease. 337 middle aged men were followed, all of whom
 either worked as bank staff or as London Transport staff (indicated by
@@ -345,10 +348,10 @@ of fiber intake. Here are three of them.</p>
 heart disease. Since this variable is very likely to be subject to
 measurement error, it is well known that simply averaging the two
 measurements, where available, and using the single measurement
-otherwise, will lead to bias and lack of power <span class="citation">(<a href="#ref-carrollMeasurementErrorNonlinear2006" role="doc-biblioref">Carroll et al. 2006</a>)</span>. Instead, we let
-<span class="math inline">\(\eta_{j}\)</span> denote the true (latent)
-fiber intake of person <span class="math inline">\(j\)</span>, and
-define the structural model</p>
+otherwise, will lead to bias and lack of power <span class="citation">(<a href="#ref-carrollMeasurementErrorNonlinear2006">Carroll et al.
+2006</a>)</span>. Instead, we let <span class="math inline">\(\eta_{j}\)</span> denote the true (latent) fiber
+intake of person <span class="math inline">\(j\)</span>, and define the
+structural model</p>
 <p><span class="math display">\[\eta_{j} =
 \mathbf{x}_{ij}'\boldsymbol{\gamma} + \zeta_{j}.\]</span></p>
 <p>where <span class="math inline">\(\mathbf{x}_{ij}\)</span> is a
@@ -442,9 +445,9 @@ corresponds to the term <span class="math inline">\(\mathbf{x}_{ij}^{T}\boldsymb
 the disease model, and <code>fiber2</code> corresponds to the drift term
 <span class="math inline">\(d_{2ij}\beta_{0}\)</span>.</p>
 <p>We can inspect the model implied by the formula by using the
-<code>nobars</code> function from <a href="https://cran.r-project.org/package=lme4" class="external-link">lme4</a> <span class="citation">(<a href="#ref-batesFittingLinearMixedEffects2015" role="doc-biblioref">Bates et al. 2015</a>)</span> to remove the random
-effects, and then <code>model.matrix</code>. It looks correctly set
-up.</p>
+<code>nobars</code> function from <a href="https://cran.r-project.org/package=lme4" class="external-link">lme4</a> <span class="citation">(<a href="#ref-batesFittingLinearMixedEffects2015">Bates et al.
+2015</a>)</span> to remove the random effects, and then
+<code>model.matrix</code>. It looks correctly set up.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html" class="external-link">model.matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/lme4/man/nobars.html" class="external-link">nobars</a></span><span class="op">(</span><span class="va">formula</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">diet</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   chd fiber fiber2 chd:age chd:bus age:fiber bus:fiber chd:age:bus age:bus:fiber</span></span>
@@ -545,10 +548,10 @@ argument <code>trace = 3</code> is passed onto <code>optim</code>.</p>
 <p>Now we got some information, but the final estimate is the same,
 since we otherwise used the same parameters. We now instead try to
 increase the initial estimate of the random effect parameter <span class="math inline">\(\theta\)</span>. In general <span class="math inline">\(\theta\)</span> is a vector containing elements of
-the Cholesky factor of the covariance matrix (see, <span class="citation">Bates et al. (<a href="#ref-batesFittingLinearMixedEffects2015" role="doc-biblioref">2015</a>)</span>), but in this case it is just the
-standard deviation of the latent variable. By default, its initial value
-is 1, but we now try to increase it to 10, with the <code>start</code>
-argument.</p>
+the Cholesky factor of the covariance matrix (see, <span class="citation">Bates et al. (<a href="#ref-batesFittingLinearMixedEffects2015">2015</a>)</span>), but in
+this case it is just the standard deviation of the latent variable. By
+default, its initial value is 1, but we now try to increase it to 10,
+with the <code>start</code> argument.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">formula</span>,</span>
@@ -585,11 +588,12 @@ argument.</p>
 is less than 1406.8, increasing the initial value to 10 led us to a
 local optimum with higher likelihood value. Ideally we should have tried
 other initial values as well, but since <span class="citation">Skrondal
-and Rabe-Hesketh (<a href="#ref-skrondalGeneralizedLatentVariable2004" role="doc-biblioref">2004</a>)</span> obtained a negative log-likelihood
-value of 1372.35 while using adaptive quadrature estimation, we are
-pretty happy about finding a value close to theirs.</p>
+and Rabe-Hesketh (<a href="#ref-skrondalGeneralizedLatentVariable2004">2004</a>)</span>
+obtained a negative log-likelihood value of 1372.35 while using adaptive
+quadrature estimation, we are pretty happy about finding a value close
+to theirs.</p>
 <p>We can now use the summary method, where we find that our estimates
-are very close to the corresponding model in Table 14.1 of <span class="citation">Skrondal and Rabe-Hesketh (<a href="#ref-skrondalGeneralizedLatentVariable2004" role="doc-biblioref">2004</a>)</span>.</p>
+are very close to the corresponding model in Table 14.1 of <span class="citation">Skrondal and Rabe-Hesketh (<a href="#ref-skrondalGeneralizedLatentVariable2004">2004</a>)</span>.</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span>
 <span><span class="co">#&gt; GALAMM fit by maximum marginal likelihood.</span></span>
@@ -627,16 +631,18 @@ are very close to the corresponding model in Table 14.1 of <span class="citation
 <span><span class="co">#&gt; chd:age:bus   -0.04998    0.06507 -0.76812  4.424e-01</span></span>
 <span><span class="co">#&gt; fiber:age:bus  0.16821    0.11223  1.49882  1.339e-01</span></span></code></pre></div>
 <p>Now we were able to reproduce results very close to those in Table
-14.1 on page 420 of <span class="citation">Skrondal and Rabe-Hesketh (<a href="#ref-skrondalGeneralizedLatentVariable2004" role="doc-biblioref">2004</a>)</span>. This is a useful assurance that
-the algorithm used by galamm is correctly implemented.</p>
+14.1 on page 420 of <span class="citation">Skrondal and Rabe-Hesketh (<a href="#ref-skrondalGeneralizedLatentVariable2004">2004</a>)</span>. This
+is a useful assurance that the algorithm used by galamm is correctly
+implemented.</p>
 </div>
 <div class="section level4">
 <h4 id="comparison-to-a-model-with-indirect-effect-only">Comparison to a Model with Indirect Effect Only<a class="anchor" aria-label="anchor" href="#comparison-to-a-model-with-indirect-effect-only"></a>
 </h4>
 <p>The model above assumed that the age and bus variables had both an
 indirect effect on the risk of coronary heart disease through its impact
-on fiber intake, as well as a direct effect. Still following <span class="citation">Skrondal and Rabe-Hesketh (<a href="#ref-skrondalGeneralizedLatentVariable2004" role="doc-biblioref">2004</a>)</span>, we now estimate an alternative
-model which only has indirect effects. The disease model is now</p>
+on fiber intake, as well as a direct effect. Still following <span class="citation">Skrondal and Rabe-Hesketh (<a href="#ref-skrondalGeneralizedLatentVariable2004">2004</a>)</span>, we
+now estimate an alternative model which only has indirect effects. The
+disease model is now</p>
 <p><span class="math display">\[
 \text{logit}[P(y_{ij}=1 | \eta_{j})] = d_{ij3}\beta_{03} + \lambda
 \eta_{j},
@@ -679,7 +685,7 @@ with</p>
 <span><span class="co">#&gt; converged</span></span></code></pre></div>
 <p>Looking at the summary output, the estimates are now close to the
 first column in Table 14.1 of <span class="citation">Skrondal and
-Rabe-Hesketh (<a href="#ref-skrondalGeneralizedLatentVariable2004" role="doc-biblioref">2004</a>)</span>.</p>
+Rabe-Hesketh (<a href="#ref-skrondalGeneralizedLatentVariable2004">2004</a>)</span>.</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod0</span><span class="op">)</span></span>
 <span><span class="co">#&gt; GALAMM fit by maximum marginal likelihood.</span></span>
@@ -730,7 +736,7 @@ effects.</p>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
 <div id="ref-batesFittingLinearMixedEffects2015" class="csl-entry">
 Bates, Douglas M, Martin Mächler, Ben Bolker, and Steve Walker. 2015.
 <span>“Fitting <span>Linear Mixed-Effects Models Using</span>
@@ -741,8 +747,7 @@ Carroll, Raymond J., David Ruppert, Leonard A. Stefanski, and Ciprian M.
 Crainiceanu. 2006. <em>Measurement <span>Error</span> in <span>Nonlinear
 Models</span>: <span>A Modern Perspective</span></em>. 2nd ed.
 Monographs on <span>Statistics</span> and <span>Applied
-Probability</span>. <span>Boca Raton, Florida</span>: <span>John Wiley
-&amp; Sons</span>.
+Probability</span>. Boca Raton, Florida: John Wiley &amp; Sons.
 </div>
 <div id="ref-morrisDietHeartPostscript1977" class="csl-entry">
 Morris, J. N., J. W. Marr, and D. G. Clayton. 1977. <span>“Diet and
@@ -763,8 +768,7 @@ Error</span>.”</span> <em>The Stata Journal</em> 3 (4): 386–411. <a href="ht
 <div id="ref-skrondalGeneralizedLatentVariable2004" class="csl-entry">
 Skrondal, Anders, and Sophia Rabe-Hesketh. 2004. <em>Generalized Latent
 Variable Modeling</em>. Interdisciplinary <span>Statistics
-Series</span>. <span>Boca Raton, Florida</span>: <span>Chapman and
-Hall/CRC</span>.
+Series</span>. Boca Raton, Florida: <span>Chapman and Hall/CRC</span>.
 </div>
 </div>
 </div>

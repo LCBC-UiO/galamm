@@ -14,8 +14,8 @@
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Linear Mixed Models with Factor Structures">
 <meta property="og:description" content="galamm">
@@ -103,23 +103,30 @@
 estimate linear mixed models with factor structures. Such models are an
 instance of the generalized linear latent and mixed models (GLLAMM)
 framework described by <span class="citation">Rabe-Hesketh, Skrondal,
-and Pickles (<a href="#ref-rabe-heskethGeneralizedMultilevelStructural2004" role="doc-biblioref">2004</a>)</span> and <span class="citation">Skrondal and Rabe-Hesketh (<a href="#ref-skrondalGeneralizedLatentVariable2004" role="doc-biblioref">2004</a>)</span>. The R package <a href="https://cran.r-project.org/package=PLmixed" class="external-link">PLmixed</a> <span class="citation">(<a href="#ref-rockwoodEstimatingComplexMeasurement2019" role="doc-biblioref">Rockwood and Jeon 2019</a>)</span> estimates such
-models using a profile likelihood algorithm initially proposed by <span class="citation">Jeon and Rabe-Hesketh (<a href="#ref-jeonProfileLikelihoodApproachEstimating2012" role="doc-biblioref">2012</a>)</span>. The models are also a special
-case of generalized additive latent and mixed models (GALAMM), and in
-galamm these models are estimated using a more direct algorithm
-described in <span class="citation">Sørensen, Fjell, and Walhovd (<a href="#ref-sorensenLongitudinalModelingAgeDependent2023" role="doc-biblioref">2023</a>)</span>.</p>
+and Pickles (<a href="#ref-rabe-heskethGeneralizedMultilevelStructural2004">2004</a>)</span>
+and <span class="citation">Skrondal and Rabe-Hesketh (<a href="#ref-skrondalGeneralizedLatentVariable2004">2004</a>)</span>. The
+R package <a href="https://cran.r-project.org/package=PLmixed" class="external-link">PLmixed</a> <span class="citation">(<a href="#ref-rockwoodEstimatingComplexMeasurement2019">Rockwood and Jeon
+2019</a>)</span> estimates such models using a profile likelihood
+algorithm initially proposed by <span class="citation">Jeon and
+Rabe-Hesketh (<a href="#ref-jeonProfileLikelihoodApproachEstimating2012">2012</a>)</span>.
+The models are also a special case of generalized additive latent and
+mixed models (GALAMM), and in galamm these models are estimated using a
+more direct algorithm described in <span class="citation">Sørensen,
+Fjell, and Walhovd (<a href="#ref-sorensenLongitudinalModelingAgeDependent2023">2023</a>)</span>.</p>
 <p>The examples used in this vignette come from the simulated datasets
-provided by <a href="https://cran.r-project.org/package=PLmixed" class="external-link">PLmixed</a> <span class="citation">(<a href="#ref-rockwoodEstimatingComplexMeasurement2019" role="doc-biblioref">Rockwood and Jeon 2019</a>)</span>. The purpose of
-this vignette is to confirm that galamm gives the same results for these
-models, and to introduce the syntax. As will be clear if you run the
-code, galamm can often be considerably faster.</p>
+provided by <a href="https://cran.r-project.org/package=PLmixed" class="external-link">PLmixed</a> <span class="citation">(<a href="#ref-rockwoodEstimatingComplexMeasurement2019">Rockwood and Jeon
+2019</a>)</span>. The purpose of this vignette is to confirm that galamm
+gives the same results for these models, and to introduce the syntax. As
+will be clear if you run the code, galamm can often be considerably
+faster.</p>
 <div class="section level3">
 <h3 id="crossed-random-effects-model-with-persistence-parameters">Crossed Random Effects Model with Persistence Parameters<a class="anchor" aria-label="anchor" href="#crossed-random-effects-model-with-persistence-parameters"></a>
 </h3>
 <p>This example comes from Section 3.1 in <span class="citation">Jeon
-and Rabe-Hesketh (<a href="#ref-jeonProfileLikelihoodApproachEstimating2012" role="doc-biblioref">2012</a>)</span>, whose model was again based on
-<span class="citation">McCaffrey et al. (<a href="#ref-mccaffreyModelsValueAddedModeling2004" role="doc-biblioref">2004</a>)</span>. The dataset <code>KYPSsim</code>
-comes from <a href="https://cran.r-project.org/package=PLmixed" class="external-link">PLmixed</a> and is a
+and Rabe-Hesketh (<a href="#ref-jeonProfileLikelihoodApproachEstimating2012">2012</a>)</span>,
+whose model was again based on <span class="citation">McCaffrey et al.
+(<a href="#ref-mccaffreyModelsValueAddedModeling2004">2004</a>)</span>.
+The dataset <code>KYPSsim</code> comes from <a href="https://cran.r-project.org/package=PLmixed" class="external-link">PLmixed</a> and is a
 simulated version of the Korea Youth Panel Survey (KYPS) data.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">KYPSsim</span><span class="op">)</span></span>
@@ -145,8 +152,8 @@ variable to a factor.</p>
 <span><span class="co">#&gt; [1] "1" "2" "3" "4"</span></span></code></pre></div>
 <p>Since students attending a given middle school not necessarily attend
 the same high school, we have a model with crossed random effects. We
-use the model of <span class="citation">Jeon and Rabe-Hesketh (<a href="#ref-jeonProfileLikelihoodApproachEstimating2012" role="doc-biblioref">2012</a>)</span>, whose measurement part can be
-formulated as</p>
+use the model of <span class="citation">Jeon and Rabe-Hesketh (<a href="#ref-jeonProfileLikelihoodApproachEstimating2012">2012</a>)</span>,
+whose measurement part can be formulated as</p>
 <p><span class="math display">\[
 y_{tsmh} = \beta_{0} + \sum_{t'=2}^{4} d_{tt'}\beta_{t'} +
 \mathbf{d}_{t}^{T} \left(\boldsymbol{\lambda}_{m}  \eta_{m} +
@@ -160,12 +167,13 @@ an intercept, and <span class="math inline">\(\beta_{2}\)</span>, <span class="m
 middle school <span class="math inline">\(m\)</span> and high school
 <span class="math inline">\(s\)</span>, respectively, <span class="math inline">\(\eta_{s}\)</span> is the latent level for student
 <span class="math inline">\(s\)</span>, and <span class="math inline">\(\epsilon_{tsmh}\)</span> is a residual term. <span class="math inline">\(\boldsymbol{\lambda}_{m}\)</span> and <span class="math inline">\(\boldsymbol{\lambda}_{h}\)</span> are factor
-loadings (called “persistence parameters” by <span class="citation">McCaffrey et al. (<a href="#ref-mccaffreyModelsValueAddedModeling2004" role="doc-biblioref">2004</a>)</span> and <span class="citation">Jeon
-and Rabe-Hesketh (<a href="#ref-jeonProfileLikelihoodApproachEstimating2012" role="doc-biblioref">2012</a>)</span>) specifying how the teacher
-effects for middle school and high school impact the self esteem
-measurement. Since students attend high school after middle school, the
-measurements of self esteem in middle school are assumed not to be
-affected by high school, and hence the first two elements of <span class="math inline">\(\boldsymbol{\lambda}_{h}\)</span> are set to zero.
+loadings (called “persistence parameters” by <span class="citation">McCaffrey et al. (<a href="#ref-mccaffreyModelsValueAddedModeling2004">2004</a>)</span> and
+<span class="citation">Jeon and Rabe-Hesketh (<a href="#ref-jeonProfileLikelihoodApproachEstimating2012">2012</a>)</span>)
+specifying how the teacher effects for middle school and high school
+impact the self esteem measurement. Since students attend high school
+after middle school, the measurements of self esteem in middle school
+are assumed not to be affected by high school, and hence the first two
+elements of <span class="math inline">\(\boldsymbol{\lambda}_{h}\)</span> are set to zero.
 The first nonzero element is set to zero for identifiability, so we have
 <span class="math inline">\(\boldsymbol{\lambda}_{h} = (0, 0, 1,
 \lambda_{h4})^{T}\)</span>. Conversely, we allow for middle school to
@@ -326,9 +334,9 @@ student attends high school, as can be seen by the last two rows of the
 acceptable, although there seems to be a slight upward trend.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="lmm_factor_diagnostic_plot-1.png" alt=""><p class="caption">Diagnostic plot for linear mixed model with factor
-structures.</p>
+<div class="float">
+<img src="lmm_factor_diagnostic_plot-1.png" alt="Diagnostic plot for linear mixed model with factor structures."><div class="figcaption">Diagnostic plot for linear mixed model with
+factor structures.</div>
 </div>
 <p>We can also compare the estimated model to a model with constrained
 factor loadings. In particular, we could assume that the teacher effect
@@ -427,19 +435,21 @@ dataset.</p>
 <div class="section level3">
 <h3 id="multi-trait-multi-rater-model">Multi-Trait Multi-Rater Model<a class="anchor" aria-label="anchor" href="#multi-trait-multi-rater-model"></a>
 </h3>
-<p>We next consider a model based on example 1 in <span class="citation">Rockwood and Jeon (<a href="#ref-rockwoodEstimatingComplexMeasurement2019" role="doc-biblioref">2019</a>)</span>, which uses the dataset
-<code>JUDGEsim</code> in <a href="https://cran.r-project.org/package=PLmixed" class="external-link">PLmixed</a>, which is
+<p>We next consider a model based on example 1 in <span class="citation">Rockwood and Jeon (<a href="#ref-rockwoodEstimatingComplexMeasurement2019">2019</a>)</span>,
+which uses the dataset <code>JUDGEsim</code> in <a href="https://cran.r-project.org/package=PLmixed" class="external-link">PLmixed</a>, which is
 simulated to mimic the data used by <span class="citation">Koch et al.
-(<a href="#ref-kochCrossClassifiedCFAMTMMModel2016" role="doc-biblioref">2016</a>)</span>. We refer to <span class="citation">Rockwood and Jeon (<a href="#ref-rockwoodEstimatingComplexMeasurement2019" role="doc-biblioref">2019</a>)</span> for all the details, and merely
-present the model and how to estimate it using <code>galamm</code>. Note
-however that although the fit with <code>galamm</code> is identical to
-that presented in <span class="citation">Rockwood and Jeon (<a href="#ref-rockwoodEstimatingComplexMeasurement2019" role="doc-biblioref">2019</a>)</span>, our estimated factor loadings
-appear to differ from those in the table at the bottom of page 298 in
-<span class="citation">Rockwood and Jeon (<a href="#ref-rockwoodEstimatingComplexMeasurement2019" role="doc-biblioref">2019</a>)</span>, due to an error in the way the
-matrix of factor loadings was presented in <code>PLmixed</code> versions
-<code>&lt;= 0.1.6</code>. This issue has been fixed in
-<code>PLmixed</code> version <code>0.1.7</code> (Nicholas Rockwood,
-personal communication, August 2023).</p>
+(<a href="#ref-kochCrossClassifiedCFAMTMMModel2016">2016</a>)</span>. We
+refer to <span class="citation">Rockwood and Jeon (<a href="#ref-rockwoodEstimatingComplexMeasurement2019">2019</a>)</span>
+for all the details, and merely present the model and how to estimate it
+using <code>galamm</code>. Note however that although the fit with
+<code>galamm</code> is identical to that presented in <span class="citation">Rockwood and Jeon (<a href="#ref-rockwoodEstimatingComplexMeasurement2019">2019</a>)</span>,
+our estimated factor loadings appear to differ from those in the table
+at the bottom of page 298 in <span class="citation">Rockwood and Jeon
+(<a href="#ref-rockwoodEstimatingComplexMeasurement2019">2019</a>)</span>,
+due to an error in the way the matrix of factor loadings was presented
+in <code>PLmixed</code> versions <code>&lt;= 0.1.6</code>. This issue
+has been fixed in <code>PLmixed</code> version <code>0.1.7</code>
+(Nicholas Rockwood, personal communication, August 2023).</p>
 <p>The data contains ratings of two traits in students, and the traits
 are rated by both students and teachers.</p>
 <p>Initially, we need to convert the item variable to a factor.</p>
@@ -474,7 +484,7 @@ only rate themselves.</p>
 <span><span class="co">#&gt;    1    2    3    4    5    6    7    8    9   10   11   12 </span></span>
 <span><span class="co">#&gt; 7828 7828 7828 7828 7828 7828 1249 1249 1249 1249 1249 1249</span></span></code></pre></div>
 <p>In matrix-vector format, the measurement model is (equation 16 in
-<span class="citation">Rockwood and Jeon (<a href="#ref-rockwoodEstimatingComplexMeasurement2019" role="doc-biblioref">2019</a>)</span>)</p>
+<span class="citation">Rockwood and Jeon (<a href="#ref-rockwoodEstimatingComplexMeasurement2019">2019</a>)</span>)</p>
 <p><span class="math display">\[
 \begin{pmatrix}
 y_{1tsc} \\
@@ -701,7 +711,7 @@ than five minutes.</p>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
 <div id="ref-jeonProfileLikelihoodApproachEstimating2012" class="csl-entry">
 Jeon, Minjeong, and Sophia Rabe-Hesketh. 2012.
 <span>“Profile-<span>Likelihood Approach</span> for <span>Estimating
@@ -737,8 +747,7 @@ Research</em> 54 (2): 288–306. <a href="https://doi.org/10.1080/00273171.2018.
 <div id="ref-skrondalGeneralizedLatentVariable2004" class="csl-entry">
 Skrondal, Anders, and Sophia Rabe-Hesketh. 2004. <em>Generalized Latent
 Variable Modeling</em>. Interdisciplinary <span>Statistics
-Series</span>. <span>Boca Raton, Florida</span>: <span>Chapman and
-Hall/CRC</span>.
+Series</span>. Boca Raton, Florida: <span>Chapman and Hall/CRC</span>.
 </div>
 <div id="ref-sorensenLongitudinalModelingAgeDependent2023" class="csl-entry">
 Sørensen, Øystein, Anders M. Fjell, and Kristine B. Walhovd. 2023.
