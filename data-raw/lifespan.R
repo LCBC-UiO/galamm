@@ -127,7 +127,7 @@ lifespan <- tibble(
     id = factor(id)
   ) %>%
   ungroup() %>%
-  select(-nu, -timepoint) %>%
+  select(-nu) %>%
   as.data.frame()
 
 mm <- model.matrix(~ 0 + domain, data = lifespan)

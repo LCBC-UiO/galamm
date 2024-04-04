@@ -12,6 +12,7 @@
 \item{domain}{Cognitive domain being measured. One of \code{"epmem"} for
 episodic memory, \code{"wmem"} for working memory and \code{"execfun"} for
 executive function/speed.}
+\item{timepoint}{Integer indicating the timepoint number.}
 \item{age}{Age of participant at the timepoint.}
 \item{test}{The particular test at this observation.}
 \item{y}{Response. For \code{"epmem"} and \code{"wmem"} this is the number
