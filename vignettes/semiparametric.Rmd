@@ -779,10 +779,6 @@ summary(mod_byvar_mixed)
 #>      AIC      BIC   logLik deviance df.resid 
 #>   9476.1   9566.9  -4725.0  98981.3     7987 
 #> 
-#> Scaled residuals: 
-#>     Min      1Q  Median      3Q     Max 
-#> -13.543   0.426   1.987   6.127  18.637 
-#> 
 #> Lambda:
 #>         ability1      SE ability2      SE
 #> lambda1   1.0000       .        .       .
@@ -807,9 +803,9 @@ summary(mod_byvar_mixed)
 #> s(x):domain2:ability2Fx1  2.10045    0.47649  4.4082 1.042e-05
 #> 
 #> Approximate significance of smooth terms:
-#>                         edf Ref.df    F p-value
-#> s(x):domain1:ability1 7.865  7.865  880  <2e-16
-#> s(x):domain2:ability2 6.442  6.442 8007  <2e-16
+#>                         edf Ref.df   F p-value
+#> s(x):domain1:ability1 7.865  7.865 880  <2e-16
+#> s(x):domain2:ability2 3.036  3.036 285  <2e-16
 ```
 
 We can plot the estimated smooth terms:
