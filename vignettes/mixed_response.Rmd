@@ -115,10 +115,6 @@ summary(mixed_resp)
 #>      AIC      BIC   logLik deviance df.resid 
 #>   9248.7   9280.2  -4619.3   3633.1     3995 
 #> 
-#> Scaled residuals: 
-#>     Min      1Q  Median      3Q     Max 
-#> -3.5360 -0.7078  0.2156  0.6456  2.5978 
-#> 
 #> Lambda:
 #>         level      SE
 #> lambda1 1.000       .
@@ -178,10 +174,6 @@ summary(mod)
 #> 
 #>      AIC      BIC   logLik deviance df.resid 
 #>  12356.9  12388.3  -6173.4  31426.4     3995 
-#> 
-#> Scaled residuals: 
-#>      Min       1Q   Median       3Q      Max 
-#> -15.2275  -0.4025   0.1262   0.6757  16.0284 
 #> 
 #> Random effects:
 #>  Groups Name        Variance Std.Dev.
@@ -353,10 +345,6 @@ summary(mod)
 #>      AIC      BIC   logLik deviance df.resid 
 #>   2837.6   2892.9  -1406.8  12529.3      730 
 #> 
-#> Scaled residuals: 
-#>      Min       1Q   Median       3Q      Max 
-#> -10.1375  -0.4389  -0.3522   0.2743  27.3350 
-#> 
 #> Lambda:
 #>         loading SE
 #> lambda1   1.000  .
@@ -472,10 +460,6 @@ summary(mod)
 #>      AIC      BIC   logLik deviance df.resid 
 #>   2768.3   2823.6  -1372.2   2002.9      730 
 #> 
-#> Scaled residuals: 
-#>     Min      1Q  Median      3Q     Max 
-#> -258547      -1       0       0      66 
-#> 
 #> Lambda:
 #>         loading      SE
 #> lambda1  1.0000       .
@@ -566,10 +550,6 @@ summary(mod0)
 #> 
 #>      AIC      BIC   logLik deviance df.resid 
 #>   2764.0   2805.5  -1373.0   2007.9      733 
-#> 
-#> Scaled residuals: 
-#>     Min      1Q  Median      3Q     Max 
-#> -280306      -1       0       0      66 
 #> 
 #> Lambda:
 #>         loading      SE

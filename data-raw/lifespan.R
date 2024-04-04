@@ -123,10 +123,11 @@ lifespan <- tibble(
     y = case_when(
       domain == "execfun" ~ -(y - mean(y)) / sd(y),
       TRUE ~ y
-    )
+    ),
+    id = factor(id)
   ) %>%
   ungroup() %>%
-  select(-nu, -timepoint) %>%
+  select(-nu) %>%
   as.data.frame()
 
 mm <- model.matrix(~ 0 + domain, data = lifespan)
