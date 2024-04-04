@@ -425,8 +425,9 @@ gamm4.wrapup <- function(gobj, ret, final_model) {
   }
 
   object$fitted.values <- fitted(ret)
-  object$linear.predictors <- vapply(object$family_mapping, function(i) {
-    object$family[[i]]$linkfun(object$fitted.values[[i]])
+  object$linear.predictors <- vapply(seq_along(object$family_mapping), function(i) {
+    family_index <- object$family_mapping[[i]]
+    object$family[[family_index]]$linkfun(object$fitted.values[[i]])
   }, numeric(1))
 
   object$residuals <- residuals(ret$mer)
