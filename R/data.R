@@ -200,3 +200,30 @@
 #' @family datasets
 #'
 "latent_covariates_long"
+
+#' Simulated Dataset with Lifespan Trajectories of Three Cognitive Domains
+#'
+#' This dataset is simulated based on the data used in Section 4.1 of
+#' \insertCite{sorensenLongitudinalModelingAgeDependent2023;textual}{galamm}.
+#'
+#' @format ## `lifespan` A data frame with 54,457 rows and 7 columns:
+#' \describe{
+#' \item{id}{Subject ID.}
+#' \item{domain}{Cognitive domain being measured. One of \code{"epmem"} for
+#' episodic memory, \code{"wmem"} for working memory and \code{"execfun"} for
+#' executive function/speed.}
+#' \item{age}{Age of participant at the timepoint.}
+#' \item{test}{The particular test at this observation.}
+#' \item{y}{Response. For \code{"epmem"} and \code{"wmem"} this is the number
+#' of successes in 16 trials. For \code{"execfun"} it is the time in seconds
+#' to complete the task.}
+#' \item{retest}{Integer indicating whether the participant has taken the test
+#' at a previous timepoint.}
+#' \item{domainepmem}{Dummy variable for \code{domain=="epmem"}.}
+#' \item{domainwmem}{Dummy variable for \code{domain=="wmem"}.}
+#' \item{domainexecfun}{Dummy variable for \code{domain=="execfun"}.}
+#' }
+#'
+#' @family datasets
+#' @references \insertAllCited{}
+"lifespan"

@@ -1,5 +1,10 @@
 # galamm (development versions)
 
+- The print.summary.galamm() method does no longer print residual percentiles 
+  with mixed response models. The version implemented until now had a bug, and 
+  it is not clear how to present this information in a useful way.
+- Fixed bug causing galamm() to fail with mixed response types, when the first 
+  argument to "family" was not "gaussian".
 - BREAKING CHANGE: argument "factor", "factor_interaction" and "lambda" to 
   galamm should no longer be enclosed in a list.
 - A vignette investigating computational scalability has been added.

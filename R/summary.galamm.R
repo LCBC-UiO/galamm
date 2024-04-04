@@ -147,7 +147,10 @@ print.summary.galamm <- function(
   cat("\n")
   lme4::.prt.aictab(x$AICtab)
   cat("\n")
-  lme4::.prt.resids(residuals(x) / sigma(x), digits = digits)
+  if (length(x$model$family) == 1) {
+    lme4::.prt.resids(residuals(x) / sigma(x), digits = digits)
+  }
+
   if (exists("Lambda", x)) {
     cat("Lambda:\n")
     x$Lambda[x$Lambda == 0] <- NA

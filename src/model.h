@@ -33,7 +33,7 @@ using ldlt = Eigen::SimplicialLDLT<Eigen::SparseMatrix<T> >;
 template <typename T>
 struct Model {
   Model() {};
-  virtual ~Model() = default;
+  ~Model() = default;
   virtual T cumulant(const Vdual<T>& linpred, const Vdual<T>& trials,
                      const Ddual<T>& WSqrt) = 0;
   virtual T constfun(const Vdual<T>& y, const T& phi, const Ddual<T>& WSqrt) = 0;
@@ -61,7 +61,7 @@ struct Model {
 //' @srrstats {G1.4a} Internal class documented.
 //' @noRd
 template <typename T>
-struct Binomial : Model<T> {
+struct Binomial final : Model<T> {
   Binomial(double k) : k { static_cast<T>(k) } {}
   T k;
   T cumulant(const Vdual<T>& linpred, const Vdual<T>& trials,
@@ -104,7 +104,7 @@ struct Binomial : Model<T> {
 //' @srrstats {G1.4a} Internal class documented.
 //' @noRd
 template <typename T>
-struct Gaussian : Model<T> {
+struct Gaussian final : Model<T> {
 
   T cumulant(const Vdual<T>& linpred, const Vdual<T>& trials,
              const Ddual<T>& WSqrt) override {
@@ -145,7 +145,7 @@ struct Gaussian : Model<T> {
 //' @srrstats {G1.4a} Internal class documented.
 //' @noRd
 template <typename T>
-struct Poisson : Model<T> {
+struct Poisson final : Model<T> {
   Poisson(double k) : k {static_cast<T>(k)} {}
   T k;
   T cumulant(const Vdual<T>& linpred, const Vdual<T>& trials,

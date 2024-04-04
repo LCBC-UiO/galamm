@@ -24,10 +24,6 @@
            AIC      BIC   logLik deviance df.resid 
        12356.9  12388.3  -6173.4  31426.4     3995 
       
-      Scaled residuals: 
-         Min     1Q Median     3Q    Max 
-      -15.23  -0.40   0.13   0.68  16.03 
-      
       Random effects:
        Groups Name        Variance Std.Dev.
        id     (Intercept) 0        0       

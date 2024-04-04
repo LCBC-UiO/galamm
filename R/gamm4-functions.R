@@ -239,7 +239,8 @@ gamm4.wrapup <- function(gobj, ret, final_model) {
     model = gobj$mf,
     smooth = gobj$G$smooth,
     nsdf = gobj$G$nsdf,
-    family = ret$model$family[[1]],
+    family = ret$model$family,
+    family_mapping = ret$model$family_mapping,
     df.null = nrow(gobj$G$X),
     y = ret$model$response,
     terms = gobj$gam.terms,
@@ -256,7 +257,8 @@ gamm4.wrapup <- function(gobj, ret, final_model) {
     if (length(pvars) > 0) stats::reformulate(pvars) else NULL
   sn <- names(gobj$G$random)
 
-  if (object$family$family == "gaussian" && object$family$link == "identity") {
+  if (length(object$family) == 1 &&
+    object$family[[1]]$family == "gaussian" && object$family[[1]]$link == "identity") {
     linear <- TRUE
   } else {
     linear <- FALSE
@@ -356,7 +358,6 @@ gamm4.wrapup <- function(gobj, ret, final_model) {
     V <- Matrix::Diagonal(length(final_model$V), scale / final_model$V)
   }
 
-
   if (nrow(Zt) > 0) V <- V + Matrix::crossprod(root.phi %*% Zt) * scale
 
   R <- Matrix::chol(V, pivot = FALSE)
@@ -364,7 +365,6 @@ gamm4.wrapup <- function(gobj, ret, final_model) {
 
   gobj$G$Xf <- methods::as(gobj$G$Xf, "dgCMatrix")
   Xfp <- methods::as(Xfp, "dgCMatrix")
-
 
   WX <- methods::as(Matrix::solve(Matrix::t(R), Xfp), "matrix")
   XVX <- methods::as(Matrix::solve(Matrix::t(R), gobj$G$Xf), "matrix")
@@ -374,7 +374,6 @@ gamm4.wrapup <- function(gobj, ret, final_model) {
   object$R[, qrz$pivot] <- object$R
 
   XVX <- crossprod(object$R) ## X'V^{-1}X original parameterization
-
   object$sp <- sp
 
   colx <- ncol(gobj$G$Xf)
@@ -406,7 +405,6 @@ gamm4.wrapup <- function(gobj, ret, final_model) {
   Vb <- Vb %*% Matrix::t(Vb)
 
   object$edf <- rowSums(Vb * t(XVX))
-
   object$df.residual <- length(object$y) - sum(object$edf)
 
   object$sig2 <- scale
@@ -417,9 +415,7 @@ gamm4.wrapup <- function(gobj, ret, final_model) {
   }
 
   object$Vp <- methods::as(Vb, "matrix")
-
   object$Ve <- methods::as(Vb %*% XVX %*% Vb, "matrix")
-
   class(object) <- "gam"
 
   if (!is.null(gobj$G$P)) {
@@ -428,11 +424,12 @@ gamm4.wrapup <- function(gobj, ret, final_model) {
     object$Ve <- gobj$G$P %*% object$Ve %*% t(gobj$G$P)
   }
 
-  object$linear.predictors <- object$family$linkfun(fitted(ret))
   object$fitted.values <- fitted(ret)
+  object$linear.predictors <- vapply(object$family_mapping, function(i) {
+    object$family[[i]]$linkfun(object$fitted.values[[i]])
+  }, numeric(1))
 
   object$residuals <- residuals(ret$mer)
-
   term.names <- colnames(gobj$G$X)[seq_len(gobj$G$nsdf)]
   n.smooth <- length(gobj$G$smooth)
 
@@ -452,6 +449,8 @@ gamm4.wrapup <- function(gobj, ret, final_model) {
   names(object$edf) <- term.names
   names(object$sp) <- names(gobj$G$sp)
   object$gcv.ubre <- deviance(ret$mer)
+  object$family <- object$family[[1]]
+  object$family_mapping <- NULL
 
   object
 }
