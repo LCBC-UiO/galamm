@@ -837,10 +837,6 @@ this example.</p>
 <span><span class="co">#&gt;      AIC      BIC   logLik deviance df.resid </span></span>
 <span><span class="co">#&gt;   9476.1   9566.9  -4725.0  98981.3     7987 </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Scaled residuals: </span></span>
-<span><span class="co">#&gt;     Min      1Q  Median      3Q     Max </span></span>
-<span><span class="co">#&gt; -13.543   0.426   1.987   6.127  18.637 </span></span>
-<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Lambda:</span></span>
 <span><span class="co">#&gt;         ability1      SE ability2      SE</span></span>
 <span><span class="co">#&gt; lambda1   1.0000       .        .       .</span></span>
@@ -865,9 +861,9 @@ this example.</p>
 <span><span class="co">#&gt; s(x):domain2:ability2Fx1  2.10045    0.47649  4.4082 1.042e-05</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Approximate significance of smooth terms:</span></span>
-<span><span class="co">#&gt;                         edf Ref.df    F p-value</span></span>
-<span><span class="co">#&gt; s(x):domain1:ability1 7.865  7.865  880  &lt;2e-16</span></span>
-<span><span class="co">#&gt; s(x):domain2:ability2 6.442  6.442 8007  &lt;2e-16</span></span></code></pre></div>
+<span><span class="co">#&gt;                         edf Ref.df   F p-value</span></span>
+<span><span class="co">#&gt; s(x):domain1:ability1 7.865  7.865 880  &lt;2e-16</span></span>
+<span><span class="co">#&gt; s(x):domain2:ability2 3.036  3.036 285  &lt;2e-16</span></span></code></pre></div>
 <p>We can plot the estimated smooth terms:</p>
 <div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_smooth.galamm.html">plot_smooth</a></span><span class="op">(</span><span class="va">mod_byvar_mixed</span>, scale <span class="op">=</span> <span class="fl">0</span>, select <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
