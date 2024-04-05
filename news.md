@@ -1,4 +1,4 @@
-# galamm (development versions)
+# galamm version 0.2.0
 
 - The print.summary.galamm() method does no longer print residual percentiles 
   with mixed response models. The version implemented until now had a bug, and 
