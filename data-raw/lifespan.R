@@ -86,7 +86,7 @@ lifespan <- tibble(
     eta = case_when(
       domain == "epmem" ~ epmem_fun(age),
       domain == "wmem" ~ wmem_fun(age),
-      domain == "execfun" ~ -execfun_fun(age),
+      domain == "execfun" ~ execfun_fun(age),
       TRUE ~ NA_real_
     ) + zeta2 + zeta3,
     test = case_when(
@@ -105,7 +105,10 @@ lifespan <- tibble(
     ),
     item_bias = item_bias[test],
     lambda = loadings[test],
-    nu = retest_effect + item_bias + eta * lambda
+    nu = case_when(
+      domain == "execfun" ~ retest_effect + item_bias - eta * lambda,
+      TRUE ~ retest_effect + item_bias + eta * lambda
+    )
   ) %>%
   select(-zeta2, -zeta3, -eta, -retest_effect, -item_bias, -lambda) %>%
   rowwise() %>%
