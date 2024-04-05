@@ -105,7 +105,7 @@ lifespan <- tibble(
     ),
     item_bias = item_bias[test],
     lambda = loadings[test],
-    nu = retest_effect + item_bias + eta * lambda
+    nu = retest_effect + item_bias - eta * lambda
   ) %>%
   select(-zeta2, -zeta3, -eta, -retest_effect, -item_bias, -lambda) %>%
   rowwise() %>%
