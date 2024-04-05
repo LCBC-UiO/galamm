@@ -33,7 +33,7 @@ using ldlt = Eigen::SimplicialLDLT<Eigen::SparseMatrix<T> >;
 template <typename T>
 struct Model {
   Model() {};
-  ~Model() = default;
+  virtual ~Model() = default;
   virtual T cumulant(const Vdual<T>& linpred, const Vdual<T>& trials,
                      const Ddual<T>& WSqrt) = 0;
   virtual T constfun(const Vdual<T>& y, const T& phi, const Ddual<T>& WSqrt) = 0;
