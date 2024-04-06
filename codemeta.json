@@ -8,13 +8,13 @@
   "codeRepository": "https://github.com/LCBC-UiO/galamm",
   "issueTracker": "https://github.com/LCBC-UiO/galamm/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.1.1.9000",
+  "version": "0.2.0",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 4.3.1 (2023-06-16)",
+  "runtimePlatform": "R version 4.3.3 (2024-02-29)",
   "provider": {
     "@id": "https://cran.r-project.org",
     "@type": "Organization",
@@ -254,7 +254,7 @@
     },
     "SystemRequirements": "C++17"
   },
-  "fileSize": "26559.084KB",
+  "fileSize": "28141.422KB",
   "citation": [
     {
       "@type": "ScholarlyArticle",
