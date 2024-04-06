@@ -1,17 +1,28 @@
 # Simulate lifespan data from Section 4.1 in Sørensen et al. (2023)
 library(tidyverse)
 library(mvtnorm)
+library(mgcv)
 set.seed(3)
 trajectories <- readRDS("data-raw/trajectories.rds")
+
+# Fix trajectory for executive function:
+mod <- gam(execfun_trajectory ~ s(age),
+           data = filter(trajectories, age < 25 | age > 50))
+
+# Fix trajectory for episodic memory:
+mod2 <- gam(epmem_trajectory ~ s(age),
+            data = filter(trajectories, age < 40 | age > 70))
+plot(mod2)
+
 epmem_fun <- approxfun(
   trajectories$age,
-  trajectories$epmem_trajectory
+  predict(mod2, newdata = trajectories)
 )
 wmem_fun <- approxfun(
   trajectories$age, trajectories$wmem_trajectory
 )
 execfun_fun <- approxfun(
-  trajectories$age, trajectories$execfun_trajectory
+  trajectories$age, predict(mod, newdata = trajectories)
 )
 
 n_ids <- 1000
