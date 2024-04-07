@@ -509,10 +509,10 @@ intial values that we provided.</p>
 <p>At a given set of parameters, the marginal likelihood is evaluated
 completely in C++. For solving the penalized iteratively reweighted
 least squares problem arising due to the Laplace approximation, we use
-sparse matrix methods from the <a href="https://eigen.tuxfamily.org/index.php?title=Main_Page" class="external-link">Eigen C++
-template library</a> through the <code>RcppEigen</code> package <span class="citation">(<a href="#ref-batesFastElegantNumerical2013">Bates and
-Eddelbuettel 2013</a>)</span>. In order to keep track of the derivatives
-throughout this iterative process, we use the <a href="https://autodiff.github.io/" class="external-link">autodiff library</a> <span class="citation">(<a href="#ref-lealAutodiffModernFast2018">Leal
+sparse matrix methods from the Eigen C++ template library through the
+<code>RcppEigen</code> package <span class="citation">(<a href="#ref-batesFastElegantNumerical2013">Bates and Eddelbuettel
+2013</a>)</span>. In order to keep track of the derivatives throughout
+this iterative process, we use the <a href="https://autodiff.github.io/" class="external-link">autodiff library</a> <span class="citation">(<a href="#ref-lealAutodiffModernFast2018">Leal
 2018</a>)</span>. However, since <code>autodiff</code> natively only
 supports dense matrix operations with <code>Eigen</code>, we have
 extended this library so that it also supports sparse matrix operations.
