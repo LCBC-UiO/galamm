@@ -771,8 +771,7 @@ We can look at the model summary:
 ```r
 summary(mod_byvar_mixed)
 #> GALAMM fit by maximum marginal likelihood.
-#> Formula: y ~ domain + sl(x, by = domain, factor = c("ability1", "ability2")) +  
-#>     (0 + domain1:ability1 + domain2:ability2 | id)
+#> Formula: y ~ domain + sl(x, by = domain, factor = c("ability1", "ability2")) +      (0 + domain1:ability1 + domain2:ability2 | id)
 #>    Data: dat
 #> Control: galamm_control(optim_control = list(factr = 1e+09, trace = 3,      REPORT = 30, maxit = 1000))
 #> 
