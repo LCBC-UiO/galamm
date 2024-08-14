@@ -1,171 +1,59 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/404.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/CODE_OF_CONDUCT.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/CONTRIBUTING.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/LICENSE.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/articles/galamm.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/articles/glmm_factor.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/articles/latent_observed_interaction.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/articles/lmm_factor.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/articles/lmm_heteroscedastic.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/articles/mixed_response.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/articles/optimization.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/articles/scaling.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/articles/semiparametric.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/index.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/news.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/reference/VarCorr.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/reference/anova.galamm.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/reference/coef.galamm.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/reference/cognition.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/reference/confint.galamm.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/reference/deviance.galamm.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/reference/diet.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/reference/epilep.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/reference/extract_optim_parameters.galamm.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/reference/factor_loadings.galamm.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/reference/family.galamm.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/reference/fitted.galamm.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/reference/fixef.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/reference/formula.galamm.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/reference/galamm-package.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/reference/galamm.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/reference/galamm_control.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/reference/hsced.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/reference/latent_covariates.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/reference/latent_covariates_long.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/reference/lifespan.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/reference/llikAIC.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/reference/logLik.galamm.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/reference/mresp.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/reference/mresp_hsced.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/reference/nobs.galamm.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/reference/plot.galamm.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/reference/plot_smooth.galamm.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/reference/predict.galamm.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/reference/print.VarCorr.galamm.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/reference/print.summary.galamm.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/reference/ranef.galamm.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/reference/residuals.galamm.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/reference/sigma.galamm.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/reference/sl.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/reference/summary.galamm.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/reference/t2l.html</loc>
-  </url>
-  <url>
-    <loc>https://lcbc-uio.github.io/galamm/reference/vcov.galamm.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://lcbc-uio.github.io/galamm/404.html</loc></url>
+<url><loc>https://lcbc-uio.github.io/galamm/CODE_OF_CONDUCT.html</loc></url>
+<url><loc>https://lcbc-uio.github.io/galamm/CONTRIBUTING.html</loc></url>
+<url><loc>https://lcbc-uio.github.io/galamm/LICENSE.html</loc></url>
+<url><loc>https://lcbc-uio.github.io/galamm/articles/galamm.html</loc></url>
+<url><loc>https://lcbc-uio.github.io/galamm/articles/glmm_factor.html</loc></url>
+<url><loc>https://lcbc-uio.github.io/galamm/articles/index.html</loc></url>
+<url><loc>https://lcbc-uio.github.io/galamm/articles/latent_observed_interaction.html</loc></url>
+<url><loc>https://lcbc-uio.github.io/galamm/articles/lmm_factor.html</loc></url>
+<url><loc>https://lcbc-uio.github.io/galamm/articles/lmm_heteroscedastic.html</loc></url>
+<url><loc>https://lcbc-uio.github.io/galamm/articles/mixed_response.html</loc></url>
+<url><loc>https://lcbc-uio.github.io/galamm/articles/optimization.html</loc></url>
+<url><loc>https://lcbc-uio.github.io/galamm/articles/scaling.html</loc></url>
+<url><loc>https://lcbc-uio.github.io/galamm/articles/semiparametric.html</loc></url>
+<url><loc>https://lcbc-uio.github.io/galamm/authors.html</loc></url>
+<url><loc>https://lcbc-uio.github.io/galamm/index.html</loc></url>
+<url><loc>https://lcbc-uio.github.io/galamm/news.html</loc></url>
+<url><loc>https://lcbc-uio.github.io/galamm/reference/VarCorr.html</loc></url>
+<url><loc>https://lcbc-uio.github.io/galamm/reference/anova.galamm.html</loc></url>
+<url><loc>https://lcbc-uio.github.io/galamm/reference/coef.galamm.html</loc></url>
+<url><loc>https://lcbc-uio.github.io/galamm/reference/cognition.html</loc></url>
+<url><loc>https://lcbc-uio.github.io/galamm/reference/confint.galamm.html</loc></url>
+<url><loc>https://lcbc-uio.github.io/galamm/reference/deviance.galamm.html</loc></url>
+<url><loc>https://lcbc-uio.github.io/galamm/reference/diet.html</loc></url>
+<url><loc>https://lcbc-uio.github.io/galamm/reference/epilep.html</loc></url>
+<url><loc>https://lcbc-uio.github.io/galamm/reference/extract_optim_parameters.galamm.html</loc></url>
+<url><loc>https://lcbc-uio.github.io/galamm/reference/factor_loadings.galamm.html</loc></url>
+<url><loc>https://lcbc-uio.github.io/galamm/reference/family.galamm.html</loc></url>
+<url><loc>https://lcbc-uio.github.io/galamm/reference/fitted.galamm.html</loc></url>
+<url><loc>https://lcbc-uio.github.io/galamm/reference/fixef.html</loc></url>
+<url><loc>https://lcbc-uio.github.io/galamm/reference/formula.galamm.html</loc></url>
+<url><loc>https://lcbc-uio.github.io/galamm/reference/galamm-package.html</loc></url>
+<url><loc>https://lcbc-uio.github.io/galamm/reference/galamm.html</loc></url>
+<url><loc>https://lcbc-uio.github.io/galamm/reference/galamm_control.html</loc></url>
+<url><loc>https://lcbc-uio.github.io/galamm/reference/hsced.html</loc></url>
+<url><loc>https://lcbc-uio.github.io/galamm/reference/index.html</loc></url>
+<url><loc>https://lcbc-uio.github.io/galamm/reference/latent_covariates.html</loc></url>
+<url><loc>https://lcbc-uio.github.io/galamm/reference/latent_covariates_long.html</loc></url>
+<url><loc>https://lcbc-uio.github.io/galamm/reference/lifespan.html</loc></url>
+<url><loc>https://lcbc-uio.github.io/galamm/reference/llikAIC.html</loc></url>
+<url><loc>https://lcbc-uio.github.io/galamm/reference/logLik.galamm.html</loc></url>
+<url><loc>https://lcbc-uio.github.io/galamm/reference/mresp.html</loc></url>
+<url><loc>https://lcbc-uio.github.io/galamm/reference/mresp_hsced.html</loc></url>
+<url><loc>https://lcbc-uio.github.io/galamm/reference/nobs.galamm.html</loc></url>
+<url><loc>https://lcbc-uio.github.io/galamm/reference/plot.galamm.html</loc></url>
+<url><loc>https://lcbc-uio.github.io/galamm/reference/plot_smooth.galamm.html</loc></url>
+<url><loc>https://lcbc-uio.github.io/galamm/reference/predict.galamm.html</loc></url>
+<url><loc>https://lcbc-uio.github.io/galamm/reference/print.VarCorr.galamm.html</loc></url>
+<url><loc>https://lcbc-uio.github.io/galamm/reference/print.summary.galamm.html</loc></url>
+<url><loc>https://lcbc-uio.github.io/galamm/reference/ranef.galamm.html</loc></url>
+<url><loc>https://lcbc-uio.github.io/galamm/reference/residuals.galamm.html</loc></url>
+<url><loc>https://lcbc-uio.github.io/galamm/reference/sigma.galamm.html</loc></url>
+<url><loc>https://lcbc-uio.github.io/galamm/reference/sl.html</loc></url>
+<url><loc>https://lcbc-uio.github.io/galamm/reference/summary.galamm.html</loc></url>
+<url><loc>https://lcbc-uio.github.io/galamm/reference/t2l.html</loc></url>
+<url><loc>https://lcbc-uio.github.io/galamm/reference/vcov.galamm.html</loc></url>
 </urlset>
+
