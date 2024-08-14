@@ -1,3 +1,8 @@
+# galamm version 0.2.1
+
+- Software paper in Multivariate Behavioral Research has been added to the 
+  recommended citation.
+
 # galamm version 0.2.0
 
 - The print.summary.galamm() method does no longer print residual percentiles 
