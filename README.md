@@ -163,10 +163,6 @@ summary(mixed_resp)
 #>      AIC      BIC   logLik deviance df.resid 
 #>   9248.7   9280.2  -4619.3   3633.1     3995 
 #> 
-#> Scaled residuals: 
-#>     Min      1Q  Median      3Q     Max 
-#> -3.5360 -0.7078  0.2156  0.6456  2.5978 
-#> 
 #> Lambda:
 #>         loading      SE
 #> lambda1   1.000       .
@@ -230,7 +226,12 @@ plot_smooth(mod)
 
 ``` r
 citation("galamm")
-#> To cite package 'galamm' in publications use:
+#> To cite the 'galamm' package in publications use:
+#> 
+#>   Sørensen Ø (2024). "Multilevel Semiparametric Latent Variable
+#>   Modeling in R with "galamm"." _Multivariate Behavioral Research_.
+#>   doi:10.1007/s11336-023-09910-z
+#>   <https://doi.org/10.1007/s11336-023-09910-z>.
 #> 
 #>   Sørensen Ø, Walhovd K, Fjell A (2023). "Longitudinal Modeling of
 #>   Age-Dependent Latent Traits with Generalized Additive Latent and
@@ -238,18 +239,9 @@ citation("galamm")
 #>   doi:10.1007/s11336-023-09910-z
 #>   <https://doi.org/10.1007/s11336-023-09910-z>.
 #> 
-#> A BibTeX entry for LaTeX users is
-#> 
-#>   @Article{,
-#>     title = {Longitudinal Modeling of Age-Dependent Latent Traits with Generalized Additive Latent and Mixed Models},
-#>     author = {{\O}ystein S{\o}rensen and Kristine B. Walhovd and Anders M. Fjell},
-#>     journal = {Psychometrika},
-#>     year = {2023},
-#>     volume = {88},
-#>     number = {2},
-#>     pages = {456-486},
-#>     doi = {10.1007/s11336-023-09910-z},
-#>   }
+#> To see these entries in BibTeX format, use 'print(<citation>,
+#> bibtex=TRUE)', 'toBibtex(.)', or set
+#> 'options(citation.bibtex.max=999)'.
 ```
 
 ## Acknowledgement
@@ -276,7 +268,8 @@ for general guidelines.
 
 ## References
 
-<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="refs" class="references csl-bib-body hanging-indent"
+entry-spacing="0">
 
 <div id="ref-batesFastElegantNumerical2013" class="csl-entry">
 

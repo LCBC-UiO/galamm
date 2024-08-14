@@ -1,3 +1,14 @@
+citHeader("To cite the 'galamm' package in publications use:")
+
+bibentry(
+  bibtype  = "Article",
+  title    = "Multilevel Semiparametric Latent Variable Modeling in R with \"galamm\"",
+  author   = person("{\\O}ystein", "S{\\o}rensen"),
+  journal  = "Multivariate Behavioral Research",
+  year     = "2024",
+  doi      = "10.1007/s11336-023-09910-z"
+)
+
 bibentry(
   bibtype  = "Article",
   title    = "Longitudinal Modeling of Age-Dependent Latent Traits with Generalized Additive Latent and Mixed Models",
