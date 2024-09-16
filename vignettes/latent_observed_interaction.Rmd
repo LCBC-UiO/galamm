@@ -15,7 +15,7 @@ vignette: >
 
 
 
-```r
+``` r
 library(galamm)
 ```
 
@@ -26,7 +26,7 @@ This vignette describes how `galamm` can be used to model interactions between l
 For this example we use the simulated `latent_covariates` dataset, of which the first six rows are displayed below:
 
 
-```r
+``` r
 head(latent_covariates)
 #>   id         type         x            y response
 #> 1  1 measurement1 0.2655087 -0.530999307        0
@@ -79,7 +79,7 @@ The structural model is simply $\eta = \zeta \sim N(0, \psi)$, where $\psi$ is i
 It can be instructive to start by considering a model in which we fix $\\lambda_{4} = 0$. This type of model would be estimated with the following code:
 
 
-```r
+``` r
 lambda <- matrix(c(1, NA, NA), ncol = 1)
 
 mod0 <- galamm(
@@ -94,7 +94,7 @@ mod0 <- galamm(
 In the data generating simulations, the true values were $\lambda_{1}=1$, $\lambda_{2} = 1.3$ and $\lambda_{3} = -0.3$. The former two are very well recovered, but the latter is too positive, which is likely due to us omitting the interaction $\lambda_{4}$, whose true value was 0.2.
 
 
-```r
+``` r
 summary(mod0)
 #> GALAMM fit by maximum marginal likelihood.
 #> Formula: y ~ type + x:response + (0 + loading | id)
@@ -168,14 +168,14 @@ $$
 We specify the factor interactions with a list, one for each row of `lambda`:
 
 
-```r
+``` r
 factor_interactions <- list(~ 1, ~ 1, ~ x)
 ```
 
 This specifies that for the first two rows, there are no covariates, but for the third row, we want a linear regression with $x$ as covariate. Next, we specify the loading matrix **without** the interaction parameter, i.e., we reuse the `lambda` object that was specified for `mod0` above. This lets us fit the model as follows:
 
 
-```r
+``` r
 mod <- galamm(
   formula = y ~ type + x:response + (0 + loading | id),
   data = latent_covariates,
@@ -189,7 +189,7 @@ mod <- galamm(
 A model comparison shows overwhelming evidence in favor of this model, which is not surprising since this is how the data were simulated.
 
 
-```r
+``` r
 anova(mod, mod0)
 #> Data: latent_covariates
 #> Models:
@@ -205,7 +205,7 @@ anova(mod, mod0)
 The summary also shows that the bias in $\lambda_{3}$ has basically disappeared, as it is up to -0.318 from -0.195, with the true value being -0.3. The interaction is estimated at 0.233, which is also very close to the true value 0.2. It should of course be noted here that the noise level in this simulated dataset was set unrealistically low, to let us confirm that the implementation itself is correct.
 
 
-```r
+``` r
 summary(mod)
 #> GALAMM fit by maximum marginal likelihood.
 #> Formula: y ~ type + x:response + (0 + loading | id)
@@ -244,14 +244,14 @@ summary(mod)
 We can also try to add interactions between the $x^{2}$ and $\eta$. We first update the formula in `factor_interactions`:
 
 
-```r
+``` r
 factor_interactions <- list(~ 1, ~ 1, ~ x + I(x^2))
 ```
 
 Then we fit the model as before:
 
 
-```r
+``` r
 mod2 <- galamm(
   formula = y ~ type + x:response + (0 + loading | id),
   data = latent_covariates,
@@ -265,7 +265,7 @@ mod2 <- galamm(
 As can be seen, the coefficient for this squared interaction is not significantly different from zero.
 
 
-```r
+``` r
 summary(mod2)
 #> GALAMM fit by maximum marginal likelihood.
 #> Formula: y ~ type + x:response + (0 + loading | id)
@@ -305,7 +305,7 @@ summary(mod2)
 It is also straightforward to include additional random effects in models containing interactions between latent and observed covariates. The dataset `latent_covariates_long` is similar to `latent_covariates` that was used above, but it has six repeated measurements of the response for each subject. The first ten rows of the dataset are shown below.
 
 
-```r
+``` r
 head(latent_covariates_long, 10)
 #>    id         type         x            y response
 #> 1   1 measurement1 0.2655087 -0.530999307        0
@@ -323,14 +323,14 @@ head(latent_covariates_long, 10)
 For these data we add a random intercept for the response terms, in addition to the terms that were used above. We start by resetting the interaction models to a linear term:
 
 
-```r
+``` r
 factor_interactions <- list(~ 1, ~ 1, ~ x)
 ```
 
 Next we fit the model using `galamm`. The difference to notice here is that we added `(0 + response | id)` to the formula. This implies that for observations that are responses, for which `response = 1`, there should be a random intercept per subject.
 
 
-```r
+``` r
 mod <- galamm(
   formula = y ~ type + x:response + (0 + loading | id) + (0 + response | id),
   data = latent_covariates_long,
@@ -344,7 +344,7 @@ mod <- galamm(
 From the summary, we see that also in this case the factor loadings are very well recovered.
 
 
-```r
+``` r
 summary(mod)
 #> GALAMM fit by maximum marginal likelihood.
 #> Formula: y ~ type + x:response + (0 + loading | id) + (0 + response |      id)
@@ -386,7 +386,7 @@ summary(mod)
 We can also include smooth terms in models containing interactions between latent and observed variables. In this example, we replace the linear term `x:response` with a smooth term `s(x, by = response)`. Since this smooth term also includes the main effect of `response`, which corresponds to an intercept for the response observations, we must remove the `type` term and instead insert two dummy variables, one for each measurement. We first create these dummy variables:
 
 
-```r
+``` r
 dat <- latent_covariates
 dat$m1 <- as.numeric(dat$type == "measurement1")
 dat$m2 <- as.numeric(dat$type == "measurement2")
@@ -395,7 +395,7 @@ dat$m2 <- as.numeric(dat$type == "measurement2")
 We then fit the model:
 
 
-```r
+``` r
 mod <- galamm(
   formula = y ~ 0 + m1 + m2 + s(x, by = response) + (0 + loading | id),
   data = dat,
@@ -409,7 +409,7 @@ mod <- galamm(
 The summary output again suggest that the factor loadings are very well recovered.
 
 
-```r
+``` r
 summary(mod)
 #> GALAMM fit by maximum marginal likelihood.
 #> Formula: y ~ 0 + m1 + m2 + s(x, by = response) + (0 + loading | id)
@@ -437,11 +437,11 @@ summary(mod)
 #> Number of obs: 600, groups:  id, 200; Xr, 8
 #> 
 #> Fixed effects:
-#>                  Estimate Std. Error  t value  Pr(>|t|)
-#> m1               -0.01059   0.070477  -0.1503 8.805e-01
-#> m2               -0.01276   0.091638  -0.1393 8.892e-01
-#> s(x):responseFx1 -0.12412   0.008856 -14.0155 1.252e-44
-#> s(x):responseFx2 -0.26284   0.015809 -16.6255 4.558e-62
+#>                  Estimate Std. Error t value  Pr(>|t|)
+#> m1               -0.01059   0.070477 -0.1503 8.805e-01
+#> m2               -0.01276   0.091638 -0.1393 8.892e-01
+#> s(x):responseFx1  0.12412   0.008856 14.0155 1.252e-44
+#> s(x):responseFx2  0.26284   0.015809 16.6255 4.558e-62
 #> 
 #> Approximate significance of smooth terms:
 #>               edf Ref.df     F p-value
@@ -451,7 +451,7 @@ summary(mod)
 We can also plot the smooth term, which is linear. That is, in this case the smooth term was not necessary. Not that we can also see this from the zero variance estimate of the random effect named `s(x):response` in the summary above, which mean that the smoothing parameter for this term is infinite, and hence that the smooth term is exactly linear.
 
 
-```r
+``` r
 plot_smooth(mod)
 ```
 

@@ -15,7 +15,7 @@ vignette: >
 
 
 
-```r
+``` r
 library(galamm)
 ```
 
@@ -28,7 +28,7 @@ As for the vignette on linear mixed models, we thank @rockwoodEstimatingComplexM
 We use a simulated dataset from the PLmixed package for this example. The observations are binomial responses representing an ability measurement. The first few lines are shown below.
 
 
-```r
+``` r
 library(PLmixed)
 head(IRTsim)
 #>     sid school item y
@@ -63,14 +63,14 @@ $$
 where $N(\mathbf{0}, \boldsymbol{\Psi})$ denotes a bivariate normal distribution with mean zero covariance matrix $\boldsymbol{\Psi}$. The covariance matrix is assumed to be diagonal.
 
 
-```r
+``` r
 IRTsim$item <- factor(IRTsim$item)
 ```
 
 We confirm that `item` has five levels. This means that $\boldsymbol{\lambda}$ is a vector with five elements.
 
 
-```r
+``` r
 table(IRTsim$item)
 #> 
 #>   1   2   3   4   5 
@@ -80,7 +80,7 @@ table(IRTsim$item)
 For identifiability, we fix the first element of $\boldsymbol{\lambda}$ to one. The rest will be freely estimated. We do this by defining the following matrix. Any numeric value implies that the element is fixed, whereas `NA` implies that the element is unknown, and will be estimated.
 
 
-```r
+``` r
 (loading_matrix <- matrix(c(1, NA, NA, NA, NA), ncol = 1))
 #>      [,1]
 #> [1,]    1
@@ -93,7 +93,7 @@ For identifiability, we fix the first element of $\boldsymbol{\lambda}$ to one. 
 We fit the model as follows:
 
 
-```r
+``` r
 mod <- galamm(
   formula = y ~ item + (0 + ability | school / sid),
   data = IRTsim,
@@ -109,7 +109,7 @@ A couple of things in the model formula are worth pointing out. First the part `
 We can start by inspecting the fitted model:
 
 
-```r
+``` r
 summary(mod)
 #> GALAMM fit by maximum marginal likelihood.
 #> Formula: y ~ item + (0 + ability | school/sid)
@@ -148,7 +148,7 @@ summary(mod)
 The `fixef` method lets us consider the fixed effects:
 
 
-```r
+``` r
 fixef(mod)
 #> (Intercept)       item2       item3       item4       item5 
 #>   0.5112006   0.3255941  -0.4491070   0.4929827   0.4584897
@@ -157,7 +157,7 @@ fixef(mod)
 We can also get Wald type confidence intervals for the fixed effects.
 
 
-```r
+``` r
 confint(mod, parm = "beta")
 #>                    2.5 %     97.5 %
 #> (Intercept) -0.001727334  1.0241286
@@ -170,7 +170,7 @@ confint(mod, parm = "beta")
 We can similarly extract the factor loadings.
 
 
-```r
+``` r
 factor_loadings(mod)
 #>           ability        SE
 #> lambda1 1.0000000        NA
@@ -183,7 +183,7 @@ factor_loadings(mod)
 And we can find confidence intervals for them. Currently, only Wald type confidence intervals are available. Be aware that such intervals may have poor coverage properties.
 
 
-```r
+``` r
 confint(mod, parm = "lambda")
 #>             2.5 %    97.5 %
 #> lambda1 0.4516974 1.0223534
@@ -195,7 +195,7 @@ confint(mod, parm = "lambda")
 We can also show a diagnostic plot, although for a binomial model like this it is not very informative.
 
 
-```r
+``` r
 plot(mod)
 ```
 
@@ -207,7 +207,7 @@ plot(mod)
 We now show how the model studied above can be extended to handle binomially distributed data with multiple trials. We simulate such data by computing predictions from the model fitted above, and drawing binomial samples with multiple trials.
 
 
-```r
+``` r
 set.seed(1234)
 dat <- IRTsim
 dat$trials <- sample(1:10, nrow(dat), replace = TRUE)
@@ -228,7 +228,7 @@ head(dat)
 For binomial models with more than one trial, the response should be specified `cbind(successes, failures)`.
 
 
-```r
+``` r
 galamm_mod_trials <- galamm(
   formula = cbind(y, trials - y) ~ item + (0 + ability | school / sid),
   data = dat,
@@ -242,7 +242,7 @@ galamm_mod_trials <- galamm(
 All the utility functions apply to this model as well. We simply post its summary output here.
 
 
-```r
+``` r
 summary(galamm_mod_trials)
 #> GALAMM fit by maximum marginal likelihood.
 #> Formula: cbind(y, trials - y) ~ item + (0 + ability | school/sid)
@@ -284,7 +284,7 @@ summary(galamm_mod_trials)
 To illustrate the model for counts, we consider an example from Chapter 11.3 in @skrondalGeneralizedLatentVariable2004. The model does not contain factor loadings, but we use it to demonstrate how to fit GLMMs with Poisson distributed responses.
 
 
-```r
+``` r
 count_mod <- galamm(
   formula = y ~ lbas * treat + lage + v4 + (1 | subj),
   data = epilep,
@@ -295,7 +295,7 @@ count_mod <- galamm(
 We can look at the summary output.
 
 
-```r
+``` r
 summary(count_mod)
 #> GALAMM fit by maximum marginal likelihood.
 #> Formula: y ~ lbas * treat + lage + v4 + (1 | subj)
@@ -327,14 +327,14 @@ summary(count_mod)
 In this case there are no factor loadings to return:
 
 
-```r
+``` r
 factor_loadings(count_mod)
 ```
 
 We can again look at a diagnostic plot, which in this case looks much more reasonable.
 
 
-```r
+``` r
 plot(count_mod)
 ```
 
@@ -344,14 +344,8 @@ plot(count_mod)
 In this case we can confirm that the `galamm` function is correctly implemented by comparing it to the output of `lme4::glmer`. For a model like this, it would also be best to use `lme4`, but with factor structures or other nonlinearities, `lme4` no longer provides the flexibility we need.
 
 
-```r
+``` r
 library(lme4)
-#> Loading required package: Matrix
-#> 
-#> Attaching package: 'lme4'
-#> The following object is masked from 'package:galamm':
-#> 
-#>     llikAIC
 count_mod_lme4 <- glmer(
   formula = y ~ lbas * treat + lage + v4 + (1 | subj),
   data = epilep,
@@ -362,7 +356,7 @@ count_mod_lme4 <- glmer(
 We can confirm that the diagnostic plot has the same values as for galamm:
 
 
-```r
+``` r
 plot(count_mod_lme4)
 ```
 
@@ -371,7 +365,7 @@ plot(count_mod_lme4)
 And we can do the same for the summary output.
 
 
-```r
+``` r
 summary(count_mod_lme4)
 #> Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
 #>  Family: poisson  ( log )
@@ -414,7 +408,7 @@ summary(count_mod_lme4)
 You might note that the deviance in the summary output of the model fitted by lme4 is different from the deviance of the model fitted by galamm. This is because in the summary output, lme4 shows the deviance as minus two times the log likelihood. In contrast, calling the deviance function on a model object fitted by glmer gives the same output as galamm.
 
 
-```r
+``` r
 deviance(count_mod_lme4)
 #> [1] 407.0092
 ```

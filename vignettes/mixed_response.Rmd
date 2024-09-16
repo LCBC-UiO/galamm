@@ -15,7 +15,7 @@ vignette: >
 
 
 
-```r
+``` r
 library(galamm)
 library(lme4)
 ```
@@ -27,7 +27,7 @@ This vignette describes how `galamm` can be used to estimate models with mixed r
 We start with the `mresp` dataset, which comes with the package. The variable "itemgroup" defines the response type; it equals "a" for normally distributed responses and "b" for binomially distributed responses. They are link through a common random intercept.
 
 
-```r
+``` r
 head(mresp)
 #>   id         x          y itemgroup
 #> 1  1 0.8638214  0.2866329         a
@@ -64,7 +64,7 @@ where $N(0, \psi)$ denotes a normal distribution with mean 0 and variance $\psi$
 We define the loading matrix as follows, where the value `1` indicates that the first element $\boldsymbol{\lambda}$ is fixed, and the value `NA` indicates that its second element is unknown, and to be estimated.
 
 
-```r
+``` r
 (loading_matrix <- matrix(c(1, NA), ncol = 1))
 #>      [,1]
 #> [1,]    1
@@ -76,21 +76,21 @@ We set `load.var = "itemgroup"` because all rows of the data with the same value
 We also need to define the response families, with the vector
 
 
-```r
+``` r
 families <- c(gaussian, binomial)
 ```
 
 We also need a way of telling galamm which row belongs to which family, which we do with a family mapping. The values in `family_mapping` refer to the elements of `families`.
 
 
-```r
+``` r
 family_mapping <- ifelse(mresp$itemgroup == "a", 1, 2)
 ```
 
 We are now ready to estimate the mixed response model.
 
 
-```r
+``` r
 mixed_resp <- galamm(
   formula = y ~ x + (0 + level | id),
   data = mresp,
@@ -106,7 +106,7 @@ mixed_resp <- galamm(
 We can also look at its summary output.
 
 
-```r
+``` r
 summary(mixed_resp)
 #> GALAMM fit by maximum marginal likelihood.
 #> Formula: y ~ x + (0 + level | id)
@@ -136,7 +136,7 @@ summary(mixed_resp)
 Mixed response models can be combined with heteroscedastic residuals, which are described in the vignette on [linear mixed models with heteroscedastic residuals](https://lcbc-uio.github.io/galamm/articles/lmm_heteroscedastic.html). However, some care is needed in this case. We illustrate with the dataset `mresp_hsced`, whose first few lines are shown below:
 
 
-```r
+``` r
 head(mresp_hsced)
 #>   id         x           y itemgroup grp isgauss
 #> 1  1 0.8638214   0.2866329         a   b       1
@@ -150,7 +150,7 @@ head(mresp_hsced)
 This dataset has the same structure as `mresp`, except that the residual standard deviation of the normally distributed responses vary according to the variable `grp`, which has two levels. Two fit a model on this dataset with heteroscedastic residuals for the normally distributed variable, we must use the dummy variable `isgauss` when setting up the `weights`. This is illustrated below. By writing `~ (0 + isgauss | grp)` we specify that the heteroscedasticity is assumed between levels of `grp`, but that this only applies when `isgauss` is nonzero. Hence, the binomially distributed responses don't have any heteroscedastic residuals estimated, since for these observations the dispersion parameter $\phi$ is fixed to 1. We also ignore the factor loadings for simplicity.
 
 
-```r
+``` r
 family_mapping <- ifelse(mresp$itemgroup == "a", 1L, 2L)
 mod <- galamm(
   formula = y ~ x + (1 | id),
@@ -165,7 +165,7 @@ mod <- galamm(
 The summary output now shows that we also have estimated a variance function.
 
 
-```r
+``` r
 summary(mod)
 #> GALAMM fit by maximum marginal likelihood.
 #> Formula: y ~ x + (1 | id)
@@ -200,7 +200,7 @@ The scientific question concerns the impact of fiber intake on risk of coronary 
 The first few rows of the dataset are printed below. All of these had only a single measurement of fiber intake.
 
 
-```r
+``` r
 head(diet)
 #>   id   age bus   item         y chd fiber fiber2
 #> 1  1 -0.38   1 fiber1 17.814280   0     1      0
@@ -214,7 +214,7 @@ head(diet)
 It is instructive to also look at some men who had two measurements of fiber intake. Here are three of them.
 
 
-```r
+``` r
 diet[diet$id %in% c(219, 220, 221), ]
 #>      id   age bus   item        y chd fiber fiber2
 #> 429 219 -8.13   0 fiber1 15.64263   0     1      0
@@ -264,7 +264,7 @@ where $d_{1i}$ is a dummy variable for fiber measurements at timepoint 1 and $d_
 In the measurement model for fiber above, note that we implicitly have factor loadings equal to one. Letting the `item` variable define which rows should receive which loading, we note that the factor levels are as follows:
 
 
-```r
+``` r
 levels(diet$item)
 #> [1] "fiber1" "fiber2" "chd"
 ```
@@ -272,7 +272,7 @@ levels(diet$item)
 We could of course have changed this, but given these levels, we define the following loading matrix:
 
 
-```r
+``` r
 (loading_matrix <- matrix(c(1, 1, NA), ncol = 1))
 #>      [,1]
 #> [1,]    1
@@ -285,7 +285,7 @@ That is, "fiber1" and "fiber2" receive a loading fixed to one, whereas the loadi
 We also need to define the families, making sure it is binomial for "chd" and Gaussian for "fiber1" and "fiber2".
 
 
-```r
+``` r
 families <- c(gaussian, binomial)
 family_mapping <- ifelse(diet$item == "chd", 2, 1)
 ```
@@ -293,7 +293,7 @@ family_mapping <- ifelse(diet$item == "chd", 2, 1)
 The model formula also needs some care in this case. We define it as follows, and note that the whole part `0 + chd + fiber + fiber2` could have been replaced by `item`. We use the former for ease of explanation.
 
 
-```r
+``` r
 formula <- y ~ 0 + chd + (age * bus):chd + fiber +
   (age * bus):fiber + fiber2 + (0 + loading | id)
 ```
@@ -303,7 +303,7 @@ The initial zero specifies that we don't want R to insert an intercept term. Nex
 We can inspect the model implied by the formula by using the `nobars` function from [lme4](https://cran.r-project.org/package=lme4) [@batesFittingLinearMixedEffects2015] to remove the random effects, and then `model.matrix`. It looks correctly set up.
 
 
-```r
+``` r
 head(model.matrix(nobars(formula), data = diet))
 #>   chd fiber fiber2 chd:age chd:bus age:fiber bus:fiber chd:age:bus age:bus:fiber
 #> 1   0     1      0    0.00       0     -0.38         1        0.00         -0.38
@@ -319,7 +319,7 @@ Finally, the random effects part `(0 + loading | id)` specifies that for each `i
 We are now ready to fit the model.
 
 
-```r
+``` r
 mod <- galamm(
   formula = formula,
   data = diet,
@@ -334,7 +334,7 @@ mod <- galamm(
 Looking at the summary output, however, we see a warning that the Hessian matrix is rank deficient.
 
 
-```r
+``` r
 summary(mod)
 #> Warning in vcov.galamm(object, parm = "lambda"): Rank deficient Hessian matrix.Could not compute covariance matrix.
 #> Warning in vcov.galamm(object, "beta"): Rank deficient Hessian matrix.Could not compute covariance matrix.
@@ -374,7 +374,7 @@ We suspect that this is a convergence issue of the algorithm, and start by simpl
 
 
 
-```r
+``` r
 mod <- galamm(
   formula = formula,
   data = diet,
@@ -410,7 +410,7 @@ Now we got some information, but the final estimate is the same, since we otherw
 
 
 
-```r
+``` r
 mod <- galamm(
   formula = formula,
   data = diet,
@@ -450,7 +450,7 @@ We can now use the summary method, where we find that our estimates are very clo
 
 
 
-```r
+``` r
 summary(mod)
 #> GALAMM fit by maximum marginal likelihood.
 #> Formula: formula
@@ -497,7 +497,7 @@ $$
 The formula becomes
 
 
-```r
+``` r
 formula0 <- y ~ 0 + chd + fiber + (age * bus):fiber + fiber2 +
   (0 + loading | id)
 ```
@@ -506,7 +506,7 @@ Everything else is the same as before, so we fit the new model with
 
 
 
-```r
+``` r
 mod0 <- galamm(
   formula = formula0,
   data = diet,
@@ -541,7 +541,7 @@ mod0 <- galamm(
 Looking at the summary output, the estimates are now close to the first column in Table 14.1 of @skrondalGeneralizedLatentVariable2004.
 
 
-```r
+``` r
 summary(mod0)
 #> GALAMM fit by maximum marginal likelihood.
 #> Formula: formula0
@@ -576,7 +576,7 @@ summary(mod0)
 We can use `anova` method for galamm objects to compare the models. AIC and BIC favor the simpler model with only indirect effects.
 
 
-```r
+``` r
 anova(mod, mod0)
 #> Data: diet
 #> Models:

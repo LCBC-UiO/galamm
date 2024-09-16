@@ -15,7 +15,7 @@ vignette: >
 
 
 
-```r
+``` r
 library(galamm)
 library(PLmixed)
 ```
@@ -30,7 +30,7 @@ The examples used in this vignette come from the simulated datasets provided by 
 This example comes from Section 3.1 in @jeonProfileLikelihoodApproachEstimating2012, whose model was again based on @mccaffreyModelsValueAddedModeling2004. The dataset `KYPSsim` comes from [PLmixed](https://cran.r-project.org/package=PLmixed) and is a simulated version of the Korea Youth Panel Survey (KYPS) data.
 
 
-```r
+``` r
 head(KYPSsim)
 #>   mid hid sid time   esteem
 #> 1   1   1   1    1 2.759234
@@ -46,7 +46,7 @@ Student self esteem (variable `esteem`) was assessed at four timepoints, the fir
 We will use a discrete time model, and hence convert the time variable to a factor.
 
 
-```r
+``` r
 KYPSsim$time <- factor(KYPSsim$time)
 levels(KYPSsim$time)
 #> [1] "1" "2" "3" "4"
@@ -101,7 +101,7 @@ In order to fit the model with galamm, we use syntax similar to PLmixed, and sta
 
 
 
-```r
+``` r
 (loading_matrix <- rbind(
   c(1, 0),
   c(NA, 0),
@@ -118,7 +118,7 @@ In order to fit the model with galamm, we use syntax similar to PLmixed, and sta
 We connect the loading matrix to variables in the dataframe with the following factors. 
 
 
-```r
+``` r
 factors <- c("ms", "hs")
 ```
 
@@ -126,7 +126,7 @@ factors <- c("ms", "hs")
 Finally, we define the loading variable. This is a variable connecting rows of the dataframe to rows of the loading matrices. In this case, for each value of `time`, the corresponding row of the loading matrix should be multiplied by the latent variables $\eta_{m}$ and $\eta_{h}$, so we set it as follows:
 
 
-```r
+``` r
 load.var <- "time"
 ```
 
@@ -134,7 +134,7 @@ load.var <- "time"
 The model formula is specified as
 
 
-```r
+``` r
 form <- esteem ~ time + (0 + ms | mid) + (0 + hs | hid) + (1 | sid)
 ```
 
@@ -143,7 +143,7 @@ We use lme4 syntax for random effects. For example, the term `(0 + ms | mid)` co
 We fit the model using `galamm` with the following call.
 
 
-```r
+``` r
 mod <- galamm(
   formula = form,
   data = KYPSsim,
@@ -157,7 +157,7 @@ The model could be fit with `PLmixed` using the following call, which differs fr
 
 
 
-```r
+``` r
 kyps_plmixed <- PLmixed(
   formula = form,
   data = KYPSsim,
@@ -170,7 +170,7 @@ kyps_plmixed <- PLmixed(
 Using galamm's summary method, we can study the model output.
 
 
-```r
+``` r
 summary(mod)
 #> GALAMM fit by maximum marginal likelihood.
 #> Formula: form
@@ -209,7 +209,7 @@ summary(mod)
 We can look at the factor loadings specifically using the `factor_loadings` function. Perhaps not surprisingly, middle school teacher effects have a low impact on self esteem while the student attends high school, as can be seen by the last two rows of the "ms" column being very close to zero.
 
 
-```r
+``` r
 factor_loadings(mod)
 #>                 ms        SE       hs        SE
 #> lambda1 1.00000000        NA 0.000000        NA
@@ -221,7 +221,7 @@ factor_loadings(mod)
 A diagnostic plot of residuals versus predicted values also looks acceptable, although there seems to be a slight upward trend.
 
 
-```r
+``` r
 plot(mod)
 ```
 
@@ -230,7 +230,7 @@ plot(mod)
 We can also compare the estimated model to a model with constrained factor loadings. In particular, we could assume that the teacher effect in middle school has no effect on self esteem measured during high school, by setting the last two elements of $\boldsymbol{\lambda}_{m}$ to zero. We would then have the following loading matrix.
 
 
-```r
+``` r
 (loading_matrix_constr1 <- rbind(
   c(1, 0),
   c(NA, 0),
@@ -245,7 +245,7 @@ We can also compare the estimated model to a model with constrained factor loadi
 ```
 
 
-```r
+``` r
 mod_constr1 <- galamm(
   formula = form,
   data = KYPSsim,
@@ -258,7 +258,7 @@ mod_constr1 <- galamm(
 We could further assume that the factor loadings at timepoints 1 and 2 for middle school and at timepoints 3 and 4 for high schools are identical, which in practice would lead to a linear mixed model with no factors. One way of estimating this model is to define a new loading matrix:
 
 
-```r
+``` r
 (loading_matrix_constr2 <- rbind(
   c(1, 0),
   c(1, 0),
@@ -273,7 +273,7 @@ We could further assume that the factor loadings at timepoints 1 and 2 for middl
 ```
 
 
-```r
+``` r
 mod_constr2 <- galamm(
   formula = form,
   data = KYPSsim,
@@ -287,7 +287,7 @@ mod_constr2 <- galamm(
 Equivalently, we could create dummy variables for the timepoints:
 
 
-```r
+``` r
 KYPSsim$time12 <- as.integer(KYPSsim$time %in% 1:2)
 KYPSsim$time34 <- as.integer(KYPSsim$time %in% 3:4)
 head(KYPSsim)
@@ -303,7 +303,7 @@ head(KYPSsim)
 We this formulation, we don't need to specify the `factor`, `load.var`, and `lambda` arguments.
 
 
-```r
+``` r
 mod_constr2b <- galamm(
   formula = esteem ~ time + (0 + time12 | mid) + (0 + time34 | hid) + (1 | sid),
   data = KYPSsim
@@ -313,7 +313,7 @@ mod_constr2b <- galamm(
 We can compare all four models using the `anova` member function. Reassuringly, the two ways of formulating the last model give identical results. Furthermore, this simplest model seems to be preferred over the two more complex models on this simulated dataset.
 
 
-```r
+``` r
 anova(
   mod, mod_constr1, mod_constr2,
   mod_constr2b
@@ -344,14 +344,14 @@ The data contains ratings of two traits in students, and the traits are rated by
 Initially, we need to convert the item variable to a factor.
 
 
-```r
+``` r
 JUDGEsim$item <- factor(JUDGEsim$item)
 ```
 
 The first ten rows of the dataset are as follows:
 
 
-```r
+``` r
 head(JUDGEsim, 10)
 #>    item method trait stu class tch response
 #> 1     1      1     1   1     1   1 2.509475
@@ -369,7 +369,7 @@ head(JUDGEsim, 10)
 The grouping factors in the data are class (variable `class`), student (variable `stu`) and teacher (variable `tch`). The teachers' ratings of the first trait is given by items 1-3, and the students' rating of the same trait is given by items 7-9. For the second trait, the items are 4-6 and 10-12, respectively. Looking at the frequency table, we see that there are more observations of items 1-6. This happens because a single teacher would in general rate more than one student, whereas a single student would only rate themselves.
 
 
-```r
+``` r
 table(JUDGEsim$item)
 #> 
 #>    1    2    3    4    5    6    7    8    9   10   11   12 
@@ -479,7 +479,7 @@ $$
 We specify the loading matrix as follows. In comparison with the mathematical model formulation just above, note that we don't need to add the last column of only ones, since this column contains no parameters to be estimated.
 
 
-```r
+``` r
 (loading_matrix <- rbind(
   c(1, 0, 1, 0, 0, 0),
   c(NA, 0, NA, 0, 0, 0),
@@ -512,7 +512,7 @@ We specify the loading matrix as follows. In comparison with the mathematical mo
 Next, we specify the factors in the order they appear in the columns of the loading matrix. We can choose whichever names we like for the factors, except for names of existing variables in the dataset, but we must make sure they match the names used in the formula.
 
 
-```r
+``` r
 factors <- c(
   "teacher1", "teacher2", "trait1.t",
   "trait2.t", "trait1.s", "trait2.s"
@@ -522,7 +522,7 @@ factors <- c(
 The formula is defined as follows, where have have placed the terms in the same order as they appear in the mathematical model in matrix-vector form specified above.
 
 
-```r
+``` r
 form <- response ~ 0 + item + (0 + teacher1 + teacher2 | tch) +
   (0 + trait1.t + trait2.t + trait1.s + trait2.s | stu) +
   (1 | class)
@@ -531,7 +531,7 @@ form <- response ~ 0 + item + (0 + teacher1 + teacher2 | tch) +
 Using `PLmixed`, we could have estimated the model as follows, and doing it would confirm that the results are the same as with galamm.
 
 
-```r
+``` r
 judge_plmixed <- PLmixed(
   formula = form,
   data = JUDGEsim,
@@ -544,7 +544,7 @@ judge_plmixed <- PLmixed(
 We get identical results using `galamm`, and it takes less than five minutes.
 
 
-```r
+``` r
 judge_galamm <- galamm(
   formula = form,
   data = JUDGEsim,
@@ -555,7 +555,7 @@ judge_galamm <- galamm(
 ```
 
 
-```r
+``` r
 summary(judge_galamm)
 #> GALAMM fit by maximum marginal likelihood.
 #> Formula: form
@@ -569,19 +569,32 @@ summary(judge_galamm)
 #> -3.8407 -0.6439  0.0017  0.6474  3.9799 
 #> 
 #> Lambda:
-#>          teacher1      SE teacher2      SE trait1.t      SE trait2.t      SE trait1.s      SE trait2.s      SE
-#> lambda1    1.0000       .        .       .    1.000       .        .       .        .       .        .       .
-#> lambda2    1.1278 0.03584        .       .    1.092 0.02172        .       .        .       .        .       .
-#> lambda3    0.9986 0.03345        .       .    1.066 0.02144        .       .        .       .        .       .
-#> lambda4         .       .   1.0000       .        .       .   1.0000       .        .       .        .       .
-#> lambda5         .       .   0.9725 0.03036        .       .   1.0536 0.02576        .       .        .       .
-#> lambda6         .       .   1.2191 0.03436        .       .   0.9581 0.02460        .       .        .       .
-#> lambda7         .       .        .       .        .       .        .       .    1.000       .        .       .
-#> lambda8         .       .        .       .        .       .        .       .    1.322 0.06109        .       .
-#> lambda9         .       .        .       .        .       .        .       .    1.145 0.05633        .       .
-#> lambda10        .       .        .       .        .       .        .       .        .       .    1.000       .
-#> lambda11        .       .        .       .        .       .        .       .        .       .    0.874 0.04417
-#> lambda12        .       .        .       .        .       .        .       .        .       .    1.096 0.04874
+#>          teacher1      SE teacher2      SE trait1.t      SE trait2.t      SE trait1.s      SE trait2.s
+#> lambda1    1.0000       .        .       .    1.000       .        .       .        .       .        .
+#> lambda2    1.1278 0.03584        .       .    1.092 0.02172        .       .        .       .        .
+#> lambda3    0.9986 0.03345        .       .    1.066 0.02144        .       .        .       .        .
+#> lambda4         .       .   1.0000       .        .       .   1.0000       .        .       .        .
+#> lambda5         .       .   0.9725 0.03036        .       .   1.0536 0.02576        .       .        .
+#> lambda6         .       .   1.2191 0.03436        .       .   0.9581 0.02460        .       .        .
+#> lambda7         .       .        .       .        .       .        .       .    1.000       .        .
+#> lambda8         .       .        .       .        .       .        .       .    1.322 0.06109        .
+#> lambda9         .       .        .       .        .       .        .       .    1.145 0.05633        .
+#> lambda10        .       .        .       .        .       .        .       .        .       .    1.000
+#> lambda11        .       .        .       .        .       .        .       .        .       .    0.874
+#> lambda12        .       .        .       .        .       .        .       .        .       .    1.096
+#>               SE
+#> lambda1        .
+#> lambda2        .
+#> lambda3        .
+#> lambda4        .
+#> lambda5        .
+#> lambda6        .
+#> lambda7        .
+#> lambda8        .
+#> lambda9        .
+#> lambda10       .
+#> lambda11 0.04417
+#> lambda12 0.04874
 #> 
 #> Random effects:
 #>  Groups   Name        Variance Std.Dev. Corr          

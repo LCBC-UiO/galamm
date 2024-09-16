@@ -15,7 +15,7 @@ vignette: >
 
 
 
-```r
+``` r
 library(galamm)
 ```
 
@@ -34,7 +34,7 @@ In the future, we plan to also support other types of residual terms, including 
 The package includes a simulated dataset `hsced`, in which the residual variance varies between items.
 
 
-```r
+``` r
 head(hsced)
 #>   id tp item         x          y
 #> 1  1  1    1 0.7448212  0.1608286
@@ -48,7 +48,7 @@ head(hsced)
 We specify the error structure using an additional formula object, `~ (1 | item)`, specifying that a different constraint term should be included per item.
 
 
-```r
+``` r
 mod <- galamm(
   formula = y ~ x + (1 | id),
   weights = ~ (1 | item),
@@ -59,7 +59,7 @@ mod <- galamm(
 The output shows that for item 2, the residual variance is twice that of item 1.
 
 
-```r
+``` r
 summary(mod)
 #> GALAMM fit by maximum marginal likelihood.
 #> Formula: y ~ x + (1 | id)
@@ -92,7 +92,7 @@ summary(mod)
 We can confirm that the lme function from the nlme package gives the same result. It reports the multiplies on the standard deviation scale, so since $1.412369^2 = 1.995$, the results are identical.
 
 
-```r
+``` r
 library(nlme)
 #> 
 #> Attaching package: 'nlme'
@@ -140,7 +140,7 @@ summary(mod_nlme)
 The diagnostic plot also looks good.
 
 
-```r
+``` r
 plot(mod)
 ```
 
@@ -149,7 +149,7 @@ plot(mod)
 We can compare the model to one with homoscedastic residuals.
 
 
-```r
+``` r
 mod0 <- galamm(
   formula = y ~ x + (1 | id),
   data = hsced
@@ -160,7 +160,7 @@ mod0 <- galamm(
 Reassuringly, the correct model is chosen in this simple simulated case.
 
 
-```r
+``` r
 anova(mod, mod0)
 #> Data: hsced
 #> Models:

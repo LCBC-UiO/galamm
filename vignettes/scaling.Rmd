@@ -15,7 +15,7 @@ vignette: >
 
 
 
-```r
+``` r
 library(galamm)
 ```
 
@@ -24,7 +24,7 @@ This vignette describes the computational scaling properties of `galamm` for sel
 We will fit models to different random subsets of the input data, and here specify the number of such random subsets:
 
 
-```r
+``` r
 n_replicates <- 20
 ```
 
@@ -34,14 +34,14 @@ n_replicates <- 20
 We start with the linear mixed model with factor structures described in [another vignette](https://lcbc-uio.github.io/galamm/articles/lmm_factor.html). Our goal here is to study how the computing time scales with the number of observations.
 
 
-```r
+``` r
 data(KYPSsim, package = "PLmixed")
 ```
 
 We start by defining the necessary arguments to provide to galamm.
 
 
-```r
+``` r
 loading_matrix <- rbind(
   c(1, 0),
   c(NA, 0),
@@ -56,7 +56,7 @@ form <- esteem ~ time + (0 + ms | mid) + (0 + hs | hid) + (1 | sid)
 The KYPSsim dataset has 11,494 rows. 
 
 
-```r
+``` r
 nrow(KYPSsim)
 #> [1] 11494
 ```
@@ -64,7 +64,7 @@ nrow(KYPSsim)
 There are 2,924 unique student IDs, and we will fit models by extracting subsets of these students of increasing size.
 
 
-```r
+``` r
 all_sids <- unique(KYPSsim$sid)
 length(all_sids)
 #> [1] 2924
@@ -73,7 +73,7 @@ length(all_sids)
 We set up a simulation grid in `sim_params`, with five different samples sizes, and specifying that we want ten random replicates for each sample size.
 
 
-```r
+``` r
 sim_params <- expand.grid(
   n_students = c(100, 500, 1000, 2000, 2924),
   replicate = seq(from = 1, to = n_replicates, by = 1)
@@ -83,7 +83,7 @@ sim_params <- expand.grid(
 
 
 
-```r
+``` r
 set.seed(11)
 times_to_convergence <- Map(function(n, r) {
   sids <- sample(all_sids, size = n)
@@ -112,7 +112,7 @@ times_to_convergence <- Map(function(n, r) {
 The plot below suggests that for this model, the algorithm scales linearly in the number of IDs.
 
 
-```r
+``` r
 plot_dat <- do.call(rbind, times_to_convergence)
 fit <- lm(time ~ n, data = plot_dat)
 plot(plot_dat$n, plot_dat$time, xlab = "Number of IDs",
@@ -133,7 +133,7 @@ We now consider the model with group-wise heteroscedasticity consider in [the vi
 There 1200 rows and 200 unique IDs in the dataset. We take subset of IDs, while keeping the remaining model structure unchanged.
 
 
-```r
+``` r
 nrow(hsced)
 #> [1] 1200
 all_ids <- unique(hsced$id)
@@ -142,7 +142,7 @@ length(all_ids)
 ```
 
 
-```r
+``` r
 sim_params <- expand.grid(
   n_ids = c(100, 150, 200),
   replicate = seq(from = 1, to = n_replicates, by = 1)
@@ -152,7 +152,7 @@ sim_params <- expand.grid(
 
 
 
-```r
+``` r
 set.seed(11)
 times_to_convergence <- Map(function(n, r) {
   ids <- sample(all_ids, size = n)
@@ -179,7 +179,7 @@ times_to_convergence <- Map(function(n, r) {
 A plot of the time until convergence suggests that also in this case the algorithm scales linearly with the unput size.
 
 
-```r
+``` r
 plot_dat <- do.call(rbind, times_to_convergence)
 fit <- lm(time ~ n, data = plot_dat)
 plot(plot_dat$n, plot_dat$time, xlab = "Number of IDs",
@@ -197,14 +197,14 @@ abline(fit)
 We now consider an example described in the [vignette on generalized linear mixed models with factor structures](https://lcbc-uio.github.io/galamm/articles/glmm_factor.html).
 
 
-```r
+``` r
 data(IRTsim, package = "PLmixed")
 ```
 
 This dataset has 2,500 rows and 500 student IDs.
 
 
-```r
+``` r
 nrow(IRTsim)
 #> [1] 2500
 all_sids <- unique(IRTsim$sid)
@@ -215,7 +215,7 @@ length(all_sids)
 We again sample subsets of student IDs.
 
 
-```r
+``` r
 sim_params <- expand.grid(
   n_students = seq(from = 100, to = 500, by = 100),
   replicate = seq(from = 1, to = n_replicates, by = 1)
@@ -225,7 +225,7 @@ sim_params <- expand.grid(
 
 
 
-```r
+``` r
 set.seed(11)
 times_to_convergence <- Map(function(n, r) {
   sids <- sample(all_sids, size = n)
@@ -255,7 +255,7 @@ times_to_convergence <- Map(function(n, r) {
 The plot below suggests that for this model and for the range of IDs considered here, there is almost no relationship between the input data size and the time until convergence. 
 
 
-```r
+``` r
 plot_dat <- do.call(rbind, times_to_convergence)
 fit <- lm(time ~ n, data = plot_dat)
 plot(plot_dat$n, plot_dat$time, xlab = "Number of IDs",
@@ -277,7 +277,7 @@ We can study the scaling issue further in semiparametric models with factor stru
 The data for domain 1 has 4,800 rows and 200 unique IDs.
 
 
-```r
+``` r
 dat <- subset(cognition, domain == 1)
 nrow(dat)
 #> [1] 4800
@@ -289,7 +289,7 @@ length(all_ids)
 We define the simulation parameters as before.
 
 
-```r
+``` r
 sim_params <- expand.grid(
   n_ids = seq(from = 50, to = 200, by = 50),
   replicate = seq(from = 1, to = n_replicates, by = 1)
@@ -299,7 +299,7 @@ sim_params <- expand.grid(
 Then we fit the model for different subsets of the data.
 
 
-```r
+``` r
 set.seed(11)
 times_to_convergence <- Map(function(n, r) {
   ids <- sample(all_ids, size = n)
@@ -329,7 +329,7 @@ times_to_convergence <- Map(function(n, r) {
 The plot below suggests that for this model, the algorithm scales linearly in the number of IDs.
 
 
-```r
+``` r
 plot_dat <- do.call(rbind, times_to_convergence)
 fit <- lm(time ~ n, data = plot_dat)
 plot(plot_dat$n, plot_dat$time, xlab = "Number of IDs",
@@ -349,7 +349,7 @@ We now consider domain 2, which has binomial responses.
 The data for domain 2 has 3,200 rows and 200 unique IDs.
 
 
-```r
+``` r
 dat <- subset(cognition, domain == 2)
 nrow(dat)
 #> [1] 3200
@@ -361,7 +361,7 @@ length(all_ids)
 We define the simulation parameters as before.
 
 
-```r
+``` r
 sim_params <- expand.grid(
   n_ids = seq(from = 50, to = 200, by = 50),
   replicate = seq(from = 1, to = n_replicates, by = 1)
@@ -371,7 +371,7 @@ sim_params <- expand.grid(
 Then we fit the model for different subsets of the data.
 
 
-```r
+``` r
 set.seed(11)
 times_to_convergence <- Map(function(n, r) {
   ids <- sample(all_ids, size = n)
@@ -410,14 +410,14 @@ times_to_convergence <- Map(function(n, r) {
 
 
 
-```r
+``` r
 plot_dat <- do.call(rbind, times_to_convergence)
 ```
 
 We check how many models failed to converge, and then remove those rows:
 
 
-```r
+``` r
 sum(is.na(plot_dat))
 #> [1] 1
 plot_dat <- na.omit(plot_dat)
@@ -427,7 +427,7 @@ plot_dat <- na.omit(plot_dat)
 The plot below suggests that for this model, the algorithm scales linearly in the number of IDs.
 
 
-```r
+``` r
 fit <- lm(time ~ n, data = plot_dat)
 plot(plot_dat$n, plot_dat$time, xlab = "Number of IDs",
      ylab = "Time until convergence")
