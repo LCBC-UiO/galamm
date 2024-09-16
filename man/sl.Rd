@@ -63,7 +63,7 @@ mod <- galamm(
 \references{
 \insertRef{woodThinPlateRegression2003}{galamm}
 
-\insertRef{woodGeneralizedAdditiveModels2017a}{galamm}
+\insertRef{woodGeneralizedAdditiveModels2017}{galamm}
 }
 \seealso{
 Other modeling functions: 

@@ -17,7 +17,8 @@ models are provided in this argument, no table will be returned.}
 A table with model comparison metric.
 }
 \description{
-Anova function for comparing different GALAMMs fitted on the same data.
+Anova function for comparing different GALAMMs fitted on the
+same data.
 }
 \examples{
 # Poisson GLMM

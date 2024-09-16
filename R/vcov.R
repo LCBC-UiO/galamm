@@ -3,6 +3,7 @@
 #' @srrstats {G1.4} Function documented with roxygen2.
 #' @srrstats {G2.3,G2.3b} Argument "parm" is case sensitive, as is documented here.
 #' @srrstats {G2.1a} Expected data types provided for all inputs.
+#' @srrstats {RE4.6} The variance-covariance matrix of the model parameters (via vcov())
 #'
 #' @param object Object of class \code{galamm} returned from
 #'   \code{\link{galamm}}.

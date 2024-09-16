@@ -22,7 +22,7 @@ galamm(
 \arguments{
 \item{formula}{A formula specifying the model. Smooth terms are defined in
 the style of the \code{mgcv} and \code{gamm4} packages, see
-\insertCite{woodGeneralizedAdditiveModels2017a}{galamm} for an
+\insertCite{woodGeneralizedAdditiveModels2017}{galamm} for an
 introduction. Random effects are specified using \code{lme4} syntax, which
 is described in detail in
 \insertCite{batesFittingLinearMixedEffects2015}{galamm}. Factor loadings
@@ -179,7 +179,7 @@ This function fits a generalized additive latent and mixed model
 (GALAMMs), as described in
 \insertCite{sorensenLongitudinalModelingAgeDependent2023;textual}{galamm}.
 The building blocks of these models are generalized additive mixed models
-(GAMMs) \insertCite{woodGeneralizedAdditiveModels2017a}{galamm}, of which
+(GAMMs) \insertCite{woodGeneralizedAdditiveModels2017}{galamm}, of which
 generalized linear mixed models
 \insertCite{breslowApproximateInferenceGeneralized1993,harvilleMaximumLikelihoodApproaches1977,hendersonBestLinearUnbiased1975,lairdRandomEffectsModelsLongitudinal1982}{galamm}
 are special cases. GALAMMs extend upon GAMMs by allowing factor structures,

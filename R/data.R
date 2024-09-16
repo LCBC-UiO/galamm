@@ -126,7 +126,7 @@
 #' Simulated dataset mimicking the measurement of abilities in three cognitive
 #' domains. The latent traits (cognitive ability in a given domain) are based on
 #' the functions in \code{mgcv::gamSim}
-#' \insertCite{woodGeneralizedAdditiveModels2017a}{galamm}, and depend on the
+#' \insertCite{woodGeneralizedAdditiveModels2017}{galamm}, and depend on the
 #' explanatory variable x.
 #'
 #' @srrstats {G5.1} Dataset used to test package is exported.

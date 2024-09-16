@@ -5,6 +5,9 @@
 #' @srrstats {G2.3,G2.3b} Argument type is case sensitive, as stated in their
 #'   documentation.
 #' @srrstats {G2.1a} Expected data types provided for all inputs.
+#' @srrstats {RE4.10} Model Residuals, including sufficient documentation to
+#'   enable interpretation of residuals, and to enable users to submit residuals
+#'   to their own tests.
 #'
 #' @param object An object of class \code{galamm} returned from
 #'   \code{\link{galamm}}.

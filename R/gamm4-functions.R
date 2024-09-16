@@ -18,7 +18,7 @@
 #'
 #' @references \insertRef{woodStraightforwardIntermediateRank2013}{galamm}
 #'
-#' \insertRef{woodGeneralizedAdditiveModels2017a}{galamm}
+#' \insertRef{woodGeneralizedAdditiveModels2017}{galamm}
 #'
 #'
 gamm4.setup <- function(formula, pterms, mf) {
@@ -110,7 +110,7 @@ gamm4.setup <- function(formula, pterms, mf) {
 #' @references
 #' \insertRef{woodStraightforwardIntermediateRank2013}{galamm}
 #'
-#' \insertRef{woodGeneralizedAdditiveModels2017a}{galamm}
+#' \insertRef{woodGeneralizedAdditiveModels2017}{galamm}
 #'
 #' @srrstats {G1.4a} Internal function documented.
 #'

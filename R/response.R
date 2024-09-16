@@ -1,18 +1,19 @@
-#' @title Extract model fitted values
+#' @title Extract response values
 #'
 #' @srrstats {G1.4} Function documented with roxygen2.
 #' @srrstats {G2.1a} Expected data types provided for all inputs.
-#' @srrstats {RE4.9} Modelled values of response variables.
+#' @srrstats {RE4.8} Response variables, and associated "metadata" where
+#'   applicable.
 #'
-#' @description
-#' Extracts fitted values from a model including random effects.
+#' @description Extracts response values from a model.
 #'
 #' @param object An object of class \code{galamm} returned from
 #'   \code{\link{galamm}}.
 #' @param ... Optional arguments passed on to other methods. Currently not used.
 #'
 #'
-#' @return A numerical vector with fit values for each row in the input data.
+#' @return A numerical vector with fit response values for each row in the input
+#'   data.
 #' @export
 #'
 #' @family details of model fit
@@ -25,9 +26,9 @@
 #'   data = hsced
 #' )
 #'
-#' # Extract fitted values and plot against x
-#' plot(hsced$x, fitted(mod))
+#' # Plot response versus fitted values
+#' plot(fitted(mod), response(mod))
 #'
-fitted.galamm <- function(object, ...) {
-  object$model$fit
+response <- function(object, ...) {
+  object$model$response
 }

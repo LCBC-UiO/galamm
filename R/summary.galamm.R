@@ -2,6 +2,8 @@
 #'
 #' @srrstats {G1.4} Function documented with roxygen2.
 #' @srrstats {G2.1a} Expected data types provided for all inputs.
+#' @srrstats {RE4.11} Goodness-of-fit and other statistics associated such as
+#'   effect sizes with model coefficients.
 #'
 #' @description
 #' Summary method for class "galamm".
@@ -106,6 +108,8 @@ summary.galamm <- function(object, ...) {
 #' @title Print method for summary GALAMM fits
 #'
 #' @srrstats {G1.4} Function documented with roxygen2.
+#' @srrstats {RE4.11} Goodness-of-fit and other statistics associated such as
+#'   effect sizes with model coefficients.
 #'
 #' @param x An object of class \code{summary.galamm} returned from
 #'   \code{\link{summary.galamm}}.

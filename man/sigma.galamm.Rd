@@ -60,6 +60,7 @@ Other details of model fit:
 \code{\link{print.VarCorr.galamm}()},
 \code{\link{ranef.galamm}()},
 \code{\link{residuals.galamm}()},
+\code{\link{response}()},
 \code{\link{vcov.galamm}()}
 }
 \concept{details of model fit}

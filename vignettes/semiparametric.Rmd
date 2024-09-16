@@ -208,7 +208,7 @@ plot_smooth(mod)
 
 ![Smooth term estimated with galamm.](semiparametric-gaussian-gamm-smooth1-1.png)
 
-The `plot_smooth` function is a thin wrapper around the `plot.gam` function provided by the `mgcv` package [@woodGeneralizedAdditiveModels2017a]. This means that the arguments used by `plot.gam` can be used also here, as see with the examples below:
+The `plot_smooth` function is a thin wrapper around the `plot.gam` function provided by the `mgcv` package [@woodGeneralizedAdditiveModels2017]. This means that the arguments used by `plot.gam` can be used also here, as see with the examples below:
 
 
 ```r

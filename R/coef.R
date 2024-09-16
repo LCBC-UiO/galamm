@@ -2,6 +2,7 @@
 #'
 #' @srrstats {G1.4} Function documented with roxygen2.
 #' @srrstats {G2.1a} Expected data types provided for all inputs.
+#' @srrstats {RE4.2} Model coefficients (via coef() / coefficients())
 #'
 #' @description
 #' Currently, this function only returns the fixed effects.

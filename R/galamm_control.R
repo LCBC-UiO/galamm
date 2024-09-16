@@ -8,6 +8,11 @@
 #' @srrstats {G2.3,G2.3b} Argument "method" is case sensitive, as documented
 #'   below.
 #'
+#' @srrstats {RE3.0,RE3.1,RE3.2,RE3.3} All of these requirements are satisfied
+#'   by this function, which its output is given as an argument to the
+#'   galamm_control argument in galamm(). In addition, there is a special
+#'   vignette on optimization which goes further into the details.
+#'
 #' @param optim_control List containing optimization parameters. If \code{method
 #'   = "L-BFGS-B"} it is passed on to \code{stats::optim}'s \code{control}
 #'   argument and if \code{method = "Nelder-Mead"}, it is passed on to

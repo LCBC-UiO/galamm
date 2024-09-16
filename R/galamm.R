@@ -4,7 +4,7 @@
 #'   (GALAMMs), as described in
 #'   \insertCite{sorensenLongitudinalModelingAgeDependent2023;textual}{galamm}.
 #'   The building blocks of these models are generalized additive mixed models
-#'   (GAMMs) \insertCite{woodGeneralizedAdditiveModels2017a}{galamm}, of which
+#'   (GAMMs) \insertCite{woodGeneralizedAdditiveModels2017}{galamm}, of which
 #'   generalized linear mixed models
 #'   \insertCite{breslowApproximateInferenceGeneralized1993,harvilleMaximumLikelihoodApproaches1977,hendersonBestLinearUnbiased1975,lairdRandomEffectsModelsLongitudinal1982}{galamm}
 #'   are special cases. GALAMMs extend upon GAMMs by allowing factor structures,
@@ -38,13 +38,14 @@
 #' @srrstats {G2.2} Assertions on the lengths of arguments are implemented in
 #'   galamm.
 #' @srrstats {G2.3,G2.3a} match.arg() used on "na.action" argument.
-#' @srrstats {G2.3,G2.3b} Arguments "family", "load.var", "factor", and the elements
-#'   of the "start" argument are case sensitive. This is stated in the
+#' @srrstats {G2.3,G2.3b} Arguments "family", "load.var", "factor", and the
+#'   elements of the "start" argument are case sensitive. This is stated in the
 #'   documentation below.
-#' @srrstats {G2.4,G2.4a} Internally, objects family_mapping, weights_mapping and
-#'   lambda_mapping_X are explicitly converted to integer using as.integer().
-#' @srrstats {G2.4,G2.4b} as.numeric() used multiple places throughout the code for
-#'   explicitly converting to continuous.
+#' @srrstats {G2.4,G2.4a} Internally, objects family_mapping, weights_mapping
+#'   and lambda_mapping_X are explicitly converted to integer using
+#'   as.integer().
+#' @srrstats {G2.4,G2.4b} as.numeric() used multiple places throughout the code
+#'   for explicitly converting to continuous.
 #' @srrstats {G2.6} If \code{lambda} is provided as a vector, it will be
 #'   converted to a matrix with a single column, and a message will be printed.
 #' @srrstats {G2.7} Both \code{tibble}s and \code{data.table}s are accepted in
@@ -65,35 +66,67 @@
 #' @srrstats {G2.16} \code{NaN}, \code{Inf}, or \code{-Inf} in \code{data}
 #'   causes an error. The same happens with such values in \code{lambda}.
 #' @srrstats {G5.2} All errors and warnings are tested.
-#' @srrstats {G5.2a} Every message produced within R code by stop(),
-#'   warning(), or message(), is unique.
-#' @srrstats {G5.2b} All stop(), warning(), and message() calls are tested,
-#'   as can be seen in the CodeCov report on GitHub.
+#' @srrstats {G5.2a} Every message produced within R code by stop(), warning(),
+#'   or message(), is unique.
+#' @srrstats {G5.2b} All stop(), warning(), and message() calls are tested, as
+#'   can be seen in the CodeCov report on GitHub.
 #' @srrstats {G5.3} Tests have explicit expectations about return objects.
-#' @srrstats {G5.4a} These are new methods, but they have been used in the
-#'   paper Sørensen, Fjell, and Walhovd (2023), in which extensive simulation
-#'   studies confirmed the correctness of the implementation. Furthermore, the
-#'   simulated datasets, which are documented in "R/data.R" and exported, have
-#'   known ground truth and we confirm in the vignettes that the obtained
-#'   estimates are close to the true values.
+#' @srrstats {G5.4a} These are new methods, but they have been used in the paper
+#'   Sørensen, Fjell, and Walhovd (2023), in which extensive simulation studies
+#'   confirmed the correctness of the implementation. Furthermore, the simulated
+#'   datasets, which are documented in "R/data.R" and exported, have known
+#'   ground truth and we confirm in the vignettes that the obtained estimates
+#'   are close to the true values.
 #' @srrstats {G5.4b} Wherever there is overlapping functionality, results from
 #'   galamm() have been confirmed to be identical to those of lme4::lmer() for
-#'   linear mixed models, to those of lme4::glmer() for generalized linear
-#'   mixed models with binomial or Poisson responses, to those of
-#'   nlme::lme() for linear mixed models with heteroscedastic residuals, and
-#'   to those of PLmixed::PLmixed() for linear mixed models with factor
-#'   structures and generalized linear mixed models with factor structures.
-#' @srrstats {G5.5} Random seed is set when simulating data, but the
-#'   algorithms are determinstic, and hence don't depend on random numbers.
-#' @srrstats {G5.6} Implemented in the tests, both through data simulated
-#'   for this package, and through simulated data from PLmixed and lme4.
+#'   linear mixed models, to those of lme4::glmer() for generalized linear mixed
+#'   models with binomial or Poisson responses, to those of nlme::lme() for
+#'   linear mixed models with heteroscedastic residuals, and to those of
+#'   PLmixed::PLmixed() for linear mixed models with factor structures and
+#'   generalized linear mixed models with factor structures.
+#' @srrstats {G5.5} Random seed is set when simulating data, but the algorithms
+#'   are determinstic, and hence don't depend on random numbers.
+#' @srrstats {G5.6} Implemented in the tests, both through data simulated for
+#'   this package, and through simulated data from PLmixed and lme4.
 #' @srrstats {G5.6a} Tolerance in testthat() set to relatively high values,
 #'   since the outcome is platform dependent.
+#'
+#' @srrstats {RE1.0} The models can be fitted via a formula interface.
+#' @srrstats {RE1.1} The package vignettes describe all the mathematics behind
+#'   how the formula object is converted to a matrix representation.
+#' @srrstats {RE1.2} The documentation for the data argument below specifies
+#'   that a data.frame is expected.
+#' @srrstats {RE1.3} Argument factor below contains names of the latent
+#'   variables, and these are passed onto the summary and other output
+#'   functions.
+#' @srrstats {RE1.3a} This requirement does not seem relevant, as there is not
+#'   otherwise relevant information which is not transferred.
+#' @srrstats {RE1.4} Distributional assumptions with regard to input data are
+#'   documented through the family option below.
+#' @srrstats {RE2.0} Requirements to input data are strict, but no particular
+#'   transformations are performed.
+#' @srrstats {RE2.1} Satisfied through the na.action argument to galamm().
+#' @srrstats {RE2.2} This requirement seems very hard to satisfy in the context
+#'   for multilevel latent variable models, since random effects are an integral
+#'   part of the fit.
+#' @srrstats {RE2.3} Centering and offseting is possible.
+#' @srrstats {RE2.4} Preprocessing routines are part of galamm() function.
+#' @srrstats {RE2.4a} Obtained in the call to gamm4 in galamm(), which then
+#'   again calls lme4::lformula; the default behavior is to drop the column.
+#' @srrstats {RE2.4b} Obtained through the model.matrix() formula, which by
+#'   defaults drops the right-hand side variable and gives a warning.
+#' @srrstats {RE4.0} A model object of class galamm is returned, and all its
+#'   components are documented here.
+#' @srrstats {RE4.1} Generating a model object with no data seems hard for this
+#'   type of model. Instead, when a dataframe with zero rows is provided, an
+#'   error message is generated.
+#' @srrstats {RE4.7} Not applicable; algorithm is deterministic.
+#' @srrstats {RE4.12,RE4.13} Not applicable.
 #'
 #'
 #' @param formula A formula specifying the model. Smooth terms are defined in
 #'   the style of the \code{mgcv} and \code{gamm4} packages, see
-#'   \insertCite{woodGeneralizedAdditiveModels2017a}{galamm} for an
+#'   \insertCite{woodGeneralizedAdditiveModels2017}{galamm} for an
 #'   introduction. Random effects are specified using \code{lme4} syntax, which
 #'   is described in detail in
 #'   \insertCite{batesFittingLinearMixedEffects2015}{galamm}. Factor loadings

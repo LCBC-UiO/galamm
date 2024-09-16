@@ -17,7 +17,7 @@
 #' @seealso [gamm4.setup()] and [gamm4()].
 #'
 #' @references
-#' \insertRef{woodGeneralizedAdditiveModels2017a}{galamm}
+#' \insertRef{woodGeneralizedAdditiveModels2017}{galamm}
 #'
 gam.setup <- function(formula, pterms, mf) {
   m <- length(formula$smooth.spec)
@@ -261,7 +261,7 @@ gam.setup <- function(formula, pterms, mf) {
 #' @srrstats {G2.4,G2.4d} explicit conversion to factor via `as.factor()`
 #'
 #' @references
-#' \insertRef{woodGeneralizedAdditiveModels2017a}{galamm}
+#' \insertRef{woodGeneralizedAdditiveModels2017}{galamm}
 
 variable.summary <- function(pf, dl, n) {
   v.n <- length(dl)
@@ -322,7 +322,7 @@ variable.summary <- function(pf, dl, n) {
 #' @srrstats {G1.4a} Internal function documented.
 #'
 #' @references
-#' \insertRef{woodGeneralizedAdditiveModels2017a}{galamm}
+#' \insertRef{woodGeneralizedAdditiveModels2017}{galamm}
 #'
 gam.side <- function(sm, Xp, tol = .Machine$double.eps^.5) {
   m <- length(sm)
@@ -359,7 +359,7 @@ gam.side <- function(sm, Xp, tol = .Machine$double.eps^.5) {
 #' @srrstats {G1.4a} Internal function documented.
 #'
 #' @references
-#' \insertRef{woodGeneralizedAdditiveModels2017a}{galamm}
+#' \insertRef{woodGeneralizedAdditiveModels2017}{galamm}
 #'
 interpret.gam0 <- function(gf) {
   p.env <- environment(gf)

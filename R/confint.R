@@ -5,6 +5,7 @@
 #' @srrstats {G2.3,G2.3b} Arguments parm and method are case sensitive, as stated in
 #'   their documentation.
 #' @srrstats {G2.1a} Expected data types provided for all inputs.
+#' @srrstats {RE4.3} Confidence intervals on those coefficients (via confint())
 #'
 #' @param object An object of class \code{galamm} returned from
 #'   \code{\link{galamm}}.
