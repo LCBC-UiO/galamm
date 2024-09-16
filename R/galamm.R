@@ -122,6 +122,14 @@
 #'   error message is generated.
 #' @srrstats {RE4.7} Not applicable; algorithm is deterministic.
 #' @srrstats {RE4.12,RE4.13} Not applicable.
+#' @srrstats {RE4.14} Natural part of the confidence bands for fitted smooth
+#'   functions, which typically are very wide outside of the domain of the
+#'   training data.
+#' @srrstats {RE14.5} It is well documented in the literature that confidence
+#'   bands for smooth terms are very wide outside of the data domain. Some
+#'   tendency of this can be seen in Figure 2 of the Psychometrika paper by
+#'   Sørensen, Fjell, and Walhovd (2023) which describes the algorithms
+#'   implemented in this package.
 #'
 #'
 #' @param formula A formula specifying the model. Smooth terms are defined in
