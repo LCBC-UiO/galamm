@@ -203,6 +203,8 @@ print.summary.galamm <- function(
 #' @seealso [summary.galamm()] for the summary function and [print()] for the
 #'   generic.
 #'
+#' @family summary functions
+#'
 #' @examples
 #' # Linear mixed model with heteroscedastic residuals
 #' mod <- galamm(

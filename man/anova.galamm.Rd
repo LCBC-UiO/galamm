@@ -47,6 +47,7 @@ generic function.
 Other summary functions: 
 \code{\link{plot.galamm}()},
 \code{\link{plot_smooth.galamm}()},
+\code{\link{print.galamm}()},
 \code{\link{print.summary.galamm}()},
 \code{\link{summary.galamm}()}
 }
