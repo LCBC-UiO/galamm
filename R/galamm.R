@@ -124,7 +124,7 @@
 #' @srrstats {RE4.14} Natural part of the confidence bands for fitted smooth
 #'   functions, which typically are very wide outside of the domain of the
 #'   training data.
-#' @srrstats {RE14.5} It is well documented in the literature that confidence
+#' @srrstats {RE4.15} It is well documented in the literature that confidence
 #'   bands for smooth terms are very wide outside of the data domain. Some
 #'   tendency of this can be seen in Figure 2 of the Psychometrika paper by
 #'   Sørensen, Fjell, and Walhovd (2023) which describes the algorithms
