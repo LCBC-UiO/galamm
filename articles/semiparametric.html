@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">galamm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.1.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -275,7 +275,7 @@ galamm.</div>
 </div>
 <p>The <code>plot_smooth</code> function is a thin wrapper around the
 <code>plot.gam</code> function provided by the <code>mgcv</code> package
-<span class="citation">(<a href="#ref-woodGeneralizedAdditiveModels2017a">Wood 2017</a>)</span>.
+<span class="citation">(<a href="#ref-woodGeneralizedAdditiveModels2017">Wood 2017</a>)</span>.
 This means that the arguments used by <code>plot.gam</code> can be used
 also here, as see with the examples below:</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
@@ -319,18 +319,18 @@ such data can be modeled.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Scaled residuals: </span></span>
 <span><span class="co">#&gt;     Min      1Q  Median      3Q     Max </span></span>
-<span><span class="co">#&gt; -8.2547  0.0786  0.1946  0.4248  0.8213 </span></span>
+<span><span class="co">#&gt; -8.2548  0.0786  0.1946  0.4248  0.8213 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Random effects:</span></span>
 <span><span class="co">#&gt;  Groups Name        Variance Std.Dev.</span></span>
 <span><span class="co">#&gt;  id     (Intercept) 0.2306   0.4802  </span></span>
-<span><span class="co">#&gt;  Xr     s(x)        0.9694   0.9846  </span></span>
+<span><span class="co">#&gt;  Xr     s(x)        0.9695   0.9846  </span></span>
 <span><span class="co">#&gt; Number of obs: 1600, groups:  id, 200; Xr, 8</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Fixed effects:</span></span>
 <span><span class="co">#&gt;              Estimate Std. Error z value Pr(&gt;|z|)    </span></span>
-<span><span class="co">#&gt; X(Intercept)   2.8115     0.2034  13.824  &lt; 2e-16 ***</span></span>
-<span><span class="co">#&gt; Xs(x)Fx1      -1.4110     0.4242  -3.326  0.00088 ***</span></span>
+<span><span class="co">#&gt; X(Intercept)   2.8115     0.2034  13.825  &lt; 2e-16 ***</span></span>
+<span><span class="co">#&gt; Xs(x)Fx1      -1.4110     0.4242  -3.327 0.000879 ***</span></span>
 <span><span class="co">#&gt; ---</span></span>
 <span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -515,7 +515,7 @@ the model is implemented incorrectly.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Scaled residuals: </span></span>
 <span><span class="co">#&gt;    Min     1Q Median     3Q    Max </span></span>
-<span><span class="co">#&gt;  -2.76   6.46  13.58  23.31  35.84 </span></span>
+<span><span class="co">#&gt;  0.693 10.402 26.734 35.728 51.878 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Lambda:</span></span>
 <span><span class="co">#&gt;         loading       SE</span></span>
@@ -684,22 +684,20 @@ model is hard to estimate.</p>
 <span><span class="co">#&gt; At X0, 0 variables are exactly at the bounds</span></span>
 <span><span class="co">#&gt; At iterate     0  f=        25324  |proj g|=       9642.6</span></span>
 <span><span class="co">#&gt; At iterate    50  f =        136.9  |proj g|=        716.66</span></span>
-<span><span class="co">#&gt; At iterate   100  f =      -1062.7  |proj g|=        121.27</span></span>
-<span><span class="co">#&gt; At iterate   150  f =      -1069.4  |proj g|=        155.18</span></span>
-<span><span class="co">#&gt; At iterate   200  f =      -1147.3  |proj g|=         84.96</span></span>
-<span><span class="co">#&gt; At iterate   250  f =      -1147.6  |proj g|=        42.374</span></span>
-<span><span class="co">#&gt; At iterate   300  f =      -1209.4  |proj g|=        66.759</span></span>
+<span><span class="co">#&gt; At iterate   100  f =      -1054.7  |proj g|=        1485.1</span></span>
+<span><span class="co">#&gt; At iterate   150  f =      -1069.1  |proj g|=        29.652</span></span>
+<span><span class="co">#&gt; At iterate   200  f =      -1149.1  |proj g|=        920.26</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; iterations 338</span></span>
-<span><span class="co">#&gt; function evaluations 377</span></span>
-<span><span class="co">#&gt; segments explored during Cauchy searches 341</span></span>
+<span><span class="co">#&gt; iterations 237</span></span>
+<span><span class="co">#&gt; function evaluations 262</span></span>
+<span><span class="co">#&gt; segments explored during Cauchy searches 240</span></span>
 <span><span class="co">#&gt; BFGS updates skipped 0</span></span>
 <span><span class="co">#&gt; active bounds at final generalized Cauchy point 0</span></span>
-<span><span class="co">#&gt; norm of the final projected gradient 2.43961</span></span>
-<span><span class="co">#&gt; final function value -1217.34</span></span>
+<span><span class="co">#&gt; norm of the final projected gradient 12.214</span></span>
+<span><span class="co">#&gt; final function value -1217.78</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; F = -1217.34</span></span>
-<span><span class="co">#&gt; final  value -1217.343067 </span></span>
+<span><span class="co">#&gt; F = -1217.78</span></span>
+<span><span class="co">#&gt; final  value -1217.784476 </span></span>
 <span><span class="co">#&gt; converged</span></span></code></pre></div>
 <p>The summary shows that we have recovered the true values of the
 factor loadings well.</p>
@@ -712,44 +710,44 @@ factor loadings well.</p>
 <span><span class="co">#&gt; Control: galamm_control(optim_control = list(factr = 1e+09, trace = 3,      REPORT = 50, maxit = 1000))</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;      AIC      BIC   logLik deviance df.resid </span></span>
-<span><span class="co">#&gt;  -2398.7  -2266.9   1217.3  -2434.7    11182 </span></span>
+<span><span class="co">#&gt;  -2399.6  -2267.7   1217.8  -2435.6    11182 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Scaled residuals: </span></span>
 <span><span class="co">#&gt;      Min       1Q   Median       3Q      Max </span></span>
-<span><span class="co">#&gt; -2115.14 -1034.62  -885.39    22.95    51.96 </span></span>
+<span><span class="co">#&gt; -2115.30 -1034.69  -885.55    21.81    50.58 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Lambda:</span></span>
 <span><span class="co">#&gt;         ability1       SE ability3        SE</span></span>
 <span><span class="co">#&gt; lambda1   1.0000        .        .         .</span></span>
 <span><span class="co">#&gt; lambda2   1.3986 0.002569        .         .</span></span>
-<span><span class="co">#&gt; lambda3   0.3014 0.002007        .         .</span></span>
+<span><span class="co">#&gt; lambda3   0.3013 0.002007        .         .</span></span>
 <span><span class="co">#&gt; lambda4        .        .   1.0000         .</span></span>
 <span><span class="co">#&gt; lambda5        .        .   0.9993 0.0007676</span></span>
-<span><span class="co">#&gt; lambda6        .        .   1.0001 0.0007679</span></span>
-<span><span class="co">#&gt; lambda7        .        .   1.9995 0.0015687</span></span>
+<span><span class="co">#&gt; lambda6        .        .   1.0001 0.0007678</span></span>
+<span><span class="co">#&gt; lambda7        .        .   1.9995 0.0015686</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Random effects:</span></span>
 <span><span class="co">#&gt;  Groups       Name                  Variance Std.Dev. Corr </span></span>
-<span><span class="co">#&gt;  timepoint:id domain1:ability1       0.23662 0.4864        </span></span>
-<span><span class="co">#&gt;               domain3:ability3       0.28037 0.5295   -0.01</span></span>
-<span><span class="co">#&gt;  id           domain1:ability1       3.35242 1.8310        </span></span>
-<span><span class="co">#&gt;               domain3:ability3      18.30509 4.2784   0.89 </span></span>
-<span><span class="co">#&gt;  Xr.0         s(x):domain3:ability3 86.88159 9.3210        </span></span>
-<span><span class="co">#&gt;  Xr           s(x):domain1:ability1 16.07526 4.0094        </span></span>
+<span><span class="co">#&gt;  timepoint:id domain1:ability1       0.23642 0.4862        </span></span>
+<span><span class="co">#&gt;               domain3:ability3       0.28090 0.5300   -0.01</span></span>
+<span><span class="co">#&gt;  id           domain1:ability1       3.35470 1.8316        </span></span>
+<span><span class="co">#&gt;               domain3:ability3      18.36906 4.2859   0.89 </span></span>
+<span><span class="co">#&gt;  Xr.0         s(x):domain3:ability3 87.57641 9.3582        </span></span>
+<span><span class="co">#&gt;  Xr           s(x):domain1:ability1 14.33249 3.7858        </span></span>
 <span><span class="co">#&gt;  Residual                            0.01007 0.1003        </span></span>
 <span><span class="co">#&gt; Number of obs: 11200, groups:  timepoint:id, 1600; id, 200; Xr.0, 8; Xr, 8</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Fixed effects:</span></span>
 <span><span class="co">#&gt;                           Estimate Std. Error t value  Pr(&gt;|t|)</span></span>
-<span><span class="co">#&gt; (Intercept)              -0.004847   0.004671 -1.0377 2.994e-01</span></span>
-<span><span class="co">#&gt; domain3                   0.002629   0.007592  0.3463 7.291e-01</span></span>
-<span><span class="co">#&gt; s(x):domain1:ability1Fx1 -0.057658   0.245575 -0.2348 8.144e-01</span></span>
-<span><span class="co">#&gt; s(x):domain3:ability3Fx1  5.570914   0.314703 17.7021 4.037e-70</span></span>
+<span><span class="co">#&gt; (Intercept)              -0.004806   0.004670 -1.0291 3.034e-01</span></span>
+<span><span class="co">#&gt; domain3                   0.002617   0.007591  0.3448 7.303e-01</span></span>
+<span><span class="co">#&gt; s(x):domain1:ability1Fx1 -0.057935   0.241216 -0.2402 8.102e-01</span></span>
+<span><span class="co">#&gt; s(x):domain3:ability3Fx1  5.563374   0.315030 17.6598 8.553e-70</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Approximate significance of smooth terms:</span></span>
 <span><span class="co">#&gt;                         edf Ref.df     F p-value</span></span>
-<span><span class="co">#&gt; s(x):domain1:ability1 8.956  8.956  4313  &lt;2e-16</span></span>
-<span><span class="co">#&gt; s(x):domain3:ability3 8.988  8.988 59831  &lt;2e-16</span></span></code></pre></div>
+<span><span class="co">#&gt; s(x):domain1:ability1 8.951  8.951  4316  &lt;2e-16</span></span>
+<span><span class="co">#&gt; s(x):domain3:ability3 8.988  8.988 59841  &lt;2e-16</span></span></code></pre></div>
 <p>We can plot the estimated smooth terms, which recover their simulated
 ground truth very well.</p>
 <div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
@@ -834,12 +832,13 @@ this example.</p>
 <div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod_byvar_mixed</span><span class="op">)</span></span>
 <span><span class="co">#&gt; GALAMM fit by maximum marginal likelihood.</span></span>
-<span><span class="co">#&gt; Formula: y ~ domain + sl(x, by = domain, factor = c("ability1", "ability2")) +      (0 + domain1:ability1 + domain2:ability2 | id)</span></span>
+<span><span class="co">#&gt; Formula: y ~ domain + sl(x, by = domain, factor = c("ability1", "ability2")) +  </span></span>
+<span><span class="co">#&gt;     (0 + domain1:ability1 + domain2:ability2 | id)</span></span>
 <span><span class="co">#&gt;    Data: dat</span></span>
 <span><span class="co">#&gt; Control: galamm_control(optim_control = list(factr = 1e+09, trace = 3,      REPORT = 30, maxit = 1000))</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;      AIC      BIC   logLik deviance df.resid </span></span>
-<span><span class="co">#&gt;   9476.1   9566.9  -4725.0  98981.3     7987 </span></span>
+<span><span class="co">#&gt;   9476.1   9566.9  -4725.0  58315.3     7987 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Lambda:</span></span>
 <span><span class="co">#&gt;         ability1      SE ability2      SE</span></span>
@@ -912,7 +911,7 @@ Traits</span> with <span>Generalized Additive Latent</span> and
 <span>Mixed Models</span>.”</span> <em>Psychometrika</em> 88 (2):
 456–86. <a href="https://doi.org/10.1007/s11336-023-09910-z" class="external-link">https://doi.org/10.1007/s11336-023-09910-z</a>.
 </div>
-<div id="ref-woodGeneralizedAdditiveModels2017a" class="csl-entry">
+<div id="ref-woodGeneralizedAdditiveModels2017" class="csl-entry">
 Wood, Simon N. 2017. <em>Generalized Additive Models: <span>An</span>
 Introduction with <span>R</span></em>. 2nd ed. <span>Chapman and
 Hall/CRC</span>.
