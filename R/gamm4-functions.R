@@ -191,7 +191,12 @@ gamm4 <- function(fixed, random = NULL, data) {
   }
 
   lme4.formula <- stats::as.formula(lme4.formula)
-  b <- lme4::lFormula(lme4.formula, data = mf, REML = FALSE)
+  b <- lme4::lFormula(
+    formula = lme4.formula,
+    data = mf,
+    REML = FALSE,
+    control = lme4::lmerControl(check.rankX = "stop.deficient")
+    )
 
   tn <- names(b$reTrms$cnms)
   ind <- seq_along(tn)

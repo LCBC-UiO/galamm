@@ -111,8 +111,7 @@
 #'   part of the fit.
 #' @srrstats {RE2.3} Centering and offseting is possible.
 #' @srrstats {RE2.4} Preprocessing routines are part of galamm() function.
-#' @srrstats {RE2.4a} Obtained in the call to gamm4 in galamm(), which then
-#'   again calls lme4::lformula; the default behavior is to drop the column.
+#' @srrstats {RE2.4a} Rank-deficient design matrix leads to an error.
 #' @srrstats {RE2.4b} Obtained through the model.matrix() formula, which by
 #'   defaults drops the right-hand side variable and gives a warning.
 #' @srrstats {RE4.0} A model object of class galamm is returned, and all its
@@ -130,6 +129,7 @@
 #'   tendency of this can be seen in Figure 2 of the Psychometrika paper by
 #'   Sørensen, Fjell, and Walhovd (2023) which describes the algorithms
 #'   implemented in this package.
+#' @srrstats {RE5.0} Documented in vignette on computational scaling.
 #'
 #'
 #' @param formula A formula specifying the model. Smooth terms are defined in
