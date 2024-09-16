@@ -19,7 +19,7 @@ A plot is displayed on the screen.
 \description{
 Plots smooth terms of a fitted \code{galamm} object. This function is a thin
 wrapper around \code{mgcv::plot.gam}
-\insertCite{woodGeneralizedAdditiveModels2017a}{galamm}.
+\insertCite{woodGeneralizedAdditiveModels2017}{galamm}.
 }
 \examples{
 # Generalized additive mixed model with factor structures -------------------
@@ -63,6 +63,7 @@ plot_smooth(mod, shade = TRUE, rug = FALSE)
 Other summary functions: 
 \code{\link{anova.galamm}()},
 \code{\link{plot.galamm}()},
+\code{\link{print.galamm}()},
 \code{\link{print.summary.galamm}()},
 \code{\link{summary.galamm}()}
 }

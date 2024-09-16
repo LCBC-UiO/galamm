@@ -48,7 +48,7 @@ NULL
 #'
 #' \insertRef{woodThinPlateRegression2003}{galamm}
 #'
-#' \insertRef{woodGeneralizedAdditiveModels2017a}{galamm}
+#' \insertRef{woodGeneralizedAdditiveModels2017}{galamm}
 #'
 #' @examples
 #' # Linear mixed model with factor structures
@@ -120,7 +120,7 @@ sl <- function(..., factor = NULL) {
 #'
 #' \insertRef{woodThinPlateRegression2003}{galamm}
 #'
-#' \insertRef{woodGeneralizedAdditiveModels2017a}{galamm}
+#' \insertRef{woodGeneralizedAdditiveModels2017}{galamm}
 #'
 #' @examples
 #' # Linear mixed model with factor structures

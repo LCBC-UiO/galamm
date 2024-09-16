@@ -1,3 +1,11 @@
+# galamm (development versions)
+
+- New function response() returns the response used for fitting the model.
+- New print.galamm() function which is an alias for print(summary(galamm_obj)).
+- Rank deficient fixed effect matrices now leads to an error. Previously only
+  a message was written that the redundant columns were dropped.
+
+
 # galamm version 0.2.1
 
 - Software paper in Multivariate Behavioral Research has been added to the 

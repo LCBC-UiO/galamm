@@ -11,6 +11,8 @@
 #'   data.
 #' @srrstats {G5.8d} Data with more columns than rows will cause failure,
 #'   because the design matrix will be rank deficient. This is tested here.
+#' @srrstats {RE2.4a,RE2.4.b,RE7.0,RE7.0a,RE7.1,RE7.1a}
+#' @srrstats {RE7.2,RE7.3,RE7.4}
 #' @noRd
 NULL
 
@@ -606,7 +608,6 @@ test_that("edge conditions tests for data", {
   )
 })
 
-
 test_that("galamm rejects perfectly noiseless input data", {
   data("IRTsim", package = "PLmixed")
   dat <- IRTsim
@@ -624,14 +625,14 @@ test_that("galamm rejects perfectly noiseless input data", {
 
   dat <- IRTsim
   dat$item2 <- as.factor(dat$item)
-  expect_message(
+  expect_error(
     {
       mod <- galamm(
         formula = y ~ 0 + as.factor(item) + as.factor(item2) + (1 | school),
         data = dat
       )
     },
-    "fixed-effect model matrix is rank deficient so dropping 4 columns / coefficients"
+    "the fixed effects will be jointly unidentifiable"
   )
 })
 

@@ -115,7 +115,7 @@ In order to plot the smooth term, we use `plot_smooth`.
 plot_smooth(mod)
 ```
 
-The `plot_smooth` function is a thin wrapper around the `plot.gam` function provided by the `mgcv` package [@woodGeneralizedAdditiveModels2017a]. This means that the arguments used by `plot.gam` can be used also here, as see with the examples below:
+The `plot_smooth` function is a thin wrapper around the `plot.gam` function provided by the `mgcv` package [@woodGeneralizedAdditiveModels2017]. This means that the arguments used by `plot.gam` can be used also here, as see with the examples below:
 
 ```{r, semiparametric-gaussian-gamm-smooth2, fig.cap="Alternative ways of visualizing the smooth term."}
 plot_smooth(mod,

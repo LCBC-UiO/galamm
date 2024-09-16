@@ -70,6 +70,7 @@ Other details of model fit:
 \code{\link{predict.galamm}()},
 \code{\link{ranef.galamm}()},
 \code{\link{residuals.galamm}()},
+\code{\link{response}()},
 \code{\link{sigma.galamm}()},
 \code{\link{vcov.galamm}()}
 }

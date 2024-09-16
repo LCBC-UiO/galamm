@@ -15,7 +15,7 @@ vignette: >
 
 
 
-```r
+``` r
 library(galamm)
 ```
 
@@ -36,7 +36,7 @@ At convergence, the Hessian matrix of second derivatives is computed exactly, ag
 We will illustrate some ways of modifying the optimization procedure with the covariate measurement model example shown in the [vignette on models with mixed response types](https://lcbc-uio.github.io/galamm/articles/mixed_response.html). Here we start by simply setting up what we need to fit the model.
 
 
-```r
+``` r
 loading_matrix <- matrix(c(1, 1, NA), ncol = 1)
 families <- c(gaussian, binomial)
 family_mapping <- ifelse(diet$item == "chd", 2, 1)
@@ -47,7 +47,7 @@ formula <- y ~ 0 + chd + (age * bus):chd + fiber +
 Fitting the model with default arguments yields a warning when we look at the summary object.
 
 
-```r
+``` r
 mod <- galamm(
   formula = formula,
   data = diet,
@@ -95,7 +95,7 @@ summary(mod)
 In this case, we can increase the amount of information provided by `optim`, with the `trace` argument. To avoid getting too much output, we also reduce the number of iterations. We set the `control` argument as follows:
 
 
-```r
+``` r
 control <- galamm_control(optim_control = list(maxit = 5, trace = 3, REPORT = 1))
 ```
 
@@ -103,7 +103,7 @@ Here, `maxit = 5` means that we take at most 5 iterations, `trace = 3` means tha
 
 
 
-```r
+``` r
 mod <- galamm(
   formula = formula,
   data = diet,
@@ -144,14 +144,14 @@ Since what we did was simply to turn in more reporting, it is no surprise that t
 By default, L-BFGS-B uses the last 5 evaluations of the gradient to approximate the Hessian that is used during optimization (not to be confused with the exact Hessian compute with automatic differentiation after convergence). We try to increase this to 25, and see if that makes a difference. This is done with the `lmm` argument. We also reduce the amount of reporting to be every 10th step, and avoid setting the maximum number of iterations, which means that `optim()`'s default option is used.
 
 
-```r
+``` r
 control <- galamm_control(optim_control = list(trace = 3, REPORT = 10, lmm = 25))
 ```
 
 It is clear that neither this solved the issue.
 
 
-```r
+``` r
 mod <- galamm(
   formula = formula,
   data = diet,
@@ -197,7 +197,7 @@ vcov(mod)
 Looking at the model output again, we see that the random effect variance is estimated to be exactly zero.
 
 
-```r
+``` r
 summary(mod)
 #> Warning in vcov.galamm(object, parm = "lambda"): Rank deficient Hessian matrix.Could not compute covariance matrix.
 #> Warning in vcov.galamm(object, "beta"): Rank deficient Hessian matrix.Could not compute covariance matrix.
@@ -236,7 +236,7 @@ summary(mod)
  These types of obviously wrong zero variance estimates are well-known for users of mixed models [@hodgesRichlyParameterizedLinear2013]. We see if increasing the initial value for the variance parameter solves the issue. This is done with the `start` argument to `galamm`. The start argument requires a named list, with optional arguments `theta`, `beta`, `lambda`, and `weights`, giving initial values for each of these groups of parameters. In this case `theta` is the standard deviation of the random effect, and we increase it to 10 to see what happens. By default, the initial value equals 1.
  
 
-```r
+``` r
 mod <- galamm(
   formula = formula,
   data = diet,
@@ -274,7 +274,7 @@ mod <- galamm(
 Now we see that the model converged and that the Hessian is no longer rank deficient.
 
 
-```r
+``` r
 summary(mod)
 #> GALAMM fit by maximum marginal likelihood.
 #> Formula: formula
@@ -313,7 +313,7 @@ summary(mod)
 The Nelder-Mead algorithm is turned on by setting `method = "Nelder-Mead"` when calling `galamm_control()`. We also turn on reporting every 20th function evaluation by setting `verbose = 1`:
 
 
-```r
+``` r
 control <- galamm_control(
   optim_control = list(verbose = 1),
   method = "Nelder-Mead"
@@ -323,14 +323,14 @@ control <- galamm_control(
 We provide the estimates obtained with the L-BFGS-B algorithm as initial values. For this we can use the convenience function `extract_optim_parameters`:
 
 
-```r
+``` r
 start <- extract_optim_parameters(mod)
 ```
 
 We now fit the model, providing the initial values to the `start` argument.
 
 
-```r
+``` r
 mod_nm <- galamm(
   formula = formula,
   data = diet,
@@ -369,7 +369,7 @@ mod_nm <- galamm(
 The summary output shows that Nelder-Mead found exactly the same optimum in this particular case, which is not surprising given the intial values that we provided.
 
 
-```r
+``` r
 summary(mod_nm)
 #> GALAMM fit by maximum marginal likelihood.
 #> Formula: formula

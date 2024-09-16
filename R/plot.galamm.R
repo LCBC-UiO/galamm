@@ -8,6 +8,8 @@
 #'
 #' @srrstats {G1.4} Function documented with roxygen2.
 #' @srrstats {G2.1a} Expected data types provided for all inputs.
+#' @srrstats {RE6.0,RE6.2} Default plot method.
+#' @srrstats {RE6.1,RE6.3} Not applicable.
 #'
 #' @seealso [residuals.galamm()] for extracting residuals and [plot()] for the
 #'   generic function.

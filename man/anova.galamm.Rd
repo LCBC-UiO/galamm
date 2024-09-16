@@ -17,7 +17,8 @@ models are provided in this argument, no table will be returned.}
 A table with model comparison metric.
 }
 \description{
-Anova function for comparing different GALAMMs fitted on the same data.
+Anova function for comparing different GALAMMs fitted on the
+same data.
 }
 \examples{
 # Poisson GLMM
@@ -46,6 +47,7 @@ generic function.
 Other summary functions: 
 \code{\link{plot.galamm}()},
 \code{\link{plot_smooth.galamm}()},
+\code{\link{print.galamm}()},
 \code{\link{print.summary.galamm}()},
 \code{\link{summary.galamm}()}
 }

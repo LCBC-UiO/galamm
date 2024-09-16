@@ -2,6 +2,9 @@
 #'
 #' @srrstats {G1.4} Function documented with roxygen2.
 #' @srrstats {G2.1a} Expected data types provided for all inputs.
+#' @srrstats {RE4.11} Goodness-of-fit and other statistics associated such as
+#'   effect sizes with model coefficients.
+#' @srrstats {RE4.18} Summary object.
 #'
 #' @description
 #' Summary method for class "galamm".
@@ -106,6 +109,9 @@ summary.galamm <- function(object, ...) {
 #' @title Print method for summary GALAMM fits
 #'
 #' @srrstats {G1.4} Function documented with roxygen2.
+#' @srrstats {RE4.11} Goodness-of-fit and other statistics associated such as
+#'   effect sizes with model coefficients.
+#' @srrstats {RE4.18} Print method for summary object.
 #'
 #' @param x An object of class \code{summary.galamm} returned from
 #'   \code{\link{summary.galamm}}.
@@ -180,6 +186,41 @@ print.summary.galamm <- function(
 
   invisible(x)
 }
+
+#' @title Print method for GALAMM fits
+#'
+#' @srrstats {G1.4} Function documented with roxygen2.
+#' @srrstats {RE4.11} Goodness-of-fit and other statistics associated such as
+#'   effect sizes with model coefficients.
+#' @srrstats {RE4.17} Print method for objects of class galamm.
+#'
+#' @param x An object of class \code{galamm} returned from \code{\link{galamm}}.
+#' @param ... Further arguments passed on to other methods. Currently not used.
+#'
+#' @return Summary printed to screen. Invisibly returns the argument \code{x}.
+#' @export
+#'
+#' @seealso [summary.galamm()] for the summary function and [print()] for the
+#'   generic.
+#'
+#' @family summary functions
+#'
+#' @examples
+#' # Linear mixed model with heteroscedastic residuals
+#' mod <- galamm(
+#'   formula = y ~ x + (1 | id),
+#'   weights = ~ (1 | item),
+#'   data = hsced
+#' )
+#'
+#' print(mod)
+#'
+print.galamm <- function(x, ...) {
+  summary_x <- summary(x)
+  print(summary_x)
+  invisible(x)
+}
+
 
 
 #' @title Extract log likelihood, AIC, and related statistics from a GALAMM
