@@ -74,7 +74,7 @@ The structural model is simply $\eta = \zeta \sim N(0, \psi)$, where $\psi$ is i
 
 ### Model Without Interaction
 
-It can be instructive to start by considering a model in which we fix $\\lambda_{4} = 0$. This type of model would be estimated with the following code:
+It can be instructive to start by considering a model in which we fix $\lambda_{4} = 0$. This type of model would be estimated with the following code:
 
 ```{r}
 lambda <- matrix(c(1, NA, NA), ncol = 1)
