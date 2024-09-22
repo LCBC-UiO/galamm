@@ -7,6 +7,8 @@
 
 [![CRAN
 status](https://www.r-pkg.org/badges/version/galamm)](https://cran.r-project.org/package=galamm)
+[![Status at rOpenSci Software Peer
+Review](https://badges.ropensci.org/615_status.svg)](https://github.com/ropensci/software-review/issues/615)
 [![Project Status: Active – The project has reached a stable, usable
 state and is being actively
 developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
