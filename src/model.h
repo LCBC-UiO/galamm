@@ -108,12 +108,13 @@ struct Gaussian final : Model<T> {
 
   T cumulant(const Vdual<T>& linpred, const Vdual<T>& trials,
              const Ddual<T>& WSqrt) override {
-    return (WSqrt * linpred).squaredNorm() / 2;
+               auto weighted = WSqrt * linpred;
+               return weighted.squaredNorm() / 2;
   };
   T constfun(const Vdual<T>& y, const T& phi, const Ddual<T>& WSqrt) override {
     int n = y.size();
-    return -.5 * ((WSqrt * y).squaredNorm() / phi + n * log(2 * M_PI * phi))
-      + WSqrt.diagonal().array().log().sum();
+    auto weighted_y = (WSqrt * y).eval();
+    return -.5 * (weighted_y.squaredNorm() / phi + n * log(2 * M_PI * phi)) + WSqrt.diagonal().array().log().sum();
   };
   Vdual<T> meanfun(const Vdual<T>& linpred, const Vdual<T>& trials) override {
     return linpred;
@@ -128,7 +129,9 @@ struct Gaussian final : Model<T> {
   T get_phi(
       const Vdual<T>& linpred, const Vdual<T>& u, const Vdual<T>& y,
       const Ddual<T>& WSqrt, int n) override {
-        return ((WSqrt * (y - linpred)).squaredNorm() + u.squaredNorm()) / n;
+        auto diff = (y - linpred).eval();
+        auto weighted = WSqrt * diff;
+        return (weighted.squaredNorm() + u.squaredNorm()) / n;
   };
 
 };

@@ -56,7 +56,8 @@ T loss(const parameters<T>& parlist, const data<T>& datlist,
       modvec[k]->constfun(y0, phi(k), WSqrt0);
   }
 
-  return ret - parlist.u.squaredNorm() / 2 / phi(0) -
+  auto u_eval = parlist.u.eval();
+  return ret - u_eval.squaredNorm() / 2 / phi(0) -
     solver.vectorD().array().log().sum() / 2;
 
 }
