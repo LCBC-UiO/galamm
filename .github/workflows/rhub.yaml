@@ -55,7 +55,8 @@ jobs:
 
       - name: Install system dependencies using pak
         run: |
-          Rscript -e 'pak::local_system_requirements(execute = TRUE)'
+          Rscript -e 'pak::pkg_sysreqs(os = "ubuntu", execute = TRUE)'
+
 
       - uses: r-hub/actions/platform-info@v1
         with:
