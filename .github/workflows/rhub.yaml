@@ -47,21 +47,16 @@ jobs:
       fail-fast: false
       matrix:
         config: ${{ fromJson(needs.setup.outputs.containers) }}
-    container:
-      image: ${{ matrix.config.container }}
 
     steps:
       - uses: r-hub/actions/checkout@v1
 
       - name: Install system dependencies
         run: |
-          Rscript -e '
-            sysreqs <- pak::pkg_sysreqs(".", sysreqs_platform = "ubuntu")
-            install_cmds <- sysreqs$install_scripts
-            for (cmd in install_cmds) {
-              system(cmd)
-            }
-          '
+          sudo apt-get update
+          sudo apt-get install -y libcurl4-openssl-dev libssl-dev libxml2-dev libgit2-dev libharfbuzz-dev libfribidi-dev
+
+
 
       - uses: r-hub/actions/platform-info@v1
         with:
