@@ -55,8 +55,7 @@ jobs:
 
       - name: Install system dependencies using pak
         run: |
-          Rscript -e 'pak::pkg_sysreqs(os = "ubuntu", execute = TRUE)'
-
+          Rscript -e 'pak::pkg_sysreqs(".", sysreqs_platform = "ubuntu") |> pak::sysreqs_install()'
 
       - uses: r-hub/actions/platform-info@v1
         with:
