@@ -53,9 +53,15 @@ jobs:
     steps:
       - uses: r-hub/actions/checkout@v1
 
-      - name: Install system dependencies using pak
+      - name: Install system dependencies
         run: |
-          Rscript -e 'pak::pkg_sysreqs(".", sysreqs_platform = "ubuntu") |> pak::sysreqs_install()'
+          Rscript -e '
+            sysreqs <- pak::pkg_sysreqs(".", sysreqs_platform = "ubuntu")
+            install_cmds <- sysreqs$install_scripts
+            for (cmd in install_cmds) {
+              system(cmd)
+            }
+          '
 
       - uses: r-hub/actions/platform-info@v1
         with:
