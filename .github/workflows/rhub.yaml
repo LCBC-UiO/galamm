@@ -53,10 +53,9 @@ jobs:
     steps:
       - uses: r-hub/actions/checkout@v1
 
-      - name: Install system dependencies
+      - name: Install system dependencies using pak
         run: |
-          apt-get update
-          apt-get install -y libcurl4-openssl-dev libssl-dev libxml2-dev
+          Rscript -e 'pak::local_system_requirements(execute = TRUE)'
 
       - uses: r-hub/actions/platform-info@v1
         with:
