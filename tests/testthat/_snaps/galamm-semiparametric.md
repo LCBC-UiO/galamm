@@ -23,7 +23,7 @@
       Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
       
       R-sq.(adj) =  0.359   
-      lmer.REML =   Scale est. = 0.82148   n = 392
+        Scale est. = 0.82148   n = 392
 
 ---
 
@@ -50,7 +50,7 @@
       Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
       
       R-sq.(adj) =  0.359   
-      lmer.REML =   Scale est. = 0.82097   n = 392
+        Scale est. = 0.82097   n = 392
 
 ---
 
@@ -77,7 +77,7 @@
       Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
       
       R-sq.(adj) =  0.825   
-      lmer.REML =   Scale est. = 0.24854   n = 392
+        Scale est. = 0.24854   n = 392
 
 ---
 
@@ -108,7 +108,7 @@
       Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
       
       R-sq.(adj) =  0.618   
-      lmer.REML =   Scale est. = 4.6267    n = 400
+        Scale est. = 4.6267    n = 400
 
 ---
 
@@ -135,7 +135,7 @@
       Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
       
       R-sq.(adj) =  0.00979   
-      lmer.REML =   Scale est. = 12.03     n = 400
+        Scale est. = 12.03     n = 400
 
 ---
 
@@ -162,7 +162,7 @@
       Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
       
       R-sq.(adj) =  0.0212   
-      lmer.REML =   Scale est. = 11.897    n = 400
+        Scale est. = 11.897    n = 400
 
 ---
 
@@ -189,7 +189,7 @@
       Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
       
       R-sq.(adj) =  0.145   
-      glmer.ML =   Scale est. = 1         n = 400
+        Scale est. = 1         n = 400
 
 ---
 
@@ -216,7 +216,7 @@
       Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
       
       R-sq.(adj) =  0.158   
-      glmer.ML =   Scale est. = 1         n = 400
+        Scale est. = 1         n = 400
 
 ---
 
@@ -243,7 +243,7 @@
       Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
       
       R-sq.(adj) =  0.137   
-      glmer.ML =   Scale est. = 1         n = 400
+        Scale est. = 1         n = 400
 
 ---
 
@@ -270,5 +270,5 @@
       Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
       
       R-sq.(adj) =  0.0879   
-      glmer.ML =   Scale est. = 1         n = 400
+        Scale est. = 1         n = 400
 
