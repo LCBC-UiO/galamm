@@ -3,6 +3,8 @@
 This is a fix of a WARNING on r-devel-linux-x86_64-fedora-gcc. In addition, some
 fixes to summary and print functions.
 
+I have (1) reproduced the original WARNING and (2) verified that this fix removes it.
+
 ## Test environments
 
 * Local Apple M1 Mac, on R4.5.0
