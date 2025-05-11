@@ -1,5 +1,6 @@
-# galamm (development versions)
+# galamm 0.2.2
 
+- Internal fix to avoid warning about uninitialized variables.
 - New function response() returns the response used for fitting the model.
 - New print.galamm() function which is an alias for print(summary(galamm_obj)).
 - Rank deficient fixed effect matrices now leads to an error. Previously only
