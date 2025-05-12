@@ -85,8 +85,8 @@ The package `gamm4` uses `lme4` to fit the underlying model, and the resulting m
 summary(mod_gamm4$mer)
 #> Linear mixed model fit by maximum likelihood  ['lmerMod']
 #> 
-#>      AIC      BIC   logLik deviance df.resid 
-#>   3025.2   3052.1  -1507.6   3015.2     1595 
+#>       AIC       BIC    logLik -2*log(L)  df.resid 
+#>    3025.2    3052.1   -1507.6    3015.2      1595 
 #> 
 #> Scaled residuals: 
 #>      Min       1Q   Median       3Q      Max 
@@ -254,8 +254,8 @@ summary(mod_gamm4$mer)
 #> Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
 #>  Family: binomial  ( logit )
 #> 
-#>      AIC      BIC   logLik deviance df.resid 
-#>    983.7   1005.2   -487.8    975.7     1596 
+#>       AIC       BIC    logLik -2*log(L)  df.resid 
+#>     983.7    1005.2    -487.8     975.7      1596 
 #> 
 #> Scaled residuals: 
 #>     Min      1Q  Median      3Q     Max 
@@ -270,7 +270,7 @@ summary(mod_gamm4$mer)
 #> Fixed effects:
 #>              Estimate Std. Error z value Pr(>|z|)    
 #> X(Intercept)   2.8115     0.2034  13.825  < 2e-16 ***
-#> Xs(x)Fx1      -1.4110     0.4242  -3.327 0.000879 ***
+#> Xs(x)Fx1      -1.4110     0.4242  -3.326  0.00088 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
@@ -603,20 +603,20 @@ mod_byvar <- galamm(
 #> At X0, 0 variables are exactly at the bounds
 #> At iterate     0  f=        25324  |proj g|=       9642.6
 #> At iterate    50  f =        136.9  |proj g|=        716.66
-#> At iterate   100  f =      -1054.7  |proj g|=        1485.1
-#> At iterate   150  f =      -1069.1  |proj g|=        29.652
-#> At iterate   200  f =      -1149.1  |proj g|=        920.26
+#> At iterate   100  f =      -1062.4  |proj g|=        356.24
+#> At iterate   150  f =      -1069.1  |proj g|=        19.086
+#> At iterate   200  f =      -1147.6  |proj g|=         10.73
 #> 
-#> iterations 237
-#> function evaluations 262
-#> segments explored during Cauchy searches 240
+#> iterations 201
+#> function evaluations 223
+#> segments explored during Cauchy searches 204
 #> BFGS updates skipped 0
 #> active bounds at final generalized Cauchy point 0
-#> norm of the final projected gradient 12.214
-#> final function value -1217.78
+#> norm of the final projected gradient 24.1617
+#> final function value -1147.63
 #> 
-#> F = -1217.78
-#> final  value -1217.784476 
+#> F = -1147.63
+#> final  value -1147.630941 
 #> converged
 ```
 
@@ -626,50 +626,49 @@ The summary shows that we have recovered the true values of the factor loadings 
 ``` r
 summary(mod_byvar)
 #> GALAMM fit by maximum marginal likelihood.
-#> Formula: y ~ domain + sl(x, by = domain, factor = c("ability1", "ability3")) +  
-#>     (0 + domain1:ability1 + domain3:ability3 | id/timepoint)
+#> Formula: y ~ domain + sl(x, by = domain, factor = c("ability1", "ability3")) +      (0 + domain1:ability1 + domain3:ability3 | id/timepoint)
 #>    Data: dat
 #> Control: galamm_control(optim_control = list(factr = 1e+09, trace = 3,      REPORT = 50, maxit = 1000))
 #> 
 #>      AIC      BIC   logLik deviance df.resid 
-#>  -2399.6  -2267.7   1217.8  -2435.6    11182 
+#>  -2259.3  -2127.4   1147.6  -2295.3    11182 
 #> 
 #> Scaled residuals: 
 #>      Min       1Q   Median       3Q      Max 
-#> -2115.30 -1034.69  -885.55    21.81    50.58 
+#> -2097.03 -1025.71  -872.78    19.00    47.24 
 #> 
 #> Lambda:
 #>         ability1       SE ability3        SE
 #> lambda1   1.0000        .        .         .
-#> lambda2   1.3986 0.002569        .         .
-#> lambda3   0.3013 0.002007        .         .
+#> lambda2   1.3991 0.002571        .         .
+#> lambda3   0.3008 0.002004        .         .
 #> lambda4        .        .   1.0000         .
-#> lambda5        .        .   0.9993 0.0007676
+#> lambda5        .        .   0.9993 0.0007675
 #> lambda6        .        .   1.0001 0.0007678
-#> lambda7        .        .   1.9995 0.0015686
+#> lambda7        .        .   1.9993 0.0015665
 #> 
 #> Random effects:
 #>  Groups       Name                  Variance Std.Dev. Corr 
-#>  timepoint:id domain1:ability1       0.23642 0.4862        
-#>               domain3:ability3       0.28090 0.5300   -0.01
-#>  id           domain1:ability1       3.35470 1.8316        
-#>               domain3:ability3      18.36906 4.2859   0.89 
-#>  Xr.0         s(x):domain3:ability3 87.57641 9.3582        
-#>  Xr           s(x):domain1:ability1 14.33249 3.7858        
-#>  Residual                            0.01007 0.1003        
+#>  timepoint:id domain1:ability1       0.23619 0.4860        
+#>               domain3:ability3       0.28002 0.5292   -0.01
+#>  id           domain1:ability1       2.22510 1.4917        
+#>               domain3:ability3      22.66474 4.7607   0.65 
+#>  Xr.0         s(x):domain3:ability3 40.41501 6.3573        
+#>  Xr           s(x):domain1:ability1 10.17172 3.1893        
+#>  Residual                            0.01007 0.1004        
 #> Number of obs: 11200, groups:  timepoint:id, 1600; id, 200; Xr.0, 8; Xr, 8
 #> 
 #> Fixed effects:
-#>                           Estimate Std. Error t value  Pr(>|t|)
-#> (Intercept)              -0.004806   0.004670 -1.0291 3.034e-01
-#> domain3                   0.002617   0.007591  0.3448 7.303e-01
-#> s(x):domain1:ability1Fx1 -0.057935   0.241216 -0.2402 8.102e-01
-#> s(x):domain3:ability3Fx1  5.563374   0.315030 17.6598 8.553e-70
+#>                            Estimate Std. Error   t value  Pr(>|t|)
+#> (Intercept)              -2.892e-03   0.004648 -0.622171 5.338e-01
+#> domain3                  -4.951e-05   0.007555 -0.006554 9.948e-01
+#> s(x):domain1:ability1Fx1 -7.629e-02   0.219195 -0.348047 7.278e-01
+#> s(x):domain3:ability3Fx1  5.758e+00   0.307603 18.718378 3.507e-78
 #> 
 #> Approximate significance of smooth terms:
 #>                         edf Ref.df     F p-value
-#> s(x):domain1:ability1 8.951  8.951  4316  <2e-16
-#> s(x):domain3:ability3 8.988  8.988 59841  <2e-16
+#> s(x):domain1:ability1 8.932  8.932  4312  <2e-16
+#> s(x):domain3:ability3 8.975  8.975 59664  <2e-16
 ```
 
 
@@ -769,8 +768,7 @@ We can look at the model summary:
 ``` r
 summary(mod_byvar_mixed)
 #> GALAMM fit by maximum marginal likelihood.
-#> Formula: y ~ domain + sl(x, by = domain, factor = c("ability1", "ability2")) +  
-#>     (0 + domain1:ability1 + domain2:ability2 | id)
+#> Formula: y ~ domain + sl(x, by = domain, factor = c("ability1", "ability2")) +      (0 + domain1:ability1 + domain2:ability2 | id)
 #>    Data: dat
 #> Control: galamm_control(optim_control = list(factr = 1e+09, trace = 3,      REPORT = 30, maxit = 1000))
 #> 
