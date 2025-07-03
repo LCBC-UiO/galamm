@@ -8,13 +8,13 @@
   "codeRepository": "https://github.com/LCBC-UiO/galamm",
   "issueTracker": "https://github.com/LCBC-UiO/galamm/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.2.0",
+  "version": "0.2.3",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 4.3.3 (2024-02-29)",
+  "runtimePlatform": "R version 4.5.1 (2025-06-13)",
   "provider": {
     "@id": "https://cran.r-project.org",
     "@type": "Organization",
@@ -254,8 +254,31 @@
     },
     "SystemRequirements": "C++17"
   },
-  "fileSize": "28141.422KB",
+  "fileSize": "26104.358KB",
   "citation": [
+    {
+      "@type": "ScholarlyArticle",
+      "datePublished": "2024",
+      "author": [
+        {
+          "@type": "Person",
+          "givenName": "{\\O}ystein",
+          "familyName": "S{\\o}rensen"
+        }
+      ],
+      "name": "Multilevel Semiparametric Latent Variable Modeling in R with \"galamm\"",
+      "identifier": "10.1007/s11336-023-09910-z",
+      "@id": "https://doi.org/10.1007/s11336-023-09910-z",
+      "sameAs": "https://doi.org/10.1007/s11336-023-09910-z",
+      "isPartOf": {
+        "@type": "PublicationIssue",
+        "datePublished": "2024",
+        "isPartOf": {
+          "@type": ["PublicationVolume", "Periodical"],
+          "name": "Multivariate Behavioral Research"
+        }
+      }
+    },
     {
       "@type": "ScholarlyArticle",
       "datePublished": "2023",
@@ -297,5 +320,10 @@
   "readme": "https://github.com/LCBC-UiO/galamm/blob/main/README.md",
   "contIntegration": ["https://github.com/LCBC-UiO/galamm/actions/workflows/R-CMD-check.yaml", "https://app.codecov.io/gh/LCBC-UiO/galamm?branch=main"],
   "developmentStatus": "https://www.repostatus.org/#active",
+  "review": {
+    "@type": "Review",
+    "url": "https://github.com/ropensci/software-review/issues/615",
+    "provider": "https://ropensci.org"
+  },
   "keywords": ["structural-equation-models", "generalized-additive-models", "item-response-theory", "hierarchical-models", "latent-variable-models"]
 }
