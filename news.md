@@ -1,4 +1,4 @@
-# galamm (development versions)
+# galamm 0.2.3
 
 - A bug causing heteroscedastic models with more than two groups to fail has
   been solved. Thanks to Espen Moen Eilertsen for reporting the issue.
