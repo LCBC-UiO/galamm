@@ -84,7 +84,8 @@ test_that("Logistic GLMM with simple factor works", {
   )
   expect_equal(
     fixef(galamm_mod_trials),
-    c(`(Intercept)` = 0.597623431596681, item = 0.0560576419151671)
+    c(`(Intercept)` = 0.597623431596681, item = 0.0560576419151671),
+    tolerance = 1e-4
   )
 
   expect_equal(

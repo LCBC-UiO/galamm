@@ -495,8 +495,8 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
     delta <- diff(weights_obj$Zt@p)
     weights_mapping <- as.integer(weights_obj$flist[[1]]) - 2L
     weights_mapping[delta == 0] <- -1L
-    weights_inds <- length(unique(weights_mapping)) +
-      max(c(theta_inds, beta_inds, lambda_inds)) - 1L
+    weights_inds <- seq.int(from = max(c(theta_inds, beta_inds, lambda_inds)) + 1,
+                            length.out = length(unique(weights_mapping)) - 1)
   } else {
     weights_obj <- NULL
     weights_mapping <- integer()

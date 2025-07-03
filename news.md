@@ -1,5 +1,7 @@
 # galamm (development versions)
 
+- A bug causing heteroscedastic models with more than two groups to fail has
+  been solved. Thanks to Espen Moen Eilertsen for reporting the issue.
 - Have rerun all vignettes. There are some minor changes in the formatting of
   summary(model), due to changes in lme4.
 
