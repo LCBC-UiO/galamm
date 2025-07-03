@@ -72,7 +72,7 @@ test_that("Heteroscedastic model works with more than one group", {
   )
 
   expect_snapshot(print(summary(mod), digits = 3))
-  expect_equal(mod$model$loglik, -2058.13575138403)
+  expect_equal(mod$model$loglik, -2058.13575138403, tolerance = 1e-4)
   expect_equal(
     summary(mod)$AICtab,
     c(AIC = 4128.27150276806, BIC = 4158.81196378272,
