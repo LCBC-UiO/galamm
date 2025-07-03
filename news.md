@@ -1,3 +1,8 @@
+# galamm (development versions)
+
+- Have rerun all vignettes. There are some minor changes in the formatting of
+  summary(model), due to changes in lme4.
+
 # galamm 0.2.2
 
 - Internal fix to avoid warning about uninitialized variables.
