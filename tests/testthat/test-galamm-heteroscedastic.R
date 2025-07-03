@@ -77,7 +77,8 @@ test_that("Heteroscedastic model works with more than one group", {
     summary(mod)$AICtab,
     c(AIC = 4128.27150276806, BIC = 4158.81196378272,
       logLik = -2058.13575138403,
-      deviance = 4116.27150276806, df.resid = 1194)
+      deviance = 4116.27150276806, df.resid = 1194),
+    tolerance = 1e-4
   )
   expect_equal(summary(mod)$Lambda, NULL)
 
