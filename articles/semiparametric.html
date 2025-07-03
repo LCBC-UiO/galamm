@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">galamm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -72,7 +72,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Semiparametric Latent Variable Modeling</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/LCBC-UiO/galamm/blob/v0.2.2/vignettes/semiparametric.Rmd" class="external-link"><code>vignettes/semiparametric.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/LCBC-UiO/galamm/blob/main/vignettes/semiparametric.Rmd" class="external-link"><code>vignettes/semiparametric.Rmd</code></a></small>
       <div class="d-none name"><code>semiparametric.Rmd</code></div>
     </div>
 
@@ -160,8 +160,8 @@ smooth terms. We can look at the model summary for each:</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod_gamm4</span><span class="op">$</span><span class="va">mer</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Linear mixed model fit by maximum likelihood  ['lmerMod']</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;      AIC      BIC   logLik deviance df.resid </span></span>
-<span><span class="co">#&gt;   3025.2   3052.1  -1507.6   3015.2     1595 </span></span>
+<span><span class="co">#&gt;       AIC       BIC    logLik -2*log(L)  df.resid </span></span>
+<span><span class="co">#&gt;    3025.2    3052.1   -1507.6    3015.2      1595 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Scaled residuals: </span></span>
 <span><span class="co">#&gt;      Min       1Q   Median       3Q      Max </span></span>
@@ -313,8 +313,8 @@ such data can be modeled.</p>
 <span><span class="co">#&gt; Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']</span></span>
 <span><span class="co">#&gt;  Family: binomial  ( logit )</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;      AIC      BIC   logLik deviance df.resid </span></span>
-<span><span class="co">#&gt;    983.7   1005.2   -487.8    975.7     1596 </span></span>
+<span><span class="co">#&gt;       AIC       BIC    logLik -2*log(L)  df.resid </span></span>
+<span><span class="co">#&gt;     983.7    1005.2    -487.8     975.7      1596 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Scaled residuals: </span></span>
 <span><span class="co">#&gt;     Min      1Q  Median      3Q     Max </span></span>
@@ -329,7 +329,7 @@ such data can be modeled.</p>
 <span><span class="co">#&gt; Fixed effects:</span></span>
 <span><span class="co">#&gt;              Estimate Std. Error z value Pr(&gt;|z|)    </span></span>
 <span><span class="co">#&gt; X(Intercept)   2.8115     0.2034  13.825  &lt; 2e-16 ***</span></span>
-<span><span class="co">#&gt; Xs(x)Fx1      -1.4110     0.4242  -3.327 0.000879 ***</span></span>
+<span><span class="co">#&gt; Xs(x)Fx1      -1.4110     0.4242  -3.326  0.00088 ***</span></span>
 <span><span class="co">#&gt; ---</span></span>
 <span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -683,70 +683,69 @@ model is hard to estimate.</p>
 <span><span class="co">#&gt; At X0, 0 variables are exactly at the bounds</span></span>
 <span><span class="co">#&gt; At iterate     0  f=        25324  |proj g|=       9642.6</span></span>
 <span><span class="co">#&gt; At iterate    50  f =        136.9  |proj g|=        716.66</span></span>
-<span><span class="co">#&gt; At iterate   100  f =      -1054.7  |proj g|=        1485.1</span></span>
-<span><span class="co">#&gt; At iterate   150  f =      -1069.1  |proj g|=        29.652</span></span>
-<span><span class="co">#&gt; At iterate   200  f =      -1149.1  |proj g|=        920.26</span></span>
+<span><span class="co">#&gt; At iterate   100  f =      -1062.4  |proj g|=        356.24</span></span>
+<span><span class="co">#&gt; At iterate   150  f =      -1069.1  |proj g|=        19.086</span></span>
+<span><span class="co">#&gt; At iterate   200  f =      -1147.6  |proj g|=         10.73</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; iterations 237</span></span>
-<span><span class="co">#&gt; function evaluations 262</span></span>
-<span><span class="co">#&gt; segments explored during Cauchy searches 240</span></span>
+<span><span class="co">#&gt; iterations 201</span></span>
+<span><span class="co">#&gt; function evaluations 223</span></span>
+<span><span class="co">#&gt; segments explored during Cauchy searches 204</span></span>
 <span><span class="co">#&gt; BFGS updates skipped 0</span></span>
 <span><span class="co">#&gt; active bounds at final generalized Cauchy point 0</span></span>
-<span><span class="co">#&gt; norm of the final projected gradient 12.214</span></span>
-<span><span class="co">#&gt; final function value -1217.78</span></span>
+<span><span class="co">#&gt; norm of the final projected gradient 24.1617</span></span>
+<span><span class="co">#&gt; final function value -1147.63</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; F = -1217.78</span></span>
-<span><span class="co">#&gt; final  value -1217.784476 </span></span>
+<span><span class="co">#&gt; F = -1147.63</span></span>
+<span><span class="co">#&gt; final  value -1147.630941 </span></span>
 <span><span class="co">#&gt; converged</span></span></code></pre></div>
 <p>The summary shows that we have recovered the true values of the
 factor loadings well.</p>
 <div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod_byvar</span><span class="op">)</span></span>
 <span><span class="co">#&gt; GALAMM fit by maximum marginal likelihood.</span></span>
-<span><span class="co">#&gt; Formula: y ~ domain + sl(x, by = domain, factor = c("ability1", "ability3")) +  </span></span>
-<span><span class="co">#&gt;     (0 + domain1:ability1 + domain3:ability3 | id/timepoint)</span></span>
+<span><span class="co">#&gt; Formula: y ~ domain + sl(x, by = domain, factor = c("ability1", "ability3")) +      (0 + domain1:ability1 + domain3:ability3 | id/timepoint)</span></span>
 <span><span class="co">#&gt;    Data: dat</span></span>
 <span><span class="co">#&gt; Control: galamm_control(optim_control = list(factr = 1e+09, trace = 3,      REPORT = 50, maxit = 1000))</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;      AIC      BIC   logLik deviance df.resid </span></span>
-<span><span class="co">#&gt;  -2399.6  -2267.7   1217.8  -2435.6    11182 </span></span>
+<span><span class="co">#&gt;  -2259.3  -2127.4   1147.6  -2295.3    11182 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Scaled residuals: </span></span>
 <span><span class="co">#&gt;      Min       1Q   Median       3Q      Max </span></span>
-<span><span class="co">#&gt; -2115.30 -1034.69  -885.55    21.81    50.58 </span></span>
+<span><span class="co">#&gt; -2097.03 -1025.71  -872.78    19.00    47.24 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Lambda:</span></span>
 <span><span class="co">#&gt;         ability1       SE ability3        SE</span></span>
 <span><span class="co">#&gt; lambda1   1.0000        .        .         .</span></span>
-<span><span class="co">#&gt; lambda2   1.3986 0.002569        .         .</span></span>
-<span><span class="co">#&gt; lambda3   0.3013 0.002007        .         .</span></span>
+<span><span class="co">#&gt; lambda2   1.3991 0.002571        .         .</span></span>
+<span><span class="co">#&gt; lambda3   0.3008 0.002004        .         .</span></span>
 <span><span class="co">#&gt; lambda4        .        .   1.0000         .</span></span>
-<span><span class="co">#&gt; lambda5        .        .   0.9993 0.0007676</span></span>
+<span><span class="co">#&gt; lambda5        .        .   0.9993 0.0007675</span></span>
 <span><span class="co">#&gt; lambda6        .        .   1.0001 0.0007678</span></span>
-<span><span class="co">#&gt; lambda7        .        .   1.9995 0.0015686</span></span>
+<span><span class="co">#&gt; lambda7        .        .   1.9993 0.0015665</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Random effects:</span></span>
 <span><span class="co">#&gt;  Groups       Name                  Variance Std.Dev. Corr </span></span>
-<span><span class="co">#&gt;  timepoint:id domain1:ability1       0.23642 0.4862        </span></span>
-<span><span class="co">#&gt;               domain3:ability3       0.28090 0.5300   -0.01</span></span>
-<span><span class="co">#&gt;  id           domain1:ability1       3.35470 1.8316        </span></span>
-<span><span class="co">#&gt;               domain3:ability3      18.36906 4.2859   0.89 </span></span>
-<span><span class="co">#&gt;  Xr.0         s(x):domain3:ability3 87.57641 9.3582        </span></span>
-<span><span class="co">#&gt;  Xr           s(x):domain1:ability1 14.33249 3.7858        </span></span>
-<span><span class="co">#&gt;  Residual                            0.01007 0.1003        </span></span>
+<span><span class="co">#&gt;  timepoint:id domain1:ability1       0.23619 0.4860        </span></span>
+<span><span class="co">#&gt;               domain3:ability3       0.28002 0.5292   -0.01</span></span>
+<span><span class="co">#&gt;  id           domain1:ability1       2.22510 1.4917        </span></span>
+<span><span class="co">#&gt;               domain3:ability3      22.66474 4.7607   0.65 </span></span>
+<span><span class="co">#&gt;  Xr.0         s(x):domain3:ability3 40.41501 6.3573        </span></span>
+<span><span class="co">#&gt;  Xr           s(x):domain1:ability1 10.17172 3.1893        </span></span>
+<span><span class="co">#&gt;  Residual                            0.01007 0.1004        </span></span>
 <span><span class="co">#&gt; Number of obs: 11200, groups:  timepoint:id, 1600; id, 200; Xr.0, 8; Xr, 8</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Fixed effects:</span></span>
-<span><span class="co">#&gt;                           Estimate Std. Error t value  Pr(&gt;|t|)</span></span>
-<span><span class="co">#&gt; (Intercept)              -0.004806   0.004670 -1.0291 3.034e-01</span></span>
-<span><span class="co">#&gt; domain3                   0.002617   0.007591  0.3448 7.303e-01</span></span>
-<span><span class="co">#&gt; s(x):domain1:ability1Fx1 -0.057935   0.241216 -0.2402 8.102e-01</span></span>
-<span><span class="co">#&gt; s(x):domain3:ability3Fx1  5.563374   0.315030 17.6598 8.553e-70</span></span>
+<span><span class="co">#&gt;                            Estimate Std. Error   t value  Pr(&gt;|t|)</span></span>
+<span><span class="co">#&gt; (Intercept)              -2.892e-03   0.004648 -0.622171 5.338e-01</span></span>
+<span><span class="co">#&gt; domain3                  -4.951e-05   0.007555 -0.006554 9.948e-01</span></span>
+<span><span class="co">#&gt; s(x):domain1:ability1Fx1 -7.629e-02   0.219195 -0.348047 7.278e-01</span></span>
+<span><span class="co">#&gt; s(x):domain3:ability3Fx1  5.758e+00   0.307603 18.718378 3.507e-78</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Approximate significance of smooth terms:</span></span>
 <span><span class="co">#&gt;                         edf Ref.df     F p-value</span></span>
-<span><span class="co">#&gt; s(x):domain1:ability1 8.951  8.951  4316  &lt;2e-16</span></span>
-<span><span class="co">#&gt; s(x):domain3:ability3 8.988  8.988 59841  &lt;2e-16</span></span></code></pre></div>
+<span><span class="co">#&gt; s(x):domain1:ability1 8.932  8.932  4312  &lt;2e-16</span></span>
+<span><span class="co">#&gt; s(x):domain3:ability3 8.975  8.975 59664  &lt;2e-16</span></span></code></pre></div>
 <p>We can plot the estimated smooth terms, which recover their simulated
 ground truth very well.</p>
 <div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
@@ -831,8 +830,7 @@ this example.</p>
 <div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod_byvar_mixed</span><span class="op">)</span></span>
 <span><span class="co">#&gt; GALAMM fit by maximum marginal likelihood.</span></span>
-<span><span class="co">#&gt; Formula: y ~ domain + sl(x, by = domain, factor = c("ability1", "ability2")) +  </span></span>
-<span><span class="co">#&gt;     (0 + domain1:ability1 + domain2:ability2 | id)</span></span>
+<span><span class="co">#&gt; Formula: y ~ domain + sl(x, by = domain, factor = c("ability1", "ability2")) +      (0 + domain1:ability1 + domain2:ability2 | id)</span></span>
 <span><span class="co">#&gt;    Data: dat</span></span>
 <span><span class="co">#&gt; Control: galamm_control(optim_control = list(factr = 1e+09, trace = 3,      REPORT = 30, maxit = 1000))</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -928,7 +926,7 @@ Hall/CRC</span>.
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
     </footer>
