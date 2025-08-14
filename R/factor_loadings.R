@@ -46,7 +46,7 @@ factor_loadings <- function(object) {
 #'
 #' # Estimate model
 #' mod <- galamm(y ~ item + (0 + ability | sid) + (0 + ability | school),
-#'   data = IRTsub, family = binomial, load.var = "item",
+#'   data = IRTsub, family = binomial, load_var = "item",
 #'   factor = "ability", lambda = loading_matrix
 #' )
 #'

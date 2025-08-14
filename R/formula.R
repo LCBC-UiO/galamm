@@ -30,7 +30,7 @@
 #'   family = families,
 #'   family_mapping = family_mapping,
 #'   factor = "level",
-#'   load.var = "itemgroup",
+#'   load_var = "itemgroup",
 #'   lambda = loading_matrix
 #' )
 #'

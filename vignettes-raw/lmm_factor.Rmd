@@ -115,7 +115,7 @@ factors <- c("ms", "hs")
 Finally, we define the loading variable. This is a variable connecting rows of the dataframe to rows of the loading matrices. In this case, for each value of `time`, the corresponding row of the loading matrix should be multiplied by the latent variables $\eta_{m}$ and $\eta_{h}$, so we set it as follows:
 
 ```{r}
-load.var <- "time"
+load_var <- "time"
 ```
 
 
@@ -134,7 +134,7 @@ mod <- galamm(
   formula = form,
   data = KYPSsim,
   factor = factors,
-  load.var = load.var,
+  load_var = load_var,
   lambda = loading_matrix
 )
 ```
@@ -147,7 +147,7 @@ kyps_plmixed <- PLmixed(
   formula = form,
   data = KYPSsim,
   factor = list(factors),
-  load.var = load.var,
+  load_var = load_var,
   lambda = list(loading_matrix)
 )
 ```
@@ -186,7 +186,7 @@ mod_constr1 <- galamm(
   formula = form,
   data = KYPSsim,
   factor = factors,
-  load.var = load.var,
+  load_var = load_var,
   lambda = loading_matrix_constr1
 )
 ```
@@ -207,7 +207,7 @@ mod_constr2 <- galamm(
   formula = form,
   data = KYPSsim,
   factor = factors,
-  load.var = load.var,
+  load_var = load_var,
   lambda = loading_matrix_constr2
 )
 ```
@@ -221,7 +221,7 @@ KYPSsim$time34 <- as.integer(KYPSsim$time %in% 3:4)
 head(KYPSsim)
 ```
 
-We this formulation, we don't need to specify the `factor`, `load.var`, and `lambda` arguments.
+We this formulation, we don't need to specify the `factor`, `load_var`, and `lambda` arguments.
 
 ```{r}
 mod_constr2b <- galamm(
@@ -408,7 +408,7 @@ judge_plmixed <- PLmixed(
   formula = form,
   data = JUDGEsim,
   lambda = list(loading_matrix),
-  load.var = "item",
+  load_var = "item",
   factor = list(factors)
 )
 ```
@@ -420,7 +420,7 @@ judge_galamm <- galamm(
   formula = form,
   data = JUDGEsim,
   lambda = loading_matrix,
-  load.var = "item",
+  load_var = "item",
   factor = factors
 )
 ```

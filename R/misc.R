@@ -1,6 +1,6 @@
 #' Add factor variables as data columns
 #'
-#' @param load.var The \code{load.var} argument provided to
+#' @param load_var The \code{load_var} argument provided to
 #'   \code{\link{galamm}}.
 #' @param lambda The \code{lambda} argument provided to \code{\link{galamm}}.
 #' @param factor The \code{factor} argument provided to \code{\link{galamm}}.
@@ -20,16 +20,16 @@
 #' data(KYPSsim, package = "PLmixed")
 #' loading_matrix <- rbind(c(1, 0), c(NA, 0), c(NA, 1), c(NA, NA))
 #' factors <- c("ms", "hs")
-#' load.var <- "time"
-#' res <- setup_factor(load.var, loading_matrix, factors, KYPSsim)
+#' load_var <- "time"
+#' res <- setup_factor(load_var, loading_matrix, factors, KYPSsim)
 #'
 #' # Columns "ms" and "hs" have now been added:
 #' head(res$data)
 #' # NA's in the original formulation have been replaced by 1's:
 #' res$lambda
-setup_factor <- function(load.var, lambda, factor, data) {
-  if (!is.null(load.var) && (!is.character(load.var)) || length(load.var) > 1) {
-    stop("load.var must be a character of length one.")
+setup_factor <- function(load_var, lambda, factor, data) {
+  if (!is.null(load_var) && (!is.character(load_var)) || length(load_var) > 1) {
+    stop("load_var must be a character of length one.")
   }
 
   if (is.null(factor)) {
@@ -40,8 +40,8 @@ setup_factor <- function(load.var, lambda, factor, data) {
   }
 
   eval(parse(text = paste0(
-    "data$", load.var,
-    "<- factor(data$", load.var, ")"
+    "data$", load_var,
+    "<- factor(data$", load_var, ")"
   )))
 
   lambda[is.na(lambda)] <-
@@ -52,15 +52,15 @@ setup_factor <- function(load.var, lambda, factor, data) {
     stop("Factor already a column in data.")
   }
   for (j in seq_along(factor)) {
-    if (length(unique(data[, load.var])) != length(lambda[, j])) {
+    if (length(unique(data[, load_var])) != length(lambda[, j])) {
       stop(
         "lambda matrix must contain one row ",
-        "for each unique element in load.var"
+        "for each unique element in load_var"
       )
     }
     eval(parse(text = paste("data$", factor[[j]], "<-1")))
     rows_to_zero <-
-      data[, load.var] %in% levels(data[, load.var])[lambda[, j] == 0]
+      data[, load_var] %in% levels(data[, load_var])[lambda[, j] == 0]
     eval(
       parse(
         text =

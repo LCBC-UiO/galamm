@@ -20,7 +20,7 @@ weights=NULL
 data = dat
 family = gaussian
 family_mapping = rep(1L, nrow(data))
-load.var = "item"
+load_var = "item"
 lambda = list(lmat)
 factor = list(c("ability1", "ability3"))
 factor_interactions = NULL
@@ -44,7 +44,7 @@ if (is.numeric(family_mapping)) {
 
 stopifnot(length(family_list) == length(unique(family_mapping)))
 
-tmp <- setup_factor(load.var, lambda, factor, data)
+tmp <- setup_factor(load_var, lambda, factor, data)
 data <- tmp$data
 lambda_orig <- tmp$lambda
 rm(tmp)
@@ -59,7 +59,7 @@ colnames(gobj$lmod$X) <- gsub("^X", "", colnames(gobj$lmod$X))
 response_obj <-
   setup_response_object(family_list, family_mapping, data, gobj)
 lambda_mappings <- define_factor_mappings(
-  gobj, load.var, lambda_orig, factor, factor_interactions, data
+  gobj, load_var, lambda_orig, factor, factor_interactions, data
 )
 
 lambda <- lambda_mappings$lambda

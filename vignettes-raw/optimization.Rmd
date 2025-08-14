@@ -58,7 +58,7 @@ mod <- galamm(
   family = families,
   family_mapping = family_mapping,
   factor = "loading",
-  load.var = "item",
+  load_var = "item",
   lambda = loading_matrix
 )
 
@@ -81,7 +81,7 @@ mod <- galamm(
   family = families,
   family_mapping = family_mapping,
   factor = "loading",
-  load.var = "item",
+  load_var = "item",
   lambda = loading_matrix,
   control = control
 )
@@ -105,7 +105,7 @@ mod <- galamm(
   family = families,
   family_mapping = family_mapping,
   factor = "loading",
-  load.var = "item",
+  load_var = "item",
   lambda = loading_matrix,
   control = control
 )
@@ -127,7 +127,7 @@ mod <- galamm(
   family = families,
   family_mapping = family_mapping,
   factor = "loading",
-  load.var = "item",
+  load_var = "item",
   lambda = loading_matrix,
   start = list(theta = 10),
   control = control
@@ -166,7 +166,7 @@ mod_nm <- galamm(
   family = families,
   family_mapping = family_mapping,
   factor = "loading",
-  load.var = "item",
+  load_var = "item",
   lambda = loading_matrix,
   control = control,
   start = start

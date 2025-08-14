@@ -6,7 +6,7 @@ mod <- galamm(
   data = mresp,
   family = c(gaussian, binomial),
   family_mapping = ifelse(mresp$itemgroup == "a", 1L, 2L),
-  load.var = "itemgroup",
+  load_var = "itemgroup",
   lambda = list(matrix(c(1, NA), ncol = 1)),
   factor = list("loading")
 )

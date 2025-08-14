@@ -19,7 +19,7 @@ test_that("LMM with simple factor works", {
   mod <- galamm(
     formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
     data = IRTsub,
-    load.var = "item",
+    load_var = "item",
     factor = "abil.sid",
     lambda = irt.lam
   )
@@ -37,7 +37,7 @@ test_that("LMM with simple factor works", {
   class(IRTsub) <- c("tbl_df", "tbl", "data.frame")
   mod1 <- galamm(
     y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
-    data = IRTsub, load.var = "item",
+    data = IRTsub, load_var = "item",
     factor = "abil.sid", lambda = irt.lam
   )
   expect_equal(deviance(mod1), deviance(mod))
@@ -45,7 +45,7 @@ test_that("LMM with simple factor works", {
   class(IRTsub) <- c("data.table", "data.frame")
   mod2 <- galamm(
     y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
-    data = IRTsub, , load.var = "item",
+    data = IRTsub, , load_var = "item",
     factor = "abil.sid", lambda = irt.lam
   )
   expect_equal(deviance(mod2), deviance(mod))
@@ -100,7 +100,7 @@ test_that("LMM with simple factor works", {
   mod2 <- galamm(
     formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
     data = IRTsub,
-    load.var = "item",
+    load_var = "item",
     factor = "abil.sid",
     lambda = irt.lam,
     start = list(
@@ -125,7 +125,7 @@ test_that("LMM with simple factor works with Nelder-Mead", {
   mod <- galamm(
     formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
     data = IRTsub,
-    load.var = "item",
+    load_var = "item",
     factor = "abil.sid",
     lambda = irt.lam,
     control = galamm_control(method = "Nelder-Mead")
@@ -179,7 +179,7 @@ test_that("LMM with simple factor works with Nelder-Mead", {
   mod2 <- galamm(
     formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
     data = IRTsub,
-    load.var = "item",
+    load_var = "item",
     factor = "abil.sid",
     lambda = irt.lam,
     start = list(
@@ -210,7 +210,7 @@ test_that("LMM with two factors works", {
     formula = form,
     data = dat,
     factor = c("ms", "hs"),
-    load.var = "time",
+    load_var = "time",
     lambda = kyps.lam
   )
 
@@ -269,7 +269,7 @@ test_that("LMM with two raters works", {
       (0 + teacher1 + teacher2 | tch),
     data = dat,
     lambda = judge.lam,
-    load.var = "item",
+    load_var = "item",
     factor = c("teacher1", "teacher2")
   )
 
@@ -338,7 +338,7 @@ test_that("Complex LMM works", {
       (0 + teacher1 + teacher2 | tch),
     data = JUDGEsim,
     lambda = judge.lam,
-    load.var = "item",
+    load_var = "item",
     factor = c(
       "teacher1", "teacher2", "trait1.t",
       "trait2.t", "trait1.s", "trait2.s"
@@ -416,7 +416,7 @@ test_that("multiple factors in fixed effects works", {
     formula = y ~ 0 + x:domain1:lambda1 + x:domain2:lambda2 +
       (0 + 1 | id),
     data = dat,
-    load.var = "item",
+    load_var = "item",
     lambda = lmat,
     factor = c("lambda1", "lambda2"),
     start = list(
@@ -462,7 +462,7 @@ test_that(
     mod <- galamm(
       formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
       data = IRTsub,
-      load.var = "item",
+      load_var = "item",
       factor = "abil.sid",
       lambda = irt.lam
     )
@@ -470,7 +470,7 @@ test_that(
     mod0 <- galamm(
       formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
       data = IRTsub,
-      load.var = "item",
+      load_var = "item",
       factor = "abil.sid",
       lambda = irt.lam
     )
@@ -486,7 +486,7 @@ test_that(
     mod0 <- galamm(
       formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
       data = IRTsub,
-      load.var = "item",
+      load_var = "item",
       factor = "abil.sid",
       lambda = irt.lam
     )
@@ -497,3 +497,24 @@ test_that(
     expect_equal(factor_loadings(mod), factor_loadings(mod0), tolerance = 1e-8)
   }
 )
+
+test_that("deprecated load.var maps to load_var with a warning", {
+  IRTsub <- IRTsim[IRTsim$item < 4, ] # Select items 1-3
+  set.seed(12345)
+  IRTsub <- IRTsub[sample(nrow(IRTsub), 300), ] # Randomly sample 300 responses
+
+  IRTsub <- IRTsub[order(IRTsub$item), ] # Order by item
+  irt.lam <- matrix(c(1, NA, NA), ncol = 1) # Specify the lambda matrix
+
+  expect_warning(
+    galamm(
+      formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
+      data = IRTsub,
+      load.var = "item",
+      factor = "abil.sid",
+      lambda = irt.lam
+    ),
+    "`load.var` is deprecated"
+  )
+
+})

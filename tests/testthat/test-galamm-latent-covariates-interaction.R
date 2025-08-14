@@ -1,7 +1,7 @@
 test_that("Interaction between latent and observed covariates works", {
   formula <- y ~ type + x:response + (0 + loading | id)
   data <- latent_covariates
-  load.var <- "type"
+  load_var <- "type"
   lambda <- matrix(c(1, NA, NA), ncol = 1)
   factor <- "loading"
   factor_interactions <- list(~1, ~1, ~x)
@@ -9,7 +9,7 @@ test_that("Interaction between latent and observed covariates works", {
   mod <- galamm(
     formula = formula,
     data = data,
-    load.var = load.var,
+    load_var = load_var,
     lambda = lambda,
     factor = factor,
     factor_interactions = factor_interactions
@@ -20,7 +20,7 @@ test_that("Interaction between latent and observed covariates works", {
   mod0a <- galamm(
     formula = formula,
     data = data,
-    load.var = load.var,
+    load_var = load_var,
     lambda = lambda,
     factor = factor,
     factor_interactions = list(~1, ~1, ~1)
@@ -29,7 +29,7 @@ test_that("Interaction between latent and observed covariates works", {
   mod0b <- galamm(
     formula = formula,
     data = data,
-    load.var = load.var,
+    load_var = load_var,
     lambda = lambda,
     factor = factor
   )
@@ -39,7 +39,7 @@ test_that("Interaction between latent and observed covariates works", {
   modq <- galamm(
     formula = formula,
     data = data,
-    load.var = load.var,
+    load_var = load_var,
     lambda = lambda,
     factor = factor,
     factor_interactions = list(~1, ~1, ~ x + I(x^2))
@@ -52,7 +52,7 @@ test_that("Interaction between latent and observed covariates works", {
 test_that("Crossed latent-observed interaction models work", {
   formula <- y ~ type + x:response + (0 + loading | id) + (0 + response | id)
   data <- subset(latent_covariates_long, id < 100)
-  load.var <- "type"
+  load_var <- "type"
   lambda <- matrix(c(1, NA, NA), ncol = 1)
   factor <- "loading"
   factor_interactions <- list(~1, ~1, ~x)
@@ -60,7 +60,7 @@ test_that("Crossed latent-observed interaction models work", {
   mod <- galamm(
     formula = formula,
     data = data,
-    load.var = load.var,
+    load_var = load_var,
     lambda = lambda,
     factor = factor,
     factor_interactions = factor_interactions
@@ -77,7 +77,7 @@ test_that("Latent-observed interaction with smooths", {
   formula <- y ~ 0 + m1 + m2 + s(x, k = 4, by = response) +
     (0 + loading | id)
 
-  load.var <- "type"
+  load_var <- "type"
   lambda <- matrix(c(1, NA, NA), ncol = 1)
   factor <- "loading"
   factor_interactions <- list(~1, ~1, ~x)
@@ -85,7 +85,7 @@ test_that("Latent-observed interaction with smooths", {
   mod <- galamm(
     formula = formula,
     data = data,
-    load.var = load.var,
+    load_var = load_var,
     lambda = lambda,
     factor = factor,
     factor_interactions = factor_interactions
@@ -108,7 +108,7 @@ test_that("Latent-observed interaction with smooths", {
   mod <- galamm(
     formula = formula,
     data = data,
-    load.var = load.var,
+    load_var = load_var,
     lambda = lambda,
     factor = factor,
     factor_interactions = factor_interactions

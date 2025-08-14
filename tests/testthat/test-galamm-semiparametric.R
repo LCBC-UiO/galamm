@@ -681,7 +681,7 @@ test_that("Basic GAMM with factor structures works", {
   mod <- galamm(
     formula = y ~ 0 + item + sl(x, factor = "loading"),
     data = dat,
-    load.var = "item",
+    load_var = "item",
     lambda = matrix(c(1, NA, NA), ncol = 1),
     factor = "loading"
   )
@@ -735,7 +735,7 @@ test_that("Basic GAMM with factor structures works", {
   mod <- galamm(
     formula = y ~ 0 + item + t2l(x, factor = "loading"),
     data = dat,
-    load.var = "item",
+    load_var = "item",
     lambda = matrix(c(1, NA, NA), ncol = 1),
     factor = "loading"
   )
@@ -801,7 +801,7 @@ test_that("GAMM with factor structures and random effects works", {
     formula = y ~ 0 + item + sl(x, factor = "loading", k = 4) +
       (0 + loading | id / timepoint),
     data = dat,
-    load.var = "item",
+    load_var = "item",
     lambda = matrix(c(1, NA, NA), ncol = 1),
     factor = "loading"
   )
@@ -879,7 +879,7 @@ test_that("galamm with by variables and loadings works", {
       domain + sl(x, k = 4, by = domain, factor = c("ability1", "ability3")) +
       (0 + domain1:ability1 + domain3:ability3 | id),
     data = dat,
-    load.var = "item",
+    load_var = "item",
     lambda = lmat,
     factor = c("ability1", "ability3"),
     control = galamm_control(

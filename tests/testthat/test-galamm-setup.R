@@ -25,11 +25,11 @@ test_that("wrong input is handled properly", {
         (0 + loading | id / timepoint),
       data = dat,
       family = binomial,
-      load.var = "item",
+      load_var = "item",
       lambda = matrix(c(1, NA, NA), ncol = 1),
       factor = "loading"
     ),
-    "lambda matrix must contain one row for each unique element in load.var"
+    "lambda matrix must contain one row for each unique element in load_var"
   )
 
   expect_error(
@@ -38,7 +38,7 @@ test_that("wrong input is handled properly", {
         (0 + loading | id / timepoint)),
       data = dat,
       family = binomial,
-      load.var = "item",
+      load_var = "item",
       lambda = matrix(c(1, NA, NA), ncol = 1),
       factor = "loading"
     ),
@@ -51,7 +51,7 @@ test_that("wrong input is handled properly", {
         (0 + loading | id / timepoint),
       data = dat,
       family = binomial,
-      load.var = "item",
+      load_var = "item",
       lambda = matrix(c(1, NA), ncol = 1),
       factor = "loading",
       start = list(phi = 1)
@@ -65,7 +65,7 @@ test_that("wrong input is handled properly", {
         (0 + loading | id / timepoint),
       data = dat,
       family = binomial,
-      load.var = "item",
+      load_var = "item",
       lambda = matrix(c(1, NA), ncol = 1),
       factor = "loading",
       start = list(theta = 1)
@@ -79,7 +79,7 @@ test_that("wrong input is handled properly", {
         (0 + loading | id / timepoint),
       data = dat,
       family = binomial,
-      load.var = "item",
+      load_var = "item",
       lambda = matrix(c(1, NA), ncol = 1),
       factor = "loading",
       start = list(beta = rep(1, 10))
@@ -93,7 +93,7 @@ test_that("wrong input is handled properly", {
         (0 + loading | id / timepoint),
       data = dat,
       family = binomial,
-      load.var = "item",
+      load_var = "item",
       lambda = matrix(c(1, NA), ncol = 1),
       factor = "loading",
       start = list(lambda = rep(1, 5))
@@ -107,7 +107,7 @@ test_that("wrong input is handled properly", {
         (0 + loading | id / timepoint),
       data = dat,
       family = binomial,
-      load.var = "item",
+      load_var = "item",
       lambda = matrix(c(1, NA), ncol = 1),
       factor = "loading",
       start = list(weights = rep(1, 5))
@@ -132,7 +132,7 @@ test_that("wrong input is handled properly", {
         (0 + loading | id / timepoint),
       data = newdat,
       family = binomial,
-      load.var = "item",
+      load_var = "item",
       lambda = matrix(c(1, NA, NA), ncol = 1),
       factor = 1L
     ),
@@ -146,7 +146,7 @@ test_that("wrong input is handled properly", {
         (0 + loading | id / timepoint),
       data = newdat,
       family = binomial,
-      load.var = "item",
+      load_var = "item",
       lambda = list(matrix(c(1, NA), ncol = 1)),
       factor = "loading"
     ),
@@ -261,20 +261,20 @@ test_that("wrong input is handled properly", {
     {
       mod1 <- galamm(
         formula = y ~ x + (1 | id), data = dat, family = gaussian,
-        load.var = 1
+        load_var = 1
       )
     },
-    "load.var must be NULL or a character of length one"
+    "load_var must be NULL or a character of length one"
   )
 
   expect_error(
     {
       mod1 <- galamm(
         formula = y ~ x + (0 + a | id), data = dat, family = gaussian,
-        load.var = letters
+        load_var = letters
       )
     },
-    "load.var must be NULL or a character of length one"
+    "load_var must be NULL or a character of length one"
   )
 })
 
@@ -331,7 +331,7 @@ test_that("multiple factors and factors in fixed effects are allowed", {
       + (0 + ms | mid),
     data = KYPSsim,
     factor = c("ms", "hs"),
-    load.var = c("time"),
+    load_var = c("time"),
     lambda = kyps.lam,
     control = galamm_control(
       optim_control = list(maxit = 1),
@@ -347,7 +347,7 @@ test_that("multiple factors and factors in fixed effects are allowed", {
   kyps.model <- galamm(
     formula = esteem ~ 1 + ms:time2 + (1 | sid),
     data = subset(KYPSsim, time %in% c(1, 2)),
-    factor = "ms", load.var = "time",
+    factor = "ms", load_var = "time",
     lambda = matrix(c(1, NA)),
     control = galamm_control(
       optim_control = list(maxit = 1),
@@ -388,7 +388,7 @@ test_that("missing values are handled appropriately", {
     galamm(
       formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
       data = IRTsub,
-      load.var = c("item"),
+      load_var = c("item"),
       factor = c("abil.sid"),
       lambda = irt.lam,
       na.action = na.fail
@@ -404,7 +404,7 @@ test_that("missing values are handled appropriately", {
       mod <- galamm(
         formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
         data = IRTsub,
-        load.var = c("item"),
+        load_var = c("item"),
         factor = c("abil.sid"),
         lambda = irt.lam,
         na.action = "na.fail"
@@ -420,7 +420,7 @@ test_that("missing values are handled appropriately", {
       mod <- galamm(
         formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
         data = IRTsub,
-        load.var = c("item"),
+        load_var = c("item"),
         factor = c("abil.sid"),
         lambda = irt.lam
       )
@@ -434,7 +434,7 @@ test_that("missing values are handled appropriately", {
     galamm(
       formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
       data = IRTsub,
-      load.var = c("item"),
+      load_var = c("item"),
       factor = c("abil.sid"),
       lambda = irt.lam
     ),
@@ -446,7 +446,7 @@ test_that("missing values are handled appropriately", {
   mod <- galamm(
     formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
     data = IRTsub,
-    load.var = "item",
+    load_var = "item",
     factor = "abil.sid",
     lambda = irt.lam,
     na.action = "na.omit"
@@ -455,7 +455,7 @@ test_that("missing values are handled appropriately", {
   mod2 <- galamm(
     formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
     data = IRTsub,
-    load.var = "item",
+    load_var = "item",
     factor = "abil.sid",
     lambda = irt.lam
   )
@@ -463,7 +463,7 @@ test_that("missing values are handled appropriately", {
   mod3 <- galamm(
     formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
     data = IRTsub,
-    load.var = "item",
+    load_var = "item",
     factor = "abil.sid",
     lambda = irt.lam
   )
@@ -477,7 +477,7 @@ test_that("missing values are handled appropriately", {
     galamm(
       formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
       data = IRTsub,
-      load.var = "item",
+      load_var = "item",
       factor = "abil.sid",
       lambda = irt.lamInf
     ),
@@ -488,7 +488,7 @@ test_that("missing values are handled appropriately", {
     galamm(
       formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
       data = IRTsub,
-      load.var = "item",
+      load_var = "item",
       factor = "abil.sid",
       lambda = irt.lamInf
     ),
@@ -500,7 +500,7 @@ test_that("missing values are handled appropriately", {
     galamm(
       formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
       data = IRTsub,
-      load.var = "item",
+      load_var = "item",
       factor = "abil.sid",
       lambda = irt.lamInf
     ),
@@ -514,7 +514,7 @@ test_that("missing values are handled appropriately", {
       mod <- galamm(
         formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
         data = IRTsub,
-        load.var = "item",
+        load_var = "item",
         factor = "abil.sid",
         lambda = irt.lam,
       )
@@ -530,7 +530,7 @@ test_that("missing values are handled appropriately", {
       mod <- galamm(
         formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
         data = IRTsub,
-        load.var = "item",
+        load_var = "item",
         factor = "abil.sid",
         lambda = irt.lam,
       )
@@ -545,7 +545,7 @@ test_that("missing values are handled appropriately", {
       mod <- galamm(
         formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
         data = IRTsub,
-        load.var = "item",
+        load_var = "item",
         factor = "abil.sid",
         lambda = irt.lam,
       )
@@ -563,7 +563,7 @@ test_that("edge conditions tests for data", {
       mod <- galamm(
         formula = y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),
         data = IRTsub[0, ],
-        load.var = "item",
+        load_var = "item",
         factor = "abil.sid",
         lambda = irt.lam,
       )
@@ -646,21 +646,21 @@ test_that("loading and factor dimensions have to be correct", {
       formula = y ~ 0 + as.factor(item) + (0 + abil.sid | sid) +
         (0 + abil.sid | school),
       data = IRTsim,
-      load.var = "item",
+      load_var = "item",
       factor = "abil.sid",
       lambda = irt.lam[1:4, , drop = FALSE]
     ),
-    "lambda matrix must contain one row for each unique element in load.var"
+    "lambda matrix must contain one row for each unique element in load_var"
   )
   expect_error(
     galamm(
       formula = y ~ 0 + as.factor(item) + (0 + abil.sid | sid) +
         (0 + abil.sid | school),
       data = IRTsim,
-      load.var = "item",
+      load_var = "item",
       lambda = irt.lam
     ),
-    "load.var, lambda, and factor must either all have values or all be NULL."
+    "load_var, lambda, and factor must either all have values or all be NULL."
   )
 
   expect_message(
@@ -668,7 +668,7 @@ test_that("loading and factor dimensions have to be correct", {
       formula = y ~ 0 + as.factor(item) + (0 + abil.sid | sid) +
         (0 + abil.sid | school),
       data = IRTsim,
-      load.var = "item",
+      load_var = "item",
       factor = "abil.sid",
       lambda = as.numeric(irt.lam),
       control = galamm_control(
@@ -694,9 +694,10 @@ test_that("loading and factor dimensions have to be correct", {
         (0 + ms | mid) + (1 | sid),
       data = KYPSsim,
       factor = c("ms", "hs"),
-      load.var = "time",
+      load_var = "time",
       lambda = kyps.lam[, 1, drop = FALSE]
     ),
     "lambda matrix must have one column for each element in factor"
   )
 })
+

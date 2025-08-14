@@ -218,7 +218,7 @@ mod <- galamm(
   formula = y ~ 0 + item + sl(x, factor = "loading") +
     (0 + loading | id / timepoint),
   data = dat,
-  load.var = "item",
+  load_var = "item",
   lambda = loading_matrix,
   factor = "loading"
 )
@@ -249,7 +249,7 @@ mod <- galamm(
     (0 + loading | id / timepoint),
   data = dat,
   family = binomial,
-  load.var = "item",
+  load_var = "item",
   lambda = matrix(c(1, NA), ncol = 1),
   factor = "loading"
 )
@@ -305,7 +305,7 @@ mod_byvar <- galamm(
     sl(x, by = domain, factor = c("ability1", "ability3")) +
     (0 + domain1:ability1 + domain3:ability3 | id / timepoint),
   data = dat,
-  load.var = "item",
+  load_var = "item",
   lambda = lmat,
   factor = c("ability1", "ability3"),
   control = galamm_control(
@@ -370,7 +370,7 @@ mod_byvar_mixed <- galamm(
   data = dat,
   family = c(gaussian, binomial),
   family_mapping = ifelse(dat$domain == 1, 1L, 2L),
-  load.var = "item",
+  load_var = "item",
   lambda = lmat,
   factor = c("ability1", "ability2"),
   control = galamm_control(

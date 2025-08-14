@@ -5,7 +5,7 @@ test_that("Mixed response works", {
     data = dat,
     family = c(gaussian, binomial),
     family_mapping = ifelse(dat$itemgroup == "a", 1L, 2L),
-    load.var = "itemgroup",
+    load_var = "itemgroup",
     lambda = matrix(c(1, NA), ncol = 1),
     factor = "loading"
   )
@@ -76,7 +76,7 @@ test_that("Mixed response works", {
       data = dat,
       family = c(gaussian, binomial),
       family_mapping = ifelse(dat$itemgroup == "a", 1L, 2L)[1:3],
-      load.var = "itemgroup",
+      load_var = "itemgroup",
       lambda = matrix(c(1, NA), ncol = 1),
       factor = "loading"
     ),
@@ -89,7 +89,7 @@ test_that("Mixed response works", {
       data = dat,
       family = c(gaussian, binomial),
       family_mapping = matrix(ifelse(dat$itemgroup == "a", 1L, 2L), ncol = 2),
-      load.var = "itemgroup",
+      load_var = "itemgroup",
       lambda = matrix(c(1, NA), ncol = 1),
       factor = "loading"
     ),
@@ -102,7 +102,7 @@ test_that("Mixed response works", {
       data = dat,
       family = c(gaussian, binomial),
       family_mapping = sample(1:4, nrow(dat), replace = TRUE),
-      load.var = "itemgroup",
+      load_var = "itemgroup",
       lambda = matrix(c(1, NA), ncol = 1),
       factor = "loading"
     ),
@@ -115,7 +115,7 @@ test_that("Mixed response works", {
       data = dat,
       family = c(gaussian, binomial),
       family_mapping = rep(1, nrow(dat)),
-      load.var = "itemgroup",
+      load_var = "itemgroup",
       lambda = matrix(c(1, NA), ncol = 1),
       factor = "loading"
     ),
@@ -128,7 +128,7 @@ test_that("Mixed response works", {
     data = dat,
     family = c(gaussian, binomial),
     family_mapping = ifelse(dat$itemgroup == "a", 1L, 2L),
-    load.var = "itemgroup",
+    load_var = "itemgroup",
     lambda = matrix(c(1, NA), ncol = 1),
     factor = "loading",
     start = list(
@@ -149,7 +149,7 @@ test_that("Mixed response works with multiple trials", {
     data = dat,
     family = c(gaussian, binomial),
     family_mapping = ifelse(dat$itemgroup == "a", 1L, 2L),
-    load.var = "itemgroup",
+    load_var = "itemgroup",
     lambda = matrix(c(1, NA), ncol = 1),
     factor = "loading"
   )
@@ -168,7 +168,7 @@ test_that("Covariate measurement error model works", {
     family = c(gaussian, binomial),
     family_mapping = ifelse(diet$item == "chd", 2L, 1L),
     factor = "loading",
-    load.var = "item",
+    load_var = "item",
     lambda = lam,
     start = list(theta = 10)
   )
@@ -195,7 +195,7 @@ test_that("Covariate measurement error model works", {
     family = c(gaussian, binomial),
     family_mapping = ifelse(diet$item == "chd", 2L, 1L),
     factor = "loading",
-    load.var = "item",
+    load_var = "item",
     lambda = lam,
     start = list(theta = 10)
   )

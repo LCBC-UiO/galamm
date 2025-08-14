@@ -17,7 +17,7 @@ test_that("Logistic GLMM with simple factor works", {
     formula = form,
     data = dat,
     family = binomial,
-    load.var = "item",
+    load_var = "item",
     factor = "abil.sid",
     lambda = irt.lam
   )
@@ -135,7 +135,7 @@ test_that(
       formula = form,
       data = dat,
       family = binomial,
-      load.var = "item",
+      load_var = "item",
       factor = "abil.sid",
       lambda = irt.lam
     )
@@ -144,7 +144,7 @@ test_that(
       formula = form,
       data = dat,
       family = binomial,
-      load.var = "item",
+      load_var = "item",
       factor = "abil.sid",
       lambda = irt.lam
     )

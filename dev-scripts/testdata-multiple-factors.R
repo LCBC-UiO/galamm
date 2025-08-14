@@ -28,7 +28,7 @@ formula <- response ~ 0 + item + (0 + teacher1 + teacher2 | tch) +
   (0 + trait1.t + trait2.t + trait1.s + trait2.s | stu) +
   (1 | class)
 
-load.var = "item"
+load_var = "item"
 
 weights = NULL
 family = gaussian

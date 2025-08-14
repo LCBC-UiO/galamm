@@ -10,6 +10,7 @@ galamm(
   data,
   family = gaussian,
   family_mapping = rep(1, nrow(data)),
+  load_var = NULL,
   load.var = NULL,
   lambda = NULL,
   factor = NULL,
@@ -60,10 +61,12 @@ sensitive.}
 to the first element of \code{family}. The length of \code{family_mapping}
 must be identical to the number of observations, \code{nrow(data)}.}
 
-\item{load.var}{Optional character specifying the name of the variable in
+\item{load_var}{Optional character specifying the name of the variable in
 \code{data} identifying what the factors load onto. Default to \code{NULL},
 which means that there are no loading variables. Argument is case
 sensitive.}
+
+\item{load.var}{Deprecated. Use \code{load_var} instead.}
 
 \item{lambda}{Optional factor loading matrix. Numerical values indicate that
 the given value is fixed, while \code{NA} means that the entry is a
@@ -217,7 +220,7 @@ mod <- galamm(
   family = families,
   family_mapping = family_mapping,
   factor = "level",
-  load.var = "itemgroup",
+  load_var = "itemgroup",
   lambda = loading_matrix
 )
 
@@ -257,7 +260,7 @@ mod <- galamm(
   formula = y ~ 0 + item + sl(x, factor = "loading") +
     (0 + loading | id),
   data = dat,
-  load.var = "item",
+  load_var = "item",
   lambda = loading_matrix,
   factor = "loading"
 )
@@ -277,7 +280,7 @@ factor_interactions <- list(~1, ~1, ~x)
 mod <- galamm(
   formula = y ~ type + x:response + (0 + loading | id),
   data = latent_covariates,
-  load.var = "type",
+  load_var = "type",
   lambda = lambda,
   factor = "loading",
   factor_interactions = factor_interactions

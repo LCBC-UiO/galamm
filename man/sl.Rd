@@ -44,7 +44,7 @@ loading_matrix <- matrix(c(1, NA, NA), ncol = 1)
 mod <- galamm(
   formula = y ~ 0 + item + sl(x, k = 4, factor = "loading"),
   data = dat,
-  load.var = "item",
+  load_var = "item",
   lambda = loading_matrix,
   factor = "loading"
 )
@@ -54,7 +54,7 @@ mod <- galamm(
   formula = y ~ 0 + item +
     sl(x, bs = "cr", k = 4, factor = "loading"),
   data = dat,
-  load.var = "item",
+  load_var = "item",
   lambda = loading_matrix,
   factor = "loading"
 )

@@ -27,7 +27,7 @@ family <- gaussian
 family_mapping <- rep(1L, nrow(data))
 lambda <- list(time.lam, item.lam)
 factor = list(c("ms", "hs"), "lat.var")
-load.var = c("time", "item")
+load_var = c("time", "item")
 factor_interactions <- NULL
 start <- NULL
 control <- galamm_control()
@@ -38,6 +38,6 @@ na.action <- "na.omit"
 #   data = data,
 #   lambda = lambda,
 #   factor = factor,
-#   load.var = load.var)
+#   load_var = load_var)
 #
 #

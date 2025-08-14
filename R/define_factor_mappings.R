@@ -211,7 +211,7 @@ factor_finder <- function(factor, vars) {
 #' of \code{lambda}, with zero-order indexing as in \code{C++}.
 #'
 #' @param gobj A list element returned from the internal function \code{gamm4}.
-#' @param load.var The argument \code{load.var} argument provided to
+#' @param load_var The argument \code{load_var} argument provided to
 #'   \code{\link{galamm}}.
 #' @param lambda The argument \code{lambda} argument provided to
 #'   \code{\link{galamm}}.
@@ -242,7 +242,7 @@ factor_finder <- function(factor, vars) {
 #'
 #' @noRd
 define_factor_mappings <- function(
-    gobj, load.var, lambda, factor, factor_interactions, data) {
+    gobj, load_var, lambda, factor, factor_interactions, data) {
   if (is.null(factor)) {
     return(
       list(
@@ -281,7 +281,7 @@ define_factor_mappings <- function(
       } else {
         return(mapping_component)
       }
-      ll[data[, load.var]]
+      ll[data[, load_var]]
     })
     lambda_mapping_X <- do.call(c, mappings)
     stopifnot(length(lambda_mapping_X) == length(X))
@@ -348,7 +348,7 @@ define_factor_mappings <- function(
 
           mapping_component_covs <- Map(function(x, y) {
             as.numeric(stats::model.matrix(factor_interactions[[y]], data = data[x, ]))
-          }, x = inds, y = data[inds, load.var])
+          }, x = inds, y = data[inds, load_var])
         }
 
         inds_expanded <- unlist(Map(function(x, y) {
@@ -357,7 +357,7 @@ define_factor_mappings <- function(
 
         mapping_component[inds_expanded] <-
           Map(function(x, y) rep(ll[x, cn], each = y),
-            x = data[inds, load.var], y = delta[inds]
+            x = data[inds, load_var], y = delta[inds]
           )
       }
 

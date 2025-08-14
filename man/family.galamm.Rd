@@ -30,7 +30,7 @@ mixed_resp <- galamm(
   data = mresp,
   family = families,
   family_mapping = family_mapping,
-  load.var = "itemgroup",
+  load_var = "itemgroup",
   lambda = loading_matrix,
   factor = "level"
 )

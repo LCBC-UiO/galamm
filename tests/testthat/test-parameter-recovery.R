@@ -96,7 +96,7 @@ lmm_factor_simulator_function <- function(n_ids, repetition) {
 
   mod <- galamm(
     formula = y ~ x + (0 + loading | id), data = dat,
-    load.var = "timepoint",
+    load_var = "timepoint",
     lambda = matrix(c(1, NA, NA), ncol = 1),
     factor = "loading"
   )
