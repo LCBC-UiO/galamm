@@ -213,9 +213,9 @@ We can look at the factor loadings specifically using the `factor_loadings` func
 factor_loadings(mod)
 #>                 ms        SE       hs        SE
 #> lambda1 1.00000000        NA 0.000000        NA
-#> lambda2 0.87509310 0.1421073 0.000000        NA
-#> lambda3 0.04431740 0.1495679 1.000000        NA
-#> lambda4 0.02093663 0.1542824 1.501574 0.5040217
+#> lambda2 0.87509320 0.1421073 0.000000        NA
+#> lambda3 0.04431744 0.1495679 1.000000        NA
+#> lambda4 0.02093667 0.1542824 1.501574 0.5040217
 ```
 
 A diagnostic plot of residuals versus predicted values also looks acceptable, although there seems to be a slight upward trend.
