@@ -17,6 +17,9 @@ test_that("galamm reproduces gamm4", {
   ), tolerance = .001)
 
   expect_snapshot(print(summary(mod$gam), digits = 2))
+
+  pdf(file = NULL)
+  on.exit(dev.off(), add = TRUE)
   expect_type(plot_smooth(mod), "list")
 
   expect_equal(head(predict(mod)), structure(c(
