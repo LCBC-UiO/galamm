@@ -55,7 +55,7 @@ setup_factor <- function(load.var, lambda, factor, data) {
     if (length(unique(data[, load.var])) != length(lambda[, j])) {
       stop(
         "lambda matrix must contain one row ",
-        "for each element in load.var"
+        "for each unique element in load.var"
       )
     }
     eval(parse(text = paste("data$", factor[[j]], "<-1")))

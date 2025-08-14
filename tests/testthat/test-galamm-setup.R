@@ -29,7 +29,7 @@ test_that("wrong input is handled properly", {
       lambda = matrix(c(1, NA, NA), ncol = 1),
       factor = "loading"
     ),
-    "lambda matrix must contain one row for each element in load.var"
+    "lambda matrix must contain one row for each unique element in load.var"
   )
 
   expect_error(
@@ -650,7 +650,7 @@ test_that("loading and factor dimensions have to be correct", {
       factor = "abil.sid",
       lambda = irt.lam[1:4, , drop = FALSE]
     ),
-    "lambda matrix must contain one row for each element in load.var"
+    "lambda matrix must contain one row for each unique element in load.var"
   )
   expect_error(
     galamm(
