@@ -138,6 +138,7 @@ Rockwood and Jeon (2019)
 <span>  <span class="va">data</span>,</span>
 <span>  family <span class="op">=</span> <span class="va">gaussian</span>,</span>
 <span>  family_mapping <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  load_var <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  load.var <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  lambda <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  factor <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -205,11 +206,15 @@ to the first element of <code>family</code>. The length of <code>family_mapping<
 must be identical to the number of observations, <code>nrow(data)</code>.</p></dd>
 
 
-<dt id="arg-load-var">load.var<a class="anchor" aria-label="anchor" href="#arg-load-var"></a></dt>
+<dt id="arg-load-var">load_var<a class="anchor" aria-label="anchor" href="#arg-load-var"></a></dt>
 <dd><p>Optional character specifying the name of the variable in
 <code>data</code> identifying what the factors load onto. Default to <code>NULL</code>,
 which means that there are no loading variables. Argument is case
 sensitive.</p></dd>
+
+
+<dt id="arg-load-var">load.var<a class="anchor" aria-label="anchor" href="#arg-load-var"></a></dt>
+<dd><p>Deprecated. Use <code>load_var</code> instead.</p></dd>
 
 
 <dt id="arg-lambda">lambda<a class="anchor" aria-label="anchor" href="#arg-lambda"></a></dt>
@@ -391,7 +396,7 @@ Chapman and Hall/CRC.</p>
 <span class="r-in"><span>  family <span class="op">=</span> <span class="va">families</span>,</span></span>
 <span class="r-in"><span>  family_mapping <span class="op">=</span> <span class="va">family_mapping</span>,</span></span>
 <span class="r-in"><span>  factor <span class="op">=</span> <span class="st">"level"</span>,</span></span>
-<span class="r-in"><span>  load.var <span class="op">=</span> <span class="st">"itemgroup"</span>,</span></span>
+<span class="r-in"><span>  load_var <span class="op">=</span> <span class="st">"itemgroup"</span>,</span></span>
 <span class="r-in"><span>  lambda <span class="op">=</span> <span class="va">loading_matrix</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
@@ -482,7 +487,7 @@ Chapman and Hall/CRC.</p>
 <span class="r-in"><span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="fl">0</span> <span class="op">+</span> <span class="va">item</span> <span class="op">+</span> <span class="fu"><a href="sl.html">sl</a></span><span class="op">(</span><span class="va">x</span>, factor <span class="op">=</span> <span class="st">"loading"</span><span class="op">)</span> <span class="op">+</span></span></span>
 <span class="r-in"><span>    <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">loading</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  data <span class="op">=</span> <span class="va">dat</span>,</span></span>
-<span class="r-in"><span>  load.var <span class="op">=</span> <span class="st">"item"</span>,</span></span>
+<span class="r-in"><span>  load_var <span class="op">=</span> <span class="st">"item"</span>,</span></span>
 <span class="r-in"><span>  lambda <span class="op">=</span> <span class="va">loading_matrix</span>,</span></span>
 <span class="r-in"><span>  factor <span class="op">=</span> <span class="st">"loading"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
@@ -503,7 +508,7 @@ Chapman and Hall/CRC.</p>
 <span class="r-in"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu">galamm</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">type</span> <span class="op">+</span> <span class="va">x</span><span class="op">:</span><span class="va">response</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">loading</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  data <span class="op">=</span> <span class="va">latent_covariates</span>,</span></span>
-<span class="r-in"><span>  load.var <span class="op">=</span> <span class="st">"type"</span>,</span></span>
+<span class="r-in"><span>  load_var <span class="op">=</span> <span class="st">"type"</span>,</span></span>
 <span class="r-in"><span>  lambda <span class="op">=</span> <span class="va">lambda</span>,</span></span>
 <span class="r-in"><span>  factor <span class="op">=</span> <span class="st">"loading"</span>,</span></span>
 <span class="r-in"><span>  factor_interactions <span class="op">=</span> <span class="va">factor_interactions</span></span></span>

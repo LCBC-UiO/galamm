@@ -196,7 +196,7 @@ estimated.</p>
 <span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">item</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">ability</span> <span class="op">|</span> <span class="va">school</span> <span class="op">/</span> <span class="va">sid</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">IRTsim</span>,</span>
 <span>  family <span class="op">=</span> <span class="va">binomial</span>,</span>
-<span>  load.var <span class="op">=</span> <span class="st">"item"</span>,</span>
+<span>  load_var <span class="op">=</span> <span class="st">"item"</span>,</span>
 <span>  factor <span class="op">=</span> <span class="st">"ability"</span>,</span>
 <span>  lambda <span class="op">=</span> <span class="va">loading_matrix</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -209,7 +209,7 @@ in the mathematical specification of the model. The variable
 <code>ability</code> is not part of the <code>IRTsim</code> dataframe,
 but is instead specified in the argument
 <code>factor = "ability"</code>. The argument
-<code>load.var = "item"</code> specifies that all rows in the dataframe
+<code>load_var = "item"</code> specifies that all rows in the dataframe
 with the same value of “item” should get the same element of
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝛌</mi><annotation encoding="application/x-tex">\boldsymbol{\lambda}</annotation></semantics></math>,
 and hence it defines the dummy variable
@@ -328,7 +328,7 @@ specified <code>cbind(successes, failures)</code>.</p>
 <span>  formula <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">y</span>, <span class="va">trials</span> <span class="op">-</span> <span class="va">y</span><span class="op">)</span> <span class="op">~</span> <span class="va">item</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">ability</span> <span class="op">|</span> <span class="va">school</span> <span class="op">/</span> <span class="va">sid</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">dat</span>,</span>
 <span>  family <span class="op">=</span> <span class="va">binomial</span>,</span>
-<span>  load.var <span class="op">=</span> <span class="st">"item"</span>,</span>
+<span>  load_var <span class="op">=</span> <span class="st">"item"</span>,</span>
 <span>  factor <span class="op">=</span> <span class="st">"ability"</span>,</span>
 <span>  lambda <span class="op">=</span> <span class="va">loading_matrix</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -428,6 +428,11 @@ need.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/lme4/lme4/" class="external-link">lme4</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; Loading required package: Matrix</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Attaching package: 'lme4'</span></span>
+<span><span class="co">#&gt; The following object is masked from 'package:galamm':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     llikAIC</span></span>
 <span><span class="va">count_mod_lme4</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/lme4/man/glmer.html" class="external-link">glmer</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">lbas</span> <span class="op">*</span> <span class="va">treat</span> <span class="op">+</span> <span class="va">lage</span> <span class="op">+</span> <span class="va">v4</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">subj</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">epilep</span>,</span>

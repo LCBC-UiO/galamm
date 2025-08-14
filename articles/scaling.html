@@ -107,7 +107,7 @@ galamm.</p>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">factors</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ms"</span>, <span class="st">"hs"</span><span class="op">)</span></span>
-<span><span class="va">load.var</span> <span class="op">&lt;-</span> <span class="st">"time"</span></span>
+<span><span class="va">load_var</span> <span class="op">&lt;-</span> <span class="st">"time"</span></span>
 <span><span class="va">form</span> <span class="op">&lt;-</span> <span class="va">esteem</span> <span class="op">~</span> <span class="va">time</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">ms</span> <span class="op">|</span> <span class="va">mid</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">hs</span> <span class="op">|</span> <span class="va">hid</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">sid</span><span class="op">)</span></span></code></pre></div>
 <p>The KYPSsim dataset has 11,494 rows.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
@@ -137,7 +137,7 @@ replicates for each sample size.</p>
 <span>    formula <span class="op">=</span> <span class="va">form</span>,</span>
 <span>    data <span class="op">=</span> <span class="va">dat</span>,</span>
 <span>    factor <span class="op">=</span> <span class="va">factors</span>,</span>
-<span>    load.var <span class="op">=</span> <span class="va">load.var</span>,</span>
+<span>    load_var <span class="op">=</span> <span class="va">load_var</span>,</span>
 <span>    lambda <span class="op">=</span> <span class="va">loading_matrix</span></span>
 <span>  <span class="op">)</span></span>
 <span>  <span class="va">t2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span></span>
@@ -250,7 +250,7 @@ on generalized linear mixed models with factor structures</a>.</p>
 <span>    formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">item</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">ability</span> <span class="op">|</span> <span class="va">school</span> <span class="op">/</span> <span class="va">sid</span><span class="op">)</span>,</span>
 <span>    data <span class="op">=</span> <span class="va">IRTsim</span>,</span>
 <span>    family <span class="op">=</span> <span class="va">binomial</span>,</span>
-<span>    load.var <span class="op">=</span> <span class="st">"item"</span>,</span>
+<span>    load_var <span class="op">=</span> <span class="st">"item"</span>,</span>
 <span>    factor <span class="op">=</span> <span class="st">"ability"</span>,</span>
 <span>    lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
@@ -320,7 +320,7 @@ separate vignette</a>.</p>
 <span>    formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="fl">0</span> <span class="op">+</span> <span class="va">item</span> <span class="op">+</span> <span class="fu"><a href="../reference/sl.html">sl</a></span><span class="op">(</span><span class="va">x</span>, factor <span class="op">=</span> <span class="st">"loading"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>      <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">loading</span> <span class="op">|</span> <span class="va">id</span> <span class="op">/</span> <span class="va">timepoint</span><span class="op">)</span>,</span>
 <span>    data <span class="op">=</span> <span class="va">dat</span>,</span>
-<span>    load.var <span class="op">=</span> <span class="st">"item"</span>,</span>
+<span>    load_var <span class="op">=</span> <span class="st">"item"</span>,</span>
 <span>    lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,</span>
 <span>    factor <span class="op">=</span> <span class="st">"loading"</span></span>
 <span>  <span class="op">)</span></span>
@@ -381,7 +381,7 @@ model fit to the data.</div>
 <span>        <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">loading</span> <span class="op">|</span> <span class="va">id</span> <span class="op">/</span> <span class="va">timepoint</span><span class="op">)</span>,</span>
 <span>      data <span class="op">=</span> <span class="va">dat</span>,</span>
 <span>      family <span class="op">=</span> <span class="va">binomial</span>,</span>
-<span>      load.var <span class="op">=</span> <span class="st">"item"</span>,</span>
+<span>      load_var <span class="op">=</span> <span class="st">"item"</span>,</span>
 <span>      lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="cn">NA</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,</span>
 <span>      factor <span class="op">=</span> <span class="st">"loading"</span></span>
 <span>    <span class="op">)</span></span>

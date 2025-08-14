@@ -139,7 +139,7 @@
 <span>  data <span class="op">=</span> <span class="va">mresp</span>,</span>
 <span>  family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">gaussian</span>, <span class="va">binomial</span><span class="op">)</span>,</span>
 <span>  family_mapping <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">mresp</span><span class="op">$</span><span class="va">itemgroup</span> <span class="op">==</span> <span class="st">"a"</span>, <span class="fl">1L</span>, <span class="fl">2L</span><span class="op">)</span>,</span>
-<span>  load.var <span class="op">=</span> <span class="st">"itemgroup"</span>,</span>
+<span>  load_var <span class="op">=</span> <span class="st">"itemgroup"</span>,</span>
 <span>  lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="cn">NA</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,</span>
 <span>  factor <span class="op">=</span> <span class="st">"loading"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -185,7 +185,7 @@
 <span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="fl">0</span> <span class="op">+</span> <span class="va">item</span> <span class="op">+</span> <span class="fu"><a href="reference/sl.html">sl</a></span><span class="op">(</span><span class="va">x</span>, factor <span class="op">=</span> <span class="st">"loading"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">loading</span> <span class="op">|</span> <span class="va">id</span> <span class="op">/</span> <span class="va">timepoint</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">dat</span>,</span>
-<span>  load.var <span class="op">=</span> <span class="st">"item"</span>,</span>
+<span>  load_var <span class="op">=</span> <span class="st">"item"</span>,</span>
 <span>  lambda <span class="op">=</span> <span class="va">loading_matrix</span>,</span>
 <span>  factor <span class="op">=</span> <span class="st">"loading"</span></span>
 <span><span class="op">)</span></span></code></pre></div>

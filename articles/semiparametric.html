@@ -328,7 +328,7 @@ such data can be modeled.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Fixed effects:</span></span>
 <span><span class="co">#&gt;              Estimate Std. Error z value Pr(&gt;|z|)    </span></span>
-<span><span class="co">#&gt; X(Intercept)   2.8115     0.2034  13.825  &lt; 2e-16 ***</span></span>
+<span><span class="co">#&gt; X(Intercept)   2.8115     0.2034  13.824  &lt; 2e-16 ***</span></span>
 <span><span class="co">#&gt; Xs(x)Fx1      -1.4110     0.4242  -3.326  0.00088 ***</span></span>
 <span><span class="co">#&gt; ---</span></span>
 <span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
@@ -491,7 +491,7 @@ issues.</p>
 <span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="fl">0</span> <span class="op">+</span> <span class="va">item</span> <span class="op">+</span> <span class="fu"><a href="../reference/sl.html">sl</a></span><span class="op">(</span><span class="va">x</span>, factor <span class="op">=</span> <span class="st">"loading"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">loading</span> <span class="op">|</span> <span class="va">id</span> <span class="op">/</span> <span class="va">timepoint</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">dat</span>,</span>
-<span>  load.var <span class="op">=</span> <span class="st">"item"</span>,</span>
+<span>  load_var <span class="op">=</span> <span class="st">"item"</span>,</span>
 <span>  lambda <span class="op">=</span> <span class="va">loading_matrix</span>,</span>
 <span>  factor <span class="op">=</span> <span class="st">"loading"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -514,7 +514,7 @@ the model is implemented incorrectly.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Scaled residuals: </span></span>
 <span><span class="co">#&gt;    Min     1Q Median     3Q    Max </span></span>
-<span><span class="co">#&gt;  0.693 10.402 26.734 35.728 51.878 </span></span>
+<span><span class="co">#&gt; -92.78 -65.29 -50.78 -17.21 -10.48 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Lambda:</span></span>
 <span><span class="co">#&gt;         loading       SE</span></span>
@@ -535,7 +535,7 @@ the model is implemented incorrectly.</p>
 <span><span class="co">#&gt; item11            1.2694    0.06663 19.0513 6.412e-81</span></span>
 <span><span class="co">#&gt; item12            1.7788    0.09307 19.1128 1.977e-81</span></span>
 <span><span class="co">#&gt; item13            0.3797    0.02019 18.8077 6.531e-79</span></span>
-<span><span class="co">#&gt; s(x):loadingFx1  -0.1496    0.19977 -0.7488 4.540e-01</span></span>
+<span><span class="co">#&gt; s(x):loadingFx1   0.1496    0.19977  0.7488 4.540e-01</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Approximate significance of smooth terms:</span></span>
 <span><span class="co">#&gt;                edf Ref.df    F p-value</span></span>
@@ -566,7 +566,7 @@ is the same as before.</p>
 <span>    <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">loading</span> <span class="op">|</span> <span class="va">id</span> <span class="op">/</span> <span class="va">timepoint</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">dat</span>,</span>
 <span>  family <span class="op">=</span> <span class="va">binomial</span>,</span>
-<span>  load.var <span class="op">=</span> <span class="st">"item"</span>,</span>
+<span>  load_var <span class="op">=</span> <span class="st">"item"</span>,</span>
 <span>  lambda <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="cn">NA</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,</span>
 <span>  factor <span class="op">=</span> <span class="st">"loading"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -671,7 +671,7 @@ model is hard to estimate.</p>
 <span>    <span class="fu"><a href="../reference/sl.html">sl</a></span><span class="op">(</span><span class="va">x</span>, by <span class="op">=</span> <span class="va">domain</span>, factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ability1"</span>, <span class="st">"ability3"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">domain1</span><span class="op">:</span><span class="va">ability1</span> <span class="op">+</span> <span class="va">domain3</span><span class="op">:</span><span class="va">ability3</span> <span class="op">|</span> <span class="va">id</span> <span class="op">/</span> <span class="va">timepoint</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">dat</span>,</span>
-<span>  load.var <span class="op">=</span> <span class="st">"item"</span>,</span>
+<span>  load_var <span class="op">=</span> <span class="st">"item"</span>,</span>
 <span>  lambda <span class="op">=</span> <span class="va">lmat</span>,</span>
 <span>  factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ability1"</span>, <span class="st">"ability3"</span><span class="op">)</span>,</span>
 <span>  control <span class="op">=</span> <span class="fu"><a href="../reference/galamm_control.html">galamm_control</a></span><span class="op">(</span></span>
@@ -683,69 +683,70 @@ model is hard to estimate.</p>
 <span><span class="co">#&gt; At X0, 0 variables are exactly at the bounds</span></span>
 <span><span class="co">#&gt; At iterate     0  f=        25324  |proj g|=       9642.6</span></span>
 <span><span class="co">#&gt; At iterate    50  f =        136.9  |proj g|=        716.66</span></span>
-<span><span class="co">#&gt; At iterate   100  f =      -1062.4  |proj g|=        356.24</span></span>
-<span><span class="co">#&gt; At iterate   150  f =      -1069.1  |proj g|=        19.086</span></span>
-<span><span class="co">#&gt; At iterate   200  f =      -1147.6  |proj g|=         10.73</span></span>
+<span><span class="co">#&gt; At iterate   100  f =      -1062.4  |proj g|=        400.16</span></span>
+<span><span class="co">#&gt; At iterate   150  f =      -1069.1  |proj g|=        151.55</span></span>
+<span><span class="co">#&gt; At iterate   200  f =      -1147.5  |proj g|=        44.829</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; iterations 201</span></span>
-<span><span class="co">#&gt; function evaluations 223</span></span>
-<span><span class="co">#&gt; segments explored during Cauchy searches 204</span></span>
+<span><span class="co">#&gt; iterations 207</span></span>
+<span><span class="co">#&gt; function evaluations 228</span></span>
+<span><span class="co">#&gt; segments explored during Cauchy searches 210</span></span>
 <span><span class="co">#&gt; BFGS updates skipped 0</span></span>
 <span><span class="co">#&gt; active bounds at final generalized Cauchy point 0</span></span>
-<span><span class="co">#&gt; norm of the final projected gradient 24.1617</span></span>
-<span><span class="co">#&gt; final function value -1147.63</span></span>
+<span><span class="co">#&gt; norm of the final projected gradient 5.59584</span></span>
+<span><span class="co">#&gt; final function value -1147.55</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; F = -1147.63</span></span>
-<span><span class="co">#&gt; final  value -1147.630941 </span></span>
+<span><span class="co">#&gt; F = -1147.55</span></span>
+<span><span class="co">#&gt; final  value -1147.545485 </span></span>
 <span><span class="co">#&gt; converged</span></span></code></pre></div>
 <p>The summary shows that we have recovered the true values of the
 factor loadings well.</p>
 <div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod_byvar</span><span class="op">)</span></span>
 <span><span class="co">#&gt; GALAMM fit by maximum marginal likelihood.</span></span>
-<span><span class="co">#&gt; Formula: y ~ domain + sl(x, by = domain, factor = c("ability1", "ability3")) +      (0 + domain1:ability1 + domain3:ability3 | id/timepoint)</span></span>
+<span><span class="co">#&gt; Formula: y ~ domain + sl(x, by = domain, factor = c("ability1", "ability3")) +  </span></span>
+<span><span class="co">#&gt;     (0 + domain1:ability1 + domain3:ability3 | id/timepoint)</span></span>
 <span><span class="co">#&gt;    Data: dat</span></span>
 <span><span class="co">#&gt; Control: galamm_control(optim_control = list(factr = 1e+09, trace = 3,      REPORT = 50, maxit = 1000))</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;      AIC      BIC   logLik deviance df.resid </span></span>
-<span><span class="co">#&gt;  -2259.3  -2127.4   1147.6  -2295.3    11182 </span></span>
+<span><span class="co">#&gt;  -2259.1  -2127.3   1147.5  -2295.1    11182 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Scaled residuals: </span></span>
 <span><span class="co">#&gt;      Min       1Q   Median       3Q      Max </span></span>
-<span><span class="co">#&gt; -2097.03 -1025.71  -872.78    19.00    47.24 </span></span>
+<span><span class="co">#&gt; -2097.48 -1025.93  -872.88    18.74    46.92 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Lambda:</span></span>
 <span><span class="co">#&gt;         ability1       SE ability3        SE</span></span>
 <span><span class="co">#&gt; lambda1   1.0000        .        .         .</span></span>
-<span><span class="co">#&gt; lambda2   1.3991 0.002571        .         .</span></span>
+<span><span class="co">#&gt; lambda2   1.3990 0.002570        .         .</span></span>
 <span><span class="co">#&gt; lambda3   0.3008 0.002004        .         .</span></span>
 <span><span class="co">#&gt; lambda4        .        .   1.0000         .</span></span>
 <span><span class="co">#&gt; lambda5        .        .   0.9993 0.0007675</span></span>
-<span><span class="co">#&gt; lambda6        .        .   1.0001 0.0007678</span></span>
-<span><span class="co">#&gt; lambda7        .        .   1.9993 0.0015665</span></span>
+<span><span class="co">#&gt; lambda6        .        .   1.0001 0.0007677</span></span>
+<span><span class="co">#&gt; lambda7        .        .   1.9994 0.0015665</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Random effects:</span></span>
 <span><span class="co">#&gt;  Groups       Name                  Variance Std.Dev. Corr </span></span>
-<span><span class="co">#&gt;  timepoint:id domain1:ability1       0.23619 0.4860        </span></span>
-<span><span class="co">#&gt;               domain3:ability3       0.28002 0.5292   -0.01</span></span>
-<span><span class="co">#&gt;  id           domain1:ability1       2.22510 1.4917        </span></span>
-<span><span class="co">#&gt;               domain3:ability3      22.66474 4.7607   0.65 </span></span>
-<span><span class="co">#&gt;  Xr.0         s(x):domain3:ability3 40.41501 6.3573        </span></span>
-<span><span class="co">#&gt;  Xr           s(x):domain1:ability1 10.17172 3.1893        </span></span>
-<span><span class="co">#&gt;  Residual                            0.01007 0.1004        </span></span>
+<span><span class="co">#&gt;  timepoint:id domain1:ability1       0.23641 0.4862        </span></span>
+<span><span class="co">#&gt;               domain3:ability3       0.28011 0.5293   -0.01</span></span>
+<span><span class="co">#&gt;  id           domain1:ability1       2.22291 1.4909        </span></span>
+<span><span class="co">#&gt;               domain3:ability3      22.71304 4.7658   0.65 </span></span>
+<span><span class="co">#&gt;  Xr.0         s(x):domain3:ability3 40.45375 6.3603        </span></span>
+<span><span class="co">#&gt;  Xr           s(x):domain1:ability1  9.81843 3.1334        </span></span>
+<span><span class="co">#&gt;  Residual                            0.01007 0.1003        </span></span>
 <span><span class="co">#&gt; Number of obs: 11200, groups:  timepoint:id, 1600; id, 200; Xr.0, 8; Xr, 8</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Fixed effects:</span></span>
-<span><span class="co">#&gt;                            Estimate Std. Error   t value  Pr(&gt;|t|)</span></span>
-<span><span class="co">#&gt; (Intercept)              -2.892e-03   0.004648 -0.622171 5.338e-01</span></span>
-<span><span class="co">#&gt; domain3                  -4.951e-05   0.007555 -0.006554 9.948e-01</span></span>
-<span><span class="co">#&gt; s(x):domain1:ability1Fx1 -7.629e-02   0.219195 -0.348047 7.278e-01</span></span>
-<span><span class="co">#&gt; s(x):domain3:ability3Fx1  5.758e+00   0.307603 18.718378 3.507e-78</span></span>
+<span><span class="co">#&gt;                            Estimate Std. Error t value  Pr(&gt;|t|)</span></span>
+<span><span class="co">#&gt; (Intercept)              -0.0029364   0.004648 -0.6317 5.276e-01</span></span>
+<span><span class="co">#&gt; domain3                   0.0000136   0.007556  0.0018 9.986e-01</span></span>
+<span><span class="co">#&gt; s(x):domain1:ability1Fx1 -0.0861681   0.216332 -0.3983 6.904e-01</span></span>
+<span><span class="co">#&gt; s(x):domain3:ability3Fx1  5.7635009   0.307665 18.7331 2.662e-78</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Approximate significance of smooth terms:</span></span>
 <span><span class="co">#&gt;                         edf Ref.df     F p-value</span></span>
-<span><span class="co">#&gt; s(x):domain1:ability1 8.932  8.932  4312  &lt;2e-16</span></span>
-<span><span class="co">#&gt; s(x):domain3:ability3 8.975  8.975 59664  &lt;2e-16</span></span></code></pre></div>
+<span><span class="co">#&gt; s(x):domain1:ability1 8.929  8.929  4314  &lt;2e-16</span></span>
+<span><span class="co">#&gt; s(x):domain3:ability3 8.975  8.975 59677  &lt;2e-16</span></span></code></pre></div>
 <p>We can plot the estimated smooth terms, which recover their simulated
 ground truth very well.</p>
 <div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
@@ -802,7 +803,7 @@ this example.</p>
 <span>  data <span class="op">=</span> <span class="va">dat</span>,</span>
 <span>  family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">gaussian</span>, <span class="va">binomial</span><span class="op">)</span>,</span>
 <span>  family_mapping <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">dat</span><span class="op">$</span><span class="va">domain</span> <span class="op">==</span> <span class="fl">1</span>, <span class="fl">1L</span>, <span class="fl">2L</span><span class="op">)</span>,</span>
-<span>  load.var <span class="op">=</span> <span class="st">"item"</span>,</span>
+<span>  load_var <span class="op">=</span> <span class="st">"item"</span>,</span>
 <span>  lambda <span class="op">=</span> <span class="va">lmat</span>,</span>
 <span>  factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ability1"</span>, <span class="st">"ability2"</span><span class="op">)</span>,</span>
 <span>  control <span class="op">=</span> <span class="fu"><a href="../reference/galamm_control.html">galamm_control</a></span><span class="op">(</span></span>
@@ -830,12 +831,13 @@ this example.</p>
 <div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod_byvar_mixed</span><span class="op">)</span></span>
 <span><span class="co">#&gt; GALAMM fit by maximum marginal likelihood.</span></span>
-<span><span class="co">#&gt; Formula: y ~ domain + sl(x, by = domain, factor = c("ability1", "ability2")) +      (0 + domain1:ability1 + domain2:ability2 | id)</span></span>
+<span><span class="co">#&gt; Formula: y ~ domain + sl(x, by = domain, factor = c("ability1", "ability2")) +  </span></span>
+<span><span class="co">#&gt;     (0 + domain1:ability1 + domain2:ability2 | id)</span></span>
 <span><span class="co">#&gt;    Data: dat</span></span>
 <span><span class="co">#&gt; Control: galamm_control(optim_control = list(factr = 1e+09, trace = 3,      REPORT = 30, maxit = 1000))</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;      AIC      BIC   logLik deviance df.resid </span></span>
-<span><span class="co">#&gt;   9476.1   9566.9  -4725.0  58315.3     7987 </span></span>
+<span><span class="co">#&gt;   9476.1   9566.9  -4725.0  26787.6     7987 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Lambda:</span></span>
 <span><span class="co">#&gt;         ability1      SE ability2      SE</span></span>

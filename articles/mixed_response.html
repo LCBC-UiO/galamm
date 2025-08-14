@@ -167,7 +167,7 @@ element is unknown, and to be estimated.</p>
 <span><span class="co">#&gt;      [,1]</span></span>
 <span><span class="co">#&gt; [1,]    1</span></span>
 <span><span class="co">#&gt; [2,]   NA</span></span></code></pre></div>
-<p>We set <code>load.var = "itemgroup"</code> because all rows of the
+<p>We set <code>load_var = "itemgroup"</code> because all rows of the
 data with the same value of <code>itemgroup</code> will receive the same
 factor loading. In <code>formula</code>, we state
 <code>(0 + level | id)</code> to specify that each subject, identified
@@ -193,7 +193,7 @@ family, which we do with a family mapping. The values in
 <span>  data <span class="op">=</span> <span class="va">mresp</span>,</span>
 <span>  family <span class="op">=</span> <span class="va">families</span>,</span>
 <span>  family_mapping <span class="op">=</span> <span class="va">family_mapping</span>,</span>
-<span>  load.var <span class="op">=</span> <span class="st">"itemgroup"</span>,</span>
+<span>  load_var <span class="op">=</span> <span class="st">"itemgroup"</span>,</span>
 <span>  lambda <span class="op">=</span> <span class="va">loading_matrix</span>,</span>
 <span>  factor <span class="op">=</span> <span class="st">"level"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -474,7 +474,7 @@ matrix.</p>
 <span>  family <span class="op">=</span> <span class="va">families</span>,</span>
 <span>  family_mapping <span class="op">=</span> <span class="va">family_mapping</span>,</span>
 <span>  factor <span class="op">=</span> <span class="st">"loading"</span>,</span>
-<span>  load.var <span class="op">=</span> <span class="st">"item"</span>,</span>
+<span>  load_var <span class="op">=</span> <span class="st">"item"</span>,</span>
 <span>  lambda <span class="op">=</span> <span class="va">loading_matrix</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>Looking at the summary output, however, we see a warning that the
@@ -522,7 +522,7 @@ argument <code>trace = 3</code> is passed onto <code>optim</code>.</p>
 <span>  family <span class="op">=</span> <span class="va">families</span>,</span>
 <span>  family_mapping <span class="op">=</span> <span class="va">family_mapping</span>,</span>
 <span>  factor <span class="op">=</span> <span class="st">"loading"</span>,</span>
-<span>  load.var <span class="op">=</span> <span class="st">"item"</span>,</span>
+<span>  load_var <span class="op">=</span> <span class="st">"item"</span>,</span>
 <span>  lambda <span class="op">=</span> <span class="va">loading_matrix</span>,</span>
 <span>  control <span class="op">=</span> <span class="fu"><a href="../reference/galamm_control.html">galamm_control</a></span><span class="op">(</span>optim_control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>trace <span class="op">=</span> <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
@@ -563,7 +563,7 @@ with the <code>start</code> argument.</p>
 <span>  family <span class="op">=</span> <span class="va">families</span>,</span>
 <span>  family_mapping <span class="op">=</span> <span class="va">family_mapping</span>,</span>
 <span>  factor <span class="op">=</span> <span class="st">"loading"</span>,</span>
-<span>  load.var <span class="op">=</span> <span class="st">"item"</span>,</span>
+<span>  load_var <span class="op">=</span> <span class="st">"item"</span>,</span>
 <span>  lambda <span class="op">=</span> <span class="va">loading_matrix</span>,</span>
 <span>  start <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>theta <span class="op">=</span> <span class="fl">10</span><span class="op">)</span>,</span>
 <span>  control <span class="op">=</span> <span class="fu"><a href="../reference/galamm_control.html">galamm_control</a></span><span class="op">(</span>optim_control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>trace <span class="op">=</span> <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
@@ -582,7 +582,7 @@ with the <code>start</code> argument.</p>
 <span><span class="co">#&gt; segments explored during Cauchy searches 58</span></span>
 <span><span class="co">#&gt; BFGS updates skipped 0</span></span>
 <span><span class="co">#&gt; active bounds at final generalized Cauchy point 0</span></span>
-<span><span class="co">#&gt; norm of the final projected gradient 0.0119052</span></span>
+<span><span class="co">#&gt; norm of the final projected gradient 0.0119457</span></span>
 <span><span class="co">#&gt; final function value 1372.16</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; F = 1372.16</span></span>
@@ -659,7 +659,7 @@ with</p>
 <span>  family <span class="op">=</span> <span class="va">families</span>,</span>
 <span>  family_mapping <span class="op">=</span> <span class="va">family_mapping</span>,</span>
 <span>  factor <span class="op">=</span> <span class="st">"loading"</span>,</span>
-<span>  load.var <span class="op">=</span> <span class="st">"item"</span>,</span>
+<span>  load_var <span class="op">=</span> <span class="st">"item"</span>,</span>
 <span>  lambda <span class="op">=</span> <span class="va">loading_matrix</span>,</span>
 <span>  start <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>theta <span class="op">=</span> <span class="fl">10</span><span class="op">)</span>,</span>
 <span>  control <span class="op">=</span> <span class="fu"><a href="../reference/galamm_control.html">galamm_control</a></span><span class="op">(</span>optim_control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>trace <span class="op">=</span> <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>

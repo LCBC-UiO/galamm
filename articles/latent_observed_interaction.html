@@ -196,7 +196,7 @@ This type of model would be estimated with the following code:</p>
 <span><span class="va">mod0</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">type</span> <span class="op">+</span> <span class="va">x</span><span class="op">:</span><span class="va">response</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">loading</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">latent_covariates</span>,</span>
-<span>  load.var <span class="op">=</span> <span class="st">"type"</span>,</span>
+<span>  load_var <span class="op">=</span> <span class="st">"type"</span>,</span>
 <span>  lambda <span class="op">=</span> <span class="va">lambda</span>,</span>
 <span>  factor <span class="op">=</span> <span class="st">"loading"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -293,7 +293,7 @@ above. This lets us fit the model as follows:</p>
 <code class="sourceCode R"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">type</span> <span class="op">+</span> <span class="va">x</span><span class="op">:</span><span class="va">response</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">loading</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">latent_covariates</span>,</span>
-<span>  load.var <span class="op">=</span> <span class="st">"type"</span>,</span>
+<span>  load_var <span class="op">=</span> <span class="st">"type"</span>,</span>
 <span>  lambda <span class="op">=</span> <span class="va">lambda</span>,</span>
 <span>  factor <span class="op">=</span> <span class="st">"loading"</span>,</span>
 <span>  factor_interactions <span class="op">=</span> <span class="va">factor_interactions</span></span>
@@ -367,7 +367,7 @@ We first update the formula in <code>factor_interactions</code>:</p>
 <code class="sourceCode R"><span><span class="va">mod2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">type</span> <span class="op">+</span> <span class="va">x</span><span class="op">:</span><span class="va">response</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">loading</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">latent_covariates</span>,</span>
-<span>  load.var <span class="op">=</span> <span class="st">"type"</span>,</span>
+<span>  load_var <span class="op">=</span> <span class="st">"type"</span>,</span>
 <span>  lambda <span class="op">=</span> <span class="va">lambda</span>,</span>
 <span>  factor <span class="op">=</span> <span class="st">"loading"</span>,</span>
 <span>  factor_interactions <span class="op">=</span> <span class="va">factor_interactions</span></span>
@@ -445,7 +445,7 @@ subject.</p>
 <code class="sourceCode R"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">type</span> <span class="op">+</span> <span class="va">x</span><span class="op">:</span><span class="va">response</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">loading</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">response</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">latent_covariates_long</span>,</span>
-<span>  load.var <span class="op">=</span> <span class="st">"type"</span>,</span>
+<span>  load_var <span class="op">=</span> <span class="st">"type"</span>,</span>
 <span>  lambda <span class="op">=</span> <span class="va">lambda</span>,</span>
 <span>  factor <span class="op">=</span> <span class="st">"loading"</span>,</span>
 <span>  factor_interactions <span class="op">=</span> <span class="va">factor_interactions</span></span>
@@ -506,7 +506,7 @@ each measurement. We first create these dummy variables:</p>
 <code class="sourceCode R"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="fl">0</span> <span class="op">+</span> <span class="va">m1</span> <span class="op">+</span> <span class="va">m2</span> <span class="op">+</span> <span class="fu"><a href="../reference/sl.html">s</a></span><span class="op">(</span><span class="va">x</span>, by <span class="op">=</span> <span class="va">response</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">loading</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">dat</span>,</span>
-<span>  load.var <span class="op">=</span> <span class="st">"type"</span>,</span>
+<span>  load_var <span class="op">=</span> <span class="st">"type"</span>,</span>
 <span>  lambda <span class="op">=</span> <span class="va">lambda</span>,</span>
 <span>  factor <span class="op">=</span> <span class="st">"loading"</span>,</span>
 <span>  factor_interactions <span class="op">=</span> <span class="va">factor_interactions</span></span>
