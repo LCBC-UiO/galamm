@@ -701,3 +701,35 @@ test_that("loading and factor dimensions have to be correct", {
   )
 })
 
+test_that("errors are passed on from gamm4/mgcv", {
+  dat <- data.frame(
+    x0 = rep(1:5, each = 2),
+    y  = rnorm(10)
+  )
+
+  err_galamm <- rlang::catch_cnd(
+    galamm(y ~ s(x0, k = 20), data = dat),
+    classes = "error"
+  )
+  err_gamm4 <- rlang::catch_cnd(
+    gamm4::gamm4(y ~ s(x0, k = 20), data = dat),
+    classes = "error"
+  )
+
+  expect_identical(class(err_galamm), class(err_gamm4))
+  expect_identical(conditionMessage(err_galamm), conditionMessage(err_gamm4))
+
+  warn_galamm <- rlang::catch_cnd(
+    galamm(y ~ s(x0, k = 2), data = dat),
+    classes = "warning"
+  )
+  warn_gamm4 <- rlang::catch_cnd(
+    gamm4::gamm4(y ~ s(x0, k = 2), data = dat),
+    classes = "warning"
+  )
+
+  expect_identical(class(warn_galamm), class(warn_gamm4))
+  expect_identical(conditionMessage(warn_galamm), conditionMessage(warn_gamm4))
+
+})
+
