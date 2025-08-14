@@ -50,7 +50,7 @@ plot_smooth <- function(object, ...) {
 #'   formula = y ~ 0 + item + sl(x, factor = "loading") +
 #'     (0 + loading | id),
 #'   data = dat,
-#'   load.var = "item",
+#'   load_var = "item",
 #'   lambda = loading_matrix,
 #'   factor = "loading"
 #' )

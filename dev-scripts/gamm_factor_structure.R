@@ -22,7 +22,7 @@ mod <- galamm(
   formula = y ~ 0 + x:domain1:lambda1 + x:domain2:lambda2 +
     (0 + domain1:lambda1 + domain2:lambda2 | id),
   data = data,
-  load.var = "item",
+  load_var = "item",
   lambda = list(lmat),
   factor = list(c("lambda1", "lambda2"))
   )

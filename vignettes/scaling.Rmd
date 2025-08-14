@@ -49,7 +49,7 @@ loading_matrix <- rbind(
   c(NA, NA)
 )
 factors <- c("ms", "hs")
-load.var <- "time"
+load_var <- "time"
 form <- esteem ~ time + (0 + ms | mid) + (0 + hs | hid) + (1 | sid)
 ```
 
@@ -93,7 +93,7 @@ times_to_convergence <- Map(function(n, r) {
     formula = form,
     data = dat,
     factor = factors,
-    load.var = load.var,
+    load_var = load_var,
     lambda = loading_matrix
   )
   t2 <- Sys.time()
@@ -235,7 +235,7 @@ times_to_convergence <- Map(function(n, r) {
     formula = y ~ item + (0 + ability | school / sid),
     data = IRTsim,
     family = binomial,
-    load.var = "item",
+    load_var = "item",
     factor = "ability",
     lambda = matrix(c(1, NA, NA, NA, NA), ncol = 1)
   )
@@ -309,7 +309,7 @@ times_to_convergence <- Map(function(n, r) {
     formula = y ~ 0 + item + sl(x, factor = "loading") +
       (0 + loading | id / timepoint),
     data = dat,
-    load.var = "item",
+    load_var = "item",
     lambda = matrix(c(1, NA, NA), ncol = 1),
     factor = "loading"
   )
@@ -384,7 +384,7 @@ times_to_convergence <- Map(function(n, r) {
         (0 + loading | id / timepoint),
       data = dat,
       family = binomial,
-      load.var = "item",
+      load_var = "item",
       lambda = matrix(c(1, NA), ncol = 1),
       factor = "loading"
     )

@@ -60,7 +60,7 @@ NULL
 #' mod <- galamm(
 #'   formula = y ~ 0 + item + sl(x, k = 4, factor = "loading"),
 #'   data = dat,
-#'   load.var = "item",
+#'   load_var = "item",
 #'   lambda = loading_matrix,
 #'   factor = "loading"
 #' )
@@ -70,7 +70,7 @@ NULL
 #'   formula = y ~ 0 + item +
 #'     sl(x, bs = "cr", k = 4, factor = "loading"),
 #'   data = dat,
-#'   load.var = "item",
+#'   load_var = "item",
 #'   lambda = loading_matrix,
 #'   factor = "loading"
 #' )
@@ -131,7 +131,7 @@ sl <- function(..., factor = NULL) {
 #' mod <- galamm(
 #'   formula = y ~ 0 + item + t2l(x, k = 4, factor = "loading"),
 #'   data = dat,
-#'   load.var = "item",
+#'   load_var = "item",
 #'   lambda = loading_matrix,
 #'   factor = "loading"
 #' )
@@ -141,7 +141,7 @@ sl <- function(..., factor = NULL) {
 #'   formula = y ~ 0 + item +
 #'     t2l(x, bs = "tp", k = 4, factor = "loading"),
 #'   data = dat,
-#'   load.var = "item",
+#'   load_var = "item",
 #'   lambda = loading_matrix,
 #'   factor = "loading"
 #' )

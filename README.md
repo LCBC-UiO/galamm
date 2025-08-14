@@ -148,7 +148,7 @@ mixed_resp <- galamm(
   data = mresp,
   family = c(gaussian, binomial),
   family_mapping = ifelse(mresp$itemgroup == "a", 1L, 2L),
-  load.var = "itemgroup",
+  load_var = "itemgroup",
   lambda = matrix(c(1, NA), ncol = 1),
   factor = "loading"
 )
@@ -210,7 +210,7 @@ mod <- galamm(
   formula = y ~ 0 + item + sl(x, factor = "loading") +
     (0 + loading | id / timepoint),
   data = dat,
-  load.var = "item",
+  load_var = "item",
   lambda = loading_matrix,
   factor = "loading"
 )

@@ -29,7 +29,7 @@
 #'   the galamm() function.
 #' @srrstats {G2.0a} Secondary documentation of expectations on lengths of
 #'   inputs provided for the parameters in the descriptions below. This applies
-#'   in particular to \code{lambda}, \code{factor}, \code{load.var}, and
+#'   in particular to \code{lambda}, \code{factor}, \code{load_var}, and
 #'   \code{factor_interactions}, as well as \code{family} and
 #'   \code{family_mapping}.
 #' @srrstats {G2.1} Assertions on types of input implemented in galamm function.
@@ -38,7 +38,7 @@
 #' @srrstats {G2.2} Assertions on the lengths of arguments are implemented in
 #'   galamm.
 #' @srrstats {G2.3,G2.3a} match.arg() used on "na.action" argument.
-#' @srrstats {G2.3,G2.3b} Arguments "family", "load.var", "factor", and the
+#' @srrstats {G2.3,G2.3b} Arguments "family", "load_var", "factor", and the
 #'   elements of the "start" argument are case sensitive. This is stated in the
 #'   documentation below.
 #' @srrstats {G2.4,G2.4a} Internally, objects family_mapping, weights_mapping
@@ -173,10 +173,12 @@
 #'   to the first element of \code{family}. The length of \code{family_mapping}
 #'   must be identical to the number of observations, \code{nrow(data)}.
 #'
-#' @param load.var Optional character specifying the name of the variable in
+#' @param load_var Optional character specifying the name of the variable in
 #'   \code{data} identifying what the factors load onto. Default to \code{NULL},
 #'   which means that there are no loading variables. Argument is case
 #'   sensitive.
+#'
+#' @param load.var Deprecated. Use \code{load_var} instead.
 #'
 #' @param lambda Optional factor loading matrix. Numerical values indicate that
 #'   the given value is fixed, while \code{NA} means that the entry is a
@@ -300,7 +302,7 @@
 #'   family = families,
 #'   family_mapping = family_mapping,
 #'   factor = "level",
-#'   load.var = "itemgroup",
+#'   load_var = "itemgroup",
 #'   lambda = loading_matrix
 #' )
 #'
@@ -340,7 +342,7 @@
 #'   formula = y ~ 0 + item + sl(x, factor = "loading") +
 #'     (0 + loading | id),
 #'   data = dat,
-#'   load.var = "item",
+#'   load_var = "item",
 #'   lambda = loading_matrix,
 #'   factor = "loading"
 #' )
@@ -360,7 +362,7 @@
 #' mod <- galamm(
 #'   formula = y ~ type + x:response + (0 + loading | id),
 #'   data = latent_covariates,
-#'   load.var = "type",
+#'   load_var = "type",
 #'   lambda = lambda,
 #'   factor = "loading",
 #'   factor_interactions = factor_interactions
@@ -375,10 +377,16 @@
 #' @md
 galamm <- function(formula, weights = NULL, data, family = gaussian,
                    family_mapping = rep(1, nrow(data)),
-                   load.var = NULL, lambda = NULL, factor = NULL,
-                   factor_interactions = NULL,
+                   load_var = NULL, load.var = NULL, lambda = NULL,
+                   factor = NULL, factor_interactions = NULL,
                    na.action = getOption("na.action"),
                    start = NULL, control = galamm_control()) {
+
+  if (!is.null(load.var)) {
+    warning("`load.var` is deprecated; use `load_var` instead.", call. = FALSE)
+    if (is.null(load_var)) load_var <- load.var
+  }
+
   if (!inherits(data, "data.frame")) {
     stop("data must be a data.frame")
   }
@@ -421,8 +429,8 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
     )
   }
 
-  if (!is.null(load.var) && (length(load.var) > 1 || !is.character(load.var))) {
-    stop("load.var must be NULL or a character of length one")
+  if (!is.null(load_var) && (length(load_var) > 1 || !is.character(load_var))) {
+    stop("load_var must be NULL or a character of length one")
   }
   if (!is.null(factor) && !is.character(factor)) {
     stop("factor must be NULL or a character vector")
@@ -442,18 +450,18 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
       stop("all non-NA values in lambda must be either 0 or 1")
     }
   }
-  if (any(vapply(list(load.var, lambda, factor), is.null, logical(1))) &&
+  if (any(vapply(list(load_var, lambda, factor), is.null, logical(1))) &&
     any(vapply(
-      list(load.var, lambda, factor),
+      list(load_var, lambda, factor),
       function(x) !is.null(x), logical(1)
     ))) {
     stop(
-      "load.var, lambda, and factor must either all have values or ",
+      "load_var, lambda, and factor must either all have values or ",
       "all be NULL."
     )
   }
 
-  tmp <- setup_factor(load.var, lambda, factor, data)
+  tmp <- setup_factor(load_var, lambda, factor, data)
   data <- tmp$data
   lambda_orig <- tmp$lambda
   rm(tmp)
@@ -477,7 +485,7 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   }
 
   lambda_mappings <- define_factor_mappings(
-    gobj, load.var, lambda_orig, factor, factor_interactions, data
+    gobj, load_var, lambda_orig, factor, factor_interactions, data
   )
 
   lambda <- lambda_mappings$lambda

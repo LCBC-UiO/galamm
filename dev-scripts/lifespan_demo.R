@@ -13,7 +13,7 @@ mod <- galamm(
   data = lifespan,
   family = c(binomial, gaussian),
   family_mapping = ifelse(lifespan$domain == "execfun", 2, 1),
-  load.var = "test",
+  load_var = "test",
   lambda = lmat,
   factor = c("epmem_ability", "wmem_ability", "execfun_ability"),
   start = list(

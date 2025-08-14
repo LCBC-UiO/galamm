@@ -82,7 +82,7 @@ lambda <- matrix(c(1, NA, NA), ncol = 1)
 mod0 <- galamm(
   formula = y ~ type + x:response + (0 + loading | id),
   data = latent_covariates,
-  load.var = "type",
+  load_var = "type",
   lambda = lambda,
   factor = "loading"
 )
@@ -144,7 +144,7 @@ This specifies that for the first two rows, there are no covariates, but for the
 mod <- galamm(
   formula = y ~ type + x:response + (0 + loading | id),
   data = latent_covariates,
-  load.var = "type",
+  load_var = "type",
   lambda = lambda,
   factor = "loading",
   factor_interactions = factor_interactions
@@ -177,7 +177,7 @@ Then we fit the model as before:
 mod2 <- galamm(
   formula = y ~ type + x:response + (0 + loading | id),
   data = latent_covariates,
-  load.var = "type",
+  load_var = "type",
   lambda = lambda,
   factor = "loading",
   factor_interactions = factor_interactions
@@ -210,7 +210,7 @@ Next we fit the model using `galamm`. The difference to notice here is that we a
 mod <- galamm(
   formula = y ~ type + x:response + (0 + loading | id) + (0 + response | id),
   data = latent_covariates_long,
-  load.var = "type",
+  load_var = "type",
   lambda = lambda,
   factor = "loading",
   factor_interactions = factor_interactions
@@ -241,7 +241,7 @@ We then fit the model:
 mod <- galamm(
   formula = y ~ 0 + m1 + m2 + s(x, by = response) + (0 + loading | id),
   data = dat,
-  load.var = "type",
+  load_var = "type",
   lambda = lambda,
   factor = "loading",
   factor_interactions = factor_interactions

@@ -1,7 +1,7 @@
 rm(list = ls())
 devtools::load_all()
 
-load.var <- "type"
+load_var <- "type"
 lambda <- list(matrix(c(1, NA, NA)))
 factor <- list("loading")
 factor_interactions <- list(list(~ 1, ~ 1, ~ x))
