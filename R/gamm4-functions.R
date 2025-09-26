@@ -12,7 +12,6 @@
 #' @author Simon N Wood, with some modifications by Oystein Sorensen.
 #' @noRd
 #'
-#' @seealso [gamm4()] and [gam.setup()].
 #'
 #' @srrstats {G1.4a} Internal function documented.
 #'
@@ -105,7 +104,6 @@ gamm4.setup <- function(formula, pterms, mf) {
 #' @author Simon Wood and Fabian Scheipl.
 #' @noRd
 #'
-#' @seealso [gamm4.setup()] and [gam.setup()].
 #'
 #' @references
 #' \insertRef{woodStraightforwardIntermediateRank2013}{galamm}

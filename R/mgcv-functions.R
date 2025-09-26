@@ -14,7 +14,6 @@
 #'
 #' @srrstats {G1.4a} Internal function documented.
 #'
-#' @seealso [gamm4.setup()] and [gamm4()].
 #'
 #' @references
 #' \insertRef{woodGeneralizedAdditiveModels2017}{galamm}
