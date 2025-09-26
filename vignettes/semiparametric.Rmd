@@ -259,18 +259,18 @@ summary(mod_gamm4$mer)
 #> 
 #> Scaled residuals: 
 #>     Min      1Q  Median      3Q     Max 
-#> -8.2548  0.0786  0.1946  0.4248  0.8213 
+#> -8.2547  0.0786  0.1946  0.4248  0.8213 
 #> 
 #> Random effects:
 #>  Groups Name        Variance Std.Dev.
 #>  id     (Intercept) 0.2306   0.4802  
-#>  Xr     s(x)        0.9695   0.9846  
+#>  Xr     s(x)        0.9694   0.9846  
 #> Number of obs: 1600, groups:  id, 200; Xr, 8
 #> 
 #> Fixed effects:
 #>              Estimate Std. Error z value Pr(>|z|)    
-#> X(Intercept)   2.8115     0.2034  13.824  < 2e-16 ***
-#> Xs(x)Fx1      -1.4110     0.4242  -3.326  0.00088 ***
+#> X(Intercept)   2.8115     0.2034  13.825  < 2e-16 ***
+#> Xs(x)Fx1      -1.4110     0.4242  -3.326 0.000879 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
@@ -769,8 +769,7 @@ We can look at the model summary:
 ``` r
 summary(mod_byvar_mixed)
 #> GALAMM fit by maximum marginal likelihood.
-#> Formula: y ~ domain + sl(x, by = domain, factor = c("ability1", "ability2")) +  
-#>     (0 + domain1:ability1 + domain2:ability2 | id)
+#> Formula: y ~ domain + sl(x, by = domain, factor = c("ability1", "ability2")) +      (0 + domain1:ability1 + domain2:ability2 | id)
 #>    Data: dat
 #> Control: galamm_control(optim_control = list(factr = 1e+09, trace = 3,      REPORT = 30, maxit = 1000))
 #> 
