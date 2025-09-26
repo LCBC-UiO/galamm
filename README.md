@@ -29,6 +29,17 @@ Skrondal and Rabe-Hesketh
 efficiently handling crossed random effects and semiparametric
 estimation.
 
+Some typical usage examples include:
+
+- Modeling how a latent trait of interest (e.g., general cognitive
+  ability, anxiety, quality of life) depends nonlinearly on predictors
+  of interest (e.g., age), and how this relationship is moderated by
+  other variables of interest (e.g., educational attainment, genetics).
+- Analyzing data with mixed response types, e.g., when a latent trait is
+  measured with a combination of continuous and binary responses.
+- Avoiding measurement error bias by utilizing replicate measurements of
+  covariates of interest.
+
 To get started, take a look at the [introductory
 vignette](https://lcbc-uio.github.io/galamm/articles/galamm.html).
 
