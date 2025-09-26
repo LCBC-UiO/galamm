@@ -154,7 +154,7 @@ This dataset has the same structure as `mresp`, except that the residual standar
 family_mapping <- ifelse(mresp$itemgroup == "a", 1L, 2L)
 mod <- galamm(
   formula = y ~ x + (1 | id),
-  weights = ~ (0 + isgauss | grp),
+  dispformula = ~ (0 + isgauss | grp),
   family = c(gaussian, binomial),
   family_mapping = family_mapping,
   data = mresp_hsced
@@ -170,7 +170,6 @@ summary(mod)
 #> GALAMM fit by maximum marginal likelihood.
 #> Formula: y ~ x + (1 | id)
 #>    Data: mresp_hsced
-#> Weights: ~(0 + isgauss | grp)
 #> 
 #>      AIC      BIC   logLik deviance df.resid 
 #>  12356.9  12388.3  -6173.4  31426.4     3995 

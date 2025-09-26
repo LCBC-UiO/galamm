@@ -1,7 +1,7 @@
 test_that("Heteroscedastic model works", {
   mod <- galamm(
     formula = y ~ x + (1 | id),
-    weights = ~ (1 | item),
+    dispformula = ~ (1 | item),
     data = hsced
   )
 
@@ -38,17 +38,17 @@ test_that("Heteroscedastic model works", {
   expect_error(
     galamm(
       formula = y ~ x + (1 | id),
-      weights = list(~ (1 | item)),
+      dispformula = list(~ (1 | item)),
       data = hsced
     ),
-    "weights must be a formula"
+    "dispformula must be a formula"
   )
 
 
   # Now use initial values
   mod_start <- galamm(
     formula = y ~ x + (1 | id),
-    weights = ~ (1 | item),
+    dispformula = ~ (1 | item),
     data = hsced,
     start = list(beta = c(.13, .70), theta = 1.01, weights = .501)
   )
@@ -67,7 +67,7 @@ test_that("Heteroscedastic model works with more than one group", {
 
   mod <- galamm(
     formula = y ~ x + (1 | id),
-    weights = ~ (1 | item),
+    dispformula = ~ (1 | item),
     data = hsced2
   )
 
@@ -104,7 +104,7 @@ test_that("Heteroscedastic model works with more than one group", {
   # Now use initial values
   mod_start <- galamm(
     formula = y ~ x + (1 | id),
-    weights = ~ (1 | item),
+    dispformula = ~ (1 | item),
     data = hsced2,
     start = list(beta = c(.13, .70), theta = 1.01, weights = c(.501, .44))
   )
@@ -113,5 +113,16 @@ test_that("Heteroscedastic model works with more than one group", {
     mod_start$parameters$parameter_estimates,
     mod$parameters$parameter_estimates,
     tolerance = .01
+  )
+})
+
+test_that("weights maps to dispformula with a warning", {
+  expect_warning({
+    galamm(
+      formula = y ~ x + (1 | id),
+      weights = ~ (1 | item),
+      data = hsced
+    )},
+    "`weights` is deprecated"
   )
 })

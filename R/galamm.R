@@ -142,10 +142,12 @@
 #'   \code{PLmixed} package
 #'   \insertCite{rockwoodEstimatingComplexMeasurement2019}{galamm}.
 #'
-#' @param weights An optional formula object specifying an expression for the
+#' @param dispformula An optional formula object specifying an expression for the
 #'   residual variance. Defaults to \code{NULL}, corresponding to homoscedastic
 #'   errors. The formula is defined in \code{lme4} style; see vignettes and
 #'   examples for details.
+#'
+#' @param weights Deprecated. Use \code{dispformula} instead.
 #'
 #' @param data A data.frame containing all the variables specified by the model
 #'   formula, with the exception of factor loadings.
@@ -257,7 +259,7 @@
 #' # We also set the initial value of the random intercept standard deviation
 #' # to 1
 #' mod <- galamm(
-#'   formula = y ~ x + (1 | id), weights = ~ (1 | item),
+#'   formula = y ~ x + (1 | id), dispformula = ~ (1 | item),
 #'   data = hsced, start = list(theta = 1)
 #' )
 #' summary(mod)
@@ -317,8 +319,8 @@
 #' @family modeling functions
 #'
 #' @md
-galamm <- function(formula, weights = NULL, data, family = gaussian,
-                   family_mapping = rep(1, nrow(data)),
+galamm <- function(formula, dispformula = NULL, weights = NULL, data,
+                   family = gaussian, family_mapping = rep(1, nrow(data)),
                    load_var = NULL, load.var = NULL, lambda = NULL,
                    factor = NULL, factor_interactions = NULL,
                    na.action = getOption("na.action"),
@@ -327,6 +329,10 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   if (!is.null(load.var)) {
     warning("`load.var` is deprecated; use `load_var` instead.", call. = FALSE)
     if (is.null(load_var)) load_var <- load.var
+  }
+  if (!is.null(weights)) {
+    warning("`weights` is deprecated; use `dispformula` instead.", call. = FALSE)
+    if (is.null(dispformula)) dispformula <- weights
   }
 
   if (!inherits(data, "data.frame")) {
@@ -351,8 +357,8 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   if (!methods::is(formula, "formula")) {
     stop("formula must be a formula")
   }
-  if (!is.null(weights) && !methods::is(weights, "formula")) {
-    stop("weights must be a formula")
+  if (!is.null(dispformula) && !methods::is(dispformula, "formula")) {
+    stop("dispformula must be a formula")
   }
   if (!is.vector(family_mapping)) {
     stop("family_mapping must be a vector.")
@@ -437,10 +443,10 @@ galamm <- function(formula, weights = NULL, data, family = gaussian,
   beta_inds <- max(theta_inds) + seq_along(colnames(gobj$lmod$X))
   lambda_inds <- max(beta_inds) + seq_along(lambda[lambda >= 2])
 
-  if (!is.null(weights)) {
-    weights_obj <- lme4::mkReTrms(lme4::findbars(weights), fr = data)
+  if (!is.null(dispformula)) {
+    weights_obj <- lme4::mkReTrms(lme4::findbars(dispformula), fr = data)
     if (length(weights_obj$flist) > 1) {
-      stop("Multiple grouping terms in weights not yet implemented.")
+      stop("Multiple grouping terms in dispformula not yet implemented.")
     }
     delta <- diff(weights_obj$Zt@p)
     weights_mapping <- as.integer(weights_obj$flist[[1]]) - 2L

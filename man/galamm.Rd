@@ -6,6 +6,7 @@
 \usage{
 galamm(
   formula,
+  dispformula = NULL,
   weights = NULL,
   data,
   family = gaussian,
@@ -31,10 +32,12 @@ will also be part of the model formula, and is based on the syntax of the
 \code{PLmixed} package
 \insertCite{rockwoodEstimatingComplexMeasurement2019}{galamm}.}
 
-\item{weights}{An optional formula object specifying an expression for the
+\item{dispformula}{An optional formula object specifying an expression for the
 residual variance. Defaults to \code{NULL}, corresponding to homoscedastic
 errors. The formula is defined in \code{lme4} style; see vignettes and
 examples for details.}
+
+\item{weights}{Deprecated. Use \code{dispformula} instead.}
 
 \item{data}{A data.frame containing all the variables specified by the model
 formula, with the exception of factor loadings.}
@@ -167,7 +170,7 @@ summary(mod)
 # We also set the initial value of the random intercept standard deviation
 # to 1
 mod <- galamm(
-  formula = y ~ x + (1 | id), weights = ~ (1 | item),
+  formula = y ~ x + (1 | id), dispformula = ~ (1 | item),
   data = hsced, start = list(theta = 1)
 )
 summary(mod)

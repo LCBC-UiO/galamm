@@ -208,7 +208,7 @@ test_that("Mixed response and heteroscedastic error works", {
   family_mapping <- ifelse(mresp$itemgroup == "a", 1L, 2L)
   mod <- galamm(
     formula = y ~ x + (1 | id),
-    weights = ~ (0 + isgauss | grp),
+    dispformula = ~ (0 + isgauss | grp),
     family = c(gaussian, binomial),
     family_mapping = family_mapping,
     data = mresp_hsced

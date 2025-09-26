@@ -118,10 +118,10 @@ test_that("wrong input is handled properly", {
   expect_error(
     mod <- galamm(
       formula = y ~ 0 + item + (1 | id),
-      weights = ~ (1 | item) + (1 | domain),
+      dispformula = ~ (1 | item) + (1 | domain),
       data = dat
     ),
-    "Multiple grouping terms in weights not yet implemented."
+    "Multiple grouping terms in dispformula not yet implemented."
   )
 
   newdat <- dat

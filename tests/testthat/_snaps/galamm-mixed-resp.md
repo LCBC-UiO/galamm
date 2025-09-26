@@ -19,7 +19,6 @@
       GALAMM fit by maximum marginal likelihood.
       Formula: y ~ x + (1 | id)
          Data: mresp_hsced
-      Weights: ~(0 + isgauss | grp)
       
            AIC      BIC   logLik deviance df.resid 
        12356.9  12388.3  -6173.4  31426.4     3995 
