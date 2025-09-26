@@ -76,6 +76,13 @@
 <!-- badges: start -->
 
 <p>galamm estimates generalized additive latent and mixed models (GALAMMs). This is the first package implementing the model framework and the computational algorithms introduced in Sørensen, Fjell, and Walhovd (<a href="#ref-sorensenLongitudinalModelingAgeDependent2023">2023</a>). It is an extension of the GLLAMM framework for multilevel latent variable modeling detailed in Rabe-Hesketh, Skrondal, and Pickles (<a href="#ref-rabe-heskethGeneralizedMultilevelStructural2004">2004</a>) and Skrondal and Rabe-Hesketh (<a href="#ref-skrondalGeneralizedLatentVariable2004">2004</a>), in particular by efficiently handling crossed random effects and semiparametric estimation.</p>
+<p>Some typical usage examples include:</p>
+<ul>
+<li>Modeling how a latent trait of interest (e.g., general cognitive ability, anxiety, quality of life) depends nonlinearly on predictors of interest (e.g., age), and how this relationship is moderated by other variables of interest (e.g., educational attainment, genetics).</li>
+<li>Analyzing data with mixed response types, e.g., when a latent trait is measured with a combination of continuous and binary responses.</li>
+<li>Avoiding measurement error bias by utilizing replicate measurements of covariates of interest.</li>
+</ul>
+<p>To get started, take a look at the <a href="https://lcbc-uio.github.io/galamm/articles/galamm.html">introductory vignette</a>.</p>
 <div class="section level2">
 <h2 id="what-can-the-package-do">What Can the Package Do?<a class="anchor" aria-label="anchor" href="#what-can-the-package-do"></a>
 </h2>
@@ -97,11 +104,6 @@
 </ul>
 <p>Random effects are defined using <a href="https://cran.r-project.org/package=lme4" class="external-link">lme4</a> syntax, and the syntax for factor structures are close to that of <a href="https://cran.r-project.org/package=PLmixed" class="external-link">PLmixed</a> (<a href="#ref-rockwoodEstimatingComplexMeasurement2019">Rockwood and Jeon 2019</a>). However, for the types of models supported by both PLmixed and galamm, galamm is usually considerably faster. Smooth terms, as in generalized additive mixed models, use the same syntax as <a href="https://cran.r-project.org/package=mgcv" class="external-link">mgcv</a>.</p>
 <p>For most users, it should not be necessary to think about how the actual computations are performed, although they are detailed in the <a href="https://lcbc-uio.github.io/galamm/articles/optimization.html">optimization vignette</a>. In short, the core computations are done using sparse matrix methods supported by <a href="https://cran.r-project.org/package=RcppEigen" class="external-link">RcppEigen</a> (<a href="#ref-batesFastElegantNumerical2013">Bates and Eddelbuettel 2013</a>) and automatic differentiation using the C++ library <a href="https://autodiff.github.io/" class="external-link">autodiff</a> (<a href="#ref-lealAutodiffModernFast2018">Leal 2018</a>). Scaling of the algorithm is investigated further in <a href="https://lcbc-uio.github.io/galamm/articles/scaling.html">the vignette on computational scaling</a>.</p>
-</div>
-<div class="section level2">
-<h2 id="where-do-i-start">Where Do I Start?<a class="anchor" aria-label="anchor" href="#where-do-i-start"></a>
-</h2>
-<p>To get started, take a look at the <a href="https://lcbc-uio.github.io/galamm/articles/galamm.html">introductory vignette</a>.</p>
 </div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
