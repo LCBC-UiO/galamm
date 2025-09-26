@@ -230,6 +230,7 @@ summary(mod)
 }
 \seealso{
 Other modeling functions: 
+\code{\link{galammObject}},
 \code{\link{s}()},
 \code{\link{t2}()}
 }

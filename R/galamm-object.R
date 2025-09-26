@@ -39,4 +39,5 @@
 #'
 #' @docType class
 #' @name galammObject
+#' @family modeling functions
 NULL
