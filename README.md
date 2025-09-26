@@ -29,6 +29,9 @@ Skrondal and Rabe-Hesketh
 efficiently handling crossed random effects and semiparametric
 estimation.
 
+To get started, take a look at the [introductory
+vignette](https://lcbc-uio.github.io/galamm/articles/galamm.html).
+
 ## What Can the Package Do?
 
 Many applications, particularly in the social sciences, require modeling
@@ -93,11 +96,6 @@ automatic differentiation using the C++ library
 2018](#ref-lealAutodiffModernFast2018)). Scaling of the algorithm is
 investigated further in [the vignette on computational
 scaling](https://lcbc-uio.github.io/galamm/articles/scaling.html).
-
-## Where Do I Start?
-
-To get started, take a look at the [introductory
-vignette](https://lcbc-uio.github.io/galamm/articles/galamm.html).
 
 ## Installation
 
