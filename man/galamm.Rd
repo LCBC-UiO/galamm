@@ -109,73 +109,7 @@ class \code{galamm_control} resulting from calling
 defaults of \code{\link{galamm_control}} are used.}
 }
 \value{
-A model object of class \code{galamm}, containing the following
-elements:
-\itemize{
-\item \code{call} the matched call used when fitting the model.
-\item \code{random_effects} a list containing the following two elements:
-\itemize{
-\item \code{b} random effects in original parametrization.
-\item \code{u} random effects standardized to have identity covariance matrix.
-}
-\item \code{model} a list with various elements related to the model setup and
-fit:
-\itemize{
-\item \code{deviance} deviance of final model.
-\item \code{deviance_residuals} deviance residuals of the final model.
-\item \code{df} degrees of freedom of model.
-\item \code{family} a list of one or more family objects, as specified in the
-\code{family} arguments to \code{galamm}.
-\item \code{factor_interactions} List of formulas specifying interactions
-between latent and observed variables, as provided to the argument
-\code{factor_interactions} to \code{galamm}. If not provided, it is
-\code{NULL}.
-\item \code{fit} a numeric vector with fitted values.
-\item \code{fit_population} a numeric vector with fitted values excluding
-random effects.
-\item \code{hessian} Hessian matrix of final model, i.e., the second
-derivative of the log-likelihood with respect to all model parameters.
-\item \code{lmod} Linear model object returned by \code{lme4::lFormula}, which
-is used internally for setting up the models.
-\item \code{loglik} Log-likelihood of final model.
-\item \code{n} Number of observations.
-\item \code{pearson_residual} Pearson residuals of final model.
-\item \code{reduced_hessian} Logical specifying whether the full Hessian
-matrix was computed, or a Hessian matrix with derivatives only with respect
-to beta and lambda.
-\item \code{response} A numeric vector containing the response values used when
-fitting the model.
-\item \code{weights_object} Object with weights used in model fitting. Is
-\code{NULL} when no weights were used.
-}
-\item \code{parameters} A list object with model parameters and related
-information:
-\itemize{
-\item \code{beta_inds} Integer vector specifying the indices of fixed
-regression coefficients among the estimated model parameters.
-\item \code{dispersion_parameter} One or more dispersion parameters of the
-final model.
-\item \code{lambda_dummy} Dummy matrix of factor loadings, which shows the
-structure of the loading matrix that was supplied in the \code{lambda}
-arguments.
-\item \code{lambda_inds} Integer vector specifying the indices of factor
-loadings among the estimated model parameters.
-\item \code{lambda_interaction_inds} Integer vector specifying the indices
-of regression coefficients for interactions between latent and observed
-variables.
-\item \code{parameter_estimates} Numeric vector of final parameter estimates.
-\item \code{parameter_names} Names of all parameters estimates.
-\item \code{theta_inds} Integer vector specifying the indices of variance
-components among the estimated model parameters. Technically these are the
-entries of the Cholesky decomposition of the covariance matrix.
-\item \code{weights_inds} Integer vector specifying the indices of estimated
-weights (used in heteroscedastic Gaussian models) among the estimated model
-parameters.
-}
-\item \code{gam} List containing information about smooth terms in the model.
-If no smooth terms are contained in the model, then it is a list of length
-zero.
-}
+An object of type \code{galamm} as described in \link{galammObject}.
 }
 \description{
 This function fits a generalized additive latent and mixed model
@@ -296,6 +230,7 @@ summary(mod)
 }
 \seealso{
 Other modeling functions: 
+\code{\link{galammObject}},
 \code{\link{s}()},
 \code{\link{t2}()}
 }
