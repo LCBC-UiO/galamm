@@ -3,8 +3,7 @@ test_that("Mixed response works", {
   mod <- galamm(
     formula = y ~ x + (0 + loading | id),
     data = dat,
-    family = c(gaussian, binomial),
-    family_mapping = ifelse(dat$itemgroup == "a", 1L, 2L),
+    family = gfam(list(gaussian, binomial)),
     load_var = "itemgroup",
     lambda = matrix(c(1, NA), ncol = 1),
     factor = "loading"

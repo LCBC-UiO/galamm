@@ -35,7 +35,9 @@
 #' \describe{
 #'   \item{id}{Subject ID.}
 #'   \item{x}{Predictor variable.}
-#'   \item{y}{Response.}
+#'   \item{y}{Matrix whose first column is the response and whose second
+#'   column equals 1 if the observation is conditionally normally distributed
+#'   and 2 if the observation is conditionally binomially distributed.}
 #'   \item{itemgroup}{Factor variable which equals "a" for the normally
 #'   distributed responses and "b" for the binomially distributed response
 #'   (with 1 trial).}
@@ -52,11 +54,13 @@
 #'
 #' @srrstats {G5.1} Dataset used to test package is exported.
 #'
-#' @format ## `mresp` A data frame with 4000 rows and 5 columns:
+#' @format ## `mresp_hsced` A data frame with 4000 rows and 5 columns:
 #' \describe{
 #'   \item{id}{Subject ID.}
 #'   \item{x}{Predictor variable.}
-#'   \item{y}{Response.}
+#'   \item{y}{Matrix whose first column is the response and whose second
+#'   column equals 1 if the observation is conditionally normally distributed
+#'   and 2 if the observation is conditionally binomially distributed.}
 #'   \item{itemgroup}{Factor variable which equals "a" for the normally
 #'   distributed responses and "b" for the binomially distributed response
 #'   (with 1 trial).}
