@@ -1,8 +1,10 @@
 # galamm (development versions)
 
+- Argument weights to galamm has been renamed to dispformula. The old name 
+  weights will work for a while, but a deprecation warning will be issued.
 - Improved tests.
 - Improved error messages.
-- Argument load_var to galamm has been renamed to load_var. The old name 
+- Argument load.var to galamm has been renamed to load_var. The old name 
   load_var will work for a while, but a deprecation warning will be issued.
 
 # galamm 0.2.3

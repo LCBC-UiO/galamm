@@ -160,7 +160,7 @@ times_to_convergence <- Map(function(n, r) {
   t1 <- Sys.time()
   mod <- galamm(
     formula = y ~ x + (1 | id),
-    weights = ~ (1 | item),
+    dispformula = ~ (1 | item),
     data = dat
   )
   t2 <- Sys.time()

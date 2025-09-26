@@ -23,7 +23,7 @@ Extracts response values from a model.
 # Linear mixed model with heteroscedastic residuals
 mod <- galamm(
   formula = y ~ x + (1 | id),
-  weights = ~ (1 | item),
+  dispformula = ~ (1 | item),
   data = hsced
 )
 

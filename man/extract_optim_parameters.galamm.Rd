@@ -29,7 +29,7 @@ that can be directly provided as initial values for a new model fit.
 # Fit linear mixed model with heteroscedastic residuals
 mod <- galamm(
   formula = y ~ x + (1 | id),
-  weights = ~ (1 | item),
+  dispformula = ~ (1 | item),
   data = hsced
 )
 
@@ -39,7 +39,7 @@ start <- extract_optim_parameters(mod)
 # Fit again using the Nelder-Mead algorithm, using start as initial values:
 mod_nm <- galamm(
   formula = y ~ x + (1 | id),
-  weights = ~ (1 | item),
+  dispformula = ~ (1 | item),
   data = hsced,
   start = start,
   control = galamm_control(method = "Nelder-Mead")

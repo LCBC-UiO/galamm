@@ -48,7 +48,7 @@ We specify the error structure using an additional formula object, `~ (1 | item)
 ```{r}
 mod <- galamm(
   formula = y ~ x + (1 | id),
-  weights = ~ (1 | item),
+  dispformula = ~ (1 | item),
   data = hsced
 )
 ```
