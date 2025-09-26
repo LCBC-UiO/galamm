@@ -111,7 +111,7 @@ from the summary methods of <code>mgcv</code> (author: Simon Wood) and
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Linear mixed model with heteroscedastic residuals</span></span></span>
 <span class="r-in"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="galamm.html">galamm</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">x</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  weights <span class="op">=</span> <span class="op">~</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">item</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  dispformula <span class="op">=</span> <span class="op">~</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">item</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  data <span class="op">=</span> <span class="va">hsced</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
@@ -119,7 +119,6 @@ from the summary methods of <code>mgcv</code> (author: Simon Wood) and
 <span class="r-out co"><span class="r-pr">#&gt;</span> GALAMM fit by maximum marginal likelihood.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Formula: y ~ x + (1 | id)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    Data: hsced</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Weights: ~(1 | item)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      AIC      BIC   logLik deviance df.resid </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   4126.3   4151.7  -2058.1   4116.3     1195 </span>

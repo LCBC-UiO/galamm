@@ -318,18 +318,18 @@ such data can be modeled.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Scaled residuals: </span></span>
 <span><span class="co">#&gt;     Min      1Q  Median      3Q     Max </span></span>
-<span><span class="co">#&gt; -8.2548  0.0786  0.1946  0.4248  0.8213 </span></span>
+<span><span class="co">#&gt; -8.2547  0.0786  0.1946  0.4248  0.8213 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Random effects:</span></span>
 <span><span class="co">#&gt;  Groups Name        Variance Std.Dev.</span></span>
 <span><span class="co">#&gt;  id     (Intercept) 0.2306   0.4802  </span></span>
-<span><span class="co">#&gt;  Xr     s(x)        0.9695   0.9846  </span></span>
+<span><span class="co">#&gt;  Xr     s(x)        0.9694   0.9846  </span></span>
 <span><span class="co">#&gt; Number of obs: 1600, groups:  id, 200; Xr, 8</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Fixed effects:</span></span>
 <span><span class="co">#&gt;              Estimate Std. Error z value Pr(&gt;|z|)    </span></span>
-<span><span class="co">#&gt; X(Intercept)   2.8115     0.2034  13.824  &lt; 2e-16 ***</span></span>
-<span><span class="co">#&gt; Xs(x)Fx1      -1.4110     0.4242  -3.326  0.00088 ***</span></span>
+<span><span class="co">#&gt; X(Intercept)   2.8115     0.2034  13.825  &lt; 2e-16 ***</span></span>
+<span><span class="co">#&gt; Xs(x)Fx1      -1.4110     0.4242  -3.326 0.000879 ***</span></span>
 <span><span class="co">#&gt; ---</span></span>
 <span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -831,8 +831,7 @@ this example.</p>
 <div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod_byvar_mixed</span><span class="op">)</span></span>
 <span><span class="co">#&gt; GALAMM fit by maximum marginal likelihood.</span></span>
-<span><span class="co">#&gt; Formula: y ~ domain + sl(x, by = domain, factor = c("ability1", "ability2")) +  </span></span>
-<span><span class="co">#&gt;     (0 + domain1:ability1 + domain2:ability2 | id)</span></span>
+<span><span class="co">#&gt; Formula: y ~ domain + sl(x, by = domain, factor = c("ability1", "ability2")) +      (0 + domain1:ability1 + domain2:ability2 | id)</span></span>
 <span><span class="co">#&gt;    Data: dat</span></span>
 <span><span class="co">#&gt; Control: galamm_control(optim_control = list(factr = 1e+09, trace = 3,      REPORT = 30, maxit = 1000))</span></span>
 <span><span class="co">#&gt; </span></span>

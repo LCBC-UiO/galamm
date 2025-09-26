@@ -256,7 +256,7 @@ is fixed to 1. We also ignore the factor loadings for simplicity.</p>
 <code class="sourceCode R"><span><span class="va">family_mapping</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">mresp</span><span class="op">$</span><span class="va">itemgroup</span> <span class="op">==</span> <span class="st">"a"</span>, <span class="fl">1L</span>, <span class="fl">2L</span><span class="op">)</span></span>
 <span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">x</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span>,</span>
-<span>  weights <span class="op">=</span> <span class="op">~</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">isgauss</span> <span class="op">|</span> <span class="va">grp</span><span class="op">)</span>,</span>
+<span>  dispformula <span class="op">=</span> <span class="op">~</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">isgauss</span> <span class="op">|</span> <span class="va">grp</span><span class="op">)</span>,</span>
 <span>  family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">gaussian</span>, <span class="va">binomial</span><span class="op">)</span>,</span>
 <span>  family_mapping <span class="op">=</span> <span class="va">family_mapping</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">mresp_hsced</span></span>
@@ -268,7 +268,6 @@ function.</p>
 <span><span class="co">#&gt; GALAMM fit by maximum marginal likelihood.</span></span>
 <span><span class="co">#&gt; Formula: y ~ x + (1 | id)</span></span>
 <span><span class="co">#&gt;    Data: mresp_hsced</span></span>
-<span><span class="co">#&gt; Weights: ~(0 + isgauss | grp)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;      AIC      BIC   logLik deviance df.resid </span></span>
 <span><span class="co">#&gt;  12356.9  12388.3  -6173.4  31426.4     3995 </span></span>

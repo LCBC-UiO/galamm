@@ -130,7 +130,7 @@ should be included per item.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">x</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span>,</span>
-<span>  weights <span class="op">=</span> <span class="op">~</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">item</span><span class="op">)</span>,</span>
+<span>  dispformula <span class="op">=</span> <span class="op">~</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">item</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">hsced</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>The output shows that for item 2, the residual variance is twice that
@@ -140,7 +140,6 @@ of item 1.</p>
 <span><span class="co">#&gt; GALAMM fit by maximum marginal likelihood.</span></span>
 <span><span class="co">#&gt; Formula: y ~ x + (1 | id)</span></span>
 <span><span class="co">#&gt;    Data: hsced</span></span>
-<span><span class="co">#&gt; Weights: ~(1 | item)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;      AIC      BIC   logLik deviance df.resid </span></span>
 <span><span class="co">#&gt;   4126.3   4151.7  -2058.1   4116.3     1195 </span></span>
