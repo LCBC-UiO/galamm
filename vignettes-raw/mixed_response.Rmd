@@ -67,17 +67,18 @@ We define the loading matrix as follows, where the value `1` indicates that the 
 
 We set `load_var = "itemgroup"` because all rows of the data with the same value of `itemgroup` will receive the same factor loading. In `formula`, we state `(0 + level | id)` to specify that each subject, identified by `id`, has a given level. `level` is not an element of the `mresp` data, but is instead the factor onto which the loading matrix loads. We identify this with the argument `factor = "level"`. We could have chosen any other name for `"level"`, except for names that are already columns in `mresp`.
 
-We also need to define the response families, with the vector
+We also need to define the response families using the `gfam` function:
 
 ```{r}
-families <- c(gaussian, binomial)
+families <- gfam(list(gaussian, binomial))
 ```
 
-We also need a way of telling galamm which row belongs to which family, which we do with a family mapping. The values in `family_mapping` refer to the elements of `families`.
+We also need a way of telling galamm which row belongs to which family. This is encoded in the dataframe `mresp`, where the response `y` is a matrix with two columns, in which the first column is the response and the second column is the index of the family. That is, a `1` means `gaussian` and a `2` means `binomial`.
 
 ```{r}
-family_mapping <- ifelse(mresp$itemgroup == "a", 1, 2)
+head(mresp$y)
 ```
+
 
 We are now ready to estimate the mixed response model.
 
@@ -86,7 +87,6 @@ mixed_resp <- galamm(
   formula = y ~ x + (0 + level | id),
   data = mresp,
   family = families,
-  family_mapping = family_mapping,
   load_var = "itemgroup",
   lambda = loading_matrix,
   factor = "level"
@@ -111,12 +111,10 @@ head(mresp_hsced)
 This dataset has the same structure as `mresp`, except that the residual standard deviation of the normally distributed responses vary according to the variable `grp`, which has two levels. Two fit a model on this dataset with heteroscedastic residuals for the normally distributed variable, we must use the dummy variable `isgauss` when setting up the `weights`. This is illustrated below. By writing `~ (0 + isgauss | grp)` we specify that the heteroscedasticity is assumed between levels of `grp`, but that this only applies when `isgauss` is nonzero. Hence, the binomially distributed responses don't have any heteroscedastic residuals estimated, since for these observations the dispersion parameter $\phi$ is fixed to 1. We also ignore the factor loadings for simplicity.
 
 ```{r}
-family_mapping <- ifelse(mresp$itemgroup == "a", 1L, 2L)
 mod <- galamm(
   formula = y ~ x + (1 | id),
   dispformula = ~ (0 + isgauss | grp),
-  family = c(gaussian, binomial),
-  family_mapping = family_mapping,
+  family = gfam(list(gaussian, binomial)),
   data = mresp_hsced
 )
 ```
@@ -197,8 +195,12 @@ That is, "fiber1" and "fiber2" receive a loading fixed to one, whereas the loadi
 We also need to define the families, making sure it is binomial for "chd" and Gaussian for "fiber1" and "fiber2".
 
 ```{r}
-families <- c(gaussian, binomial)
-family_mapping <- ifelse(diet$item == "chd", 2, 1)
+head(diet$y)
+```
+
+
+```{r}
+families <- gfam(list(gaussian, binomial))
 ```
 
 The model formula also needs some care in this case. We define it as follows, and note that the whole part `0 + chd + fiber + fiber2` could have been replaced by `item`. We use the former for ease of explanation.
@@ -225,7 +227,6 @@ mod <- galamm(
   formula = formula,
   data = diet,
   family = families,
-  family_mapping = family_mapping,
   factor = "loading",
   load_var = "item",
   lambda = loading_matrix
@@ -247,7 +248,6 @@ mod <- galamm(
   formula = formula,
   data = diet,
   family = families,
-  family_mapping = family_mapping,
   factor = "loading",
   load_var = "item",
   lambda = loading_matrix,
@@ -263,7 +263,6 @@ mod <- galamm(
   formula = formula,
   data = diet,
   family = families,
-  family_mapping = family_mapping,
   factor = "loading",
   load_var = "item",
   lambda = loading_matrix,
@@ -306,7 +305,6 @@ mod0 <- galamm(
   formula = formula0,
   data = diet,
   family = families,
-  family_mapping = family_mapping,
   factor = "loading",
   load_var = "item",
   lambda = loading_matrix,

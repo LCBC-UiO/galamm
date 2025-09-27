@@ -368,8 +368,7 @@ mod_byvar_mixed <- galamm(
     sl(x, by = domain, factor = c("ability1", "ability2")) +
     (0 + domain1:ability1 + domain2:ability2 | id),
   data = dat,
-  family = c(gaussian, binomial),
-  family_mapping = ifelse(dat$domain == 1, 1L, 2L),
+  family = gfam(list(gaussian, binomial)),
   load_var = "item",
   lambda = lmat,
   factor = c("ability1", "ability2"),
