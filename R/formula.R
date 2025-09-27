@@ -19,8 +19,7 @@
 #' loading_matrix <- matrix(c(1, NA), ncol = 1)
 #'
 #' # Define mapping to families.
-#' families <- c(gaussian, binomial)
-#' family_mapping <- ifelse(mresp$itemgroup == "a", 1, 2)
+#' families <- gfam(list(gaussian, binomial))
 #'
 #'
 #' # Fit the model
@@ -28,7 +27,6 @@
 #'   formula = y ~ x + (0 + level | id),
 #'   data = mresp,
 #'   family = families,
-#'   family_mapping = family_mapping,
 #'   factor = "level",
 #'   load_var = "itemgroup",
 #'   lambda = loading_matrix

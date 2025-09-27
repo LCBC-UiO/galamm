@@ -30,8 +30,7 @@
 #' @srrstats {G2.0a} Secondary documentation of expectations on lengths of
 #'   inputs provided for the parameters in the descriptions below. This applies
 #'   in particular to \code{lambda}, \code{factor}, \code{load_var}, and
-#'   \code{factor_interactions}, as well as \code{family} and
-#'   \code{family_mapping}.
+#'   \code{factor_interactions}, as well as \code{family}.
 #' @srrstats {G2.1} Assertions on types of input implemented in galamm function.
 #' @srrstats {G2.1a} Documentation on expected data types provided for all
 #'   inputs in the documentation below.
@@ -41,7 +40,7 @@
 #' @srrstats {G2.3,G2.3b} Arguments "family", "load_var", "factor", and the
 #'   elements of the "start" argument are case sensitive. This is stated in the
 #'   documentation below.
-#' @srrstats {G2.4,G2.4a} Internally, objects family_mapping, weights_mapping
+#' @srrstats {G2.4,G2.4a} Internally, objects weights_mapping
 #'   and lambda_mapping_X are explicitly converted to integer using
 #'   as.integer().
 #' @srrstats {G2.4,G2.4b} as.numeric() used multiple places throughout the code
@@ -221,16 +220,13 @@
 #' loading_matrix <- matrix(c(1, NA), ncol = 1)
 #'
 #' # Define mapping to families.
-#' families <- c(gaussian, binomial)
-#' family_mapping <- ifelse(mresp$itemgroup == "a", 1, 2)
-#'
+#' families <- gfam(list(gaussian, binomial))
 #'
 #' # Fit the model
 #' mod <- galamm(
 #'   formula = y ~ x + (0 + level | id),
 #'   data = mresp,
 #'   family = families,
-#'   family_mapping = family_mapping,
 #'   factor = "level",
 #'   load_var = "itemgroup",
 #'   lambda = loading_matrix

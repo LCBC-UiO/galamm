@@ -122,8 +122,6 @@ setup_family <- function(family) {
 #' Create the response object
 #'
 #' @param family_list A list of families returned from \code{setup_family}.
-#' @param family_mapping The argument \code{family_mapping} provided to
-#'   \code{\link{galamm}}.
 #' @param data A data frame.
 #' @param gobj A list object returned from the internal function \code{gamm4}.
 #'
