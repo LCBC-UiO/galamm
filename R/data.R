@@ -93,7 +93,9 @@
 #'   \item{item}{Integer indicating whether the outcome is fiber intake at
 #'   time 1 (item = 1), fiber intake at time 2 (item = 2), or coronary heart
 #'   disease (item = 3).}
-#'   \item{y}{Outcome.}
+#'   \item{y}{Matrix with two column. The first column is the outcome, and
+#'   the second column an index which equals 1 if the response is conditionally
+#'   Gaussian and 2 if the response is conditionally binomial.}
 #'   \item{chd}{Dummy variable indicating whether y is an indicator for
 #'   coronary heart disease, coded as 0/1.}
 #'   \item{fiber}{Dummy variable indicating whether y is a fiber measurement

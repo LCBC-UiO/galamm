@@ -326,7 +326,6 @@ galamm <- function(formula, dispformula = NULL, weights = NULL, data,
             call. = FALSE)
     # Deal with the case here
   }
-
   if (!inherits(data, "data.frame")) {
     stop("data must be a data.frame")
   }
@@ -354,7 +353,11 @@ galamm <- function(formula, dispformula = NULL, weights = NULL, data,
   }
 
   family_list <- if (!inherits(family, "extended_family")) {
-    list(family)
+    if (length(family) == 1 || inherits(family, "family")) {
+      setup_family(family)
+    } else {
+      stop("Use gfam for mixed response types")
+    }
   } else {
     family
   }
@@ -448,9 +451,10 @@ galamm <- function(formula, dispformula = NULL, weights = NULL, data,
 
   y <- response_obj[, 1]
   trials <- response_obj[, 2]
+  family_mapping <- response_obj[, 3]
   u_init <- rep(0, nrow(gobj$lmod$reTrms$Zt))
   family_txt <- vapply(family_list, function(f) f$family, "a")
-  k <- find_k(family_txt, response_obj[, 2, drop = TRUE], y, trials)
+  k <- find_k(family_txt, family_mapping, y, trials)
 
   maxit_conditional_modes <- ifelse(
     length(family_list) == 1 & family_list[[1]]$family == "gaussian",
@@ -475,7 +479,7 @@ galamm <- function(formula, dispformula = NULL, weights = NULL, data,
       weights = par[weights_inds],
       weights_mapping = weights_mapping,
       family = family_txt,
-      family_mapping = as.integer(response_obj[, 2, drop = TRUE]) - 1L,
+      family_mapping = as.integer(family_mapping) - 1L,
       k = k,
       maxit_conditional_modes = maxit_conditional_modes,
       lossvalue_tol = control$pirls_tol_abs,
@@ -540,21 +544,21 @@ galamm <- function(formula, dispformula = NULL, weights = NULL, data,
   linear_predictor_random <- as.numeric(Matrix::t(gobj$lmod$reTrms$Zt) %*% b)
 
   extractor <- function(i, inc_random = TRUE) {
-    family_list[[response_obj[, 2, drop = TRUE][[i]]]]$linkinv(
+    family_list[[family_mapping[[i]]]]$linkinv(
       linear_predictor_fixed[[i]] +
         ifelse(inc_random, linear_predictor_random[[i]], 0)
     )
   }
 
-  fit <- vapply(seq_along(response_obj[, 2, drop = TRUE]), extractor, numeric(1))
-  fit_population <- vapply(seq_along(response_obj[, 2, drop = TRUE]), extractor,
+  fit <- vapply(seq_along(family_mapping), extractor, numeric(1))
+  fit_population <- vapply(seq_along(family_mapping), extractor,
     numeric(1),
     inc_random = FALSE
   )
 
   pearson_residuals <- (response_obj[, 1] - fit) /
     unlist(Map(function(x, y) sqrt(family_list[[x]]$variance(y)),
-      x = response_obj[, 2, drop = TRUE], y = fit
+      x = family_mapping, y = fit
     ))
 
   if (length(family_list) == 1 && family_list[[1]]$family == "gaussian") {
@@ -572,8 +576,8 @@ galamm <- function(formula, dispformula = NULL, weights = NULL, data,
       }
     )
     dev_res <- sqrt(vapply(
-      seq_along(response_obj[ , 2, drop = TRUE]),
-      function(i) tmp[[response_obj[ , 2, drop = TRUE][[i]]]][[i]], 1
+      seq_along(family_mapping),
+      function(i) tmp[[family_mapping[[i]]]][[i]], 1
     ))
 
     deviance_residuals <- sign(response_obj[, 1] - fit) * dev_res
