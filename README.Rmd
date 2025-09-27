@@ -108,8 +108,7 @@ Responses in rows with `itemgroup = "a"` are normally distributed while those in
 mixed_resp <- galamm(
   formula = y ~ x + (0 + loading | id),
   data = mresp,
-  family = c(gaussian, binomial),
-  family_mapping = ifelse(mresp$itemgroup == "a", 1L, 2L),
+  family = gfam(list(gaussian, binomial)),
   load_var = "itemgroup",
   lambda = matrix(c(1, NA), ncol = 1),
   factor = "loading"
