@@ -44,6 +44,7 @@ For this first example, we focus only on the first item measured for the first d
 
 ```{r}
 dat <- subset(cognition, domain == 1 & item == "11")
+dat$y <- dat$y[, 1]
 ```
 
 Each subject in this dataset has been measured eight times, and we can plot the measurements as follows:
@@ -132,6 +133,7 @@ In the cognition dataset, the responses relating to domain 2 are binomially dist
 
 ```{r}
 dat <- subset(cognition, domain == 2 & item == "21")
+dat$y <- dat$y[, 1]
 ```
 
 Again we can fit this model using `gamm4`.
@@ -184,6 +186,7 @@ To illustrate basic usage, we continue with the cognition data, but now use all 
 
 ```{r}
 dat <- subset(cognition, domain == 1)
+dat$y <- dat$y[, 1]
 head(dat)
 ```
 
@@ -243,6 +246,7 @@ We can now move on to the part of the cognition data that is conditionally binom
 
 ```{r}
 dat <- subset(cognition, domain == 2)
+dat$y <- dat$y[, 1]
 
 mod <- galamm(
   formula = y ~ 0 + item + sl(x, factor = "loading") +
@@ -277,6 +281,7 @@ Domain 1 and 3 both have Gaussian responses, and we can model them jointly.
 
 ```{r}
 dat <- subset(cognition, domain %in% c(1, 3))
+dat$y <- dat$y[, 1]
 ```
 
 We also add indicator variables for the two domains.
@@ -335,6 +340,11 @@ plot_smooth(mod_byvar, scale = 0, select = 2)
 
 ### Mixed Gaussian and Binomial Responses
 
+```{r, echo=FALSE}
+rm(list = ls())
+```
+
+
 Domain 1 has Gaussian responses and domain 2 has binomial responses, and we can model them jointly. For the sake of speed, we include only two items for each domain.
 
 ```{r}
@@ -359,8 +369,7 @@ We define the loading matrix, now having two columns:
   ), ncol = 2))
 ```
 
-Then we define the model. The smooth term is now `sl(x, by = domain, factor = c("ability1", "ability2"))`, indicating that there should be a separate smooth term for each level of `domain`, and that the term should be multiplied by the loading "ability1" or "ability2". Because this model has some convergence issues, we omit the timepoint-level random intercepts in this example.
-
+Then we define the model. The smooth term is now `sl(x, by = domain, factor = c("ability1", "ability2"))`, indicating that there should be a separate smooth term for each level of `domain`, and that the term should be multiplied by the loading "ability1" or "ability2". Because this model has some convergence issues, we omit the timepoint-level random intercepts in this example. Since `gfam` is also exported from `gamm4`, which we loaded at the top of this vignette, we use `galamm::gfam` to get the correct function.
 
 ```{r}
 mod_byvar_mixed <- galamm(
@@ -368,7 +377,7 @@ mod_byvar_mixed <- galamm(
     sl(x, by = domain, factor = c("ability1", "ability2")) +
     (0 + domain1:ability1 + domain2:ability2 | id),
   data = dat,
-  family = gfam(list(gaussian, binomial)),
+  family = galamm::gfam(list(gaussian, binomial)),
   load_var = "item",
   lambda = lmat,
   factor = c("ability1", "ability2"),

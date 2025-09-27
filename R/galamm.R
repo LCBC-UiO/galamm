@@ -348,7 +348,7 @@ galamm <- function(formula, dispformula = NULL, weights = NULL, data,
     stop("dispformula must be a formula")
   }
 
-  family_list <- if (!inherits(family, "extended_family")) {
+  family_list <- if (!inherits(family, "galamm_extended_family")) {
     if (length(family) == 1 || inherits(family, "family")) {
       setup_family(family)
     } else {
@@ -458,6 +458,7 @@ galamm <- function(formula, dispformula = NULL, weights = NULL, data,
   )
 
   mlwrapper <- function(par, gradient = FALSE, hessian = FALSE) {
+    tmp <- family_txt
     marginal_likelihood(
       y = y,
       trials = trials,

@@ -11,7 +11,7 @@ gfam(fl)
 \code{poisson} with canonical link functions are supported.}
 }
 \value{
-An object of class "extended_family".
+An object of class "galamm_extended_family".
 }
 \description{
 This function is inspired by a function of the same name in the \code{mgcv}

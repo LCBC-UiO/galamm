@@ -10,7 +10,7 @@
 #' @param fl A list of families. Currently \code{gaussian}, \code{binomial}, and
 #'   \code{poisson} with canonical link functions are supported.
 #'
-#' @returns An object of class "extended_family".
+#' @returns An object of class "galamm_extended_family".
 #' @export
 #'
 #' @references \insertAllCited{}
@@ -27,6 +27,6 @@ gfam <- function(fl) {
       return(f)
     }
   })
-  class(ret) <- "extended_family"
+  class(ret) <- "galamm_extended_family"
   ret
 }

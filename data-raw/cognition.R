@@ -79,5 +79,6 @@ cognition <- crossing(
   as.data.frame()
 
 cognition$y <- matrix(c(cognition$y, ifelse(cognition$domain == 2, 2, 1)), ncol = 2)
+colnames(cognition$y) <- c("y", "y.1")
 
 usethis::use_data(cognition, overwrite = TRUE)

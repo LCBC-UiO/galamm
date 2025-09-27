@@ -43,7 +43,7 @@ We will illustrate some ways of modifying the optimization procedure with the co
 
 ```{r}
 loading_matrix <- matrix(c(1, 1, NA), ncol = 1)
-families <- c(gaussian, binomial)
+families <- gfam(list(gaussian, binomial))
 formula <- y ~ 0 + chd + (age * bus):chd + fiber +
   (age * bus):fiber + fiber2 + (0 + loading | id)
 ```

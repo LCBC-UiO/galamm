@@ -419,7 +419,7 @@ We check how many models failed to converge, and then remove those rows:
 
 ``` r
 sum(is.na(plot_dat))
-#> [1] 1
+#> [1] 0
 plot_dat <- na.omit(plot_dat)
 ```
 
