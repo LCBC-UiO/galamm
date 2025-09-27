@@ -146,9 +146,11 @@
 #'   \item{item}{Factor variable denoting the item within the tests of each
 #'   cognitive domain.}
 #'   \item{trials}{Number of trials, if applicable.}
-#'   \item{y}{Response variable. For domain 1 a real number, for domain 2 a
+#'   \item{y}{Matrix with two columns. The first column is the response
+#'       variable: for domain 1 a real number, for domain 2 a
 #'       binomially distributed variable based on a single trial, for
-#'       domain 3 a real number.}
+#'       domain 3 a real number. The second column equals 1 if the response is
+#'       conditionally Gaussian and 2 if the response is conditionally binomial.}
 #' }
 #' @family datasets
 #' @references \insertAllCited{}
