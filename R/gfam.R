@@ -13,10 +13,12 @@
 #' @returns An object of class "galamm_extended_family".
 #' @export
 #'
+#' @family modeling functions
+#'
 #' @references \insertAllCited{}
 #'
 gfam <- function(fl) {
-  if(!is.list(fl)) stop("fl must be a list")
+  if (!is.list(fl)) stop("fl must be a list")
 
   ret <- lapply(fl, function(f) {
     if (is.character(f)) {

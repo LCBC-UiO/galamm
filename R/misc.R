@@ -111,7 +111,7 @@ setup_family <- function(family) {
   })
 
   lapply(ret, function(f) {
-    if(!inherits(f, "family")) {
+    if (!inherits(f, "family")) {
       stop("Not a family object")
     }
   })
@@ -134,8 +134,8 @@ setup_response_object <- function(family_list, data, gobj) {
   response_obj <- matrix(nrow = nrow(gobj$lmod$X), ncol = 3)
   response_name <- all.vars(lme4::nobars(gobj$fake.formula))[[1]]
 
-  if(length(family_list) > 1) {
-    if(!isTRUE(base::all.equal(
+  if (length(family_list) > 1) {
+    if (!isTRUE(base::all.equal(
       sort(as.integer(unique(data[, response_name][, 2]))),
       seq_along(family_list)))) {
       stop("There must be at least one index per family")
@@ -144,7 +144,7 @@ setup_response_object <- function(family_list, data, gobj) {
 
   for (i in seq_along(family_list)) {
     f <- family_list[[1]]
-    matching_rows <- if(length(family_list) > 1) {
+    matching_rows <- if (length(family_list) > 1) {
       data[, response_name][, 2] == i
     } else {
       rep(TRUE, nrow(data))
