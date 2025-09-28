@@ -64,7 +64,7 @@ distributed response follow two different residual standard deviations.</p>
     <h2 id="format">Format<a class="anchor" aria-label="anchor" href="#format"></a></h2>
 
 <div class="section">
-<h3 id="mresp-a-data-frame-with-rows-and-columns-"><code>mresp</code> A data frame with 4000 rows and 5 columns:<a class="anchor" aria-label="anchor" href="#mresp-a-data-frame-with-rows-and-columns-"></a></h3>
+<h3 id="mresp-hsced-a-data-frame-with-rows-and-columns-"><code>mresp_hsced</code> A data frame with 4000 rows and 5 columns:<a class="anchor" aria-label="anchor" href="#mresp-hsced-a-data-frame-with-rows-and-columns-"></a></h3>
 
 
 <dl><dt>id</dt>
@@ -74,7 +74,9 @@ distributed response follow two different residual standard deviations.</p>
 <dd><p>Predictor variable.</p></dd>
 
 <dt>y</dt>
-<dd><p>Response.</p></dd>
+<dd><p>Matrix whose first column is the response and whose second
+column equals 1 if the observation is conditionally normally distributed
+and 2 if the observation is conditionally binomially distributed.</p></dd>
 
 <dt>itemgroup</dt>
 <dd><p>Factor variable which equals "a" for the normally

@@ -138,7 +138,7 @@ Rockwood and Jeon (2019)
 <span>  weights <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">data</span>,</span>
 <span>  family <span class="op">=</span> <span class="va">gaussian</span>,</span>
-<span>  family_mapping <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  family_mapping <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  load_var <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  load.var <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  lambda <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -186,29 +186,16 @@ formula, with the exception of factor loadings.</p></dd>
 
 
 <dt id="arg-family">family<a class="anchor" aria-label="anchor" href="#arg-family"></a></dt>
-<dd><p>A a list or character vector containing one or more model
-families. For each element in <code>family</code> there should be a corresponding
-element in <code>family_mapping</code> specifying which elements of the response
-are conditionally distributed according to the given family. Currently
-family can be one of <code>gaussian</code>, <code>binomial</code>, and <code>poisson</code>,
-and only canonical link functions are supported. The family arguments can
-either be provided as character values, e.g., <code>c("gaussian",
-  "poisson")</code> or <code>list("gaussian", "poisson")</code>, as function names, e.g.,
-<code>c(gaussian, poisson)</code> or <code>list(gaussian, poisson)</code>, or as
-function calls, e.g., <code>list(gaussian(), poisson())</code>. In the latter
-case, they must be provided in a list, and bot as a vector. Mixing the
-different ways of describing the family also works, e.g.,
-<code>list("gaussian", poisson())</code>, but in this case they must be provided
-in a list. When provided as character values, the argument is case
-sensitive.</p></dd>
+<dd><p>A family object specifying the response distribution of the
+model. Currently <code>gaussian</code>, <code>binomial</code>, and <code>poisson</code>
+with canonical link functions are supported. Models with mixed response
+types, in which responses are distributed according to one of the three
+supported distributions, can be set up using the <code><a href="gfam.html">gfam()</a></code> function.</p></dd>
 
 
 <dt id="arg-family-mapping">family_mapping<a class="anchor" aria-label="anchor" href="#arg-family-mapping"></a></dt>
-<dd><p>Optional vector mapping from the elements of
-<code>family</code> to rows of <code>data</code>. Defaults to <code>rep(1,
-  nrow(data))</code>, which means that all observations are distributed according
-to the first element of <code>family</code>. The length of <code>family_mapping</code>
-must be identical to the number of observations, <code>nrow(data)</code>.</p></dd>
+<dd><p>Deprecated. See the documentation to <code><a href="gfam.html">gfam()</a></code> for how
+to set up mixed response type models.</p></dd>
 
 
 <dt id="arg-load-var">load_var<a class="anchor" aria-label="anchor" href="#arg-load-var"></a></dt>
@@ -320,6 +307,7 @@ Chapman and Hall/CRC.</p>
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p>Other modeling functions:
 <code><a href="galammObject.html">galammObject</a></code>,
+<code><a href="gfam.html">gfam</a>()</code>,
 <code><a href="sl.html">s</a>()</code>,
 <code><a href="t2l.html">t2</a>()</code></p></div>
     </div>
@@ -334,16 +322,13 @@ Chapman and Hall/CRC.</p>
 <span class="r-in"><span><span class="va">loading_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="cn">NA</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Define mapping to families.</span></span></span>
-<span class="r-in"><span><span class="va">families</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">gaussian</span>, <span class="va">binomial</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">family_mapping</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">mresp</span><span class="op">$</span><span class="va">itemgroup</span> <span class="op">==</span> <span class="st">"a"</span>, <span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">families</span> <span class="op">&lt;-</span> <span class="fu"><a href="gfam.html">gfam</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">gaussian</span>, <span class="va">binomial</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Fit the model</span></span></span>
 <span class="r-in"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu">galamm</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">x</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">level</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  data <span class="op">=</span> <span class="va">mresp</span>,</span></span>
 <span class="r-in"><span>  family <span class="op">=</span> <span class="va">families</span>,</span></span>
-<span class="r-in"><span>  family_mapping <span class="op">=</span> <span class="va">family_mapping</span>,</span></span>
 <span class="r-in"><span>  factor <span class="op">=</span> <span class="st">"level"</span>,</span></span>
 <span class="r-in"><span>  load_var <span class="op">=</span> <span class="st">"itemgroup"</span>,</span></span>
 <span class="r-in"><span>  lambda <span class="op">=</span> <span class="va">loading_matrix</span></span></span>

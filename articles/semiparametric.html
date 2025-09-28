@@ -103,17 +103,18 @@ generalized additive mixed models.</p>
 measurements of abilities in three cognitive domains.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">cognition</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   id domain          x timepoint item trials          y</span></span>
-<span><span class="co">#&gt; 1  1      1 0.06475113         1   11      1 0.16788973</span></span>
-<span><span class="co">#&gt; 2  1      1 0.06475113         1   12      1 0.08897838</span></span>
-<span><span class="co">#&gt; 3  1      1 0.06475113         1   13      1 0.03162123</span></span>
-<span><span class="co">#&gt; 4  1      1 0.15766278         2   11      1 0.46598362</span></span>
-<span><span class="co">#&gt; 5  1      1 0.15766278         2   12      1 0.84564656</span></span>
-<span><span class="co">#&gt; 6  1      1 0.15766278         2   13      1 0.20549872</span></span></code></pre></div>
+<span><span class="co">#&gt;   id domain          x timepoint item trials        y.y      y.y.1</span></span>
+<span><span class="co">#&gt; 1  1      1 0.06475113         1   11      1 0.16788973 1.00000000</span></span>
+<span><span class="co">#&gt; 2  1      1 0.06475113         1   12      1 0.08897838 1.00000000</span></span>
+<span><span class="co">#&gt; 3  1      1 0.06475113         1   13      1 0.03162123 1.00000000</span></span>
+<span><span class="co">#&gt; 4  1      1 0.15766278         2   11      1 0.46598362 1.00000000</span></span>
+<span><span class="co">#&gt; 5  1      1 0.15766278         2   12      1 0.84564656 1.00000000</span></span>
+<span><span class="co">#&gt; 6  1      1 0.15766278         2   13      1 0.20549872 1.00000000</span></span></code></pre></div>
 <p>For this first example, we focus only on the first item measured for
 the first domain.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">cognition</span>, <span class="va">domain</span> <span class="op">==</span> <span class="fl">1</span> <span class="op">&amp;</span> <span class="va">item</span> <span class="op">==</span> <span class="st">"11"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">cognition</span>, <span class="va">domain</span> <span class="op">==</span> <span class="fl">1</span> <span class="op">&amp;</span> <span class="va">item</span> <span class="op">==</span> <span class="st">"11"</span><span class="op">)</span></span>
+<span><span class="va">dat</span><span class="op">$</span><span class="va">y</span> <span class="op">&lt;-</span> <span class="va">dat</span><span class="op">$</span><span class="va">y</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span></span></code></pre></div>
 <p>Each subject in this dataset has been measured eight times, and we
 can plot the measurements as follows:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
@@ -165,12 +166,12 @@ smooth terms. We can look at the model summary for each:</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Scaled residuals: </span></span>
 <span><span class="co">#&gt;      Min       1Q   Median       3Q      Max </span></span>
-<span><span class="co">#&gt; -2.93755 -0.65215  0.00612  0.62654  3.14289 </span></span>
+<span><span class="co">#&gt; -2.93755 -0.65215  0.00612  0.62654  3.14290 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Random effects:</span></span>
 <span><span class="co">#&gt;  Groups   Name        Variance Std.Dev.</span></span>
 <span><span class="co">#&gt;  id       (Intercept) 0.8551   0.9247  </span></span>
-<span><span class="co">#&gt;  Xr       s(x)        2.0341   1.4262  </span></span>
+<span><span class="co">#&gt;  Xr       s(x)        2.0343   1.4263  </span></span>
 <span><span class="co">#&gt;  Residual             0.2501   0.5001  </span></span>
 <span><span class="co">#&gt; Number of obs: 1600, groups:  id, 200; Xr, 8</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -300,7 +301,8 @@ term.</div>
 binomially distributed. We will use the first trial to illustrate how
 such data can be modeled.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">cognition</span>, <span class="va">domain</span> <span class="op">==</span> <span class="fl">2</span> <span class="op">&amp;</span> <span class="va">item</span> <span class="op">==</span> <span class="st">"21"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">cognition</span>, <span class="va">domain</span> <span class="op">==</span> <span class="fl">2</span> <span class="op">&amp;</span> <span class="va">item</span> <span class="op">==</span> <span class="st">"21"</span><span class="op">)</span></span>
+<span><span class="va">dat</span><span class="op">$</span><span class="va">y</span> <span class="op">&lt;-</span> <span class="va">dat</span><span class="op">$</span><span class="va">y</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span></span></code></pre></div>
 <p>Again we can fit this model using <code>gamm4</code>.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mod_gamm4</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/gamm4/man/gamm4.html" class="external-link">gamm4</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="fu"><a href="../reference/sl.html">s</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>,</span>
@@ -422,6 +424,7 @@ now use all items of cognitive domain 1. These are all conditionally
 normal distributed.</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">cognition</span>, <span class="va">domain</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="va">dat</span><span class="op">$</span><span class="va">y</span> <span class="op">&lt;-</span> <span class="va">dat</span><span class="op">$</span><span class="va">y</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   id domain          x timepoint item trials          y</span></span>
 <span><span class="co">#&gt; 1  1      1 0.06475113         1   11      1 0.16788973</span></span>
@@ -560,6 +563,7 @@ Other than that, and setting <code>family = binomial</code>, the model
 is the same as before.</p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">cognition</span>, <span class="va">domain</span> <span class="op">==</span> <span class="fl">2</span><span class="op">)</span></span>
+<span><span class="va">dat</span><span class="op">$</span><span class="va">y</span> <span class="op">&lt;-</span> <span class="va">dat</span><span class="op">$</span><span class="va">y</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span></span>
 <span></span>
 <span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="fl">0</span> <span class="op">+</span> <span class="va">item</span> <span class="op">+</span> <span class="fu"><a href="../reference/sl.html">sl</a></span><span class="op">(</span><span class="va">x</span>, factor <span class="op">=</span> <span class="st">"loading"</span><span class="op">)</span> <span class="op">+</span></span>
@@ -637,7 +641,8 @@ confidence limits.</p>
 <p>Domain 1 and 3 both have Gaussian responses, and we can model them
 jointly.</p>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">cognition</span>, <span class="va">domain</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">cognition</span>, <span class="va">domain</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">dat</span><span class="op">$</span><span class="va">y</span> <span class="op">&lt;-</span> <span class="va">dat</span><span class="op">$</span><span class="va">y</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span></span></code></pre></div>
 <p>We also add indicator variables for the two domains.</p>
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span></span>
@@ -683,20 +688,19 @@ model is hard to estimate.</p>
 <span><span class="co">#&gt; At X0, 0 variables are exactly at the bounds</span></span>
 <span><span class="co">#&gt; At iterate     0  f=        25324  |proj g|=       9642.6</span></span>
 <span><span class="co">#&gt; At iterate    50  f =        136.9  |proj g|=        716.66</span></span>
-<span><span class="co">#&gt; At iterate   100  f =      -1062.4  |proj g|=        400.16</span></span>
-<span><span class="co">#&gt; At iterate   150  f =      -1069.1  |proj g|=        151.55</span></span>
-<span><span class="co">#&gt; At iterate   200  f =      -1147.5  |proj g|=        44.829</span></span>
+<span><span class="co">#&gt; At iterate   100  f =      -1055.1  |proj g|=        2101.3</span></span>
+<span><span class="co">#&gt; At iterate   150  f =        -1069  |proj g|=        12.671</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; iterations 207</span></span>
-<span><span class="co">#&gt; function evaluations 228</span></span>
-<span><span class="co">#&gt; segments explored during Cauchy searches 210</span></span>
+<span><span class="co">#&gt; iterations 192</span></span>
+<span><span class="co">#&gt; function evaluations 210</span></span>
+<span><span class="co">#&gt; segments explored during Cauchy searches 195</span></span>
 <span><span class="co">#&gt; BFGS updates skipped 0</span></span>
 <span><span class="co">#&gt; active bounds at final generalized Cauchy point 0</span></span>
-<span><span class="co">#&gt; norm of the final projected gradient 5.59584</span></span>
-<span><span class="co">#&gt; final function value -1147.55</span></span>
+<span><span class="co">#&gt; norm of the final projected gradient 5.66964</span></span>
+<span><span class="co">#&gt; final function value -1147.33</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; F = -1147.55</span></span>
-<span><span class="co">#&gt; final  value -1147.545485 </span></span>
+<span><span class="co">#&gt; F = -1147.33</span></span>
+<span><span class="co">#&gt; final  value -1147.325580 </span></span>
 <span><span class="co">#&gt; converged</span></span></code></pre></div>
 <p>The summary shows that we have recovered the true values of the
 factor loadings well.</p>
@@ -709,44 +713,44 @@ factor loadings well.</p>
 <span><span class="co">#&gt; Control: galamm_control(optim_control = list(factr = 1e+09, trace = 3,      REPORT = 50, maxit = 1000))</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;      AIC      BIC   logLik deviance df.resid </span></span>
-<span><span class="co">#&gt;  -2259.1  -2127.3   1147.5  -2295.1    11182 </span></span>
+<span><span class="co">#&gt;  -2258.7  -2126.8   1147.3  -2294.7    11182 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Scaled residuals: </span></span>
 <span><span class="co">#&gt;      Min       1Q   Median       3Q      Max </span></span>
-<span><span class="co">#&gt; -2097.48 -1025.93  -872.88    18.74    46.92 </span></span>
+<span><span class="co">#&gt; -2097.34 -1025.85  -872.87    18.58    46.76 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Lambda:</span></span>
 <span><span class="co">#&gt;         ability1       SE ability3        SE</span></span>
 <span><span class="co">#&gt; lambda1   1.0000        .        .         .</span></span>
 <span><span class="co">#&gt; lambda2   1.3990 0.002570        .         .</span></span>
-<span><span class="co">#&gt; lambda3   0.3008 0.002004        .         .</span></span>
+<span><span class="co">#&gt; lambda3   0.3009 0.002004        .         .</span></span>
 <span><span class="co">#&gt; lambda4        .        .   1.0000         .</span></span>
 <span><span class="co">#&gt; lambda5        .        .   0.9993 0.0007675</span></span>
 <span><span class="co">#&gt; lambda6        .        .   1.0001 0.0007677</span></span>
-<span><span class="co">#&gt; lambda7        .        .   1.9994 0.0015665</span></span>
+<span><span class="co">#&gt; lambda7        .        .   1.9994 0.0015666</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Random effects:</span></span>
 <span><span class="co">#&gt;  Groups       Name                  Variance Std.Dev. Corr </span></span>
-<span><span class="co">#&gt;  timepoint:id domain1:ability1       0.23641 0.4862        </span></span>
-<span><span class="co">#&gt;               domain3:ability3       0.28011 0.5293   -0.01</span></span>
-<span><span class="co">#&gt;  id           domain1:ability1       2.22291 1.4909        </span></span>
-<span><span class="co">#&gt;               domain3:ability3      22.71304 4.7658   0.65 </span></span>
-<span><span class="co">#&gt;  Xr.0         s(x):domain3:ability3 40.45375 6.3603        </span></span>
-<span><span class="co">#&gt;  Xr           s(x):domain1:ability1  9.81843 3.1334        </span></span>
+<span><span class="co">#&gt;  timepoint:id domain1:ability1       0.23649 0.4863        </span></span>
+<span><span class="co">#&gt;               domain3:ability3       0.28004 0.5292   -0.01</span></span>
+<span><span class="co">#&gt;  id           domain1:ability1       2.22433 1.4914        </span></span>
+<span><span class="co">#&gt;               domain3:ability3      22.73158 4.7678   0.65 </span></span>
+<span><span class="co">#&gt;  Xr.0         s(x):domain3:ability3 40.36766 6.3536        </span></span>
+<span><span class="co">#&gt;  Xr           s(x):domain1:ability1  9.75801 3.1238        </span></span>
 <span><span class="co">#&gt;  Residual                            0.01007 0.1003        </span></span>
 <span><span class="co">#&gt; Number of obs: 11200, groups:  timepoint:id, 1600; id, 200; Xr.0, 8; Xr, 8</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Fixed effects:</span></span>
 <span><span class="co">#&gt;                            Estimate Std. Error t value  Pr(&gt;|t|)</span></span>
-<span><span class="co">#&gt; (Intercept)              -0.0029364   0.004648 -0.6317 5.276e-01</span></span>
-<span><span class="co">#&gt; domain3                   0.0000136   0.007556  0.0018 9.986e-01</span></span>
-<span><span class="co">#&gt; s(x):domain1:ability1Fx1 -0.0861681   0.216332 -0.3983 6.904e-01</span></span>
-<span><span class="co">#&gt; s(x):domain3:ability3Fx1  5.7635009   0.307665 18.7331 2.662e-78</span></span>
+<span><span class="co">#&gt; (Intercept)              -0.0029983   0.004649 -0.6450 5.190e-01</span></span>
+<span><span class="co">#&gt; domain3                   0.0001012   0.007557  0.0134 9.893e-01</span></span>
+<span><span class="co">#&gt; s(x):domain1:ability1Fx1 -0.0824905   0.214289 -0.3850 7.003e-01</span></span>
+<span><span class="co">#&gt; s(x):domain3:ability3Fx1  5.7597059   0.307604 18.7244 3.129e-78</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Approximate significance of smooth terms:</span></span>
 <span><span class="co">#&gt;                         edf Ref.df     F p-value</span></span>
 <span><span class="co">#&gt; s(x):domain1:ability1 8.929  8.929  4314  &lt;2e-16</span></span>
-<span><span class="co">#&gt; s(x):domain3:ability3 8.975  8.975 59677  &lt;2e-16</span></span></code></pre></div>
+<span><span class="co">#&gt; s(x):domain3:ability3 8.975  8.975 59678  &lt;2e-16</span></span></code></pre></div>
 <p>We can plot the estimated smooth terms, which recover their simulated
 ground truth very well.</p>
 <div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
@@ -794,15 +798,16 @@ indicating that there should be a separate smooth term for each level of
 <code>domain</code>, and that the term should be multiplied by the
 loading “ability1” or “ability2”. Because this model has some
 convergence issues, we omit the timepoint-level random intercepts in
-this example.</p>
+this example. Since <code>gfam</code> is also exported from
+<code>gamm4</code>, which we loaded at the top of this vignette, we use
+<code><a href="../reference/gfam.html">galamm::gfam</a></code> to get the correct function.</p>
 <div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mod_byvar_mixed</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">domain</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="../reference/sl.html">sl</a></span><span class="op">(</span><span class="va">x</span>, by <span class="op">=</span> <span class="va">domain</span>, factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ability1"</span>, <span class="st">"ability2"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">domain1</span><span class="op">:</span><span class="va">ability1</span> <span class="op">+</span> <span class="va">domain2</span><span class="op">:</span><span class="va">ability2</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">dat</span>,</span>
-<span>  family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">gaussian</span>, <span class="va">binomial</span><span class="op">)</span>,</span>
-<span>  family_mapping <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">dat</span><span class="op">$</span><span class="va">domain</span> <span class="op">==</span> <span class="fl">1</span>, <span class="fl">1L</span>, <span class="fl">2L</span><span class="op">)</span>,</span>
+<span>  family <span class="op">=</span> <span class="fu">galamm</span><span class="fu">::</span><span class="fu"><a href="../reference/gfam.html">gfam</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">gaussian</span>, <span class="va">binomial</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  load_var <span class="op">=</span> <span class="st">"item"</span>,</span>
 <span>  lambda <span class="op">=</span> <span class="va">lmat</span>,</span>
 <span>  factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ability1"</span>, <span class="st">"ability2"</span><span class="op">)</span>,</span>
@@ -831,7 +836,8 @@ this example.</p>
 <div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod_byvar_mixed</span><span class="op">)</span></span>
 <span><span class="co">#&gt; GALAMM fit by maximum marginal likelihood.</span></span>
-<span><span class="co">#&gt; Formula: y ~ domain + sl(x, by = domain, factor = c("ability1", "ability2")) +      (0 + domain1:ability1 + domain2:ability2 | id)</span></span>
+<span><span class="co">#&gt; Formula: y ~ domain + sl(x, by = domain, factor = c("ability1", "ability2")) +  </span></span>
+<span><span class="co">#&gt;     (0 + domain1:ability1 + domain2:ability2 | id)</span></span>
 <span><span class="co">#&gt;    Data: dat</span></span>
 <span><span class="co">#&gt; Control: galamm_control(optim_control = list(factr = 1e+09, trace = 3,      REPORT = 30, maxit = 1000))</span></span>
 <span><span class="co">#&gt; </span></span>

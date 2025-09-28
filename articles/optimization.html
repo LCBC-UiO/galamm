@@ -132,8 +132,7 @@ on models with mixed response types</a>. Here we start by simply setting
 up what we need to fit the model.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">loading_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="cn">NA</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
-<span><span class="va">families</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">gaussian</span>, <span class="va">binomial</span><span class="op">)</span></span>
-<span><span class="va">family_mapping</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">diet</span><span class="op">$</span><span class="va">item</span> <span class="op">==</span> <span class="st">"chd"</span>, <span class="fl">2</span>, <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="va">families</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gfam.html">gfam</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">gaussian</span>, <span class="va">binomial</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">formula</span> <span class="op">&lt;-</span> <span class="va">y</span> <span class="op">~</span> <span class="fl">0</span> <span class="op">+</span> <span class="va">chd</span> <span class="op">+</span> <span class="op">(</span><span class="va">age</span> <span class="op">*</span> <span class="va">bus</span><span class="op">)</span><span class="op">:</span><span class="va">chd</span> <span class="op">+</span> <span class="va">fiber</span> <span class="op">+</span></span>
 <span>  <span class="op">(</span><span class="va">age</span> <span class="op">*</span> <span class="va">bus</span><span class="op">)</span><span class="op">:</span><span class="va">fiber</span> <span class="op">+</span> <span class="va">fiber2</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">loading</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span></span></code></pre></div>
 <p>Fitting the model with default arguments yields a warning when we
@@ -143,7 +142,6 @@ look at the summary object.</p>
 <span>  formula <span class="op">=</span> <span class="va">formula</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">diet</span>,</span>
 <span>  family <span class="op">=</span> <span class="va">families</span>,</span>
-<span>  family_mapping <span class="op">=</span> <span class="va">family_mapping</span>,</span>
 <span>  factor <span class="op">=</span> <span class="st">"loading"</span>,</span>
 <span>  load_var <span class="op">=</span> <span class="st">"item"</span>,</span>
 <span>  lambda <span class="op">=</span> <span class="va">loading_matrix</span></span>
@@ -198,7 +196,6 @@ model:</p>
 <span>  formula <span class="op">=</span> <span class="va">formula</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">diet</span>,</span>
 <span>  family <span class="op">=</span> <span class="va">families</span>,</span>
-<span>  family_mapping <span class="op">=</span> <span class="va">family_mapping</span>,</span>
 <span>  factor <span class="op">=</span> <span class="st">"loading"</span>,</span>
 <span>  load_var <span class="op">=</span> <span class="st">"item"</span>,</span>
 <span>  lambda <span class="op">=</span> <span class="va">loading_matrix</span>,</span>
@@ -247,7 +244,6 @@ the maximum number of iterations, which means that
 <span>  formula <span class="op">=</span> <span class="va">formula</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">diet</span>,</span>
 <span>  family <span class="op">=</span> <span class="va">families</span>,</span>
-<span>  family_mapping <span class="op">=</span> <span class="va">family_mapping</span>,</span>
 <span>  factor <span class="op">=</span> <span class="st">"loading"</span>,</span>
 <span>  load_var <span class="op">=</span> <span class="st">"item"</span>,</span>
 <span>  lambda <span class="op">=</span> <span class="va">loading_matrix</span>,</span>
@@ -334,7 +330,6 @@ see what happens. By default, the initial value equals 1.</p>
 <span>  formula <span class="op">=</span> <span class="va">formula</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">diet</span>,</span>
 <span>  family <span class="op">=</span> <span class="va">families</span>,</span>
-<span>  family_mapping <span class="op">=</span> <span class="va">family_mapping</span>,</span>
 <span>  factor <span class="op">=</span> <span class="st">"loading"</span>,</span>
 <span>  load_var <span class="op">=</span> <span class="st">"item"</span>,</span>
 <span>  lambda <span class="op">=</span> <span class="va">loading_matrix</span>,</span>
@@ -421,7 +416,6 @@ initial values. For this we can use the convenience function
 <span>  formula <span class="op">=</span> <span class="va">formula</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">diet</span>,</span>
 <span>  family <span class="op">=</span> <span class="va">families</span>,</span>
-<span>  family_mapping <span class="op">=</span> <span class="va">family_mapping</span>,</span>
 <span>  factor <span class="op">=</span> <span class="st">"loading"</span>,</span>
 <span>  load_var <span class="op">=</span> <span class="st">"item"</span>,</span>
 <span>  lambda <span class="op">=</span> <span class="va">loading_matrix</span>,</span>

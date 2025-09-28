@@ -93,13 +93,13 @@ distributed responses. They are link through a common random
 intercept.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">mresp</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   id         x          y itemgroup</span></span>
-<span><span class="co">#&gt; 1  1 0.8638214  0.2866329         a</span></span>
-<span><span class="co">#&gt; 2  1 0.7676133  2.5647490         a</span></span>
-<span><span class="co">#&gt; 3  1 0.8812059  1.0000000         b</span></span>
-<span><span class="co">#&gt; 4  1 0.2239725  1.0000000         b</span></span>
-<span><span class="co">#&gt; 5  2 0.7215696 -0.4721698         a</span></span>
-<span><span class="co">#&gt; 6  2 0.6924851  1.1750286         a</span></span></code></pre></div>
+<span><span class="co">#&gt;   id         x        y.1        y.2 itemgroup</span></span>
+<span><span class="co">#&gt; 1  1 0.8638214  0.2866329  1.0000000         a</span></span>
+<span><span class="co">#&gt; 2  1 0.7676133  2.5647490  1.0000000         a</span></span>
+<span><span class="co">#&gt; 3  1 0.8812059  1.0000000  2.0000000         b</span></span>
+<span><span class="co">#&gt; 4  1 0.2239725  1.0000000  2.0000000         b</span></span>
+<span><span class="co">#&gt; 5  2 0.7215696 -0.4721698  1.0000000         a</span></span>
+<span><span class="co">#&gt; 6  2 0.6924851  1.1750286  1.0000000         a</span></span></code></pre></div>
 <p>In terms of the GALAMM defined in the <a href="https://lcbc-uio.github.io/galamm/articles/galamm.html">introductory
 vignette</a>, and for simplicity assuming we use canonical link
 functions, we have the response model</p>
@@ -177,22 +177,31 @@ which the loading matrix loads. We identify this with the argument
 <code>factor = "level"</code>. We could have chosen any other name for
 <code>"level"</code>, except for names that are already columns in
 <code>mresp</code>.</p>
-<p>We also need to define the response families, with the vector</p>
+<p>We also need to define the response families using the
+<code>gfam</code> function:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">families</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">gaussian</span>, <span class="va">binomial</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">families</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gfam.html">gfam</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">gaussian</span>, <span class="va">binomial</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>We also need a way of telling galamm which row belongs to which
-family, which we do with a family mapping. The values in
-<code>family_mapping</code> refer to the elements of
-<code>families</code>.</p>
+family. This is encoded in the dataframe <code>mresp</code>, where the
+response <code>y</code> is a matrix with two columns, in which the first
+column is the response and the second column is the index of the family.
+That is, a <code>1</code> means <code>gaussian</code> and a
+<code>2</code> means <code>binomial</code>.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">family_mapping</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">mresp</span><span class="op">$</span><span class="va">itemgroup</span> <span class="op">==</span> <span class="st">"a"</span>, <span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">mresp</span><span class="op">$</span><span class="va">y</span><span class="op">)</span></span>
+<span><span class="co">#&gt;            [,1] [,2]</span></span>
+<span><span class="co">#&gt; [1,]  0.2866329    1</span></span>
+<span><span class="co">#&gt; [2,]  2.5647490    1</span></span>
+<span><span class="co">#&gt; [3,]  1.0000000    2</span></span>
+<span><span class="co">#&gt; [4,]  1.0000000    2</span></span>
+<span><span class="co">#&gt; [5,] -0.4721698    1</span></span>
+<span><span class="co">#&gt; [6,]  1.1750286    1</span></span></code></pre></div>
 <p>We are now ready to estimate the mixed response model.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mixed_resp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">x</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">level</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">mresp</span>,</span>
 <span>  family <span class="op">=</span> <span class="va">families</span>,</span>
-<span>  family_mapping <span class="op">=</span> <span class="va">family_mapping</span>,</span>
 <span>  load_var <span class="op">=</span> <span class="st">"itemgroup"</span>,</span>
 <span>  lambda <span class="op">=</span> <span class="va">loading_matrix</span>,</span>
 <span>  factor <span class="op">=</span> <span class="st">"level"</span></span>
@@ -231,13 +240,13 @@ needed in this case. We illustrate with the dataset
 <code>mresp_hsced</code>, whose first few lines are shown below:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">mresp_hsced</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   id         x           y itemgroup grp isgauss</span></span>
-<span><span class="co">#&gt; 1  1 0.8638214   0.2866329         a   b       1</span></span>
-<span><span class="co">#&gt; 2  1 0.7676133   2.5647490         a   b       1</span></span>
-<span><span class="co">#&gt; 3  1 0.8812059   1.0000000         b   b       0</span></span>
-<span><span class="co">#&gt; 4  1 0.2239725   1.0000000         b   b       0</span></span>
-<span><span class="co">#&gt; 5  2 0.7215696 -11.0020148         a   a       1</span></span>
-<span><span class="co">#&gt; 6  2 0.6924851   1.1750286         a   b       1</span></span></code></pre></div>
+<span><span class="co">#&gt;   id         x         y.1         y.2 itemgroup grp isgauss</span></span>
+<span><span class="co">#&gt; 1  1 0.8638214   0.2866329   1.0000000         a   b       1</span></span>
+<span><span class="co">#&gt; 2  1 0.7676133   2.5647490   1.0000000         a   b       1</span></span>
+<span><span class="co">#&gt; 3  1 0.8812059   1.0000000   2.0000000         b   b       0</span></span>
+<span><span class="co">#&gt; 4  1 0.2239725   1.0000000   2.0000000         b   b       0</span></span>
+<span><span class="co">#&gt; 5  2 0.7215696 -11.0020148   1.0000000         a   a       1</span></span>
+<span><span class="co">#&gt; 6  2 0.6924851   1.1750286   1.0000000         a   b       1</span></span></code></pre></div>
 <p>This dataset has the same structure as <code>mresp</code>, except
 that the residual standard deviation of the normally distributed
 responses vary according to the variable <code>grp</code>, which has two
@@ -253,12 +262,10 @@ dispersion parameter
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ϕ</mi><annotation encoding="application/x-tex">\phi</annotation></semantics></math>
 is fixed to 1. We also ignore the factor loadings for simplicity.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">family_mapping</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">mresp</span><span class="op">$</span><span class="va">itemgroup</span> <span class="op">==</span> <span class="st">"a"</span>, <span class="fl">1L</span>, <span class="fl">2L</span><span class="op">)</span></span>
-<span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">x</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span>,</span>
 <span>  dispformula <span class="op">=</span> <span class="op">~</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">isgauss</span> <span class="op">|</span> <span class="va">grp</span><span class="op">)</span>,</span>
-<span>  family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">gaussian</span>, <span class="va">binomial</span><span class="op">)</span>,</span>
-<span>  family_mapping <span class="op">=</span> <span class="va">family_mapping</span>,</span>
+<span>  family <span class="op">=</span> <span class="fu"><a href="../reference/gfam.html">gfam</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">gaussian</span>, <span class="va">binomial</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">mresp_hsced</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>The summary output now shows that we also have estimated a variance
@@ -309,27 +316,27 @@ had developed coronary heart disease.</p>
 only a single measurement of fiber intake.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">diet</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   id   age bus   item         y chd fiber fiber2</span></span>
-<span><span class="co">#&gt; 1  1 -0.38   1 fiber1 17.814280   0     1      0</span></span>
-<span><span class="co">#&gt; 2  1 -0.38   1    chd  0.000000   1     0      0</span></span>
-<span><span class="co">#&gt; 3  2  0.54   1 fiber1  9.487736   0     1      0</span></span>
-<span><span class="co">#&gt; 4  2  0.54   1    chd  0.000000   1     0      0</span></span>
-<span><span class="co">#&gt; 5  3  8.78   1 fiber1 15.958630   0     1      0</span></span>
-<span><span class="co">#&gt; 6  3  8.78   1    chd  0.000000   1     0      0</span></span></code></pre></div>
+<span><span class="co">#&gt;   id   age bus   item       y.1       y.2 chd fiber fiber2</span></span>
+<span><span class="co">#&gt; 1  1 -0.38   1 fiber1 17.814280  1.000000   0     1      0</span></span>
+<span><span class="co">#&gt; 2  1 -0.38   1    chd  0.000000  2.000000   1     0      0</span></span>
+<span><span class="co">#&gt; 3  2  0.54   1 fiber1  9.487736  1.000000   0     1      0</span></span>
+<span><span class="co">#&gt; 4  2  0.54   1    chd  0.000000  2.000000   1     0      0</span></span>
+<span><span class="co">#&gt; 5  3  8.78   1 fiber1 15.958630  1.000000   0     1      0</span></span>
+<span><span class="co">#&gt; 6  3  8.78   1    chd  0.000000  2.000000   1     0      0</span></span></code></pre></div>
 <p>It is instructive to also look at some men who had two measurements
 of fiber intake. Here are three of them.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">diet</span><span class="op">[</span><span class="va">diet</span><span class="op">$</span><span class="va">id</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">219</span>, <span class="fl">220</span>, <span class="fl">221</span><span class="op">)</span>, <span class="op">]</span></span>
-<span><span class="co">#&gt;      id   age bus   item        y chd fiber fiber2</span></span>
-<span><span class="co">#&gt; 429 219 -8.13   0 fiber1 15.64263   0     1      0</span></span>
-<span><span class="co">#&gt; 430 219 -8.13   0 fiber2 14.87973   0     1      1</span></span>
-<span><span class="co">#&gt; 431 219 -8.13   0    chd  0.00000   1     0      0</span></span>
-<span><span class="co">#&gt; 432 220 -1.13   0 fiber1 13.46374   0     1      0</span></span>
-<span><span class="co">#&gt; 433 220 -1.13   0 fiber2 14.73168   0     1      1</span></span>
-<span><span class="co">#&gt; 434 220 -1.13   0    chd  0.00000   1     0      0</span></span>
-<span><span class="co">#&gt; 435 221  3.67   0 fiber1 15.95863   0     1      0</span></span>
-<span><span class="co">#&gt; 436 221  3.67   0 fiber2 17.28778   0     1      1</span></span>
-<span><span class="co">#&gt; 437 221  3.67   0    chd  0.00000   1     0      0</span></span></code></pre></div>
+<span><span class="co">#&gt;      id   age bus   item      y.1      y.2 chd fiber fiber2</span></span>
+<span><span class="co">#&gt; 429 219 -8.13   0 fiber1 15.64263  1.00000   0     1      0</span></span>
+<span><span class="co">#&gt; 430 219 -8.13   0 fiber2 14.87973  1.00000   0     1      1</span></span>
+<span><span class="co">#&gt; 431 219 -8.13   0    chd  0.00000  2.00000   1     0      0</span></span>
+<span><span class="co">#&gt; 432 220 -1.13   0 fiber1 13.46374  1.00000   0     1      0</span></span>
+<span><span class="co">#&gt; 433 220 -1.13   0 fiber2 14.73168  1.00000   0     1      1</span></span>
+<span><span class="co">#&gt; 434 220 -1.13   0    chd  0.00000  2.00000   1     0      0</span></span>
+<span><span class="co">#&gt; 435 221  3.67   0 fiber1 15.95863  1.00000   0     1      0</span></span>
+<span><span class="co">#&gt; 436 221  3.67   0 fiber2 17.28778  1.00000   0     1      1</span></span>
+<span><span class="co">#&gt; 437 221  3.67   0    chd  0.00000  2.00000   1     0      0</span></span></code></pre></div>
 <div class="section level4">
 <h4 id="structural-model">Structural Model<a class="anchor" aria-label="anchor" href="#structural-model"></a>
 </h4>
@@ -425,13 +432,21 @@ whereas the loading for “chd” remains to be estimated.</p>
 <p>We also need to define the families, making sure it is binomial for
 “chd” and Gaussian for “fiber1” and “fiber2”.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">families</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">gaussian</span>, <span class="va">binomial</span><span class="op">)</span></span>
-<span><span class="va">family_mapping</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">diet</span><span class="op">$</span><span class="va">item</span> <span class="op">==</span> <span class="st">"chd"</span>, <span class="fl">2</span>, <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">diet</span><span class="op">$</span><span class="va">y</span><span class="op">)</span></span>
+<span><span class="co">#&gt;           [,1] [,2]</span></span>
+<span><span class="co">#&gt; [1,] 17.814280    1</span></span>
+<span><span class="co">#&gt; [2,]  0.000000    2</span></span>
+<span><span class="co">#&gt; [3,]  9.487736    1</span></span>
+<span><span class="co">#&gt; [4,]  0.000000    2</span></span>
+<span><span class="co">#&gt; [5,] 15.958630    1</span></span>
+<span><span class="co">#&gt; [6,]  0.000000    2</span></span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">families</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gfam.html">gfam</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">gaussian</span>, <span class="va">binomial</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>The model formula also needs some care in this case. We define it as
 follows, and note that the whole part
 <code>0 + chd + fiber + fiber2</code> could have been replaced by
 <code>item</code>. We use the former for ease of explanation.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">formula</span> <span class="op">&lt;-</span> <span class="va">y</span> <span class="op">~</span> <span class="fl">0</span> <span class="op">+</span> <span class="va">chd</span> <span class="op">+</span> <span class="op">(</span><span class="va">age</span> <span class="op">*</span> <span class="va">bus</span><span class="op">)</span><span class="op">:</span><span class="va">chd</span> <span class="op">+</span> <span class="va">fiber</span> <span class="op">+</span></span>
 <span>  <span class="op">(</span><span class="va">age</span> <span class="op">*</span> <span class="va">bus</span><span class="op">)</span><span class="op">:</span><span class="va">fiber</span> <span class="op">+</span> <span class="va">fiber2</span> <span class="op">+</span> <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">loading</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span></span></code></pre></div>
 <p>The initial zero specifies that we don’t want R to insert an
@@ -448,7 +463,7 @@ term
 <code>nobars</code> function from <a href="https://cran.r-project.org/package=lme4" class="external-link">lme4</a> <span class="citation">(<a href="#ref-batesFittingLinearMixedEffects2015">Bates et al.
 2015</a>)</span> to remove the random effects, and then
 <code>model.matrix</code>. It looks correctly set up.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html" class="external-link">model.matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/reformulas/man/nobars.html" class="external-link">nobars</a></span><span class="op">(</span><span class="va">formula</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">diet</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   chd fiber fiber2 chd:age chd:bus age:fiber bus:fiber chd:age:bus age:bus:fiber</span></span>
 <span><span class="co">#&gt; 1   0     1      0    0.00       0     -0.38         1        0.00         -0.38</span></span>
@@ -466,19 +481,18 @@ Writing <code>0 + loading</code> means that
 should be multiplied by the factor loadings defined in the loading
 matrix.</p>
 <p>We are now ready to fit the model.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">formula</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">diet</span>,</span>
 <span>  family <span class="op">=</span> <span class="va">families</span>,</span>
-<span>  family_mapping <span class="op">=</span> <span class="va">family_mapping</span>,</span>
 <span>  factor <span class="op">=</span> <span class="st">"loading"</span>,</span>
 <span>  load_var <span class="op">=</span> <span class="st">"item"</span>,</span>
 <span>  lambda <span class="op">=</span> <span class="va">loading_matrix</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>Looking at the summary output, however, we see a warning that the
 Hessian matrix is rank deficient.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning in vcov.galamm(object, parm = "lambda"): Rank deficient Hessian matrix.Could not compute covariance matrix.</span></span>
 <span><span class="co">#&gt; Warning in vcov.galamm(object, "beta"): Rank deficient Hessian matrix.Could not compute covariance matrix.</span></span>
@@ -514,12 +528,11 @@ Hessian matrix is rank deficient.</p>
 <p>We suspect that this is a convergence issue of the algorithm, and
 start by simply turning a lever to make the algorithm more verbose. The
 argument <code>trace = 3</code> is passed onto <code>optim</code>.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">formula</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">diet</span>,</span>
 <span>  family <span class="op">=</span> <span class="va">families</span>,</span>
-<span>  family_mapping <span class="op">=</span> <span class="va">family_mapping</span>,</span>
 <span>  factor <span class="op">=</span> <span class="st">"loading"</span>,</span>
 <span>  load_var <span class="op">=</span> <span class="st">"item"</span>,</span>
 <span>  lambda <span class="op">=</span> <span class="va">loading_matrix</span>,</span>
@@ -555,12 +568,11 @@ matrix (see, <span class="citation">Bates et al. (<a href="#ref-batesFittingLine
 this case it is just the standard deviation of the latent variable. By
 default, its initial value is 1, but we now try to increase it to 10,
 with the <code>start</code> argument.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">formula</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">diet</span>,</span>
 <span>  family <span class="op">=</span> <span class="va">families</span>,</span>
-<span>  family_mapping <span class="op">=</span> <span class="va">family_mapping</span>,</span>
 <span>  factor <span class="op">=</span> <span class="st">"loading"</span>,</span>
 <span>  load_var <span class="op">=</span> <span class="st">"item"</span>,</span>
 <span>  lambda <span class="op">=</span> <span class="va">loading_matrix</span>,</span>
@@ -597,7 +609,7 @@ quadrature estimation, we are pretty happy about finding a value close
 to theirs.</p>
 <p>We can now use the summary method, where we find that our estimates
 are very close to the corresponding model in Table 14.1 of <span class="citation">Skrondal and Rabe-Hesketh (<a href="#ref-skrondalGeneralizedLatentVariable2004">2004</a>)</span>.</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span>
 <span><span class="co">#&gt; GALAMM fit by maximum marginal likelihood.</span></span>
 <span><span class="co">#&gt; Formula: formula</span></span>
@@ -646,17 +658,16 @@ disease model is now</p>
 \text{logit}[P(y_{ij}=1 | \eta_{j})] = d_{ij3}\beta_{03} + \lambda \eta_{j},
 </annotation></semantics></math></p>
 <p>The formula becomes</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">formula0</span> <span class="op">&lt;-</span> <span class="va">y</span> <span class="op">~</span> <span class="fl">0</span> <span class="op">+</span> <span class="va">chd</span> <span class="op">+</span> <span class="va">fiber</span> <span class="op">+</span> <span class="op">(</span><span class="va">age</span> <span class="op">*</span> <span class="va">bus</span><span class="op">)</span><span class="op">:</span><span class="va">fiber</span> <span class="op">+</span> <span class="va">fiber2</span> <span class="op">+</span></span>
 <span>  <span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">loading</span> <span class="op">|</span> <span class="va">id</span><span class="op">)</span></span></code></pre></div>
 <p>Everything else is the same as before, so we fit the new model
 with</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mod0</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/galamm.html">galamm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">formula0</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">diet</span>,</span>
 <span>  family <span class="op">=</span> <span class="va">families</span>,</span>
-<span>  family_mapping <span class="op">=</span> <span class="va">family_mapping</span>,</span>
 <span>  factor <span class="op">=</span> <span class="st">"loading"</span>,</span>
 <span>  load_var <span class="op">=</span> <span class="st">"item"</span>,</span>
 <span>  lambda <span class="op">=</span> <span class="va">loading_matrix</span>,</span>
@@ -684,7 +695,7 @@ with</p>
 <p>Looking at the summary output, the estimates are now close to the
 first column in Table 14.1 of <span class="citation">Skrondal and
 Rabe-Hesketh (<a href="#ref-skrondalGeneralizedLatentVariable2004">2004</a>)</span>.</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod0</span><span class="op">)</span></span>
 <span><span class="co">#&gt; GALAMM fit by maximum marginal likelihood.</span></span>
 <span><span class="co">#&gt; Formula: formula0</span></span>
@@ -716,7 +727,7 @@ Rabe-Hesketh (<a href="#ref-skrondalGeneralizedLatentVariable2004">2004</a>)</sp
 <p>We can use <code>anova</code> method for galamm objects to compare
 the models. AIC and BIC favor the simpler model with only indirect
 effects.</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/anova.html" class="external-link">anova</a></span><span class="op">(</span><span class="va">mod</span>, <span class="va">mod0</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Data: diet</span></span>
 <span><span class="co">#&gt; Models:</span></span>
