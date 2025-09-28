@@ -1,5 +1,7 @@
 # galamm (development versions)
 
+- The family_mapping argument for mixed response types has been deprecated. Use
+  the gfam() function instead.
 - Argument weights to galamm has been renamed to dispformula. The old name 
   weights will work for a while, but a deprecation warning will be issued.
 - Improved tests.

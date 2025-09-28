@@ -33,13 +33,13 @@ The `cognition` dataset contains simulated data with measurements of abilities i
 
 ``` r
 head(cognition)
-#>   id domain          x timepoint item trials          y
-#> 1  1      1 0.06475113         1   11      1 0.16788973
-#> 2  1      1 0.06475113         1   12      1 0.08897838
-#> 3  1      1 0.06475113         1   13      1 0.03162123
-#> 4  1      1 0.15766278         2   11      1 0.46598362
-#> 5  1      1 0.15766278         2   12      1 0.84564656
-#> 6  1      1 0.15766278         2   13      1 0.20549872
+#>   id domain          x timepoint item trials        y.y      y.y.1
+#> 1  1      1 0.06475113         1   11      1 0.16788973 1.00000000
+#> 2  1      1 0.06475113         1   12      1 0.08897838 1.00000000
+#> 3  1      1 0.06475113         1   13      1 0.03162123 1.00000000
+#> 4  1      1 0.15766278         2   11      1 0.46598362 1.00000000
+#> 5  1      1 0.15766278         2   12      1 0.84564656 1.00000000
+#> 6  1      1 0.15766278         2   13      1 0.20549872 1.00000000
 ```
 
 For this first example, we focus only on the first item measured for the first domain.
@@ -47,6 +47,7 @@ For this first example, we focus only on the first item measured for the first d
 
 ``` r
 dat <- subset(cognition, domain == 1 & item == "11")
+dat$y <- dat$y[, 1]
 ```
 
 Each subject in this dataset has been measured eight times, and we can plot the measurements as follows:
@@ -90,12 +91,12 @@ summary(mod_gamm4$mer)
 #> 
 #> Scaled residuals: 
 #>      Min       1Q   Median       3Q      Max 
-#> -2.93755 -0.65215  0.00612  0.62654  3.14289 
+#> -2.93755 -0.65215  0.00612  0.62654  3.14290 
 #> 
 #> Random effects:
 #>  Groups   Name        Variance Std.Dev.
 #>  id       (Intercept) 0.8551   0.9247  
-#>  Xr       s(x)        2.0341   1.4262  
+#>  Xr       s(x)        2.0343   1.4263  
 #>  Residual             0.2501   0.5001  
 #> Number of obs: 1600, groups:  id, 200; Xr, 8
 #> 
@@ -234,6 +235,7 @@ In the cognition dataset, the responses relating to domain 2 are binomially dist
 
 ``` r
 dat <- subset(cognition, domain == 2 & item == "21")
+dat$y <- dat$y[, 1]
 ```
 
 Again we can fit this model using `gamm4`.
@@ -369,6 +371,7 @@ To illustrate basic usage, we continue with the cognition data, but now use all 
 
 ``` r
 dat <- subset(cognition, domain == 1)
+dat$y <- dat$y[, 1]
 head(dat)
 #>   id domain          x timepoint item trials          y
 #> 1  1      1 0.06475113         1   11      1 0.16788973
@@ -481,6 +484,7 @@ We can now move on to the part of the cognition data that is conditionally binom
 
 ``` r
 dat <- subset(cognition, domain == 2)
+dat$y <- dat$y[, 1]
 
 mod <- galamm(
   formula = y ~ 0 + item + sl(x, factor = "loading") +
@@ -552,6 +556,7 @@ Domain 1 and 3 both have Gaussian responses, and we can model them jointly.
 
 ``` r
 dat <- subset(cognition, domain %in% c(1, 3))
+dat$y <- dat$y[, 1]
 ```
 
 We also add indicator variables for the two domains.
@@ -603,20 +608,19 @@ mod_byvar <- galamm(
 #> At X0, 0 variables are exactly at the bounds
 #> At iterate     0  f=        25324  |proj g|=       9642.6
 #> At iterate    50  f =        136.9  |proj g|=        716.66
-#> At iterate   100  f =      -1062.4  |proj g|=        400.16
-#> At iterate   150  f =      -1069.1  |proj g|=        151.55
-#> At iterate   200  f =      -1147.5  |proj g|=        44.829
+#> At iterate   100  f =      -1055.1  |proj g|=        2101.3
+#> At iterate   150  f =        -1069  |proj g|=        12.671
 #> 
-#> iterations 207
-#> function evaluations 228
-#> segments explored during Cauchy searches 210
+#> iterations 192
+#> function evaluations 210
+#> segments explored during Cauchy searches 195
 #> BFGS updates skipped 0
 #> active bounds at final generalized Cauchy point 0
-#> norm of the final projected gradient 5.59584
-#> final function value -1147.55
+#> norm of the final projected gradient 5.66964
+#> final function value -1147.33
 #> 
-#> F = -1147.55
-#> final  value -1147.545485 
+#> F = -1147.33
+#> final  value -1147.325580 
 #> converged
 ```
 
@@ -632,44 +636,44 @@ summary(mod_byvar)
 #> Control: galamm_control(optim_control = list(factr = 1e+09, trace = 3,      REPORT = 50, maxit = 1000))
 #> 
 #>      AIC      BIC   logLik deviance df.resid 
-#>  -2259.1  -2127.3   1147.5  -2295.1    11182 
+#>  -2258.7  -2126.8   1147.3  -2294.7    11182 
 #> 
 #> Scaled residuals: 
 #>      Min       1Q   Median       3Q      Max 
-#> -2097.48 -1025.93  -872.88    18.74    46.92 
+#> -2097.34 -1025.85  -872.87    18.58    46.76 
 #> 
 #> Lambda:
 #>         ability1       SE ability3        SE
 #> lambda1   1.0000        .        .         .
 #> lambda2   1.3990 0.002570        .         .
-#> lambda3   0.3008 0.002004        .         .
+#> lambda3   0.3009 0.002004        .         .
 #> lambda4        .        .   1.0000         .
 #> lambda5        .        .   0.9993 0.0007675
 #> lambda6        .        .   1.0001 0.0007677
-#> lambda7        .        .   1.9994 0.0015665
+#> lambda7        .        .   1.9994 0.0015666
 #> 
 #> Random effects:
 #>  Groups       Name                  Variance Std.Dev. Corr 
-#>  timepoint:id domain1:ability1       0.23641 0.4862        
-#>               domain3:ability3       0.28011 0.5293   -0.01
-#>  id           domain1:ability1       2.22291 1.4909        
-#>               domain3:ability3      22.71304 4.7658   0.65 
-#>  Xr.0         s(x):domain3:ability3 40.45375 6.3603        
-#>  Xr           s(x):domain1:ability1  9.81843 3.1334        
+#>  timepoint:id domain1:ability1       0.23649 0.4863        
+#>               domain3:ability3       0.28004 0.5292   -0.01
+#>  id           domain1:ability1       2.22433 1.4914        
+#>               domain3:ability3      22.73158 4.7678   0.65 
+#>  Xr.0         s(x):domain3:ability3 40.36766 6.3536        
+#>  Xr           s(x):domain1:ability1  9.75801 3.1238        
 #>  Residual                            0.01007 0.1003        
 #> Number of obs: 11200, groups:  timepoint:id, 1600; id, 200; Xr.0, 8; Xr, 8
 #> 
 #> Fixed effects:
 #>                            Estimate Std. Error t value  Pr(>|t|)
-#> (Intercept)              -0.0029364   0.004648 -0.6317 5.276e-01
-#> domain3                   0.0000136   0.007556  0.0018 9.986e-01
-#> s(x):domain1:ability1Fx1 -0.0861681   0.216332 -0.3983 6.904e-01
-#> s(x):domain3:ability3Fx1  5.7635009   0.307665 18.7331 2.662e-78
+#> (Intercept)              -0.0029983   0.004649 -0.6450 5.190e-01
+#> domain3                   0.0001012   0.007557  0.0134 9.893e-01
+#> s(x):domain1:ability1Fx1 -0.0824905   0.214289 -0.3850 7.003e-01
+#> s(x):domain3:ability3Fx1  5.7597059   0.307604 18.7244 3.129e-78
 #> 
 #> Approximate significance of smooth terms:
 #>                         edf Ref.df     F p-value
 #> s(x):domain1:ability1 8.929  8.929  4314  <2e-16
-#> s(x):domain3:ability3 8.975  8.975 59677  <2e-16
+#> s(x):domain3:ability3 8.975  8.975 59678  <2e-16
 ```
 
 
@@ -691,6 +695,9 @@ plot_smooth(mod_byvar, scale = 0, select = 2)
 
 
 ### Mixed Gaussian and Binomial Responses
+
+
+
 
 Domain 1 has Gaussian responses and domain 2 has binomial responses, and we can model them jointly. For the sake of speed, we include only two items for each domain.
 
@@ -725,8 +732,7 @@ We define the loading matrix, now having two columns:
 #> [5,]    0   NA
 ```
 
-Then we define the model. The smooth term is now `sl(x, by = domain, factor = c("ability1", "ability2"))`, indicating that there should be a separate smooth term for each level of `domain`, and that the term should be multiplied by the loading "ability1" or "ability2". Because this model has some convergence issues, we omit the timepoint-level random intercepts in this example.
-
+Then we define the model. The smooth term is now `sl(x, by = domain, factor = c("ability1", "ability2"))`, indicating that there should be a separate smooth term for each level of `domain`, and that the term should be multiplied by the loading "ability1" or "ability2". Because this model has some convergence issues, we omit the timepoint-level random intercepts in this example. Since `gfam` is also exported from `gamm4`, which we loaded at the top of this vignette, we use `galamm::gfam` to get the correct function.
 
 
 ``` r
@@ -735,8 +741,7 @@ mod_byvar_mixed <- galamm(
     sl(x, by = domain, factor = c("ability1", "ability2")) +
     (0 + domain1:ability1 + domain2:ability2 | id),
   data = dat,
-  family = c(gaussian, binomial),
-  family_mapping = ifelse(dat$domain == 1, 1L, 2L),
+  family = galamm::gfam(list(gaussian, binomial)),
   load_var = "item",
   lambda = lmat,
   factor = c("ability1", "ability2"),
@@ -769,7 +774,8 @@ We can look at the model summary:
 ``` r
 summary(mod_byvar_mixed)
 #> GALAMM fit by maximum marginal likelihood.
-#> Formula: y ~ domain + sl(x, by = domain, factor = c("ability1", "ability2")) +      (0 + domain1:ability1 + domain2:ability2 | id)
+#> Formula: y ~ domain + sl(x, by = domain, factor = c("ability1", "ability2")) +  
+#>     (0 + domain1:ability1 + domain2:ability2 | id)
 #>    Data: dat
 #> Control: galamm_control(optim_control = list(factr = 1e+09, trace = 3,      REPORT = 30, maxit = 1000))
 #> 

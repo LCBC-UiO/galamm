@@ -38,8 +38,7 @@ We will illustrate some ways of modifying the optimization procedure with the co
 
 ``` r
 loading_matrix <- matrix(c(1, 1, NA), ncol = 1)
-families <- c(gaussian, binomial)
-family_mapping <- ifelse(diet$item == "chd", 2, 1)
+families <- gfam(list(gaussian, binomial))
 formula <- y ~ 0 + chd + (age * bus):chd + fiber +
   (age * bus):fiber + fiber2 + (0 + loading | id)
 ```
@@ -52,7 +51,6 @@ mod <- galamm(
   formula = formula,
   data = diet,
   family = families,
-  family_mapping = family_mapping,
   factor = "loading",
   load_var = "item",
   lambda = loading_matrix
@@ -108,7 +106,6 @@ mod <- galamm(
   formula = formula,
   data = diet,
   family = families,
-  family_mapping = family_mapping,
   factor = "loading",
   load_var = "item",
   lambda = loading_matrix,
@@ -156,7 +153,6 @@ mod <- galamm(
   formula = formula,
   data = diet,
   family = families,
-  family_mapping = family_mapping,
   factor = "loading",
   load_var = "item",
   lambda = loading_matrix,
@@ -241,7 +237,6 @@ mod <- galamm(
   formula = formula,
   data = diet,
   family = families,
-  family_mapping = family_mapping,
   factor = "loading",
   load_var = "item",
   lambda = loading_matrix,
@@ -335,7 +330,6 @@ mod_nm <- galamm(
   formula = formula,
   data = diet,
   family = families,
-  family_mapping = family_mapping,
   factor = "loading",
   load_var = "item",
   lambda = loading_matrix,

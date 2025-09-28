@@ -10,7 +10,7 @@ galamm(
   weights = NULL,
   data,
   family = gaussian,
-  family_mapping = rep(1, nrow(data)),
+  family_mapping = NULL,
   load_var = NULL,
   load.var = NULL,
   lambda = NULL,
@@ -42,27 +42,14 @@ examples for details.}
 \item{data}{A data.frame containing all the variables specified by the model
 formula, with the exception of factor loadings.}
 
-\item{family}{A a list or character vector containing one or more model
-families. For each element in \code{family} there should be a corresponding
-element in \code{family_mapping} specifying which elements of the response
-are conditionally distributed according to the given family. Currently
-family can be one of \code{gaussian}, \code{binomial}, and \code{poisson},
-and only canonical link functions are supported. The family arguments can
-either be provided as character values, e.g., \code{c("gaussian",
-  "poisson")} or \code{list("gaussian", "poisson")}, as function names, e.g.,
-\code{c(gaussian, poisson)} or \code{list(gaussian, poisson)}, or as
-function calls, e.g., \code{list(gaussian(), poisson())}. In the latter
-case, they must be provided in a list, and bot as a vector. Mixing the
-different ways of describing the family also works, e.g.,
-\code{list("gaussian", poisson())}, but in this case they must be provided
-in a list. When provided as character values, the argument is case
-sensitive.}
+\item{family}{A family object specifying the response distribution of the
+model. Currently \code{gaussian}, \code{binomial}, and \code{poisson}
+with canonical link functions are supported. Models with mixed response
+types, in which responses are distributed according to one of the three
+supported distributions, can be set up using the \code{\link[=gfam]{gfam()}} function.}
 
-\item{family_mapping}{Optional vector mapping from the elements of
-\code{family} to rows of \code{data}. Defaults to \code{rep(1,
-  nrow(data))}, which means that all observations are distributed according
-to the first element of \code{family}. The length of \code{family_mapping}
-must be identical to the number of observations, \code{nrow(data)}.}
+\item{family_mapping}{Deprecated. See the documentation to \code{\link[=gfam]{gfam()}} for how
+to set up mixed response type models.}
 
 \item{load_var}{Optional character specifying the name of the variable in
 \code{data} identifying what the factors load onto. Default to \code{NULL},
@@ -146,16 +133,13 @@ package, which is detailed in
 loading_matrix <- matrix(c(1, NA), ncol = 1)
 
 # Define mapping to families.
-families <- c(gaussian, binomial)
-family_mapping <- ifelse(mresp$itemgroup == "a", 1, 2)
-
+families <- gfam(list(gaussian, binomial))
 
 # Fit the model
 mod <- galamm(
   formula = y ~ x + (0 + level | id),
   data = mresp,
   family = families,
-  family_mapping = family_mapping,
   factor = "level",
   load_var = "itemgroup",
   lambda = loading_matrix
@@ -234,6 +218,7 @@ summary(mod)
 \seealso{
 Other modeling functions: 
 \code{\link{galammObject}},
+\code{\link{gfam}()},
 \code{\link{s}()},
 \code{\link{t2}()}
 }

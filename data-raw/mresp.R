@@ -18,13 +18,15 @@ mresp <- tibble(id = 1:1000) %>%
   select(-b, -item) %>%
   as.data.frame()
 
+mresp$y <- matrix(c(mresp$y, as.numeric(as.factor(mresp$itemgroup))), ncol = 2)
+
 usethis::use_data(mresp, overwrite = TRUE)
 
 set.seed(33)
 mresp$grp <- sample(c("a", "b"), size = nrow(mresp), replace = TRUE)
 mresp$isgauss <- as.numeric(mresp$itemgroup == "a")
-mresp$y <- ifelse(mresp$itemgroup == "a" & mresp$grp == "a",
-  mresp$y + rnorm(nrow(mresp), sd = 5), mresp$y
+mresp$y[, 1] <- ifelse(mresp$itemgroup == "a" & mresp$grp == "a",
+  mresp$y[, 1] + rnorm(nrow(mresp), sd = 5), mresp$y[, 1]
 )
 
 mresp_hsced <- mresp

@@ -16,4 +16,7 @@ diet <- diet0 %>%
   ) %>%
   as.data.frame()
 
+diet$y <- matrix(c(diet$y, ifelse(diet$item == "chd", 2, 1)), ncol = 2)
+
 usethis::use_data(diet, overwrite = TRUE)
+

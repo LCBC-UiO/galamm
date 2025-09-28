@@ -3,8 +3,7 @@ test_that("Mixed response works", {
   mod <- galamm(
     formula = y ~ x + (0 + loading | id),
     data = dat,
-    family = c(gaussian, binomial),
-    family_mapping = ifelse(dat$itemgroup == "a", 1L, 2L),
+    family = gfam(list(gaussian, binomial)),
     load_var = "itemgroup",
     lambda = matrix(c(1, NA), ncol = 1),
     factor = "loading"
@@ -70,64 +69,38 @@ test_that("Mixed response works", {
     tolerance = 1e-4
   )
 
+  dat$y[, 2] <- seq_len(nrow(dat))
   expect_error(
     mod <- galamm(
       formula = y ~ x + (0 + loading | id),
       data = dat,
-      family = c(gaussian, binomial),
-      family_mapping = ifelse(dat$itemgroup == "a", 1L, 2L)[1:3],
+      family = gfam(list(gaussian, binomial)),
       load_var = "itemgroup",
       lambda = matrix(c(1, NA), ncol = 1),
       factor = "loading"
     ),
-    "family_mapping must contain one index per row in data"
+    "There must be at least one index per family"
   )
 
+  dat$y[, 2] <- 1
   expect_error(
     mod <- galamm(
       formula = y ~ x + (0 + loading | id),
       data = dat,
-      family = c(gaussian, binomial),
-      family_mapping = matrix(ifelse(dat$itemgroup == "a", 1L, 2L), ncol = 2),
+      family = gfam(list(gaussian, binomial)),
       load_var = "itemgroup",
       lambda = matrix(c(1, NA), ncol = 1),
       factor = "loading"
     ),
-    "family_mapping must be a vector"
-  )
-
-  expect_error(
-    mod <- galamm(
-      formula = y ~ x + (0 + loading | id),
-      data = dat,
-      family = c(gaussian, binomial),
-      family_mapping = sample(1:4, nrow(dat), replace = TRUE),
-      load_var = "itemgroup",
-      lambda = matrix(c(1, NA), ncol = 1),
-      factor = "loading"
-    ),
-    "family_mapping must contain a unique index for each element in family_list"
-  )
-
-  expect_error(
-    mod <- galamm(
-      formula = y ~ x + (0 + loading | id),
-      data = dat,
-      family = c(gaussian, binomial),
-      family_mapping = rep(1, nrow(dat)),
-      load_var = "itemgroup",
-      lambda = matrix(c(1, NA), ncol = 1),
-      factor = "loading"
-    ),
-    "family_mapping must contain a unique index for each element in family_list"
+    "There must be at least one index per family"
   )
 
   # Now test using initial values
+  dat <- subset(mresp, id < 100)
   mod2 <- galamm(
     formula = y ~ x + (0 + loading | id),
     data = dat,
-    family = c(gaussian, binomial),
-    family_mapping = ifelse(dat$itemgroup == "a", 1L, 2L),
+    family = gfam(list(gaussian, binomial)),
     load_var = "itemgroup",
     lambda = matrix(c(1, NA), ncol = 1),
     factor = "loading",
@@ -147,8 +120,7 @@ test_that("Mixed response works with multiple trials", {
   mod <- galamm(
     formula = cbind(y, trials - y) ~ x + (0 + loading | id),
     data = dat,
-    family = c(gaussian, binomial),
-    family_mapping = ifelse(dat$itemgroup == "a", 1L, 2L),
+    family = gfam(list(gaussian, binomial)),
     load_var = "itemgroup",
     lambda = matrix(c(1, NA), ncol = 1),
     factor = "loading"
@@ -165,8 +137,7 @@ test_that("Covariate measurement error model works", {
   mod <- galamm(
     formula = formula,
     data = diet,
-    family = c(gaussian, binomial),
-    family_mapping = ifelse(diet$item == "chd", 2L, 1L),
+    family = gfam(list(gaussian, binomial)),
     factor = "loading",
     load_var = "item",
     lambda = lam,
@@ -192,8 +163,7 @@ test_that("Covariate measurement error model works", {
   mod0 <- galamm(
     formula = formula0,
     data = diet,
-    family = c(gaussian, binomial),
-    family_mapping = ifelse(diet$item == "chd", 2L, 1L),
+    family = gfam(list(gaussian, binomial)),
     factor = "loading",
     load_var = "item",
     lambda = lam,
@@ -205,13 +175,77 @@ test_that("Covariate measurement error model works", {
 
 
 test_that("Mixed response and heteroscedastic error works", {
-  family_mapping <- ifelse(mresp$itemgroup == "a", 1L, 2L)
   mod <- galamm(
     formula = y ~ x + (1 | id),
     dispformula = ~ (0 + isgauss | grp),
-    family = c(gaussian, binomial),
-    family_mapping = family_mapping,
+    family = gfam(list(gaussian, binomial)),
     data = mresp_hsced
   )
   expect_snapshot(print(summary(mod), digits = 2))
+})
+
+test_that("Mixed response fails when it should", {
+  expect_error(
+    {
+      galamm(
+        formula = y ~ x + (0 + loading | id),
+        data = mresp,
+        family = list(gaussian, binomial),
+        load_var = "itemgroup",
+        lambda = matrix(c(1, NA), ncol = 1),
+        factor = "loading"
+      )
+    }, "Use gfam for mixed response types")
+
+  expect_error(
+    {
+      galamm(
+        formula = y ~ x + (0 + loading | id),
+        data = mresp,
+        family = list("gaussian", binomial),
+        load_var = "itemgroup",
+        lambda = matrix(c(1, NA), ncol = 1),
+        factor = "loading"
+      )
+    }, "Use gfam for mixed response types")
+
+  expect_error(
+    {
+      galamm(
+        formula = y ~ x + (0 + loading | id),
+        data = mresp,
+        family = list(gaussian(), binomial()),
+        load_var = "itemgroup",
+        lambda = matrix(c(1, NA), ncol = 1),
+        factor = "loading"
+      )
+    }, "Use gfam for mixed response types")
+
+
+  expect_error(
+    galamm(
+      formula = y ~ x + (0 + loading | id),
+      data = mresp,
+      family = mgcv::gfam(list(gaussian, binomial)),
+      load_var = "itemgroup",
+      lambda = matrix(c(1, NA), ncol = 1),
+      factor = "loading"
+    ),
+    "Unknown family object. Did you use mgcv::gfam()?")
+
+})
+
+test_that("family_mapping is deprecated", {
+  dat <- subset(mresp, id < 100)
+  expect_warning({
+    galamm(
+      formula = y ~ x + (0 + loading | id),
+      data = dat,
+      family = gfam(list(gaussian, binomial)),
+      family_mapping = ifelse(dat$itemgroup == "a", 1, 2),
+      load_var = "itemgroup",
+      lambda = matrix(c(1, NA), ncol = 1),
+      factor = "loading"
+    )
+  }, "`family_mapping` is deprecated")
 })

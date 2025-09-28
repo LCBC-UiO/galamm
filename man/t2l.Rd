@@ -68,6 +68,7 @@ mod <- galamm(
 Other modeling functions: 
 \code{\link{galamm}()},
 \code{\link{galammObject}},
+\code{\link{gfam}()},
 \code{\link{s}()}
 }
 \concept{modeling functions}

@@ -136,13 +136,13 @@ The dataframe `mresp` contains simulated data with mixed response types.
 
 ``` r
 head(mresp)
-#>   id         x          y itemgroup
-#> 1  1 0.8638214  0.2866329         a
-#> 2  1 0.7676133  2.5647490         a
-#> 3  1 0.8812059  1.0000000         b
-#> 4  1 0.2239725  1.0000000         b
-#> 5  2 0.7215696 -0.4721698         a
-#> 6  2 0.6924851  1.1750286         a
+#>   id         x        y.1        y.2 itemgroup
+#> 1  1 0.8638214  0.2866329  1.0000000         a
+#> 2  1 0.7676133  2.5647490  1.0000000         a
+#> 3  1 0.8812059  1.0000000  2.0000000         b
+#> 4  1 0.2239725  1.0000000  2.0000000         b
+#> 5  2 0.7215696 -0.4721698  1.0000000         a
+#> 6  2 0.6924851  1.1750286  1.0000000         a
 ```
 
 Responses in rows with `itemgroup = "a"` are normally distributed while
@@ -155,8 +155,7 @@ model this process jointly, and the model is set up as follows:
 mixed_resp <- galamm(
   formula = y ~ x + (0 + loading | id),
   data = mresp,
-  family = c(gaussian, binomial),
-  family_mapping = ifelse(mresp$itemgroup == "a", 1L, 2L),
+  family = gfam(list(gaussian, binomial)),
   load_var = "itemgroup",
   lambda = matrix(c(1, NA), ncol = 1),
   factor = "loading"

@@ -35,7 +35,9 @@
 #' \describe{
 #'   \item{id}{Subject ID.}
 #'   \item{x}{Predictor variable.}
-#'   \item{y}{Response.}
+#'   \item{y}{Matrix whose first column is the response and whose second
+#'   column equals 1 if the observation is conditionally normally distributed
+#'   and 2 if the observation is conditionally binomially distributed.}
 #'   \item{itemgroup}{Factor variable which equals "a" for the normally
 #'   distributed responses and "b" for the binomially distributed response
 #'   (with 1 trial).}
@@ -52,11 +54,13 @@
 #'
 #' @srrstats {G5.1} Dataset used to test package is exported.
 #'
-#' @format ## `mresp` A data frame with 4000 rows and 5 columns:
+#' @format ## `mresp_hsced` A data frame with 4000 rows and 5 columns:
 #' \describe{
 #'   \item{id}{Subject ID.}
 #'   \item{x}{Predictor variable.}
-#'   \item{y}{Response.}
+#'   \item{y}{Matrix whose first column is the response and whose second
+#'   column equals 1 if the observation is conditionally normally distributed
+#'   and 2 if the observation is conditionally binomially distributed.}
 #'   \item{itemgroup}{Factor variable which equals "a" for the normally
 #'   distributed responses and "b" for the binomially distributed response
 #'   (with 1 trial).}
@@ -89,7 +93,9 @@
 #'   \item{item}{Integer indicating whether the outcome is fiber intake at
 #'   time 1 (item = 1), fiber intake at time 2 (item = 2), or coronary heart
 #'   disease (item = 3).}
-#'   \item{y}{Outcome.}
+#'   \item{y}{Matrix with two column. The first column is the outcome, and
+#'   the second column an index which equals 1 if the response is conditionally
+#'   Gaussian and 2 if the response is conditionally binomial.}
 #'   \item{chd}{Dummy variable indicating whether y is an indicator for
 #'   coronary heart disease, coded as 0/1.}
 #'   \item{fiber}{Dummy variable indicating whether y is a fiber measurement
@@ -140,9 +146,11 @@
 #'   \item{item}{Factor variable denoting the item within the tests of each
 #'   cognitive domain.}
 #'   \item{trials}{Number of trials, if applicable.}
-#'   \item{y}{Response variable. For domain 1 a real number, for domain 2 a
+#'   \item{y}{Matrix with two columns. The first column is the response
+#'       variable: for domain 1 a real number, for domain 2 a
 #'       binomially distributed variable based on a single trial, for
-#'       domain 3 a real number.}
+#'       domain 3 a real number. The second column equals 1 if the response is
+#'       conditionally Gaussian and 2 if the response is conditionally binomial.}
 #' }
 #' @family datasets
 #' @references \insertAllCited{}

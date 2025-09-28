@@ -30,8 +30,7 @@
 #' @srrstats {G2.0a} Secondary documentation of expectations on lengths of
 #'   inputs provided for the parameters in the descriptions below. This applies
 #'   in particular to \code{lambda}, \code{factor}, \code{load_var}, and
-#'   \code{factor_interactions}, as well as \code{family} and
-#'   \code{family_mapping}.
+#'   \code{factor_interactions}, as well as \code{family}.
 #' @srrstats {G2.1} Assertions on types of input implemented in galamm function.
 #' @srrstats {G2.1a} Documentation on expected data types provided for all
 #'   inputs in the documentation below.
@@ -41,7 +40,7 @@
 #' @srrstats {G2.3,G2.3b} Arguments "family", "load_var", "factor", and the
 #'   elements of the "start" argument are case sensitive. This is stated in the
 #'   documentation below.
-#' @srrstats {G2.4,G2.4a} Internally, objects family_mapping, weights_mapping
+#' @srrstats {G2.4,G2.4a} Internally, objects weights_mapping
 #'   and lambda_mapping_X are explicitly converted to integer using
 #'   as.integer().
 #' @srrstats {G2.4,G2.4b} as.numeric() used multiple places throughout the code
@@ -152,28 +151,14 @@
 #' @param data A data.frame containing all the variables specified by the model
 #'   formula, with the exception of factor loadings.
 #'
-#' @param family A a list or character vector containing one or more model
-#'   families. For each element in \code{family} there should be a corresponding
-#'   element in \code{family_mapping} specifying which elements of the response
-#'   are conditionally distributed according to the given family. Currently
-#'   family can be one of \code{gaussian}, \code{binomial}, and \code{poisson},
-#'   and only canonical link functions are supported. The family arguments can
-#'   either be provided as character values, e.g., \code{c("gaussian",
-#'   "poisson")} or \code{list("gaussian", "poisson")}, as function names, e.g.,
-#'   \code{c(gaussian, poisson)} or \code{list(gaussian, poisson)}, or as
-#'   function calls, e.g., \code{list(gaussian(), poisson())}. In the latter
-#'   case, they must be provided in a list, and bot as a vector. Mixing the
-#'   different ways of describing the family also works, e.g.,
-#'   \code{list("gaussian", poisson())}, but in this case they must be provided
-#'   in a list. When provided as character values, the argument is case
-#'   sensitive.
+#' @param family A family object specifying the response distribution of the
+#'   model. Currently \code{gaussian}, \code{binomial}, and \code{poisson}
+#'   with canonical link functions are supported. Models with mixed response
+#'   types, in which responses are distributed according to one of the three
+#'   supported distributions, can be set up using the [gfam()] function.
 #'
-#'
-#' @param family_mapping Optional vector mapping from the elements of
-#'   \code{family} to rows of \code{data}. Defaults to \code{rep(1,
-#'   nrow(data))}, which means that all observations are distributed according
-#'   to the first element of \code{family}. The length of \code{family_mapping}
-#'   must be identical to the number of observations, \code{nrow(data)}.
+#' @param family_mapping Deprecated. See the documentation to [gfam()] for how
+#'   to set up mixed response type models.
 #'
 #' @param load_var Optional character specifying the name of the variable in
 #'   \code{data} identifying what the factors load onto. Default to \code{NULL},
@@ -235,16 +220,13 @@
 #' loading_matrix <- matrix(c(1, NA), ncol = 1)
 #'
 #' # Define mapping to families.
-#' families <- c(gaussian, binomial)
-#' family_mapping <- ifelse(mresp$itemgroup == "a", 1, 2)
-#'
+#' families <- gfam(list(gaussian, binomial))
 #'
 #' # Fit the model
 #' mod <- galamm(
 #'   formula = y ~ x + (0 + level | id),
 #'   data = mresp,
 #'   family = families,
-#'   family_mapping = family_mapping,
 #'   factor = "level",
 #'   load_var = "itemgroup",
 #'   lambda = loading_matrix
@@ -320,7 +302,7 @@
 #'
 #' @md
 galamm <- function(formula, dispformula = NULL, weights = NULL, data,
-                   family = gaussian, family_mapping = rep(1, nrow(data)),
+                   family = gaussian, family_mapping = NULL,
                    load_var = NULL, load.var = NULL, lambda = NULL,
                    factor = NULL, factor_interactions = NULL,
                    na.action = getOption("na.action"),
@@ -331,10 +313,15 @@ galamm <- function(formula, dispformula = NULL, weights = NULL, data,
     if (is.null(load_var)) load_var <- load.var
   }
   if (!is.null(weights)) {
-    warning("`weights` is deprecated; use `dispformula` instead.", call. = FALSE)
+    warning("`weights` is deprecated; use `dispformula` instead.",
+            call. = FALSE)
     if (is.null(dispformula)) dispformula <- weights
   }
-
+  if (!is.null(family_mapping)) {
+    warning("`family_mapping` is deprecated; see the gfam() function.",
+            call. = FALSE)
+    # Deal with the case here
+  }
   if (!inherits(data, "data.frame")) {
     stop("data must be a data.frame")
   }
@@ -360,21 +347,18 @@ galamm <- function(formula, dispformula = NULL, weights = NULL, data,
   if (!is.null(dispformula) && !methods::is(dispformula, "formula")) {
     stop("dispformula must be a formula")
   }
-  if (!is.vector(family_mapping)) {
-    stop("family_mapping must be a vector.")
-  }
-  if (nrow(data) != length(family_mapping)) {
-    stop("family_mapping must contain one index per row in data")
-  }
 
-  family_list <- setup_family(family)
-
-  family_mapping <- as.integer(family_mapping)
-  if (length(family_list) != length(unique(family_mapping))) {
-    stop(
-      "family_mapping must contain a unique index for each element ",
-      "in family_list."
-    )
+  if (inherits(family, "extended.family")) {
+    stop("Unknown family object. Did you use mgcv::gfam()?")
+  }
+  family_list <- if (!inherits(family, "galamm_extended_family")) {
+    if (length(family) == 1 || inherits(family, "family")) {
+      setup_family(family)
+    } else {
+      stop("Use gfam for mixed response types")
+    }
+  } else {
+    family
   }
 
   if (!is.null(load_var) && (length(load_var) > 1 || !is.character(load_var))) {
@@ -421,8 +405,7 @@ galamm <- function(formula, dispformula = NULL, weights = NULL, data,
   gobj <- gamm4(fixed = lme4::nobars(formula), random = rf, data = data)
   colnames(gobj$lmod$X) <- gsub("^X", "", colnames(gobj$lmod$X))
 
-  response_obj <-
-    setup_response_object(family_list, family_mapping, data, gobj)
+  response_obj <- setup_response_object(family_list, data, gobj)
 
   check_matrix <- as.matrix(cbind(response_obj[, 1], gobj$lmod$X))
   rank_check_covs <- qr(check_matrix[, -1, drop = FALSE])$rank
@@ -467,6 +450,7 @@ galamm <- function(formula, dispformula = NULL, weights = NULL, data,
 
   y <- response_obj[, 1]
   trials <- response_obj[, 2]
+  family_mapping <- response_obj[, 3]
   u_init <- rep(0, nrow(gobj$lmod$reTrms$Zt))
   family_txt <- vapply(family_list, function(f) f$family, "a")
   k <- find_k(family_txt, family_mapping, y, trials)
@@ -477,6 +461,7 @@ galamm <- function(formula, dispformula = NULL, weights = NULL, data,
   )
 
   mlwrapper <- function(par, gradient = FALSE, hessian = FALSE) {
+    tmp <- family_txt
     marginal_likelihood(
       y = y,
       trials = trials,
@@ -494,7 +479,7 @@ galamm <- function(formula, dispformula = NULL, weights = NULL, data,
       weights = par[weights_inds],
       weights_mapping = weights_mapping,
       family = family_txt,
-      family_mapping = family_mapping - 1L,
+      family_mapping = as.integer(family_mapping) - 1L,
       k = k,
       maxit_conditional_modes = maxit_conditional_modes,
       lossvalue_tol = control$pirls_tol_abs,
