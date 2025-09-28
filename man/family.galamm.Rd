@@ -22,14 +22,12 @@ This function returns a list of families for an object of class
 \examples{
 # Mixed response model
 loading_matrix <- matrix(c(1, NA), ncol = 1)
-families <- c(gaussian, binomial)
-family_mapping <- ifelse(mresp$itemgroup == "a", 1, 2)
+families <- gfam(list(gaussian, binomial))
 
 mixed_resp <- galamm(
   formula = y ~ x + (0 + level | id),
   data = mresp,
   family = families,
-  family_mapping = family_mapping,
   load_var = "itemgroup",
   lambda = loading_matrix,
   factor = "level"

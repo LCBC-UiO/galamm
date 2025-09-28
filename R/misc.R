@@ -100,7 +100,7 @@ setup_factor <- function(load_var, lambda, factor, data) {
 setup_family <- function(family) {
   if (length(family) == 1 || inherits(family, "family")) family <- list(family)
 
-  lapply(family, function(f) {
+  ret <- lapply(family, function(f) {
     if (is.character(f)) {
       return(eval(parse(text = f))())
     } else if (is.function(f)) {
@@ -109,13 +109,19 @@ setup_family <- function(family) {
       return(f)
     }
   })
+
+  lapply(ret, function(f) {
+    if (!inherits(f, "family")) {
+      stop("Not a family object")
+    }
+  })
+
+  ret
 }
 
 #' Create the response object
 #'
 #' @param family_list A list of families returned from \code{setup_family}.
-#' @param family_mapping The argument \code{family_mapping} provided to
-#'   \code{\link{galamm}}.
 #' @param data A data frame.
 #' @param gobj A list object returned from the internal function \code{gamm4}.
 #'
@@ -124,28 +130,43 @@ setup_family <- function(family) {
 #' @return A matrix with responses and number of trials.
 #' @noRd
 #'
-setup_response_object <- function(family_list, family_mapping, data, gobj) {
-  response_obj <- matrix(nrow = nrow(gobj$lmod$X), ncol = 2)
+setup_response_object <- function(family_list, data, gobj) {
+  response_obj <- matrix(nrow = nrow(gobj$lmod$X), ncol = 3)
+  response_name <- all.vars(lme4::nobars(gobj$fake.formula))[[1]]
+
+  if (length(family_list) > 1) {
+    if (!isTRUE(base::all.equal(
+      sort(as.integer(unique(data[, response_name][, 2]))),
+      seq_along(family_list)))) {
+      stop("There must be at least one index per family")
+    }
+  }
 
   for (i in seq_along(family_list)) {
     f <- family_list[[1]]
+    matching_rows <- if (length(family_list) > 1) {
+      data[, response_name][, 2] == i
+    } else {
+      rep(TRUE, nrow(data))
+    }
+
     mf <- stats::model.frame(lme4::nobars(gobj$fake.formula),
-      data = data[family_mapping == i, ]
+      data = data[matching_rows, ]
     )
     mr <- stats::model.response(mf)
 
     if (f$family == "binomial" && !is.null(dim(mr))) {
       trials <- rowSums(mr)
     } else {
-      trials <- rep(1, sum(family_mapping == i))
+      trials <- rep(1, sum(matching_rows))
     }
     if (is.matrix(mr)) {
       response <- mr[, 1, drop = TRUE]
     } else {
       response <- mr
     }
-    response_obj[family_mapping == i, ] <-
-      cbind(response = response, trials = trials)
+    response_obj[matching_rows, ] <-
+      cbind(response = response, trials = trials, family = i)
   }
   response_obj
 }
