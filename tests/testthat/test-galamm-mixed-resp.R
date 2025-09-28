@@ -220,6 +220,19 @@ test_that("Mixed response fails when it should", {
         factor = "loading"
       )
     }, "Use gfam for mixed response types")
+
+
+  expect_error(
+    galamm(
+      formula = y ~ x + (0 + loading | id),
+      data = mresp,
+      family = mgcv::gfam(list(gaussian, binomial)),
+      load_var = "itemgroup",
+      lambda = matrix(c(1, NA), ncol = 1),
+      factor = "loading"
+    ),
+    "Unknown family object. Did you use mgcv::gfam()?")
+
 })
 
 test_that("family_mapping is deprecated", {

@@ -348,6 +348,9 @@ galamm <- function(formula, dispformula = NULL, weights = NULL, data,
     stop("dispformula must be a formula")
   }
 
+  if(inherits(family, "extended.family")) {
+    stop("Unknown family object. Did you use mgcv::gfam()?")
+  }
   family_list <- if (!inherits(family, "galamm_extended_family")) {
     if (length(family) == 1 || inherits(family, "family")) {
       setup_family(family)
