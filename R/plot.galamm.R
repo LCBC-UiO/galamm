@@ -1,8 +1,10 @@
 #' @title Diagnostic plots for galamm objects
 #'
 #' @param x An object of class \code{galamm} returned from \code{\link{galamm}}.
+#' @param residuals Character of length one describing the type of residuals to be
+#'   returned. One of \code{"pearson"} and \code{"deviance"}. Argument is case
+#'   sensitive.
 #' @param ... Optional arguments passed on to the \code{plot} function.
-#'
 #' @return A plot is displayed.
 #' @export
 #'
@@ -23,9 +25,12 @@
 #'
 #' # Diagnostic plot
 #' plot(mod)
+#' plot(mod, residuals = "deviance")
 #'
-plot.galamm <- function(x, ...) {
-  plot(fitted(x), residuals(x, type = "pearson"),
+plot.galamm <- function(x, residuals = c("pearson", "deviance"), ...) {
+  residuals <- match.arg(residuals)
+
+  plot(fitted(x), residuals(x, type = residuals),
     xlab = "Predicted values",
     ylab = "Pearson residuals",
     ...

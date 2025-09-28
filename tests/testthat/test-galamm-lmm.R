@@ -34,6 +34,16 @@ test_that("LMM with simple factor works", {
   expect_invisible(plot(mod))
   dev.off()
 
+  pdf(NULL)
+  expect_invisible(plot(mod, residuals = "deviance"))
+  dev.off()
+
+  expect_error(
+    plot(mod, residuals = "spearman"),
+    "'arg' should be one of"
+  )
+
+
   class(IRTsub) <- c("tbl_df", "tbl", "data.frame")
   mod1 <- galamm(
     y ~ 0 + as.factor(item) + (0 + abil.sid | school / sid),

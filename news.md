@@ -1,5 +1,7 @@
 # galamm (development versions)
 
+- The plot() function now takes an optional argument for the type of residuals 
+  to plot.
 - The family_mapping argument for mixed response types has been deprecated. Use
   the gfam() function instead.
 - Argument weights to galamm has been renamed to dispformula. The old name 
