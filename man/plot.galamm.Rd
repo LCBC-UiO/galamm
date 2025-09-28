@@ -4,10 +4,14 @@
 \alias{plot.galamm}
 \title{Diagnostic plots for galamm objects}
 \usage{
-\method{plot}{galamm}(x, ...)
+\method{plot}{galamm}(x, residuals = c("pearson", "deviance"), ...)
 }
 \arguments{
 \item{x}{An object of class \code{galamm} returned from \code{\link{galamm}}.}
+
+\item{residuals}{Character of length one describing the type of residuals to be
+returned. One of \code{"pearson"} and \code{"deviance"}. Argument is case
+sensitive.}
 
 \item{...}{Optional arguments passed on to the \code{plot} function.}
 }
@@ -24,6 +28,7 @@ mod <- galamm(Reaction ~ Days + (Days | Subject), data = sleepstudy)
 
 # Diagnostic plot
 plot(mod)
+plot(mod, residuals = "deviance")
 
 }
 \seealso{

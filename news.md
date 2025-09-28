@@ -1,5 +1,7 @@
 # galamm (development versions)
 
+- The plot() function now takes an optional argument for the type of residuals 
+  to plot.
 - Argument weights to galamm has been renamed to dispformula. The old name 
   weights will work for a while, but a deprecation warning will be issued.
 - Improved tests.
