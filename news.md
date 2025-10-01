@@ -1,5 +1,6 @@
 # galamm (development versions)
 
+- A bug in the computation of deviance residuals has been corrected.
 - A bug in the computation of Pearson residuals for non-Gaussian models has been
   corrected.
 - The plot() function now takes an optional argument for the type of residuals 

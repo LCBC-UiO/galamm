@@ -562,25 +562,17 @@ galamm <- function(formula, dispformula = NULL, weights = NULL, data,
     ))
 
   if (length(family_list) == 1 && family_list[[1]]$family == "gaussian") {
-    deviance_residuals <- response_obj[, 1] - fit
+    deviance_residuals <- y - fit
     deviance <- -2 * opt$value
   } else {
     # McCullagh and Nelder (1989), page 39
-    tmp <- lapply(
-      family_list,
-      function(x) {
-        x$dev.resids(
-          response_obj[, 1] / response_obj[, 2],
-          fit, response_obj[, 2]
-        )
-      }
-    )
+    tmp <- lapply(family_list, function(x) x$dev.resids(y / trials, fit, trials))
     dev_res <- sqrt(vapply(
       seq_along(family_mapping),
       function(i) tmp[[family_mapping[[i]]]][[i]], 1
     ))
 
-    deviance_residuals <- sign(response_obj[, 1] - fit) * dev_res
+    deviance_residuals <- sign(y - fit * trials) * dev_res
     deviance <- sum((dev_res)^2)
   }
 

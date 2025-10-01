@@ -1,5 +1,9 @@
 #' @title Diagnostic plots for galamm objects
 #'
+#' @description This function provides diagnostic plots for models fitted with
+#' [galamm()]. See the [residuals.galamm()] function for definition of the
+#' residuals being used.
+#'
 #' @param x An object of class \code{galamm} returned from \code{\link{galamm}}.
 #' @param residuals Character of length one describing the type of residuals to be
 #'   returned. One of \code{"pearson"} and \code{"deviance"}. Argument is case
