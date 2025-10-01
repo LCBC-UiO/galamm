@@ -20,7 +20,8 @@ sensitive.}
 Numeric vector of residual values.
 }
 \description{
-Residuals of galamm objects
+See \insertCite{dunnGeneralizedLinearModels2018;textual}{galamm} for definition of the
+residuals.
 }
 \examples{
 # Poisson GLMM
@@ -32,6 +33,9 @@ count_mod <- galamm(
 # Extract residuals
 residuals(count_mod)
 
+}
+\references{
+\insertAllCited{}
 }
 \seealso{
 \code{\link[=fitted.galamm]{fitted.galamm()}} for model fitted values, \code{\link[=predict.galamm]{predict.galamm()}} for
