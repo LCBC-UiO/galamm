@@ -1,13 +1,11 @@
 #' @title Diagnostic plots for galamm objects
 #'
 #' @description This function provides diagnostic plots for models fitted with
-#' [galamm()]. See the [residuals.galamm()] function for definition of the
-#' residuals being used.
+#'   [galamm()]. See the [residuals.galamm()] function for definition of the
+#'   residuals being used.
 #'
 #' @param x An object of class \code{galamm} returned from \code{\link{galamm}}.
-#' @param residuals Character of length one describing the type of residuals to be
-#'   returned. One of \code{"pearson"} and \code{"deviance"}. Argument is case
-#'   sensitive.
+#' @param form An option formula specifying the desired type of plot.
 #' @param ... Optional arguments passed on to the \code{plot} function.
 #' @return A plot is displayed.
 #' @export
@@ -21,6 +19,14 @@
 #'   generic function.
 #'
 #' @family summary functions
+#' @author Douglas Bates, Martin Maechler, Ben Bolker, and Steven Walker, with
+#' modifications by Øystein Sørensen.
+#'
+#' @details The interface of this function is designed to be similar to the
+#'   `plot.merMod` function from `lme4`
+#'   \insertCite{batesFittingLinearMixedEffects2015}{galamm}.
+#'
+#' @references \insertAllCited{}
 #'
 #' @examples
 #' # Linear mixed model example from lme4
@@ -29,15 +35,43 @@
 #'
 #' # Diagnostic plot
 #' plot(mod)
-#' plot(mod, residuals = "deviance")
 #'
-plot.galamm <- function(x, residuals = c("pearson", "deviance"), ...) {
-  residuals <- match.arg(residuals)
+#' # Logistic mixed model example from lme4
+#' data("cbpp", package = "lme4")
+#' mod <- galamm(cbind(incidence, size - incidence) ~ period + (1 | herd),
+#'               data = cbpp, family = binomial)
+#'
+#' # Diagnostic plot using Pearson residuals
+#' plot(mod)
+#'
+#' # Diagnostic plot using deviance residuals
+#' plot(mod, resid(., type = "deviance") ~ fitted(.))
+#'
+plot.galamm <- function(x, form = resid(., type = "pearson") ~ fitted(.), ...) {
+  object <- x
+  allV <- all.vars(nlme::asOneFormula(form))
+  args <- list()
 
-  plot(fitted(x), residuals(x, type = residuals),
-    xlab = "Predicted values",
-    ylab = "Pearson residuals",
-    ...
-  )
-  graphics::abline(h = 0, col = "blue")
+  if (length(allV > 0)) {
+
+  } else {
+    data <- NULL
+  }
+
+  data <- as.list(c(as.list(data), . = list(object)))
+  covF <- nlme::getCovariateFormula(form)
+  .x <- eval(covF[[2]], data)
+
+  argForm <- ~ .x
+  argData <- data.frame(.x = .x, check.names = FALSE)
+  respF <- nlme::getResponseFormula(form)
+  if (!is.null(respF)) {
+    .y <- eval(respF[[2]], data)
+    argForm <- .y ~ .x
+    argData[, ".y"] <- .y
+  }
+
+  args <- c(list(argForm, data = argData), args)
+
+  do.call("xyplot", as.list(args))
 }

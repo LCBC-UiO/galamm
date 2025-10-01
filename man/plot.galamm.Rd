@@ -4,14 +4,12 @@
 \alias{plot.galamm}
 \title{Diagnostic plots for galamm objects}
 \usage{
-\method{plot}{galamm}(x, residuals = c("pearson", "deviance"), ...)
+\method{plot}{galamm}(x, form = resid(., type = "pearson") ~ fitted(.), ...)
 }
 \arguments{
 \item{x}{An object of class \code{galamm} returned from \code{\link{galamm}}.}
 
-\item{residuals}{Character of length one describing the type of residuals to be
-returned. One of \code{"pearson"} and \code{"deviance"}. Argument is case
-sensitive.}
+\item{form}{An option formula specifying the desired type of plot.}
 
 \item{...}{Optional arguments passed on to the \code{plot} function.}
 }
@@ -23,6 +21,11 @@ This function provides diagnostic plots for models fitted with
 \code{\link[=galamm]{galamm()}}. See the \code{\link[=residuals.galamm]{residuals.galamm()}} function for definition of the
 residuals being used.
 }
+\details{
+The interface of this function is designed to be similar to the
+\code{plot.merMod} function from \code{lme4}
+\insertCite{batesFittingLinearMixedEffects2015}{galamm}.
+}
 \examples{
 # Linear mixed model example from lme4
 data("sleepstudy", package = "lme4")
@@ -30,8 +33,21 @@ mod <- galamm(Reaction ~ Days + (Days | Subject), data = sleepstudy)
 
 # Diagnostic plot
 plot(mod)
-plot(mod, residuals = "deviance")
 
+# Logistic mixed model example from lme4
+data("cbpp", package = "lme4")
+mod <- galamm(cbind(incidence, size - incidence) ~ period + (1 | herd),
+              data = cbpp, family = binomial)
+
+# Diagnostic plot using Pearson residuals
+plot(mod)
+
+# Diagnostic plot using deviance residuals
+plot(mod, resid(., type = "deviance") ~ fitted(.))
+
+}
+\references{
+\insertAllCited{}
 }
 \seealso{
 \code{\link[=residuals.galamm]{residuals.galamm()}} for extracting residuals and \code{\link[=plot]{plot()}} for the
@@ -43,5 +59,9 @@ Other summary functions:
 \code{\link{print.galamm}()},
 \code{\link{print.summary.galamm}()},
 \code{\link{summary.galamm}()}
+}
+\author{
+Douglas Bates, Martin Maechler, Ben Bolker, and Steven Walker, with
+modifications by Øystein Sørensen.
 }
 \concept{summary functions}
