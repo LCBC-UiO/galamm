@@ -19,7 +19,9 @@ sensitive.}
 A plot is displayed.
 }
 \description{
-Diagnostic plots for galamm objects
+This function provides diagnostic plots for models fitted with
+\code{\link[=galamm]{galamm()}}. See the \code{\link[=residuals.galamm]{residuals.galamm()}} function for definition of the
+residuals being used.
 }
 \examples{
 # Linear mixed model example from lme4

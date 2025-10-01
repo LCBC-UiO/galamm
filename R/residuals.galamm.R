@@ -1,7 +1,17 @@
 #' @title Residuals of galamm objects
 #'
-#' @description See \insertCite{dunnGeneralizedLinearModels2018;textual}{galamm} for definition of the
-#' residuals.
+#' @description Computes residuals for models fit with [galamm()] using the definitions in
+#' Chapter 8 of \insertCite{dunnGeneralizedLinearModels2018;textual}{galamm}.
+#' Define \eqn{y} as the response and \eqn{\hat{\mu}} as the model fit. Importantly,
+#' \eqn{\hat{\mu}} includes all random effects. Also define \eqn{V(\cdot)} as the
+#' variance function of the model family, and \eqn{w} as the weight. The Pearson
+#' residual is then
+#' \deqn{r_{P} = (y - \hat{\mu})/\sqrt{V(\hat{\mu}) / w}.}
+#' Furthermore, let \eqn{sgn(\cdot)} be the function which returns the sign of its
+#' argument and let \eqn{d(y, \hat{\mu})} be the model deviance. The deviance
+#' residual is then
+#' \deqn{r_{D} = sgn(y - \hat{\mu}) \sqrt{w d(y, \hat{\mu})}.}
+#'
 #'
 #' @srrstats {G1.4} Function documented with roxygen2.
 #' @srrstats {G2.3,G2.3a} match.arg() used on "type" argument.
