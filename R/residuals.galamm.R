@@ -1,5 +1,8 @@
 #' @title Residuals of galamm objects
 #'
+#' @description See \insertCite{dunnGeneralizedLinearModels2018;textual}{galamm} for definition of the
+#' residuals.
+#'
 #' @srrstats {G1.4} Function documented with roxygen2.
 #' @srrstats {G2.3,G2.3a} match.arg() used on "type" argument.
 #' @srrstats {G2.3,G2.3b} Argument type is case sensitive, as stated in their
@@ -18,6 +21,8 @@
 #'
 #' @return Numeric vector of residual values.
 #' @export
+#'
+#' @references \insertAllCited{}
 #'
 #' @seealso [fitted.galamm()] for model fitted values, [predict.galamm()] for
 #'   model predictions, and [plot.galamm()] for diagnostic plots. The generic

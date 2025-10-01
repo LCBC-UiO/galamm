@@ -556,9 +556,9 @@ galamm <- function(formula, dispformula = NULL, weights = NULL, data,
     inc_random = FALSE
   )
 
-  pearson_residuals <- (response_obj[, 1] - fit) /
-    unlist(Map(function(x, y) sqrt(family_list[[x]]$variance(y)),
-      x = family_mapping, y = fit
+  pearson_residuals <- (y - fit * trials) /
+    unlist(Map(function(x, y, trials) sqrt(trials * family_list[[x]]$variance(y)),
+      x = family_mapping, y = fit, trials = trials
     ))
 
   if (length(family_list) == 1 && family_list[[1]]$family == "gaussian") {

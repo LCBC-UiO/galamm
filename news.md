@@ -1,5 +1,7 @@
 # galamm (development versions)
 
+- A bug in the computation of Pearson residuals for non-Gaussian models has been
+  corrected.
 - The plot() function now takes an optional argument for the type of residuals 
   to plot.
 - The family_mapping argument for mixed response types has been deprecated. Use
