@@ -8,13 +8,13 @@
   "codeRepository": "https://github.com/LCBC-UiO/galamm",
   "issueTracker": "https://github.com/LCBC-UiO/galamm/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.2.3",
+  "version": "0.3.0",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 4.5.1 (2025-06-13)",
+  "runtimePlatform": "R version 4.5.2 (2025-10-31)",
   "provider": {
     "@id": "https://cran.r-project.org",
     "@type": "Organization",
@@ -243,10 +243,22 @@
     },
     "9": {
       "@type": "SoftwareApplication",
+      "identifier": "rlang",
+      "name": "rlang",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=rlang"
+    },
+    "10": {
+      "@type": "SoftwareApplication",
       "identifier": "stats",
       "name": "stats"
     },
-    "10": {
+    "11": {
       "@type": "SoftwareApplication",
       "identifier": "R",
       "name": "R",
@@ -254,7 +266,7 @@
     },
     "SystemRequirements": "C++17"
   },
-  "fileSize": "26104.358KB",
+  "fileSize": "26115.68KB",
   "citation": [
     {
       "@type": "ScholarlyArticle",
@@ -316,7 +328,7 @@
       }
     }
   ],
-  "releaseNotes": "https://github.com/LCBC-UiO/galamm/blob/master/NEWS.md",
+  "releaseNotes": "https://github.com/LCBC-UiO/galamm/blob/main/NEWS.md",
   "readme": "https://github.com/LCBC-UiO/galamm/blob/main/README.md",
   "contIntegration": ["https://github.com/LCBC-UiO/galamm/actions/workflows/R-CMD-check.yaml", "https://app.codecov.io/gh/LCBC-UiO/galamm?branch=main"],
   "developmentStatus": "https://www.repostatus.org/#active",

@@ -252,8 +252,8 @@ summary(galamm_mod_trials)
 #>   7149.8   7213.9  -3563.9   2974.8     2489 
 #> 
 #> Scaled residuals: 
-#>    Min     1Q Median     3Q    Max 
-#> -1.573  2.830  5.003  9.183 20.222 
+#>     Min      1Q  Median      3Q     Max 
+#> -3.5305 -0.6906  0.0763  0.7734  2.1677 
 #> 
 #> Lambda:
 #>         ability     SE
@@ -347,6 +347,11 @@ In this case we can confirm that the `galamm` function is correctly implemented 
 ``` r
 library(lme4)
 #> Loading required package: Matrix
+#> 
+#> Attaching package: 'lme4'
+#> The following object is masked from 'package:galamm':
+#> 
+#>     llikAIC
 count_mod_lme4 <- glmer(
   formula = y ~ lbas * treat + lage + v4 + (1 | subj),
   data = epilep,
