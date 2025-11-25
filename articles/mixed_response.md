@@ -1,0 +1,719 @@
+# Models with Mixed Response Types
+
+``` r
+library(galamm)
+library(lme4)
+```
+
+This vignette describes how `galamm` can be used to estimate models with
+mixed response types.
+
+### Mixed Normal and Binomial Response
+
+We start with the `mresp` dataset, which comes with the package. The
+variable “itemgroup” defines the response type; it equals “a” for
+normally distributed responses and “b” for binomially distributed
+responses. They are link through a common random intercept.
+
+``` r
+head(mresp)
+#>   id         x        y.1        y.2 itemgroup
+#> 1  1 0.8638214  0.2866329  1.0000000         a
+#> 2  1 0.7676133  2.5647490  1.0000000         a
+#> 3  1 0.8812059  1.0000000  2.0000000         b
+#> 4  1 0.2239725  1.0000000  2.0000000         b
+#> 5  2 0.7215696 -0.4721698  1.0000000         a
+#> 6  2 0.6924851  1.1750286  1.0000000         a
+```
+
+In terms of the GALAMM defined in the [introductory
+vignette](https://lcbc-uio.github.io/galamm/articles/galamm.html), and
+for simplicity assuming we use canonical link functions, we have the
+response model
+
+$$f\left( y_{ij}|\nu_{ij},\phi \right) = \exp\left( \frac{y_{ij}\nu_{ij} - b\left( \nu_{ij} \right)}{\phi} + c\left( y_{ij},\phi \right) \right)$$
+
+for the $i$th observation of the $j$ subject. Although we don’t show
+this with a subscript, when the variable `itemgroup = "a"` we have a
+Gaussian response, so $b(\nu) = \nu^{2}/2$ and the support of the
+distribution is the entire real line $\mathbb{R}$. The mean in this case
+is given by $\mu_{ij} = \nu_{ij}$. When `itemgroup = "b"` we have a
+binomial response, so $b(\nu) = \log\left( 1 + \exp(\nu) \right)$ and
+the support is $\{ 0,1\}$. In this binomial case we also have
+$\phi = 1$. The mean in this case is given by
+$\mu_{ij} = \exp\left( \nu_{ij} \right)/\left( 1 + \exp\left( \nu_{ij} \right) \right)$.
+The function $c\left( y_{ij},\phi \right)$ also differs between these
+cases, but is not of the same interest, since it does not depend on the
+linear predictor. It hence matters for the value of the log-likelihood,
+but not for its derivative with respect to the parameters of interest.
+
+Next, the nonlinear predictor is given by
+
+$$\nu_{ij} = \beta_{0} + x_{ij}\beta_{1} + \mathbf{z}_{ij}^{T}{\mathbf{λ}}\eta$$
+
+where $x_{ij}$ is an explanatory and $\mathbf{z}_{ij}$ is a dummy vector
+of length 2 with exactly one element equal to one and one element equal
+to zero. When `itemgroup = "a"`, $\mathbf{z} = (1,0)^{T}$ and when
+`itemgroup = "b"`, $\mathbf{z} = (0,1)^{T}$. The parameter
+${\mathbf{λ}} = (1,\lambda)^{T}$ is a vector of factor loadings, whose
+first element equals zero for identifiability. $\eta$ is a latent
+variable, in this case representing an underlying trait “causing” the
+observed responses.
+
+The structural model is simply
+
+$$\eta = \zeta \sim N(0,\psi),$$
+
+where $N(0,\psi)$ denotes a normal distribution with mean 0 and variance
+$\psi$.
+
+We define the loading matrix as follows, where the value `1` indicates
+that the first element $\mathbf{λ}$ is fixed, and the value `NA`
+indicates that its second element is unknown, and to be estimated.
+
+``` r
+(loading_matrix <- matrix(c(1, NA), ncol = 1))
+#>      [,1]
+#> [1,]    1
+#> [2,]   NA
+```
+
+We set `load_var = "itemgroup"` because all rows of the data with the
+same value of `itemgroup` will receive the same factor loading. In
+`formula`, we state `(0 + level | id)` to specify that each subject,
+identified by `id`, has a given level. `level` is not an element of the
+`mresp` data, but is instead the factor onto which the loading matrix
+loads. We identify this with the argument `factor = "level"`. We could
+have chosen any other name for `"level"`, except for names that are
+already columns in `mresp`.
+
+We also need to define the response families using the `gfam` function:
+
+``` r
+families <- gfam(list(gaussian, binomial))
+```
+
+We also need a way of telling galamm which row belongs to which family.
+This is encoded in the dataframe `mresp`, where the response `y` is a
+matrix with two columns, in which the first column is the response and
+the second column is the index of the family. That is, a `1` means
+`gaussian` and a `2` means `binomial`.
+
+``` r
+head(mresp$y)
+#>            [,1] [,2]
+#> [1,]  0.2866329    1
+#> [2,]  2.5647490    1
+#> [3,]  1.0000000    2
+#> [4,]  1.0000000    2
+#> [5,] -0.4721698    1
+#> [6,]  1.1750286    1
+```
+
+We are now ready to estimate the mixed response model.
+
+``` r
+mixed_resp <- galamm(
+  formula = y ~ x + (0 + level | id),
+  data = mresp,
+  family = families,
+  load_var = "itemgroup",
+  lambda = loading_matrix,
+  factor = "level"
+)
+```
+
+We can also look at its summary output.
+
+``` r
+summary(mixed_resp)
+#> GALAMM fit by maximum marginal likelihood.
+#> Formula: y ~ x + (0 + level | id)
+#>    Data: mresp
+#> 
+#>      AIC      BIC   logLik deviance df.resid 
+#>   9248.7   9280.2  -4619.3   3633.1     3995 
+#> 
+#> Lambda:
+#>         level      SE
+#> lambda1 1.000       .
+#> lambda2 1.095 0.09982
+#> 
+#> Random effects:
+#>  Groups Name  Variance Std.Dev.
+#>  id     level 1.05     1.025   
+#> Number of obs: 4000, groups:  id, 1000
+#> 
+#> Fixed effects:
+#>             Estimate Std. Error z value  Pr(>|z|)
+#> (Intercept)    0.041    0.05803  0.7065 4.799e-01
+#> x              0.971    0.08594 11.2994 1.321e-29
+```
+
+#### Mixed Response and Heteroscedastic Residuals
+
+Mixed response models can be combined with heteroscedastic residuals,
+which are described in the vignette on [linear mixed models with
+heteroscedastic
+residuals](https://lcbc-uio.github.io/galamm/articles/lmm_heteroscedastic.html).
+However, some care is needed in this case. We illustrate with the
+dataset `mresp_hsced`, whose first few lines are shown below:
+
+``` r
+head(mresp_hsced)
+#>   id         x         y.1         y.2 itemgroup grp isgauss
+#> 1  1 0.8638214   0.2866329   1.0000000         a   b       1
+#> 2  1 0.7676133   2.5647490   1.0000000         a   b       1
+#> 3  1 0.8812059   1.0000000   2.0000000         b   b       0
+#> 4  1 0.2239725   1.0000000   2.0000000         b   b       0
+#> 5  2 0.7215696 -11.0020148   1.0000000         a   a       1
+#> 6  2 0.6924851   1.1750286   1.0000000         a   b       1
+```
+
+This dataset has the same structure as `mresp`, except that the residual
+standard deviation of the normally distributed responses vary according
+to the variable `grp`, which has two levels. Two fit a model on this
+dataset with heteroscedastic residuals for the normally distributed
+variable, we must use the dummy variable `isgauss` when setting up the
+`weights`. This is illustrated below. By writing `~ (0 + isgauss | grp)`
+we specify that the heteroscedasticity is assumed between levels of
+`grp`, but that this only applies when `isgauss` is nonzero. Hence, the
+binomially distributed responses don’t have any heteroscedastic
+residuals estimated, since for these observations the dispersion
+parameter $\phi$ is fixed to 1. We also ignore the factor loadings for
+simplicity.
+
+``` r
+mod <- galamm(
+  formula = y ~ x + (1 | id),
+  dispformula = ~ (0 + isgauss | grp),
+  family = gfam(list(gaussian, binomial)),
+  data = mresp_hsced
+)
+```
+
+The summary output now shows that we also have estimated a variance
+function.
+
+``` r
+summary(mod)
+#> GALAMM fit by maximum marginal likelihood.
+#> Formula: y ~ x + (1 | id)
+#>    Data: mresp_hsced
+#> 
+#>      AIC      BIC   logLik deviance df.resid 
+#>  12356.9  12388.3  -6173.4  31426.4     3995 
+#> 
+#> Random effects:
+#>  Groups Name        Variance Std.Dev.
+#>  id     (Intercept) 0        0       
+#> Number of obs: 4000, groups:  id, 1000
+#> 
+#> Variance function:
+#>       a       b 
+#> 1.00000 0.07756 
+#> 
+#> Fixed effects:
+#>             Estimate Std. Error z value  Pr(>|z|)
+#> (Intercept)  0.01523    0.06303  0.2416 8.091e-01
+#> x            0.99563    0.11153  8.9267 4.388e-19
+```
+
+### Covariate Measurement Error Model
+
+This example is taken from Chapter 14.2 in Skrondal and Rabe-Hesketh
+([2004](#ref-skrondalGeneralizedLatentVariable2004)), and follows the
+analyses in ([Rabe-Hesketh, Pickles, and Skrondal
+2003](#ref-rabe-heskethCorrectingCovariateMeasurement2003);
+[Rabe-Hesketh, Skrondal, and Pickles
+2003](#ref-rabe-heskethMaximumLikelihoodEstimation2003)). No originality
+is claimed with respect to the analyses; but for the sake of
+understanding the `galamm` code, we explain it in quite some detail. The
+original dataset comes from Morris, Marr, and Clayton
+([1977](#ref-morrisDietHeartPostscript1977)).
+
+The scientific question concerns the impact of fiber intake on risk of
+coronary heat disease. 337 middle aged men were followed, all of whom
+either worked as bank staff or as London Transport staff (indicated by
+dummy variable `bus`). All men had a first measurement of fiber intake,
+and some had an additional measurement six months later. In addition,
+all had a binary variable indicating whether or not they had developed
+coronary heart disease.
+
+The first few rows of the dataset are printed below. All of these had
+only a single measurement of fiber intake.
+
+``` r
+head(diet)
+#>   id   age bus   item       y.1       y.2 chd fiber fiber2
+#> 1  1 -0.38   1 fiber1 17.814280  1.000000   0     1      0
+#> 2  1 -0.38   1    chd  0.000000  2.000000   1     0      0
+#> 3  2  0.54   1 fiber1  9.487736  1.000000   0     1      0
+#> 4  2  0.54   1    chd  0.000000  2.000000   1     0      0
+#> 5  3  8.78   1 fiber1 15.958630  1.000000   0     1      0
+#> 6  3  8.78   1    chd  0.000000  2.000000   1     0      0
+```
+
+It is instructive to also look at some men who had two measurements of
+fiber intake. Here are three of them.
+
+``` r
+diet[diet$id %in% c(219, 220, 221), ]
+#>      id   age bus   item      y.1      y.2 chd fiber fiber2
+#> 429 219 -8.13   0 fiber1 15.64263  1.00000   0     1      0
+#> 430 219 -8.13   0 fiber2 14.87973  1.00000   0     1      1
+#> 431 219 -8.13   0    chd  0.00000  2.00000   1     0      0
+#> 432 220 -1.13   0 fiber1 13.46374  1.00000   0     1      0
+#> 433 220 -1.13   0 fiber2 14.73168  1.00000   0     1      1
+#> 434 220 -1.13   0    chd  0.00000  2.00000   1     0      0
+#> 435 221  3.67   0 fiber1 15.95863  1.00000   0     1      0
+#> 436 221  3.67   0 fiber2 17.28778  1.00000   0     1      1
+#> 437 221  3.67   0    chd  0.00000  2.00000   1     0      0
+```
+
+#### Structural Model
+
+Our first goal is to model the effect of fiber intake on risk of heart
+disease. Since this variable is very likely to be subject to measurement
+error, it is well known that simply averaging the two measurements,
+where available, and using the single measurement otherwise, will lead
+to bias and lack of power ([Carroll et al.
+2006](#ref-carrollMeasurementErrorNonlinear2006)). Instead, we let
+$\eta_{j}$ denote the true (latent) fiber intake of person $j$, and
+define the structural model
+
+$$\eta_{j} = \mathbf{x}_{ij}\prime{\mathbf{γ}} + \zeta_{j}.$$
+
+where $\mathbf{x}_{ij}$ is a vector of covariates age, bus, and their
+interaction, as well as a constant term for defining the intercept. The
+R formula for setting up the model matrix would be
+`model.matrix(~ age * bus, data = diet)`. The term $\zeta_{j}$ is a
+normally distributed disturbance, $\zeta_{j} \sim N(0,\psi)$.
+
+#### Measurement Model
+
+It is assumed that the fiber measurements are normally distributed
+around the true value $\eta_{j}$, and allow for a drift term
+$d_{ij}\beta_{0}$, where $d_{2ij}$ is a dummy variable whose value
+equals one if the $i$th row of the $j$th person is a replicate fiber
+measurement, and zero otherwise. This allows for a drift in the
+measurements, and the model becomes
+
+$$y_{ij} = d_{2ij}\beta_{0} + \eta_{j} + \epsilon_{ij},\qquad\epsilon_{ij} = N(0,\theta).$$
+
+#### Disease Model
+
+Next, for the rows corresponding to coronary heart disease measurement,
+we assume a binomial model with a logit link function, i.e., logistic
+regression. This model is given by
+
+$$\text{logit}\left\lbrack P\left( y_{ij} = 1|\eta_{j} \right) \right\rbrack = \mathbf{x}_{ij}\prime{\mathbf{β}} + \lambda\eta_{j},$$
+
+where $\mathbf{x}_{ij}$ is the same as before, but where $\mathbf{β}$
+now represents the direct effect of age and bus on the probability of
+coronary heart disease. The factor loading $\lambda$ is the regression
+coefficient for latent fiber intake on the risk of coronary heart
+disease.
+
+#### Nonlinear Predictor
+
+Stacking the three responses, which are fiber intake at times 1 and 2,
+and coronary heart disease, we can define the joint model as a GLLAMM
+with nonlinear predictor
+
+$$\nu_{ij} = d_{2ij}\beta_{0} + d_{3ij}\mathbf{x}_{j}\prime{\mathbf{β}} + \mathbf{x}_{j}\prime{\mathbf{γ}}\left\lbrack \left( d_{1i} + d_{2i} \right) + \lambda d_{3i} \right\rbrack + \zeta_{j}\left\lbrack \left( d_{1i} + d_{2i} \right) + \lambda d_{3i} \right\rbrack,$$
+
+where $d_{1i}$ is a dummy variable for fiber measurements at timepoint 1
+and $d_{3i}$ is an indicator for coronary heart disease.
+
+#### Estimating the Model with galamm
+
+In the measurement model for fiber above, note that we implicitly have
+factor loadings equal to one. Letting the `item` variable define which
+rows should receive which loading, we note that the factor levels are as
+follows:
+
+``` r
+levels(diet$item)
+#> [1] "fiber1" "fiber2" "chd"
+```
+
+We could of course have changed this, but given these levels, we define
+the following loading matrix:
+
+``` r
+(loading_matrix <- matrix(c(1, 1, NA), ncol = 1))
+#>      [,1]
+#> [1,]    1
+#> [2,]    1
+#> [3,]   NA
+```
+
+That is, “fiber1” and “fiber2” receive a loading fixed to one, whereas
+the loading for “chd” remains to be estimated.
+
+We also need to define the families, making sure it is binomial for
+“chd” and Gaussian for “fiber1” and “fiber2”.
+
+``` r
+head(diet$y)
+#>           [,1] [,2]
+#> [1,] 17.814280    1
+#> [2,]  0.000000    2
+#> [3,]  9.487736    1
+#> [4,]  0.000000    2
+#> [5,] 15.958630    1
+#> [6,]  0.000000    2
+```
+
+``` r
+families <- gfam(list(gaussian, binomial))
+```
+
+The model formula also needs some care in this case. We define it as
+follows, and note that the whole part `0 + chd + fiber + fiber2` could
+have been replaced by `item`. We use the former for ease of explanation.
+
+``` r
+formula <- y ~ 0 + chd + (age * bus):chd + fiber +
+  (age * bus):fiber + fiber2 + (0 + loading | id)
+```
+
+The initial zero specifies that we don’t want R to insert an intercept
+term. Next, `chd + (age * bus) : chd` applies to “chd” rows only, and
+corresponds to $\mathbf{x}_{ij}^{T}{\mathbf{β}}$ in the disease model.
+The part `fiber + (age * bus) : fiber` corresponds to the term
+$\mathbf{x}_{ij}^{T}{\mathbf{γ}}$ in the disease model, and `fiber2`
+corresponds to the drift term $d_{2ij}\beta_{0}$.
+
+We can inspect the model implied by the formula by using the `nobars`
+function from [lme4](https://cran.r-project.org/package=lme4) ([Bates et
+al. 2015](#ref-batesFittingLinearMixedEffects2015)) to remove the random
+effects, and then `model.matrix`. It looks correctly set up.
+
+``` r
+head(model.matrix(nobars(formula), data = diet))
+#>   chd fiber fiber2 chd:age chd:bus age:fiber bus:fiber chd:age:bus age:bus:fiber
+#> 1   0     1      0    0.00       0     -0.38         1        0.00         -0.38
+#> 2   1     0      0   -0.38       1      0.00         0       -0.38          0.00
+#> 3   0     1      0    0.00       0      0.54         1        0.00          0.54
+#> 4   1     0      0    0.54       1      0.00         0        0.54          0.00
+#> 5   0     1      0    0.00       0      8.78         1        0.00          8.78
+#> 6   1     0      0    8.78       1      0.00         0        8.78          0.00
+```
+
+Finally, the random effects part `(0 + loading | id)` specifies that for
+each `id` there should be a single random intercept, which corresponds
+to latent fiber intake $\eta_{j}$. Writing `0 + loading` means that
+$\eta_{j}$ should be multiplied by the factor loadings defined in the
+loading matrix.
+
+We are now ready to fit the model.
+
+``` r
+mod <- galamm(
+  formula = formula,
+  data = diet,
+  family = families,
+  factor = "loading",
+  load_var = "item",
+  lambda = loading_matrix
+)
+```
+
+Looking at the summary output, however, we see a warning that the
+Hessian matrix is rank deficient.
+
+``` r
+summary(mod)
+#> Warning in vcov.galamm(object, parm = "lambda"): Rank deficient Hessian matrix.Could not compute covariance matrix.
+#> Warning in vcov.galamm(object, "beta"): Rank deficient Hessian matrix.Could not compute covariance matrix.
+#> GALAMM fit by maximum marginal likelihood.
+#> Formula: formula
+#>    Data: diet
+#> 
+#>      AIC      BIC   logLik deviance df.resid 
+#>   2837.6   2892.9  -1406.8  12529.3      730 
+#> 
+#> Lambda:
+#>         loading SE
+#> lambda1   1.000  .
+#> lambda2   1.000  .
+#> lambda3  -2.026  .
+#> 
+#> Random effects:
+#>  Groups Name    Variance Std.Dev.
+#>  id     loading 0        0       
+#> Number of obs: 742, groups:  id, 333
+#> 
+#> Fixed effects:
+#>               Estimate Std. Error z value Pr(>|z|)
+#> chd           -1.78692         NA      NA       NA
+#> fiber         17.96184         NA      NA       NA
+#> fiber2        -0.64927         NA      NA       NA
+#> chd:age        0.06682         NA      NA       NA
+#> chd:bus       -0.06882         NA      NA       NA
+#> fiber:age     -0.20480         NA      NA       NA
+#> fiber:bus     -1.69601         NA      NA       NA
+#> chd:age:bus   -0.04934         NA      NA       NA
+#> fiber:age:bus  0.16097         NA      NA       NA
+```
+
+We suspect that this is a convergence issue of the algorithm, and start
+by simply turning a lever to make the algorithm more verbose. The
+argument `trace = 3` is passed onto `optim`.
+
+``` r
+mod <- galamm(
+  formula = formula,
+  data = diet,
+  family = families,
+  factor = "loading",
+  load_var = "item",
+  lambda = loading_matrix,
+  control = galamm_control(optim_control = list(trace = 3))
+)
+#> N = 11, M = 20 machine precision = 2.22045e-16
+#> At X0, 0 variables are exactly at the bounds
+#> At iterate     0  f=         2148  |proj g|=       122.68
+#> At iterate    10  f =       1770.3  |proj g|=        30.656
+#> At iterate    20  f =       1467.2  |proj g|=        11.286
+#> At iterate    30  f =       1417.6  |proj g|=        73.904
+#> At iterate    40  f =       1406.8  |proj g|=       0.21144
+#> 
+#> iterations 43
+#> function evaluations 51
+#> segments explored during Cauchy searches 44
+#> BFGS updates skipped 0
+#> active bounds at final generalized Cauchy point 1
+#> norm of the final projected gradient 0.0123301
+#> final function value 1406.8
+#> 
+#> F = 1406.8
+#> final  value 1406.801105 
+#> converged
+```
+
+Now we got some information, but the final estimate is the same, since
+we otherwise used the same parameters. We now instead try to increase
+the initial estimate of the random effect parameter $\theta$. In general
+$\theta$ is a vector containing elements of the Cholesky factor of the
+covariance matrix (see, Bates et al.
+([2015](#ref-batesFittingLinearMixedEffects2015))), but in this case it
+is just the standard deviation of the latent variable. By default, its
+initial value is 1, but we now try to increase it to 10, with the
+`start` argument.
+
+``` r
+mod <- galamm(
+  formula = formula,
+  data = diet,
+  family = families,
+  factor = "loading",
+  load_var = "item",
+  lambda = loading_matrix,
+  start = list(theta = 10),
+  control = galamm_control(optim_control = list(trace = 3))
+)
+#> N = 11, M = 20 machine precision = 2.22045e-16
+#> At X0, 0 variables are exactly at the bounds
+#> At iterate     0  f=       2827.6  |proj g|=       123.31
+#> At iterate    10  f =       1764.5  |proj g|=        103.86
+#> At iterate    20  f =       1623.6  |proj g|=        131.81
+#> At iterate    30  f =       1442.4  |proj g|=        35.169
+#> At iterate    40  f =         1388  |proj g|=        20.654
+#> At iterate    50  f =       1372.4  |proj g|=        1.4042
+#> 
+#> iterations 57
+#> function evaluations 69
+#> segments explored during Cauchy searches 58
+#> BFGS updates skipped 0
+#> active bounds at final generalized Cauchy point 0
+#> norm of the final projected gradient 0.0119457
+#> final function value 1372.16
+#> 
+#> F = 1372.16
+#> final  value 1372.160387 
+#> converged
+```
+
+The output printed is the negative log-likelihood, and since 1372.16 is
+less than 1406.8, increasing the initial value to 10 led us to a local
+optimum with higher likelihood value. Ideally we should have tried other
+initial values as well, but since Skrondal and Rabe-Hesketh
+([2004](#ref-skrondalGeneralizedLatentVariable2004)) obtained a negative
+log-likelihood value of 1372.35 while using adaptive quadrature
+estimation, we are pretty happy about finding a value close to theirs.
+
+We can now use the summary method, where we find that our estimates are
+very close to the corresponding model in Table 14.1 of Skrondal and
+Rabe-Hesketh ([2004](#ref-skrondalGeneralizedLatentVariable2004)).
+
+``` r
+summary(mod)
+#> GALAMM fit by maximum marginal likelihood.
+#> Formula: formula
+#>    Data: diet
+#> Control: galamm_control(optim_control = list(trace = 3))
+#> 
+#>      AIC      BIC   logLik deviance df.resid 
+#>   2768.3   2823.6  -1372.2   2002.9      730 
+#> 
+#> Lambda:
+#>         loading      SE
+#> lambda1  1.0000       .
+#> lambda2  1.0000       .
+#> lambda3 -0.1339 0.05121
+#> 
+#> Random effects:
+#>  Groups Name    Variance Std.Dev.
+#>  id     loading 23.64    4.862   
+#> Number of obs: 742, groups:  id, 333
+#> 
+#> Fixed effects:
+#>               Estimate Std. Error  z value   Pr(>|z|)
+#> chd           -1.91520    0.27229 -7.03361  2.013e-12
+#> fiber         17.94834    0.48686 36.86566 1.641e-297
+#> fiber2         0.22406    0.41783  0.53624  5.918e-01
+#> chd:age        0.06613    0.05931  1.11515  2.648e-01
+#> chd:bus       -0.02900    0.34355 -0.08441  9.327e-01
+#> fiber:age     -0.21207    0.10090 -2.10172  3.558e-02
+#> fiber:bus     -1.68278    0.63721 -2.64084  8.270e-03
+#> chd:age:bus   -0.04998    0.06507 -0.76812  4.424e-01
+#> fiber:age:bus  0.16821    0.11223  1.49882  1.339e-01
+```
+
+Now we were able to reproduce results very close to those in Table 14.1
+on page 420 of Skrondal and Rabe-Hesketh
+([2004](#ref-skrondalGeneralizedLatentVariable2004)). This is a useful
+assurance that the algorithm used by galamm is correctly implemented.
+
+#### Comparison to a Model with Indirect Effect Only
+
+The model above assumed that the age and bus variables had both an
+indirect effect on the risk of coronary heart disease through its impact
+on fiber intake, as well as a direct effect. Still following Skrondal
+and Rabe-Hesketh ([2004](#ref-skrondalGeneralizedLatentVariable2004)),
+we now estimate an alternative model which only has indirect effects.
+The disease model is now
+
+$$\text{logit}\left\lbrack P\left( y_{ij} = 1|\eta_{j} \right) \right\rbrack = d_{ij3}\beta_{03} + \lambda\eta_{j},$$
+
+The formula becomes
+
+``` r
+formula0 <- y ~ 0 + chd + fiber + (age * bus):fiber + fiber2 +
+  (0 + loading | id)
+```
+
+Everything else is the same as before, so we fit the new model with
+
+``` r
+mod0 <- galamm(
+  formula = formula0,
+  data = diet,
+  family = families,
+  factor = "loading",
+  load_var = "item",
+  lambda = loading_matrix,
+  start = list(theta = 10),
+  control = galamm_control(optim_control = list(trace = 3))
+)
+#> N = 8, M = 20 machine precision = 2.22045e-16
+#> At X0, 0 variables are exactly at the bounds
+#> At iterate     0  f=       2827.6  |proj g|=       123.31
+#> At iterate    10  f =       1664.7  |proj g|=        25.235
+#> At iterate    20  f =       1427.9  |proj g|=        37.186
+#> At iterate    30  f =       1373.5  |proj g|=        5.1449
+#> 
+#> iterations 37
+#> function evaluations 40
+#> segments explored during Cauchy searches 38
+#> BFGS updates skipped 0
+#> active bounds at final generalized Cauchy point 0
+#> norm of the final projected gradient 0.000304544
+#> final function value 1373.01
+#> 
+#> F = 1373.01
+#> final  value 1373.013263 
+#> converged
+```
+
+Looking at the summary output, the estimates are now close to the first
+column in Table 14.1 of Skrondal and Rabe-Hesketh
+([2004](#ref-skrondalGeneralizedLatentVariable2004)).
+
+``` r
+summary(mod0)
+#> GALAMM fit by maximum marginal likelihood.
+#> Formula: formula0
+#>    Data: diet
+#> Control: galamm_control(optim_control = list(trace = 3))
+#> 
+#>      AIC      BIC   logLik deviance df.resid 
+#>   2764.0   2805.5  -1373.0   2007.9      733 
+#> 
+#> Lambda:
+#>         loading      SE
+#> lambda1   1.000       .
+#> lambda2   1.000       .
+#> lambda3  -0.136 0.05148
+#> 
+#> Random effects:
+#>  Groups Name    Variance Std.Dev.
+#>  id     loading 23.64    4.862   
+#> Number of obs: 742, groups:  id, 333
+#> 
+#> Fixed effects:
+#>               Estimate Std. Error  z value   Pr(>|z|)
+#> chd            -1.9668    0.18248 -10.7783  4.360e-27
+#> fiber          17.9741    0.48123  37.3504 2.502e-305
+#> fiber2          0.2238    0.41779   0.5358  5.921e-01
+#> fiber:age      -0.1896    0.09914  -1.9122  5.585e-02
+#> fiber:bus      -1.6991    0.62529  -2.7173  6.581e-03
+#> fiber:age:bus   0.1515    0.11012   1.3760  1.688e-01
+```
+
+We can use `anova` method for galamm objects to compare the models. AIC
+and BIC favor the simpler model with only indirect effects.
+
+``` r
+anova(mod, mod0)
+#> Data: diet
+#> Models:
+#> mod0: formula0
+#> mod: formula
+#>      npar    AIC    BIC  logLik deviance  Chisq Df Pr(>Chisq)
+#> mod0    9 2764.0 2805.5 -1373.0   2002.9                     
+#> mod    12 2768.3 2823.6 -1372.2   2002.9 1.7058  3     0.6357
+```
+
+## References
+
+Bates, Douglas M, Martin Mächler, Ben Bolker, and Steve Walker. 2015.
+“Fitting Linear Mixed-Effects Models Using Lme4.” *Journal of
+Statistical Software* 67 (1): 1–48.
+<https://doi.org/10.18637/jss.v067.i01>.
+
+Carroll, Raymond J., David Ruppert, Leonard A. Stefanski, and Ciprian M.
+Crainiceanu. 2006. *Measurement Error in Nonlinear Models: A Modern
+Perspective*. 2nd ed. Monographs on Statistics and Applied Probability.
+Boca Raton, Florida: John Wiley & Sons.
+
+Morris, J. N., J. W. Marr, and D. G. Clayton. 1977. “Diet and Heart: A
+Postscript.” *Br Med J* 2 (6098): 1307–14.
+<https://doi.org/10.1136/bmj.2.6098.1307>.
+
+Rabe-Hesketh, Sophia, Andrew Pickles, and Anders Skrondal. 2003.
+“Correcting for Covariate Measurement Error in Logistic Regression Using
+Nonparametric Maximum Likelihood Estimation.” *Statistical Modelling* 3
+(3): 215–32. <https://doi.org/10.1191/1471082X03st056oa>.
+
+Rabe-Hesketh, Sophia, Anders Skrondal, and Andrew Pickles. 2003.
+“Maximum Likelihood Estimation of Generalized Linear Models with
+Covariate Measurement Error.” *The Stata Journal* 3 (4): 386–411.
+<https://doi.org/10.1177/1536867X0400300408>.
+
+Skrondal, Anders, and Sophia Rabe-Hesketh. 2004. *Generalized Latent
+Variable Modeling*. Interdisciplinary Statistics Series. Boca Raton,
+Florida: Chapman and Hall/CRC.
