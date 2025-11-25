@@ -36,7 +36,6 @@ We start with the `mresp` dataset, which comes with the package. The variable "i
 head(mresp)
 ```
 
-
 In terms of the GALAMM defined in the [introductory vignette](https://lcbc-uio.github.io/galamm/articles/galamm.html), and for simplicity assuming we use canonical link functions, we have the response model
 
 $$

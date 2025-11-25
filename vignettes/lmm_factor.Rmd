@@ -213,9 +213,9 @@ We can look at the factor loadings specifically using the `factor_loadings` func
 factor_loadings(mod)
 #>                 ms        SE       hs        SE
 #> lambda1 1.00000000        NA 0.000000        NA
-#> lambda2 0.87509320 0.1421073 0.000000        NA
-#> lambda3 0.04431744 0.1495679 1.000000        NA
-#> lambda4 0.02093667 0.1542824 1.501574 0.5040217
+#> lambda2 0.87509307 0.1421073 0.000000        NA
+#> lambda3 0.04431739 0.1495679 1.000000        NA
+#> lambda4 0.02093662 0.1542824 1.501574 0.5040218
 ```
 
 A diagnostic plot of residuals versus predicted values also looks acceptable, although there seems to be a slight upward trend.
@@ -544,6 +544,73 @@ judge_plmixed <- PLmixed(
 We get identical results using `galamm`, and it takes less than five minutes.
 
 
+``` r
+judge_galamm <- galamm(
+  formula = form,
+  data = JUDGEsim,
+  lambda = loading_matrix,
+  load_var = "item",
+  factor = factors
+)
+```
+
+
+``` r
+summary(judge_galamm)
+#> GALAMM fit by maximum marginal likelihood.
+#> Formula: form
+#>    Data: JUDGEsim
+#> 
+#>      AIC      BIC   logLik deviance df.resid 
+#> 113184.6 113531.9 -56553.3 113106.6    54423 
+#> 
+#> Scaled residuals: 
+#>     Min      1Q  Median      3Q     Max 
+#> -3.8407 -0.6439  0.0017  0.6474  3.9799 
+#> 
+#> Lambda:
+#>          teacher1      SE teacher2      SE trait1.t      SE trait2.t      SE trait1.s      SE trait2.s      SE
+#> lambda1    1.0000       .        .       .    1.000       .        .       .        .       .        .       .
+#> lambda2    1.1278 0.03584        .       .    1.092 0.02172        .       .        .       .        .       .
+#> lambda3    0.9986 0.03345        .       .    1.066 0.02144        .       .        .       .        .       .
+#> lambda4         .       .   1.0000       .        .       .   1.0000       .        .       .        .       .
+#> lambda5         .       .   0.9725 0.03036        .       .   1.0536 0.02576        .       .        .       .
+#> lambda6         .       .   1.2191 0.03436        .       .   0.9581 0.02460        .       .        .       .
+#> lambda7         .       .        .       .        .       .        .       .    1.000       .        .       .
+#> lambda8         .       .        .       .        .       .        .       .    1.322 0.06109        .       .
+#> lambda9         .       .        .       .        .       .        .       .    1.145 0.05633        .       .
+#> lambda10        .       .        .       .        .       .        .       .        .       .    1.000       .
+#> lambda11        .       .        .       .        .       .        .       .        .       .    0.874 0.04417
+#> lambda12        .       .        .       .        .       .        .       .        .       .    1.096 0.04874
+#> 
+#> Random effects:
+#>  Groups   Name        Variance Std.Dev. Corr          
+#>  stu      trait1.t    0.24025  0.4902                 
+#>           trait2.t    0.16872  0.4108   0.86          
+#>           trait1.s    0.29588  0.5439   0.46 0.40     
+#>           trait2.s    0.37690  0.6139   0.20 0.30 0.40
+#>  tch      teacher1    0.09704  0.3115                 
+#>           teacher2    0.11321  0.3365   0.44          
+#>  class    (Intercept) 0.00000  0.0000                 
+#>  Residual             0.39044  0.6249                 
+#> Number of obs: 54462, groups:  stu, 1249; tch, 390; class, 125
+#> 
+#> Fixed effects:
+#>        Estimate Std. Error t value Pr(>|t|)
+#> item1     3.399    0.02270  149.72        0
+#> item2     3.363    0.02502  134.42        0
+#> item3     3.362    0.02329  144.38        0
+#> item4     2.820    0.02226  126.65        0
+#> item5     2.939    0.02225  132.08        0
+#> item6     2.877    0.02512  114.53        0
+#> item7     3.426    0.02344  146.16        0
+#> item8     3.552    0.02696  131.77        0
+#> item9     3.597    0.02496  144.11        0
+#> item10    2.334    0.02479   94.17        0
+#> item11    2.909    0.02330  124.83        0
+#> item12    2.470    0.02599   95.07        0
+```
 
 
 
+# References
