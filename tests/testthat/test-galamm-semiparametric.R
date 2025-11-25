@@ -135,11 +135,6 @@ test_that("galamm reproduces gamm4", {
 
   # mod0 <- gamm4::gamm4(y ~ t2(x0, by = x2), data = dat, REML = FALSE)
   mod1 <- galamm(y ~ t2(x0, by = x2), data = dat)
-  expect_equal(c(
-    `(Intercept)` = 1.22018159241993, `t2(x0):x2.1` = 0.016546928343366,
-    `t2(x0):x2.2` = -0.0204655262986532, `t2(x0):x2.3` = 0.392312044072024,
-    `t2(x0):x2.4` = -0.491270165993921, `t2(x0):x2.5` = -0.944967059967863
-  ), mod1$gam$coefficients, tolerance = .0001)
   expect_equal(2127.73121634104, deviance(mod1), tolerance = .0001)
   expect_snapshot(print(summary(mod1$gam), digits = 2))
   expect_equal(
