@@ -287,12 +287,12 @@ summary(mod_gamm4$mer)
 #> 
 #> Scaled residuals: 
 #>     Min      1Q  Median      3Q     Max 
-#> -8.2547  0.0786  0.1946  0.4248  0.8213 
+#> -8.2548  0.0786  0.1946  0.4248  0.8213 
 #> 
 #> Random effects:
 #>  Groups Name        Variance Std.Dev.
 #>  id     (Intercept) 0.2306   0.4802  
-#>  Xr     s(x)        0.9694   0.9846  
+#>  Xr     s(x)        0.9695   0.9846  
 #> Number of obs: 1600, groups:  id, 200; Xr, 8
 #> 
 #> Fixed effects:
@@ -682,19 +682,21 @@ mod_byvar <- galamm(
 #> At X0, 0 variables are exactly at the bounds
 #> At iterate     0  f=        25324  |proj g|=       9642.6
 #> At iterate    50  f =        136.9  |proj g|=        716.66
-#> At iterate   100  f =      -1055.1  |proj g|=        2101.3
-#> At iterate   150  f =        -1069  |proj g|=        12.671
+#> At iterate   100  f =      -1036.1  |proj g|=        2364.3
+#> At iterate   150  f =        -1069  |proj g|=          46.6
+#> At iterate   200  f =      -1147.4  |proj g|=         95.18
+#> At iterate   250  f =      -1217.6  |proj g|=        53.837
 #> 
-#> iterations 192
-#> function evaluations 210
-#> segments explored during Cauchy searches 195
+#> iterations 266
+#> function evaluations 292
+#> segments explored during Cauchy searches 269
 #> BFGS updates skipped 0
 #> active bounds at final generalized Cauchy point 0
-#> norm of the final projected gradient 5.66964
-#> final function value -1147.33
+#> norm of the final projected gradient 8.60877
+#> final function value -1217.8
 #> 
-#> F = -1147.33
-#> final  value -1147.325580 
+#> F = -1217.8
+#> final  value -1217.796853 
 #> converged
 ```
 
@@ -710,44 +712,44 @@ summary(mod_byvar)
 #> Control: galamm_control(optim_control = list(factr = 1e+09, trace = 3,      REPORT = 50, maxit = 1000))
 #> 
 #>      AIC      BIC   logLik deviance df.resid 
-#>  -2258.7  -2126.8   1147.3  -2294.7    11182 
+#>  -2399.6  -2267.8   1217.8  -2435.6    11182 
 #> 
 #> Scaled residuals: 
 #>      Min       1Q   Median       3Q      Max 
-#> -2097.34 -1025.85  -872.87    18.58    46.76 
+#> -2115.29 -1034.70  -885.48    21.85    50.66 
 #> 
 #> Lambda:
 #>         ability1       SE ability3        SE
 #> lambda1   1.0000        .        .         .
-#> lambda2   1.3990 0.002570        .         .
-#> lambda3   0.3009 0.002004        .         .
+#> lambda2   1.3986 0.002569        .         .
+#> lambda3   0.3013 0.002007        .         .
 #> lambda4        .        .   1.0000         .
-#> lambda5        .        .   0.9993 0.0007675
-#> lambda6        .        .   1.0001 0.0007677
-#> lambda7        .        .   1.9994 0.0015666
+#> lambda5        .        .   0.9993 0.0007676
+#> lambda6        .        .   1.0001 0.0007679
+#> lambda7        .        .   1.9995 0.0015686
 #> 
 #> Random effects:
 #>  Groups       Name                  Variance Std.Dev. Corr 
-#>  timepoint:id domain1:ability1       0.23649 0.4863        
-#>               domain3:ability3       0.28004 0.5292   -0.01
-#>  id           domain1:ability1       2.22433 1.4914        
-#>               domain3:ability3      22.73158 4.7678   0.65 
-#>  Xr.0         s(x):domain3:ability3 40.36766 6.3536        
-#>  Xr           s(x):domain1:ability1  9.75801 3.1238        
+#>  timepoint:id domain1:ability1       0.23651 0.4863        
+#>               domain3:ability3       0.28043 0.5296   -0.01
+#>  id           domain1:ability1       3.35714 1.8322        
+#>               domain3:ability3      18.34082 4.2826   0.88 
+#>  Xr.0         s(x):domain3:ability3 87.28287 9.3425        
+#>  Xr           s(x):domain1:ability1 14.27050 3.7776        
 #>  Residual                            0.01007 0.1003        
 #> Number of obs: 11200, groups:  timepoint:id, 1600; id, 200; Xr.0, 8; Xr, 8
 #> 
 #> Fixed effects:
-#>                            Estimate Std. Error t value  Pr(>|t|)
-#> (Intercept)              -0.0029983   0.004649 -0.6450 5.190e-01
-#> domain3                   0.0001012   0.007557  0.0134 9.893e-01
-#> s(x):domain1:ability1Fx1 -0.0824905   0.214289 -0.3850 7.003e-01
-#> s(x):domain3:ability3Fx1  5.7597059   0.307604 18.7244 3.129e-78
+#>                           Estimate Std. Error t value  Pr(>|t|)
+#> (Intercept)              -0.004819   0.004671 -1.0318 3.022e-01
+#> domain3                   0.002595   0.007592  0.3418 7.325e-01
+#> s(x):domain1:ability1Fx1 -0.065816   0.241553 -0.2725 7.853e-01
+#> s(x):domain3:ability3Fx1  5.569172   0.314765 17.6931 4.739e-70
 #> 
 #> Approximate significance of smooth terms:
 #>                         edf Ref.df     F p-value
-#> s(x):domain1:ability1 8.929  8.929  4314  <2e-16
-#> s(x):domain3:ability3 8.975  8.975 59678  <2e-16
+#> s(x):domain1:ability1 8.951  8.951  4316  <2e-16
+#> s(x):domain3:ability3 8.988  8.988 59836  <2e-16
 ```
 
 We can plot the estimated smooth terms, which recover their simulated
@@ -860,7 +862,7 @@ summary(mod_byvar_mixed)
 #> Control: galamm_control(optim_control = list(factr = 1e+09, trace = 3,      REPORT = 30, maxit = 1000))
 #> 
 #>      AIC      BIC   logLik deviance df.resid 
-#>   9476.1   9566.9  -4725.0  26787.6     7987 
+#>   9476.1   9566.9  -4725.0  58315.3     7987 
 #> 
 #> Lambda:
 #>         ability1      SE ability2      SE

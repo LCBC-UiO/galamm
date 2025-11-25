@@ -60,7 +60,7 @@ Here we start by simply setting up what we need to fit the model.
 
 ``` r
 loading_matrix <- matrix(c(1, 1, NA), ncol = 1)
-families <- gfam(list(gaussian, binomial))
+families <- galamm::gfam(list(gaussian, binomial))
 formula <- y ~ 0 + chd + (age * bus):chd + fiber +
   (age * bus):fiber + fiber2 + (0 + loading | id)
 ```
@@ -301,7 +301,7 @@ mod <- galamm(
 #> segments explored during Cauchy searches 61
 #> BFGS updates skipped 0
 #> active bounds at final generalized Cauchy point 0
-#> norm of the final projected gradient 0.00165407
+#> norm of the final projected gradient 0.00165413
 #> final function value 1372.16
 #> 
 #> F = 1372.16
@@ -403,7 +403,7 @@ mod_nm <- galamm(
 #> (NM) 360: f = 1372.16 at    1.84247   -1.91525    17.9485   0.223968  0.0661412  -0.028921   -0.21203   -1.68308 -0.0499804   0.168172  -0.133908
 #> (NM) 380: f = 1372.16 at    1.84247   -1.91525    17.9485   0.223979  0.0661419 -0.0289297  -0.212034   -1.68304 -0.0499815   0.168174  -0.133909
 #> (NM) 400: f = 1372.16 at    1.84247   -1.91525    17.9485   0.223972   0.066143 -0.0289282  -0.212032   -1.68306 -0.0499827   0.168173  -0.133909
-#> (NM) 420: f = 1372.16 at    1.84246   -1.91525    17.9485   0.223982  0.0661428 -0.0289291   -0.21203   -1.68305 -0.0499825    0.16817   -0.13391
+#> (NM) 420: f = 1372.16 at    1.84246   -1.91525    17.9485   0.223982  0.0661427  -0.028929   -0.21203   -1.68305 -0.0499824    0.16817   -0.13391
 ```
 
 The summary output shows that Nelder-Mead found exactly the same optimum
@@ -433,12 +433,12 @@ summary(mod_nm)
 #> 
 #> Fixed effects:
 #>               Estimate Std. Error  z value   Pr(>|z|)
-#> chd           -1.91525    0.27229 -7.03373  2.011e-12
-#> fiber         17.94850    0.48686 36.86601 1.620e-297
+#> chd           -1.91525    0.27229 -7.03374  2.011e-12
+#> fiber         17.94850    0.48686 36.86602 1.620e-297
 #> fiber2         0.22398    0.41783  0.53606  5.919e-01
 #> chd:age        0.06614    0.05931  1.11526  2.647e-01
 #> chd:bus       -0.02893    0.34355 -0.08422  9.329e-01
-#> fiber:age     -0.21203    0.10090 -2.10130  3.561e-02
+#> fiber:age     -0.21203    0.10090 -2.10131  3.561e-02
 #> fiber:bus     -1.68304    0.63721 -2.64124  8.260e-03
 #> chd:age:bus   -0.04998    0.06507 -0.76814  4.424e-01
 #> fiber:age:bus  0.16817    0.11223  1.49847  1.340e-01

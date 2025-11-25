@@ -529,7 +529,7 @@ mod <- galamm(
 #> segments explored during Cauchy searches 58
 #> BFGS updates skipped 0
 #> active bounds at final generalized Cauchy point 0
-#> norm of the final projected gradient 0.0119457
+#> norm of the final projected gradient 0.0119116
 #> final function value 1372.16
 #> 
 #> F = 1372.16
