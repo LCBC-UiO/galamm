@@ -1,5 +1,6 @@
-# galamm (development versions)
+# galamm 0.3.0
 
+- The expected output of a unit test has been changed.
 - A bug in the computation of deviance residuals has been corrected.
 - A bug in the computation of Pearson residuals for non-Gaussian models has been
   corrected.
