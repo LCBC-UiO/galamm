@@ -21,3 +21,26 @@ that component is missing it falls back to re‑evaluating the expression
 supplied in the original call (\code{call$data}).  This mirrors the behavior
 of \code{model.frame.lmerMod} and other modelling packages.
 }
+\seealso{
+Other details of model fit: 
+\code{\link{VarCorr}()},
+\code{\link{coef.galamm}()},
+\code{\link{confint.galamm}()},
+\code{\link{deviance.galamm}()},
+\code{\link{factor_loadings.galamm}()},
+\code{\link{family.galamm}()},
+\code{\link{fitted.galamm}()},
+\code{\link{fixef}()},
+\code{\link{formula.galamm}()},
+\code{\link{llikAIC}()},
+\code{\link{logLik.galamm}()},
+\code{\link{nobs.galamm}()},
+\code{\link{predict.galamm}()},
+\code{\link{print.VarCorr.galamm}()},
+\code{\link{ranef.galamm}()},
+\code{\link{residuals.galamm}()},
+\code{\link{response}()},
+\code{\link{sigma.galamm}()},
+\code{\link{vcov.galamm}()}
+}
+\concept{details of model fit}
