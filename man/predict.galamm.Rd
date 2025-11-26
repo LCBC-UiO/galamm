@@ -65,6 +65,7 @@ Other details of model fit:
 \code{\link{formula.galamm}()},
 \code{\link{llikAIC}()},
 \code{\link{logLik.galamm}()},
+\code{\link{model.frame.galamm}()},
 \code{\link{nobs.galamm}()},
 \code{\link{print.VarCorr.galamm}()},
 \code{\link{ranef.galamm}()},
