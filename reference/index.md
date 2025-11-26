@@ -58,6 +58,8 @@ Detailed information on specific parts of model fits.
   : Extract formula from fitted galamm object
 - [`logLik(`*`<galamm>`*`)`](https://lcbc-uio.github.io/galamm/reference/logLik.galamm.md)
   : Extract Log-Likelihood of galamm Object
+- [`model.frame(`*`<galamm>`*`)`](https://lcbc-uio.github.io/galamm/reference/model.frame.galamm.md)
+  : Extract the model frame from a galamm object
 - [`nobs(`*`<galamm>`*`)`](https://lcbc-uio.github.io/galamm/reference/nobs.galamm.md)
   : Extract the Number of Observations from a galamm Fit
 - [`predict(`*`<galamm>`*`)`](https://lcbc-uio.github.io/galamm/reference/predict.galamm.md)

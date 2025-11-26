@@ -41,6 +41,7 @@ Other details of model fit:
 [`fixef()`](https://lcbc-uio.github.io/galamm/reference/fixef.md),
 [`formula.galamm()`](https://lcbc-uio.github.io/galamm/reference/formula.galamm.md),
 [`llikAIC()`](https://lcbc-uio.github.io/galamm/reference/llikAIC.md),
+[`model.frame.galamm()`](https://lcbc-uio.github.io/galamm/reference/model.frame.galamm.md),
 [`nobs.galamm()`](https://lcbc-uio.github.io/galamm/reference/nobs.galamm.md),
 [`predict.galamm()`](https://lcbc-uio.github.io/galamm/reference/predict.galamm.md),
 [`print.VarCorr.galamm()`](https://lcbc-uio.github.io/galamm/reference/print.VarCorr.galamm.md),
