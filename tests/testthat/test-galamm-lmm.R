@@ -43,6 +43,9 @@ test_that("LMM with simple factor works", {
     "'arg' should be one of"
   )
 
+  expect_s3_class(model.frame(mod), "data.frame")
+  mod$data <- NULL
+  expect_error(model.frame(mod))
 
   class(IRTsub) <- c("tbl_df", "tbl", "data.frame")
   mod1 <- galamm(
