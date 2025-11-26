@@ -1,6 +1,6 @@
 Package: galamm
 Title: Generalized Additive Latent and Mixed Models
-Version: 0.3.0
+Version: 0.3.0.9000
 Authors@R: c(
     person(given = "Øystein",
            family = "Sørensen",
@@ -41,7 +41,6 @@ Imports:
     nlme,
     Rcpp,
     Rdpack,
-    rlang,
     stats
 Depends:
     R (>= 3.5.0)
@@ -56,6 +55,7 @@ Suggests:
     gamm4,
     knitr,
     PLmixed,
+    rlang,
     rmarkdown,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3

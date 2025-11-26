@@ -55,6 +55,7 @@ Other details of model fit:
 \code{\link{fixef}()},
 \code{\link{llikAIC}()},
 \code{\link{logLik.galamm}()},
+\code{\link{model.frame.galamm}()},
 \code{\link{nobs.galamm}()},
 \code{\link{predict.galamm}()},
 \code{\link{print.VarCorr.galamm}()},
