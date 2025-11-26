@@ -33,7 +33,7 @@
 #' data("sleepstudy", package = "lme4")
 #' mod <- galamm(Reaction ~ Days + (Days | Subject), data = sleepstudy)
 #'
-#' # Diagnostic plot
+#' # Diagnostic plot of Pearson residuals versus fitted values
 #' plot(mod)
 #'
 #' # Logistic mixed model example from lme4
@@ -49,29 +49,31 @@
 #'
 plot.galamm <- function(x, form = resid(., type = "pearson") ~ fitted(.), ...) {
   object <- x
-  allV <- all.vars(nlme::asOneFormula(form))
-  args <- list()
 
-  if (length(allV > 0)) {
-
-  } else {
-    data <- NULL
-  }
-
-  data <- as.list(c(as.list(data), . = list(object)))
-  covF <- nlme::getCovariateFormula(form)
-  .x <- eval(covF[[2]], data)
-
-  argForm <- ~ .x
-  argData <- data.frame(.x = .x, check.names = FALSE)
+  deparse1 <- function(expr) paste(deparse(expr, backtick = TRUE), collapse = "")
+  data <- list(. = object)
+  covF  <- nlme::getCovariateFormula(form)
   respF <- nlme::getResponseFormula(form)
+
+  .x <- eval(covF[[2]], data)
+  argData <- data.frame(.x = .x, check.names = FALSE)
+  argForm <- ~ .x
+
   if (!is.null(respF)) {
     .y <- eval(respF[[2]], data)
+    argData$.y <- .y
     argForm <- .y ~ .x
-    argData[, ".y"] <- .y
   }
 
-  args <- c(list(argForm, data = argData), args)
+  # Create axis labels from the literal expressions the user supplied
+  xlab <- deparse1(covF[[2]])
+  ylab <- if (!is.null(respF)) deparse1(respF[[2]]) else NULL
 
-  do.call("xyplot", as.list(args))
+  # Build argument list for plot
+  args <- list(argForm, data = argData, ...)
+  args$xlab <- xlab
+  if (!is.null(ylab)) args$ylab <- ylab
+
+  do.call("plot", args)
+
 }
