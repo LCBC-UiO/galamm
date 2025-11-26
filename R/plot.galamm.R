@@ -6,6 +6,8 @@
 #'
 #' @param x An object of class \code{galamm} returned from \code{\link{galamm}}.
 #' @param form An option formula specifying the desired type of plot.
+#' @param abline An optional numeric vector specifying the intercept and slope
+#'   of a line to be added to the plot.
 #' @param ... Optional arguments passed on to the \code{plot} function.
 #' @return A plot is displayed.
 #' @export
@@ -29,14 +31,26 @@
 #' @references \insertAllCited{}
 #'
 #' @examples
-#' # Linear mixed model example from lme4
+#' ## Linear mixed model example from lme4
 #' data("sleepstudy", package = "lme4")
 #' mod <- galamm(Reaction ~ Days + (Days | Subject), data = sleepstudy)
 #'
 #' # Diagnostic plot of Pearson residuals versus fitted values
 #' plot(mod)
 #'
-#' # Logistic mixed model example from lme4
+#' # Include a straight line at zero
+#' plot(mod, abline = c(0, 0))
+#'
+#' # Diagnostic plot of Pearson residuals versus fitted values per subject
+#' plot(mod, form = resid(., type = "pearson") ~ fitted(.) | Subject)
+#'
+#' # Residuals plotted against time with a straight line at zero
+#' plot(mod, form = resid(., type = "pearson") ~ Days, abline = c(0, 0))
+#'
+#' # Residuals plotted against time per subject
+#' plot(mod, form = resid(., type = "pearson") ~ Days | Subject)
+#'
+#' ## Logistic mixed model example from lme4
 #' data("cbpp", package = "lme4")
 #' mod <- galamm(cbind(incidence, size - incidence) ~ period + (1 | herd),
 #'               data = cbpp, family = binomial)
@@ -47,33 +61,69 @@
 #' # Diagnostic plot using deviance residuals
 #' plot(mod, resid(., type = "deviance") ~ fitted(.))
 #'
-plot.galamm <- function(x, form = resid(., type = "pearson") ~ fitted(.), ...) {
-  object <- x
+#' # Diagnostic plot per herd
+#' plot(mod, resid(., type = "deviance") ~ fitted(.) | herd)
+#'
+#' ## Linear mixed model with factor structures
+#' # See vignette on linear mixed models with factor structures for details
+#' data(KYPSsim, package = "PLmixed")
+#' KYPSsim <- KYPSsim[KYPSsim$sid < 100, ]
+#' KYPSsim$time <- factor(KYPSsim$time)
+#'
+#' loading_matrix <- rbind(c(1, 0), c(NA, 0), c(NA, 1), c(NA, NA))
+#' factors <- c("ms", "hs")
+#' load_var <- "time"
+#' form <- esteem ~ time + (0 + ms | mid) + (0 + hs | hid) + (1 | sid)
+#'
+#' mod <- galamm(formula = form, data = KYPSsim, factor = factors,
+#'               load_var = load_var, lambda = loading_matrix)
+#'
+#' # Pearson residuals plotted against fitted value
+#' plot(mod)
+#'
+#' # Actual value plotted against fitted value with a line crossing the diagonal
+#' plot(mod, form = esteem ~ fitted(.), abline = c(0, 1))
+#'
+plot.galamm <- function(x, form = resid(., type = "pearson") ~ fitted(.),
+                        abline = NULL, ...) {
+  fsplit <- split_conditional_formula(form)
+  mf <- model.frame(x)
+  env <- list2env(list(. = x), parent = asNamespace("stats"))
 
-  deparse1 <- function(expr) paste(deparse(expr, backtick = TRUE), collapse = "")
-  data <- list(. = object)
-  covF  <- nlme::getCovariateFormula(form)
-  respF <- nlme::getResponseFormula(form)
+  if (!is.null(fsplit$resp)) mf$.y <- eval(fsplit$resp, envir = mf, enclos = env)
+  mf$.x <- eval(fsplit$main_rhs, envir = mf, enclos = env)
 
-  .x <- eval(covF[[2]], data)
-  argData <- data.frame(.x = .x, check.names = FALSE)
-  argForm <- ~ .x
-
-  if (!is.null(respF)) {
-    .y <- eval(respF[[2]], data)
-    argData$.y <- .y
-    argForm <- .y ~ .x
+  cond_var_name <- NULL
+  if (!is.null(fsplit$cond)) {
+    cond_val <- eval(fsplit$cond, envir = mf, enclos = env)
+    cond_var_name <- if (is.name(fsplit$cond)) as.character(fsplit$cond) else "cond"
+    mf[[cond_var_name]] <- cond_val
   }
 
-  # Create axis labels from the literal expressions the user supplied
-  xlab <- deparse1(covF[[2]])
-  ylab <- if (!is.null(respF)) deparse1(respF[[2]]) else NULL
+  xlab <- deparse1(fsplit$main_rhs)
+  ylab <- if (!is.null(fsplit$resp)) deparse1(fsplit$resp) else NULL
 
-  # Build argument list for plot
-  args <- list(argForm, data = argData, ...)
-  args$xlab <- xlab
-  if (!is.null(ylab)) args$ylab <- ylab
+  if (is.null(cond_var_name)) {
+    args <- list(.y ~ .x, data = mf, xlab = xlab, ylab = ylab, ...)
+    do.call("plot", args)
+    if(!is.null(abline)) graphics::abline(a = abline[[1]], b = abline[[2]])
+  } else {
+    lat_form <- as.formula(paste(".y ~ .x |", cond_var_name))
+    lattice::xyplot(lat_form, data = mf, xlab = xlab, ylab = ylab, ...)
+  }
+}
 
-  do.call("plot", args)
-
+deparse1 <- function(expr) paste(deparse(expr, backtick = TRUE), collapse = "")
+split_conditional_formula <- function(f) {
+  stopifnot(inherits(f, "formula"))
+  resp <- f[[2]]
+  rhs  <- f[[3]]
+  if (is.call(rhs) && identical(rhs[[1]], as.name("|"))) {
+    main_rhs <- rhs[[2]]
+    cond     <- rhs[[3]]
+  } else {
+    main_rhs <- rhs
+    cond     <- NULL
+  }
+  list(resp = resp, main_rhs = main_rhs, cond = cond)
 }
