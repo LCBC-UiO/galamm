@@ -41,7 +41,6 @@ Imports:
     nlme,
     Rcpp,
     Rdpack,
-    rlang,
     stats
 Depends:
     R (>= 3.5.0)

@@ -9,17 +9,13 @@
 \arguments{
 \item{formula}{An object of type \code{galamm} as described in \link{galammObject}.}
 
-\item{...}{Ignored – present for S3 compatibility.}
+\item{...}{Other arguments. Currently not used.}
 }
 \value{
-A data.frame containing the variables that were used in the fit.
+A data frame.
 }
 \description{
-Returns the data frame that was used to fit the model. The function first
-looks for a component named \code{data} (added by the \code{galamm()} function).  If
-that component is missing it falls back to re‑evaluating the expression
-supplied in the original call (\code{call$data}).  This mirrors the behavior
-of \code{model.frame.lmerMod} and other modelling packages.
+Extract the model frame from a galamm object
 }
 \seealso{
 Other details of model fit: 
