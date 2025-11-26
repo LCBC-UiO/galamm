@@ -22,7 +22,7 @@
 ## Citation
 
 Source:
-[`inst/CITATION`](https://github.com/LCBC-UiO/galamm/blob/main/inst/CITATION)
+[`inst/CITATION`](https://github.com/LCBC-UiO/galamm/blob/v0.3.0/inst/CITATION)
 
 Sørensen Ø (2024). “Multilevel Semiparametric Latent Variable Modeling
 in R with "galamm".” *Multivariate Behavioral Research*.
