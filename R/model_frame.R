@@ -7,14 +7,14 @@
 #'   supplied in the original call (`call$data`).  This mirrors the behavior
 #'   of `model.frame.lmerMod` and other modelling packages.
 #'
-#' @param object An object of type `galamm` as described in [galammObject].
+#' @param formula An object of type `galamm` as described in [galammObject].
 #' @param ...   Ignored – present for S3 compatibility.
 #' @return A data.frame containing the variables that were used in the fit.
 #' @family details of model fit
 #' @export
-model.frame.galamm <- function(object, ...) {
-  if (!is.null(object$data)) {
-    return(object$data)
+model.frame.galamm <- function(formula, ...) {
+  if (!is.null(formula$data)) {
+    return(formula$data)
   }
   stop(
     "No data stored in the 'galamm' object and the original call cannot be ",

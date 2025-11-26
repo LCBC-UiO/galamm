@@ -4,10 +4,10 @@
 \alias{model.frame.galamm}
 \title{Extract the model frame from a galamm object}
 \usage{
-\method{model.frame}{galamm}(object, ...)
+\method{model.frame}{galamm}(formula, ...)
 }
 \arguments{
-\item{object}{An object of type \code{galamm} as described in \link{galammObject}.}
+\item{formula}{An object of type \code{galamm} as described in \link{galammObject}.}
 
 \item{...}{Ignored – present for S3 compatibility.}
 }
