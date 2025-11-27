@@ -9,7 +9,8 @@
 \arguments{
 \item{x}{An object of class \code{galamm} returned from \code{\link{galamm}}.}
 
-\item{form}{An option formula specifying the desired type of plot.}
+\item{form}{An option formula specifying the desired type of plot.
+Conditioning variables are specified with a vertical bar.}
 
 \item{abline}{An optional numeric vector specifying the intercept and slope
 of a line to be added to the plot.}
@@ -46,8 +47,9 @@ plot(mod, form = resid(., type = "pearson") ~ fitted(.) | Subject)
 # Residuals plotted against time with a straight line at zero
 plot(mod, form = resid(., type = "pearson") ~ Days, abline = c(0, 0))
 
-# Residuals plotted against time per subject
-plot(mod, form = resid(., type = "pearson") ~ Days | Subject)
+# Residuals plotted against time per subject with a straight line at zero
+plot(mod, form = resid(., type = "pearson") ~ Days | Subject,
+     abline = c(0, 0))
 
 ## Logistic mixed model example from lme4
 data("cbpp", package = "lme4")

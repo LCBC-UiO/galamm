@@ -6,6 +6,7 @@
 #'
 #' @param x An object of class \code{galamm} returned from \code{\link{galamm}}.
 #' @param form An option formula specifying the desired type of plot.
+#'   Conditioning variables are specified with a vertical bar.
 #' @param abline An optional numeric vector specifying the intercept and slope
 #'   of a line to be added to the plot.
 #' @param ... Optional arguments passed on to the \code{plot} function.
@@ -47,8 +48,9 @@
 #' # Residuals plotted against time with a straight line at zero
 #' plot(mod, form = resid(., type = "pearson") ~ Days, abline = c(0, 0))
 #'
-#' # Residuals plotted against time per subject
-#' plot(mod, form = resid(., type = "pearson") ~ Days | Subject)
+#' # Residuals plotted against time per subject with a straight line at zero
+#' plot(mod, form = resid(., type = "pearson") ~ Days | Subject,
+#'      abline = c(0, 0))
 #'
 #' ## Logistic mixed model example from lme4
 #' data("cbpp", package = "lme4")
@@ -109,7 +111,30 @@ plot.galamm <- function(x, form = resid(., type = "pearson") ~ fitted(.),
     if(!is.null(abline)) graphics::abline(a = abline[[1]], b = abline[[2]])
   } else {
     lat_form <- as.formula(paste(".y ~ .x |", cond_var_name))
-    lattice::xyplot(lat_form, data = mf, xlab = xlab, ylab = ylab, ...)
+
+    dotlist <- list(...)
+
+    add_abline_panel <- function(x, y, ...) {
+      lattice::panel.xyplot(x, y, ...)
+      if (!is.null(abline)) {
+        lattice::panel.abline(a = abline[[1]], b = abline[[2]])
+      }
+    }
+
+    if (!is.null(dotlist$panel)) {
+      user_panel <- dotlist$panel
+      dotlist$panel <- function(x, y, ...) {
+        user_panel(x, y, ...)
+        if (!is.null(abline)) {
+          lattice::panel.abline(a = abline[1], b = abline[2])
+        }
+      }
+    } else {
+      dotlist$panel <- add_abline_panel
+    }
+
+    do.call(lattice::xyplot,
+            c(list(lat_form, data = mf, xlab = xlab, ylab = ylab), dotlist))
   }
 }
 
