@@ -35,13 +35,23 @@ test_that("LMM with simple factor works", {
   dev.off()
 
   pdf(NULL)
-  expect_invisible(plot(mod, residuals = "deviance"))
+  expect_invisible(plot(mod, form = resid(., type = "pearson") ~ fitted(.)))
   dev.off()
 
   expect_error(
-    plot(mod, residuals = "spearman"),
+    plot(mod, form = resid(., type = "spearman") ~ fitted(.)),
     "'arg' should be one of"
   )
+
+  pdf(NULL)
+  expect_invisible(plot(mod, form = resid(., type = "deviance") ~ fitted(.)))
+  dev.off()
+
+  pdf(NULL)
+  expect_invisible(
+    plot(mod, form = resid(., type = "deviance") ~ fitted(.), abline = c(0, 0))
+  )
+  dev.off()
 
   expect_s3_class(model.frame(mod), "data.frame")
   mod$data <- NULL
