@@ -108,7 +108,7 @@ plot.galamm <- function(x, form = resid(., type = "pearson") ~ fitted(.),
   if (is.null(cond_var_name)) {
     args <- list(.y ~ .x, data = mf, xlab = xlab, ylab = ylab, ...)
     do.call("plot", args)
-    if(!is.null(abline)) graphics::abline(a = abline[[1]], b = abline[[2]])
+    if (!is.null(abline)) graphics::abline(a = abline[[1]], b = abline[[2]])
   } else {
     lat_form <- as.formula(paste(".y ~ .x |", cond_var_name))
 
