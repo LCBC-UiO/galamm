@@ -1,3 +1,7 @@
+# galamm 0.3.0 (development versions)
+
+- plot.galamm() has been considerably extended.
+
 # galamm 0.3.0
 
 - The expected output of a unit test has been changed.
