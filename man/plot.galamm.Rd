@@ -51,6 +51,9 @@ plot(mod, form = resid(., type = "pearson") ~ Days, abline = c(0, 0))
 plot(mod, form = resid(., type = "pearson") ~ Days | Subject,
      abline = c(0, 0))
 
+# Box plot of residuals by Subject
+plot(fm1, Subject ~ resid(., scaled=TRUE))
+
 ## Logistic mixed model example from lme4
 data("cbpp", package = "lme4")
 mod <- galamm(cbind(incidence, size - incidence) ~ period + (1 | herd),

@@ -52,6 +52,9 @@
 #' plot(mod, form = resid(., type = "pearson") ~ Days | Subject,
 #'      abline = c(0, 0))
 #'
+#' # Box plot of residuals by Subject
+#' plot(fm1, Subject ~ resid(., scaled=TRUE))
+#'
 #' ## Logistic mixed model example from lme4
 #' data("cbpp", package = "lme4")
 #' mod <- galamm(cbind(incidence, size - incidence) ~ period + (1 | herd),
@@ -105,41 +108,54 @@ plot.galamm <- function(x, form = resid(., type = "pearson") ~ fitted(.),
   xlab <- deparse1(fsplit$main_rhs)
   ylab <- if (!is.null(fsplit$resp)) deparse1(fsplit$resp) else NULL
 
-  if (is.null(cond_var_name)) {
-    lat_form <- .y ~ .x
-  } else {
-    lat_form <- as.formula(paste(".y ~ .x |", cond_var_name))
-  }
+  use_xy <- is.numeric(mf$.y) && !is.factor(mf$.y)
 
-  add_abline_panel <- function(x, y, ...) {
-    lattice::panel.xyplot(x, y, ...)
-    if (!is.null(abline)) {
-      if (length(abline) == 1L) {
-        lattice::panel.abline(h = abline)
-      } else {
-        lattice::panel.abline(a = abline[[1]], b = abline[[2]])
-      }
+  if (use_xy) {
+    if (is.null(cond_var_name)) {
+      lat_form <- .y ~ .x
+    } else {
+      lat_form <- as.formula(paste(".y ~ .x |", cond_var_name))
     }
-  }
 
-  dotlist <- list(...)
-  if (!is.null(dotlist$panel)) {
-    user_panel <- dotlist$panel
-    dotlist$panel <- function(x, y, ...) {
-      user_panel(x, y, ...)
+    add_abline_panel <- function(x, y, ...) {
+      lattice::panel.xyplot(x, y, ...)
       if (!is.null(abline)) {
-        lattice::panel.abline(a = abline[[1]], b = abline[[2]])
+        if (length(abline) == 1L) {
+          lattice::panel.abline(h = abline)
+        } else {
+          lattice::panel.abline(a = abline[[1]], b = abline[[2]])
+        }
       }
     }
+
+    dotlist <- list(...)
+    if (!is.null(dotlist$panel)) {
+      user_panel <- dotlist$panel
+      dotlist$panel <- function(x, y, ...) {
+        user_panel(x, y, ...)
+        if (!is.null(abline)) {
+          lattice::panel.abline(a = abline[[1]], b = abline[[2]])
+        }
+      }
+    } else {
+      dotlist$panel <- add_abline_panel
+    }
+
+    do.call(lattice::xyplot,
+            c(list(lat_form, data = mf, xlab = xlab, ylab = ylab), dotlist))
   } else {
-    dotlist$panel <- add_abline_panel
+    if (is.null(cond_var_name)) {
+      lat_form <- .y ~ .x
+    } else {
+      lat_form <- as.formula(paste(".y ~ .x |", cond_var_name))
+    }
+    dotlist <- list(...)
+
+    do.call(lattice::bwplot,
+            c(list(lat_form, data = mf, xlab = xlab, ylab = ylab), dotlist))
   }
 
-  if (!requireNamespace("lattice", quietly = TRUE)) {
-    stop("Package 'lattice' is required for plot.galamm().")
-  }
-  do.call(lattice::xyplot,
-          c(list(lat_form, data = mf, xlab = xlab, ylab = ylab), dotlist))
+
 }
 
 deparse1 <- function(expr) paste(deparse(expr, backtick = TRUE), collapse = "")
