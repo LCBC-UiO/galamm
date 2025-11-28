@@ -348,7 +348,7 @@ student attends high school, as can be seen by the last two rows of the
 <p>A diagnostic plot of residuals versus predicted values also looks
 acceptable, although there seems to be a slight upward trend.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mod</span>, abline <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="float">
 <img src="lmm_factor_diagnostic_plot-1.png" alt="Diagnostic plot for linear mixed model with factor structures."><div class="figcaption">Diagnostic plot for linear mixed model with
 factor structures.</div>
@@ -437,7 +437,7 @@ dataset.</p>
 <span><span class="co">#&gt; Data: KYPSsim</span></span>
 <span><span class="co">#&gt; Models:</span></span>
 <span><span class="co">#&gt; mod_constr2: form</span></span>
-<span><span class="co">#&gt; mod_constr2b: esteem ~ time + (0 + time12 | mid) + (0 + time34 | hid) + (1 | sid)</span></span>
+<span><span class="co">#&gt; mod_constr2b: esteem ~ time + (0 + time12 | mid) + (0 + time34 | hid) + (1 |     sid)</span></span>
 <span><span class="co">#&gt; mod_constr1: form</span></span>
 <span><span class="co">#&gt; mod: form</span></span>
 <span><span class="co">#&gt;              npar   AIC   BIC  logLik deviance   Chisq Df Pr(&gt;Chisq)   </span></span>
@@ -693,19 +693,32 @@ than five minutes.</p>
 <span><span class="co">#&gt; -3.8407 -0.6439  0.0017  0.6474  3.9799 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Lambda:</span></span>
-<span><span class="co">#&gt;          teacher1      SE teacher2      SE trait1.t      SE trait2.t      SE trait1.s      SE trait2.s      SE</span></span>
-<span><span class="co">#&gt; lambda1    1.0000       .        .       .    1.000       .        .       .        .       .        .       .</span></span>
-<span><span class="co">#&gt; lambda2    1.1278 0.03584        .       .    1.092 0.02172        .       .        .       .        .       .</span></span>
-<span><span class="co">#&gt; lambda3    0.9986 0.03345        .       .    1.066 0.02144        .       .        .       .        .       .</span></span>
-<span><span class="co">#&gt; lambda4         .       .   1.0000       .        .       .   1.0000       .        .       .        .       .</span></span>
-<span><span class="co">#&gt; lambda5         .       .   0.9725 0.03036        .       .   1.0536 0.02576        .       .        .       .</span></span>
-<span><span class="co">#&gt; lambda6         .       .   1.2191 0.03436        .       .   0.9581 0.02460        .       .        .       .</span></span>
-<span><span class="co">#&gt; lambda7         .       .        .       .        .       .        .       .    1.000       .        .       .</span></span>
-<span><span class="co">#&gt; lambda8         .       .        .       .        .       .        .       .    1.322 0.06109        .       .</span></span>
-<span><span class="co">#&gt; lambda9         .       .        .       .        .       .        .       .    1.145 0.05633        .       .</span></span>
-<span><span class="co">#&gt; lambda10        .       .        .       .        .       .        .       .        .       .    1.000       .</span></span>
-<span><span class="co">#&gt; lambda11        .       .        .       .        .       .        .       .        .       .    0.874 0.04417</span></span>
-<span><span class="co">#&gt; lambda12        .       .        .       .        .       .        .       .        .       .    1.096 0.04874</span></span>
+<span><span class="co">#&gt;          teacher1      SE teacher2      SE trait1.t      SE trait2.t      SE trait1.s      SE trait2.s</span></span>
+<span><span class="co">#&gt; lambda1    1.0000       .        .       .    1.000       .        .       .        .       .        .</span></span>
+<span><span class="co">#&gt; lambda2    1.1278 0.03584        .       .    1.092 0.02172        .       .        .       .        .</span></span>
+<span><span class="co">#&gt; lambda3    0.9986 0.03345        .       .    1.066 0.02144        .       .        .       .        .</span></span>
+<span><span class="co">#&gt; lambda4         .       .   1.0000       .        .       .   1.0000       .        .       .        .</span></span>
+<span><span class="co">#&gt; lambda5         .       .   0.9725 0.03036        .       .   1.0536 0.02576        .       .        .</span></span>
+<span><span class="co">#&gt; lambda6         .       .   1.2191 0.03436        .       .   0.9581 0.02460        .       .        .</span></span>
+<span><span class="co">#&gt; lambda7         .       .        .       .        .       .        .       .    1.000       .        .</span></span>
+<span><span class="co">#&gt; lambda8         .       .        .       .        .       .        .       .    1.322 0.06109        .</span></span>
+<span><span class="co">#&gt; lambda9         .       .        .       .        .       .        .       .    1.145 0.05633        .</span></span>
+<span><span class="co">#&gt; lambda10        .       .        .       .        .       .        .       .        .       .    1.000</span></span>
+<span><span class="co">#&gt; lambda11        .       .        .       .        .       .        .       .        .       .    0.874</span></span>
+<span><span class="co">#&gt; lambda12        .       .        .       .        .       .        .       .        .       .    1.096</span></span>
+<span><span class="co">#&gt;               SE</span></span>
+<span><span class="co">#&gt; lambda1        .</span></span>
+<span><span class="co">#&gt; lambda2        .</span></span>
+<span><span class="co">#&gt; lambda3        .</span></span>
+<span><span class="co">#&gt; lambda4        .</span></span>
+<span><span class="co">#&gt; lambda5        .</span></span>
+<span><span class="co">#&gt; lambda6        .</span></span>
+<span><span class="co">#&gt; lambda7        .</span></span>
+<span><span class="co">#&gt; lambda8        .</span></span>
+<span><span class="co">#&gt; lambda9        .</span></span>
+<span><span class="co">#&gt; lambda10       .</span></span>
+<span><span class="co">#&gt; lambda11 0.04417</span></span>
+<span><span class="co">#&gt; lambda12 0.04874</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Random effects:</span></span>
 <span><span class="co">#&gt;  Groups   Name        Variance Std.Dev. Corr          </span></span>
@@ -733,6 +746,21 @@ than five minutes.</p>
 <span><span class="co">#&gt; item10    2.334    0.02479   94.17        0</span></span>
 <span><span class="co">#&gt; item11    2.909    0.02330  124.83        0</span></span>
 <span><span class="co">#&gt; item12    2.470    0.02599   95.07        0</span></span></code></pre></div>
+<p>We can make various diagnostic plots. The one below plots scaled
+deviance residuals against teacher. It does not look like the residuals
+depend on teacher.</p>
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">judge_galamm</span>, form <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/residuals.html" class="external-link">resid</a></span><span class="op">(</span><span class="va">.</span>, type <span class="op">=</span> <span class="st">"deviance"</span>, scaled <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">~</span> <span class="va">tch</span><span class="op">)</span></span></code></pre></div>
+<div class="float">
+<img src="unnamed-chunk-28-1.png" alt="plot of chunk unnamed-chunk-28"><div class="figcaption">plot of chunk unnamed-chunk-28</div>
+</div>
+<p>The quantile-quantile plot also looks very good (no surprise: these
+are simulated data).</p>
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/qqmath.galamm.html">qqmath</a></span><span class="op">(</span><span class="va">judge_galamm</span><span class="op">)</span></span></code></pre></div>
+<div class="float">
+<img src="unnamed-chunk-29-1.png" alt="plot of chunk unnamed-chunk-29"><div class="figcaption">plot of chunk unnamed-chunk-29</div>
+</div>
 </div>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>

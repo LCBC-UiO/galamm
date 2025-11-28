@@ -1,5 +1,7 @@
 # galamm 0.3.0 (development versions)
 
+- Vignettes are updated to better demonstrate model checking
+  possibilities.
 - A qqmath() function has now been added, which makes quantile-quantile
   plots.
 - residuals.galamm() now has a “scaled = TRUE/FALSE” argument.

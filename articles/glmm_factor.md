@@ -222,11 +222,12 @@ confint(mod, parm = "lambda")
 #> lambda4 0.3580520 0.8139307
 ```
 
-We can also show a diagnostic plot, although for a binomial model like
-this it is not very informative.
+We can also make a diagnostic plot, where we use deviance residuals
+since these are more useful for logistic regression models. The division
+into two parts is a consequence of the binary outcomes.
 
 ``` r
-plot(mod)
+plot(mod, form = residuals(., type = "deviance", scaled = TRUE) ~ fitted(.), abline = c(0, 0))
 ```
 
 ![Diagnostic plot for binomial
@@ -312,6 +313,22 @@ summary(galamm_mod_trials)
 #> item5        0.19302    0.06098   3.165 1.548e-03
 ```
 
+In this case the plot of residuals versus fitted values looks much
+better than in the binary case, since with more trials the values are
+closer to normal.
+
+``` r
+plot(
+  galamm_mod_trials, 
+  form = residuals(., type = "deviance", scaled = TRUE) ~ fitted(.), 
+  abline = c(0, 0)
+  )
+```
+
+![plot of chunk unnamed-chunk-15](unnamed-chunk-15-1.png)
+
+plot of chunk unnamed-chunk-15
+
 ### Model with Poisson Distributed Responses
 
 To illustrate the model for counts, we consider an example from Chapter
@@ -364,17 +381,27 @@ In this case there are no factor loadings to return:
 factor_loadings(count_mod)
 ```
 
-We can again look at a diagnostic plot, which in this case looks much
-more reasonable.
+We can again look at a diagnostic plot.
 
 ``` r
-plot(count_mod)
+plot(count_mod, form = residuals(., type = "deviance") ~ fitted(.), abline = c(0, 0))
 ```
 
 ![Diagnostic plot for Poisson
 model.](glmm_factor_poisson_diagnostic-1.png)
 
 Diagnostic plot for Poisson model.
+
+We can also plot the residuals per subject:
+
+``` r
+plot(count_mod, form = resid(., type = "deviance") ~ as.factor(subj), 
+     abline = c(0, 0))
+```
+
+![plot of chunk unnamed-chunk-19](unnamed-chunk-19-1.png)
+
+plot of chunk unnamed-chunk-19
 
 In this case we can confirm that the `galamm` function is correctly
 implemented by comparing it to the output of
@@ -385,12 +412,6 @@ flexibility we need.
 
 ``` r
 library(lme4)
-#> Loading required package: Matrix
-#> 
-#> Attaching package: 'lme4'
-#> The following object is masked from 'package:galamm':
-#> 
-#>     llikAIC
 count_mod_lme4 <- glmer(
   formula = y ~ lbas * treat + lage + v4 + (1 | subj),
   data = epilep,

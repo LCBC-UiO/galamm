@@ -90,7 +90,7 @@ already columns in `mresp`.
 We also need to define the response families using the `gfam` function:
 
 ``` r
-families <- gfam(list(gaussian, binomial))
+families <- galamm::gfam(list(gaussian, binomial))
 ```
 
 We also need a way of telling galamm which row belongs to which family.
@@ -187,7 +187,7 @@ simplicity.
 mod <- galamm(
   formula = y ~ x + (1 | id),
   dispformula = ~ (0 + isgauss | grp),
-  family = gfam(list(gaussian, binomial)),
+  family = galamm::gfam(list(gaussian, binomial)),
   data = mresp_hsced
 )
 ```
@@ -367,7 +367,7 @@ head(diet$y)
 ```
 
 ``` r
-families <- gfam(list(gaussian, binomial))
+families <- galamm::gfam(list(gaussian, binomial))
 ```
 
 The model formula also needs some care in this case. We define it as

@@ -209,7 +209,7 @@ can be seen to be almost identical to the plot produced from the mixed
 model part of the `gamm4` model.
 
 ``` r
-plot(mod)
+plot(mod, abline = c(0, 0))
 ```
 
 ![Diagnostic plot for model fitted with

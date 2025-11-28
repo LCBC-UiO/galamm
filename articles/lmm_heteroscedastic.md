@@ -100,11 +100,6 @@ so since $1.412369^{2} = 1.995$, the results are identical.
 
 ``` r
 library(nlme)
-#> 
-#> Attaching package: 'nlme'
-#> The following object is masked from 'package:lme4':
-#> 
-#>     lmList
 mod_nlme <- lme(y ~ x,
   data = hsced, random = list(id = ~1),
   weights = varIdent(form = ~ 1 | item), method = "ML"
@@ -145,13 +140,23 @@ summary(mod_nlme)
 The diagnostic plot also looks good.
 
 ``` r
-plot(mod)
+plot(mod, abline = c(0, 0))
 ```
 
 ![Diagnostic plot for heteroscedastic
 model.](lmm_heteroscedastic_diagnostic-1.png)
 
 Diagnostic plot for heteroscedastic model.
+
+The quantile-quantile plot is also acceptable.
+
+``` r
+qqmath(mod)
+```
+
+![plot of chunk unnamed-chunk-6](unnamed-chunk-6-1.png)
+
+plot of chunk unnamed-chunk-6
 
 We can compare the model to one with homoscedastic residuals.
 

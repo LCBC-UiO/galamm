@@ -477,6 +477,27 @@ covariates.](latent-observed-smooth-1.png)
 Smooth term in model with interaction between latent and observed
 covariates.
 
+We can also make a diagnostic plot of residuals versus fitted value, and
+we see no clear trends.
+
+``` r
+plot(mod, abline = c(0, 0))
+```
+
+![plot of chunk unnamed-chunk-19](unnamed-chunk-19-1.png)
+
+plot of chunk unnamed-chunk-19
+
+We can also plot the residuals against $x$, and again we see no trends.
+
+``` r
+plot(mod, form = residuals(.) ~ x, abline = c(0, 0))
+```
+
+![plot of chunk unnamed-chunk-20](unnamed-chunk-20-1.png)
+
+plot of chunk unnamed-chunk-20
+
 ## References
 
 Rockwood, Nicholas J., and Minjeong Jeon. 2019. “Estimating Complex
