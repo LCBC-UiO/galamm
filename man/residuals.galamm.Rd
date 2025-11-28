@@ -4,7 +4,7 @@
 \alias{residuals.galamm}
 \title{Residuals of galamm objects}
 \usage{
-\method{residuals}{galamm}(object, type = c("pearson", "deviance"), ...)
+\method{residuals}{galamm}(object, type = c("pearson", "deviance"), scaled = FALSE, ...)
 }
 \arguments{
 \item{object}{An object of class \code{galamm} returned from
@@ -13,6 +13,9 @@
 \item{type}{Character of length one describing the type of residuals to be
 returned. One of \code{"pearson"} and \code{"deviance"}. Argument is case
 sensitive.}
+
+\item{scaled}{Logical value specifying whether to scale the residuals by
+their standard deviation. Defaults to \code{FALSE}.}
 
 \item{...}{Optional arguments passed on to other methods. Currently not used.}
 }

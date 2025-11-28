@@ -22,7 +22,7 @@
 #' @seealso [residuals.galamm()] for extracting residuals and [plot()] for the
 #'   generic function.
 #'
-#' @family summary functions
+#' @family diagnostics
 #' @author Douglas Bates, Martin Maechler, Ben Bolker, and Steven Walker, with
 #' modifications by Øystein Sørensen.
 #'

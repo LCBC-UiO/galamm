@@ -54,8 +54,18 @@ test_that("Logistic GLMM with simple factor works", {
   )
 
   expect_equal(
+    residuals(mod, type = "deviance", scaled = TRUE)[[7]],
+    -1.26299208558568
+  )
+
+  expect_equal(
     residuals(mod, type = "pearson")[c(2, 3, 9)],
     c(0.34711634976693, 0.810706452322364, -0.987045133505393)
+  )
+
+  expect_equal(
+    residuals(mod, type = "pearson", scaled = TRUE)[[7]],
+    -1.23177063323396
   )
 
   set.seed(1234)

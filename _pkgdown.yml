@@ -32,6 +32,11 @@ reference:
   contents:
   - has_concept("summary functions")
 
+- title: Diagnostics
+  desc: Functions helping with model diagnostics.
+  contents:
+  - has_concept("diagnostics")
+
 - title: Model details
   desc: Detailed information on specific parts of model fits.
   contents:

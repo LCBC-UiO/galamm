@@ -97,15 +97,11 @@ plot(mod, form = esteem ~ fitted(.), abline = c(0, 1))
 \code{\link[=residuals.galamm]{residuals.galamm()}} for extracting residuals and \code{\link[=plot]{plot()}} for the
 generic function.
 
-Other summary functions: 
-\code{\link{anova.galamm}()},
-\code{\link{plot_smooth.galamm}()},
-\code{\link{print.galamm}()},
-\code{\link{print.summary.galamm}()},
-\code{\link{summary.galamm}()}
+Other diagnostics: 
+\code{\link{qqmath.galamm}()}
 }
 \author{
 Douglas Bates, Martin Maechler, Ben Bolker, and Steven Walker, with
 modifications by Øystein Sørensen.
 }
-\concept{summary functions}
+\concept{diagnostics}
