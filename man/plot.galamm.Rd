@@ -15,7 +15,8 @@ Conditioning variables are specified with a vertical bar.}
 \item{abline}{An optional numeric vector specifying the intercept and slope
 of a line to be added to the plot.}
 
-\item{...}{Optional arguments passed on to the \code{plot} function.}
+\item{...}{Optional arguments passed on to the plot functions in the
+\code{lattice} package.}
 }
 \value{
 A plot is displayed.
@@ -50,6 +51,9 @@ plot(mod, form = resid(., type = "pearson") ~ Days, abline = c(0, 0))
 # Residuals plotted against time per subject with a straight line at zero
 plot(mod, form = resid(., type = "pearson") ~ Days | Subject,
      abline = c(0, 0))
+
+# Box plot of residuals by Subject
+plot(mod, Subject ~ resid(., scaled=TRUE))
 
 ## Logistic mixed model example from lme4
 data("cbpp", package = "lme4")
