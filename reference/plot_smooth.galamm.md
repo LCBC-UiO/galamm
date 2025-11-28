@@ -37,7 +37,6 @@ edition. Chapman and Hall/CRC.
 
 Other summary functions:
 [`anova.galamm()`](https://lcbc-uio.github.io/galamm/reference/anova.galamm.md),
-[`plot.galamm()`](https://lcbc-uio.github.io/galamm/reference/plot.galamm.md),
 [`print.galamm()`](https://lcbc-uio.github.io/galamm/reference/print.galamm.md),
 [`print.summary.galamm()`](https://lcbc-uio.github.io/galamm/reference/print.summary.galamm.md),
 [`summary.galamm()`](https://lcbc-uio.github.io/galamm/reference/summary.galamm.md)

@@ -335,8 +335,6 @@ Functions for summarising the result of model fits.
 
 - [`anova(`*`<galamm>`*`)`](https://lcbc-uio.github.io/galamm/reference/anova.galamm.md)
   : Compare likelihoods of galamm objects
-- [`plot(`*`<galamm>`*`)`](https://lcbc-uio.github.io/galamm/reference/plot.galamm.md)
-  : Diagnostic plots for galamm objects
 - [`plot_smooth(`*`<galamm>`*`)`](https://lcbc-uio.github.io/galamm/reference/plot_smooth.galamm.md)
   : Plot smooth terms for galamm fits
 - [`print(`*`<galamm>`*`)`](https://lcbc-uio.github.io/galamm/reference/print.galamm.md)
@@ -345,6 +343,15 @@ Functions for summarising the result of model fits.
   : Print method for summary GALAMM fits
 - [`summary(`*`<galamm>`*`)`](https://lcbc-uio.github.io/galamm/reference/summary.galamm.md)
   : Summarizing GALAMM fits
+
+## Diagnostics
+
+Functions helping with model diagnostics.
+
+- [`plot(`*`<galamm>`*`)`](https://lcbc-uio.github.io/galamm/reference/plot.galamm.md)
+  : Diagnostic plots for galamm objects
+- [`qqmath(`*`<galamm>`*`)`](https://lcbc-uio.github.io/galamm/reference/qqmath.galamm.md)
+  : Quantile-quantile plots for galamm objects
 
 ## Model details
 

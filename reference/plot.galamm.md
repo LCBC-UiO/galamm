@@ -58,12 +58,8 @@ for extracting residuals and
 [`plot()`](https://rdrr.io/r/graphics/plot.default.html) for the generic
 function.
 
-Other summary functions:
-[`anova.galamm()`](https://lcbc-uio.github.io/galamm/reference/anova.galamm.md),
-[`plot_smooth.galamm()`](https://lcbc-uio.github.io/galamm/reference/plot_smooth.galamm.md),
-[`print.galamm()`](https://lcbc-uio.github.io/galamm/reference/print.galamm.md),
-[`print.summary.galamm()`](https://lcbc-uio.github.io/galamm/reference/print.summary.galamm.md),
-[`summary.galamm()`](https://lcbc-uio.github.io/galamm/reference/summary.galamm.md)
+Other diagnostics:
+[`qqmath.galamm()`](https://lcbc-uio.github.io/galamm/reference/qqmath.galamm.md)
 
 ## Author
 

@@ -71,7 +71,6 @@ for the print method and
 
 Other summary functions:
 [`anova.galamm()`](https://lcbc-uio.github.io/galamm/reference/anova.galamm.md),
-[`plot.galamm()`](https://lcbc-uio.github.io/galamm/reference/plot.galamm.md),
 [`plot_smooth.galamm()`](https://lcbc-uio.github.io/galamm/reference/plot_smooth.galamm.md),
 [`print.galamm()`](https://lcbc-uio.github.io/galamm/reference/print.galamm.md),
 [`print.summary.galamm()`](https://lcbc-uio.github.io/galamm/reference/print.summary.galamm.md)

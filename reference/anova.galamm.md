@@ -40,7 +40,6 @@ for the summary method and
 function.
 
 Other summary functions:
-[`plot.galamm()`](https://lcbc-uio.github.io/galamm/reference/plot.galamm.md),
 [`plot_smooth.galamm()`](https://lcbc-uio.github.io/galamm/reference/plot_smooth.galamm.md),
 [`print.galamm()`](https://lcbc-uio.github.io/galamm/reference/print.galamm.md),
 [`print.summary.galamm()`](https://lcbc-uio.github.io/galamm/reference/print.summary.galamm.md),

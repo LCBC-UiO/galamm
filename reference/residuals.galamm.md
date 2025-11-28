@@ -16,7 +16,7 @@ deviance. The deviance residual is then \$\$r\_{D} = sgn(y - \hat{\mu})
 
 ``` r
 # S3 method for class 'galamm'
-residuals(object, type = c("pearson", "deviance"), ...)
+residuals(object, type = c("pearson", "deviance"), scaled = FALSE, ...)
 ```
 
 ## Arguments
@@ -31,6 +31,11 @@ residuals(object, type = c("pearson", "deviance"), ...)
   Character of length one describing the type of residuals to be
   returned. One of `"pearson"` and `"deviance"`. Argument is case
   sensitive.
+
+- scaled:
+
+  Logical value specifying whether to scale the residuals by their
+  standard deviation. Defaults to `FALSE`.
 
 - ...:
 

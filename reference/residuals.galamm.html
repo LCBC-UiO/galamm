@@ -29,7 +29,7 @@ $$r_{D} = sgn(y - \hat{\mu}) \sqrt{w d(y, \hat{\mu})}.$$"><meta property="og:ima
 
     <a class="navbar-brand me-2" href="../index.html">galamm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0.9001</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -85,7 +85,7 @@ $$r_{D} = sgn(y - \hat{\mu}) \sqrt{w d(y, \hat{\mu})}.$$</p>
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for class 'galamm'</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/stats/residuals.html" class="external-link">residuals</a></span><span class="op">(</span><span class="va">object</span>, type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"pearson"</span>, <span class="st">"deviance"</span><span class="op">)</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/residuals.html" class="external-link">residuals</a></span><span class="op">(</span><span class="va">object</span>, type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"pearson"</span>, <span class="st">"deviance"</span><span class="op">)</span>, scaled <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -101,6 +101,11 @@ $$r_{D} = sgn(y - \hat{\mu}) \sqrt{w d(y, \hat{\mu})}.$$</p>
 <dd><p>Character of length one describing the type of residuals to be
 returned. One of <code>"pearson"</code> and <code>"deviance"</code>. Argument is case
 sensitive.</p></dd>
+
+
+<dt id="arg-scaled">scaled<a class="anchor" aria-label="anchor" href="#arg-scaled"></a></dt>
+<dd><p>Logical value specifying whether to scale the residuals by
+their standard deviation. Defaults to <code>FALSE</code>.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
