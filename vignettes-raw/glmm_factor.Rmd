@@ -121,10 +121,10 @@ And we can find confidence intervals for them. Currently, only Wald type confide
 confint(mod, parm = "lambda")
 ```
 
-We can also show a diagnostic plot, although for a binomial model like this it is not very informative.
+We can also make a diagnostic plot, where we use deviance residuals since these are more useful for logistic regression models. The division into two parts is a consequence of the binary outcomes.
 
 ```{r, glmm_factor_binomial_diagnostic, fig.cap="Diagnostic plot for binomial model."}
-plot(mod)
+plot(mod, form = residuals(., type = "deviance", scaled = TRUE) ~ fitted(.), abline = c(0, 0))
 ```
 
 
@@ -162,6 +162,16 @@ All the utility functions apply to this model as well. We simply post its summar
 summary(galamm_mod_trials)
 ```
 
+In this case the plot of residuals versus fitted values looks much better than in the binary case, since with more trials the values are closer to normal.
+
+```{r}
+plot(
+  galamm_mod_trials, 
+  form = residuals(., type = "deviance", scaled = TRUE) ~ fitted(.), 
+  abline = c(0, 0)
+  )
+```
+
 
 ## Model with Poisson Distributed Responses
 
@@ -188,10 +198,17 @@ In this case there are no factor loadings to return:
 factor_loadings(count_mod)
 ```
 
-We can again look at a diagnostic plot, which in this case looks much more reasonable.
+We can again look at a diagnostic plot.
 
 ```{r, glmm_factor_poisson_diagnostic, fig.cap="Diagnostic plot for Poisson model."}
-plot(count_mod)
+plot(count_mod, form = residuals(., type = "deviance") ~ fitted(.), abline = c(0, 0))
+```
+
+We can also plot the residuals per subject:
+
+```{r}
+plot(count_mod, form = resid(., type = "deviance") ~ as.factor(subj), 
+     abline = c(0, 0))
 ```
 
 

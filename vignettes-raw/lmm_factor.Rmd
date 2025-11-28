@@ -167,7 +167,7 @@ factor_loadings(mod)
 A diagnostic plot of residuals versus predicted values also looks acceptable, although there seems to be a slight upward trend.
 
 ```{r, lmm_factor_diagnostic_plot, fig.cap="Diagnostic plot for linear mixed model with factor structures."}
-plot(mod)
+plot(mod, abline = c(0, 0))
 ```
 
 We can also compare the estimated model to a model with constrained factor loadings. In particular, we could assume that the teacher effect in middle school has no effect on self esteem measured during high school, by setting the last two elements of $\boldsymbol{\lambda}_{m}$ to zero. We would then have the following loading matrix.
@@ -429,6 +429,17 @@ judge_galamm <- galamm(
 summary(judge_galamm)
 ```
 
+We can make various diagnostic plots. The one below plots scaled deviance residuals against teacher. It does not look like the residuals depend on teacher.
+
+```{r}
+plot(judge_galamm, form = resid(., type = "deviance", scaled = TRUE) ~ tch)
+```
+
+The quantile-quantile plot also looks very good (no surprise: these are simulated data).
+
+```{r}
+qqmath(judge_galamm)
+```
 
 
 # References

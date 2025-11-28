@@ -195,7 +195,7 @@ The `plot` function now gives us a diagnostic plot, which by inspection can be s
 
 
 ``` r
-plot(mod)
+plot(mod, abline = c(0, 0))
 ```
 
 ![Diagnostic plot for model fitted with galamm.](semiparametric-gaussian-gamm-diagnostic-1.png)

@@ -74,8 +74,15 @@ summary(mod_nlme)
 The diagnostic plot also looks good.
 
 ```{r, lmm_heteroscedastic_diagnostic, fig.cap="Diagnostic plot for heteroscedastic model."}
-plot(mod)
+plot(mod, abline = c(0, 0))
 ```
+
+The quantile-quantile plot is also acceptable.
+
+```{r}
+qqmath(mod)
+```
+
 
 We can compare the model to one with homoscedastic residuals.
 
