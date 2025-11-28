@@ -30,28 +30,26 @@ test_that("LMM with simple factor works", {
     c("~", "y", "0 + as.factor(item) + (0 + abil.sid | school/sid)")
   )
 
-  pdf(NULL)
-  expect_invisible(plot(mod))
-  dev.off()
-
-  pdf(NULL)
-  expect_invisible(plot(mod, form = resid(., type = "pearson") ~ fitted(.)))
-  dev.off()
+  expect_s3_class(plot(mod), "trellis")
+  expect_s3_class(
+    plot(mod, form = resid(., type = "pearson") ~ fitted(.)),
+    "trellis"
+    )
 
   expect_error(
     plot(mod, form = resid(., type = "spearman") ~ fitted(.)),
     "'arg' should be one of"
   )
 
-  pdf(NULL)
-  expect_invisible(plot(mod, form = resid(., type = "deviance") ~ fitted(.)))
-  dev.off()
+  expect_s3_class(
+    plot(mod, form = resid(., type = "deviance") ~ fitted(.)),
+    "trellis"
+    )
 
-  pdf(NULL)
-  expect_invisible(
-    plot(mod, form = resid(., type = "deviance") ~ fitted(.), abline = c(0, 0))
+  expect_s3_class(
+    plot(mod, form = resid(., type = "deviance") ~ fitted(.), abline = c(0, 0)),
+    "trellis"
   )
-  dev.off()
 
   expect_s3_class(model.frame(mod), "data.frame")
   mod$data <- NULL
