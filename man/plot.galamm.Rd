@@ -15,7 +15,8 @@ Conditioning variables are specified with a vertical bar.}
 \item{abline}{An optional numeric vector specifying the intercept and slope
 of a line to be added to the plot.}
 
-\item{...}{Optional arguments passed on to the \code{plot} function.}
+\item{...}{Optional arguments passed on to the plot functions in the
+\code{lattice} package.}
 }
 \value{
 A plot is displayed.

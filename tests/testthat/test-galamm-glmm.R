@@ -161,16 +161,12 @@ test_that("diagnostic plots work", {
   mod <- galamm(cbind(incidence, size - incidence) ~ period + (1 | herd),
                 data = cbpp, family = binomial)
 
-  pdf(NULL)
   expect_s3_class(plot(mod, resid(., type = "deviance") ~ fitted(.) | herd),
                   "trellis")
-  dev.off()
 
-  pdf(NULL)
   expect_s3_class(
     plot(mod, resid(., type = "deviance") ~ fitted(.) | herd, abline = c(0, 1)),
     "trellis")
-  dev.off()
 
   data("sleepstudy", package = "lme4")
   mod <- galamm(Reaction ~ Days + (Days | Subject), data = sleepstudy)
@@ -178,6 +174,11 @@ test_that("diagnostic plots work", {
   expect_s3_class(
     plot(mod, form = resid(., type = "pearson") ~ Days | Subject,
          abline = c(0, 0)),
+    "trellis"
+  )
+
+  expect_s3_class(
+    plot(mod, form = Subject ~ resid(., type = "deviance", scaled = TRUE)),
     "trellis"
   )
 

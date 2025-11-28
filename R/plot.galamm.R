@@ -9,7 +9,8 @@
 #'   Conditioning variables are specified with a vertical bar.
 #' @param abline An optional numeric vector specifying the intercept and slope
 #'   of a line to be added to the plot.
-#' @param ... Optional arguments passed on to the \code{plot} function.
+#' @param ... Optional arguments passed on to the plot functions in the
+#'   \code{lattice} package.
 #' @return A plot is displayed.
 #' @export
 #'
