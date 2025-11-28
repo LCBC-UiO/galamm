@@ -61,7 +61,7 @@ residuals.galamm <- function(object, type = c("pearson", "deviance"),
     ret <- object$model$deviance_residuals
   }
 
-  if(scaled) {
+  if (scaled) {
     ret <- ret / stats::sd(ret)
   }
   ret
