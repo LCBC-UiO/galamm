@@ -54,7 +54,7 @@
 #'      abline = c(0, 0))
 #'
 #' # Box plot of residuals by Subject
-#' plot(fm1, Subject ~ resid(., scaled=TRUE))
+#' plot(mod, Subject ~ resid(., scaled=TRUE))
 #'
 #' ## Logistic mixed model example from lme4
 #' data("cbpp", package = "lme4")
@@ -93,7 +93,7 @@
 plot.galamm <- function(x, form = resid(., type = "pearson") ~ fitted(.),
                         abline = NULL, ...) {
   fsplit <- split_conditional_formula(form)
-  mf <- model.frame(x)
+  mf <- stats::model.frame(x)
   env <- list2env(list(. = x), parent = asNamespace("stats"))
 
   if (!is.null(fsplit$resp)) mf$.y <- eval(fsplit$resp, envir = mf, enclos = env)
@@ -115,7 +115,7 @@ plot.galamm <- function(x, form = resid(., type = "pearson") ~ fitted(.),
     if (is.null(cond_var_name)) {
       lat_form <- .y ~ .x
     } else {
-      lat_form <- as.formula(paste(".y ~ .x |", cond_var_name))
+      lat_form <- stats::as.formula(paste(".y ~ .x |", cond_var_name))
     }
 
     add_abline_panel <- function(x, y, ...) {
@@ -148,7 +148,7 @@ plot.galamm <- function(x, form = resid(., type = "pearson") ~ fitted(.),
     if (is.null(cond_var_name)) {
       lat_form <- .y ~ .x
     } else {
-      lat_form <- as.formula(paste(".y ~ .x |", cond_var_name))
+      lat_form <- stats::as.formula(paste(".y ~ .x |", cond_var_name))
     }
     dotlist <- list(...)
 

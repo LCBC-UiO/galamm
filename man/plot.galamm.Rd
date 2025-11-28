@@ -53,7 +53,7 @@ plot(mod, form = resid(., type = "pearson") ~ Days | Subject,
      abline = c(0, 0))
 
 # Box plot of residuals by Subject
-plot(fm1, Subject ~ resid(., scaled=TRUE))
+plot(mod, Subject ~ resid(., scaled=TRUE))
 
 ## Logistic mixed model example from lme4
 data("cbpp", package = "lme4")
