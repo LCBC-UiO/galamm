@@ -79,6 +79,7 @@ mod <- galamm(Reaction ~ Days + (Days | Subject), data = sleepstudy)
 # Diagnostic plot of Pearson residuals versus fitted values
 plot(mod)
 
+
 # Include a straight line at zero
 plot(mod, abline = c(0, 0))
 
