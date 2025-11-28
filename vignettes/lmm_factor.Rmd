@@ -222,7 +222,7 @@ A diagnostic plot of residuals versus predicted values also looks acceptable, al
 
 
 ``` r
-plot(mod)
+plot(mod, abline = c(0, 0))
 ```
 
 ![Diagnostic plot for linear mixed model with factor structures.](lmm_factor_diagnostic_plot-1.png)
@@ -321,7 +321,7 @@ anova(
 #> Data: KYPSsim
 #> Models:
 #> mod_constr2: form
-#> mod_constr2b: esteem ~ time + (0 + time12 | mid) + (0 + time34 | hid) + (1 | sid)
+#> mod_constr2b: esteem ~ time + (0 + time12 | mid) + (0 + time34 | hid) + (1 |     sid)
 #> mod_constr1: form
 #> mod: form
 #>              npar   AIC   BIC  logLik deviance   Chisq Df Pr(>Chisq)   
@@ -569,19 +569,32 @@ summary(judge_galamm)
 #> -3.8407 -0.6439  0.0017  0.6474  3.9799 
 #> 
 #> Lambda:
-#>          teacher1      SE teacher2      SE trait1.t      SE trait2.t      SE trait1.s      SE trait2.s      SE
-#> lambda1    1.0000       .        .       .    1.000       .        .       .        .       .        .       .
-#> lambda2    1.1278 0.03584        .       .    1.092 0.02172        .       .        .       .        .       .
-#> lambda3    0.9986 0.03345        .       .    1.066 0.02144        .       .        .       .        .       .
-#> lambda4         .       .   1.0000       .        .       .   1.0000       .        .       .        .       .
-#> lambda5         .       .   0.9725 0.03036        .       .   1.0536 0.02576        .       .        .       .
-#> lambda6         .       .   1.2191 0.03436        .       .   0.9581 0.02460        .       .        .       .
-#> lambda7         .       .        .       .        .       .        .       .    1.000       .        .       .
-#> lambda8         .       .        .       .        .       .        .       .    1.322 0.06109        .       .
-#> lambda9         .       .        .       .        .       .        .       .    1.145 0.05633        .       .
-#> lambda10        .       .        .       .        .       .        .       .        .       .    1.000       .
-#> lambda11        .       .        .       .        .       .        .       .        .       .    0.874 0.04417
-#> lambda12        .       .        .       .        .       .        .       .        .       .    1.096 0.04874
+#>          teacher1      SE teacher2      SE trait1.t      SE trait2.t      SE trait1.s      SE trait2.s
+#> lambda1    1.0000       .        .       .    1.000       .        .       .        .       .        .
+#> lambda2    1.1278 0.03584        .       .    1.092 0.02172        .       .        .       .        .
+#> lambda3    0.9986 0.03345        .       .    1.066 0.02144        .       .        .       .        .
+#> lambda4         .       .   1.0000       .        .       .   1.0000       .        .       .        .
+#> lambda5         .       .   0.9725 0.03036        .       .   1.0536 0.02576        .       .        .
+#> lambda6         .       .   1.2191 0.03436        .       .   0.9581 0.02460        .       .        .
+#> lambda7         .       .        .       .        .       .        .       .    1.000       .        .
+#> lambda8         .       .        .       .        .       .        .       .    1.322 0.06109        .
+#> lambda9         .       .        .       .        .       .        .       .    1.145 0.05633        .
+#> lambda10        .       .        .       .        .       .        .       .        .       .    1.000
+#> lambda11        .       .        .       .        .       .        .       .        .       .    0.874
+#> lambda12        .       .        .       .        .       .        .       .        .       .    1.096
+#>               SE
+#> lambda1        .
+#> lambda2        .
+#> lambda3        .
+#> lambda4        .
+#> lambda5        .
+#> lambda6        .
+#> lambda7        .
+#> lambda8        .
+#> lambda9        .
+#> lambda10       .
+#> lambda11 0.04417
+#> lambda12 0.04874
 #> 
 #> Random effects:
 #>  Groups   Name        Variance Std.Dev. Corr          
@@ -611,6 +624,23 @@ summary(judge_galamm)
 #> item12    2.470    0.02599   95.07        0
 ```
 
+We can make various diagnostic plots. The one below plots scaled deviance residuals against teacher. It does not look like the residuals depend on teacher.
+
+
+``` r
+plot(judge_galamm, form = resid(., type = "deviance", scaled = TRUE) ~ tch)
+```
+
+![plot of chunk unnamed-chunk-28](unnamed-chunk-28-1.png)
+
+The quantile-quantile plot also looks very good (no surprise: these are simulated data).
+
+
+``` r
+qqmath(judge_galamm)
+```
+
+![plot of chunk unnamed-chunk-29](unnamed-chunk-29-1.png)
 
 
 # References

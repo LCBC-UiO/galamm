@@ -69,7 +69,7 @@ We set `load_var = "itemgroup"` because all rows of the data with the same value
 We also need to define the response families using the `gfam` function:
 
 ```{r}
-families <- gfam(list(gaussian, binomial))
+families <- galamm::gfam(list(gaussian, binomial))
 ```
 
 We also need a way of telling galamm which row belongs to which family. This is encoded in the dataframe `mresp`, where the response `y` is a matrix with two columns, in which the first column is the response and the second column is the index of the family. That is, a `1` means `gaussian` and a `2` means `binomial`.
@@ -113,7 +113,7 @@ This dataset has the same structure as `mresp`, except that the residual standar
 mod <- galamm(
   formula = y ~ x + (1 | id),
   dispformula = ~ (0 + isgauss | grp),
-  family = gfam(list(gaussian, binomial)),
+  family = galamm::gfam(list(gaussian, binomial)),
   data = mresp_hsced
 )
 ```
@@ -199,7 +199,7 @@ head(diet$y)
 
 
 ```{r}
-families <- gfam(list(gaussian, binomial))
+families <- galamm::gfam(list(gaussian, binomial))
 ```
 
 The model formula also needs some care in this case. We define it as follows, and note that the whole part `0 + chd + fiber + fiber2` could have been replaced by `item`. We use the former for ease of explanation.
