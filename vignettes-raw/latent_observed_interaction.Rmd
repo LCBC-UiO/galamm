@@ -260,5 +260,17 @@ We can also plot the smooth term, which is linear. That is, in this case the smo
 plot_smooth(mod)
 ```
 
+We can also make a diagnostic plot of residuals versus fitted value, and we see no clear trends.
+
+```{r}
+plot(mod, abline = c(0, 0))
+```
+
+We can also plot the residuals against $x$, and again we see no trends.
+
+```{r}
+plot(mod, form = residuals(.) ~ x, abline = c(0, 0))
+```
+
 
 # References
