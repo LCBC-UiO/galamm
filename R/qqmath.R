@@ -35,10 +35,12 @@ qqmath.galamm <- function(x, data = NULL, ...) {
 
   qqpanel <- function(x, subscripts, ...) {
     dots <- list(...)
-    panel.qqmathline(x, ...)
-    panel.qqmath(x, ...)
+    lattice::panel.qqmathline(x, ...)
+    lattice::panel.qqmath(x, ...)
   }
-  qqmath(values, xlab = "Standard normal quantiles",
-         ylab = "Standardized residuals",
-         prepanel = prepanel.qqmathline, panel = qqpanel, ...)
+  lattice::qqmath(
+    values, xlab = "Standard normal quantiles",
+    ylab = "Standardized residuals",
+    prepanel = lattice::prepanel.qqmathline,
+    panel = qqpanel, ...)
 }

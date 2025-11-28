@@ -26,9 +26,8 @@ Quantile-quantile plots for galamm objects
 ## Linear mixed model example from lme4
 data("sleepstudy", package = "lme4")
 mod <- galamm(Reaction ~ Days + (Days | Subject), data = sleepstudy)
-
-mod <- lmer(Reaction ~ Days + (Days | Subject), data = sleepstudy)
 qqmath(mod)
+
 }
 \seealso{
 Other diagnostics: 
