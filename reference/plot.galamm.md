@@ -32,7 +32,8 @@ plot(x, form = resid(., type = "pearson") ~ fitted(.), abline = NULL, ...)
 
 - ...:
 
-  Optional arguments passed on to the `plot` function.
+  Optional arguments passed on to the plot functions in the `lattice`
+  package.
 
 ## Value
 
@@ -95,6 +96,10 @@ plot(mod, form = resid(., type = "pearson") ~ Days, abline = c(0, 0))
 # Residuals plotted against time per subject with a straight line at zero
 plot(mod, form = resid(., type = "pearson") ~ Days | Subject,
      abline = c(0, 0))
+
+
+# Box plot of residuals by Subject
+plot(mod, Subject ~ resid(., scaled=TRUE))
 
 
 ## Logistic mixed model example from lme4

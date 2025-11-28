@@ -80,7 +80,8 @@ of a line to be added to the plot.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Optional arguments passed on to the <code>plot</code> function.</p></dd>
+<dd><p>Optional arguments passed on to the plot functions in the
+<code>lattice</code> package.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -146,6 +147,10 @@ modifications by Øystein Sørensen.</p>
 <span class="r-in"><span>     abline <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plot.galamm-5.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Box plot of residuals by Subject</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mod</span>, <span class="va">Subject</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/stats/residuals.html" class="external-link">resid</a></span><span class="op">(</span><span class="va">.</span>, scaled<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="plot.galamm-6.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Logistic mixed model example from lme4</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"cbpp"</span>, package <span class="op">=</span> <span class="st">"lme4"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="galamm.html">galamm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">incidence</span>, <span class="va">size</span> <span class="op">-</span> <span class="va">incidence</span><span class="op">)</span> <span class="op">~</span> <span class="va">period</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">herd</span><span class="op">)</span>,</span></span>
@@ -153,15 +158,15 @@ modifications by Øystein Sørensen.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Diagnostic plot using Pearson residuals</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="plot.galamm-6.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.galamm-7.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Diagnostic plot using deviance residuals</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mod</span>, <span class="fu"><a href="https://rdrr.io/r/stats/residuals.html" class="external-link">resid</a></span><span class="op">(</span><span class="va">.</span>, type <span class="op">=</span> <span class="st">"deviance"</span><span class="op">)</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/stats/fitted.values.html" class="external-link">fitted</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="plot.galamm-7.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.galamm-8.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Diagnostic plot per herd</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mod</span>, <span class="fu"><a href="https://rdrr.io/r/stats/residuals.html" class="external-link">resid</a></span><span class="op">(</span><span class="va">.</span>, type <span class="op">=</span> <span class="st">"deviance"</span><span class="op">)</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/stats/fitted.values.html" class="external-link">fitted</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span> <span class="op">|</span> <span class="va">herd</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="plot.galamm-8.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.galamm-9.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Linear mixed model with factor structures</span></span></span>
 <span class="r-in"><span><span class="co"># See vignette on linear mixed models with factor structures for details</span></span></span>
@@ -179,11 +184,11 @@ modifications by Øystein Sørensen.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Pearson residuals plotted against fitted value</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="plot.galamm-9.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.galamm-10.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Actual value plotted against fitted value with a line crossing the diagonal</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mod</span>, form <span class="op">=</span> <span class="va">esteem</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/stats/fitted.values.html" class="external-link">fitted</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span>, abline <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="plot.galamm-10.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.galamm-11.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
