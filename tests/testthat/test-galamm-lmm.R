@@ -51,6 +51,8 @@ test_that("LMM with simple factor works", {
     "trellis"
   )
 
+  expect_s3_class(qqmath(mod), "trellis")
+
   expect_s3_class(model.frame(mod), "data.frame")
   mod$data <- NULL
   expect_error(model.frame(mod))
