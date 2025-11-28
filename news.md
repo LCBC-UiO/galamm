@@ -1,5 +1,6 @@
 # galamm 0.3.0 (development versions)
 
+- residuals.galamm() now has a "scaled = TRUE/FALSE" argument.
 - plot.galamm() has been considerably extended.
 
 # galamm 0.3.0

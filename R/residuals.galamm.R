@@ -27,6 +27,8 @@
 #' @param type Character of length one describing the type of residuals to be
 #'   returned. One of \code{"pearson"} and \code{"deviance"}. Argument is case
 #'   sensitive.
+#' @param scaled Logical value specifying whether to scale the residuals by
+#'   their standard deviation. Defaults to \code{FALSE}.
 #' @param ... Optional arguments passed on to other methods. Currently not used.
 #'
 #' @return Numeric vector of residual values.
@@ -50,11 +52,17 @@
 #' # Extract residuals
 #' residuals(count_mod)
 #'
-residuals.galamm <- function(object, type = c("pearson", "deviance"), ...) {
+residuals.galamm <- function(object, type = c("pearson", "deviance"),
+                             scaled = FALSE, ...) {
   type <- match.arg(type, c("pearson", "deviance"))
   if (type == "pearson") {
-    object$model$pearson_residuals
+    ret <- object$model$pearson_residuals
   } else if (type == "deviance") {
-    object$model$deviance_residuals
+    ret <- object$model$deviance_residuals
   }
+
+  if(scaled) {
+    ret <- ret / sd(ret)
+  }
+  ret
 }
