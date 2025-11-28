@@ -107,7 +107,7 @@ summary(mod)
 The `plot` function now gives us a diagnostic plot, which by inspection can be seen to be almost identical to the plot produced from the mixed model part of the `gamm4` model.
 
 ```{r, semiparametric-gaussian-gamm-diagnostic, fig.cap="Diagnostic plot for model fitted with galamm."}
-plot(mod)
+plot(mod, abline = c(0, 0))
 ```
 
 In order to plot the smooth term, we use `plot_smooth`.
