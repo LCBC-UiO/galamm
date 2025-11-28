@@ -106,36 +106,40 @@ plot.galamm <- function(x, form = resid(., type = "pearson") ~ fitted(.),
   ylab <- if (!is.null(fsplit$resp)) deparse1(fsplit$resp) else NULL
 
   if (is.null(cond_var_name)) {
-    args <- list(.y ~ .x, data = mf, xlab = xlab, ylab = ylab, ...)
-    do.call("plot", args)
-    if (!is.null(abline)) graphics::abline(a = abline[[1]], b = abline[[2]])
+    lat_form <- .y ~ .x
   } else {
     lat_form <- as.formula(paste(".y ~ .x |", cond_var_name))
+  }
 
-    dotlist <- list(...)
+  add_abline_panel <- function(x, y, ...) {
+    lattice::panel.xyplot(x, y, ...)
+    if (!is.null(abline)) {
+      if (length(abline) == 1L) {
+        lattice::panel.abline(h = abline)
+      } else {
+        lattice::panel.abline(a = abline[[1]], b = abline[[2]])
+      }
+    }
+  }
 
-    add_abline_panel <- function(x, y, ...) {
-      lattice::panel.xyplot(x, y, ...)
+  dotlist <- list(...)
+  if (!is.null(dotlist$panel)) {
+    user_panel <- dotlist$panel
+    dotlist$panel <- function(x, y, ...) {
+      user_panel(x, y, ...)
       if (!is.null(abline)) {
         lattice::panel.abline(a = abline[[1]], b = abline[[2]])
       }
     }
-
-    if (!is.null(dotlist$panel)) {
-      user_panel <- dotlist$panel
-      dotlist$panel <- function(x, y, ...) {
-        user_panel(x, y, ...)
-        if (!is.null(abline)) {
-          lattice::panel.abline(a = abline[1], b = abline[2])
-        }
-      }
-    } else {
-      dotlist$panel <- add_abline_panel
-    }
-
-    do.call(lattice::xyplot,
-            c(list(lat_form, data = mf, xlab = xlab, ylab = ylab), dotlist))
+  } else {
+    dotlist$panel <- add_abline_panel
   }
+
+  if (!requireNamespace("lattice", quietly = TRUE)) {
+    stop("Package 'lattice' is required for plot.galamm().")
+  }
+  do.call(lattice::xyplot,
+          c(list(lat_form, data = mf, xlab = xlab, ylab = ylab), dotlist))
 }
 
 deparse1 <- function(expr) paste(deparse(expr, backtick = TRUE), collapse = "")
