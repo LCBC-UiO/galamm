@@ -98,7 +98,7 @@ With `galamm` we use similar argument, but the `random` specification is now par
 mod <- galamm(y ~ s(x) + (1 | id), data = dat)
 ```
 
-As opposed to `gamm4`, `galamm` gives a single summary. As can be seen, smooth terms are both reported as random effects, and in a separate line under the header "Approximate significance of smooth terms:". Reassuringly, the results from fitting the model with `gamm4` and with `galamm` are essentially equally, even though they use somewhat different computational algorithms.
+As opposed to `gamm4`, `galamm` gives a single summary. As can be seen, smooth terms are both reported as random effects, and in a separate line under the header "Approximate significance of smooth terms:". Reassuringly, the results from fitting the model with `gamm4` and with `galamm` are essentially equal, even though they use somewhat different computational algorithms.
 
 ```{r}
 summary(mod)
