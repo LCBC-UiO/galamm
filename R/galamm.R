@@ -398,11 +398,11 @@ galamm <- function(formula, dispformula = NULL, weights = NULL, data,
   lambda_orig <- tmp$lambda
   rm(tmp)
 
-  rf <- lme4::findbars(formula)
+  rf <- reformulas::findbars(formula)
   rf <- if (!is.null(rf)) {
     stats::as.formula(paste("~", paste("(", rf, ")", collapse = "+")))
   }
-  gobj <- gamm4(fixed = lme4::nobars(formula), random = rf, data = data)
+  gobj <- gamm4(fixed = reformulas::nobars(formula), random = rf, data = data)
   colnames(gobj$lmod$X) <- gsub("^X", "", colnames(gobj$lmod$X))
 
   response_obj <- setup_response_object(family_list, data, gobj)
@@ -427,7 +427,7 @@ galamm <- function(formula, dispformula = NULL, weights = NULL, data,
   lambda_inds <- max(beta_inds) + seq_along(lambda[lambda >= 2])
 
   if (!is.null(dispformula)) {
-    weights_obj <- lme4::mkReTrms(lme4::findbars(dispformula), fr = data)
+    weights_obj <- reformulas::mkReTrms(reformulas::findbars(dispformula), fr = data)
     if (length(weights_obj$flist) > 1) {
       stop("Multiple grouping terms in dispformula not yet implemented.")
     }

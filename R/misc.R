@@ -132,7 +132,7 @@ setup_family <- function(family) {
 #'
 setup_response_object <- function(family_list, data, gobj) {
   response_obj <- matrix(nrow = nrow(gobj$lmod$X), ncol = 3)
-  response_name <- all.vars(lme4::nobars(gobj$fake.formula))[[1]]
+  response_name <- all.vars(reformulas::nobars(gobj$fake.formula))[[1]]
 
   if (length(family_list) > 1) {
     if (!isTRUE(base::all.equal(
@@ -150,7 +150,7 @@ setup_response_object <- function(family_list, data, gobj) {
       rep(TRUE, nrow(data))
     }
 
-    mf <- stats::model.frame(lme4::nobars(gobj$fake.formula),
+    mf <- stats::model.frame(reformulas::nobars(gobj$fake.formula),
       data = data[matching_rows, ]
     )
     mr <- stats::model.response(mf)
