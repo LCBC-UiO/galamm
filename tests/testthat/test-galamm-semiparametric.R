@@ -28,6 +28,15 @@ test_that("galamm reproduces gamm4", {
   expect_snapshot(print(summary(mod$gam), digits = 2))
   expect_equal(head(predict(mod)), head(predict(mod_comp$gam)), tolerance = .01)
 
+  Xp1 <- predict(mod, type = "lpmatrix")
+  Xp2 <- predict(mod_comp$gam, type = "lpmatrix")
+  expect_equal(Xp1, Xp2)
+
+  nd <- data.frame(x = runif(10))
+  Xp1 <- predict(mod, type = "lpmatrix", newdata = nd)
+  Xp2 <- predict(mod_comp$gam, type = "lpmatrix", newdata = nd)
+  expect_equal(Xp1, Xp2)
+
   mod <- galamm(formula = y ~ s(x, fx = TRUE) + (1 | id), data = dat)
   mod_comp <- gamm4::gamm4(
     formula = y[, 1] ~ s(x, fx = TRUE),
@@ -38,12 +47,30 @@ test_that("galamm reproduces gamm4", {
   expect_snapshot(print(summary(mod$gam), digits = 2))
   expect_equal(head(predict(mod)), head(predict(mod_comp$gam)), tolerance = .01)
 
+  Xp1 <- predict(mod, type = "lpmatrix")
+  Xp2 <- predict(mod_comp$gam, type = "lpmatrix")
+  expect_equal(Xp1, Xp2)
+
+  nd <- data.frame(x = runif(10))
+  Xp1 <- predict(mod, type = "lpmatrix", newdata = nd)
+  Xp2 <- predict(mod_comp$gam, type = "lpmatrix", newdata = nd)
+  expect_equal(Xp1, Xp2)
+
   set.seed(1)
   dat <- mgcv::gamSim(verbose = FALSE, scale = .1)
   mod0 <- mgcv::gamm(y ~ s(x1) + t2(x2), data = dat, method = "ML")
   mod1 <- galamm(y ~ s(x1) + t2(x2), data = dat)
   expect_equal(as.numeric(deviance(mod0$lme)), deviance(mod1), tolerance = .0001)
   expect_equal(head(predict(mod1)), head(predict(mod0$gam)), tolerance = .01)
+
+  Xp1 <- predict(mod0$gam, type = "lpmatrix")
+  Xp2 <- predict(mod1, type = "lpmatrix")
+  expect_equal(Xp1, Xp2)
+
+  nd <- data.frame(x1 = runif(10), x2 = runif(10))
+  Xp1 <- predict(mod0$gam, type = "lpmatrix", newdata = nd)
+  Xp2 <- predict(mod1, type = "lpmatrix", newdata = nd)
+  expect_equal(Xp1, Xp2)
 
   set.seed(1)
   dat <- mgcv::gamSim(4, verbose = FALSE)
@@ -57,6 +84,15 @@ test_that("galamm reproduces gamm4", {
   expect_equal(
     predict(mod1, newdata = nd), predict(mod0$gam, newdata = nd), tolerance = .001
   )
+
+  Xp1 <- predict(mod0$gam, type = "lpmatrix")
+  Xp2 <- predict(mod1, type = "lpmatrix")
+  expect_equal(Xp1, Xp2)
+
+  nd <- data.frame(x2 = runif(10), fac = 3)
+  Xp1 <- predict(mod0$gam, type = "lpmatrix", newdata = nd)
+  Xp2 <- predict(mod1, type = "lpmatrix", newdata = nd)
+  expect_equal(Xp1, Xp2)
 
   mod0 <- gamm4::gamm4(y ~ s(x0, by = x2), data = dat, REML = FALSE)
   mod1 <- galamm(y ~ s(x0, by = x2), data = dat)
