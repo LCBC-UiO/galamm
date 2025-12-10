@@ -49,17 +49,32 @@
 #' predict(count_mod, newdata = nd)
 #' predict(count_mod, newdata = nd, type = "response")
 #'
+#' # Semiparametric model
+#' dat <- subset(cognition, domain == 1 & item == "11")
+#' dat$y <- dat$y[, 1]
+#' mod <- galamm(y ~ s(x) + (1 | id), data = dat)
+#'
+#' # Get the linear predictor matrix
+#' Xp <- predict(mod, type = "lpmatrix")
+#' # Compute the estimated smooth function
+#' # See the vignette on posterior sampling for details
+#' betas <- coef(mod$gam)
+#' fit <- Xp %*% betas
+#' plot(dat$x, fit)
+#'
 predict.galamm <- function(object, newdata = NULL,
-                           type = c("link", "response"),
+                           type = c("link", "response", "lpmatrix"),
                            ...) {
   type <- match.arg(type)
+  base_form <- object$formula
+  newform <- stats::update(reformulas::nobars(base_form), NULL ~ .)
 
   if (!is.null(newdata)) {
     if (!is.null(object$gam) && length(object$gam) > 0) {
       return(predict(object$gam, newdata = newdata, type = type, ...))
     }
-    newform <- stats::update(reformulas::nobars(eval(object$call[[2]])), NULL ~ .)
     X <- stats::model.matrix(newform, data = newdata)
+    if (type == "lpmatrix") return(X)
     beta_hat <-
       object$parameters$parameter_estimates[object$parameters$beta_inds]
 
@@ -67,6 +82,10 @@ predict.galamm <- function(object, newdata = NULL,
   } else {
     if (!is.null(object$gam) && length(object$gam) > 0) {
       return(predict(object$gam, type = type, ...))
+    }
+    if (type == "lpmatrix") {
+      X <- stats::model.matrix(newform, data = stats::model.frame(object))
+      return(X)
     }
     linear_predictor <- family(object)[[1]]$linkfun(object$model$fit_population)
   }
