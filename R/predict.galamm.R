@@ -83,7 +83,7 @@ predict.galamm <- function(object, newdata = NULL,
     if (!is.null(object$gam) && length(object$gam) > 0) {
       return(predict(object$gam, type = type, ...))
     }
-    if(type == "lpmatrix") {
+    if (type == "lpmatrix") {
       X <- stats::model.matrix(newform, data = stats::model.frame(object))
       return(X)
     }
