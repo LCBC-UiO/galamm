@@ -18,6 +18,8 @@
 
 ### Advanced topics
 
+- [Posterior
+  Sampling](https://lcbc-uio.github.io/galamm/articles/posterior_sampling.md):
 - [Computational
   Scaling](https://lcbc-uio.github.io/galamm/articles/scaling.md):
 - [Optimization](https://lcbc-uio.github.io/galamm/articles/optimization.md):

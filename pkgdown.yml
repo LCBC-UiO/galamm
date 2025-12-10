@@ -9,9 +9,10 @@ articles:
   lmm_heteroscedastic: lmm_heteroscedastic.html
   mixed_response: mixed_response.html
   optimization: optimization.html
+  posterior_sampling: posterior_sampling.html
   scaling: scaling.html
   semiparametric: semiparametric.html
-last_built: 2025-12-10T12:59Z
+last_built: 2025-12-10T14:41Z
 urls:
   reference: https://lcbc-uio.github.io/galamm/reference
   article: https://lcbc-uio.github.io/galamm/articles
