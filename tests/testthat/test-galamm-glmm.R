@@ -22,6 +22,15 @@ test_that("Logistic GLMM with simple factor works", {
     lambda = irt.lam
   )
 
+  Xp <- predict(mod, newdata = dat[1:4, ], type = "lpmatrix")
+  expect_equal(dim(Xp), c(4L, 5L))
+
+  Xp <- predict(mod, newdata = dat[1, , drop = FALSE], type = "lpmatrix")
+  expect_equal(dim(Xp), c(1L, 5L))
+
+  Xp <- predict(mod, type = "lpmatrix")
+  expect_equal(dim(Xp), c(245L, 5L))
+
   expect_snapshot(summary(mod))
 
   expect_equal(

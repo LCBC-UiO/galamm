@@ -66,12 +66,13 @@ predict.galamm <- function(object, newdata = NULL,
                            type = c("link", "response", "lpmatrix"),
                            ...) {
   type <- match.arg(type)
+  base_form <- object$formula
+  newform <- stats::update(reformulas::nobars(base_form), NULL ~ .)
 
   if (!is.null(newdata)) {
     if (!is.null(object$gam) && length(object$gam) > 0) {
       return(predict(object$gam, newdata = newdata, type = type, ...))
     }
-    newform <- stats::update(reformulas::nobars(eval(object$call[[2]])), NULL ~ .)
     X <- stats::model.matrix(newform, data = newdata)
     if (type == "lpmatrix") return(X)
     beta_hat <-
@@ -81,6 +82,10 @@ predict.galamm <- function(object, newdata = NULL,
   } else {
     if (!is.null(object$gam) && length(object$gam) > 0) {
       return(predict(object$gam, type = type, ...))
+    }
+    if(type == "lpmatrix") {
+      X <- stats::model.matrix(newform, data = model.frame(object))
+      return(X)
     }
     linear_predictor <- family(object)[[1]]$linkfun(object$model$fit_population)
   }

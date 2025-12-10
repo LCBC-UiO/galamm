@@ -644,6 +644,7 @@ galamm <- function(formula, dispformula = NULL, weights = NULL, data,
   )
 
   ret$data <- data
+  ret$formula <- formula
   class(ret) <- "galamm"
 
   ret$gam <- gamm4.wrapup(gobj, ret, final_model)
