@@ -58,7 +58,7 @@ predict.galamm <- function(object, newdata = NULL,
     if (!is.null(object$gam) && length(object$gam) > 0) {
       return(predict(object$gam, newdata = newdata, type = type, ...))
     }
-    newform <- stats::update(lme4::nobars(eval(object$call[[2]])), NULL ~ .)
+    newform <- stats::update(reformulas::nobars(eval(object$call[[2]])), NULL ~ .)
     X <- stats::model.matrix(newform, data = newdata)
     beta_hat <-
       object$parameters$parameter_estimates[object$parameters$beta_inds]
