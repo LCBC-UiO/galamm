@@ -84,7 +84,7 @@ predict.galamm <- function(object, newdata = NULL,
       return(predict(object$gam, type = type, ...))
     }
     if(type == "lpmatrix") {
-      X <- stats::model.matrix(newform, data = model.frame(object))
+      X <- stats::model.matrix(newform, data = stats::model.frame(object))
       return(X)
     }
     linear_predictor <- family(object)[[1]]$linkfun(object$model$fit_population)
