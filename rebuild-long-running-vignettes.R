@@ -9,6 +9,7 @@ knitr::knit("semiparametric.Rmd", output = "../vignettes/semiparametric.Rmd")
 knitr::knit("optimization.Rmd", output = "../vignettes/optimization.Rmd")
 knitr::knit("latent_observed_interaction.Rmd", output = "../vignettes/latent_observed_interaction.Rmd")
 knitr::knit("scaling.Rmd", output = "../vignettes/scaling.Rmd")
+knitr::knit("posterior_sampling.Rmd", output = "../vignettes/posterior_sampling.Rmd")
 
 imgs <- list.files(pattern = "\\.png$")
 imgs_new <- file.path("..", "vignettes", imgs)

@@ -17,6 +17,7 @@ articles:
 - title: Advanced topics
   navbar: Advanced topics
   contents:
+  - posterior_sampling
   - scaling
   - optimization
 
