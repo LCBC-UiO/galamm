@@ -25,9 +25,9 @@ knitr::opts_chunk$set(
 library(galamm)
 ```
 
-Sampling from the empirical Bayes posterior distribution can be a convenient way of obtaining confidence bands for nonlinear functions of the estimated parameters. This vignette illustrates this for one of the models estimated in the vignette on [semiparametric latent variable modeling](https://lcbc-uio.github.io/galamm/articles/mixed_response.html). More background can also be found in [this blog post by Gavin Simpson](https://fromthebottomoftheheap.net/2016/12/15/simultaneous-interval-revisited/) and in Section 6.10 of @woodGeneralizedAdditiveModels2017.
+Sampling from the empirical Bayes posterior distribution can be a convenient way of obtaining confidence bands for nonlinear functions of the estimated parameters. More background can be found in [this blog post by Gavin Simpson](https://fromthebottomoftheheap.net/2016/12/15/simultaneous-interval-revisited/) and in Section 6.10 of @woodGeneralizedAdditiveModels2017.
 
-## Confidence intervals for extrema of a smooth function
+We start by fitting a semiparametric modeling with factor structures described in the vignette on [semiparametric latent variable modeling](https://lcbc-uio.github.io/galamm/articles/mixed_response.html).
 
 ```{r}
 dat <- subset(cognition, domain == 1)
@@ -43,6 +43,10 @@ mod <- galamm(
   factor = "loading"
 )
 ```
+
+## Confidence intervals for extrema of a smooth function
+
+
 
 
 # References
