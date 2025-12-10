@@ -4,7 +4,7 @@
 \alias{predict.galamm}
 \title{Predictions from a model at new data values}
 \usage{
-\method{predict}{galamm}(object, newdata = NULL, type = c("link", "response"), ...)
+\method{predict}{galamm}(object, newdata = NULL, type = c("link", "response", "lpmatrix"), ...)
 }
 \arguments{
 \item{object}{An object of class \code{galamm} returned from

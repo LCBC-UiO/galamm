@@ -49,8 +49,20 @@
 #' predict(count_mod, newdata = nd)
 #' predict(count_mod, newdata = nd, type = "response")
 #'
+#' # Semiparametric model
+#' dat <- subset(cognition, domain == 1 & item == "11")
+#' dat$y <- dat$y[, 1]
+#' mod <- galamm(y ~ z + s(x) + (1 | id), data = dat)
+#'
+#' # Get the linear predictor matrix
+#' Xp <- predict(mod, type = "lpmatrix")
+#' # Use it to plot the smooth function manually
+#'
+#'
+#'
+#'
 predict.galamm <- function(object, newdata = NULL,
-                           type = c("link", "response"),
+                           type = c("link", "response", "lpmatrix"),
                            ...) {
   type <- match.arg(type)
 
@@ -60,6 +72,7 @@ predict.galamm <- function(object, newdata = NULL,
     }
     newform <- stats::update(lme4::nobars(eval(object$call[[2]])), NULL ~ .)
     X <- stats::model.matrix(newform, data = newdata)
+    if (type == "lpmatrix") return(X)
     beta_hat <-
       object$parameters$parameter_estimates[object$parameters$beta_inds]
 
