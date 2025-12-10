@@ -1,0 +1,24 @@
+---
+title: "Posterior Sampling"
+output:
+  rmarkdown::html_vignette:
+    fig_width: 6
+    fig_height: 4
+bibliography: ../inst/REFERENCES.bib
+link-citations: yes
+vignette: >
+  %\VignetteIndexEntry{Posterior Sampling}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+
+
+``` r
+library(galamm)
+library(PLmixed)
+```
+
+
+# References
