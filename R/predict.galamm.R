@@ -52,14 +52,15 @@
 #' # Semiparametric model
 #' dat <- subset(cognition, domain == 1 & item == "11")
 #' dat$y <- dat$y[, 1]
-#' mod <- galamm(y ~ z + s(x) + (1 | id), data = dat)
+#' mod <- galamm(y ~ s(x) + (1 | id), data = dat)
 #'
 #' # Get the linear predictor matrix
 #' Xp <- predict(mod, type = "lpmatrix")
-#' # Use it to plot the smooth function manually
-#'
-#'
-#'
+#' # Compute the estimated smooth function
+#' # See the vignette on posterior sampling for details
+#' betas <- coef(mod$gam)
+#' fit <- Xp %*% betas
+#' plot(dat$x, fit)
 #'
 predict.galamm <- function(object, newdata = NULL,
                            type = c("link", "response", "lpmatrix"),

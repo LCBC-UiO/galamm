@@ -48,6 +48,19 @@ nd <- data.frame(lbas = c(.3, .2), treat = c(0, 1), lage = 0.2, v4 = -.2)
 predict(count_mod, newdata = nd)
 predict(count_mod, newdata = nd, type = "response")
 
+# Semiparametric model
+dat <- subset(cognition, domain == 1 & item == "11")
+dat$y <- dat$y[, 1]
+mod <- galamm(y ~ s(x) + (1 | id), data = dat)
+
+# Get the linear predictor matrix
+Xp <- predict(mod, type = "lpmatrix")
+# Compute the estimated smooth function
+# See the vignette on posterior sampling for details
+betas <- coef(mod$gam)
+fit <- Xp \%*\% betas
+plot(dat$x, fit)
+
 }
 \seealso{
 \code{\link[=fitted.galamm]{fitted.galamm()}} for model fits, \code{\link[=residuals.galamm]{residuals.galamm()}} for
