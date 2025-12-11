@@ -62,6 +62,7 @@ plot_smooth(mod, shade = TRUE, rug = FALSE)
 \seealso{
 Other summary functions: 
 \code{\link{anova.galamm}()},
+\code{\link{draw}()},
 \code{\link{print.galamm}()},
 \code{\link{print.summary.galamm}()},
 \code{\link{summary.galamm}()}
