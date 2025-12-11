@@ -8,7 +8,6 @@ NULL
 #' [gratia::draw()] for details. When \code{object} is not of class
 #' \code{galamm}, it is forwarded to \code{gratia::draw()}.
 #'
-#' @inheritParams draw
 #' @return A ggplot object.
 #' @export
 #' @method draw galamm

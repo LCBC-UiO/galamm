@@ -49,6 +49,7 @@ more generally, and \code{\link[=vcov.galamm]{vcov.galamm()}} for the variance-c
 Other details of model fit: 
 \code{\link{VarCorr}()},
 \code{\link{coef.galamm}()},
+\code{\link{derivatives.galamm}()},
 \code{\link{deviance.galamm}()},
 \code{\link{factor_loadings.galamm}()},
 \code{\link{family.galamm}()},

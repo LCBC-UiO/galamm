@@ -36,6 +36,7 @@ Other details of model fit:
 \code{\link{VarCorr}()},
 \code{\link{coef.galamm}()},
 \code{\link{confint.galamm}()},
+\code{\link{derivatives.galamm}()},
 \code{\link{deviance.galamm}()},
 \code{\link{factor_loadings.galamm}()},
 \code{\link{family.galamm}()},
