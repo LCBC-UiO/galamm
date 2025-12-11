@@ -42,7 +42,7 @@ generic function.
 
 Other summary functions: 
 \code{\link{anova.galamm}()},
-\code{\link{draw}()},
+\code{\link{draw.galamm}()},
 \code{\link{plot_smooth.galamm}()},
 \code{\link{print.galamm}()},
 \code{\link{summary.galamm}()}

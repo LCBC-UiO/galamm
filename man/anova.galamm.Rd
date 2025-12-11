@@ -45,7 +45,7 @@ anova(count_mod, count_mod0)
 generic function.
 
 Other summary functions: 
-\code{\link{draw}()},
+\code{\link{draw.galamm}()},
 \code{\link{plot_smooth.galamm}()},
 \code{\link{print.galamm}()},
 \code{\link{print.summary.galamm}()},

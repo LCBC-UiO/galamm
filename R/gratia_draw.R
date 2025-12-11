@@ -1,14 +1,6 @@
-#' @export
-#' @rdname draw
-draw <- function(object, ...) {
-  UseMethod("draw")
-}
-
-#' @export
-#' @rdname draw
-draw.default <- function(object, ...) {
-  gratia::draw(object, ...)
-}
+##' @importFrom gratia draw
+##' @export draw
+NULL
 
 #' Draw method for galamm objects
 #'
