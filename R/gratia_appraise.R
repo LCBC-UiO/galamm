@@ -20,7 +20,7 @@ NULL
 #' appraise(mod)
 #'
 appraise.galamm <- function(object, ...) {
-  if (is.null(object$gam)) {
+  if (is.null(object$gam) || length(object$gam) == 0) {
     stop("No GAM object")
   }
   gratia::appraise(object$gam, ...)

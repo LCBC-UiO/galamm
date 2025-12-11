@@ -21,7 +21,7 @@ NULL
 #' draw(mod)
 #'
 draw.galamm <- function(object, ...) {
-  if (is.null(object$gam)) {
+  if (is.null(object$gam) || length(object$gam) == 0) {
     stop("No GAM object")
   }
   gratia::draw(object$gam, ...)
