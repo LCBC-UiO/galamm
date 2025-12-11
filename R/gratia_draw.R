@@ -8,10 +8,12 @@ NULL
 #' [gratia::draw()] for details. When \code{object} is not of class
 #' \code{galamm}, it is forwarded to \code{gratia::draw()}.
 #'
+#' @param object An object of class \code{galamm} returned from
+#'   \code{\link{galamm}}.
+#' @param ... Other arguments passed on to [gratia::draw()].
 #' @return A ggplot object.
 #' @export
-#' @method draw galamm
-#' @rdname draw
+#' @aliases draw draw.galamm
 #' @family summary functions
 #' @examples
 #' dat <- subset(cognition, domain == 1 & item == "11")

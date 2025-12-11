@@ -5,13 +5,15 @@ NULL
 #' Gratia style model diagnostic plots
 #'
 #' This function uses \code{gratia::appraise} to make model diagnostic plots.
-#' See [gratia::appraise()] for details. When \code{object} is not of class
+#' See [gratia::appraise()] for details. When \code{model} is not of class
 #' \code{galamm}, it is forwarded to \code{gratia::appraise()}.
 #'
+#' @param model An object of class \code{galamm} returned from
+#'   \code{\link{galamm}}.
+#' @param ... Other arguments passed on to [gratia::appraise()].
 #' @return A ggplot object.
 #' @export
-#' @method appraise galamm
-#' @rdname appraise
+#' @aliases appraise appraise.galamm
 #' @family details of model fit
 #' @examples
 #' dat <- subset(cognition, domain == 1 & item == "11")
@@ -19,9 +21,9 @@ NULL
 #' mod <- galamm(y ~ s(x) + (1 | id), data = dat)
 #' appraise(mod)
 #'
-appraise.galamm <- function(object, ...) {
-  if (is.null(object$gam) || length(object$gam) == 0) {
+appraise.galamm <- function(model, ...) {
+  if (is.null(model$gam) || length(model$gam) == 0) {
     stop("No GAM object")
   }
-  gratia::appraise(object$gam, ...)
+  gratia::appraise(model$gam, ...)
 }

@@ -2,9 +2,16 @@
 % Please edit documentation in R/gratia_draw.R
 \name{draw.galamm}
 \alias{draw.galamm}
+\alias{draw}
 \title{Draw method for galamm objects}
 \usage{
 \method{draw}{galamm}(object, ...)
+}
+\arguments{
+\item{object}{An object of class \code{galamm} returned from
+\code{\link{galamm}}.}
+
+\item{...}{Other arguments passed on to \code{\link[gratia:draw]{gratia::draw()}}.}
 }
 \value{
 A ggplot object.

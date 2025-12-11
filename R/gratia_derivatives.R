@@ -9,10 +9,12 @@ NULL
 #' [gratia::derivatives()] for details. When \code{object} is not of class
 #' \code{galamm}, it is forwarded to \code{gratia::derivatives()}.
 #'
+#' @param object An object of class \code{galamm} returned from
+#'   \code{\link{galamm}}.
+#' @param ... Other arguments passed on to [gratia::derivatives()].
 #' @return A tibble.
 #' @export
-#' @method derivatives galamm
-#' @rdname derivatives
+#' @aliases derivatives derivatives.galamm
 #' @family details of model fit
 #' @examples
 #' dat <- subset(cognition, domain == 1 & item == "11")
