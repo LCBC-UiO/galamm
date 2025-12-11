@@ -41,6 +41,7 @@ as.data.frame(VarCorr(mod))
 \code{\link[=print.VarCorr.galamm]{print.VarCorr.galamm()}} for the print function.
 
 Other details of model fit: 
+\code{\link{appraise.galamm}()},
 \code{\link{coef.galamm}()},
 \code{\link{confint.galamm}()},
 \code{\link{derivatives.galamm}()},

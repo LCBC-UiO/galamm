@@ -41,6 +41,7 @@ coefficients more generally.
 
 Other details of model fit: 
 \code{\link{VarCorr}()},
+\code{\link{appraise.galamm}()},
 \code{\link{coef.galamm}()},
 \code{\link{confint.galamm}()},
 \code{\link{derivatives.galamm}()},

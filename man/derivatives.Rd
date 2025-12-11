@@ -7,7 +7,7 @@
 \method{derivatives}{galamm}(object, ...)
 }
 \value{
-A a tibble.
+A tibble.
 }
 \description{
 This function uses \code{gratia::derivatives} to compute derivatives of
@@ -27,6 +27,7 @@ draw(dd)
 \seealso{
 Other details of model fit: 
 \code{\link{VarCorr}()},
+\code{\link{appraise.galamm}()},
 \code{\link{coef.galamm}()},
 \code{\link{confint.galamm}()},
 \code{\link{deviance.galamm}()},

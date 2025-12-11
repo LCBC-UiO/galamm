@@ -34,6 +34,7 @@ effects, and \code{\link[=coef]{coef()}} for the generic function.
 
 Other details of model fit: 
 \code{\link{VarCorr}()},
+\code{\link{appraise.galamm}()},
 \code{\link{confint.galamm}()},
 \code{\link{derivatives.galamm}()},
 \code{\link{deviance.galamm}()},

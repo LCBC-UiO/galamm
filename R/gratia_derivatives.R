@@ -9,7 +9,7 @@ NULL
 #' [gratia::derivatives()] for details. When \code{object} is not of class
 #' \code{galamm}, it is forwarded to \code{gratia::derivatives()}.
 #'
-#' @return A a tibble.
+#' @return A tibble.
 #' @export
 #' @method derivatives galamm
 #' @rdname derivatives
