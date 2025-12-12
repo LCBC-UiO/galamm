@@ -34,8 +34,10 @@ An object of class `c("VarCorr.galamm", "VarCorr.merMod")`.
 for the print function.
 
 Other details of model fit:
+[`appraise.galamm()`](https://lcbc-uio.github.io/galamm/reference/appraise.galamm.md),
 [`coef.galamm()`](https://lcbc-uio.github.io/galamm/reference/coef.galamm.md),
 [`confint.galamm()`](https://lcbc-uio.github.io/galamm/reference/confint.galamm.md),
+[`derivatives.galamm()`](https://lcbc-uio.github.io/galamm/reference/derivatives.galamm.md),
 [`deviance.galamm()`](https://lcbc-uio.github.io/galamm/reference/deviance.galamm.md),
 [`factor_loadings.galamm()`](https://lcbc-uio.github.io/galamm/reference/factor_loadings.galamm.md),
 [`family.galamm()`](https://lcbc-uio.github.io/galamm/reference/family.galamm.md),

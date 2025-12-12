@@ -34,7 +34,9 @@ for the generic function.
 
 Other details of model fit:
 [`VarCorr()`](https://lcbc-uio.github.io/galamm/reference/VarCorr.md),
+[`appraise.galamm()`](https://lcbc-uio.github.io/galamm/reference/appraise.galamm.md),
 [`confint.galamm()`](https://lcbc-uio.github.io/galamm/reference/confint.galamm.md),
+[`derivatives.galamm()`](https://lcbc-uio.github.io/galamm/reference/derivatives.galamm.md),
 [`deviance.galamm()`](https://lcbc-uio.github.io/galamm/reference/deviance.galamm.md),
 [`factor_loadings.galamm()`](https://lcbc-uio.github.io/galamm/reference/factor_loadings.galamm.md),
 [`family.galamm()`](https://lcbc-uio.github.io/galamm/reference/family.galamm.md),

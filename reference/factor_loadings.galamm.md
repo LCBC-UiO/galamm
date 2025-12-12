@@ -38,8 +38,10 @@ for coefficients more generally.
 
 Other details of model fit:
 [`VarCorr()`](https://lcbc-uio.github.io/galamm/reference/VarCorr.md),
+[`appraise.galamm()`](https://lcbc-uio.github.io/galamm/reference/appraise.galamm.md),
 [`coef.galamm()`](https://lcbc-uio.github.io/galamm/reference/coef.galamm.md),
 [`confint.galamm()`](https://lcbc-uio.github.io/galamm/reference/confint.galamm.md),
+[`derivatives.galamm()`](https://lcbc-uio.github.io/galamm/reference/derivatives.galamm.md),
 [`deviance.galamm()`](https://lcbc-uio.github.io/galamm/reference/deviance.galamm.md),
 [`family.galamm()`](https://lcbc-uio.github.io/galamm/reference/family.galamm.md),
 [`fitted.galamm()`](https://lcbc-uio.github.io/galamm/reference/fitted.galamm.md),
@@ -86,6 +88,6 @@ mod <- galamm(y ~ item + (0 + ability | sid) + (0 + ability | school),
 factor_loadings(mod)
 #>           ability        SE
 #> lambda1 1.0000000        NA
-#> lambda2 0.3570000 0.2113691
-#> lambda3 0.3713262 0.2206723
+#> lambda2 0.8441962 0.5553192
+#> lambda3 1.3391371 0.7567644
 ```

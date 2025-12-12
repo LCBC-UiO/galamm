@@ -335,6 +335,8 @@ Functions for summarising the result of model fits.
 
 - [`anova(`*`<galamm>`*`)`](https://lcbc-uio.github.io/galamm/reference/anova.galamm.md)
   : Compare likelihoods of galamm objects
+- [`draw(`*`<galamm>`*`)`](https://lcbc-uio.github.io/galamm/reference/draw.galamm.md)
+  : Draw method for galamm objects
 - [`plot_smooth(`*`<galamm>`*`)`](https://lcbc-uio.github.io/galamm/reference/plot_smooth.galamm.md)
   : Plot smooth terms for galamm fits
 - [`print(`*`<galamm>`*`)`](https://lcbc-uio.github.io/galamm/reference/print.galamm.md)
@@ -359,10 +361,14 @@ Detailed information on specific parts of model fits.
 
 - [`VarCorr(`*`<galamm>`*`)`](https://lcbc-uio.github.io/galamm/reference/VarCorr.md)
   : Extract variance and correlation components from model
+- [`appraise(`*`<galamm>`*`)`](https://lcbc-uio.github.io/galamm/reference/appraise.galamm.md)
+  : Gratia style model diagnostic plots
 - [`coef(`*`<galamm>`*`)`](https://lcbc-uio.github.io/galamm/reference/coef.galamm.md)
   : Extract galamm coefficients
 - [`confint(`*`<galamm>`*`)`](https://lcbc-uio.github.io/galamm/reference/confint.galamm.md)
   : Confidence intervals for model parameters
+- [`derivatives(`*`<galamm>`*`)`](https://lcbc-uio.github.io/galamm/reference/derivatives.galamm.md)
+  : Derivatives of estimated smooth via finite differences
 - [`deviance(`*`<galamm>`*`)`](https://lcbc-uio.github.io/galamm/reference/deviance.galamm.md)
   : Extract deviance of galamm object
 - [`factor_loadings(`*`<galamm>`*`)`](https://lcbc-uio.github.io/galamm/reference/factor_loadings.galamm.md)

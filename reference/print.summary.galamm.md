@@ -45,6 +45,7 @@ for the summary function and
 
 Other summary functions:
 [`anova.galamm()`](https://lcbc-uio.github.io/galamm/reference/anova.galamm.md),
+[`draw.galamm()`](https://lcbc-uio.github.io/galamm/reference/draw.galamm.md),
 [`plot_smooth.galamm()`](https://lcbc-uio.github.io/galamm/reference/plot_smooth.galamm.md),
 [`print.galamm()`](https://lcbc-uio.github.io/galamm/reference/print.galamm.md),
 [`summary.galamm()`](https://lcbc-uio.github.io/galamm/reference/summary.galamm.md)
