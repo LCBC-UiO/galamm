@@ -34,6 +34,7 @@ generic.
 
 Other summary functions: 
 \code{\link{anova.galamm}()},
+\code{\link{draw.galamm}()},
 \code{\link{plot_smooth.galamm}()},
 \code{\link{print.summary.galamm}()},
 \code{\link{summary.galamm}()}

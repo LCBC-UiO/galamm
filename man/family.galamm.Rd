@@ -42,8 +42,10 @@ family(mixed_resp)
 
 Other details of model fit: 
 \code{\link{VarCorr}()},
+\code{\link{appraise.galamm}()},
 \code{\link{coef.galamm}()},
 \code{\link{confint.galamm}()},
+\code{\link{derivatives.galamm}()},
 \code{\link{deviance.galamm}()},
 \code{\link{factor_loadings.galamm}()},
 \code{\link{fitted.galamm}()},
