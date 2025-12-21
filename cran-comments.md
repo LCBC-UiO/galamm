@@ -1,8 +1,6 @@
 ## Submission note
 
-This submission fixes an error on ATLAS caused by a wrong expectation in a unit
-test, reported by professor Ripley on November 25th. It also contains a large 
-number of new developments, as described in NEWS.md.
+This submission contains many new feastures, as described in news.md.
 
 ## Test environments
 
