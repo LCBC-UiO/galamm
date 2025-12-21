@@ -8,7 +8,7 @@
   "codeRepository": "https://github.com/LCBC-UiO/galamm",
   "issueTracker": "https://github.com/LCBC-UiO/galamm/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
@@ -127,6 +127,18 @@
     },
     {
       "@type": "SoftwareApplication",
+      "identifier": "rlang",
+      "name": "rlang",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=rlang"
+    },
+    {
+      "@type": "SoftwareApplication",
       "identifier": "rmarkdown",
       "name": "rmarkdown",
       "provider": {
@@ -154,6 +166,30 @@
   "softwareRequirements": {
     "1": {
       "@type": "SoftwareApplication",
+      "identifier": "gratia",
+      "name": "gratia",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=gratia"
+    },
+    "2": {
+      "@type": "SoftwareApplication",
+      "identifier": "lattice",
+      "name": "lattice",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=lattice"
+    },
+    "3": {
+      "@type": "SoftwareApplication",
       "identifier": "lme4",
       "name": "lme4",
       "provider": {
@@ -164,7 +200,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=lme4"
     },
-    "2": {
+    "4": {
       "@type": "SoftwareApplication",
       "identifier": "Matrix",
       "name": "Matrix",
@@ -176,7 +212,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=Matrix"
     },
-    "3": {
+    "5": {
       "@type": "SoftwareApplication",
       "identifier": "memoise",
       "name": "memoise",
@@ -188,12 +224,12 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=memoise"
     },
-    "4": {
+    "6": {
       "@type": "SoftwareApplication",
       "identifier": "methods",
       "name": "methods"
     },
-    "5": {
+    "7": {
       "@type": "SoftwareApplication",
       "identifier": "mgcv",
       "name": "mgcv",
@@ -205,7 +241,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=mgcv"
     },
-    "6": {
+    "8": {
       "@type": "SoftwareApplication",
       "identifier": "nlme",
       "name": "nlme",
@@ -217,7 +253,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=nlme"
     },
-    "7": {
+    "9": {
       "@type": "SoftwareApplication",
       "identifier": "Rcpp",
       "name": "Rcpp",
@@ -229,7 +265,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=Rcpp"
     },
-    "8": {
+    "10": {
       "@type": "SoftwareApplication",
       "identifier": "Rdpack",
       "name": "Rdpack",
@@ -241,24 +277,24 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=Rdpack"
     },
-    "9": {
+    "11": {
       "@type": "SoftwareApplication",
-      "identifier": "rlang",
-      "name": "rlang",
+      "identifier": "reformulas",
+      "name": "reformulas",
       "provider": {
         "@id": "https://cran.r-project.org",
         "@type": "Organization",
         "name": "Comprehensive R Archive Network (CRAN)",
         "url": "https://cran.r-project.org"
       },
-      "sameAs": "https://CRAN.R-project.org/package=rlang"
+      "sameAs": "https://CRAN.R-project.org/package=reformulas"
     },
-    "10": {
+    "12": {
       "@type": "SoftwareApplication",
       "identifier": "stats",
       "name": "stats"
     },
-    "11": {
+    "13": {
       "@type": "SoftwareApplication",
       "identifier": "R",
       "name": "R",
@@ -266,7 +302,7 @@
     },
     "SystemRequirements": "C++17"
   },
-  "fileSize": "26115.68KB",
+  "fileSize": "5033.82KB",
   "citation": [
     {
       "@type": "ScholarlyArticle",
