@@ -96,12 +96,12 @@ summary(mod_gamm4$mer)
 #> 
 #> Scaled residuals: 
 #>      Min       1Q   Median       3Q      Max 
-#> -2.93755 -0.65215  0.00612  0.62654  3.14290 
+#> -2.93755 -0.65215  0.00612  0.62654  3.14289 
 #> 
 #> Random effects:
 #>  Groups   Name        Variance Std.Dev.
 #>  id       (Intercept) 0.8551   0.9247  
-#>  Xr       s(x)        2.0343   1.4263  
+#>  Xr       s(x)        2.0341   1.4262  
 #>  Residual             0.2501   0.5001  
 #> Number of obs: 1600, groups:  id, 200; Xr, 8
 #> 
@@ -171,8 +171,8 @@ As opposed to `gamm4`, `galamm` gives a single summary. As can be seen,
 smooth terms are both reported as random effects, and in a separate line
 under the header “Approximate significance of smooth terms:”.
 Reassuringly, the results from fitting the model with `gamm4` and with
-`galamm` are essentially equally, even though they use somewhat
-different computational algorithms.
+`galamm` are essentially equal, even though they use somewhat different
+computational algorithms.
 
 ``` r
 summary(mod)
@@ -298,7 +298,7 @@ summary(mod_gamm4$mer)
 #> Fixed effects:
 #>              Estimate Std. Error z value Pr(>|z|)    
 #> X(Intercept)   2.8115     0.2034  13.825  < 2e-16 ***
-#> Xs(x)Fx1      -1.4110     0.4242  -3.326 0.000879 ***
+#> Xs(x)Fx1      -1.4110     0.4242  -3.326  0.00088 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 

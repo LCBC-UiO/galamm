@@ -40,9 +40,9 @@ The estimated smooth function looks like this:
 plot_smooth(mod)
 ```
 
-![plot of chunk unnamed-chunk-66](unnamed-chunk-66-1.png)
+![plot of chunk unnamed-chunk-3](unnamed-chunk-3-1.png)
 
-plot of chunk unnamed-chunk-66
+plot of chunk unnamed-chunk-3
 
 By making a grid, we can find where it reaches its maximum:
 
@@ -104,9 +104,9 @@ plot(grid$x, fits[, 1], type = "l")
 for(i in sample(2:1000, 10)) lines(grid$x, fits[, i])
 ```
 
-![plot of chunk unnamed-chunk-73](unnamed-chunk-73-1.png)
+![plot of chunk unnamed-chunk-10](unnamed-chunk-10-1.png)
 
-plot of chunk unnamed-chunk-73
+plot of chunk unnamed-chunk-10
 
 We can now get a posterior 95% interval for the position of the maximum
 by simply looking at percentiles.
@@ -115,7 +115,7 @@ by simply looking at percentiles.
 maxima <- grid$x[apply(fits, 2, which.max)]
 quantile(maxima, probs = c(.025, .975))
 #>     2.5%    97.5% 
-#> 0.488975 0.568000
+#> 0.491975 0.565000
 ```
 
 We can also visualize the posterior distribution.
@@ -124,9 +124,9 @@ We can also visualize the posterior distribution.
 hist(maxima)
 ```
 
-![plot of chunk unnamed-chunk-75](unnamed-chunk-75-1.png)
+![plot of chunk unnamed-chunk-12](unnamed-chunk-12-1.png)
 
-plot of chunk unnamed-chunk-75
+plot of chunk unnamed-chunk-12
 
 ## References
 

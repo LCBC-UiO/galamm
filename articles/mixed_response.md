@@ -393,6 +393,8 @@ effects, and then `model.matrix`. It looks correctly set up.
 
 ``` r
 head(model.matrix(nobars(formula), data = diet))
+#> Warning: the 'nobars' function has moved to the reformulas package. Please update your imports, or ask an upstream package maintainter to do so.
+#> This warning is displayed once per session.
 #>   chd fiber fiber2 chd:age chd:bus age:fiber bus:fiber chd:age:bus age:bus:fiber
 #> 1   0     1      0    0.00       0     -0.38         1        0.00         -0.38
 #> 2   1     0      0   -0.38       1      0.00         0       -0.38          0.00

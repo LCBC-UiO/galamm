@@ -100,6 +100,11 @@ so since $1.412369^{2} = 1.995$, the results are identical.
 
 ``` r
 library(nlme)
+#> 
+#> Attaching package: 'nlme'
+#> The following object is masked from 'package:lme4':
+#> 
+#>     lmList
 mod_nlme <- lme(y ~ x,
   data = hsced, random = list(id = ~1),
   weights = varIdent(form = ~ 1 | item), method = "ML"

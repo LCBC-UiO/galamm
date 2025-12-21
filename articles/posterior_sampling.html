@@ -109,7 +109,7 @@ the first 10 subjects.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_smooth.galamm.html">plot_smooth</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span></code></pre></div>
 <div class="float">
-<img src="unnamed-chunk-66-1.png" alt="plot of chunk unnamed-chunk-66"><div class="figcaption">plot of chunk unnamed-chunk-66</div>
+<img src="unnamed-chunk-3-1.png" alt="plot of chunk unnamed-chunk-3"><div class="figcaption">plot of chunk unnamed-chunk-3</div>
 </div>
 <p>By making a grid, we can find where it reaches its maximum:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
@@ -152,7 +152,7 @@ functions. Note that we also here drop the first three columns.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">grid</span><span class="op">$</span><span class="va">x</span>, <span class="va">fits</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span>, type <span class="op">=</span> <span class="st">"l"</span><span class="op">)</span></span>
 <span><span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">2</span><span class="op">:</span><span class="fl">1000</span>, <span class="fl">10</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="va">grid</span><span class="op">$</span><span class="va">x</span>, <span class="va">fits</span><span class="op">[</span>, <span class="va">i</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <div class="float">
-<img src="unnamed-chunk-73-1.png" alt="plot of chunk unnamed-chunk-73"><div class="figcaption">plot of chunk unnamed-chunk-73</div>
+<img src="unnamed-chunk-10-1.png" alt="plot of chunk unnamed-chunk-10"><div class="figcaption">plot of chunk unnamed-chunk-10</div>
 </div>
 <p>We can now get a posterior 95% interval for the position of the
 maximum by simply looking at percentiles.</p>
@@ -160,12 +160,12 @@ maximum by simply looking at percentiles.</p>
 <code class="sourceCode R"><span><span class="va">maxima</span> <span class="op">&lt;-</span> <span class="va">grid</span><span class="op">$</span><span class="va">x</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply</a></span><span class="op">(</span><span class="va">fits</span>, <span class="fl">2</span>, <span class="va">which.max</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/stats/quantile.html" class="external-link">quantile</a></span><span class="op">(</span><span class="va">maxima</span>, probs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">.025</span>, <span class="fl">.975</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;     2.5%    97.5% </span></span>
-<span><span class="co">#&gt; 0.488975 0.568000</span></span></code></pre></div>
+<span><span class="co">#&gt; 0.491975 0.565000</span></span></code></pre></div>
 <p>We can also visualize the posterior distribution.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="va">maxima</span><span class="op">)</span></span></code></pre></div>
 <div class="float">
-<img src="unnamed-chunk-75-1.png" alt="plot of chunk unnamed-chunk-75"><div class="figcaption">plot of chunk unnamed-chunk-75</div>
+<img src="unnamed-chunk-12-1.png" alt="plot of chunk unnamed-chunk-12"><div class="figcaption">plot of chunk unnamed-chunk-12</div>
 </div>
 </div>
 <div class="section level2">
