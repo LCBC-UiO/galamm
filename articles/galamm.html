@@ -12,8 +12,8 @@
 <link rel="icon" sizes="any" href="../favicon.ico">
 <link rel="manifest" href="../site.webmanifest">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Introduction">
 </head>
@@ -73,7 +73,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Introduction</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/LCBC-UiO/galamm/blob/v0.4.0/vignettes/galamm.Rmd" class="external-link"><code>vignettes/galamm.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/LCBC-UiO/galamm/blob/main/vignettes/galamm.Rmd" class="external-link"><code>vignettes/galamm.Rmd</code></a></small>
       <div class="d-none name"><code>galamm.Rmd</code></div>
     </div>
 
@@ -87,10 +87,10 @@ vignettes where you can find more information.</p>
 <div class="section level3">
 <h3 id="generalized-additive-latent-and-mixed-models">Generalized Additive Latent and Mixed Models<a class="anchor" aria-label="anchor" href="#generalized-additive-latent-and-mixed-models"></a>
 </h3>
-<p>Generalized additive latent and mixed models (GALAMMs) <span class="citation">(<a href="#ref-sorensenLongitudinalModelingAgeDependent2023">Sørensen,
-Fjell, and Walhovd 2023</a>)</span> is an extension of generalized
-linear latent and mixed models (GLLAMMs) <span class="citation">(<a href="#ref-rabe-heskethGeneralizedMultilevelStructural2004">Rabe-Hesketh,
-Skrondal, and Pickles 2004</a>; <a href="#ref-skrondalGeneralizedLatentVariable2004">Skrondal and
+<p>Generalized additive latent and mixed models (GALAMMs) <span class="citation">(<a href="#ref-sorensenLongitudinalModelingAgeDependent2023">Sørensen et al.
+2023</a>)</span> is an extension of generalized linear latent and mixed
+models (GLLAMMs) <span class="citation">(<a href="#ref-rabe-heskethGeneralizedMultilevelStructural2004">Rabe-Hesketh
+et al. 2004</a>; <a href="#ref-skrondalGeneralizedLatentVariable2004">Skrondal and
 Rabe-Hesketh 2004</a>)</span> which allows both observed responses and
 latent variables to depend smoothly on observed variables.
 <em>Smoothly</em> here means that the relationship is not assumed to
@@ -117,34 +117,34 @@ responses
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>y</mi><mn>1</mn></msub><mo>,</mo><mi>…</mi><mo>,</mo><msub><mi>y</mi><mi>n</mi></msub></mrow><annotation encoding="application/x-tex">y_{1}, \dots, y_{n}</annotation></semantics></math>
 are assumed independently distributed according to an exponential family
 with density</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>y</mi><mo stretchy="false" form="prefix">|</mo><mi>θ</mi><mo>,</mo><mi>ϕ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mfrac><mrow><mi>y</mi><mi>θ</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>μ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mi>b</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>θ</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>μ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mi>ϕ</mi></mfrac><mo>+</mo><mi>c</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>y</mi><mo>,</mo><mi>ϕ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>y</mi><mo stretchy="false" form="prefix">|</mo><mi>θ</mi><mo>,</mo><mi>ϕ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mrow><mi mathvariant="normal">exp</mi><mo>⁡</mo></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mfrac><mrow><mi>y</mi><mi>θ</mi><mo stretchy="false" form="prefix">(</mo><mi>μ</mi><mo stretchy="false" form="postfix">)</mo><mo>−</mo><mi>b</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>θ</mi><mo stretchy="false" form="prefix">(</mo><mi>μ</mi><mo stretchy="false" form="postfix">)</mo><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mi>ϕ</mi></mfrac><mo>+</mo><mi>c</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>y</mi><mo>,</mo><mi>ϕ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
 f\left(y | \theta, \phi\right) = \exp \left( \frac{y\theta(\mu) - b\left(\theta(\mu)\right)}{\phi} + c\left(y, \phi\right) \right)
 </annotation></semantics></math></p>
 <p>here
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>μ</mi><mo>=</mo><msup><mi>g</mi><mrow><mo>−</mo><mn>1</mn></mrow></msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>ν</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\mu = g^{-1}(\nu)</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>μ</mi><mo>=</mo><msup><mi>g</mi><mrow><mi>−</mi><mn>1</mn></mrow></msup><mo stretchy="false" form="prefix">(</mo><mi>ν</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">\mu = g^{-1}(\nu)</annotation></semantics></math>
 is the mean,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>g</mi><mrow><mo>−</mo><mn>1</mn></mrow></msup><mrow><mo stretchy="true" form="prefix">(</mo><mo>⋅</mo><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">g^{-1}(\cdot)</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>g</mi><mrow><mi>−</mi><mn>1</mn></mrow></msup><mo stretchy="false" form="prefix">(</mo><mi>⋅</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">g^{-1}(\cdot)</annotation></semantics></math>
 is the inverse of link function
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>g</mi><mrow><mo stretchy="true" form="prefix">(</mo><mo>⋅</mo><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">g(\cdot)</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>g</mi><mo stretchy="false" form="prefix">(</mo><mi>⋅</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">g(\cdot)</annotation></semantics></math>,
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ν</mi><annotation encoding="application/x-tex">\nu</annotation></semantics></math>
 is a “nonlinear predictor”,
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ϕ</mi><annotation encoding="application/x-tex">\phi</annotation></semantics></math>
 is a dispersion parameter, and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>b</mi><mrow><mo stretchy="true" form="prefix">(</mo><mo>⋅</mo><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">b(\cdot)</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>b</mi><mo stretchy="false" form="prefix">(</mo><mi>⋅</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">b(\cdot)</annotation></semantics></math>
 and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi><mrow><mo stretchy="true" form="prefix">(</mo><mo>⋅</mo><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">c(\cdot)</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi><mo stretchy="false" form="prefix">(</mo><mi>⋅</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">c(\cdot)</annotation></semantics></math>
 are known functions. In contrast to what is assumed, e.g., by <a href="https://cran.r-project.org/package=lme4" class="external-link">lme4</a> <span class="citation">(<a href="#ref-batesFittingLinearMixedEffects2015">Bates et al.
 2015</a>)</span>, the functions
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>b</mi><mrow><mo stretchy="true" form="prefix">(</mo><mo>⋅</mo><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">b(\cdot)</annotation></semantics></math>,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi><mrow><mo stretchy="true" form="prefix">(</mo><mo>⋅</mo><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">c(\cdot)</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>b</mi><mo stretchy="false" form="prefix">(</mo><mi>⋅</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">b(\cdot)</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi><mo stretchy="false" form="prefix">(</mo><mi>⋅</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">c(\cdot)</annotation></semantics></math>,
 and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>g</mi><mrow><mo stretchy="true" form="prefix">(</mo><mo>⋅</mo><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">g(\cdot)</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>g</mi><mo stretchy="false" form="prefix">(</mo><mi>⋅</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">g(\cdot)</annotation></semantics></math>
 are allowed to vary between observations. That is, the observations can
 come from different members of the exponential family. The vignette on
 <a href="https://lcbc-uio.github.io/galamm/articles/mixed_response.html">models
 with mixed response types</a> describes this in detail.</p>
 <p>Using canonical link functions, the response model simplifies to</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>y</mi><mo stretchy="false" form="prefix">|</mo><mi>ν</mi><mo>,</mo><mi>ϕ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mfrac><mrow><mi>y</mi><mi>ν</mi><mo>−</mo><mi>b</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>ν</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mi>ϕ</mi></mfrac><mo>+</mo><mi>c</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>y</mi><mo>,</mo><mi>ϕ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>y</mi><mo stretchy="false" form="prefix">|</mo><mi>ν</mi><mo>,</mo><mi>ϕ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mrow><mi mathvariant="normal">exp</mi><mo>⁡</mo></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mfrac><mrow><mi>y</mi><mi>ν</mi><mo>−</mo><mi>b</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>ν</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mi>ϕ</mi></mfrac><mo>+</mo><mi>c</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>y</mi><mo>,</mo><mi>ϕ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
 f\left(y | \nu, \phi\right) = \exp \left( \frac{y\nu - b\left(\nu\right)}{\phi} + c\left(y, \phi\right) \right)
 </annotation></semantics></math></p>
 </div>
@@ -153,32 +153,32 @@ f\left(y | \nu, \phi\right) = \exp \left( \frac{y\nu - b\left(\nu\right)}{\phi} 
 </h4>
 <p>Next, the nonlinear predictor, which corresponds to the measurement
 model in a classical structural equation model, is defined by</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ν</mi><mo>=</mo><munderover><mo>∑</mo><mrow><mi>s</mi><mo>=</mo><mn>1</mn></mrow><mi>S</mi></munderover><msub><mi>f</mi><mi>s</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐱</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><munderover><mo>∑</mo><mrow><mi>l</mi><mo>=</mo><mn>2</mn></mrow><mi>L</mi></munderover><munderover><mo>∑</mo><mrow><mi>m</mi><mo>=</mo><mn>1</mn></mrow><msub><mi>M</mi><mi>l</mi></msub></munderover><msubsup><mi>η</mi><mi>m</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>l</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><msubsup><mi>𝐳</mi><mi>m</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>l</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><msup><mrow></mrow><mi>′</mi></msup><msubsup><mi>𝛌</mi><mi>m</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>l</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><mo>,</mo></mrow><annotation encoding="application/x-tex">
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ν</mi><mo>=</mo><munderover><mo>∑</mo><mrow><mi>s</mi><mo>=</mo><mn>1</mn></mrow><mi>S</mi></munderover><msub><mi>f</mi><mi>s</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐱</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><munderover><mo>∑</mo><mrow><mi>l</mi><mo>=</mo><mn>2</mn></mrow><mi>L</mi></munderover><munderover><mo>∑</mo><mrow><mi>m</mi><mo>=</mo><mn>1</mn></mrow><msub><mi>M</mi><mi>l</mi></msub></munderover><msubsup><mi>η</mi><mi>m</mi><mrow><mo stretchy="false" form="prefix">(</mo><mi>l</mi><mo stretchy="false" form="postfix">)</mo></mrow></msubsup><msubsup><mi>𝐳</mi><mi>m</mi><mrow><mo stretchy="false" form="prefix">(</mo><mi>l</mi><mo stretchy="false" form="postfix">)</mo></mrow></msubsup><msup><mrow></mrow><mi>′</mi></msup><msubsup><mi>𝛌</mi><mi>m</mi><mrow><mo stretchy="false" form="prefix">(</mo><mi>l</mi><mo stretchy="false" form="postfix">)</mo></mrow></msubsup><mo>,</mo></mrow><annotation encoding="application/x-tex">
 \nu = \sum_{s=1}^{S} f_{s}\left(\mathbf{x}\right) + \sum_{l=2}^{L}\sum_{m=1}^{M_{l}} \eta_{m}^{(l)} \mathbf{z}^{(l)}_{m}{}^{'}\boldsymbol{\lambda}_{m}^{(l)},
 </annotation></semantics></math></p>
 <p>where
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝐱</mi><annotation encoding="application/x-tex">\mathbf{x}</annotation></semantics></math>
 are explanatory variables,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>f</mi><mi>s</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐱</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">f_{s}(\mathbf{x})</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>f</mi><mi>s</mi></msub><mo stretchy="false" form="prefix">(</mo><mi>𝐱</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">f_{s}(\mathbf{x})</annotation></semantics></math>,
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>s</mi><mo>=</mo><mn>1</mn><mo>,</mo><mi>…</mi><mo>,</mo><mi>S</mi></mrow><annotation encoding="application/x-tex">s=1,\dots,S</annotation></semantics></math>
 are smooth functions,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>η</mi><mi>m</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>l</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><annotation encoding="application/x-tex">\eta_{m}^{(l)}</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>η</mi><mi>m</mi><mrow><mo stretchy="false" form="prefix">(</mo><mi>l</mi><mo stretchy="false" form="postfix">)</mo></mrow></msubsup><annotation encoding="application/x-tex">\eta_{m}^{(l)}</annotation></semantics></math>
 are latent variables varying at level
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>l</mi><annotation encoding="application/x-tex">l</annotation></semantics></math>,
 and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>𝛌</mi><mi>m</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>l</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><msup><mrow></mrow><mi>T</mi></msup><msubsup><mi>𝐳</mi><mi>m</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>l</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup></mrow><annotation encoding="application/x-tex">\boldsymbol{\lambda}_{m}^{(l)}{}^{T} \mathbf{z}_{m}^{(l)}</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>𝛌</mi><mi>m</mi><mrow><mo stretchy="false" form="prefix">(</mo><mi>l</mi><mo stretchy="false" form="postfix">)</mo></mrow></msubsup><msup><mrow></mrow><mi>T</mi></msup><msubsup><mi>𝐳</mi><mi>m</mi><mrow><mo stretchy="false" form="prefix">(</mo><mi>l</mi><mo stretchy="false" form="postfix">)</mo></mrow></msubsup></mrow><annotation encoding="application/x-tex">\boldsymbol{\lambda}_{m}^{(l)}{}^{T} \mathbf{z}_{m}^{(l)}</annotation></semantics></math>
 is the weighted sum of a vector of explanatory variables
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>𝐳</mi><mi>m</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>l</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><annotation encoding="application/x-tex">\mathbf{z}_{m}^{(l)}</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>𝐳</mi><mi>m</mi><mrow><mo stretchy="false" form="prefix">(</mo><mi>l</mi><mo stretchy="false" form="postfix">)</mo></mrow></msubsup><annotation encoding="application/x-tex">\mathbf{z}_{m}^{(l)}</annotation></semantics></math>
 varying at level
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>l</mi><annotation encoding="application/x-tex">l</annotation></semantics></math>
 and parameters
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>𝛌</mi><mi>m</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>l</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><annotation encoding="application/x-tex">\boldsymbol{\lambda}_{m}^{(l)}</annotation></semantics></math>.
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>𝛌</mi><mi>m</mi><mrow><mo stretchy="false" form="prefix">(</mo><mi>l</mi><mo stretchy="false" form="postfix">)</mo></mrow></msubsup><annotation encoding="application/x-tex">\boldsymbol{\lambda}_{m}^{(l)}</annotation></semantics></math>.
 Let</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>𝛈</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>l</mi><mo stretchy="true" form="postfix">)</mo></mrow></msup><mo>=</mo><msup><mrow><mo stretchy="true" form="prefix">[</mo><msubsup><mi>η</mi><mn>1</mn><mrow><mo stretchy="true" form="prefix">(</mo><mi>l</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><mo>,</mo><mi>…</mi><mo>,</mo><msubsup><mi>η</mi><msub><mi>M</mi><mi>l</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>l</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><mo stretchy="true" form="postfix">]</mo></mrow><mi>T</mi></msup><mo>∈</mo><msup><mi>ℝ</mi><msub><mi>M</mi><mi>l</mi></msub></msup></mrow><annotation encoding="application/x-tex">\boldsymbol{\eta}^{(l)} = [\eta_{1}^{(l)}, \dots, \eta_{M_{l}}^{(l)}]^{T} \in \mathbb{R}^{M_{l}}</annotation></semantics></math></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>𝛈</mi><mrow><mo stretchy="false" form="prefix">(</mo><mi>l</mi><mo stretchy="false" form="postfix">)</mo></mrow></msup><mo>=</mo><mo stretchy="false" form="prefix">[</mo><msubsup><mi>η</mi><mn>1</mn><mrow><mo stretchy="false" form="prefix">(</mo><mi>l</mi><mo stretchy="false" form="postfix">)</mo></mrow></msubsup><mo>,</mo><mi>…</mi><mo>,</mo><msubsup><mi>η</mi><msub><mi>M</mi><mi>l</mi></msub><mrow><mo stretchy="false" form="prefix">(</mo><mi>l</mi><mo stretchy="false" form="postfix">)</mo></mrow></msubsup><msup><mo stretchy="false" form="postfix">]</mo><mi>T</mi></msup><mo>∈</mo><msup><mi>ℝ</mi><msub><mi>M</mi><mi>l</mi></msub></msup></mrow><annotation encoding="application/x-tex">\boldsymbol{\eta}^{(l)} = [\eta_{1}^{(l)}, \dots, \eta_{M_{l}}^{(l)}]^{T} \in \mathbb{R}^{M_{l}}</annotation></semantics></math></p>
 <p>be the vector of all latent variables at level
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>l</mi><annotation encoding="application/x-tex">l</annotation></semantics></math>,
 and</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝛈</mi><mo>=</mo><msup><mrow><mo stretchy="true" form="prefix">[</mo><msup><mi>𝛈</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>2</mn><mo stretchy="true" form="postfix">)</mo></mrow></msup><mo>,</mo><mi>…</mi><mo>,</mo><msup><mi>𝛈</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>L</mi><mo stretchy="true" form="postfix">)</mo></mrow></msup><mo stretchy="true" form="postfix">]</mo></mrow><mi>T</mi></msup><mo>∈</mo><msup><mi>ℝ</mi><mi>M</mi></msup></mrow><annotation encoding="application/x-tex">\boldsymbol{\eta} = [\boldsymbol{\eta}^{(2)}, \dots, \boldsymbol{\eta}^{(L)}]^{T} \in \mathbb{R}^{M}</annotation></semantics></math></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝛈</mi><mo>=</mo><mo stretchy="false" form="prefix">[</mo><msup><mi>𝛈</mi><mrow><mo stretchy="false" form="prefix">(</mo><mn>2</mn><mo stretchy="false" form="postfix">)</mo></mrow></msup><mo>,</mo><mi>…</mi><mo>,</mo><msup><mi>𝛈</mi><mrow><mo stretchy="false" form="prefix">(</mo><mi>L</mi><mo stretchy="false" form="postfix">)</mo></mrow></msup><msup><mo stretchy="false" form="postfix">]</mo><mi>T</mi></msup><mo>∈</mo><msup><mi>ℝ</mi><mi>M</mi></msup></mrow><annotation encoding="application/x-tex">\boldsymbol{\eta} = [\boldsymbol{\eta}^{(2)}, \dots, \boldsymbol{\eta}^{(L)}]^{T} \in \mathbb{R}^{M}</annotation></semantics></math></p>
 <p>the vector of all latent variables belonging to a given level-2 unit,
 where
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi><mo>=</mo><msubsup><mo>∑</mo><mrow><mi>l</mi><mo>=</mo><mn>2</mn></mrow><mi>L</mi></msubsup><msub><mi>M</mi><mi>l</mi></msub></mrow><annotation encoding="application/x-tex">M = \sum_{l=2}^{L} M_{l}</annotation></semantics></math>.
@@ -205,9 +205,9 @@ and
 is a vector of
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Q</mi><annotation encoding="application/x-tex">Q</annotation></semantics></math>
 predictors for the latent variables.
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝐡</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐰</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mrow><mo stretchy="true" form="prefix">[</mo><msub><mi>𝐡</mi><mn>2</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐰</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo><mi>…</mi><mo>,</mo><msub><mi>𝐡</mi><mi>L</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐰</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">]</mo></mrow><mo>∈</mo><msup><mi>ℝ</mi><mi>M</mi></msup></mrow><annotation encoding="application/x-tex">\mathbf{h}(\mathbf{w}) = [\mathbf{h}_{2}(\mathbf{w}), \dots, \mathbf{h}_{L}(\mathbf{w})] \in \mathbb{R}^{M}</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝐡</mi><mo stretchy="false" form="prefix">(</mo><mi>𝐰</mi><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mo stretchy="false" form="prefix">[</mo><msub><mi>𝐡</mi><mn>2</mn></msub><mo stretchy="false" form="prefix">(</mo><mi>𝐰</mi><mo stretchy="false" form="postfix">)</mo><mo>,</mo><mi>…</mi><mo>,</mo><msub><mi>𝐡</mi><mi>L</mi></msub><mo stretchy="false" form="prefix">(</mo><mi>𝐰</mi><mo stretchy="false" form="postfix">)</mo><mo stretchy="false" form="postfix">]</mo><mo>∈</mo><msup><mi>ℝ</mi><mi>M</mi></msup></mrow><annotation encoding="application/x-tex">\mathbf{h}(\mathbf{w}) = [\mathbf{h}_{2}(\mathbf{w}), \dots, \mathbf{h}_{L}(\mathbf{w})] \in \mathbb{R}^{M}</annotation></semantics></math>
 is a vector of smooth functions whose components
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>𝐡</mi><mi>l</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐰</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>∈</mo><msup><mi>ℝ</mi><msub><mi>M</mi><mi>l</mi></msub></msup></mrow><annotation encoding="application/x-tex">\mathbf{h}_{l}(\mathbf{w}) \in \mathbb{R}^{M_{l}}</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>𝐡</mi><mi>l</mi></msub><mo stretchy="false" form="prefix">(</mo><mi>𝐰</mi><mo stretchy="false" form="postfix">)</mo><mo>∈</mo><msup><mi>ℝ</mi><msub><mi>M</mi><mi>l</mi></msub></msup></mrow><annotation encoding="application/x-tex">\mathbf{h}_{l}(\mathbf{w}) \in \mathbb{R}^{M_{l}}</annotation></semantics></math>
 are vectors of functions predicting the latent variables varying at
 level
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>l</mi><annotation encoding="application/x-tex">l</annotation></semantics></math>,
@@ -215,24 +215,24 @@ and depending on a subset of the elements
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝐰</mi><annotation encoding="application/x-tex">\mathbf{w}</annotation></semantics></math>.
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝛇</mi><annotation encoding="application/x-tex">\boldsymbol{\zeta}</annotation></semantics></math>
 is a vector of normally distributed random effects,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>𝛇</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>l</mi><mo stretchy="true" form="postfix">)</mo></mrow></msup><mo>∼</mo><mi>N</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>𝟎</mn><mo>,</mo><msup><mi>𝚿</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>l</mi><mo stretchy="true" form="postfix">)</mo></mrow></msup><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\boldsymbol{\zeta}^{(l)} \sim N(\mathbf{0}, \boldsymbol{\Psi}^{(l)})</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>𝛇</mi><mrow><mo stretchy="false" form="prefix">(</mo><mi>l</mi><mo stretchy="false" form="postfix">)</mo></mrow></msup><mo>∼</mo><mi>N</mi><mo stretchy="false" form="prefix">(</mo><mn>𝟎</mn><mo>,</mo><msup><mi>𝚿</mi><mrow><mo stretchy="false" form="prefix">(</mo><mi>l</mi><mo stretchy="false" form="postfix">)</mo></mrow></msup><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">\boldsymbol{\zeta}^{(l)} \sim N(\mathbf{0}, \boldsymbol{\Psi}^{(l)})</annotation></semantics></math>
 for
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>l</mi><mo>=</mo><mn>2</mn><mo>,</mo><mi>…</mi><mo>,</mo><mi>L</mi></mrow><annotation encoding="application/x-tex">l=2,\dots,L</annotation></semantics></math>,
 where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>𝚿</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>l</mi><mo stretchy="true" form="postfix">)</mo></mrow></msup><mo>∈</mo><msup><mi>ℝ</mi><mrow><msub><mi>M</mi><mi>l</mi></msub><mo>×</mo><msub><mi>M</mi><mi>l</mi></msub></mrow></msup></mrow><annotation encoding="application/x-tex">\boldsymbol{\Psi}^{(l)} \in \mathbb{R}^{M_{l} \times M_{l}}</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>𝚿</mi><mrow><mo stretchy="false" form="prefix">(</mo><mi>l</mi><mo stretchy="false" form="postfix">)</mo></mrow></msup><mo>∈</mo><msup><mi>ℝ</mi><mrow><msub><mi>M</mi><mi>l</mi></msub><mo>×</mo><msub><mi>M</mi><mi>l</mi></msub></mrow></msup></mrow><annotation encoding="application/x-tex">\boldsymbol{\Psi}^{(l)} \in \mathbb{R}^{M_{l} \times M_{l}}</annotation></semantics></math>
 is the covariance matrix of random effects at level
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>l</mi><annotation encoding="application/x-tex">l</annotation></semantics></math>.
 Defining the
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi><mo>×</mo><mi>M</mi></mrow><annotation encoding="application/x-tex">M \times M</annotation></semantics></math>
 covariance matrix
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝚿</mi><mo>=</mo><mtext mathvariant="normal">diag</mtext><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>𝚿</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>2</mn><mo stretchy="true" form="postfix">)</mo></mrow></msup><mo>,</mo><mi>…</mi><mo>,</mo><msup><mi>𝚿</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>L</mi><mo stretchy="true" form="postfix">)</mo></mrow></msup><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\boldsymbol{\Psi} = \text{diag}(\boldsymbol{\Psi}^{(2)}, \dots, \boldsymbol{\Psi}^{(L)})</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝚿</mi><mo>=</mo><mtext mathvariant="normal">diag</mtext><mo stretchy="false" form="prefix">(</mo><msup><mi>𝚿</mi><mrow><mo stretchy="false" form="prefix">(</mo><mn>2</mn><mo stretchy="false" form="postfix">)</mo></mrow></msup><mo>,</mo><mi>…</mi><mo>,</mo><msup><mi>𝚿</mi><mrow><mo stretchy="false" form="prefix">(</mo><mi>L</mi><mo stretchy="false" form="postfix">)</mo></mrow></msup><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">\boldsymbol{\Psi} = \text{diag}(\boldsymbol{\Psi}^{(2)}, \dots, \boldsymbol{\Psi}^{(L)})</annotation></semantics></math>,
 we also have
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝛇</mi><mo>∼</mo><mi>N</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>𝟎</mn><mo>,</mo><mi>𝚿</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\boldsymbol{\zeta} \sim N(\mathbf{0}, \boldsymbol{\Psi})</annotation></semantics></math>.</p>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝛇</mi><mo>∼</mo><mi>N</mi><mo stretchy="false" form="prefix">(</mo><mn>𝟎</mn><mo>,</mo><mi>𝚿</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">\boldsymbol{\zeta} \sim N(\mathbf{0}, \boldsymbol{\Psi})</annotation></semantics></math>.</p>
 </div>
 <div class="section level3">
 <h3 id="mixed-model-representation">Mixed Model Representation<a class="anchor" aria-label="anchor" href="#mixed-model-representation"></a>
 </h3>
-<p>In <span class="citation">Sørensen, Fjell, and Walhovd (<a href="#ref-sorensenLongitudinalModelingAgeDependent2023">2023</a>)</span>
+<p>In <span class="citation">Sørensen et al. (<a href="#ref-sorensenLongitudinalModelingAgeDependent2023">2023</a>)</span>
 we show that any model specified as above can be transformed to a
 GLLAMM, which is essentially a generalized nonlinear mixed model. This
 transformation is rather complex, so we won’t spell it out here, but the
@@ -250,15 +250,15 @@ does.</p>
 </h3>
 <p>In mixed model representation, the nonlinear predictor can be written
 on the form</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝛎</mi><mo>=</mo><mi>𝐗</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝛌</mi><mo>,</mo><mi>𝐁</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>𝛃</mi><mo>+</mo><mi>𝐙</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝛌</mi><mo>,</mo><mi>𝐁</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>𝛇</mi></mrow><annotation encoding="application/x-tex">
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝛎</mi><mo>=</mo><mi>𝐗</mi><mo stretchy="false" form="prefix">(</mo><mi>𝛌</mi><mo>,</mo><mi>𝐁</mi><mo stretchy="false" form="postfix">)</mo><mi>𝛃</mi><mo>+</mo><mi>𝐙</mi><mo stretchy="false" form="prefix">(</mo><mi>𝛌</mi><mo>,</mo><mi>𝐁</mi><mo stretchy="false" form="postfix">)</mo><mi>𝛇</mi></mrow><annotation encoding="application/x-tex">
 \boldsymbol{\nu} = \mathbf{X}(\boldsymbol{\lambda}, \mathbf{B}) \boldsymbol{\beta} +  \mathbf{Z}(\boldsymbol{\lambda}, \mathbf{B}) \boldsymbol{\zeta}
 </annotation></semantics></math></p>
 <p>where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝐗</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝛌</mi><mo>,</mo><mi>𝐁</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\mathbf{X}(\boldsymbol{\lambda}, \mathbf{B})</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝐗</mi><mo stretchy="false" form="prefix">(</mo><mi>𝛌</mi><mo>,</mo><mi>𝐁</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">\mathbf{X}(\boldsymbol{\lambda}, \mathbf{B})</annotation></semantics></math>
 is the regression matrix for fixed effects
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝛃</mi><annotation encoding="application/x-tex">\boldsymbol{\beta}</annotation></semantics></math>
 and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝐙</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝛌</mi><mo>,</mo><mi>𝐁</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\mathbf{Z}(\boldsymbol{\lambda}, \mathbf{B})</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝐙</mi><mo stretchy="false" form="prefix">(</mo><mi>𝛌</mi><mo>,</mo><mi>𝐁</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">\mathbf{Z}(\boldsymbol{\lambda}, \mathbf{B})</annotation></semantics></math>
 is the regression matrix for random effects
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝛇</mi><annotation encoding="application/x-tex">\boldsymbol{\zeta}</annotation></semantics></math>.
 In contrast to with generalized linear mixed models, however, both
@@ -267,11 +267,11 @@ matrices will in general depend on factor loadings
 and regression coefficients between latent variables
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝐁</mi><annotation encoding="application/x-tex">\mathbf{B}</annotation></semantics></math>.
 Both of these are parameters that need to be estimated, and hence
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝐗</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝛌</mi><mo>,</mo><mi>𝐁</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\mathbf{X}(\boldsymbol{\lambda}, \mathbf{B})</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝐗</mi><mo stretchy="false" form="prefix">(</mo><mi>𝛌</mi><mo>,</mo><mi>𝐁</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">\mathbf{X}(\boldsymbol{\lambda}, \mathbf{B})</annotation></semantics></math>
 and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝛃</mi><annotation encoding="application/x-tex">\boldsymbol{\beta}</annotation></semantics></math>
 and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝐙</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝛌</mi><mo>,</mo><mi>𝐁</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\mathbf{Z}(\boldsymbol{\lambda}, \mathbf{B})</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝐙</mi><mo stretchy="false" form="prefix">(</mo><mi>𝛌</mi><mo>,</mo><mi>𝐁</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">\mathbf{Z}(\boldsymbol{\lambda}, \mathbf{B})</annotation></semantics></math>
 need to be updated throughout the estimation process.</p>
 <div class="section level4">
 <h4 id="evaluating-the-marginal-likelihood">Evaluating the Marginal Likelihood<a class="anchor" aria-label="anchor" href="#evaluating-the-marginal-likelihood"></a>
@@ -280,7 +280,7 @@ need to be updated throughout the estimation process.</p>
 the joint likelihood for the model. We then obtain the marginal
 likelihood by integrating over the random effects, yielding a marginal
 likelihood function of the form</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>L</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝛃</mi><mo>,</mo><mi>𝚲</mi><mo>,</mo><mi>𝚪</mi><mo>,</mo><mi>𝛌</mi><mo>,</mo><mi>𝐁</mi><mo>,</mo><mi>𝛟</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><mn>2</mn><mi>π</mi><msub><mi>ϕ</mi><mn>1</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo>−</mo><mi>r</mi><mi>/</mi><mn>2</mn></mrow></msup><msub><mo>∫</mo><msup><mi>ℝ</mi><mi>r</mi></msup></msub><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>g</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝛃</mi><mo>,</mo><mi>𝚲</mi><mo>,</mo><mi>𝚪</mi><mo>,</mo><mi>𝛌</mi><mo>,</mo><mi>𝐁</mi><mo>,</mo><mi>𝛟</mi><mo>,</mo><mi>𝐮</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mtext mathvariant="normal">d</mtext><mi>𝐮</mi></mrow><annotation encoding="application/x-tex">
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>L</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝛃</mi><mo>,</mo><mi>𝚲</mi><mo>,</mo><mi>𝚪</mi><mo>,</mo><mi>𝛌</mi><mo>,</mo><mi>𝐁</mi><mo>,</mo><mi>𝛟</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><mn>2</mn><mi>π</mi><msub><mi>ϕ</mi><mn>1</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mi>−</mi><mi>r</mi><mi>/</mi><mn>2</mn></mrow></msup><msub><mo>∫</mo><msup><mi>ℝ</mi><mi>r</mi></msup></msub><mrow><mi mathvariant="normal">exp</mi><mo>⁡</mo></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mi>g</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝛃</mi><mo>,</mo><mi>𝚲</mi><mo>,</mo><mi>𝚪</mi><mo>,</mo><mi>𝛌</mi><mo>,</mo><mi>𝐁</mi><mo>,</mo><mi>𝛟</mi><mo>,</mo><mi>𝐮</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mtext mathvariant="normal">d</mtext><mi>𝐮</mi></mrow><annotation encoding="application/x-tex">
 L\left(\boldsymbol{\beta}, \boldsymbol{\Lambda}, \boldsymbol{\Gamma}, \boldsymbol{\lambda}, \mathbf{B}, \boldsymbol{\phi}\right) =  \left(2 \pi \phi_{1}\right)^{-r/2}  \int_{\mathbb{R}^{r}} \exp\left( g\left(\boldsymbol{\beta}, \boldsymbol{\Lambda}, \boldsymbol{\Gamma}, \boldsymbol{\lambda}, \mathbf{B}, \boldsymbol{\phi}, \mathbf{u}\right) \right) \text{d} \mathbf{u}
 </annotation></semantics></math></p>
 <p>where
@@ -333,7 +333,7 @@ additive mixed models with factor structures</a>.</li>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-batesFittingLinearMixedEffects2015" class="csl-entry">
 Bates, Douglas M, Martin Mächler, Ben Bolker, and Steve Walker. 2015.
 <span>“Fitting <span>Linear Mixed-Effects Models Using</span>
@@ -347,7 +347,7 @@ Rabe-Hesketh, Sophia, Anders Skrondal, and Andrew Pickles. 2004.
 <div id="ref-skrondalGeneralizedLatentVariable2004" class="csl-entry">
 Skrondal, Anders, and Sophia Rabe-Hesketh. 2004. <em>Generalized Latent
 Variable Modeling</em>. Interdisciplinary <span>Statistics
-Series</span>. Boca Raton, Florida: <span>Chapman and Hall/CRC</span>.
+Series</span>. <span>Chapman and Hall/CRC</span>.
 </div>
 <div id="ref-sorensenLongitudinalModelingAgeDependent2023" class="csl-entry">
 Sørensen, Øystein, Anders M. Fjell, and Kristine B. Walhovd. 2023.

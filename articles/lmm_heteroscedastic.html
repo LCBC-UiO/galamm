@@ -12,8 +12,8 @@
 <link rel="icon" sizes="any" href="../favicon.ico">
 <link rel="manifest" href="../site.webmanifest">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Heteroscedastic Linear Mixed Models">
 </head>
@@ -73,7 +73,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Heteroscedastic Linear Mixed Models</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/LCBC-UiO/galamm/blob/v0.4.0/vignettes/lmm_heteroscedastic.Rmd" class="external-link"><code>vignettes/lmm_heteroscedastic.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/LCBC-UiO/galamm/blob/main/vignettes/lmm_heteroscedastic.Rmd" class="external-link"><code>vignettes/lmm_heteroscedastic.Rmd</code></a></small>
       <div class="d-none name"><code>lmm_heteroscedastic.Rmd</code></div>
     </div>
 
@@ -86,7 +86,7 @@ Gaussian response models. Referring to the model formulation outlined in
 the <a href="https://lcbc-uio.github.io/galamm/articles/galamm.html">introductory
 vignette</a>, the response model and nonlinear predictor can be easily
 combined in this particular case, to give</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>y</mi><mi>i</mi></msub><mo>=</mo><munderover><mo>∑</mo><mrow><mi>s</mi><mo>=</mo><mn>1</mn></mrow><mi>S</mi></munderover><msub><mi>f</mi><mi>s</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>𝐱</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><munderover><mo>∑</mo><mrow><mi>l</mi><mo>=</mo><mn>2</mn></mrow><mi>L</mi></munderover><munderover><mo>∑</mo><mrow><mi>m</mi><mo>=</mo><mn>1</mn></mrow><msub><mi>M</mi><mi>l</mi></msub></munderover><msubsup><mi>η</mi><mi>m</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>l</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><msubsup><mi>𝐳</mi><mrow><mi>i</mi><mi>m</mi></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mi>l</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><msup><mrow></mrow><mi>′</mi></msup><msubsup><mi>𝛌</mi><mi>m</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>l</mi><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><mo>+</mo><msub><mi>ϵ</mi><mrow><mi>g</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>i</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></msub><mo>,</mo></mrow><annotation encoding="application/x-tex">
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>y</mi><mi>i</mi></msub><mo>=</mo><munderover><mo>∑</mo><mrow><mi>s</mi><mo>=</mo><mn>1</mn></mrow><mi>S</mi></munderover><msub><mi>f</mi><mi>s</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>𝐱</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><munderover><mo>∑</mo><mrow><mi>l</mi><mo>=</mo><mn>2</mn></mrow><mi>L</mi></munderover><munderover><mo>∑</mo><mrow><mi>m</mi><mo>=</mo><mn>1</mn></mrow><msub><mi>M</mi><mi>l</mi></msub></munderover><msubsup><mi>η</mi><mi>m</mi><mrow><mo stretchy="false" form="prefix">(</mo><mi>l</mi><mo stretchy="false" form="postfix">)</mo></mrow></msubsup><msubsup><mi>𝐳</mi><mrow><mi>i</mi><mi>m</mi></mrow><mrow><mo stretchy="false" form="prefix">(</mo><mi>l</mi><mo stretchy="false" form="postfix">)</mo></mrow></msubsup><msup><mrow></mrow><mi>′</mi></msup><msubsup><mi>𝛌</mi><mi>m</mi><mrow><mo stretchy="false" form="prefix">(</mo><mi>l</mi><mo stretchy="false" form="postfix">)</mo></mrow></msubsup><mo>+</mo><msub><mi>ϵ</mi><mrow><mi>g</mi><mo stretchy="false" form="prefix">(</mo><mi>i</mi><mo stretchy="false" form="postfix">)</mo></mrow></msub><mo>,</mo></mrow><annotation encoding="application/x-tex">
 y_{i} = \sum_{s=1}^{S} f_{s}\left(\mathbf{x}_{i}\right) + \sum_{l=2}^{L}\sum_{m=1}^{M_{l}} \eta_{m}^{(l)} \mathbf{z}^{(l)}_{im}{}^{'}\boldsymbol{\lambda}_{m}^{(l)} + \epsilon_{g(i)},
 </annotation></semantics></math></p>
 <p>where subscript
@@ -96,12 +96,12 @@ refers to the
 elementary unit of observation, i.e., the
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi><annotation encoding="application/x-tex">i</annotation></semantics></math>th
 row in the dataframe.
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>g</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>i</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">g(i)</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>g</mi><mo stretchy="false" form="prefix">(</mo><mi>i</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">g(i)</annotation></semantics></math>
 refers to the group to which the
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi><annotation encoding="application/x-tex">i</annotation></semantics></math>th
 observation belongs, with each grouping having a separately estimated
 residual variance,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ϵ</mi><mi>g</mi></msub><mo>∼</mo><mi>N</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo>,</mo><msubsup><mi>σ</mi><mi>g</mi><mn>2</mn></msubsup><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\epsilon_{g} \sim N(0, \sigma_{g}^{2})</annotation></semantics></math>.</p>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ϵ</mi><mi>g</mi></msub><mo>∼</mo><mi>N</mi><mo stretchy="false" form="prefix">(</mo><mn>0</mn><mo>,</mo><msubsup><mi>σ</mi><mi>g</mi><mn>2</mn></msubsup><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">\epsilon_{g} \sim N(0, \sigma_{g}^{2})</annotation></semantics></math>.</p>
 <p>In the future, we plan to also support other types of residual terms,
 including autocorrelation and residuals that depend on continuous
 variables. Such features are currently supported by the R packages <a href="https://cran.r-project.org/package=nlme" class="external-link">nlme</a> <span class="citation">(<a href="#ref-pinheiroMixedEffectsModelsSPLUS2000">Pinheiro and Bates
@@ -245,7 +245,7 @@ case.</p>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-pinheiroMixedEffectsModelsSPLUS2000" class="csl-entry">
 Pinheiro, Jose, and Douglas M Bates. 2000. <em>Mixed-<span>Effects
 Models</span> in <span>S</span> and <span>S-PLUS</span></em>. Statistics

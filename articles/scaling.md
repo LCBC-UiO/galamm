@@ -1,6 +1,7 @@
 # Computational Scaling
 
 ``` r
+
 library(galamm)
 ```
 
@@ -12,6 +13,7 @@ We will fit models to different random subsets of the input data, and
 here specify the number of such random subsets:
 
 ``` r
+
 n_replicates <- 20
 ```
 
@@ -24,12 +26,14 @@ Our goal here is to study how the computing time scales with the number
 of observations.
 
 ``` r
+
 data(KYPSsim, package = "PLmixed")
 ```
 
 We start by defining the necessary arguments to provide to galamm.
 
 ``` r
+
 loading_matrix <- rbind(
   c(1, 0),
   c(NA, 0),
@@ -44,6 +48,7 @@ form <- esteem ~ time + (0 + ms | mid) + (0 + hs | hid) + (1 | sid)
 The KYPSsim dataset has 11,494 rows.
 
 ``` r
+
 nrow(KYPSsim)
 #> [1] 11494
 ```
@@ -52,6 +57,7 @@ There are 2,924 unique student IDs, and we will fit models by extracting
 subsets of these students of increasing size.
 
 ``` r
+
 all_sids <- unique(KYPSsim$sid)
 length(all_sids)
 #> [1] 2924
@@ -62,6 +68,7 @@ sizes, and specifying that we want ten random replicates for each sample
 size.
 
 ``` r
+
 sim_params <- expand.grid(
   n_students = c(100, 500, 1000, 2000, 2924),
   replicate = seq(from = 1, to = n_replicates, by = 1)
@@ -69,6 +76,7 @@ sim_params <- expand.grid(
 ```
 
 ``` r
+
 set.seed(11)
 times_to_convergence <- Map(function(n, r) {
   sids <- sample(all_sids, size = n)
@@ -98,6 +106,7 @@ The plot below suggests that for this model, the algorithm scales
 linearly in the number of IDs.
 
 ``` r
+
 plot_dat <- do.call(rbind, times_to_convergence)
 fit <- lm(time ~ n, data = plot_dat)
 plot(plot_dat$n, plot_dat$time, xlab = "Number of IDs",
@@ -122,6 +131,7 @@ There 1200 rows and 200 unique IDs in the dataset. We take subset of
 IDs, while keeping the remaining model structure unchanged.
 
 ``` r
+
 nrow(hsced)
 #> [1] 1200
 all_ids <- unique(hsced$id)
@@ -130,6 +140,7 @@ length(all_ids)
 ```
 
 ``` r
+
 sim_params <- expand.grid(
   n_ids = c(100, 150, 200),
   replicate = seq(from = 1, to = n_replicates, by = 1)
@@ -137,6 +148,7 @@ sim_params <- expand.grid(
 ```
 
 ``` r
+
 set.seed(11)
 times_to_convergence <- Map(function(n, r) {
   ids <- sample(all_ids, size = n)
@@ -164,6 +176,7 @@ A plot of the time until convergence suggests that also in this case the
 algorithm scales linearly with the unput size.
 
 ``` r
+
 plot_dat <- do.call(rbind, times_to_convergence)
 fit <- lm(time ~ n, data = plot_dat)
 plot(plot_dat$n, plot_dat$time, xlab = "Number of IDs",
@@ -186,12 +199,14 @@ linear mixed models with factor
 structures](https://lcbc-uio.github.io/galamm/articles/glmm_factor.html).
 
 ``` r
+
 data(IRTsim, package = "PLmixed")
 ```
 
 This dataset has 2,500 rows and 500 student IDs.
 
 ``` r
+
 nrow(IRTsim)
 #> [1] 2500
 all_sids <- unique(IRTsim$sid)
@@ -202,6 +217,7 @@ length(all_sids)
 We again sample subsets of student IDs.
 
 ``` r
+
 sim_params <- expand.grid(
   n_students = seq(from = 100, to = 500, by = 100),
   replicate = seq(from = 1, to = n_replicates, by = 1)
@@ -209,6 +225,7 @@ sim_params <- expand.grid(
 ```
 
 ``` r
+
 set.seed(11)
 times_to_convergence <- Map(function(n, r) {
   sids <- sample(all_sids, size = n)
@@ -240,6 +257,7 @@ considered here, there is almost no relationship between the input data
 size and the time until convergence.
 
 ``` r
+
 plot_dat <- do.call(rbind, times_to_convergence)
 fit <- lm(time ~ n, data = plot_dat)
 plot(plot_dat$n, plot_dat$time, xlab = "Number of IDs",
@@ -274,6 +292,7 @@ vignette](https://lcbc-uio.github.io/galamm/articles/semiparametric.html).
 The data for domain 1 has 4,800 rows and 200 unique IDs.
 
 ``` r
+
 dat <- subset(cognition, domain == 1)
 nrow(dat)
 #> [1] 4800
@@ -285,6 +304,7 @@ length(all_ids)
 We define the simulation parameters as before.
 
 ``` r
+
 sim_params <- expand.grid(
   n_ids = seq(from = 50, to = 200, by = 50),
   replicate = seq(from = 1, to = n_replicates, by = 1)
@@ -294,6 +314,7 @@ sim_params <- expand.grid(
 Then we fit the model for different subsets of the data.
 
 ``` r
+
 set.seed(11)
 times_to_convergence <- Map(function(n, r) {
   ids <- sample(all_ids, size = n)
@@ -324,6 +345,7 @@ The plot below suggests that for this model, the algorithm scales
 linearly in the number of IDs.
 
 ``` r
+
 plot_dat <- do.call(rbind, times_to_convergence)
 fit <- lm(time ~ n, data = plot_dat)
 plot(plot_dat$n, plot_dat$time, xlab = "Number of IDs",
@@ -345,6 +367,7 @@ We now consider domain 2, which has binomial responses.
 The data for domain 2 has 3,200 rows and 200 unique IDs.
 
 ``` r
+
 dat <- subset(cognition, domain == 2)
 nrow(dat)
 #> [1] 3200
@@ -356,6 +379,7 @@ length(all_ids)
 We define the simulation parameters as before.
 
 ``` r
+
 sim_params <- expand.grid(
   n_ids = seq(from = 50, to = 200, by = 50),
   replicate = seq(from = 1, to = n_replicates, by = 1)
@@ -365,6 +389,7 @@ sim_params <- expand.grid(
 Then we fit the model for different subsets of the data.
 
 ``` r
+
 set.seed(11)
 times_to_convergence <- Map(function(n, r) {
   ids <- sample(all_ids, size = n)
@@ -401,12 +426,14 @@ times_to_convergence <- Map(function(n, r) {
 ```
 
 ``` r
+
 plot_dat <- do.call(rbind, times_to_convergence)
 ```
 
 We check how many models failed to converge, and then remove those rows:
 
 ``` r
+
 sum(is.na(plot_dat))
 #> [1] 0
 plot_dat <- na.omit(plot_dat)
@@ -416,6 +443,7 @@ The plot below suggests that for this model, the algorithm scales
 linearly in the number of IDs.
 
 ``` r
+
 fit <- lm(time ~ n, data = plot_dat)
 plot(plot_dat$n, plot_dat$time, xlab = "Number of IDs",
      ylab = "Time until convergence")
@@ -431,12 +459,12 @@ with factor structures. Black line shows linear model fit to the data.
 
 ### Conclusion
 
-The algorithm used by galamm, which is described in detail in Sørensen,
-Fjell, and Walhovd
-([2023](#ref-sorensenLongitudinalModelingAgeDependent2023)), seems to
-scale linearly with the input data size in the tests considered in this
-vignette, with the exception of the the generalized linear mixed model
-with factor structures, for which the relationship was almost flat.
+The algorithm used by galamm, which is described in detail in Sørensen
+et al. ([2023](#ref-sorensenLongitudinalModelingAgeDependent2023)),
+seems to scale linearly with the input data size in the tests considered
+in this vignette, with the exception of the the generalized linear mixed
+model with factor structures, for which the relationship was almost
+flat.
 
 ## References
 

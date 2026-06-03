@@ -1,6 +1,7 @@
 # Posterior Sampling
 
 ``` r
+
 library(galamm)
 ```
 
@@ -18,6 +19,7 @@ modeling](https://lcbc-uio.github.io/galamm/articles/mixed_response.html).
 To make it more interesting we only keep the first 10 subjects.
 
 ``` r
+
 dat <- subset(cognition, domain == 1 & id <= 10)
 dat$y <- dat$y[, 1]
 loading_matrix <- matrix(c(1, NA, NA), ncol = 1)
@@ -37,6 +39,7 @@ mod <- galamm(
 The estimated smooth function looks like this:
 
 ``` r
+
 plot_smooth(mod)
 ```
 
@@ -47,6 +50,7 @@ plot of chunk unnamed-chunk-3
 By making a grid, we can find where it reaches its maximum:
 
 ``` r
+
 grid <- data.frame(x = seq(from = 0, to = 1, by = .001), item = "11")
 fit <- predict(mod, newdata = grid)
 grid$x[which.max(fit)]
@@ -62,6 +66,7 @@ point estimates of the spline coefficients. These can be found in the
 coefficients are listed below:
 
 ``` r
+
 coef(mod$gam)
 #>         item11         item12         item13 s(x):loading.1 s(x):loading.2 s(x):loading.3 s(x):loading.4 
 #>     1.40903875     1.98958988     0.43056016     0.17365496     0.37308713     0.14767053    -0.46778527 
@@ -73,12 +78,14 @@ We see that in this case we do not need the three first, and hence we
 do:
 
 ``` r
+
 bhat_spline <- coef(mod$gam)[-(1:3)]
 ```
 
 We similarly find the covariance matrix of the spline coefficients:
 
 ``` r
+
 vcov_spline <- vcov(mod$gam)[-(1:3), -(1:3)]
 ```
 
@@ -86,6 +93,7 @@ We can now sample 1000 new spline coefficient vectors from the
 posterior:
 
 ``` r
+
 betas <- mgcv::rmvn(1000, bhat_spline, vcov_spline)
 ```
 
@@ -93,6 +101,7 @@ We can use the linear predictor matrix to reconstruct the 1000
 functions. Note that we also here drop the first three columns.
 
 ``` r
+
 Xp <- predict(mod, newdata = grid, type = "lpmatrix")[ , -(1:3)]
 fits <- Xp %*% t(betas)
 ```
@@ -100,6 +109,7 @@ fits <- Xp %*% t(betas)
 It’s hard to visualize all of them, but we can do a handful:
 
 ``` r
+
 plot(grid$x, fits[, 1], type = "l")
 for(i in sample(2:1000, 10)) lines(grid$x, fits[, i])
 ```
@@ -112,6 +122,7 @@ We can now get a posterior 95% interval for the position of the maximum
 by simply looking at percentiles.
 
 ``` r
+
 maxima <- grid$x[apply(fits, 2, which.max)]
 quantile(maxima, probs = c(.025, .975))
 #>     2.5%    97.5% 
@@ -121,6 +132,7 @@ quantile(maxima, probs = c(.025, .975))
 We can also visualize the posterior distribution.
 
 ``` r
+
 hist(maxima)
 ```
 

@@ -53,7 +53,7 @@ Leppik IE, Dreifuss FE, Porter R, Bowman T, Santilli N, Jacobs M, Crosby
 C, Cloyd J, Stackman J, Graves N, Sutula T, Welty T, Vickery J, Brundage
 R, Gates J, Gumnit RJ, Gutierrez A (1987). “A Controlled Study of
 Progabide in Partial Seizures: Methodology and Results.” *Neurology*,
-**37**(6), 963–963. ISSN 0028-3878, 1526-632X,
+**37**(6), 963–963. ISSN 0028-3878, 1526-632X.
 [doi:10.1212/WNL.37.6.963](https://doi.org/10.1212/WNL.37.6.963) .  
   
 Skrondal A, Rabe-Hesketh S (2004). *Generalized Latent Variable

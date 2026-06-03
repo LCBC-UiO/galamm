@@ -21,7 +21,7 @@ combinations thereof. Syntax for model formulation is close to 'lme4'
 
 Sørensen Ø, Fjell AM, Walhovd KB (2023). “Longitudinal Modeling of
 Age-Dependent Latent Traits with Generalized Additive Latent and Mixed
-Models.” *Psychometrika*, **88**(2), 456–486. ISSN 1860-0980,
+Models.” *Psychometrika*, **88**(2), 456–486. ISSN 1860-0980.
 [doi:10.1007/s11336-023-09910-z](https://doi.org/10.1007/s11336-023-09910-z)
 .
 

@@ -1,6 +1,7 @@
 # Models with Mixed Response Types
 
 ``` r
+
 library(galamm)
 library(lme4)
 ```
@@ -16,6 +17,7 @@ normally distributed responses and “b” for binomially distributed
 responses. They are link through a common random intercept.
 
 ``` r
+
 head(mresp)
 #>   id         x        y.1        y.2 itemgroup
 #> 1  1 0.8638214  0.2866329  1.0000000         a
@@ -31,47 +33,54 @@ vignette](https://lcbc-uio.github.io/galamm/articles/galamm.html), and
 for simplicity assuming we use canonical link functions, we have the
 response model
 
-$$f\left( y_{ij}|\nu_{ij},\phi \right) = \exp\left( \frac{y_{ij}\nu_{ij} - b\left( \nu_{ij} \right)}{\phi} + c\left( y_{ij},\phi \right) \right)$$
+``` math
+f\left(y_{ij} | \nu_{ij}, \phi\right) = \exp \left( \frac{y_{ij}\nu_{ij} - b\left(\nu_{ij}\right)}{\phi} + c\left(y_{ij}, \phi\right) \right)
+```
 
-for the $i$th observation of the $j$ subject. Although we don’t show
+for the $`i`$th observation of the $`j`$ subject. Although we don’t show
 this with a subscript, when the variable `itemgroup = "a"` we have a
-Gaussian response, so $b(\nu) = \nu^{2}/2$ and the support of the
-distribution is the entire real line $\mathbb{R}$. The mean in this case
-is given by $\mu_{ij} = \nu_{ij}$. When `itemgroup = "b"` we have a
-binomial response, so $b(\nu) = \log\left( 1 + \exp(\nu) \right)$ and
-the support is $\{ 0,1\}$. In this binomial case we also have
-$\phi = 1$. The mean in this case is given by
-$\mu_{ij} = \exp\left( \nu_{ij} \right)/\left( 1 + \exp\left( \nu_{ij} \right) \right)$.
-The function $c\left( y_{ij},\phi \right)$ also differs between these
-cases, but is not of the same interest, since it does not depend on the
-linear predictor. It hence matters for the value of the log-likelihood,
-but not for its derivative with respect to the parameters of interest.
+Gaussian response, so $`b(\nu) = \nu^{2}/2`$ and the support of the
+distribution is the entire real line $`\mathbb{R}`$. The mean in this
+case is given by $`\mu_{ij} = \nu_{ij}`$. When `itemgroup = "b"` we have
+a binomial response, so $`b(\nu) = \log(1 + \exp(\nu))`$ and the support
+is $`\{0, 1\}`$. In this binomial case we also have $`\phi=1`$. The mean
+in this case is given by
+$`\mu_{ij} = \exp(\nu_{ij}) / (1 + \exp(\nu_{ij}))`$. The function
+$`c(y_{ij}, \phi)`$ also differs between these cases, but is not of the
+same interest, since it does not depend on the linear predictor. It
+hence matters for the value of the log-likelihood, but not for its
+derivative with respect to the parameters of interest.
 
 Next, the nonlinear predictor is given by
 
-$$\nu_{ij} = \beta_{0} + x_{ij}\beta_{1} + \mathbf{z}_{ij}^{T}{\mathbf{λ}}\eta$$
+``` math
+\nu_{ij} = \beta_{0} + x_{ij}\beta_{1} + \mathbf{z}_{ij}^{T}\boldsymbol{\lambda} \eta
+```
 
-where $x_{ij}$ is an explanatory and $\mathbf{z}_{ij}$ is a dummy vector
-of length 2 with exactly one element equal to one and one element equal
-to zero. When `itemgroup = "a"`, $\mathbf{z} = (1,0)^{T}$ and when
-`itemgroup = "b"`, $\mathbf{z} = (0,1)^{T}$. The parameter
-${\mathbf{λ}} = (1,\lambda)^{T}$ is a vector of factor loadings, whose
-first element equals zero for identifiability. $\eta$ is a latent
-variable, in this case representing an underlying trait “causing” the
-observed responses.
+where $`x_{ij}`$ is an explanatory and $`\mathbf{z}_{ij}`$ is a dummy
+vector of length 2 with exactly one element equal to one and one element
+equal to zero. When `itemgroup = "a"`, $`\mathbf{z} = (1, 0)^{T}`$ and
+when `itemgroup = "b"`, $`\mathbf{z} = (0, 1)^{T}`$. The parameter
+$`\boldsymbol{\lambda} = (1, \lambda)^{T}`$ is a vector of factor
+loadings, whose first element equals zero for identifiability. $`\eta`$
+is a latent variable, in this case representing an underlying trait
+“causing” the observed responses.
 
 The structural model is simply
 
-$$\eta = \zeta \sim N(0,\psi),$$
+``` math
+\eta = \zeta \sim N(0, \psi),
+```
 
-where $N(0,\psi)$ denotes a normal distribution with mean 0 and variance
-$\psi$.
+where $`N(0, \psi)`$ denotes a normal distribution with mean 0 and
+variance $`\psi`$.
 
 We define the loading matrix as follows, where the value `1` indicates
-that the first element $\mathbf{λ}$ is fixed, and the value `NA`
-indicates that its second element is unknown, and to be estimated.
+that the first element $`\boldsymbol{\lambda}`$ is fixed, and the value
+`NA` indicates that its second element is unknown, and to be estimated.
 
 ``` r
+
 (loading_matrix <- matrix(c(1, NA), ncol = 1))
 #>      [,1]
 #> [1,]    1
@@ -90,6 +99,7 @@ already columns in `mresp`.
 We also need to define the response families using the `gfam` function:
 
 ``` r
+
 families <- galamm::gfam(list(gaussian, binomial))
 ```
 
@@ -100,6 +110,7 @@ the second column is the index of the family. That is, a `1` means
 `gaussian` and a `2` means `binomial`.
 
 ``` r
+
 head(mresp$y)
 #>            [,1] [,2]
 #> [1,]  0.2866329    1
@@ -113,6 +124,7 @@ head(mresp$y)
 We are now ready to estimate the mixed response model.
 
 ``` r
+
 mixed_resp <- galamm(
   formula = y ~ x + (0 + level | id),
   data = mresp,
@@ -126,6 +138,7 @@ mixed_resp <- galamm(
 We can also look at its summary output.
 
 ``` r
+
 summary(mixed_resp)
 #> GALAMM fit by maximum marginal likelihood.
 #> Formula: y ~ x + (0 + level | id)
@@ -160,6 +173,7 @@ However, some care is needed in this case. We illustrate with the
 dataset `mresp_hsced`, whose first few lines are shown below:
 
 ``` r
+
 head(mresp_hsced)
 #>   id         x         y.1         y.2 itemgroup grp isgauss
 #> 1  1 0.8638214   0.2866329   1.0000000         a   b       1
@@ -180,10 +194,11 @@ we specify that the heteroscedasticity is assumed between levels of
 `grp`, but that this only applies when `isgauss` is nonzero. Hence, the
 binomially distributed responses don’t have any heteroscedastic
 residuals estimated, since for these observations the dispersion
-parameter $\phi$ is fixed to 1. We also ignore the factor loadings for
+parameter $`\phi`$ is fixed to 1. We also ignore the factor loadings for
 simplicity.
 
 ``` r
+
 mod <- galamm(
   formula = y ~ x + (1 | id),
   dispformula = ~ (0 + isgauss | grp),
@@ -196,6 +211,7 @@ The summary output now shows that we also have estimated a variance
 function.
 
 ``` r
+
 summary(mod)
 #> GALAMM fit by maximum marginal likelihood.
 #> Formula: y ~ x + (1 | id)
@@ -223,13 +239,13 @@ summary(mod)
 
 This example is taken from Chapter 14.2 in Skrondal and Rabe-Hesketh
 ([2004](#ref-skrondalGeneralizedLatentVariable2004)), and follows the
-analyses in ([Rabe-Hesketh, Pickles, and Skrondal
+analyses in ([Rabe-Hesketh, Pickles, et al.
 2003](#ref-rabe-heskethCorrectingCovariateMeasurement2003);
-[Rabe-Hesketh, Skrondal, and Pickles
+[Rabe-Hesketh, Skrondal, et al.
 2003](#ref-rabe-heskethMaximumLikelihoodEstimation2003)). No originality
 is claimed with respect to the analyses; but for the sake of
 understanding the `galamm` code, we explain it in quite some detail. The
-original dataset comes from Morris, Marr, and Clayton
+original dataset comes from Morris et al.
 ([1977](#ref-morrisDietHeartPostscript1977)).
 
 The scientific question concerns the impact of fiber intake on risk of
@@ -244,6 +260,7 @@ The first few rows of the dataset are printed below. All of these had
 only a single measurement of fiber intake.
 
 ``` r
+
 head(diet)
 #>   id   age bus   item       y.1       y.2 chd fiber fiber2
 #> 1  1 -0.38   1 fiber1 17.814280  1.000000   0     1      0
@@ -258,6 +275,7 @@ It is instructive to also look at some men who had two measurements of
 fiber intake. Here are three of them.
 
 ``` r
+
 diet[diet$id %in% c(219, 220, 221), ]
 #>      id   age bus   item      y.1      y.2 chd fiber fiber2
 #> 429 219 -8.13   0 fiber1 15.64263  1.00000   0     1      0
@@ -279,27 +297,31 @@ error, it is well known that simply averaging the two measurements,
 where available, and using the single measurement otherwise, will lead
 to bias and lack of power ([Carroll et al.
 2006](#ref-carrollMeasurementErrorNonlinear2006)). Instead, we let
-$\eta_{j}$ denote the true (latent) fiber intake of person $j$, and
+$`\eta_{j}`$ denote the true (latent) fiber intake of person $`j`$, and
 define the structural model
 
-$$\eta_{j} = \mathbf{x}_{ij}\prime{\mathbf{γ}} + \zeta_{j}.$$
+``` math
+\eta_{j} = \mathbf{x}_{ij}'\boldsymbol{\gamma} + \zeta_{j}.
+```
 
-where $\mathbf{x}_{ij}$ is a vector of covariates age, bus, and their
+where $`\mathbf{x}_{ij}`$ is a vector of covariates age, bus, and their
 interaction, as well as a constant term for defining the intercept. The
 R formula for setting up the model matrix would be
-`model.matrix(~ age * bus, data = diet)`. The term $\zeta_{j}$ is a
-normally distributed disturbance, $\zeta_{j} \sim N(0,\psi)$.
+`model.matrix(~ age * bus, data = diet)`. The term $`\zeta_{j}`$ is a
+normally distributed disturbance, $`\zeta_{j} \sim N(0, \psi)`$.
 
 #### Measurement Model
 
 It is assumed that the fiber measurements are normally distributed
-around the true value $\eta_{j}$, and allow for a drift term
-$d_{ij}\beta_{0}$, where $d_{2ij}$ is a dummy variable whose value
-equals one if the $i$th row of the $j$th person is a replicate fiber
+around the true value $`\eta_{j}`$, and allow for a drift term
+$`d_{ij}\beta_{0}`$, where $`d_{2ij}`$ is a dummy variable whose value
+equals one if the $`i`$th row of the $`j`$th person is a replicate fiber
 measurement, and zero otherwise. This allows for a drift in the
 measurements, and the model becomes
 
-$$y_{ij} = d_{2ij}\beta_{0} + \eta_{j} + \epsilon_{ij},\qquad\epsilon_{ij} = N(0,\theta).$$
+``` math
+y_{ij} = d_{2ij} \beta_{0} + \eta_{j} + \epsilon_{ij}, \qquad \epsilon_{ij} = N(0, \theta).
+```
 
 #### Disease Model
 
@@ -307,13 +329,15 @@ Next, for the rows corresponding to coronary heart disease measurement,
 we assume a binomial model with a logit link function, i.e., logistic
 regression. This model is given by
 
-$$\text{logit}\left\lbrack P\left( y_{ij} = 1|\eta_{j} \right) \right\rbrack = \mathbf{x}_{ij}\prime{\mathbf{β}} + \lambda\eta_{j},$$
+``` math
+\text{logit}[P(y_{ij}=1 | \eta_{j})] = \mathbf{x}_{ij}'\boldsymbol{\beta} + \lambda \eta_{j},
+```
 
-where $\mathbf{x}_{ij}$ is the same as before, but where $\mathbf{β}$
-now represents the direct effect of age and bus on the probability of
-coronary heart disease. The factor loading $\lambda$ is the regression
-coefficient for latent fiber intake on the risk of coronary heart
-disease.
+where $`\mathbf{x}_{ij}`$ is the same as before, but where
+$`\boldsymbol{\beta}`$ now represents the direct effect of age and bus
+on the probability of coronary heart disease. The factor loading
+$`\lambda`$ is the regression coefficient for latent fiber intake on the
+risk of coronary heart disease.
 
 #### Nonlinear Predictor
 
@@ -321,10 +345,12 @@ Stacking the three responses, which are fiber intake at times 1 and 2,
 and coronary heart disease, we can define the joint model as a GLLAMM
 with nonlinear predictor
 
-$$\nu_{ij} = d_{2ij}\beta_{0} + d_{3ij}\mathbf{x}_{j}\prime{\mathbf{β}} + \mathbf{x}_{j}\prime{\mathbf{γ}}\left\lbrack \left( d_{1i} + d_{2i} \right) + \lambda d_{3i} \right\rbrack + \zeta_{j}\left\lbrack \left( d_{1i} + d_{2i} \right) + \lambda d_{3i} \right\rbrack,$$
+``` math
+\nu_{ij} = d_{2ij} \beta_{0} + d_{3ij} \mathbf{x}_{j}'\boldsymbol{\beta} + \mathbf{x}_{j}'\boldsymbol{\gamma}\left[(d_{1i} + d_{2i}) + \lambda d_{3i}\right] + \zeta_{j} \left[(d_{1i} + d_{2i}) + \lambda d_{3i}\right],
+```
 
-where $d_{1i}$ is a dummy variable for fiber measurements at timepoint 1
-and $d_{3i}$ is an indicator for coronary heart disease.
+where $`d_{1i}`$ is a dummy variable for fiber measurements at timepoint
+1 and $`d_{3i}`$ is an indicator for coronary heart disease.
 
 #### Estimating the Model with galamm
 
@@ -334,6 +360,7 @@ rows should receive which loading, we note that the factor levels are as
 follows:
 
 ``` r
+
 levels(diet$item)
 #> [1] "fiber1" "fiber2" "chd"
 ```
@@ -342,6 +369,7 @@ We could of course have changed this, but given these levels, we define
 the following loading matrix:
 
 ``` r
+
 (loading_matrix <- matrix(c(1, 1, NA), ncol = 1))
 #>      [,1]
 #> [1,]    1
@@ -356,6 +384,7 @@ We also need to define the families, making sure it is binomial for
 “chd” and Gaussian for “fiber1” and “fiber2”.
 
 ``` r
+
 head(diet$y)
 #>           [,1] [,2]
 #> [1,] 17.814280    1
@@ -367,6 +396,7 @@ head(diet$y)
 ```
 
 ``` r
+
 families <- galamm::gfam(list(gaussian, binomial))
 ```
 
@@ -375,16 +405,17 @@ follows, and note that the whole part `0 + chd + fiber + fiber2` could
 have been replaced by `item`. We use the former for ease of explanation.
 
 ``` r
+
 formula <- y ~ 0 + chd + (age * bus):chd + fiber +
   (age * bus):fiber + fiber2 + (0 + loading | id)
 ```
 
 The initial zero specifies that we don’t want R to insert an intercept
 term. Next, `chd + (age * bus) : chd` applies to “chd” rows only, and
-corresponds to $\mathbf{x}_{ij}^{T}{\mathbf{β}}$ in the disease model.
-The part `fiber + (age * bus) : fiber` corresponds to the term
-$\mathbf{x}_{ij}^{T}{\mathbf{γ}}$ in the disease model, and `fiber2`
-corresponds to the drift term $d_{2ij}\beta_{0}$.
+corresponds to $`\mathbf{x}_{ij}^{T} \boldsymbol{\beta}`$ in the disease
+model. The part `fiber + (age * bus) : fiber` corresponds to the term
+$`\mathbf{x}_{ij}^{T}\boldsymbol{\gamma}`$ in the disease model, and
+`fiber2` corresponds to the drift term $`d_{2ij}\beta_{0}`$.
 
 We can inspect the model implied by the formula by using the `nobars`
 function from [lme4](https://cran.r-project.org/package=lme4) ([Bates et
@@ -392,6 +423,7 @@ al. 2015](#ref-batesFittingLinearMixedEffects2015)) to remove the random
 effects, and then `model.matrix`. It looks correctly set up.
 
 ``` r
+
 head(model.matrix(nobars(formula), data = diet))
 #> Warning: the 'nobars' function has moved to the reformulas package. Please update your imports, or ask an upstream package maintainter to do so.
 #> This warning is displayed once per session.
@@ -406,13 +438,14 @@ head(model.matrix(nobars(formula), data = diet))
 
 Finally, the random effects part `(0 + loading | id)` specifies that for
 each `id` there should be a single random intercept, which corresponds
-to latent fiber intake $\eta_{j}$. Writing `0 + loading` means that
-$\eta_{j}$ should be multiplied by the factor loadings defined in the
+to latent fiber intake $`\eta_{j}`$. Writing `0 + loading` means that
+$`\eta_{j}`$ should be multiplied by the factor loadings defined in the
 loading matrix.
 
 We are now ready to fit the model.
 
 ``` r
+
 mod <- galamm(
   formula = formula,
   data = diet,
@@ -427,6 +460,7 @@ Looking at the summary output, however, we see a warning that the
 Hessian matrix is rank deficient.
 
 ``` r
+
 summary(mod)
 #> Warning in vcov.galamm(object, parm = "lambda"): Rank deficient Hessian matrix.Could not compute covariance matrix.
 #> Warning in vcov.galamm(object, "beta"): Rank deficient Hessian matrix.Could not compute covariance matrix.
@@ -466,6 +500,7 @@ by simply turning a lever to make the algorithm more verbose. The
 argument `trace = 3` is passed onto `optim`.
 
 ``` r
+
 mod <- galamm(
   formula = formula,
   data = diet,
@@ -498,15 +533,16 @@ mod <- galamm(
 
 Now we got some information, but the final estimate is the same, since
 we otherwise used the same parameters. We now instead try to increase
-the initial estimate of the random effect parameter $\theta$. In general
-$\theta$ is a vector containing elements of the Cholesky factor of the
-covariance matrix (see, Bates et al.
+the initial estimate of the random effect parameter $`\theta`$. In
+general $`\theta`$ is a vector containing elements of the Cholesky
+factor of the covariance matrix (see, Bates et al.
 ([2015](#ref-batesFittingLinearMixedEffects2015))), but in this case it
 is just the standard deviation of the latent variable. By default, its
 initial value is 1, but we now try to increase it to 10, with the
 `start` argument.
 
 ``` r
+
 mod <- galamm(
   formula = formula,
   data = diet,
@@ -552,6 +588,7 @@ very close to the corresponding model in Table 14.1 of Skrondal and
 Rabe-Hesketh ([2004](#ref-skrondalGeneralizedLatentVariable2004)).
 
 ``` r
+
 summary(mod)
 #> GALAMM fit by maximum marginal likelihood.
 #> Formula: formula
@@ -599,11 +636,14 @@ and Rabe-Hesketh ([2004](#ref-skrondalGeneralizedLatentVariable2004)),
 we now estimate an alternative model which only has indirect effects.
 The disease model is now
 
-$$\text{logit}\left\lbrack P\left( y_{ij} = 1|\eta_{j} \right) \right\rbrack = d_{ij3}\beta_{03} + \lambda\eta_{j},$$
+``` math
+\text{logit}[P(y_{ij}=1 | \eta_{j})] = d_{ij3}\beta_{03} + \lambda \eta_{j},
+```
 
 The formula becomes
 
 ``` r
+
 formula0 <- y ~ 0 + chd + fiber + (age * bus):fiber + fiber2 +
   (0 + loading | id)
 ```
@@ -611,6 +651,7 @@ formula0 <- y ~ 0 + chd + fiber + (age * bus):fiber + fiber2 +
 Everything else is the same as before, so we fit the new model with
 
 ``` r
+
 mod0 <- galamm(
   formula = formula0,
   data = diet,
@@ -646,6 +687,7 @@ column in Table 14.1 of Skrondal and Rabe-Hesketh
 ([2004](#ref-skrondalGeneralizedLatentVariable2004)).
 
 ``` r
+
 summary(mod0)
 #> GALAMM fit by maximum marginal likelihood.
 #> Formula: formula0
@@ -680,6 +722,7 @@ We can use `anova` method for galamm objects to compare the models. AIC
 and BIC favor the simpler model with only indirect effects.
 
 ``` r
+
 anova(mod, mod0)
 #> Data: diet
 #> Models:
@@ -700,7 +743,7 @@ Statistical Software* 67 (1): 1–48.
 Carroll, Raymond J., David Ruppert, Leonard A. Stefanski, and Ciprian M.
 Crainiceanu. 2006. *Measurement Error in Nonlinear Models: A Modern
 Perspective*. 2nd ed. Monographs on Statistics and Applied Probability.
-Boca Raton, Florida: John Wiley & Sons.
+John Wiley & Sons.
 
 Morris, J. N., J. W. Marr, and D. G. Clayton. 1977. “Diet and Heart: A
 Postscript.” *Br Med J* 2 (6098): 1307–14.
@@ -717,5 +760,5 @@ Covariate Measurement Error.” *The Stata Journal* 3 (4): 386–411.
 <https://doi.org/10.1177/1536867X0400300408>.
 
 Skrondal, Anders, and Sophia Rabe-Hesketh. 2004. *Generalized Latent
-Variable Modeling*. Interdisciplinary Statistics Series. Boca Raton,
-Florida: Chapman and Hall/CRC.
+Variable Modeling*. Interdisciplinary Statistics Series. Chapman and
+Hall/CRC.

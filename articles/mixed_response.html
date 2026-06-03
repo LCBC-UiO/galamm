@@ -12,8 +12,8 @@
 <link rel="icon" sizes="any" href="../favicon.ico">
 <link rel="manifest" href="../site.webmanifest">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Models with Mixed Response Types">
 </head>
@@ -73,7 +73,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Models with Mixed Response Types</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/LCBC-UiO/galamm/blob/v0.4.0/vignettes/mixed_response.Rmd" class="external-link"><code>vignettes/mixed_response.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/LCBC-UiO/galamm/blob/main/vignettes/mixed_response.Rmd" class="external-link"><code>vignettes/mixed_response.Rmd</code></a></small>
       <div class="d-none name"><code>mixed_response.Rmd</code></div>
     </div>
 
@@ -104,7 +104,7 @@ intercept.</p>
 <p>In terms of the GALAMM defined in the <a href="https://lcbc-uio.github.io/galamm/articles/galamm.html">introductory
 vignette</a>, and for simplicity assuming we use canonical link
 functions, we have the response model</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>y</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo stretchy="false" form="prefix">|</mo><msub><mi>ν</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>,</mo><mi>ϕ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mfrac><mrow><msub><mi>y</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><msub><mi>ν</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>−</mo><mi>b</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>ν</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mi>ϕ</mi></mfrac><mo>+</mo><mi>c</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>y</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>,</mo><mi>ϕ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>y</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo stretchy="false" form="prefix">|</mo><msub><mi>ν</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>,</mo><mi>ϕ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mrow><mi mathvariant="normal">exp</mi><mo>⁡</mo></mrow><mrow><mo stretchy="true" form="prefix">(</mo><mfrac><mrow><msub><mi>y</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><msub><mi>ν</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>−</mo><mi>b</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>ν</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mi>ϕ</mi></mfrac><mo>+</mo><mi>c</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>y</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>,</mo><mi>ϕ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
 f\left(y_{ij} | \nu_{ij}, \phi\right) = \exp \left( \frac{y_{ij}\nu_{ij} - b\left(\nu_{ij}\right)}{\phi} + c\left(y_{ij}, \phi\right) \right)
 </annotation></semantics></math></p>
 <p>for the
@@ -113,21 +113,21 @@ observation of the
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>j</mi><annotation encoding="application/x-tex">j</annotation></semantics></math>
 subject. Although we don’t show this with a subscript, when the variable
 <code>itemgroup = "a"</code> we have a Gaussian response, so
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>b</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>ν</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msup><mi>ν</mi><mn>2</mn></msup><mi>/</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">b(\nu) = \nu^{2}/2</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>b</mi><mo stretchy="false" form="prefix">(</mo><mi>ν</mi><mo stretchy="false" form="postfix">)</mo><mo>=</mo><msup><mi>ν</mi><mn>2</mn></msup><mi>/</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">b(\nu) = \nu^{2}/2</annotation></semantics></math>
 and the support of the distribution is the entire real line
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ℝ</mi><annotation encoding="application/x-tex">\mathbb{R}</annotation></semantics></math>.
 The mean in this case is given by
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>μ</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>ν</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mrow><annotation encoding="application/x-tex">\mu_{ij} = \nu_{ij}</annotation></semantics></math>.
 When <code>itemgroup = "b"</code> we have a binomial response, so
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>b</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>ν</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>+</mo><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>ν</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">b(\nu) = \log(1 + \exp(\nu))</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>b</mi><mo stretchy="false" form="prefix">(</mo><mi>ν</mi><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mrow><mi mathvariant="normal">log</mi><mo>⁡</mo></mrow><mo stretchy="false" form="prefix">(</mo><mn>1</mn><mo>+</mo><mrow><mi mathvariant="normal">exp</mi><mo>⁡</mo></mrow><mo stretchy="false" form="prefix">(</mo><mi>ν</mi><mo stretchy="false" form="postfix">)</mo><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">b(\nu) = \log(1 + \exp(\nu))</annotation></semantics></math>
 and the support is
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">{</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">\{0, 1\}</annotation></semantics></math>.
 In this binomial case we also have
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ϕ</mi><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\phi=1</annotation></semantics></math>.
 The mean in this case is given by
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>μ</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>ν</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>/</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>+</mo><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>ν</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\mu_{ij} = \exp(\nu_{ij}) / (1 + \exp(\nu_{ij}))</annotation></semantics></math>.
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>μ</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mrow><mi mathvariant="normal">exp</mi><mo>⁡</mo></mrow><mo stretchy="false" form="prefix">(</mo><msub><mi>ν</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo stretchy="false" form="postfix">)</mo><mi>/</mi><mo stretchy="false" form="prefix">(</mo><mn>1</mn><mo>+</mo><mrow><mi mathvariant="normal">exp</mi><mo>⁡</mo></mrow><mo stretchy="false" form="prefix">(</mo><msub><mi>ν</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo stretchy="false" form="postfix">)</mo><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">\mu_{ij} = \exp(\nu_{ij}) / (1 + \exp(\nu_{ij}))</annotation></semantics></math>.
 The function
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>y</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>,</mo><mi>ϕ</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">c(y_{ij}, \phi)</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi><mo stretchy="false" form="prefix">(</mo><msub><mi>y</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>,</mo><mi>ϕ</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">c(y_{ij}, \phi)</annotation></semantics></math>
 also differs between these cases, but is not of the same interest, since
 it does not depend on the linear predictor. It hence matters for the
 value of the log-likelihood, but not for its derivative with respect to
@@ -140,22 +140,22 @@ is an explanatory and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>𝐳</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><annotation encoding="application/x-tex">\mathbf{z}_{ij}</annotation></semantics></math>
 is a dummy vector of length 2 with exactly one element equal to one and
 one element equal to zero. When <code>itemgroup = "a"</code>,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝐳</mi><mo>=</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>,</mo><mn>0</mn><mo stretchy="true" form="postfix">)</mo></mrow><mi>T</mi></msup></mrow><annotation encoding="application/x-tex">\mathbf{z} = (1, 0)^{T}</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝐳</mi><mo>=</mo><mo stretchy="false" form="prefix">(</mo><mn>1</mn><mo>,</mo><mn>0</mn><msup><mo stretchy="false" form="postfix">)</mo><mi>T</mi></msup></mrow><annotation encoding="application/x-tex">\mathbf{z} = (1, 0)^{T}</annotation></semantics></math>
 and when <code>itemgroup = "b"</code>,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝐳</mi><mo>=</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><mi>T</mi></msup></mrow><annotation encoding="application/x-tex">\mathbf{z} = (0, 1)^{T}</annotation></semantics></math>.
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝐳</mi><mo>=</mo><mo stretchy="false" form="prefix">(</mo><mn>0</mn><mo>,</mo><mn>1</mn><msup><mo stretchy="false" form="postfix">)</mo><mi>T</mi></msup></mrow><annotation encoding="application/x-tex">\mathbf{z} = (0, 1)^{T}</annotation></semantics></math>.
 The parameter
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝛌</mi><mo>=</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>,</mo><mi>λ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>T</mi></msup></mrow><annotation encoding="application/x-tex">\boldsymbol{\lambda} = (1, \lambda)^{T}</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝛌</mi><mo>=</mo><mo stretchy="false" form="prefix">(</mo><mn>1</mn><mo>,</mo><mi>λ</mi><msup><mo stretchy="false" form="postfix">)</mo><mi>T</mi></msup></mrow><annotation encoding="application/x-tex">\boldsymbol{\lambda} = (1, \lambda)^{T}</annotation></semantics></math>
 is a vector of factor loadings, whose first element equals zero for
 identifiability.
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>η</mi><annotation encoding="application/x-tex">\eta</annotation></semantics></math>
 is a latent variable, in this case representing an underlying trait
 “causing” the observed responses.</p>
 <p>The structural model is simply</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>η</mi><mo>=</mo><mi>ζ</mi><mo>∼</mo><mi>N</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo>,</mo><mi>ψ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo></mrow><annotation encoding="application/x-tex">
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>η</mi><mo>=</mo><mi>ζ</mi><mo>∼</mo><mi>N</mi><mo stretchy="false" form="prefix">(</mo><mn>0</mn><mo>,</mo><mi>ψ</mi><mo stretchy="false" form="postfix">)</mo><mo>,</mo></mrow><annotation encoding="application/x-tex">
 \eta = \zeta \sim N(0, \psi),
 </annotation></semantics></math></p>
 <p>where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo>,</mo><mi>ψ</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">N(0, \psi)</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi><mo stretchy="false" form="prefix">(</mo><mn>0</mn><mo>,</mo><mi>ψ</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">N(0, \psi)</annotation></semantics></math>
 denotes a normal distribution with mean 0 and variance
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ψ</mi><annotation encoding="application/x-tex">\psi</annotation></semantics></math>.</p>
 <p>We define the loading matrix as follows, where the value
@@ -300,12 +300,11 @@ function.</p>
 </h3>
 <p>This example is taken from Chapter 14.2 in <span class="citation">Skrondal and Rabe-Hesketh (<a href="#ref-skrondalGeneralizedLatentVariable2004">2004</a>)</span>, and
 follows the analyses in <span class="citation">(<a href="#ref-rabe-heskethCorrectingCovariateMeasurement2003">Rabe-Hesketh,
-Pickles, and Skrondal 2003</a>; <a href="#ref-rabe-heskethMaximumLikelihoodEstimation2003">Rabe-Hesketh,
-Skrondal, and Pickles 2003</a>)</span>. No originality is claimed with
+Pickles, et al. 2003</a>; <a href="#ref-rabe-heskethMaximumLikelihoodEstimation2003">Rabe-Hesketh,
+Skrondal, et al. 2003</a>)</span>. No originality is claimed with
 respect to the analyses; but for the sake of understanding the
 <code>galamm</code> code, we explain it in quite some detail. The
-original dataset comes from <span class="citation">Morris, Marr, and
-Clayton (<a href="#ref-morrisDietHeartPostscript1977">1977</a>)</span>.</p>
+original dataset comes from <span class="citation">Morris et al. (<a href="#ref-morrisDietHeartPostscript1977">1977</a>)</span>.</p>
 <p>The scientific question concerns the impact of fiber intake on risk
 of coronary heat disease. 337 middle aged men were followed, all of whom
 either worked as bank staff or as London Transport staff (indicated by
@@ -351,7 +350,7 @@ otherwise, will lead to bias and lack of power <span class="citation">(<a href="
 denote the true (latent) fiber intake of person
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>j</mi><annotation encoding="application/x-tex">j</annotation></semantics></math>,
 and define the structural model</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>η</mi><mi>j</mi></msub><mo>=</mo><msub><mi>𝐱</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mi>′</mi><mi>𝛄</mi><mo>+</mo><msub><mi>ζ</mi><mi>j</mi></msub><mi>.</mi></mrow><annotation encoding="application/x-tex">\eta_{j} = \mathbf{x}_{ij}'\boldsymbol{\gamma} + \zeta_{j}.</annotation></semantics></math></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>η</mi><mi>j</mi></msub><mo>=</mo><msubsup><mi>𝐱</mi><mrow><mi>i</mi><mi>j</mi></mrow><mo>′</mo></msubsup><mi>𝛄</mi><mo>+</mo><msub><mi>ζ</mi><mi>j</mi></msub><mi>.</mi></mrow><annotation encoding="application/x-tex">\eta_{j} = \mathbf{x}_{ij}'\boldsymbol{\gamma} + \zeta_{j}.</annotation></semantics></math></p>
 <p>where
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>𝐱</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><annotation encoding="application/x-tex">\mathbf{x}_{ij}</annotation></semantics></math>
 is a vector of covariates age, bus, and their interaction, as well as a
@@ -360,7 +359,7 @@ the model matrix would be
 <code>model.matrix(~ age * bus, data = diet)</code>. The term
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ζ</mi><mi>j</mi></msub><annotation encoding="application/x-tex">\zeta_{j}</annotation></semantics></math>
 is a normally distributed disturbance,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ζ</mi><mi>j</mi></msub><mo>∼</mo><mi>N</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo>,</mo><mi>ψ</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\zeta_{j} \sim N(0, \psi)</annotation></semantics></math>.</p>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ζ</mi><mi>j</mi></msub><mo>∼</mo><mi>N</mi><mo stretchy="false" form="prefix">(</mo><mn>0</mn><mo>,</mo><mi>ψ</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">\zeta_{j} \sim N(0, \psi)</annotation></semantics></math>.</p>
 </div>
 <div class="section level4">
 <h4 id="measurement-model">Measurement Model<a class="anchor" aria-label="anchor" href="#measurement-model"></a>
@@ -378,7 +377,7 @@ row of the
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>j</mi><annotation encoding="application/x-tex">j</annotation></semantics></math>th
 person is a replicate fiber measurement, and zero otherwise. This allows
 for a drift in the measurements, and the model becomes</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>y</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>d</mi><mrow><mn>2</mn><mi>i</mi><mi>j</mi></mrow></msub><msub><mi>β</mi><mn>0</mn></msub><mo>+</mo><msub><mi>η</mi><mi>j</mi></msub><mo>+</mo><msub><mi>ϵ</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>,</mo><mspace width="2.0em"></mspace><msub><mi>ϵ</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mi>N</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo>,</mo><mi>θ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>.</mi></mrow><annotation encoding="application/x-tex">y_{ij} = d_{2ij} \beta_{0} + \eta_{j} + \epsilon_{ij}, \qquad \epsilon_{ij} = N(0, \theta).</annotation></semantics></math></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>y</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>d</mi><mrow><mn>2</mn><mi>i</mi><mi>j</mi></mrow></msub><msub><mi>β</mi><mn>0</mn></msub><mo>+</mo><msub><mi>η</mi><mi>j</mi></msub><mo>+</mo><msub><mi>ϵ</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>,</mo><mspace width="2.0em"></mspace><msub><mi>ϵ</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mi>N</mi><mo stretchy="false" form="prefix">(</mo><mn>0</mn><mo>,</mo><mi>θ</mi><mo stretchy="false" form="postfix">)</mo><mi>.</mi></mrow><annotation encoding="application/x-tex">y_{ij} = d_{2ij} \beta_{0} + \eta_{j} + \epsilon_{ij}, \qquad \epsilon_{ij} = N(0, \theta).</annotation></semantics></math></p>
 </div>
 <div class="section level4">
 <h4 id="disease-model">Disease Model<a class="anchor" aria-label="anchor" href="#disease-model"></a>
@@ -386,7 +385,7 @@ for a drift in the measurements, and the model becomes</p>
 <p>Next, for the rows corresponding to coronary heart disease
 measurement, we assume a binomial model with a logit link function,
 i.e., logistic regression. This model is given by</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">logit</mtext><mrow><mo stretchy="true" form="prefix">[</mo><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>y</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mn>1</mn><mo stretchy="false" form="prefix">|</mo><msub><mi>η</mi><mi>j</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">]</mo></mrow><mo>=</mo><msub><mi>𝐱</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mi>′</mi><mi>𝛃</mi><mo>+</mo><mi>λ</mi><msub><mi>η</mi><mi>j</mi></msub><mo>,</mo></mrow><annotation encoding="application/x-tex">\text{logit}[P(y_{ij}=1 | \eta_{j})] = \mathbf{x}_{ij}'\boldsymbol{\beta} + \lambda \eta_{j},</annotation></semantics></math></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">logit</mtext><mo stretchy="false" form="prefix">[</mo><mi>P</mi><mo stretchy="false" form="prefix">(</mo><msub><mi>y</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mn>1</mn><mo stretchy="false" form="prefix">|</mo><msub><mi>η</mi><mi>j</mi></msub><mo stretchy="false" form="postfix">)</mo><mo stretchy="false" form="postfix">]</mo><mo>=</mo><msubsup><mi>𝐱</mi><mrow><mi>i</mi><mi>j</mi></mrow><mo>′</mo></msubsup><mi>𝛃</mi><mo>+</mo><mi>λ</mi><msub><mi>η</mi><mi>j</mi></msub><mo>,</mo></mrow><annotation encoding="application/x-tex">\text{logit}[P(y_{ij}=1 | \eta_{j})] = \mathbf{x}_{ij}'\boldsymbol{\beta} + \lambda \eta_{j},</annotation></semantics></math></p>
 <p>where
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>𝐱</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><annotation encoding="application/x-tex">\mathbf{x}_{ij}</annotation></semantics></math>
 is the same as before, but where
@@ -403,7 +402,7 @@ coronary heart disease.</p>
 <p>Stacking the three responses, which are fiber intake at times 1 and
 2, and coronary heart disease, we can define the joint model as a GLLAMM
 with nonlinear predictor</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ν</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>d</mi><mrow><mn>2</mn><mi>i</mi><mi>j</mi></mrow></msub><msub><mi>β</mi><mn>0</mn></msub><mo>+</mo><msub><mi>d</mi><mrow><mn>3</mn><mi>i</mi><mi>j</mi></mrow></msub><msub><mi>𝐱</mi><mi>j</mi></msub><mi>′</mi><mi>𝛃</mi><mo>+</mo><msub><mi>𝐱</mi><mi>j</mi></msub><mi>′</mi><mi>𝛄</mi><mrow><mo stretchy="true" form="prefix">[</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>d</mi><mrow><mn>1</mn><mi>i</mi></mrow></msub><mo>+</mo><msub><mi>d</mi><mrow><mn>2</mn><mi>i</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><mi>λ</mi><msub><mi>d</mi><mrow><mn>3</mn><mi>i</mi></mrow></msub><mo stretchy="true" form="postfix">]</mo></mrow><mo>+</mo><msub><mi>ζ</mi><mi>j</mi></msub><mrow><mo stretchy="true" form="prefix">[</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>d</mi><mrow><mn>1</mn><mi>i</mi></mrow></msub><mo>+</mo><msub><mi>d</mi><mrow><mn>2</mn><mi>i</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><mi>λ</mi><msub><mi>d</mi><mrow><mn>3</mn><mi>i</mi></mrow></msub><mo stretchy="true" form="postfix">]</mo></mrow><mo>,</mo></mrow><annotation encoding="application/x-tex">\nu_{ij} = d_{2ij} \beta_{0} + d_{3ij} \mathbf{x}_{j}'\boldsymbol{\beta} + \mathbf{x}_{j}'\boldsymbol{\gamma}\left[(d_{1i} + d_{2i}) + \lambda d_{3i}\right] + \zeta_{j} \left[(d_{1i} + d_{2i}) + \lambda d_{3i}\right],</annotation></semantics></math></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ν</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>d</mi><mrow><mn>2</mn><mi>i</mi><mi>j</mi></mrow></msub><msub><mi>β</mi><mn>0</mn></msub><mo>+</mo><msub><mi>d</mi><mrow><mn>3</mn><mi>i</mi><mi>j</mi></mrow></msub><msubsup><mi>𝐱</mi><mi>j</mi><mo>′</mo></msubsup><mi>𝛃</mi><mo>+</mo><msubsup><mi>𝐱</mi><mi>j</mi><mo>′</mo></msubsup><mi>𝛄</mi><mrow><mo stretchy="true" form="prefix">[</mo><mo stretchy="false" form="prefix">(</mo><msub><mi>d</mi><mrow><mn>1</mn><mi>i</mi></mrow></msub><mo>+</mo><msub><mi>d</mi><mrow><mn>2</mn><mi>i</mi></mrow></msub><mo stretchy="false" form="postfix">)</mo><mo>+</mo><mi>λ</mi><msub><mi>d</mi><mrow><mn>3</mn><mi>i</mi></mrow></msub><mo stretchy="true" form="postfix">]</mo></mrow><mo>+</mo><msub><mi>ζ</mi><mi>j</mi></msub><mrow><mo stretchy="true" form="prefix">[</mo><mo stretchy="false" form="prefix">(</mo><msub><mi>d</mi><mrow><mn>1</mn><mi>i</mi></mrow></msub><mo>+</mo><msub><mi>d</mi><mrow><mn>2</mn><mi>i</mi></mrow></msub><mo stretchy="false" form="postfix">)</mo><mo>+</mo><mi>λ</mi><msub><mi>d</mi><mrow><mn>3</mn><mi>i</mi></mrow></msub><mo stretchy="true" form="postfix">]</mo></mrow><mo>,</mo></mrow><annotation encoding="application/x-tex">\nu_{ij} = d_{2ij} \beta_{0} + d_{3ij} \mathbf{x}_{j}'\boldsymbol{\beta} + \mathbf{x}_{j}'\boldsymbol{\gamma}\left[(d_{1i} + d_{2i}) + \lambda d_{3i}\right] + \zeta_{j} \left[(d_{1i} + d_{2i}) + \lambda d_{3i}\right],</annotation></semantics></math></p>
 <p>where
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>d</mi><mrow><mn>1</mn><mi>i</mi></mrow></msub><annotation encoding="application/x-tex">d_{1i}</annotation></semantics></math>
 is a dummy variable for fiber measurements at timepoint 1 and
@@ -657,7 +656,7 @@ indirect effect on the risk of coronary heart disease through its impact
 on fiber intake, as well as a direct effect. Still following <span class="citation">Skrondal and Rabe-Hesketh (<a href="#ref-skrondalGeneralizedLatentVariable2004">2004</a>)</span>, we
 now estimate an alternative model which only has indirect effects. The
 disease model is now</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">logit</mtext><mrow><mo stretchy="true" form="prefix">[</mo><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>y</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mn>1</mn><mo stretchy="false" form="prefix">|</mo><msub><mi>η</mi><mi>j</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">]</mo></mrow><mo>=</mo><msub><mi>d</mi><mrow><mi>i</mi><mi>j</mi><mn>3</mn></mrow></msub><msub><mi>β</mi><mn>03</mn></msub><mo>+</mo><mi>λ</mi><msub><mi>η</mi><mi>j</mi></msub><mo>,</mo></mrow><annotation encoding="application/x-tex">
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">logit</mtext><mo stretchy="false" form="prefix">[</mo><mi>P</mi><mo stretchy="false" form="prefix">(</mo><msub><mi>y</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mn>1</mn><mo stretchy="false" form="prefix">|</mo><msub><mi>η</mi><mi>j</mi></msub><mo stretchy="false" form="postfix">)</mo><mo stretchy="false" form="postfix">]</mo><mo>=</mo><msub><mi>d</mi><mrow><mi>i</mi><mi>j</mi><mn>3</mn></mrow></msub><msub><mi>β</mi><mn>03</mn></msub><mo>+</mo><mi>λ</mi><msub><mi>η</mi><mi>j</mi></msub><mo>,</mo></mrow><annotation encoding="application/x-tex">
 \text{logit}[P(y_{ij}=1 | \eta_{j})] = d_{ij3}\beta_{03} + \lambda \eta_{j},
 </annotation></semantics></math></p>
 <p>The formula becomes</p>
@@ -744,7 +743,7 @@ effects.</p>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-batesFittingLinearMixedEffects2015" class="csl-entry">
 Bates, Douglas M, Martin Mächler, Ben Bolker, and Steve Walker. 2015.
 <span>“Fitting <span>Linear Mixed-Effects Models Using</span>
@@ -755,7 +754,7 @@ Carroll, Raymond J., David Ruppert, Leonard A. Stefanski, and Ciprian M.
 Crainiceanu. 2006. <em>Measurement <span>Error</span> in <span>Nonlinear
 Models</span>: <span>A Modern Perspective</span></em>. 2nd ed.
 Monographs on <span>Statistics</span> and <span>Applied
-Probability</span>. Boca Raton, Florida: John Wiley &amp; Sons.
+Probability</span>. John Wiley &amp; Sons.
 </div>
 <div id="ref-morrisDietHeartPostscript1977" class="csl-entry">
 Morris, J. N., J. W. Marr, and D. G. Clayton. 1977. <span>“Diet and
@@ -776,7 +775,7 @@ Error</span>.”</span> <em>The Stata Journal</em> 3 (4): 386–411. <a href="ht
 <div id="ref-skrondalGeneralizedLatentVariable2004" class="csl-entry">
 Skrondal, Anders, and Sophia Rabe-Hesketh. 2004. <em>Generalized Latent
 Variable Modeling</em>. Interdisciplinary <span>Statistics
-Series</span>. Boca Raton, Florida: <span>Chapman and Hall/CRC</span>.
+Series</span>. <span>Chapman and Hall/CRC</span>.
 </div>
 </div>
 </div>

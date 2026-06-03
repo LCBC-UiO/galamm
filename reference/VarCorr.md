@@ -68,9 +68,9 @@ mod <- galamm(
 
 # Extract information on variance and covariance
 VarCorr(mod)
-#>  Groups   Name        Std.Dev. Variance
-#>  id       (Intercept) 0.99400  0.98804 
-#>  Residual             0.97964  0.95970 
+#>  Groups   Name        Variance Std.Dev.
+#>  id       (Intercept) 0.98804  0.99400 
+#>  Residual             0.95970  0.97964 
 
 # Convert to data frame
 # (this invokes lme4's function as.data.frame.VarCorr.merMod)

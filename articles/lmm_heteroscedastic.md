@@ -1,6 +1,7 @@
 # Heteroscedastic Linear Mixed Models
 
 ``` r
+
 library(galamm)
 ```
 
@@ -11,13 +12,15 @@ vignette](https://lcbc-uio.github.io/galamm/articles/galamm.html), the
 response model and nonlinear predictor can be easily combined in this
 particular case, to give
 
-$$y_{i} = \sum\limits_{s = 1}^{S}f_{s}\left( \mathbf{x}_{i} \right) + \sum\limits_{l = 2}^{L}\sum\limits_{m = 1}^{M_{l}}\eta_{m}^{(l)}\mathbf{z}_{im}^{(l)}{}^{\prime}{\mathbf{λ}}_{m}^{(l)} + \epsilon_{g{(i)}},$$
+``` math
+y_{i} = \sum_{s=1}^{S} f_{s}\left(\mathbf{x}_{i}\right) + \sum_{l=2}^{L}\sum_{m=1}^{M_{l}} \eta_{m}^{(l)} \mathbf{z}^{(l)}_{im}{}^{'}\boldsymbol{\lambda}_{m}^{(l)} + \epsilon_{g(i)},
+```
 
-where subscript $i$ refers to the $i$th elementary unit of observation,
-i.e., the $i$th row in the dataframe. $g(i)$ refers to the group to
-which the $i$th observation belongs, with each grouping having a
-separately estimated residual variance,
-$\epsilon_{g} \sim N\left( 0,\sigma_{g}^{2} \right)$.
+where subscript $`i`$ refers to the $`i`$th elementary unit of
+observation, i.e., the $`i`$th row in the dataframe. $`g(i)`$ refers to
+the group to which the $`i`$th observation belongs, with each grouping
+having a separately estimated residual variance,
+$`\epsilon_{g} \sim N(0, \sigma_{g}^{2})`$.
 
 In the future, we plan to also support other types of residual terms,
 including autocorrelation and residuals that depend on continuous
@@ -40,6 +43,7 @@ The package includes a simulated dataset `hsced`, in which the residual
 variance varies between items.
 
 ``` r
+
 head(hsced)
 #>   id tp item         x          y
 #> 1  1  1    1 0.7448212  0.1608286
@@ -55,6 +59,7 @@ We specify the error structure using an additional formula object,
 included per item.
 
 ``` r
+
 mod <- galamm(
   formula = y ~ x + (1 | id),
   dispformula = ~ (1 | item),
@@ -66,6 +71,7 @@ The output shows that for item 2, the residual variance is twice that of
 item 1.
 
 ``` r
+
 summary(mod)
 #> GALAMM fit by maximum marginal likelihood.
 #> Formula: y ~ x + (1 | id)
@@ -96,9 +102,10 @@ summary(mod)
 
 We can confirm that the lme function from the nlme package gives the
 same result. It reports the multiplies on the standard deviation scale,
-so since $1.412369^{2} = 1.995$, the results are identical.
+so since $`1.412369^2 = 1.995`$, the results are identical.
 
 ``` r
+
 library(nlme)
 #> 
 #> Attaching package: 'nlme'
@@ -145,6 +152,7 @@ summary(mod_nlme)
 The diagnostic plot also looks good.
 
 ``` r
+
 plot(mod, abline = c(0, 0))
 ```
 
@@ -156,6 +164,7 @@ Diagnostic plot for heteroscedastic model.
 The quantile-quantile plot is also acceptable.
 
 ``` r
+
 qqmath(mod)
 ```
 
@@ -166,6 +175,7 @@ plot of chunk unnamed-chunk-6
 We can compare the model to one with homoscedastic residuals.
 
 ``` r
+
 mod0 <- galamm(
   formula = y ~ x + (1 | id),
   data = hsced
@@ -175,6 +185,7 @@ mod0 <- galamm(
 Reassuringly, the correct model is chosen in this simple simulated case.
 
 ``` r
+
 anova(mod, mod0)
 #> Data: hsced
 #> Models:

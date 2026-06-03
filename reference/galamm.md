@@ -152,35 +152,35 @@ An object of type `galamm` as described in
 
 Bates DM, Mächler M, Bolker B, Walker S (2015). “Fitting Linear
 Mixed-Effects Models Using Lme4.” *Journal of Statistical Software*,
-**67**(1), 1–48. ISSN 1548-7660,
+**67**(1), 1–48. ISSN 1548-7660.
 [doi:10.18637/jss.v067.i01](https://doi.org/10.18637/jss.v067.i01) .  
   
 Breslow NE, Clayton DG (1993). “Approximate Inference in Generalized
 Linear Mixed Models.” *Journal of the American Statistical Association*,
-**88**(421), 9–25. ISSN 0162-1459,
+**88**(421), 9–25. ISSN 0162-1459.
 [doi:10.2307/2290687](https://doi.org/10.2307/2290687) .  
   
 Harville DA (1977). “Maximum Likelihood Approaches to Variance Component
 Estimation and to Related Problems.” *Journal of the American
-Statistical Association*, **72**(358), 320–338. ISSN 0162-1459,
+Statistical Association*, **72**(358), 320–338. ISSN 0162-1459.
 [doi:10.2307/2286796](https://doi.org/10.2307/2286796) .  
   
 Henderson CR (1975). “Best Linear Unbiased Estimation and Prediction
 under a Selection Model.” *Biometrics*, **31**(2), 423–447. ISSN
-0006-341X, [doi:10.2307/2529430](https://doi.org/10.2307/2529430) .  
+0006-341X. [doi:10.2307/2529430](https://doi.org/10.2307/2529430) .  
   
 Laird NM, Ware JH (1982). “Random-Effects Models for Longitudinal Data.”
-*Biometrics*, **38**(4), 963–974. ISSN 0006-341X,
+*Biometrics*, **38**(4), 963–974. ISSN 0006-341X.
 [doi:10.2307/2529876](https://doi.org/10.2307/2529876) .  
   
 Rabe-Hesketh S, Skrondal A, Pickles A (2004). “Generalized Multilevel
 Structural Equation Modeling.” *Psychometrika*, **69**(2), 167–190. ISSN
-1860-0980, [doi:10.1007/BF02295939](https://doi.org/10.1007/BF02295939)
+1860-0980. [doi:10.1007/BF02295939](https://doi.org/10.1007/BF02295939)
 .  
   
 Rockwood NJ, Jeon M (2019). “Estimating Complex Measurement and Growth
 Models Using the R Package PLmixed.” *Multivariate Behavioral Research*,
-**54**(2), 288–306. ISSN 0027-3171,
+**54**(2), 288–306. ISSN 0027-3171.
 [doi:10.1080/00273171.2018.1516541](https://doi.org/10.1080/00273171.2018.1516541)
 .  
   
@@ -190,7 +190,7 @@ Boca Raton, Florida.
   
 Sørensen Ø, Fjell AM, Walhovd KB (2023). “Longitudinal Modeling of
 Age-Dependent Latent Traits with Generalized Additive Latent and Mixed
-Models.” *Psychometrika*, **88**(2), 456–486. ISSN 1860-0980,
+Models.” *Psychometrika*, **88**(2), 456–486. ISSN 1860-0980.
 [doi:10.1007/s11336-023-09910-z](https://doi.org/10.1007/s11336-023-09910-z)
 .  
   

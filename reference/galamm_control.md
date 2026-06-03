@@ -72,36 +72,36 @@ argument to
 
 Bates DM, Mächler M, Bolker B, Walker S (2015). “Fitting Linear
 Mixed-Effects Models Using Lme4.” *Journal of Statistical Software*,
-**67**(1), 1–48. ISSN 1548-7660,
+**67**(1), 1–48. ISSN 1548-7660.
 [doi:10.18637/jss.v067.i01](https://doi.org/10.18637/jss.v067.i01) .
 
 BROYDEN CG (1970). “The Convergence of a Class of Double-rank
 Minimization Algorithms 1. General Considerations.” *IMA Journal of
-Applied Mathematics*, **6**(1), 76–90. ISSN 0272-4960,
+Applied Mathematics*, **6**(1), 76–90. ISSN 0272-4960.
 [doi:10.1093/imamat/6.1.76](https://doi.org/10.1093/imamat/6.1.76) .
 
 Byrd RH, Lu P, Nocedal J, Zhu C (1995). “A Limited Memory Algorithm for
 Bound Constrained Optimization.” *SIAM Journal on Scientific Computing*,
-**16**(5), 1190–1208. ISSN 1064-8275,
+**16**(5), 1190–1208. ISSN 1064-8275.
 [doi:10.1137/0916069](https://doi.org/10.1137/0916069) .
 
 Fletcher R (1970). “A New Approach to Variable Metric Algorithms.” *The
-Computer Journal*, **13**(3), 317–322. ISSN 0010-4620,
+Computer Journal*, **13**(3), 317–322. ISSN 0010-4620.
 [doi:10.1093/comjnl/13.3.317](https://doi.org/10.1093/comjnl/13.3.317) .
 
 Goldfarb D (1970). “A Family of Variable-Metric Methods Derived by
 Variational Means.” *Mathematics of Computation*, **24**(109), 23–26.
-ISSN 0025-5718, 1088-6842,
+ISSN 0025-5718, 1088-6842.
 [doi:10.1090/S0025-5718-1970-0258249-6](https://doi.org/10.1090/S0025-5718-1970-0258249-6)
 .
 
 Nelder JA, Mead R (1965). “A Simplex Method for Function Minimization.”
-*The Computer Journal*, **7**(4), 308–313. ISSN 0010-4620,
+*The Computer Journal*, **7**(4), 308–313. ISSN 0010-4620.
 [doi:10.1093/comjnl/7.4.308](https://doi.org/10.1093/comjnl/7.4.308) .
 
 Shanno DF (1970). “Conditioning of Quasi-Newton Methods for Function
 Minimization.” *Mathematics of Computation*, **24**(111), 647–656. ISSN
-0025-5718, 1088-6842,
+0025-5718, 1088-6842.
 [doi:10.1090/S0025-5718-1970-0274029-X](https://doi.org/10.1090/S0025-5718-1970-0274029-X)
 .
 

@@ -96,6 +96,7 @@ scaling](https://lcbc-uio.github.io/galamm/articles/scaling.html).
 Install the package from CRAN using
 
 ``` r
+
 install.packages("galamm")
 ```
 
@@ -103,6 +104,7 @@ You can install the development version of galamm from
 [GitHub](https://github.com/) with:
 
 ``` r
+
 # install.packages("remotes")
 remotes::install_github("LCBC-UiO/galamm")
 ```
@@ -110,6 +112,7 @@ remotes::install_github("LCBC-UiO/galamm")
 ## Examples
 
 ``` r
+
 library(galamm)
 ```
 
@@ -118,6 +121,7 @@ library(galamm)
 The dataframe `mresp` contains simulated data with mixed response types.
 
 ``` r
+
 head(mresp)
 #>   id         x        y.1        y.2 itemgroup
 #> 1  1 0.8638214  0.2866329  1.0000000         a
@@ -135,6 +139,7 @@ associated with the same underlying latent variable. We hence need to
 model this process jointly, and the model is set up as follows:
 
 ``` r
+
 mixed_resp <- galamm(
   formula = y ~ x + (0 + loading | id),
   data = mresp,
@@ -148,6 +153,7 @@ mixed_resp <- galamm(
 The summary function gives some information about the model fit.
 
 ``` r
+
 summary(mixed_resp)
 #> GALAMM fit by maximum marginal likelihood.
 #> Formula: y ~ x + (0 + loading | id)
@@ -182,6 +188,7 @@ ability depends on time.
 We start by reducing the data.
 
 ``` r
+
 dat <- subset(cognition, domain == 1)
 dat$item <- factor(dat$item)
 ```
@@ -190,6 +197,7 @@ Next we define the matrix of factor loadings, where `NA` denotes unknown
 values to be estimated.
 
 ``` r
+
 loading_matrix <- matrix(c(1, NA, NA), ncol = 1)
 ```
 
@@ -197,6 +205,7 @@ We then compute the model estimates, containing both a smooth term for
 the latent ability and random intercept for subject and timepoints.
 
 ``` r
+
 mod <- galamm(
   formula = y ~ 0 + item + sl(x, factor = "loading") +
     (0 + loading | id / timepoint),
@@ -210,6 +219,7 @@ mod <- galamm(
 We finally plot the estimated smooth term.
 
 ``` r
+
 plot_smooth(mod)
 ```
 
@@ -218,6 +228,7 @@ plot_smooth(mod)
 ## How to cite this package
 
 ``` r
+
 citation("galamm")
 #> To cite the 'galamm' package in publications use:
 #> 

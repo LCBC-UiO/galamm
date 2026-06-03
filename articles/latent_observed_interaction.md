@@ -1,6 +1,7 @@
 # Interactions Between Latent and Observed Covariates
 
 ``` r
+
 library(galamm)
 ```
 
@@ -17,6 +18,7 @@ For this example we use the simulated `latent_covariates` dataset, of
 which the first six rows are displayed below:
 
 ``` r
+
 head(latent_covariates)
 #>   id         type         x            y response
 #> 1  1 measurement1 0.2655087 -0.530999307        0
@@ -35,38 +37,49 @@ interested in modeling, and the `type` variable distinguishes these
 responses. In this case we have complete observations for each subject
 ID, and for a given ID, the measurement model can be written as follows:
 
-$$\begin{pmatrix}
+``` math
+\begin{pmatrix}
 y_{1} \\
 y_{2} \\
 y_{3}
-\end{pmatrix} = {\mathbf{β}}_{0} + \begin{pmatrix}
+\end{pmatrix}
+=
+\boldsymbol{\beta}_{0} +
+\begin{pmatrix}
 1 & 0 & 0 & 0 \\
 0 & 1 & 0 & 0 \\
 0 & 0 & 1 & x
-\end{pmatrix}\begin{pmatrix}
+\end{pmatrix}
+\begin{pmatrix}
 1 \\
 \lambda_{2} \\
 \lambda_{3} \\
 \lambda_{4}
-\end{pmatrix}\eta + \begin{pmatrix}
+\end{pmatrix}
+\eta 
++
+\begin{pmatrix}
 0 \\
 0 \\
-{x\beta}
-\end{pmatrix} + {\mathbf{ϵ}}.$$
+x \beta
+\end{pmatrix}
++ \boldsymbol{\epsilon}.
+```
 
-In this equation ${\mathbf{β}}_{0} \in {\mathbb{R}}^{3}$ is a vector of
-intercepts, $\eta$ is a latent variable, the loading of the latent
-variable onto the first measurement $y_{1}$ is fixed to 1 for
-identifiability, $\lambda_{2}$ is the loading of the latent variable
-onto the second measurement $y_{2}$, $\lambda_{3}$ is the main effect of
-the latent variable on the response of interest $y_{3}$, $\beta$ is the
-effect of the observed covariate $x$ on $y_{3}$, and $\lambda_{4}$ is
-the interaction effect of $x$ and $\eta$ on $y_{3}$. We assume that the
-residuals $\mathbf{ϵ}$ are independently and identically normally
-distributed; this assumption is valid in this simulated case, but note
-that since the response $y_{3}$ is qualitatively different from the
-measurements $y_{1}$ and $y_{2}$, this assumption will in general not
-hold, and a [heteroscedastic measurement
+In this equation $`\boldsymbol{\beta}_{0} \in \mathbb{R}^{3}`$ is a
+vector of intercepts, $`\eta`$ is a latent variable, the loading of the
+latent variable onto the first measurement $`y_{1}`$ is fixed to 1 for
+identifiability, $`\lambda_{2}`$ is the loading of the latent variable
+onto the second measurement $`y_{2}`$, $`\lambda_{3}`$ is the main
+effect of the latent variable on the response of interest $`y_{3}`$,
+$`\beta`$ is the effect of the observed covariate $`x`$ on $`y_{3}`$,
+and $`\lambda_{4}`$ is the interaction effect of $`x`$ and $`\eta`$ on
+$`y_{3}`$. We assume that the residuals $`\boldsymbol{\epsilon}`$ are
+independently and identically normally distributed; this assumption is
+valid in this simulated case, but note that since the response $`y_{3}`$
+is qualitatively different from the measurements $`y_{1}`$ and
+$`y_{2}`$, this assumption will in general not hold, and a
+[heteroscedastic measurement
 model](https://lcbc-uio.github.io/galamm/articles/lmm_heteroscedastic.html)
 should be used, or a [model with mixed response
 types](https://lcbc-uio.github.io/galamm/articles/mixed_response.html).
@@ -75,16 +88,17 @@ variable models in matrix form we refer to the first four pages of
 Rockwood and Jeon
 ([2019](#ref-rockwoodEstimatingComplexMeasurement2019)).
 
-The structural model is simply $\eta = \zeta \sim N(0,\psi)$, where
-$\psi$ is its variance.
+The structural model is simply $`\eta = \zeta \sim N(0, \psi)`$, where
+$`\psi`$ is its variance.
 
 #### Model Without Interaction
 
 It can be instructive to start by considering a model in which we fix
-$\lambda_{4} = 0$. This type of model would be estimated with the
+$`\lambda_{4} = 0`$. This type of model would be estimated with the
 following code:
 
 ``` r
+
 lambda <- matrix(c(1, NA, NA), ncol = 1)
 
 mod0 <- galamm(
@@ -97,12 +111,13 @@ mod0 <- galamm(
 ```
 
 In the data generating simulations, the true values were
-$\lambda_{1} = 1$, $\lambda_{2} = 1.3$ and $\lambda_{3} = - 0.3$. The
+$`\lambda_{1}=1`$, $`\lambda_{2} = 1.3`$ and $`\lambda_{3} = -0.3`$. The
 former two are very well recovered, but the latter is too positive,
-which is likely due to us omitting the interaction $\lambda_{4}$, whose
-true value was 0.2.
+which is likely due to us omitting the interaction $`\lambda_{4}`$,
+whose true value was 0.2.
 
 ``` r
+
 summary(mod0)
 #> GALAMM fit by maximum marginal likelihood.
 #> Formula: y ~ type + x:response + (0 + loading | id)
@@ -139,44 +154,57 @@ summary(mod0)
 
 The measurement model can be equivalently written as
 
-$$\begin{pmatrix}
+``` math
+\begin{pmatrix}
 y_{1} \\
 y_{2} \\
 y_{3}
-\end{pmatrix} = {\mathbf{β}}_{0} + \begin{pmatrix}
+\end{pmatrix}
+=
+\boldsymbol{\beta}_{0} +
+\begin{pmatrix}
 1 \\
 \lambda_{2} \\
-{\lambda_{3} + \lambda_{4}x}
-\end{pmatrix}\eta + \begin{pmatrix}
+\lambda_{3} + \lambda_{4} x
+\end{pmatrix}
+\eta 
++
+\begin{pmatrix}
 0 \\
 0 \\
-{x\beta}
-\end{pmatrix} + {\mathbf{ϵ}}.$$
+x \beta
+\end{pmatrix}
++ \boldsymbol{\epsilon}.
+```
 
 This way of writing shows more explicitly which factor loadings are
 connected with which observation. In order to fit this model with
 `galamm`, we must provide formulas for the terms in the loading matrix
 
-$$\begin{pmatrix}
+``` math
+\begin{pmatrix}
 1 \\
 \lambda_{2} \\
-{\lambda_{3} + \lambda_{4}x}
-\end{pmatrix}.$$
+\lambda_{3} + \lambda_{4} x
+\end{pmatrix}.
+```
 
 We specify the factor interactions with a list, one for each row of
 `lambda`:
 
 ``` r
+
 factor_interactions <- list(~ 1, ~ 1, ~ x)
 ```
 
 This specifies that for the first two rows, there are no covariates, but
-for the third row, we want a linear regression with $x$ as covariate.
+for the third row, we want a linear regression with $`x`$ as covariate.
 Next, we specify the loading matrix **without** the interaction
 parameter, i.e., we reuse the `lambda` object that was specified for
 `mod0` above. This lets us fit the model as follows:
 
 ``` r
+
 mod <- galamm(
   formula = y ~ type + x:response + (0 + loading | id),
   data = latent_covariates,
@@ -191,6 +219,7 @@ A model comparison shows overwhelming evidence in favor of this model,
 which is not surprising since this is how the data were simulated.
 
 ``` r
+
 anova(mod, mod0)
 #> Data: latent_covariates
 #> Models:
@@ -203,7 +232,7 @@ anova(mod, mod0)
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ```
 
-The summary also shows that the bias in $\lambda_{3}$ has basically
+The summary also shows that the bias in $`\lambda_{3}`$ has basically
 disappeared, as it is up to -0.318 from -0.195, with the true value
 being -0.3. The interaction is estimated at 0.233, which is also very
 close to the true value 0.2. It should of course be noted here that the
@@ -211,6 +240,7 @@ noise level in this simulated dataset was set unrealistically low, to
 let us confirm that the implementation itself is correct.
 
 ``` r
+
 summary(mod)
 #> GALAMM fit by maximum marginal likelihood.
 #> Formula: y ~ type + x:response + (0 + loading | id)
@@ -246,16 +276,18 @@ summary(mod)
 
 #### Interaction Between Latent Covariate and a Quadratic Term
 
-We can also try to add interactions between the $x^{2}$ and $\eta$. We
-first update the formula in `factor_interactions`:
+We can also try to add interactions between the $`x^{2}`$ and $`\eta`$.
+We first update the formula in `factor_interactions`:
 
 ``` r
+
 factor_interactions <- list(~ 1, ~ 1, ~ x + I(x^2))
 ```
 
 Then we fit the model as before:
 
 ``` r
+
 mod2 <- galamm(
   formula = y ~ type + x:response + (0 + loading | id),
   data = latent_covariates,
@@ -270,6 +302,7 @@ As can be seen, the coefficient for this squared interaction is not
 significantly different from zero.
 
 ``` r
+
 summary(mod2)
 #> GALAMM fit by maximum marginal likelihood.
 #> Formula: y ~ type + x:response + (0 + loading | id)
@@ -314,6 +347,7 @@ response for each subject. The first ten rows of the dataset are shown
 below.
 
 ``` r
+
 head(latent_covariates_long, 10)
 #>    id         type         x            y response
 #> 1   1 measurement1 0.2655087 -0.530999307        0
@@ -333,6 +367,7 @@ addition to the terms that were used above. We start by resetting the
 interaction models to a linear term:
 
 ``` r
+
 factor_interactions <- list(~ 1, ~ 1, ~ x)
 ```
 
@@ -342,6 +377,7 @@ for observations that are responses, for which `response = 1`, there
 should be a random intercept per subject.
 
 ``` r
+
 mod <- galamm(
   formula = y ~ type + x:response + (0 + loading | id) + (0 + response | id),
   data = latent_covariates_long,
@@ -356,6 +392,7 @@ From the summary, we see that also in this case the factor loadings are
 very well recovered.
 
 ``` r
+
 summary(mod)
 #> GALAMM fit by maximum marginal likelihood.
 #> Formula: y ~ type + x:response + (0 + loading | id) + (0 + response |      id)
@@ -401,6 +438,7 @@ remove the `type` term and instead insert two dummy variables, one for
 each measurement. We first create these dummy variables:
 
 ``` r
+
 dat <- latent_covariates
 dat$m1 <- as.numeric(dat$type == "measurement1")
 dat$m2 <- as.numeric(dat$type == "measurement2")
@@ -409,6 +447,7 @@ dat$m2 <- as.numeric(dat$type == "measurement2")
 We then fit the model:
 
 ``` r
+
 mod <- galamm(
   formula = y ~ 0 + m1 + m2 + s(x, by = response) + (0 + loading | id),
   data = dat,
@@ -423,6 +462,7 @@ The summary output again suggest that the factor loadings are very well
 recovered.
 
 ``` r
+
 summary(mod)
 #> GALAMM fit by maximum marginal likelihood.
 #> Formula: y ~ 0 + m1 + m2 + s(x, by = response) + (0 + loading | id)
@@ -468,6 +508,7 @@ the summary above, which mean that the smoothing parameter for this term
 is infinite, and hence that the smooth term is exactly linear.
 
 ``` r
+
 plot_smooth(mod)
 ```
 
@@ -481,6 +522,7 @@ We can also make a diagnostic plot of residuals versus fitted value, and
 we see no clear trends.
 
 ``` r
+
 plot(mod, abline = c(0, 0))
 ```
 
@@ -488,9 +530,11 @@ plot(mod, abline = c(0, 0))
 
 plot of chunk unnamed-chunk-19
 
-We can also plot the residuals against $x$, and again we see no trends.
+We can also plot the residuals against $`x`$, and again we see no
+trends.
 
 ``` r
+
 plot(mod, form = residuals(.) ~ x, abline = c(0, 0))
 ```
 

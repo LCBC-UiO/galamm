@@ -1,6 +1,7 @@
 # Semiparametric Latent Variable Modeling
 
 ``` r
+
 library(galamm)
 library(gamm4)
 ```
@@ -8,7 +9,7 @@ library(gamm4)
 This vignette describes how to use `galamm` to estimate latent variable
 models with smooth terms, or equivalently, generalized additive mixed
 models with factor structures. The examples are based on Section 4 and 5
-in Sørensen, Fjell, and Walhovd
+in Sørensen et al.
 ([2023](#ref-sorensenLongitudinalModelingAgeDependent2023)), but as we
 cannot share the data, we have instead simulated somewhat simpler
 datasets that will be used. We will gradually add complexity, starting
@@ -28,6 +29,7 @@ The `cognition` dataset contains simulated data with measurements of
 abilities in three cognitive domains.
 
 ``` r
+
 head(cognition)
 #>   id domain          x timepoint item trials        y.y      y.y.1
 #> 1  1      1 0.06475113         1   11      1 0.16788973 1.00000000
@@ -42,6 +44,7 @@ For this first example, we focus only on the first item measured for the
 first domain.
 
 ``` r
+
 dat <- subset(cognition, domain == 1 & item == "11")
 dat$y <- dat$y[, 1]
 ```
@@ -50,6 +53,7 @@ Each subject in this dataset has been measured eight times, and we can
 plot the measurements as follows:
 
 ``` r
+
 plot(dat$x, dat$y, type = "n", xlab = "x", ylab = "y")
 for(i in unique(dat$id)) {
   dd <- dat[dat$id == i, ]
@@ -64,20 +68,23 @@ points(dat$x, dat$y, pch = 20, lwd = .05)
 Plot of data for domain 1 and item 11.
 
 We use a generalized additive mixed model with random intercepts per
-subject to estimate the function relating $x$ to $y$. In terms of the
-model framework outlined in the [introductory
+subject to estimate the function relating $`x`$ to $`y`$. In terms of
+the model framework outlined in the [introductory
 vignette](https://lcbc-uio.github.io/galamm/articles/galamm.html), we
-model the $i$th response from the $j$th subject with
+model the $`i`$th response from the $`j`$th subject with
 
-$$y_{ij} = f\left( x_{ij} \right) + \eta_{j} + \epsilon_{ij}$$
+``` math
+y_{ij} = f(x_{ij}) + \eta_{j} + \epsilon_{ij}
+```
 
-where $f\left( x_{ij} \right)$ is a smooth function to be estimated,
-$\eta_{j} \sim N(0,\psi)$ is a random intercept, and
-$\epsilon_{ij} \sim N(0,\phi)$ is a residual term.
+where $`f(x_{ij})`$ is a smooth function to be estimated,
+$`\eta_{j} \sim N(0, \psi)`$ is a random intercept, and
+$`\epsilon_{ij} \sim N(0, \phi)`$ is a residual term.
 
 This model can be estimated using `gamm4` as follows:
 
 ``` r
+
 mod_gamm4 <- gamm4(y ~ s(x), random = ~ (1 | id), data = dat, REML = FALSE)
 ```
 
@@ -88,6 +95,7 @@ effects corresponding to spline coefficients have been converted into
 single smooth terms. We can look at the model summary for each:
 
 ``` r
+
 summary(mod_gamm4$mer)
 #> Linear mixed model fit by maximum likelihood  ['lmerMod']
 #> 
@@ -140,6 +148,7 @@ summary(mod_gamm4$gam)
 We can also plot the estimated smooth term:
 
 ``` r
+
 plot(mod_gamm4$gam)
 ```
 
@@ -152,6 +161,7 @@ In contrast, invoking the `plot` function on the mixed model part gives
 us a diagnostic plot.
 
 ``` r
+
 plot(mod_gamm4$mer)
 ```
 
@@ -164,6 +174,7 @@ With `galamm` we use similar argument, but the `random` specification is
 now part of the model formula.
 
 ``` r
+
 mod <- galamm(y ~ s(x) + (1 | id), data = dat)
 ```
 
@@ -175,6 +186,7 @@ Reassuringly, the results from fitting the model with `gamm4` and with
 computational algorithms.
 
 ``` r
+
 summary(mod)
 #> GALAMM fit by maximum marginal likelihood.
 #> Formula: y ~ s(x) + (1 | id)
@@ -209,6 +221,7 @@ can be seen to be almost identical to the plot produced from the mixed
 model part of the `gamm4` model.
 
 ``` r
+
 plot(mod, abline = c(0, 0))
 ```
 
@@ -220,6 +233,7 @@ Diagnostic plot for model fitted with galamm.
 In order to plot the smooth term, we use `plot_smooth`.
 
 ``` r
+
 plot_smooth(mod)
 ```
 
@@ -235,6 +249,7 @@ arguments used by `plot.gam` can be used also here, as see with the
 examples below:
 
 ``` r
+
 plot_smooth(mod,
   shade = TRUE, rug = FALSE, seWithMean = TRUE,
   shift = +2
@@ -247,6 +262,7 @@ term.](semiparametric-gaussian-gamm-smooth2-1.png)
 Alternative ways of visualizing the smooth term.
 
 ``` r
+
 plot_smooth(mod, se = FALSE)
 ```
 
@@ -262,6 +278,7 @@ binomially distributed. We will use the first trial to illustrate how
 such data can be modeled.
 
 ``` r
+
 dat <- subset(cognition, domain == 2 & item == "21")
 dat$y <- dat$y[, 1]
 ```
@@ -269,6 +286,7 @@ dat$y <- dat$y[, 1]
 Again we can fit this model using `gamm4`.
 
 ``` r
+
 mod_gamm4 <- gamm4(y ~ s(x),
   random = ~ (1 | id),
   data = dat, family = binomial
@@ -278,6 +296,7 @@ mod_gamm4 <- gamm4(y ~ s(x),
 We can look at the summary output as before.
 
 ``` r
+
 summary(mod_gamm4$mer)
 #> Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
 #>  Family: binomial  ( logit )
@@ -333,6 +352,7 @@ And we can plot the smooth term. The diagnostic plot is not very useful
 in the binomial case, so we omit it.
 
 ``` r
+
 plot(mod_gamm4$gam)
 ```
 
@@ -344,6 +364,7 @@ Again the `galamm` syntax is similar, but it puts the random effect
 specification into the model formula.
 
 ``` r
+
 mod <- galamm(y ~ s(x) + (1 | id), data = dat, family = binomial)
 ```
 
@@ -353,6 +374,7 @@ call `deviance(mod_gamm4$mer)` gives the same value as in the summary
 for the model fitted with galamm.
 
 ``` r
+
 summary(mod)
 #> GALAMM fit by maximum marginal likelihood.
 #> Formula: y ~ s(x) + (1 | id)
@@ -382,6 +404,7 @@ summary(mod)
 ```
 
 ``` r
+
 plot_smooth(mod)
 ```
 
@@ -403,6 +426,7 @@ use all items of cognitive domain 1. These are all conditionally normal
 distributed.
 
 ``` r
+
 dat <- subset(cognition, domain == 1)
 dat$y <- dat$y[, 1]
 head(dat)
@@ -416,31 +440,39 @@ head(dat)
 ```
 
 We now need a factor model to associate the underlying latent trait
-$\eta$ with the measurements $y_{i}$:
+$`\eta`$ with the measurements $`y_{i}`$:
 
-$$y_{i} = \beta_{i} + \lambda_{i}\eta + \epsilon_{i}$$
+``` math
+y_{i} = \beta_{i} + \lambda_{i} \eta + \epsilon_{i}
+```
 
 In the structural model, we have a smooth term for the relationship
 between the latent trait and x, and we have random intercepts for a
-given timepoint within subject $\zeta^{(2)}$, and for a given subject
-across timepoints $\zeta^{(3)}$.
+given timepoint within subject $`\zeta^{(2)}`$, and for a given subject
+across timepoints $`\zeta^{(3)}`$.
 
-$$\eta = h(x) + \zeta^{(2)} + \zeta^{(3)}.$$
+``` math
+\eta = h(x) + \zeta^{(2)} + \zeta^{(3)}.
+```
 
 The reduced form of the model is
 
-$$y_{i} = \beta_{i} + \lambda_{i}\left\{ h(x) + \zeta^{(2)} + \zeta^{(3)} \right\} + \epsilon_{i}$$
+``` math
+y_{i} = \beta_{i} + \lambda_{i} \left\{ h(x) + \zeta^{(2)} + \zeta^{(3)} \right\} + \epsilon_{i}
+```
 
-We will use a varying-coefficient term, where $h(x)$ is being
-interpreted as a regression coefficient for the effect of $\lambda_{i}$
-on $y_{i}$, and the regression term varies with $x$. In contrast to
-Hastie and Tibshirani ([1993](#ref-hastieVaryingCoefficientModels1993))
-and other uses of varying-coefficient terms, however, in this case the
-predictor $\lambda_{i}$ is a model parameter. We have three items
-loading in $\eta$ and fix the first loading to 1 for identifiability, so
-the loading matrix is as follows:
+We will use a varying-coefficient term, where $`h(x)`$ is being
+interpreted as a regression coefficient for the effect of
+$`\lambda_{i}`$ on $`y_{i}`$, and the regression term varies with $`x`$.
+In contrast to Hastie and Tibshirani
+([1993](#ref-hastieVaryingCoefficientModels1993)) and other uses of
+varying-coefficient terms, however, in this case the predictor
+$`\lambda_{i}`$ is a model parameter. We have three items loading in
+$`\eta`$ and fix the first loading to 1 for identifiability, so the
+loading matrix is as follows:
 
 ``` r
+
 (loading_matrix <- matrix(c(1, NA, NA), ncol = 1))
 #>      [,1]
 #> [1,]    1
@@ -465,6 +497,7 @@ up by `mgcv`, so `galamm` provides an additional `factor` argument which
 alleviates most of these issues.
 
 ``` r
+
 mod <- galamm(
   formula = y ~ 0 + item + sl(x, factor = "loading") +
     (0 + loading | id / timepoint),
@@ -485,6 +518,7 @@ results, there are no clear indications that the model is implemented
 incorrectly.
 
 ``` r
+
 summary(mod)
 #> GALAMM fit by maximum marginal likelihood.
 #> Formula: y ~ 0 + item + sl(x, factor = "loading") + (0 + loading | id/timepoint)
@@ -527,6 +561,7 @@ We also plot the smooth term. Since we had a very large amount of data,
 there is essentially no uncertainty about the estimate.
 
 ``` r
+
 plot_smooth(mod)
 ```
 
@@ -545,6 +580,7 @@ Other than that, and setting `family = binomial`, the model is the same
 as before.
 
 ``` r
+
 dat <- subset(cognition, domain == 2)
 dat$y <- dat$y[, 1]
 
@@ -559,7 +595,7 @@ mod <- galamm(
 )
 ```
 
-The summary is shown below. The factor loading $\lambda_{2} = 2$ was
+The summary is shown below. The factor loading $`\lambda_{2} = 2`$ was
 used when simulating the data, and including the uncertainty, our
 estimate covers the true value well. Also note that the variation
 between individuals (group `id`) and the variation between timepoints
@@ -575,6 +611,7 @@ inaccurate for binomial data with a low number of repeated observations
 ([Joe 2008](#ref-joeAccuracyLaplaceApproximation2008)).
 
 ``` r
+
 summary(mod)
 #> GALAMM fit by maximum marginal likelihood.
 #> Formula: y ~ 0 + item + sl(x, factor = "loading") + (0 + loading | id/timepoint)
@@ -614,6 +651,7 @@ The true value 2 for the factor loading is well within the 95 %
 confidence limits.
 
 ``` r
+
 confint(mod, parm = "lambda")
 #>            2.5 %   97.5 %
 #> lambda1 1.612341 2.791192
@@ -627,6 +665,7 @@ Domain 1 and 3 both have Gaussian responses, and we can model them
 jointly.
 
 ``` r
+
 dat <- subset(cognition, domain %in% c(1, 3))
 dat$y <- dat$y[, 1]
 ```
@@ -634,6 +673,7 @@ dat$y <- dat$y[, 1]
 We also add indicator variables for the two domains.
 
 ``` r
+
 dat <- cbind(
   dat,
   model.matrix(~ 0 + domain, data = dat)[, c("domain1", "domain3")]
@@ -643,6 +683,7 @@ dat <- cbind(
 We define the loading matrix, now having two columns:
 
 ``` r
+
 (lmat <- matrix(c(
     1, NA, NA, 0, 0, 0, 0,
     0, 0, 0, 1, NA, NA, NA
@@ -665,6 +706,7 @@ and that the term should be multiplied by the loading “ability1” or
 convergence than usual, because this model is hard to estimate.
 
 ``` r
+
 mod_byvar <- galamm(
   formula = y ~ domain +
     sl(x, by = domain, factor = c("ability1", "ability3")) +
@@ -704,6 +746,7 @@ The summary shows that we have recovered the true values of the factor
 loadings well.
 
 ``` r
+
 summary(mod_byvar)
 #> GALAMM fit by maximum marginal likelihood.
 #> Formula: y ~ domain + sl(x, by = domain, factor = c("ability1", "ability3")) +  
@@ -756,6 +799,7 @@ We can plot the estimated smooth terms, which recover their simulated
 ground truth very well.
 
 ``` r
+
 plot_smooth(mod_byvar, scale = 0, select = 1)
 ```
 
@@ -765,6 +809,7 @@ plot_smooth(mod_byvar, scale = 0, select = 1)
 Estimated smooth term for domain 1 in model with domain 1 and domain 3.
 
 ``` r
+
 plot_smooth(mod_byvar, scale = 0, select = 2)
 ```
 
@@ -780,12 +825,14 @@ we can model them jointly. For the sake of speed, we include only two
 items for each domain.
 
 ``` r
+
 dat <- subset(cognition, domain %in% c(1, 2))
 ```
 
 We also add indicator variables for the two domains.
 
 ``` r
+
 dat <- cbind(
   dat,
   model.matrix(~ 0 + domain, data = dat)[, c("domain1", "domain2")]
@@ -795,6 +842,7 @@ dat <- cbind(
 We define the loading matrix, now having two columns:
 
 ``` r
+
 (lmat <- matrix(c(
     1, NA, NA, 0, 0,
     0, 0, 0, 1, NA
@@ -819,6 +867,7 @@ use
 get the correct function.
 
 ``` r
+
 mod_byvar_mixed <- galamm(
   formula = y ~ domain +
     sl(x, by = domain, factor = c("ability1", "ability2")) +
@@ -854,6 +903,7 @@ mod_byvar_mixed <- galamm(
 We can look at the model summary:
 
 ``` r
+
 summary(mod_byvar_mixed)
 #> GALAMM fit by maximum marginal likelihood.
 #> Formula: y ~ domain + sl(x, by = domain, factor = c("ability1", "ability2")) +  
@@ -896,6 +946,7 @@ summary(mod_byvar_mixed)
 We can plot the estimated smooth terms:
 
 ``` r
+
 plot_smooth(mod_byvar_mixed, scale = 0, select = 1)
 ```
 
@@ -906,6 +957,7 @@ Estimated smooth term for domain 1 in mixed response model with domain 1
 and domain 2.
 
 ``` r
+
 plot_smooth(mod_byvar_mixed, scale = 0, select = 2)
 ```
 

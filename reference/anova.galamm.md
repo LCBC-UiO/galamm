@@ -29,7 +29,7 @@ A table with model comparison metric.
 
 Bates DM, Mächler M, Bolker B, Walker S (2015). “Fitting Linear
 Mixed-Effects Models Using Lme4.” *Journal of Statistical Software*,
-**67**(1), 1–48. ISSN 1548-7660,
+**67**(1), 1–48. ISSN 1548-7660.
 [doi:10.18637/jss.v067.i01](https://doi.org/10.18637/jss.v067.i01) .
 
 ## See also

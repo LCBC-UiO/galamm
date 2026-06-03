@@ -86,8 +86,8 @@ mod <- galamm(y ~ item + (0 + ability | sid) + (0 + ability | school),
 
 # Show estimated factor loadings, with standard errors
 factor_loadings(mod)
-#>           ability        SE
-#> lambda1 1.0000000        NA
-#> lambda2 0.8441962 0.5553192
-#> lambda3 1.3391371 0.7567644
+#>          ability        SE
+#> lambda1 1.000000        NA
+#> lambda2 1.222182 0.8141238
+#> lambda3 1.158764 0.6707796
 ```

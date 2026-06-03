@@ -1,6 +1,7 @@
 # Optimization
 
 ``` r
+
 library(galamm)
 ```
 
@@ -11,7 +12,7 @@ convergence issues.
 ### High-Level Overview
 
 The optimization procedure used by `galamm` is described in Section 3 of
-Sørensen, Fjell, and Walhovd
+Sørensen et al.
 ([2023](#ref-sorensenLongitudinalModelingAgeDependent2023)). It consists
 of two steps:
 
@@ -59,6 +60,7 @@ types](https://lcbc-uio.github.io/galamm/articles/mixed_response.html).
 Here we start by simply setting up what we need to fit the model.
 
 ``` r
+
 loading_matrix <- matrix(c(1, 1, NA), ncol = 1)
 families <- galamm::gfam(list(gaussian, binomial))
 formula <- y ~ 0 + chd + (age * bus):chd + fiber +
@@ -69,6 +71,7 @@ Fitting the model with default arguments yields a warning when we look
 at the summary object.
 
 ``` r
+
 mod <- galamm(
   formula = formula,
   data = diet,
@@ -118,6 +121,7 @@ also reduce the number of iterations. We set the `control` argument as
 follows:
 
 ``` r
+
 control <- galamm_control(optim_control = list(maxit = 5, trace = 3, REPORT = 1))
 ```
 
@@ -128,6 +132,7 @@ We provide this object to the `control` argument in `galamm`, and rerun
 the model:
 
 ``` r
+
 mod <- galamm(
   formula = formula,
   data = diet,
@@ -178,12 +183,14 @@ number of iterations, which means that
 used.
 
 ``` r
+
 control <- galamm_control(optim_control = list(trace = 3, REPORT = 10, lmm = 25))
 ```
 
 It is clear that neither this solved the issue.
 
 ``` r
+
 mod <- galamm(
   formula = formula,
   data = diet,
@@ -229,6 +236,7 @@ Looking at the model output again, we see that the random effect
 variance is estimated to be exactly zero.
 
 ``` r
+
 summary(mod)
 #> Warning in vcov.galamm(object, parm = "lambda"): Rank deficient Hessian matrix.Could not compute covariance matrix.
 #> Warning in vcov.galamm(object, "beta"): Rank deficient Hessian matrix.Could not compute covariance matrix.
@@ -276,6 +284,7 @@ we increase it to 10 to see what happens. By default, the initial value
 equals 1.
 
 ``` r
+
 mod <- galamm(
   formula = formula,
   data = diet,
@@ -313,6 +322,7 @@ Now we see that the model converged and that the Hessian is no longer
 rank deficient.
 
 ``` r
+
 summary(mod)
 #> GALAMM fit by maximum marginal likelihood.
 #> Formula: formula
@@ -355,6 +365,7 @@ We also turn on reporting every 20th function evaluation by setting
 `verbose = 1`:
 
 ``` r
+
 control <- galamm_control(
   optim_control = list(verbose = 1),
   method = "Nelder-Mead"
@@ -366,6 +377,7 @@ values. For this we can use the convenience function
 `extract_optim_parameters`:
 
 ``` r
+
 start <- extract_optim_parameters(mod)
 ```
 
@@ -373,6 +385,7 @@ We now fit the model, providing the initial values to the `start`
 argument.
 
 ``` r
+
 mod_nm <- galamm(
   formula = formula,
   data = diet,
@@ -411,6 +424,7 @@ in this particular case, which is not surprising given the intial values
 that we provided.
 
 ``` r
+
 summary(mod_nm)
 #> GALAMM fit by maximum marginal likelihood.
 #> Formula: formula
@@ -501,15 +515,15 @@ Statistical Software* 67 (1): 1–48.
 
 Byrd, Richard H., Peihuang Lu, Jorge Nocedal, and Ciyou Zhu. 1995. “A
 Limited Memory Algorithm for Bound Constrained Optimization.” *SIAM
-Journal on Scientific Computing* 16 (5): 1190–1208.
+Journal on Scientific Computing* 16 (5): 1190–208.
 <https://doi.org/10.1137/0916069>.
 
 Hodges, James S. 2013. *Richly Parameterized Linear Models Additive,
 Time Series, and Spatial Models Using Random Effects*. 1st ed. Chapman &
 Hall/CRC Texts in Statistical Science. Chapman & Hall.
 
-Leal, Allan M. M. 2018. “Autodiff, a Modern, Fast and Expressive C++
-Library for Automatic Differentiation.”
+Leal, Allan M. M. 2018. *Autodiff, a Modern, Fast and Expressive C++
+Library for Automatic Differentiation*.
 
 Nelder, J. A., and R. Mead. 1965. “A Simplex Method for Function
 Minimization.” *The Computer Journal* 7 (4): 308–13.

@@ -49,7 +49,7 @@ Numeric vector of residual values.
 
 Dunn PK, Smyth GK (2018). *Generalized Linear Models With Examples in
 R*, Springer Texts in Statistics. Springer, New York, NY. ISBN
-978-1-4419-0117-0 978-1-4419-0118-7,
+978-1-4419-0117-0 978-1-4419-0118-7.
 [doi:10.1007/978-1-4419-0118-7](https://doi.org/10.1007/978-1-4419-0118-7)
 .
 

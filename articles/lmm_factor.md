@@ -1,6 +1,7 @@
 # Linear Mixed Models with Factor Structures
 
 ``` r
+
 library(galamm)
 library(PLmixed)
 ```
@@ -8,7 +9,7 @@ library(PLmixed)
 This vignette describes how `galamm` can be used to estimate linear
 mixed models with factor structures. Such models are an instance of the
 generalized linear latent and mixed models (GLLAMM) framework described
-by Rabe-Hesketh, Skrondal, and Pickles
+by Rabe-Hesketh et al.
 ([2004](#ref-rabe-heskethGeneralizedMultilevelStructural2004)) and
 Skrondal and Rabe-Hesketh
 ([2004](#ref-skrondalGeneralizedLatentVariable2004)). The R package
@@ -19,7 +20,7 @@ Jeon and Rabe-Hesketh
 ([2012](#ref-jeonProfileLikelihoodApproachEstimating2012)). The models
 are also a special case of generalized additive latent and mixed models
 (GALAMM), and in galamm these models are estimated using a more direct
-algorithm described in Sørensen, Fjell, and Walhovd
+algorithm described in Sørensen et al.
 ([2023](#ref-sorensenLongitudinalModelingAgeDependent2023)).
 
 The examples used in this vignette come from the simulated datasets
@@ -41,6 +42,7 @@ was again based on McCaffrey et al.
 version of the Korea Youth Panel Survey (KYPS) data.
 
 ``` r
+
 head(KYPSsim)
 #>   mid hid sid time   esteem
 #> 1   1   1   1    1 2.759234
@@ -62,6 +64,7 @@ We will use a discrete time model, and hence convert the time variable
 to a factor.
 
 ``` r
+
 KYPSsim$time <- factor(KYPSsim$time)
 levels(KYPSsim$time)
 #> [1] "1" "2" "3" "4"
@@ -73,68 +76,81 @@ use the model of Jeon and Rabe-Hesketh
 ([2012](#ref-jeonProfileLikelihoodApproachEstimating2012)), whose
 measurement part can be formulated as
 
-$$y_{tsmh} = \beta_{0} + \sum\limits_{t\prime = 2}^{4}d_{tt\prime}\beta_{t\prime} + \mathbf{d}_{t}^{T}\left( {\mathbf{λ}}_{m}\eta_{m} + {\mathbf{λ}}_{h}\eta_{h} \right) + \eta_{s} + \epsilon_{tsmh},$$
+``` math
+y_{tsmh} = \beta_{0} + \sum_{t'=2}^{4} d_{tt'}\beta_{t'} + \mathbf{d}_{t}^{T} \left(\boldsymbol{\lambda}_{m}  \eta_{m} + \boldsymbol{\lambda}_{h}  \eta_{h}\right) + \eta_{s} + \epsilon_{tsmh},
+```
 
-where $\mathbf{d}_{t} = \left( d_{t1},d_{t2},d_{t3},d_{t4} \right)^{T}$
-is a vector whose $t$th element equals one and all other elements equal
-zero. $\beta_{0}$ is an intercept, and $\beta_{2}$, $\beta_{3}$, and
-$\beta_{4}$ are the effects of timepoints 2, 3, and 4. $\eta_{m}$ and
-$\eta_{h}$ are the “teacher effects” of middle school $m$ and high
-school $s$, respectively, $\eta_{s}$ is the latent level for student
-$s$, and $\epsilon_{tsmh}$ is a residual term. ${\mathbf{λ}}_{m}$ and
-${\mathbf{λ}}_{h}$ are factor loadings (called “persistence parameters”
-by McCaffrey et al. ([2004](#ref-mccaffreyModelsValueAddedModeling2004))
-and Jeon and Rabe-Hesketh
-([2012](#ref-jeonProfileLikelihoodApproachEstimating2012))) specifying
-how the teacher effects for middle school and high school impact the
-self esteem measurement. Since students attend high school after middle
-school, the measurements of self esteem in middle school are assumed not
-to be affected by high school, and hence the first two elements of
-${\mathbf{λ}}_{h}$ are set to zero. The first nonzero element is set to
-zero for identifiability, so we have
-${\mathbf{λ}}_{h} = \left( 0,0,1,\lambda_{h4} \right)^{T}$. Conversely,
+where $`\mathbf{d}_{t} = (d_{t1},d_{t2},d_{t3},d_{t4})^{T}`$ is a vector
+whose $`t`$th element equals one and all other elements equal zero.
+$`\beta_{0}`$ is an intercept, and $`\beta_{2}`$, $`\beta_{3}`$, and
+$`\beta_{4}`$ are the effects of timepoints 2, 3, and 4. $`\eta_{m}`$
+and $`\eta_{h}`$ are the “teacher effects” of middle school $`m`$ and
+high school $`s`$, respectively, $`\eta_{s}`$ is the latent level for
+student $`s`$, and $`\epsilon_{tsmh}`$ is a residual term.
+$`\boldsymbol{\lambda}_{m}`$ and $`\boldsymbol{\lambda}_{h}`$ are factor
+loadings (called “persistence parameters” by McCaffrey et al.
+([2004](#ref-mccaffreyModelsValueAddedModeling2004)) and Jeon and
+Rabe-Hesketh ([2012](#ref-jeonProfileLikelihoodApproachEstimating2012)))
+specifying how the teacher effects for middle school and high school
+impact the self esteem measurement. Since students attend high school
+after middle school, the measurements of self esteem in middle school
+are assumed not to be affected by high school, and hence the first two
+elements of $`\boldsymbol{\lambda}_{h}`$ are set to zero. The first
+nonzero element is set to zero for identifiability, so we have
+$`\boldsymbol{\lambda}_{h} = (0, 0, 1, \lambda_{h4})^{T}`$. Conversely,
 we allow for middle school to have an effect of measurements in high
 school, so
-${\mathbf{λ}}_{m} = \left( 1,\lambda_{m2},\lambda_{m3},\lambda_{m4} \right)^{T}$,
+$`\boldsymbol{\lambda}_{m} = (1, \lambda_{m2}, \lambda_{m3}, \lambda_{m4})^{T}`$,
 with the first element set to zero for identifiability. The residuals
-are assumed normally distributed, $\epsilon_{tsmh} \sim N(0,\phi)$.
+are assumed normally distributed, $`\epsilon_{tsmh} \sim N(0, \phi)`$.
 
 Written out for each of the four timepoints, the model becomes
 
-$$\begin{aligned}
-y_{1smh} & {= \beta_{0} + \eta_{m} + \eta_{s} + \epsilon_{1smh}} \\
-y_{2smh} & {= \beta_{0} + \beta_{2} + \lambda_{m2}\eta_{m} + \eta_{s} + \epsilon_{2smh}} \\
-y_{3smh} & {= \beta_{0} + \beta_{3} + \lambda_{m3}\eta_{m} + \eta_{h} + \eta_{s} + \epsilon_{3smh}} \\
-y_{4smh} & {= \beta_{0} + \beta_{4} + \lambda_{m4}\eta_{m} + \lambda_{h4}\eta_{h} + \eta_{s} + \epsilon_{4smh}}
-\end{aligned}$$
+``` math
+\begin{aligned}
+y_{1smh} &= \beta_{0} +  \eta_{m} + \eta_{s} + \epsilon_{1smh} \\
+y_{2smh} &= \beta_{0} + \beta_{2} + \lambda_{m2}  \eta_{m} + \eta_{s} + \epsilon_{2smh} \\
+y_{3smh} &= \beta_{0} + \beta_{3} + \lambda_{m3}  \eta_{m} +  \eta_{h} + \eta_{s} + \epsilon_{3smh} \\
+y_{4smh} &= \beta_{0} + \beta_{4} + \lambda_{m4}  \eta_{m} + \lambda_{h4}  \eta_{h} + \eta_{s} + \epsilon_{4smh}
+\end{aligned}
+```
 
 The structural model is simply
 
-$$\begin{pmatrix}
+``` math
+\begin{pmatrix}
 \eta_{m} \\
 \eta_{h} \\
 \eta_{s}
-\end{pmatrix} = \begin{pmatrix}
+\end{pmatrix}
+=
+\begin{pmatrix}
 \zeta_{m} \\
 \zeta_{h} \\
 \zeta_{s}
-\end{pmatrix} \sim N_{3}\left( \mathbf{0},\begin{pmatrix}
+\end{pmatrix}
+\sim
+N_{3}\left(\mathbf{0},
+\begin{pmatrix}
 \psi_{m} & 0 & 0 \\
 0 & \psi_{h} & 0 \\
 0 & 0 & \psi_{s}
-\end{pmatrix} \right),$$
+\end{pmatrix}
+\right),
+```
 
-where $N_{3}(a,b)$ denotes a trivariate normal distribution with mean
-$a$ and covariance $b$.
+where $`N_{3}(a, b)`$ denotes a trivariate normal distribution with mean
+$`a`$ and covariance $`b`$.
 
 In order to fit the model with galamm, we use syntax similar to PLmixed,
 and start by defining the loading matrix. The first column contains
-${\mathbf{λ}}_{m}$ and the second column contains ${\mathbf{λ}}_{h}$.
-Numerical values in this matrix means that the entry is fixed to the
-given value, whereas `NA` means that the value is unknown, and should be
-estimated.
+$`\boldsymbol{\lambda}_{m}`$ and the second column contains
+$`\boldsymbol{\lambda}_{h}`$. Numerical values in this matrix means that
+the entry is fixed to the given value, whereas `NA` means that the value
+is unknown, and should be estimated.
 
 ``` r
+
 (loading_matrix <- rbind(
   c(1, 0),
   c(NA, 0),
@@ -152,38 +168,42 @@ We connect the loading matrix to variables in the dataframe with the
 following factors.
 
 ``` r
+
 factors <- c("ms", "hs")
 ```
 
 Finally, we define the loading variable. This is a variable connecting
 rows of the dataframe to rows of the loading matrices. In this case, for
 each value of `time`, the corresponding row of the loading matrix should
-be multiplied by the latent variables $\eta_{m}$ and $\eta_{h}$, so we
-set it as follows:
+be multiplied by the latent variables $`\eta_{m}`$ and $`\eta_{h}`$, so
+we set it as follows:
 
 ``` r
+
 load_var <- "time"
 ```
 
 The model formula is specified as
 
 ``` r
+
 form <- esteem ~ time + (0 + ms | mid) + (0 + hs | hid) + (1 | sid)
 ```
 
 We use lme4 syntax for random effects. For example, the term
-`(0 + ms | mid)` corresponds to $\lambda_{mt}\eta_{m}$, where `| mid`
-specifies that $\eta_{m}$ should have a unique value for each unique
+`(0 + ms | mid)` corresponds to $`\lambda_{mt}\eta_{m}`$, where `| mid`
+specifies that $`\eta_{m}`$ should have a unique value for each unique
 `mid`. Since `"ms"` can be found in the `factors` defined above, this
 term should be treated specially, by making sure that the latent
 variable is multiplied by the factor loading corresponding to `"ms"` for
 each particular row. In contrast, the latent variable for students
-$\eta_{s}$ is a simple random intercept, and hence the term `(1 | sid)`
-suffices.
+$`\eta_{s}`$ is a simple random intercept, and hence the term
+`(1 | sid)` suffices.
 
 We fit the model using `galamm` with the following call.
 
 ``` r
+
 mod <- galamm(
   formula = form,
   data = KYPSsim,
@@ -200,6 +220,7 @@ results are essentially equivalent, but we won’t run it in this vignette
 as it takes 5-10 minutes.
 
 ``` r
+
 kyps_plmixed <- PLmixed(
   formula = form,
   data = KYPSsim,
@@ -212,6 +233,7 @@ kyps_plmixed <- PLmixed(
 Using galamm’s summary method, we can study the model output.
 
 ``` r
+
 summary(mod)
 #> GALAMM fit by maximum marginal likelihood.
 #> Formula: form
@@ -254,6 +276,7 @@ attends high school, as can be seen by the last two rows of the “ms”
 column being very close to zero.
 
 ``` r
+
 factor_loadings(mod)
 #>                 ms        SE       hs        SE
 #> lambda1 1.00000000        NA 0.000000        NA
@@ -266,6 +289,7 @@ A diagnostic plot of residuals versus predicted values also looks
 acceptable, although there seems to be a slight upward trend.
 
 ``` r
+
 plot(mod, abline = c(0, 0))
 ```
 
@@ -277,10 +301,11 @@ Diagnostic plot for linear mixed model with factor structures.
 We can also compare the estimated model to a model with constrained
 factor loadings. In particular, we could assume that the teacher effect
 in middle school has no effect on self esteem measured during high
-school, by setting the last two elements of ${\mathbf{λ}}_{m}$ to zero.
-We would then have the following loading matrix.
+school, by setting the last two elements of $`\boldsymbol{\lambda}_{m}`$
+to zero. We would then have the following loading matrix.
 
 ``` r
+
 (loading_matrix_constr1 <- rbind(
   c(1, 0),
   c(NA, 0),
@@ -295,6 +320,7 @@ We would then have the following loading matrix.
 ```
 
 ``` r
+
 mod_constr1 <- galamm(
   formula = form,
   data = KYPSsim,
@@ -311,6 +337,7 @@ factors. One way of estimating this model is to define a new loading
 matrix:
 
 ``` r
+
 (loading_matrix_constr2 <- rbind(
   c(1, 0),
   c(1, 0),
@@ -325,6 +352,7 @@ matrix:
 ```
 
 ``` r
+
 mod_constr2 <- galamm(
   formula = form,
   data = KYPSsim,
@@ -337,6 +365,7 @@ mod_constr2 <- galamm(
 Equivalently, we could create dummy variables for the timepoints:
 
 ``` r
+
 KYPSsim$time12 <- as.integer(KYPSsim$time %in% 1:2)
 KYPSsim$time34 <- as.integer(KYPSsim$time %in% 3:4)
 head(KYPSsim)
@@ -353,6 +382,7 @@ We this formulation, we don’t need to specify the `factor`, `load_var`,
 and `lambda` arguments.
 
 ``` r
+
 mod_constr2b <- galamm(
   formula = esteem ~ time + (0 + time12 | mid) + (0 + time34 | hid) + (1 | sid),
   data = KYPSsim
@@ -365,6 +395,7 @@ results. Furthermore, this simplest model seems to be preferred over the
 two more complex models on this simulated dataset.
 
 ``` r
+
 anova(
   mod, mod_constr1, mod_constr2,
   mod_constr2b
@@ -410,12 +441,14 @@ rated by both students and teachers.
 Initially, we need to convert the item variable to a factor.
 
 ``` r
+
 JUDGEsim$item <- factor(JUDGEsim$item)
 ```
 
 The first ten rows of the dataset are as follows:
 
 ``` r
+
 head(JUDGEsim, 10)
 #>    item method trait stu class tch response
 #> 1     1      1     1   1     1   1 2.509475
@@ -440,6 +473,7 @@ teacher would in general rate more than one student, whereas a single
 student would only rate themselves.
 
 ``` r
+
 table(JUDGEsim$item)
 #> 
 #>    1    2    3    4    5    6    7    8    9   10   11   12 
@@ -450,19 +484,23 @@ In matrix-vector format, the measurement model is (equation 16 in
 Rockwood and Jeon
 ([2019](#ref-rockwoodEstimatingComplexMeasurement2019)))
 
-$$\begin{pmatrix}
+``` math
+\begin{pmatrix}
 y_{1tsc} \\
 \vdots \\
 y_{12tsc} \\
-
-\end{pmatrix} = \begin{pmatrix}
+\end{pmatrix}
+=
+\begin{pmatrix}
 \beta_{1} \\
 \vdots \\
 \beta_{12}
-\end{pmatrix} + \begin{pmatrix}
-1 & 0 & 1 & 0 & 0 & 0 & 1 \\
+\end{pmatrix}
++
+\begin{pmatrix}
+1 & 0 & 1 & 0 & 0 & 0 & 1\\
 \lambda_{21} & 0 & \lambda_{23} & 0 & 0 & 0 & 1 \\
-\lambda_{31} & 0 & \lambda_{33} & 0 & 0 & 0 & 1 \\
+\lambda_{31} & 0 & \lambda_{33} & 0 & 0 & 0 & 1\\
 0 & 1 & 0 & 1 & 0 & 0 & 1 \\
 0 & \lambda_{52} & 0 & \lambda_{54} & 0 & 0 & 1 \\
 0 & \lambda_{62} & 0 & \lambda_{64} & 0 & 0 & 1 \\
@@ -472,8 +510,8 @@ y_{12tsc} \\
 0 & 0 & 0 & 0 & 0 & 1 & 1 \\
 0 & 0 & 0 & 0 & 0 & \lambda_{11,6} & 1 \\
 0 & 0 & 0 & 0 & 0 & \lambda_{12,6} & 1 \\
- & & & & & & 
-\end{pmatrix}\begin{pmatrix}
+\end{pmatrix}
+\begin{pmatrix}
 \eta_{1t}^{(t)} \\
 \eta_{2t}^{(t)} \\
 \eta_{3s}^{(s)} \\
@@ -481,21 +519,23 @@ y_{12tsc} \\
 \eta_{5s}^{(s)} \\
 \eta_{6s}^{(s)} \\
 \eta_{7c}^{(c)} \\
+\end{pmatrix} +
+\boldsymbol{\epsilon}_{tsc}
+```
 
-\end{pmatrix} + {\mathbf{ϵ}}_{tsc}$$
-
-In brief, $\eta_{1t}^{(t)}$ and $\eta_{2t}^{(t)}$ are the teacher
-effects, $\eta_{3s}^{(s)}$ and $\eta_{4s}^{(s)}$ are teacher’s
-perception of the students on the trait, $\eta_{5s}^{(s)}$ and
-$\eta_{6s}^{(s)}$ are the students’ perception of themselves on the
-trait, and $\eta_{7c}^{(c)}$ is the classroom effect. The factor
+In brief, $`\eta_{1t}^{(t)}`$ and $`\eta_{2t}^{(t)}`$ are the teacher
+effects, $`\eta_{3s}^{(s)}`$ and $`\eta_{4s}^{(s)}`$ are teacher’s
+perception of the students on the trait, $`\eta_{5s}^{(s)}`$ and
+$`\eta_{6s}^{(s)}`$ are the students’ perception of themselves on the
+trait, and $`\eta_{7c}^{(c)}`$ is the classroom effect. The factor
 loadings are the “regression coefficients” for regressing the observed
-items onto these latent traits. The subscripts $t$, $s$, and $c$
+items onto these latent traits. The subscripts $`t`$, $`s`$, and $`c`$
 indicate teacher, student, and class, respectively.
 
 The structural model is simply
 
-$$\begin{pmatrix}
+``` math
+\begin{pmatrix}
 \eta_{1t}^{(t)} \\
 \eta_{2t}^{(t)} \\
 \eta_{3s}^{(s)} \\
@@ -503,8 +543,9 @@ $$\begin{pmatrix}
 \eta_{5s}^{(s)} \\
 \eta_{6s}^{(s)} \\
 \eta_{7c}^{(c)} \\
-
-\end{pmatrix} = \begin{pmatrix}
+\end{pmatrix}
+=
+\begin{pmatrix}
 \zeta_{1t}^{(t)} \\
 \zeta_{2t}^{(t)} \\
 \zeta_{3s}^{(s)} \\
@@ -512,33 +553,41 @@ $$\begin{pmatrix}
 \zeta_{5s}^{(s)} \\
 \zeta_{6s}^{(s)} \\
 \zeta_{7c}^{(c)} \\
-
-\end{pmatrix}$$
+\end{pmatrix}
+```
 
 where
 
-$$\begin{pmatrix}
+``` math
+\begin{pmatrix}
 \zeta_{1t}^{(t)} \\
 \zeta_{2t}^{(t)} \\
+\end{pmatrix}
+\sim N_{2}(\mathbf{0}, \boldsymbol{\Psi}^{(t)}),
+```
 
-\end{pmatrix} \sim N_{2}\left( \mathbf{0},\mathbf{\Psi}^{(t)} \right),$$
-
-$$\begin{pmatrix}
+``` math
+\begin{pmatrix}
 \zeta_{3s}^{(s)} \\
 \zeta_{4s}^{(s)} \\
 \zeta_{5s}^{(s)} \\
 \zeta_{6s}^{(s)} \\
+\end{pmatrix}
+\sim N_{4}(\mathbf{0}, \boldsymbol{\Psi}^{(s)}),
+```
 
-\end{pmatrix} \sim N_{4}\left( \mathbf{0},\mathbf{\Psi}^{(s)} \right),$$
-
-$$\begin{pmatrix}
+``` math
+\begin{pmatrix}
 \zeta_{7c}^{(c)} \\
-
-\end{pmatrix} \sim N_{1}\left( 0,\psi^{(c)} \right),$$
+\end{pmatrix}
+\sim N_{1}(0, \psi^{(c)}),
+```
 
 and
 
-$$\epsilon_{tsc} \sim N_{1}(0,\phi).$$
+``` math
+\epsilon_{tsc} \sim N_{1}(0, \phi).
+```
 
 We specify the loading matrix as follows. In comparison with the
 mathematical model formulation just above, note that we don’t need to
@@ -546,6 +595,7 @@ add the last column of only ones, since this column contains no
 parameters to be estimated.
 
 ``` r
+
 (loading_matrix <- rbind(
   c(1, 0, 1, 0, 0, 0),
   c(NA, 0, NA, 0, 0, 0),
@@ -581,6 +631,7 @@ factors, except for names of existing variables in the dataset, but we
 must make sure they match the names used in the formula.
 
 ``` r
+
 factors <- c(
   "teacher1", "teacher2", "trait1.t",
   "trait2.t", "trait1.s", "trait2.s"
@@ -592,6 +643,7 @@ the same order as they appear in the mathematical model in matrix-vector
 form specified above.
 
 ``` r
+
 form <- response ~ 0 + item + (0 + teacher1 + teacher2 | tch) +
   (0 + trait1.t + trait2.t + trait1.s + trait2.s | stu) +
   (1 | class)
@@ -601,6 +653,7 @@ Using `PLmixed`, we could have estimated the model as follows, and doing
 it would confirm that the results are the same as with galamm.
 
 ``` r
+
 judge_plmixed <- PLmixed(
   formula = form,
   data = JUDGEsim,
@@ -614,6 +667,7 @@ We get identical results using `galamm`, and it takes less than five
 minutes.
 
 ``` r
+
 judge_galamm <- galamm(
   formula = form,
   data = JUDGEsim,
@@ -624,6 +678,7 @@ judge_galamm <- galamm(
 ```
 
 ``` r
+
 summary(judge_galamm)
 #> GALAMM fit by maximum marginal likelihood.
 #> Formula: form
@@ -697,6 +752,7 @@ deviance residuals against teacher. It does not look like the residuals
 depend on teacher.
 
 ``` r
+
 plot(judge_galamm, form = resid(., type = "deviance", scaled = TRUE) ~ tch)
 ```
 
@@ -708,6 +764,7 @@ The quantile-quantile plot also looks very good (no surprise: these are
 simulated data).
 
 ``` r
+
 qqmath(judge_galamm)
 ```
 
@@ -743,8 +800,8 @@ Measurement and Growth Models Using the R Package PLmixed.”
 <https://doi.org/10.1080/00273171.2018.1516541>.
 
 Skrondal, Anders, and Sophia Rabe-Hesketh. 2004. *Generalized Latent
-Variable Modeling*. Interdisciplinary Statistics Series. Boca Raton,
-Florida: Chapman and Hall/CRC.
+Variable Modeling*. Interdisciplinary Statistics Series. Chapman and
+Hall/CRC.
 
 Sørensen, Øystein, Anders M. Fjell, and Kristine B. Walhovd. 2023.
 “Longitudinal Modeling of Age-Dependent Latent Traits with Generalized

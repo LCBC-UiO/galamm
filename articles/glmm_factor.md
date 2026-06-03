@@ -1,13 +1,14 @@
 # Generalized Linear Mixed Models with Factor Structures
 
 ``` r
+
 library(galamm)
 ```
 
 This vignette describes how `galamm` can be used to estimate generalized
 linear mixed models with factor structures. Such models are an instance
 of the generalized linear latent and mixed models (GLLAMM) framework
-described by Rabe-Hesketh, Skrondal, and Pickles
+described by Rabe-Hesketh et al.
 ([2004](#ref-rabe-heskethGeneralizedMultilevelStructural2004)). The R
 package PLmixed ([Rockwood and Jeon
 2019](#ref-rockwoodEstimatingComplexMeasurement2019)) estimates such
@@ -16,7 +17,7 @@ and Rabe-Hesketh
 ([2012](#ref-jeonProfileLikelihoodApproachEstimating2012)). The models
 are also a special case of generalized additive latent and mixed models
 (GALAMM), and in galamm these models are estimated using a more direct
-algorithm described in Sørensen, Fjell, and Walhovd
+algorithm described in Sørensen et al.
 ([2023](#ref-sorensenLongitudinalModelingAgeDependent2023)).
 
 As for the vignette on linear mixed models, we thank Rockwood and Jeon
@@ -32,6 +33,7 @@ The observations are binomial responses representing an ability
 measurement. The first few lines are shown below.
 
 ``` r
+
 library(PLmixed)
 head(IRTsim)
 #>     sid school item y
@@ -50,55 +52,66 @@ depends both on the students ability as well as on the school the
 student attends. Having the outline of GALAMMs from the [introductory
 vignette](https://lcbc-uio.github.io/galamm/articles/galamm.html) in
 mind, we assume a binomial response model with a logit link, yielding
-for the $i$th measurement of the $j$th student in the $k$th school,
+for the $`i`$th measurement of the $`j`$th student in the $`k`$th
+school,
 
-$$\text{P}\left( y_{ijk} = 1|\mathbf{x}_{ijk},{\mathbf{η}}_{jk} \right) = \frac{\exp\left( \nu_{ijk} \right)}{1 + \exp\left( \nu_{ijk} \right)}$$
+``` math
+\text{P}(y_{ijk} = 1 | \mathbf{x}_{ijk}, \boldsymbol{\eta}_{jk}) = \frac{\exp(\nu_{ijk})}{1 + \exp(\nu_{ijk})}
+```
 
 The latent variable vector is given by
-${\mathbf{η}}_{jk} = \left( \eta_{j},\eta_{jk} \right)^{T}$, where the
-last element is the effect of the school which the $j$th student
-attends. The nonlinear predictor is given by
+$`\boldsymbol{\eta}_{jk} = (\eta_{j}, \eta_{jk})^{T}`$, where the last
+element is the effect of the school which the $`j`$th student attends.
+The nonlinear predictor is given by
 
-$$\nu_{ijk} = \mathbf{x}_{ijk}^{T}{\mathbf{β}} + \mathbf{x}_{ijk}^{T}{\mathbf{λ}}\left( \eta_{j} + \eta_{jk} \right)$$
+``` math
+\nu_{ijk} = \mathbf{x}_{ijk}^{T} \boldsymbol{\beta} + \mathbf{x}_{ijk}^{T}\boldsymbol{\lambda} (\eta_{j} + \eta_{jk})
+```
 
-where $\mathbf{x}_{ij}$ is a vector containing dummy variables for
-items, $\eta_{j}$ is a latent variable describing the underlying ability
-of student $j$, and $\eta_{k}$ is a latent variable describing the
-effect of school $k$. The factor loading $\lambda$ describes how the sum
-of the two latent variables impacts the nonlinear predictor, and hence
-the probability of correct response. We note that using a common
-$\lambda$ for two latent variables like this is not necessarily a good
-model, but it makes this introductory example easier to follow. We will
-extend the model later.
+where $`\mathbf{x}_{ij}`$ is a vector containing dummy variables for
+items, $`\eta_{j}`$ is a latent variable describing the underlying
+ability of student $`j`$, and $`\eta_{k}`$ is a latent variable
+describing the effect of school $`k`$. The factor loading $`\lambda`$
+describes how the sum of the two latent variables impacts the nonlinear
+predictor, and hence the probability of correct response. We note that
+using a common $`\lambda`$ for two latent variables like this is not
+necessarily a good model, but it makes this introductory example easier
+to follow. We will extend the model later.
 
 The structural model is simply
 
-$${\mathbf{η}}_{jk} = {\mathbf{ζ}}_{jk} \sim N_{2}(\mathbf{0},\mathbf{\Psi}),$$
+``` math
+\boldsymbol{\eta}_{jk} = \boldsymbol{\zeta}_{jk} \sim N_{2}(\mathbf{0}, \boldsymbol{\Psi}),
+```
 
-where $N(\mathbf{0},\mathbf{\Psi})$ denotes a bivariate normal
-distribution with mean zero covariance matrix $\mathbf{\Psi}$. The
+where $`N(\mathbf{0}, \boldsymbol{\Psi})`$ denotes a bivariate normal
+distribution with mean zero covariance matrix $`\boldsymbol{\Psi}`$. The
 covariance matrix is assumed to be diagonal.
 
 ``` r
+
 IRTsim$item <- factor(IRTsim$item)
 ```
 
-We confirm that `item` has five levels. This means that $\mathbf{λ}$ is
-a vector with five elements.
+We confirm that `item` has five levels. This means that
+$`\boldsymbol{\lambda}`$ is a vector with five elements.
 
 ``` r
+
 table(IRTsim$item)
 #> 
 #>   1   2   3   4   5 
 #> 500 500 500 500 500
 ```
 
-For identifiability, we fix the first element of $\mathbf{λ}$ to one.
-The rest will be freely estimated. We do this by defining the following
-matrix. Any numeric value implies that the element is fixed, whereas
-`NA` implies that the element is unknown, and will be estimated.
+For identifiability, we fix the first element of
+$`\boldsymbol{\lambda}`$ to one. The rest will be freely estimated. We
+do this by defining the following matrix. Any numeric value implies that
+the element is fixed, whereas `NA` implies that the element is unknown,
+and will be estimated.
 
 ``` r
+
 (loading_matrix <- matrix(c(1, NA, NA, NA, NA), ncol = 1))
 #>      [,1]
 #> [1,]    1
@@ -111,6 +124,7 @@ matrix. Any numeric value implies that the element is fixed, whereas
 We fit the model as follows:
 
 ``` r
+
 mod <- galamm(
   formula = y ~ item + (0 + ability | school / sid),
   data = IRTsim,
@@ -125,23 +139,24 @@ A couple of things in the model formula are worth pointing out. First
 the part `(0 + ability | school / sid)` in the model formula specifies
 that student ability varies between students within schools. It
 corresponds to the term
-$\mathbf{x}_{ijk}^{T}{\mathbf{λ}}\left( \eta_{j} + \eta_{jk} \right)$ in
+$`\mathbf{x}_{ijk}^{T}\boldsymbol{\lambda} (\eta_{j} + \eta_{jk})`$ in
 the mathematical specification of the model. The variable `ability` is
 not part of the `IRTsim` dataframe, but is instead specified in the
 argument `factor = "ability"`. The argument `load_var = "item"`
 specifies that all rows in the dataframe with the same value of “item”
-should get the same element of $\mathbf{λ}$, and hence it defines the
-dummy variable $\mathbf{x}_{ijk}$. Finally, `lambda = loading_matrix`
-provides the matrix of factor loadings. Note that we must explicitly add
-a zero in `(0 + ability | school / sid)` to avoid having a random
-intercept estimated in addition to the effect for each value of “item”;
-such a model would not be identified. The fixed effect part of the model
-formula, which is simply `item`, specifies the term
-$\mathbf{x}_{ijk}^{T}{\mathbf{β}}$.
+should get the same element of $`\boldsymbol{\lambda}`$, and hence it
+defines the dummy variable $`\mathbf{x}_{ijk}`$. Finally,
+`lambda = loading_matrix` provides the matrix of factor loadings. Note
+that we must explicitly add a zero in `(0 + ability | school / sid)` to
+avoid having a random intercept estimated in addition to the effect for
+each value of “item”; such a model would not be identified. The fixed
+effect part of the model formula, which is simply `item`, specifies the
+term $`\mathbf{x}_{ijk}^{T} \boldsymbol{\beta}`$.
 
 We can start by inspecting the fitted model:
 
 ``` r
+
 summary(mod)
 #> GALAMM fit by maximum marginal likelihood.
 #> Formula: y ~ item + (0 + ability | school/sid)
@@ -180,6 +195,7 @@ summary(mod)
 The `fixef` method lets us consider the fixed effects:
 
 ``` r
+
 fixef(mod)
 #> (Intercept)       item2       item3       item4       item5 
 #>   0.5112006   0.3255941  -0.4491070   0.4929827   0.4584897
@@ -188,6 +204,7 @@ fixef(mod)
 We can also get Wald type confidence intervals for the fixed effects.
 
 ``` r
+
 confint(mod, parm = "beta")
 #>                    2.5 %     97.5 %
 #> (Intercept) -0.001727334  1.0241286
@@ -200,6 +217,7 @@ confint(mod, parm = "beta")
 We can similarly extract the factor loadings.
 
 ``` r
+
 factor_loadings(mod)
 #>           ability        SE
 #> lambda1 1.0000000        NA
@@ -214,6 +232,7 @@ confidence intervals are available. Be aware that such intervals may
 have poor coverage properties.
 
 ``` r
+
 confint(mod, parm = "lambda")
 #>             2.5 %    97.5 %
 #> lambda1 0.4516974 1.0223534
@@ -227,6 +246,7 @@ since these are more useful for logistic regression models. The division
 into two parts is a consequence of the binary outcomes.
 
 ``` r
+
 plot(mod, form = residuals(., type = "deviance", scaled = TRUE) ~ fitted(.), abline = c(0, 0))
 ```
 
@@ -243,6 +263,7 @@ by computing predictions from the model fitted above, and drawing
 binomial samples with multiple trials.
 
 ``` r
+
 set.seed(1234)
 dat <- IRTsim
 dat$trials <- sample(1:10, nrow(dat), replace = TRUE)
@@ -264,6 +285,7 @@ For binomial models with more than one trial, the response should be
 specified `cbind(successes, failures)`.
 
 ``` r
+
 galamm_mod_trials <- galamm(
   formula = cbind(y, trials - y) ~ item + (0 + ability | school / sid),
   data = dat,
@@ -278,6 +300,7 @@ All the utility functions apply to this model as well. We simply post
 its summary output here.
 
 ``` r
+
 summary(galamm_mod_trials)
 #> GALAMM fit by maximum marginal likelihood.
 #> Formula: cbind(y, trials - y) ~ item + (0 + ability | school/sid)
@@ -318,6 +341,7 @@ better than in the binary case, since with more trials the values are
 closer to normal.
 
 ``` r
+
 plot(
   galamm_mod_trials, 
   form = residuals(., type = "deviance", scaled = TRUE) ~ fitted(.), 
@@ -338,6 +362,7 @@ contain factor loadings, but we use it to demonstrate how to fit GLMMs
 with Poisson distributed responses.
 
 ``` r
+
 count_mod <- galamm(
   formula = y ~ lbas * treat + lage + v4 + (1 | subj),
   data = epilep,
@@ -348,6 +373,7 @@ count_mod <- galamm(
 We can look at the summary output.
 
 ``` r
+
 summary(count_mod)
 #> GALAMM fit by maximum marginal likelihood.
 #> Formula: y ~ lbas * treat + lage + v4 + (1 | subj)
@@ -378,12 +404,14 @@ summary(count_mod)
 In this case there are no factor loadings to return:
 
 ``` r
+
 factor_loadings(count_mod)
 ```
 
 We can again look at a diagnostic plot.
 
 ``` r
+
 plot(count_mod, form = residuals(., type = "deviance") ~ fitted(.), abline = c(0, 0))
 ```
 
@@ -395,6 +423,7 @@ Diagnostic plot for Poisson model.
 We can also plot the residuals per subject:
 
 ``` r
+
 plot(count_mod, form = resid(., type = "deviance") ~ as.factor(subj), 
      abline = c(0, 0))
 ```
@@ -411,6 +440,7 @@ structures or other nonlinearities, `lme4` no longer provides the
 flexibility we need.
 
 ``` r
+
 library(lme4)
 #> Loading required package: Matrix
 count_mod_lme4 <- glmer(
@@ -424,6 +454,7 @@ We can confirm that the diagnostic plot has the same values as for
 galamm:
 
 ``` r
+
 plot(count_mod_lme4)
 ```
 
@@ -435,6 +466,7 @@ lme4 diagnostic plot for Poisson model.
 And we can do the same for the summary output.
 
 ``` r
+
 summary(count_mod_lme4)
 #> Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
 #>  Family: poisson  ( log )
@@ -481,6 +513,7 @@ function on a model object fitted by glmer gives the same output as
 galamm.
 
 ``` r
+
 deviance(count_mod_lme4)
 #> [1] 407.0092
 ```
@@ -505,8 +538,8 @@ Measurement and Growth Models Using the R Package PLmixed.”
 <https://doi.org/10.1080/00273171.2018.1516541>.
 
 Skrondal, Anders, and Sophia Rabe-Hesketh. 2004. *Generalized Latent
-Variable Modeling*. Interdisciplinary Statistics Series. Boca Raton,
-Florida: Chapman and Hall/CRC.
+Variable Modeling*. Interdisciplinary Statistics Series. Chapman and
+Hall/CRC.
 
 Sørensen, Øystein, Anders M. Fjell, and Kristine B. Walhovd. 2023.
 “Longitudinal Modeling of Age-Dependent Latent Traits with Generalized

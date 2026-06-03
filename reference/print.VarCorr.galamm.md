@@ -51,7 +51,7 @@ argument `x` is silently returned.
 
 Bates DM, Mächler M, Bolker B, Walker S (2015). “Fitting Linear
 Mixed-Effects Models Using Lme4.” *Journal of Statistical Software*,
-**67**(1), 1–48. ISSN 1548-7660,
+**67**(1), 1–48. ISSN 1548-7660.
 [doi:10.18637/jss.v067.i01](https://doi.org/10.18637/jss.v067.i01) .
 
 ## See also
@@ -99,7 +99,7 @@ mod <- galamm(
 
 # Extract information on variance and covariance
 VarCorr(mod)
-#>  Groups   Name        Std.Dev. Variance
-#>  id       (Intercept) 0.99400  0.98804 
-#>  Residual             0.97964  0.95970 
+#>  Groups   Name        Variance Std.Dev.
+#>  id       (Intercept) 0.98804  0.99400 
+#>  Residual             0.95970  0.97964 
 ```

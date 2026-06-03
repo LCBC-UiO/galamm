@@ -62,14 +62,14 @@ diet
 ## References
 
 Morris JN, Marr JW, Clayton DG (1977). “Diet and Heart: A Postscript.”
-*Br Med J*, **2**(6098), 1307–1314. ISSN 0007-1447, 1468-5833,
+*Br Med J*, **2**(6098), 1307–1314. ISSN 0007-1447, 1468-5833.
 [doi:10.1136/bmj.2.6098.1307](https://doi.org/10.1136/bmj.2.6098.1307)
 .  
   
 Rabe-Hesketh S, Pickles A, Skrondal A (2003). “Correcting for Covariate
 Measurement Error in Logistic Regression Using Nonparametric Maximum
 Likelihood Estimation.” *Statistical Modelling*, **3**(3), 215–232. ISSN
-1471-082X,
+1471-082X.
 [doi:10.1191/1471082X03st056oa](https://doi.org/10.1191/1471082X03st056oa)
 .  
   
