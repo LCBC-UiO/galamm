@@ -3,10 +3,10 @@
     Code
       print(VarCorr(mod), digits = 2)
     Output
-       Groups     Name     Std.Dev. Variance
-       sid:school abil.sid 0.24     0.055   
-       school     abil.sid 0.21     0.046   
-       Residual            0.37     0.137   
+       Groups     Name     Variance Std.Dev.
+       sid:school abil.sid 0.055    0.24    
+       school     abil.sid 0.046    0.21    
+       Residual            0.137    0.37    
 
 ---
 
@@ -79,10 +79,10 @@
     Code
       print(VarCorr(mod), digits = 2)
     Output
-       Groups     Name     Std.Dev. Variance
-       sid:school abil.sid 0.24     0.055   
-       school     abil.sid 0.21     0.046   
-       Residual            0.37     0.137   
+       Groups     Name     Variance Std.Dev.
+       sid:school abil.sid 0.055    0.24    
+       school     abil.sid 0.046    0.21    
+       Residual            0.137    0.37    
 
 ---
 
